@@ -174,7 +174,7 @@ Tipo de dato:
 >>> type(4) 
  < type int >
 ```
-Aplicar una conversión a un conjunto como una lista:
+APLICAR una conversión a un conjunto como una lista:
 ```python
 >>> map(str, [1, 2, 3, 4])
  ['1', '2', '3', '4']
@@ -186,30 +186,30 @@ Redondear un flotante con x número de decimales:
 ```
 Generar un rango en una lista (esto es mágico):
 ```python
->>> range(5) 
+>>> range(5)
  [0, 1, 2, 3, 4]
-```
+ ```
 Sumar un conjunto:
+
 ```python
->>> sum([1, 2, 4]) 
- 7
-```
+ sum([1, 2, 4]) 
+ 7```
+ 
 Organizar un conjunto:
 ```python
->>> sorted([5, 2, 1]) 
+sorted([5, 2, 1]) 
  [1, 2, 5]
-```
+ ```
 Conocer los comandos que le puedes aplicar a x tipo de datos:
 ````python
- >>>Li = [5, 2, 1]
- >>>dir(Li)
- >>>['append', 'count', 'extend', 'index', 'insert', 'pop', 'remove', 'reverse', 'sort']
-```
+Li = [5, 2, 1]
+dir(Li)
+ ['append', 'count', 'extend', 'index', 'insert', 'pop', 'remove', 'reverse', 'sort']```
 ‘append’, ‘count’, ‘extend’, ‘index’, ‘insert’, ‘pop’, ‘remove’, ‘reverse’, ‘sort’ son posibles comandos que puedes aplicar a una lista.
 
 Información sobre una función o librería:
 ```python
->>> help(sorted) 
+help(sorted) 
  (Aparecerá la documentación de la función sorted)
 ```
 ### Clases
@@ -217,7 +217,7 @@ Clases es uno de los conceptos con más definiciones en la programación, pero e
 
 Para crear un constructor haces una función dentro de la clase con el nombre init y de parámetros self (significa su clase misma), nombre_r y edad_r:
 ````python
->>> class Estudiante(object): 
+ class Estudiante(object): 
  ... 	def __init__(self,nombre_r,edad_r): 
  ... 		self.nombre = nombre_r 
  ... 		self.edad = edad_r 
@@ -225,8 +225,8 @@ Para crear un constructor haces una función dentro de la clase con el nombre in
  ... 	def hola(self): 
  ... 		return "Mi nombre es %s y tengo %i" % (self.nombre, self.edad) 
  ... 
- >>> e = Estudiante(“Arturo”, 21) 
- >>> print (e.hola())
+e = Estudiante(“Arturo”, 21) 
+ print (e.hola())
  Mi nombre es Arturo y tengo 21
 ```
 Lo que hicimos en las dos últimas líneas fue:
@@ -258,7 +258,6 @@ Los condicionales tienen la siguiente estructura. Ten en cuenta que lo que conti
  else:
  	elementos
 ```
-
 ### Bucle FOR
 El bucle de for lo puedes usar de la siguiente forma: recorres una cadena o lista a la cual va a tomar el elemento en cuestión con la siguiente estructura:
 ```python
@@ -287,3 +286,227 @@ Ejemplo:
 ```
  
 En este ejemplo preguntará si es menor que diez. Dado que es menor imprimirá x y luego sumará una unidad a x. Luego x es 1 y como sigue siendo menor a diez se seguirá ejecutando, y así sucesivamente hasta que x llegue a ser mayor o igual a 10.
+
+### Funciones principales en Turtle Graphics
+
+Las funciones principales para animar nuestro objeto son las siguientes:
+
+**forward(distance)**: Avanzar una determinada cantidad de píxeles.
+**backward(distance)**: Retroceder una determinada cantidad de píxeles.
+**left(angle):** Girar hacia la izquierda un determinado ángulo.
+**right(angle)**: Girar hacia la derecha un determinado ángulo.
+
+Por otro lado, puede que en ocasiones queramos desplazarnos de un punto a otro sin dejar rastro. Para ello utilizaremos las siguientes funciones:
+
+**home(distance)**: Desplazarse al origen de coordenadas.
+**goto((x, y))**: Desplazarse a una coordenada en concreto.
+**pendown()**: Subir el lápiz para no mostrar el rastro.
+**penup()**: Bajar el lápiz para mostrar el rastro.
+
+Por último, puede que queramos cambiar el color o tamaño del lápiz. En ese caso utilizaremos las siguientes funciones gráficas:
+
+**shape(‘turtle’):** Cambia al objeto tortuga.
+**pencolor(color)**: Cambiar al color especificado.
+**pensize(dimension)**: Tamaño de la punta del lápiz.
+
+# Operadores aritmeticos
+1. ( ) = parentesis
+2. = multiplicacion
+3. / = division
+4. % = modulo
+5. = suma
+6. – = resta
+7. **  = potencia
+### Operadores racionales
+
+1. = mayor que
+
+3. < = menor que
+4. = = mayor o igual que
+
+6. = = menor o igual que
+
+8. != = diferente
+9. == = igualdad
+10. = -> igual
+### Operadores lógicos
+
+1. Not
+2. And
+3. Or
+
+### Prioridad de operadores en funcionalidad
+
+1. ()
+2. **
+3. *,/, not
+4. +, -, and
+5. ,<,==,>=,<=, ! , or
+
+### Operadores de asignación
+a + = 5 Suma en Asignación
+b - = 2 resta en Asignación
+a * = 3 multiplicación en Asignación
+a / = 3 división en Asignación
+a ** = 2 potencia en Asignación
+a % = 2 modulo en Asignación
+
+### Variables y expresiones
+
+Asignaciones = Crea una variable y asigna un valor
+_age = 20 #Cuando una variable empieza por ’ _ ’ es una variable privada
+PI = 3.14159 #Cuando una variable esta en mayúscula significa que es una constante
+__do_not_touch = “something important” #Cuando esta variable esta en doble guion bajo = significa que el codigo se puede romper
+
+Re asignaciones de variables
+my_var = 2
+my_var = my_var * 5
+print(my_var)
+
+Variables y Expresiones
+Las variables pueden contener números y letras
+No pueden comenzar con numero
+Multiples palabras se unen con _
+No se pueden utilizar palabras reservadas
+
+### Operaciones con Strings en Python
+
+Los strings tienen varios métodos que nosotros podemos utilizar.
+
+- **upper**: convierte todo el string a mayúsculas
+- **lower**: convierte todo el string a minúsculas
+- **find**: encuentra el indice en donde existe un patrón que nosotros definimos
+- **startswith**: significa que empieza con algún patrón.
+- **endswith**: significa que termina con algún patrón.
+- **capitalize**: coloca la primera letra en mayúscula y el resto en minúscula.
+
+**in** y **not in** nos permite saber con cualquier secuencia sin una subsecuencia o substrings se encuentra adentro de la secuencia mayor.
+
+**dir**: Nos dice todos los métodos que podemos utilizar dentro de un objeto.
+**help**: nos imprime en pantalla el docstrings o comentario de ayuda o instrucciones que posee la función. Casi todas las funciones en Python las tienen.
+
+### Operaciones con strings: Slices en python
+
+Los* slices *en Python nos permiten manejar secuencias de una manera poderosa.
+
+Slices en español significa ““rebanada””, si tenemos una secuencia de elementos y queremos una rebanada tenemos una sintaxis para definir qué pedazos queremos de esa secuencia.
+
+`secuencia[comienzo: final: pasos]`
+
+### Operaciones con strings: Slices en python
+
+
+En realidad la notación slice es más sencilla de lo que parece. Este es el resumen de sus principales opciones:
+
+a[inicio:final] = desde el elemento 'inicio' hasta 'final'-1
+a[inicio:] = desde el elemento 'inicio' hasta el final del array
+a[:final] = desde el primer elemento hasta elemento 'final'-1
+a[:] = todos los elementos del array
+a[::salto] = desde el elemento principio hasta el final del array de dendo saltos de en en x en x letras
+Además de estos cuatro casos que son los más comunes, también puedes utilizar un tercer valor opcional llamado step o salto:
+
+#### el número de elementos indicado por 'salto', es decir, de 2 en 2 por ejemplo
+
+a[inicio: final:salto]
+Otra de las opciones más interesantes del slice es que el principio y el final pueden ser números negativos. 
+Esto indica que se empieza a contar desde el final del array:
+
+a[-1] = selecciona el último elemento del array
+a[-2:] = selecciona los dos últimos elementos del array
+a[:-2] = selecciona todos los elementos excepto los dos últimos
+Si existen menos elementos de los que quieres seleccionar, Python se porta bien y no muestra ningún error. 
+Si por ejemplo el array sólo tiene un elemento y tratas de seleccionar `a[:-2]`, el resultado es una lista vacía en vez de un mensaje de error. Como es posible que a veces te interese mostrar un error en estos casos, es algo que deberías tener en cuenta.
+
+`un_slice = 'Platano'`
+
+#### MOSTRAMOS LA PABLABRA COMPLETA
+print(un_slice[0:len(un_slice):1])
+print(un_slice[0:len(un_slice)])
+print(un_slice[:])
+
+#### MOSTRAMOS UNA LETRA CONCRETA DE LA PABLABRA
+print(un_slice[0])=  Nos muestra la primera letra de la palabra empezando por el principio
+print(un_slice[-2]) = Nos muestra la segunda letra de la palabra empezando por el final
+
+#### MOSTRAMOS LA PABLABRA DESDE UNA LETRA CONCRETA
+print(un_slice[0:]) = Nos muestra la pablabra desde la posición cero hasta el final
+print(un_slice[3:]) = Nos muestra la pablabra desde la posición tres hasta el final
+print(un_slice[3::2]) = Nos muestra la pablabra desde la posición tres hasta el final dando saltos saltos de dos en dos letras
+
+#### MOSTRAMOS LA PABLABRA HASTA UNA LETRA CONCRETA
+print(un_slice[:len(un_slice)])  = Nos muestra la pablabra completa
+print(un_slice[:len(un_slice)-2]) = Nos muestra la pablabra desde la posición cero hasta la posición 2 empezando por el final
+print(un_slice[:len(un_slice):3]) = Nos muestra la pablabra desde la posición cero hasta el final dando saltos saltos de tres en tres letras
+
+#### MOSTRAMOS LA PABLABRA DANDO SALTOS
+print(un_slice[0:len(un_slice):2]) = Nos muestra la pablabra desde la posición cero hasta el final dando saltos saltos de dos en dos letras
+print(un_slice[2:len(un_slice):4]) = Nos muestra la pablabra desde la posición dos hasta el final dando saltos saltos de cuatro en cuatro letras
+
+#### For loops
+
+Las iteraciones es uno de los conceptos más importantes en la programación. En Python existen muchas manera de iterar pero las dos principales son los **for loops** y **while loops**.
+
+Los **for loops** nos permiten iterar a través de una secuencia y los while loops nos permiten iterara hasta cuando una condición se vuelva falsa.
+
+**for loops:**
+
+- Tienen dos keywords break y continue que nos permiten salir anticipadamente de la iteración
+- Se usan cuando se quiere ejecutar varias veces una o varias instrucciones.
+- for [variable] in [secuencia]:
+
+Es una convención usar la letra `i` como variable en nuestro for, pero podemos colocar la que queramos.
+
+`range`: Nos da un objeto rango, es un iterador sobre el cual podemos generar secuencias.
+
+### While loops
+
+Al igual que las for loops, las **while loops** nos sirve para iterar, pero las for loops nos sirve para iterar a lo largo de una secuencia mientras que las **while loops** nos sirve para iterar mientras una condición sea verdadera.
+
+Si no tenemos un mecanismo para convertir el mecanismo en falsedad, entonces nuestro while loops se ira al infinito(infinite loop).
+
+####Iterators and generators
+
+Aunque no lo sepas, probablemente ya utilices iterators en tu vida diaria como programador de Python. Un iterator es simplemente un objeto que cumple con los requisitos del Iteration Protocol (protocolo de iteración) y por lo tanto puede ser utilizado en ciclos. Por ejemplo,
+```python
+for i in range(10):
+    print(i)
+```
+En este caso, la función range es un iterable que regresa un nuevo valor en cada ciclo. Para crear un objeto que sea un iterable, y por lo tanto, implemente el protocolo de iteración, debemos hacer tres cosas:
+
+- Crear una clase que implemente los métodos **iter** y **
+**
+- **ite**r debe regresar el objeto sobre el cual se iterará
+- **next** debe regresar el siguiente valor y aventar la excepción StopIteration cuando ya no hayan elementos sobre los cual iterar.
+Por su parte, los generators son simplemente una forma rápida de crear iterables sin la necesidad de declarar una clase que implemente el protocolo de iteración. Para crear un generator simplemente declaramos una función y utilizamos el keyword yield en vez de return para regresar el siguiente valor en una iteración. Por ejemplo,
+```python
+def fibonacci(max):
+    a, b = 0, 1
+    while a < max:
+        yield a
+        a, b = b, a+b
+```
+Es importante recalcar que una vez que se ha agotado un generator ya no podemos utlizarlo y debemos crear una nueva instancia. Por ejemplo,
+```python
+fib1 = fibonacci(20)
+fib_nums = [num for num in fib1]
+...
+double_fib_nums = [num * 2 for num in fib1] # no va a funcionar
+double_fib_nums = [num * 2 for num in fibonacci(30)] # sí funciona
+```
+
+### Uso de listas
+
+Python y todos los lenguajes nos ofrecen *constructos* mucho más poderosos, haciendo que el desarrollo de nuestro software sea
+
+- Más sofisticado
+- Más legible
+- Más fácil de implementar
+Estos *constructos* se llaman **Estructuras de Datos** que nos permiten agrupar de distintas maneras varios valores y elementos para poderlos manipular con mayor facilidad.
+
+Las **listas** las vas a utilizar durante toda tu carrera dentro de la programación e ingeniería de Software.
+
+Las **listas** son una secuencia de valores. A diferencia de los strings, las listas pueden tener cualquier tipo de valor. También, a diferencia de los strings, son mutables, podemos agregar y eliminar elementos.
+
+En Python, las listas son referenciales. Una lista no guarda en memoria los objetos, sólo guarda la referencia hacia donde viven los objetos en memoria
+
+Se inician con `[]` o con la built-in function `list`.
