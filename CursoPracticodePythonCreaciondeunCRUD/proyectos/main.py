@@ -1,12 +1,25 @@
 import sys
 
-clients = ["Pablo", "Ricardo,"]
+clients = [
+        {
+            "name":"pablo",
+            "company":"Google",
+            "email":"pablo@google.com",
+            "position":"Software Engineer",
+        },
+        {
+            "name":"Ricardo",
+            "company":"Facebook",
+            "email":"recardo@facebook.com",
+            "position":"Data engineer",
+        }
+        ]
 
-def create_client(client_name):
+def create_client(client):
     global clients
 
-    if client_name not in clients:
-        clients.append(client_name)
+    if client not in clients:
+        clients.append(client)
 
     else:
         print("Client already is in client's list")
@@ -23,7 +36,12 @@ def search_client(client_name):
 
 def list_clients():
     for idx, client in enumerate(clients):
-        print("{} : {}".format(idx, client))
+        print("{uid} | {name} | {company} | {email} | {position}".format(
+            uid = idx,
+            name = client["name"],
+            company = client["company"],
+            email = client["email"],
+            position = client["position"]))
 
 
 def update_client(client_name, update_client_name):
@@ -46,6 +64,14 @@ def delete_client(client_name):
     else:
         print("Client is not in clinet list")
 
+
+def _get_client_field(field_name):
+    field = None
+
+    while not field:
+        field = input("What is the clinet {}? ".format(field_name))
+
+    return field
 
 def _get_client_name():
     client_name = None
@@ -80,8 +106,13 @@ if __name__ == '__main__':
     command = command.upper()
 
     if command == "C":
-        client_name = _get_client_name()
-        create_client(client_name)
+        client = {
+                "name" : _get_client_field("name"),
+                "company" : _get_client_field("company"),
+                "email" : _get_client_field("email"),
+                "position" : _get_client_field("position"),
+        }
+        create_client(client)
         list_clients()
 
     elif command == "L":

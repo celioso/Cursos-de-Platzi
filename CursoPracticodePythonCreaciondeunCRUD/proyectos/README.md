@@ -545,3 +545,107 @@ Si queremos ciclar a lo largo de un diccionario tenemos las opciones:
 `keys`: nos imprime una lista de las llaves
 `values`: nos imprime una lista de los valores
 `items`: nos manda una lista de tuplas de los valores
+
+### Diccionarios
+
+Los diccionarios se conocen con diferentes nombres a lo largo de los lenguajes de programación como HashMaps, Mapas, Objetos, etc. En Python se conocen como **Diccionarios**.
+
+Un diccionario es similar a una lista sabiendo que podemos acceder a través de un indice, pero en el caso de las listas este índice debe ser un número entero. Con los diccionarios puede ser cualquier objeto, normalmente los verán con **strings** para ser más explicitos, pero funcionan con muchos tipos de llaves…
+
+Un diccionario es una asociación entre llaves(**keys**) y valores(**values**) y la referencia en Python es muy precisa. Si abres un diccionario verás muchas palabras y cada palabra tiene su definición.
+
+Para iniciar un diccionario se usa `{}` o con la función `dict`
+
+Estos también tienen varios métodos. Siempre puedes usar la función `dir` para saber todos los métodos que puedes usar con un objeto.
+
+Si queremos ciclar a lo largo de un diccionario tenemos las opciones:
+
+`keys`: nos imprime una lista de las llaves
+`values`: nos imprime una lista de los valores
+`items`: nos manda una lista de tuplas de los valores
+
+ejemplos:
+
+```pythonn
+>>> rea.items()
+dict_items([('Pizza', 'la comida mas deliciosa del mundo'), ('Pasta', 'la Comida mas sabrosa de Italia')])
+>>> for key in rea.keys():
+...     print(key)
+...
+Pizza
+Pasta
+>>> for key in rea.values():
+...     print(key)
+...
+la comida mas deliciosa del mundo
+la Comida mas sabrosa de Italia
+>>> for key, value in rea.items():
+...     print(key, value)
+...
+Pizza la comida mas deliciosa del mundo
+Pasta la Comida mas sabrosa de Italia
+```
+
+### Tuplas y conjuntos
+
+Tuplas(tuples) son iguales a las listas, la única diferencia es que son** inmutables**, la diferencia con los strings es que pueden recibir muchos tipos valores. Son una serie de valores separados por comas, casi siempre se le agregan paréntesis para que sea mucho más legible.
+
+Para poderla inicializar utilizamos la función `tuple`.
+
+Uno de sus usos muy comunes es cuando queremos regresar más de un valor en nuestra función.
+
+Una de las características de las Estructuras de Datos es que cada una de ellas nos sirve para algo especifico. No existe en programación una navaja suiza que nos sirva para todos. Los mejores programas son aquellos que utilizan la herramienta correcta para el trabajo correcto.
+
+Conjutos(**sets**) nacen de la teoría de conjuntos. Son una de las Estructuras más importantes y se parecen a las listas, podemos añadir varios elementos al conjunto, pero **no pueden existir elementos duplicados**. A diferencia de los tuples podemos agregar y eliminar, son **mutables**.
+
+Los sets se pueden inicializar con la función **set**. Una recomendación es inicializarlos con esta función para no causar confusión con los diccionarios.
+
+- `add `nos sirve añadir elementos.
+- `remove` nos permite eliminar elementos.
+
+
+#### **Declaracion de tuplas**
+a= 1,2,3
+a=(1,2,3)
+##### Operaciones con tuplas:
+**Acceder a un valor mediante indice de tupla**
+a[0]=1
+**Conteo de cuantas veces está un valor en la tupla**
+a.count(1)—>1
+
+**Declaración conjutos o Sets**
+a= set([1,2,3])
+a={1,2,3}
+##### Operaciones con conjuntos:
+
+- NO se puede acceder a un valor mediante índice
+- NO se puede agregar un valor ya existente, por ejemplo
+**Agregar un valor a conjunto**
+`a.add(1`)—> error!! (valor existente en set)
+`a.add(20)`—> a={1,2,3,20}
+Tenemos:
+a={1,2,3,20}
+b={3,4,5}
+`a.intersection(b)`–> {3} **(elementos en común)**
+`a.union(b)`—>{1,2,3,20,4,5} **(elementos de a + b pero sin repetir ninguno)**
+`a.difference(b)`–>{1,2,20} **(elementos de a que no se encuentran en b)**
+`b.difference(a)`–>{4,5} **(elementos de b que no se encuentran en a)**
+
+## Python comprehensions
+
+Las Comprehensions son constructos que nos permiten generar una secuencia a partir de otra secuencia.
+
+Existen tres tipos de comprehensions:
+
+- List comprehensions
+`[element for element in element_list if element_meets_condition]`
+- Dictionary comprehensions
+`{key: element for element in element_list if element_meets_condition}`
+- Sets comprehensions
+`{element for element in element_list if elements_meets_condition}`
+
+### Búsquedas binarias
+
+Uno de los conceptos más importantes que debes entender en tu carrera dentro de la programación son los algoritmos. No son más que una secuencia de instrucciones para resolver un problema específico.
+
+Búsqueda binaria lo único que hace es tratar de encontrar un resultado en una lista ordenada de tal manera que podamos razonar. Si tenemos un elemento mayor que otro, podemos simplemente usar la mitad de la lista cada vez.
