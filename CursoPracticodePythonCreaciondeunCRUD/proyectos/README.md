@@ -510,3 +510,38 @@ Las **listas** son una secuencia de valores. A diferencia de los strings, las li
 En Python, las listas son referenciales. Una lista no guarda en memoria los objetos, sólo guarda la referencia hacia donde viven los objetos en memoria
 
 Se inician con `[]` o con la built-in function `list`.
+
+### Operaciones con listas
+
+Ahora que ya entiendes cómo funcionan las **listas**, podemos ver qué tipo de operaciones y métodos podemos utilizar para modificarlas, manipularlas y realizar diferentes tipos de cómputos con esta Estructura de Datos.
+
+El operador **+(suma)** concatena dos o más listas.
+El operador ***(multiplicación)** repite los elementos de la misma lista tantas veces los queramos multiplicar
+
+Sólo podemos utilizar **+(suma) **y ***(multiplicación).**
+
+Las listas tienen varios métodos que podemos utilizar.
+
+- `append` nos permite añadir elementos a listas. Cambia el tamaño de la lista.
+- `pop` nos permite sacar el último elemento de la lista. También recibe un índice y esto nos permite elegir qué elemento queremos eliminar.
+- `sort` modifica la propia lista y ordenarla de mayor a menor. Existe otro método llamado `sorted`, que también ordena la lista, pero genera una nueva instancia de la lista
+- `del` nos permite eliminar elementos vía indices, funciona con *slices*
+- `remove` nos permite es pasarle un valor para que Python compare internamente los valores y determina cuál de ellos hace match o son iguales para eliminarlos.
+
+### Diccionarios
+
+Los diccionarios se conocen con diferentes nombres a lo largo de los lenguajes de programación como HashMaps, Mapas, Objetos, etc. En Python se conocen como **Diccionarios**.
+
+Un diccionario es similar a una lista sabiendo que podemos acceder a través de un indice, pero en el caso de las listas este índice debe ser un número entero. Con los diccionarios puede ser cualquier objeto, normalmente los verán con **strings** para ser más explicitos, pero funcionan con muchos tipos de llaves…
+
+Un diccionario es una asociación entre llaves(**keys**) y valores(**values**) y la referencia en Python es muy precisa. Si abres un diccionario verás muchas palabras y cada palabra tiene su definición.
+
+Para iniciar un diccionario se usa `{}` o con la función `dict`
+
+Estos también tienen varios métodos. Siempre puedes usar la función `dir` para saber todos los métodos que puedes usar con un objeto.
+
+Si queremos ciclar a lo largo de un diccionario tenemos las opciones:
+
+`keys`: nos imprime una lista de las llaves
+`values`: nos imprime una lista de los valores
+`items`: nos manda una lista de tuplas de los valores
