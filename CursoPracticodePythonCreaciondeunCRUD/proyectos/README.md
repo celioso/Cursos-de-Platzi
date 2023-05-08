@@ -649,3 +649,11 @@ Existen tres tipos de comprehensions:
 Uno de los conceptos más importantes que debes entender en tu carrera dentro de la programación son los algoritmos. No son más que una secuencia de instrucciones para resolver un problema específico.
 
 Búsqueda binaria lo único que hace es tratar de encontrar un resultado en una lista ordenada de tal manera que podamos razonar. Si tenemos un elemento mayor que otro, podemos simplemente usar la mitad de la lista cada vez.
+
+### Decoradores
+
+**Python** es un lenguaje que acepta **diversos** paradigmas como programación orientada a objetos y la programación funcional, siendo estos los temas de nuestro siguiente módulo.
+
+Los **decoradores** son una función que envuelve a otra función para modificar o extender su comportamiento.
+
+En Python las **funciones** son ciudadanos de primera clase, first class citizen, esto significan que las funciones pueden recibir funciones como **parámetros** y pueden **regresar** funciones. Los **decoradores** utilizan este concepto de manera fundamental.
