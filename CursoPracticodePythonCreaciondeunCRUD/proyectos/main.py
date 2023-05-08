@@ -47,8 +47,7 @@ def list_clients():
 def update_client(client_name, update_client_name):
     global clients
 
-    if client_name in clients:
-        index = clients.index(client-name)
+    if len(clients) - 1 >= clients:
         clients[index] = updated_name
 
     else:
@@ -58,11 +57,10 @@ def update_client(client_name, update_client_name):
 def delete_client(client_name):
     global clients
 
-    if client_name in clients:
-        clients.remove(client_name)
-
-    else:
-        print("Client is not in clinet list")
+    if idx, client in enumerate(clients):
+        if idx == client_id:
+            del clients[idx]
+            break
 
 
 def _get_client_field(field_name):
