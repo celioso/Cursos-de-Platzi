@@ -657,3 +657,90 @@ Búsqueda binaria lo único que hace es tratar de encontrar un resultado en una 
 Los **decoradores** son una función que envuelve a otra función para modificar o extender su comportamiento.
 
 En Python las **funciones** son ciudadanos de primera clase, first class citizen, esto significan que las funciones pueden recibir funciones como **parámetros** y pueden **regresar** funciones. Los **decoradores** utilizan este concepto de manera fundamental.
+
+### Decoradores en Python
+
+En esta clase pondremos en práctica lo aprendido en la clase anterior sobre decoradores.
+
+Por convención la función interna se llama` wrapper`,
+
+Para usar los decoradores es con el símbolo de @(arroba) y lo colocamos por encima de la función. Es un *sugar syntax*
+
+`*args **kwargs `son los argumentos que tienen keywords, es decir que tienen nombre y los argumentos posicionales, los **args**. Los asteriscos son simplemente una expansión.
+
+### Decoradores en Python
+
+En esta clase pondremos en práctica lo aprendido en la clase anterior sobre decoradores.
+
+Por convención la función interna se llama` wrapper`,
+
+Para usar los decoradores es con el símbolo de @(arroba) y lo colocamos por encima de la función. Es un *sugar syntax*
+
+`*args **kwargs `son los argumentos que tienen keywords, es decir que tienen nombre y los argumentos posicionales, los **args**. Los asteriscos son simplemente una expansión.
+
+#### DECORADORES EN PYTHON
+
+Los decoradores sirven para ejecutar lógica del código antes y/o después de otra función, esto nos ayuda a generar funciones y código que pueda ser reutilizado fácilmente sin hacer más extenso nuestro código. Hay que recordar que si se genera una función dentro de otra solo existiera en ese scope(dentro de la función padre), si se quiere invocar una función varias veces dentro de otras se tiene que generar de manera global.
+
+`**args y kwargs**`
+
+Básicamente lo que hacen es pasar tal cual los valores de de los argumentos que se pasan a la función args hace referencias a listas y kwargs a elementos de un diccionario (llave: valor)
+
+** args: **
+
+```python
+def test_valor_arg(n_arg, *args):
+    print('primer valor normal: ', n_arg)
+
+    For arg in args:
+	print('este es un valor de *args: ',arg)
+
+    print(type(args))
+
+if__name__ == '__main__':
+
+    test_valor_args('carlos','Karla','Paola','Elena')
+```
+- el tipo de valor y es una tupla
+- solo poniendo argumentos divididos por comas los convierte
+**kuargs: **
+
+```python
+def test_valor_kwargs(**kwargs):
+    if kwargs is not None:
+        for key,  value in kwargs.items():
+            print('%s == %s' %(key,value))
+
+    print(type(kwargs))
+
+if __name__ == '__main__':
+
+ test_valor_kwargs(caricatura='batman')
+ ```
+ 
+- el valor que te da es un diccionario
+- toma los valores en los extremos de un signo igual
+Este es un ejemplo usando los 2 en una función
+
+```python
+def test_valor_kwargs_args(*args, **kwargs):
+    print(type(kwargs))
+    print(kwargs)
+    print('----------')
+    print(type(args))
+    print(args)
+
+if __name__ == '__main__':
+    test_valor_kwargs_args('flash', 'batman', caricatura='batman', empresa = 'dc')
+```
+
+### ¿Qué es la programación orientada a objetos?
+La programación orientada a objetos es un paradigma de programación que otorga los medios para estructurar programas de tal manera que las propiedades y comportamientos estén envueltos en objetos individuales.
+
+Para poder entender cómo modelar estos objetos tenemos que tener claros cuatro principios:
+
+- Encapsulamiento.
+- Abstracción
+- Herencia
+- Polimorfismo
+Las clases simplemente nos sirven como un molde para poder generar diferentes instancias.
