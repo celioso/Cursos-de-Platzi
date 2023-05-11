@@ -744,3 +744,105 @@ Para poder entender cómo modelar estos objetos tenemos que tener claros cuatro 
 - Herencia
 - Polimorfismo
 Las clases simplemente nos sirven como un molde para poder generar diferentes instancias.
+
+### Programación orientada a objetos en Python
+
+Para declarar una clase en Python utilizamos la keyword `class`, después de eso le damos el nombre. Una convención en Python es que todas las clases **empiecen con mayúscul**a y se continua con **CamelCase**.
+
+Un método fundamental es dunder init(**__init__**). Lo único que hace es inicializar la clase basado en los parámetros que le damos al momento de construir la clase.
+
+`self` es una referencia a la clase. Es una forma internamente para que podamos acceder a las propiedades y métodos.
+
+#### Scopes and namespaces
+
+En Python, un name, también conocido como identifier, es simplemente una forma de otorgarle un nombre a un objeto. Mediante el nombre, podemos acceder al objeto. Vamos a ver un ejemplo:
+```python
+my_var = 5
+
+id(my_var) # 4561204416
+id(5) # 4561204416
+```
+En este caso, el identifier **my_var** es simplemente una forma de acceder a un objeto en memoria (en este caso el espacio identificado por el número 4561204416 ). Es importante recordar que un name puede referirse a cualquier tipo de objeto (aún las funciones).
+
+```python
+def echo(value):
+    return value
+
+a = echo
+
+a(‘Billy’) # 3
+```
+Ahora que ya entendimos qué es un name podemos avanzar a los namespaces (espacios de nombres). Para ponerlo en palabras llanas, un namespace es simplemente un conjunto de names.
+
+En Python, te puedes imaginar que existe una relación que liga a los nombres definidos con sus respectivos objetos (como un diccionario). Pueden coexistir varios namespaces en un momento dado, pero se encuentran completamente aislados. Por ejemplo, existe un namespace específico que agrupa todas las variables globales (por eso puedes utilizar varias funciones sin tener que importar los módulos correspondientes) y cada vez que declaramos una módulo o una función, dicho módulo o función tiene asignado otro namespace.
+
+A pesar de existir una multiplicidad de namespaces, no siempre tenemos acceso a todos ellos desde un punto específico en nuestro programa. Es aquí donde el concepto de scope (campo de aplicación) entra en juego.
+
+Scope es la parte del programa en el que podemos tener acceso a un namespace sin necesidad de prefijos.
+
+En cualquier momento determinado, el programa tiene acceso a tres scopes:
+
+- El scope dentro de una función (que tiene nombres locales)
+- El scope del módulo (que tiene nombres globales)
+- El scope raíz (que tiene los built-in names)
+
+Cuando se solicita un objeto, Python busca primero el nombre en el scope local, luego en el global, y por último, en el raíz. Cuando anidamos una función dentro de otra función, su scope también queda anidado dentro del scope de la función padre.
+
+```python
+def outer_function(some_local_name):
+    def inner_function(other_local_name):
+         # Tiene acceso a la built-in function print y al nombre local some_local_name
+         print(some_local_name) 
+        
+         # También tiene acceso a su scope local
+         print(other_local_name)
+```
+Para poder manipular una variable que se encuentra fuera del scope local podemos utilizar los keywords global y nonlocal.
+```python
+some_var_in_other_scope = 10
+
+def some_function():
+     global some_var_in_other_scope
+     
+     Some_var_in_other_scope += 1
+```
+
+### Introducción a Click
+
+**Click** es un pequeño framework que nos permite crear aplicaciones de Línea de comandos. Tiene cuatro decoradores básicos:
+
+- **@click_group**: Agrupa una serie de comandos
+- **@click_command**: Aca definiremos todos los comandos de nuestra apliacion
+- **@click_argument**: Son parámetros necesarios
+- @**click_option**: Son parámetros opcionales
+Click también realiza las conversiones de tipo por nosotros. Esta basado muy fuerte en decoradores.
+
+### Crear ambiente virtual
+
+1. `pip install virtualenv`
+2. `python -m venv venv` o `virtualenv --python=python3 venv`
+
+## o 
+
+1. `virtualenv venv`
+2. `python -m venv venv`
+3. `venv\scripts\activate`
+
+### ENTORNO VIRTUAL EN WINDOWS
+luego seguí estos pasos.
+1. pip Install virtualenv
+2. Pip Install virtualenvwrapper-win:
+**3. ** una vez echo esto anote el comando que dice el profe con una ligera modificación
+estando en la carpeta “platzi-ventas” ejecuto el comando:
+• virtualenv --python=python venv
+
+si ya ha respondido la consola con done, ingreso a la carpeta con el nombre que se creo** “venv”**
+• **cd ** venv/Scripts
+
+ejecuto el archivo activate
+activate, inmediatamente inicializa el ambiente virtual tal como al profe!! EJ:
+… \CURSO PLATZI\CURSO_PYTHON_3\PLATZI-VENTAS\venv\Script> activate
+Y por fin ingresas al entorno virtual
+(venv) C:\Users…\CURSO PLATZI\CURSO_PYTHON_3\PLATZI-VENTAS\venv
+ luego regresa a la carpeta donde esta es setup.py en la Carpeta PLATZI-VENTAS y ejecuta :
+pip install --editable .
