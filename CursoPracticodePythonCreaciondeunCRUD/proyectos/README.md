@@ -832,9 +832,9 @@ Click también realiza las conversiones de tipo por nosotros. Esta basado muy fu
 luego seguí estos pasos.
 1. pip Install virtualenv
 2. Pip Install virtualenvwrapper-win:
-**3. ** una vez echo esto anote el comando que dice el profe con una ligera modificación
+3.  una vez echo esto anote el comando que dice el profe con una ligera modificación
 estando en la carpeta “platzi-ventas” ejecuto el comando:
-• virtualenv --python=python venv
+• `virtualenv --python=python venv`
 
 si ya ha respondido la consola con done, ingreso a la carpeta con el nombre que se creo** “venv”**
 • **cd ** venv/Scripts
@@ -844,5 +844,10 @@ activate, inmediatamente inicializa el ambiente virtual tal como al profe!! EJ:
 … \CURSO PLATZI\CURSO_PYTHON_3\PLATZI-VENTAS\venv\Script> activate
 Y por fin ingresas al entorno virtual
 (venv) C:\Users…\CURSO PLATZI\CURSO_PYTHON_3\PLATZI-VENTAS\venv
- luego regresa a la carpeta donde esta es setup.py en la Carpeta PLATZI-VENTAS y ejecuta :
-pip install --editable .
+luego regresa a la carpeta donde esta es setup.py en la Carpeta PLATZI-VENTAS y ejecuta :
+`pip install --editable .`
+
+### Clients
+Modelaremos a nuestros clientes y servicios usando lo aprendido en clases anteriores sobre programación orientada a objetos y clases.
+
+`@staticmethod` nos permite declarar métodos estáticos en nuestra clase. Es un método que se puede ejecutar sin necesidad de una instancia de una clase. No hace falta que reciba `self` como parámetro.
