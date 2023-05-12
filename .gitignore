@@ -5,6 +5,7 @@
 *.apk
 *.exe
 *.jpg
+*.pdf
 
 .eve
 venv/
