@@ -2,14 +2,14 @@ from setuptools import setup
 
 
 setup(
-    name = "py",
-    version = "0.1",
-    py_modules = ["pv"],
-    install_requires = [
-        "Click",
+    name='pv',
+    version='0.1',
+    py_modules=['pv'],
+    install_requires=[
+        'Click',
     ],
-    entry_points = '''
+    entry_points='''
         [console_scripts]
         pv=pv:cli
     ''',
-    )
+)

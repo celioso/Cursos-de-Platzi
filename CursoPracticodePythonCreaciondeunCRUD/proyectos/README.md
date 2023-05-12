@@ -851,3 +851,33 @@ luego regresa a la carpeta donde esta es setup.py en la Carpeta PLATZI-VENTAS y 
 Modelaremos a nuestros clientes y servicios usando lo aprendido en clases anteriores sobre programación orientada a objetos y clases.
 
 `@staticmethod` nos permite declarar métodos estáticos en nuestra clase. Es un método que se puede ejecutar sin necesidad de una instancia de una clase. No hace falta que reciba `self` como parámetro.
+
+### Tablas con mejor formatoTablas con mejor formato
+¡Hola a todos! Les comparto una mejora que le hice al código para que la tabla tenga un mejor formato.
+Utilicé un módulo llamado Tabulate, que pueden encontrar en la página oficial de PyPI o solo instalarlo con $ `pip install tabulate`.
+
+El código del método list queda así:
+
+```python
+from tabulate import tabulate
+
+@clients.command()
+@click.pass_context
+def list(ctx):
+    """List all clients"""
+    client_service = ClientService(ctx.obj['clients_table'])
+    clients_list = client_service.list_clients()
+
+    headers = [field.capitalize() for field in Client.schema()]
+    table = []
+
+    for client in clients_list:
+        table.append(
+            [client['name'],
+             client['company'],
+             client['email'],
+             client['position'],
+             client['uid']])
+
+    print(tabulate(table, headers))
+```
