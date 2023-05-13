@@ -256,34 +256,34 @@ Los condicionales tienen la siguiente estructura. Ten en cuenta que lo que conti
  elif ( a == b ): 
  	elementos 
  else:
- 	elementos
-```
+ 	elementos```
+
 ### Bucle FOR
 El bucle de for lo puedes usar de la siguiente forma: recorres una cadena o lista a la cual va a tomar el elemento en cuestión con la siguiente estructura:
 ```python
  for i in ____:
- 	elementos
-```
+ 	elementos```
+
 Ejemplo:
 ```python
 for i in range(10):
- 	print i
-```
+ 	print i```
+
 En este caso recorrerá una lista de diez elementos, es decir el _print i _de ejecutar diez veces. Ahora i va a tomar cada valor de la lista, entonces este for imprimirá los números del 0 al 9 (recordar que en un range vas hasta el número puesto -1).
 
 **Bucle WHILE**
 En este caso while tiene una condición que determina hasta cuándo se ejecutará. O sea que dejará de ejecutarse en el momento en que la condición deje de ser cierta. La estructura de un while es la siguiente:
+
 ```python
 while (condición):
- 	elementos
-```
+ 	elementos```
 Ejemplo:
+
 ```python
 >>> x = 0 
  >>> while x < 10: 
  ... 	print x 
- ... 	x += 1
-```
+ ... 	x += 1```
  
 En este ejemplo preguntará si es menor que diez. Dado que es menor imprimirá x y luego sumará una unidad a x. Luego x es 1 y como sigue siendo menor a diez se seguirá ejecutando, y así sucesivamente hasta que x llegue a ser mayor o igual a 10.
 
@@ -329,6 +329,7 @@ Por último, puede que queramos cambiar el color o tamaño del lápiz. En ese ca
 8. != = diferente
 9. == = igualdad
 10. = -> igual
+
 ### Operadores lógicos
 
 1. Not
@@ -907,3 +908,63 @@ Si queremos **evitar** que termine nuestro programa cuando ocurra un error, debe
 - `except`: es nuestro manejo del error, es lo que haremos si ocurre el error. Debemos ser específicos con el tipo de error que vamos a atrapar.
 - `else`: Es código que se ejecuta cuando no ocurre ningún error.
 - `finally`: Nos permite obtener un bloque de código que se va a ejecutar sin importar lo que pase.
+
+
+### Aplicaciones de Python en el mundo realAplicaciones de Python en el mundo real
+
+Python tiene muchas aplicaciones:
+
+En las ciencias tiene muchas librerías que puedes utilizar como analisis de las estrellas y astrofisica; si te interesa la medicina puedes utilizar **Tomopy** para analizar tomografías. También están las librerías más fuertes para la ciencia de datos **numpy**, **Pandas** y **Matplotlib**
+
+En CLI por si te gusta trabajar en la nube y con datacenters, para sincronizar miles de computadoras:
+
+- aws
+- gcloud
+- rebound
+- geeknote
+Aplicaciones Web:
+
+- Django
+- Flask
+- Bottle
+- Chalice
+- Webapp2
+- Gunicorn
+- Tornado
+
+### Python 2 vs 3 (Conclusiones)
+
+No es recomendable empezar con Python 2 porque tiene fecha de vencimiento para el próximo año.
+
+**PEP** = Python Enhancement Proposals
+
+Los **PEP** son la forma en la que se define como avanza el lenguaje. Existen tres PEPs que debes saber.
+
+- **PEP8** es la guía de estilo de cómo escribir programas de Python. Es importante escribir de manera similiar para que nuestro software sea legible para el resto de la comunidad
+- **PEP25**7 nos explica cómo generar buena documentación en nuestro código
+- **PEP20**
+
+```python
+import this
+The Zen of Python, by Tim Peters
+
+Beautiful is better than ugly.
+Explicit is better than implicit.
+Simple is better than complex.
+Complex is better than complicated.
+Flat is better than nested.
+Sparse is better than dense.
+Readability counts.
+Special cases aren't special enough to break the rules.
+Although practicality beats purity.
+Errors should never pass silently.
+Unless explicitly silenced.
+In the face of ambiguity, refuse the temptation to guess.
+There should be one-- and preferably only one --obvious way to do it.
+Although that way may not be obvious at first unless you're Dutch.
+Now is better than never.
+Although never is often better than *right* now.
+If the implementation is hard to explain, it's a bad idea.
+If the implementation is easy to explain, it may be a good idea.
+Namespaces are one honking great idea -- let's do more of those!
+```

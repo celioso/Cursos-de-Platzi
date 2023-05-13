@@ -1,0 +1,119 @@
+[33mcommit df777c6ae82becc510cc6135867798041362fc2b[m[33m ([m[1;36mHEAD -> [m[1;32mmain[m[33m)[m
+Author: Mario Celis <celioso1@hotmail.com>
+Date:   Fri May 12 19:44:17 2023 -0500
+
+    Actualización del archivo README.md
+
+[33mcommit f9a0f5f929fae92d31c2de58b77a6c7f36b52352[m
+Author: Mario Celis <celioso1@hotmail.com>
+Date:   Fri May 12 15:56:56 2023 -0500
+
+    Actualización del archivo .gitignore
+
+[33mcommit 0c999777dbac20bba3e2bb641c2b27cfe92f8228[m[33m ([m[1;31morigin/main[m[33m)[m
+Author: Mario Celis <celioso1@hotmail.com>
+Date:   Thu May 11 22:10:40 2023 -0500
+
+    CRUD avance del dia 11/05/2023
+
+[33mcommit c6a49bfeeeb55946013a68f7341c009e088014da[m
+Author: Mario Celis <celioso1@hotmail.com>
+Date:   Thu May 11 18:52:31 2023 -0500
+
+    Creación de models.py, services.py
+
+[33mcommit 57b0fff2d5e750e0653540f38ad7aed81559c42c[m
+Author: Mario Celis <celioso1@hotmail.com>
+Date:   Wed May 10 21:22:21 2023 -0500
+
+    CRUB del dia 10/05/2023
+
+[33mcommit cd3a8009a716c4a504bac1e61e08d54848e10805[m
+Author: Mario Celis <celioso1@hotmail.com>
+Date:   Wed May 10 16:14:20 2023 -0500
+
+    Creación del archivo personas
+
+[33mcommit aa97f9d6b3d7bbb8175e08f84c3e54bac4aca473[m
+Author: Mario Celis <celioso1@hotmail.com>
+Date:   Tue May 9 21:41:37 2023 -0500
+
+    Curso de CRUD 09/05/2023
+
+[33mcommit ac2e8a87bffcf1fe82bed6a63d64f1c7ed118e9c[m
+Author: Mario Celis <celioso1@hotmail.com>
+Date:   Tue May 9 18:38:54 2023 -0500
+
+    Creacion de decorators
+
+[33mcommit 163e789a3da2388e1500abbe9bf72083e27b041b[m
+Author: Mario Celis <celioso1@hotmail.com>
+Date:   Sun May 7 22:11:40 2023 -0500
+
+    Trabajo del dia 07/05/2023
+
+[33mcommit 8d31901c7172f5afea3892b9a82d4b3d77179e5c[m
+Author: Mario Celis <celioso1@hotmail.com>
+Date:   Sun May 7 19:07:59 2023 -0500
+
+    Creaacion del archivo binary_search.py
+
+[33mcommit dc8171e41cf603da01a3bcf602cf3bbdc1c2f547[m
+Author: Mario Celis <celioso1@hotmail.com>
+Date:   Sun May 7 17:43:05 2023 -0500
+
+    Actualizacion de archivos de CRUD
+
+[33mcommit d26ea882f222e734ca2babc2a2bc99e3dbb897e9[m
+Author: Mario Celis <celioso1@hotmail.com>
+Date:   Sat May 6 19:21:18 2023 -0500
+
+    se usa listas en el programa
+
+[33mcommit 59895d82b814de388f24dc152741f4173c07b402[m
+Author: Mario Celis <celioso1@hotmail.com>
+Date:   Sat May 6 15:05:43 2023 -0500
+
+    actializacion del 04/05/2023
+
+[33mcommit d31cd2c001b197352df709d93591ddcb55beee95[m
+Author: Mario Celis <celioso1@hotmail.com>
+Date:   Wed May 3 13:28:53 2023 -0500
+
+    inicio del curso Python CRUD
+
+[33mcommit 0f8ba38d439657525cad728dd3d9b51aaa5e6c6f[m
+Author: Mario Celis <celioso1@hotmail.com>
+Date:   Mon May 1 20:35:39 2023 -0500
+
+    actualización
+
+[33mcommit db8c8067f2cfd9aee668785ca4bc1adda63bb950[m
+Author: Mario Celis <celioso1@hotmail.com>
+Date:   Wed Apr 26 21:54:35 2023 -0500
+
+    Fin del curso JavaScript Basico
+
+[33mcommit 67270482997cfac23d11b1a090392d374d48c73b[m
+Author: Mario Celis <celioso1@hotmail.com>
+Date:   Tue Apr 25 16:36:59 2023 -0500
+
+    Agregue los archivos que se encontraban en replit
+
+[33mcommit 1b56edfd7eff323e3909e4c3285c1fcbb9c6757a[m
+Author: Mario Celis <celioso1@hotmail.com>
+Date:   Mon Apr 24 21:09:43 2023 -0500
+
+    curso de javaScript Primer dia
+
+[33mcommit c4559e9c2a9819377e8e6853b7b9194e21d68574[m
+Author: Mario Celis <celioso1@hotmail.com>
+Date:   Mon Apr 10 16:03:46 2023 -0500
+
+    Subir a git todo los programas
+
+[33mcommit a323c7b37f03fbcf9fa61a7c066fb171e6c46e65[m
+Author: Mario Alexander Vargas Celis <41644949+celioso@users.noreply.github.com>
+Date:   Mon Apr 10 15:53:54 2023 -0500
+
+    Initial commit
