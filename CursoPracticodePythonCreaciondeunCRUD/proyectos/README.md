@@ -566,7 +566,7 @@ Si queremos ciclar a lo largo de un diccionario tenemos las opciones:
 
 ejemplos:
 
-```pythonn
+```python
 >>> rea.items()
 dict_items([('Pizza', 'la comida mas deliciosa del mundo'), ('Pasta', 'la Comida mas sabrosa de Italia')])
 >>> for key in rea.keys():
@@ -621,7 +621,7 @@ a={1,2,3}
 - NO se puede acceder a un valor mediante índice
 - NO se puede agregar un valor ya existente, por ejemplo
 **Agregar un valor a conjunto**
-`a.add(1`)—> error!! (valor existente en set)
+`a.add(1)`—> error!! (valor existente en set)
 `a.add(20)`—> a={1,2,3,20}
 Tenemos:
 a={1,2,3,20}
@@ -629,7 +629,7 @@ b={3,4,5}
 `a.intersection(b)`–> {3} **(elementos en común)**
 `a.union(b)`—>{1,2,3,20,4,5} **(elementos de a + b pero sin repetir ninguno)**
 `a.difference(b)`–>{1,2,20} **(elementos de a que no se encuentran en b)**
-`b.difference(a)`–>{4,5} **(elementos de b que no se encuentran en a)**
+`b.difference(a)`–>{4,5} (elementos de b que no se encuentran en a)
 
 ## Python comprehensions
 
@@ -881,3 +881,29 @@ def list(ctx):
 
     print(tabulate(table, headers))
 ```
+### para ejecutar el archivo
+
+se crea él ambienté virtual con `pip install --editable .` esto se ejecuta en donde se encuentra el archivo en mi caso (venv) `C:\Users\celio\OneDrive\Escritorio\programación\platzi\CursoPracticodePythonCreaciondeunCRUD\proyectos\proyectoCRUD>`
+
+ya se puede ejecutar el archivo pv y los comandos son los siguientes `pv clients --help`  para ver `pv clients --help` ayuda, `pv clients list` para ver la lista de clientes  y para crear un cliente nuevo se usa `pv clients create`
+
+### par aejecutar el archivo
+
+se crea el anviente virtual con `pip install --editable .` esto se ejecuta en donde se encuentra el archivo en mi caso (venv) `C:\Users\celio\OneDrive\Escritorio\programación\platzi\CursoPracticodePythonCreaciondeunCRUD\proyectos\proyectoCRUD>`
+
+ya se puwde ejecutar el archivo pv y los comandos son los siguientees `pv clients --help`  para ver `pv clients --help` ayuda, `pv clients list` para ver la lista de de clientes  y para crear un cliente nuevo se usa `pv clients create`, para actualizar un usuario `pv clients update <id_cliente>`
+
+### Manejo de errores y jerarquía de errores en Python
+
+**Python** tiene una amplia jerarquía de errores que nos da posibilidades para definir errores en casos como donde no se pueda leer un archivo, dividir entre cero o si existen problemas en general en nuestro código Python. El problema con esto es que nuestro programa termina, es diferente a los errores de sintaxis donde nuestro programa nunca inicia.
+
+Para **aventar** un error en Python utilizamos la palabra `raise`. Aunque Python nos ofrece muchos errores es **buena práctica** definir errores específicos de nuestra aplicación y usar los de Python para extenderlos.
+
+Podemos generar nuestros propios errores creando una clase que extienda de `BaseException`.
+
+Si queremos **evitar** que termine nuestro programa cuando ocurra un error, debemos tener una estrategia. Debemos utilizar **try / except** cuando tenemos la posibilidad de que un pedazo de nuestro código falle
+
+- `try`: significa que se ejecuta este código. Si es posible, solo ponemos una sola línea de código ahí como buena práctica
+- `except`: es nuestro manejo del error, es lo que haremos si ocurre el error. Debemos ser específicos con el tipo de error que vamos a atrapar.
+- `else`: Es código que se ejecuta cuando no ocurre ningún error.
+- `finally`: Nos permite obtener un bloque de código que se va a ejecutar sin importar lo que pase.
