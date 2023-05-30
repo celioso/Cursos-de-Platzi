@@ -74,3 +74,63 @@ Una variable que representa un conjunto de datos discreto se denomina variable d
 
 - **Continuo :** número de amigos, calificación.
 Una variable que puede tener un número infinito de valores numéricos dentro de un rango específico se clasifica como datos continuos. Una variable que describe datos continuos es una variable continua. Por ejemplo, ¿cuál es la temperatura de tu ciudad hoy?
+
+## Recolección de datos, limpieza y validación
+“Forma de recolección de información que permite obtener conocimiento de primera mano e ideas originales sobre el problema o investigación”
+
+**Tipos de recolección de datos**
+
+1. Primaria: Datos colectados de primera mano a través de encuestas, entrevistas, experimentos y otros.
+
+3. Secundaria: Datos previamente recolectados por una fuente primaria externa al usuario primario.Por ejemplo, datos de departamentos de gobierno o empresas similares a la del usuario primario.
+
+5. Terciaria: Son datos que se adquieren de fuentes completamente externas al usuario primario. Por ejemplo, a través de proveedores de datos.
+
+**¿Qué es la validación de datos?**
+
+“El proceso de asegurar la consistencia y precisión dentro de un conjunto de datos.”
+“Si los datos no son precisos desde el comienzo, los resultados definitivamente no serán precisos.”
+
+**¿Qué se debe validar para asegurar consistencia?**
+
+	- Modelo de datos.
+	- Seguimiento de formato estándar de archivos.
+	- Tipos de datos.
+	- Rango de variables.
+	- Unicidad.
+	- Consistencia de expresiones.
+	- Valores nulos.
+
+    ## Estadistica Descriptiva Aplicada: Medidas de Dispersion
+- **Rango**: La diferencia entre el valor maximo y minimo de los datos. Da una idea de que tan dispersos estan los datos
+- **Rango Intercuartilico:** Comprende el 25%, tanto arriba como abajo, de los datos respecto a la mediana. Divide el rango de los datos en 4 partes iguales y considera solo el 50% de los datos
+- **Desviacion Estandar:** Ofrece la dispersion media de una variable. Si a la media de una distribucion Normal se le suma, por arriba y por debajo, la desviacion estandar se obtiene un rango que contiene el 65% de los datos. Si se suma dos desviaciones estandar se obtiene el 95% de los datos. Si se suma tres desviaciones estandar se obtiene el 99% de los datos
+![](https://static.platzi.com/media/user_upload/graph20-2da3c616-b5cf-4afe-b7d8-781d02f28d08.jpg)
+## Asimetría Estadística
+
+Esta relacionado con la simetria de la distribucion
+- Si media = mediana = moda implica que la distribucion es simetrica.
+- Si media > mediana > moda, entonces La distribución esta sesgada hacia la izquierda. (Sesgo positivo)
+- Si media < mediana < moda, entonces la distribucion esta sesgada hacia la derecha. (Sesgo negativo)
+
+![Asimetia estadistica](https://static.platzi.com/media/user_upload/graph21-d21e5c5d-7810-498e-a7d5-b763e8ebc152.jpg "Asimetia estadistica")
+
+## Cutorsis
+Es un estadístico de que tan juntos o que tan dispersos están los datos respecto a la media.
+
+- Si Cutorsis = 0, los datos estan distribuidos homogeneamente alrededor de la media (Distribucion Mesocurtica)
+- Si Cutorsis > 0, los datos estan concentrados alrededor de la media (Distribucion Leptocurtica)
+- Si Cutorsis < 0, los datos estan alejados de la media (Distribucion Platicurtica)
+
+![Cutorsis](https://static.platzi.com/media/user_upload/graph22-c7755fff-5b0f-42cb-83f1-70ce0c869cb9.jpg "Cutorsis")
+
+## Analisis de Regresion Simple
+Permite medir la fuerza del efecto en los datos mediante el ajuste de una linea recta. Es mucho mas efectivo para interpretar el comportamiento de los datos.
+
+**Valores obtenidos en el análisis de regresión simple:**
+
+- **Slope** (es el efecto que tiene la correlación en caso de que exista).
+- Intercept (indica en donde se corta el eje de las y, porque estamos ajustando una línea).
+- **Rvalue **(indica cuanto de nuestra variabilidad de los datos estamos capturando con la regresión lineal, podemos ver representado el coeficiente de correlación en este valor aunque con un poco de ruido).
+- **Pvalue** (indica si la regresión lineal es significativa)
+- Y otra serie de parámetros que no forman parte del objeto de estudio de esta clase
