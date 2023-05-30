@@ -134,3 +134,11 @@ Permite medir la fuerza del efecto en los datos mediante el ajuste de una linea 
 - **Rvalue **(indica cuanto de nuestra variabilidad de los datos estamos capturando con la regresión lineal, podemos ver representado el coeficiente de correlación en este valor aunque con un poco de ruido).
 - **Pvalue** (indica si la regresión lineal es significativa)
 - Y otra serie de parámetros que no forman parte del objeto de estudio de esta clase
+
+## Que hacer cuando tengo muchas variables?
+Cuando se tiene muchas variables, un analisis de pares de variables puede ser confuso por lo que tenemos que recurrir a tecnicas que nos ayudan a entender la variacion de todos los datos de manera simple: Reduciendo las dimensiones para obtener un unico espacio (Pasar de 10 variables a solo 2). Algunas de estas tecnicas son:
+
+- **Analisis de Componentes Principales (PCA):** un ejemplo de utilidad es la demostracion de que los genes reflejan la geografia de Europa
+- **TSNE (T - Distributed Stochastic Neighbor Embedding):** Separacion de todos los tipos de cancer
+- **UMAP (Uniform Manifold Approximation and Projection for Dimension Reduction):** intenta capturar la estructura global preservando la estructura local de los datos utlizando proyecciones en un plano
+- **Comparacion:** algoritmo de reduccion de dimension vs conjunto de datos
