@@ -1,0 +1,16 @@
+# Executables
+*.swf
+*.air
+*.ipa
+*.apk
+*.exe
+*.jpg
+*.pdf
+*.tar.gz
+
+.eve
+venv/
+Ingles/
+google-cloud-sdk/
+google-cloud-sdk.staging/
+__pycache__/

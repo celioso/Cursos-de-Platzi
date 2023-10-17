@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}
+{{ super() }}
+    HTTP Error 500 – Internal Server Error
+{% endblock %}
+
+{% block content %}
+    <h1>Lo sentimos, no encontramos la página ☠️☠️</h1>
+    <p>{{error}}</p>
+{% endblock %}
