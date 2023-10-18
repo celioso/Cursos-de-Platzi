@@ -12,5 +12,4 @@
 venv/
 Ingles/
 google-cloud-sdk/
-google-cloud-sdk.staging/
 __pycache__/
