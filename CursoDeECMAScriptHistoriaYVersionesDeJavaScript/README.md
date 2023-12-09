@@ -183,8 +183,118 @@ Si el retorno requiere de más líneas y aún deseas utilizarlo de manera implí
 ```javaScript
 const suma = (num1, num2) => (
     num1 + num
-
+)
 ```
 [Funciones Flecha - javaScript | MDN](https://developer.mozilla.org/es/docs/Web/JavaScript/Reference/Functions/Arrow_functions "Funciones Flecha - javaScript | MDN")
 
 [Curso de Closures y Scope en JavaScript](https://platzi.com/cursos/javascript-closures-scope/ "Curso de Closures y Scope en JavaScript")
+
+### ES6: strings
+
+Las **plantillas literales** (*template literals*) consisten en crear cadenas de caracteres que puedan contener variables sin utilizar la concatenación. Esto mejora la legibilidad y la mantenibilidad del código.
+
+**Concatenación de caracteres**
+
+Antes de ES6, si querías crear una cadena larga o un mensaje elaborado, debías utilizar la concatenación. La concatenación de caracteres consiste en unir uno o varios caracteres, como si fuera una suma.
+```JavaScript
+var nombre = "Andres"
+var edad = 23
+var mensaje = "Mi nombre es " + nombre + " y tengo " + edad + " años."
+
+console.log(mensaje)
+// 'Mi nombre es Andres y tengo 23 años.'
+```
+
+Esto trae varios **problemas en la legibilidad y mantenibilidad del código**. Se convierte cada vez más complejo en mensajes más extensos o el estar pendiente de agregar espacios antes o después de cada variable concatenada.
+
+**Cómo utilizar las plantillas literales**
+Las plantillas literales añadidas en ES6, se emplea el caracter [acento grave](https://elcodigoascii.com.ar/codigos-ascii/acento-grave-codigo-ascii-96.html "acento grave") **( ` )**, que no es una comilla simple **( ’)**, para envolver el mensaje.Para incluir las variables se utiliza la sintaxis `${variable}`.
+```JavaScript
+var nombre = "Andres"
+var edad = 23
+
+var mensaje = `Mi nombre es ${nombre} y tengo ${edad} años.`
+
+console.log(mensaje)
+// 'Mi nombre es Andres y tengo 23 años.'
+```
+De esta manera el código es más legible y que pueda mantenerse.
+
+**Plantilla multilínea**
+La plantilla multilínea consiste en crear mensajes que contengan varias líneas separadas entre sí, utilizando las [plantillas literales](https://platzi.com/clases/1815-ecmascript-6/26121-default-params-y-concatenacion/ "plantillas literales"). Antes de ES6, la forma de crear una plantilla multilínea era agregar `\n` al `string`.
+```JavaScript
+var mensaje = "Línea 1 \n" + "línea 2"
+
+console.log(mensaje)
+// 'Línea 1
+// línea 2'
+```
+
+Con ES6 solamente necesitas utilizar las plantillas literales.
+```JavaScript
+const mensaje = `Línea 1
+línea 2`
+
+console.log(mensaje)
+// 'Línea 1
+// línea 2'
+```
+
+### ES6: parámetros por defecto
+
+Los **parámetros por defecto** (*default params*) **consisten en establecer un valor por defecto a los parámetros de una función**, para asegurar que el código se ejecute correctamente en el caso de que no se establezcan los argumentos correspondientes en la invocación de la función.
+
+**Cómo era utilizar valores por defecto antes de ES6**
+
+Tal como puedes ver en el siguiente código, la función sumar recibe dos parámetros y retorna el valor total. Sin embargo, si alguien no decide poner alguno o todos los parámetros necesarios, pues que el programa no funcionará correctamente.
+
+```JavaScript
+function sumar(number1, number2){
+  return number1 + number2
+}
+
+sumar(3,4) // 7
+sumar(3)   // NaN  
+sumar()    // NaN
+```
+Antes de ES6, se debía establecer una variable y utilizar el operador OR `( ||)` con el valor por defecto necesario. El caracter guion bajo `( _)` lo utilizo para diferenciar el parámetro de la función de la variable declarada.
+```JavaScript
+function sumar(number1, number2){
+  var _number1 = number1 || 0
+  var _number2 = number2 || 0
+  
+  return _number1 + _number2
+}
+
+sumar(3,4) // 7
+sumar(3)   // 3
+sumar()    // 0
+```
+**Cómo utilizar los parámetros por defecto**
+Con los parámetros por defectos añadidos en ES6, eliminamos las declaraciones para mejorar la legibilidad y el mantenimiento del código de la siguiente manera:
+
+```JavaScript
+function sumar(number1 = 0, number2 = 0){
+  return number1 + number2
+}
+
+sumar(3,4) // 7
+sumar(3)   // 3
+sumar()    // 0
+```
+Puedes utilizar cualquier valor, siempre que sea necesario.
+
+**Posición de los parámetros por defecto**
+
+Si obligatoriamente necesitas el valor como argumento, ten presente que los parámetros por defecto siempre deben estar en las posiciones finales.
+
+```JavaScript
+// ❌ Mal
+function sumar(number1 = 0, number2) { ... }
+sumar(3)   // number1 = 3 y number2 = undefined 
+
+// ✅ Bien
+function sumar(number1, number2 = 0) { ... }
+sumar(3)   // number1 = 3 y number2 = 0
+```
+
