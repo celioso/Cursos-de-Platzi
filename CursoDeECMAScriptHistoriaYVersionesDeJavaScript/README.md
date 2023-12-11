@@ -545,3 +545,5 @@ function hola (primero, segundo, ...resto) { // <- Parámetro Rest
 hola(...array, "final") //<- Operador de propagación
 //Lo mismo que hacer -> hola(1,2,3,4,5, "final")
 ```
+
+je je
