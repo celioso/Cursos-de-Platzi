@@ -623,3 +623,74 @@ Si aún no sabes en qué consiste el asincronismo, no te preocupes, existen curs
 
 - [Curso de JavaScript Engine (V8) y el Navegador](https://platzi.com/cursos/javascript-navegador/ "Curso de JavaScript Engine (V8) y el Navegador")
 - [Curso de Asincronismo con JavaScript](https://platzi.com/cursos/asincronismo-js-2019/ "Curso de Asincronismo con JavaScript")
+
+### Clases
+
+Esta clase es difícil de entender si no se tienen unas bases teóricas sobre la Programación Orientada a Objetos y sobre aspectos de JavaScript como el this 😰 Intentaré definir estos elementos según lo que conozco para crear el concepto de lo que son las clases para quienes no lo pudieron entender bien: ㅤ Comencemos por el aspecto **teórico**: ㅤ
+
+- **Clases**: Es una plantilla. Una definición genérica de algo que tiene atributos (datos/variables) y métodos (acciones/funciones) y desde la cual se pueden crear objetos.
+- **Objetos**: Un elemento real que fue creada con base en una clase (plantilla) y que hereda (contiene) sus atributos y métodos. ㅤ
+¿Lo vemos con un ejemplo?: Tenemos una clase Animal que tiene como atributos: especie, edad, patas y tiene como métodos: dormir, comer, caminar. A partir de esa clase genérica podemos instanciar objetos de ese tipo, como los siguientes: ㅤ
+
+- **Objeto perro**: especie: canino, edad: 3, patas: 4. Puede dormir, comer y caminar.
+- **Objeto paloma**: especie: ave, edad: 1, patas: 2. Puede dormir, comer y caminar.
+- **Objeto gato**: especie: felino, edad: 2, patas: 4. Puede dormir, comer y caminar. ㅤ *Estos tres objetos fueron creados con base en la clase Animal (a esto se le llama instanciar un objeto a partir de una clase), y por ende, cada uno es un objeto de tipo Animal y cada uno tiene los atributos y métodos definidos en la clase*.
+
+ㅤ Ahora, a nivel más **técnico**, utilizamos los siguientes conceptos: ㅤ
+
+- **Constructor**: Es un método que contiene una serie de instrucciones que se encargan de inicializar un objeto cuando es instanciado a partir de esa clase. Básicamente, asigna los valores de los atributos que le enviemos a ese objeto nuevo. Es una función que se ejecuta automáticamente.
+- **Getter y Setter**: Son funciones sencillas de entender: obtener el valor de un atributo o establecerlo. Se crean de esta manera por un concepto de la POO denominado encapsulamiento, que consiste, entre otras cosas, en limitar el acceso a las clases para tener mayor control sobre ellas.
+- **This**: Con este objeto de contexto hacemos referencia al propio objeto que se está instanciando y no a la clase.
+
+```JavaScript
+// Declaración de la clase Animal
+class Animal {
+
+	// Constructor: le enviamos a la clase los valores para los atributos del nuevo objeto (como argumentos) y el constructor se encarga de asignarlos:
+	// (Recordar: this hace referencia al objeto).
+	constructor(especie, edad, patas) {
+		this.especie = especie; // Asignar atributo especie al objeto
+		this.edad = edad; // Asignar atributo edad al objeto
+		this.patas = patas; // Asignar atributo patas al objeto
+	}
+
+	// Métodos de la clase: pueden contener cualquier lógica.
+	dormir() {
+		return 'Zzzz';
+	}
+
+	comer() {
+		return 'Yummy!';
+	}
+
+	caminar() {
+		return '¡Caminando!, la la la';
+	}
+
+	// Getter y Setter (solo para edad para no alargar)
+	// (Recordar: this hace referencia al objeto)
+	get getEdad() {
+		return this.edad;
+	}
+
+	set setEdad(newEdad) {
+		this.edad= newEdad;
+	}
+}
+
+// Ahora instanciemos los objetos: tendremos perro, paloma y gato como objetos de tipo Animal. Al enviar el valor de los atributos como argumentos, el constructor automáticamente los asigna al nuevo objeto.
+const perro = new Animal('canino', 3, 4);
+const paloma = new Animal('ave', 1, 2);
+const gato = new Animal('felino', 2, 4);
+
+// Podemos acceder a los métodos desde cada objeto:
+perro.dormir();	// Retorna 'Zzzz'
+paloma.comer(); // Retorna 'Yummy!'
+gato.caminar(); // Retorna '¡Caminando!, la la la'
+
+// Usamos los getter para obtener los valores de los atributos y los setters para reasignarlos.
+perro.getEdad; // Retorna 3
+gato.setEdad = 3; // Cambia su atributo edad a 3
+```
+
+Sé que es largo y tedioso por tanto aspecto teórico, pero cuando lo entiendes se abre todo un mundo de posibilidades al momento de programar (no solo con JavaScript). Espero que sea de ayuda 😉
