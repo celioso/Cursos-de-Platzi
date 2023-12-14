@@ -916,3 +916,83 @@ for (let elemento in array) {
 [Iteradores y generadores - JavaScript | MDN](https://developer.mozilla.org/es/docs/Web/JavaScript/Guide/Iterators_and_Generators "Iteradores y generadores - JavaScript | MDN")
 
 [Generador - JavaScript | MDN](https://developer.mozilla.org/es/docs/Web/JavaScript/Reference/Global_Objects/Generator "Generador - JavaScript | MDN")
+
+### ES6: set-add
+
+`Set` es una nueva estructura de datos para almacenar **elementos únicos**, es decir, sin elementos repetidos.
+
+#### Cómo utilizar los Sets
+
+Para iniciar un `Set`, se debe crear una instancia de su clase a partir de un iterable. Generalmente, un iterable es un *array*.
+`const set = new Set(iterable)`
+
+#### Cómo manipular los Sets
+Para manipular estas estructuras de datos, existen los siguientes métodos:
+
+- `add(value)`: añade un nuevo valor.
+- `delete(value)`: elimina un elemento que contiene el `Set`, retorna un booleano si existía o no el valor.
+- `has(value)`: retorna un booleano si existe o no el valor dentro del `Set`.
+- `clear(value)`: elimina todos los valores del `Set`.
+- `size`: retorna la cantidad de elementos del `Set`.
+
+### ES7: exponentiation operator y array includes
+
+La siguiente versión de **ECMAScript** fue publicada en 2016. Las siguientes características de ES7 o ES2016 que aprenderás son: el método `includes` de *arrays* y el operador de potenciación.
+
+#### Operador de potenciación
+El operador de potenciación (exponential operator) consiste en elevar una base a un exponente utilizando el doble asterisco `(**)`.
+
+`base ** exponente`
+
+Por ejemplo, el cubo de 2 es igual a 8, matemáticamente expresado sería: $2^3=8$.
+
+```JavaScript
+const potencia = 2**3
+
+console.log(potencia) // 8
+```
+#### Método includes
+El método includes determina si un *array* o *string* incluye un determinado elemento. Devuelve `true` o `false`, si existe o no respectivamente.
+
+Este método recibe dos argumentos:
+
+- El **elemento** a comparar.
+- El **índice inicial** desde donde comparar hasta el último elemento.
+#### Índices positivos y negativos
+
+Los índices positivos comienzan desde 0 hasta la longitud total menos uno, de **izquierda** a **derecha** del *array*.
+
+`[0,1,2,3, ...., lenght-1]`
+
+Los índices negativos comienzan desde -1 hasta el negativo de la longitud total del *array*, de **derecha a izquierda**.
+
+`[-lenght, ...,  -3, -2, -1]`
+
+**Ejemplos utilizando el método includes**
+
+El método includes se utiliza para *arrays* y *strings*. El método es sensible a mayúsculas, minúsculas y espacios.
+
+```JavaScript
+//Utilizando strings
+const saludo = "Hola mundo"
+
+saludo.includes("Hola") // true
+saludo.includes("Mundo") // false
+saludo.includes(" ") // true
+saludo.includes("Hola", 1) // false
+saludo.includes("mundo", -5) // true
+```
+
+```JavaScript
+// Utilizando arrays
+const frutas = ["manzana", "pera", "piña", "uva"]
+
+frutas.includes("manzana") // true
+frutas.includes("Pera") // false
+frutas.includes("sandía") // false
+frutas.includes("manzana", 1) // false
+frutas.includes("piña", -1) // false
+frutas[0].includes("man") // true
+```
+#### Lecturas recomendadas
+[Curso de Manipulación de Arrays en JavaScript - Platzi](https://platzi.com/cursos/arrays "Curso de Manipulación de Arrays en JavaScript - Platzi")
