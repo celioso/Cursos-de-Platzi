@@ -996,3 +996,60 @@ frutas[0].includes("man") // true
 ```
 #### Lecturas recomendadas
 [Curso de Manipulación de Arrays en JavaScript - Platzi](https://platzi.com/cursos/arrays "Curso de Manipulación de Arrays en JavaScript - Platzi")
+
+### ES8: object entries y object values
+
+Los métodos de **transformación de objetos a arrays** sirven para obtener la información de las propiedades, sus valores o ambas.
+
+#### Obtener los pares de valor de un objeto en un array
+`Object.entries()` devuelve un array con las entries en forma `[propiedad, valor]` del objeto enviado como argumento.
+
+```JavaScript
+const usuario = {
+    name: "Andres",
+    email: "andres@correo.com",
+    age: 23
+}
+
+Object.entries(usuario) 
+/* 
+[
+  [ 'name', 'Andres' ],
+  [ 'email', 'andres@correo.com' ],
+  [ 'age', 23 ]
+]  
+*/
+```
+#### Obtener las propiedades de un objeto en un array
+`Object.keys()` devuelve un array con las propiedades (keys) del objeto enviado como argumento.
+
+```JavaScript
+const usuario = {
+    name: "Andres",
+    email: "andres@correo.com",
+    age: 23
+}
+
+Object.keys(usuario) 
+// [ 'name', 'email', 'age' ]
+```
+#### Obtener los valores de un objeto en un array
+`Object.values()` devuelve un *array* con los valores de cada propiedad del objeto enviado como argumento.
+
+```JavaScript
+const usuario = {
+    name: 'Andres',
+    email: "andres@correo.com",
+    age: 23
+}
+
+Object.values(usuario) 
+// [ 'Andres', 'andres@correo.com', 23 ]
+```
+
+#### Lecturas recomendadas
+[Object.entries() - JavaScript | MDN](https://developer.mozilla.org/es/docs/Web/JavaScript/Reference/Global_Objects/Object/entries "Object.entries() - JavaScript | MDN")
+
+[Object.values() - JavaScript | MDN](https://developer.mozilla.org/es/docs/Web/JavaScript/Reference/Global_Objects/Object/values "Object.values() - JavaScript | MDN")
+
+[Curso de Manipulación de Arrays en JavaScript - Platzi](https://platzi.com/cursos/arrays/ "Curso de Manipulación de Arrays en JavaScript - Platzi")
