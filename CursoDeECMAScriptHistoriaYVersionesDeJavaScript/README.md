@@ -1323,3 +1323,48 @@ result1 // 'hola'
 result2 // 'hola      '
 result3 // '      hola'
 ```
+
+### ES10: try catch y fromEntries
+
+Las siguientes características de ES10 o ES2019 que aprenderás son: parámetro opcional de *catch* y un método para tranformar *arrays* a objetos
+
+#### Parámetro opcional de catch
+El parámetro opcional de `catch` permite omitir el error si es necesario.
+
+```JavaScript
+try {
+  // Manejar el código
+} catch (err) {
+  // Se utiliza el parámetro `err`
+}
+
+try {
+  // Manejar el código
+} catch {
+  // Manejar el error sin el parámetro.
+}
+```
+Aunque siempre es recomendable manejar el error como parámetro, ya que tiene más información del problema.
+
+#### Cómo transformar un array de arrays en un objeto
+El método `Object.fromEntries` devuelve un objeto a partir de un *array* donde sus elementos son las entries en forma `[propiedad, valor]`.
+
+Se considera la operación inversa de [Object.entries()](https://platzi.com/clases/3504-ecmascript-nuevo/51768-object-entries-y-object-values/ "Object.entries()").
+
+```JavaScript
+const arrayEntries = [
+  [ 'name', 'Andres' ],
+  [ 'email', 'andres@correo.com' ],
+  [ 'age', 23 ]
+] 
+
+const usuario = Object.fromEntries(arrayEntries) 
+
+console.log(usuario)
+/* {
+  name: 'Andres',
+  email: 'andres@correo.com',
+  age: 23
+}
+*/
+```
