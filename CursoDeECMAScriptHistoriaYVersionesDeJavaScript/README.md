@@ -1582,7 +1582,7 @@ La **importación dinámica** consiste en cargar los módulos cuando el usuario 
 
 La expresión `import()` recibe un argumento de tipo `string` con la ruta del módulo a importar y devuelve una promesa.
 
-````JavaScript
+```JavaScript
 const ruta = "./modulo.js"
 
 // Utilizando promesas
@@ -1605,7 +1605,7 @@ importarModulo(ruta)
 #### Ejemplo utilizando importación dinámica
 De esta manera puedes utilizar una importación dinámica en tu aplicación para desencadenar una descarga de un módulo cuando el usuario lo vaya a utilizar. Por ejemplo, al realizar clic en un botón.
 
-````JavaScript
+```JavaScript
 const boton = document.getElementById("boton")
 
 boton.addEventListener("click", async function () {
@@ -1620,3 +1620,48 @@ Puedes usar las herramientas de desarrollador para visualizar la descarga de arc
 [Live Server - Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=ritwickdey.LiveServer "Live Server - Visual Studio Marketplace")
 
 [Curso de Debugging con Chrome DevTools - Platzi](https://platzi.com/cursos/devtools/ "Curso de Debugging con Chrome DevTools - Platzi")
+
+### ES12: numeric-separators y replaceAll
+
+La siguiente versión de ECMAScript fue publicada en 2021. Las siguientes características de ES12 o ES2021 que aprenderás son: separadores numéricos y método `replaceAll` para strings.
+
+#### Separadores numéricos
+
+Los separadores numéricos ayudan a la legibilidad de cantidades con varias cifras. Se utiliza el caracter guion bajo ( `_ `) para separar las cifras, y no afecta a la ejecución del programa.
+
+Lo ideal es separar cada 3 cifras, para visualizar los miles, millones, billones, etc.
+
+
+```JavaScript
+// 🔽 Baja legibilidad
+const numero1 = 3501548945
+console.log( numero1 ) // 3501548945
+
+// ✅ Alta legibilidad
+const numero2 = 3_501_548_945
+console.log( numero1 ) // 3501548945
+```
+De esta manera puedes identificar el número rápidamente.
+
+#### Método replaceAll
+El método `replaceAll` retorna un nuevo *string*, reemplazando **todos los elementos por otro**.
+
+Este método recibe dos argumentos:
+
+- El **patrón a reemplaza**r, puede ser un *string* o una expresión regular.
+- El **nuevo elemento** que sustituye al reemplazado.
+
+Este procedimiento fue creado para solucionar el problema que tenía el método `replace`, que realizaba la misma función de reemplazar elementos, pero solamente **una sola vez** por invocación.
+
+```JavaScript
+const mensaje = "JavaScript es maravilloso, con JavaScript puedo crear el futuro de la web."
+
+mensaje.replace("JavaScript", "Python")
+// 'Python es maravilloso, con JavaScript puedo crear el futuro de la web.'
+
+mensaje.replaceAll("JavaScript", "Python")
+// 'Python es maravilloso, con Python puedo crear el futuro de la web.'
+
+mensaje.replaceAll(/a/g, "*")
+// 'J*v*Script es m*r*villoso, con J*v*Script puedo cre*r el futuro de l* web.'
+```
