@@ -1736,3 +1736,21 @@ nombres[nombres.length -1] // "Richard"
 ```
 #### Lecturas recomendadas
 [Curso de Manipulación de Arrays en JavaScript - Platzi](https://platzi.com/cursos/arrays/ "Curso de Manipulación de Arrays en JavaScript - Platzi")
+
+### ES13: top level await en el consumo de una API
+
+*Top level await* permite utilizar la palabra reservada `await`, sin estar dentro de una [función asíncrona](https://platzi.com/clases/3504-ecmascript-nuevo/51770-funciones-asincronas/ "función asíncrona") con `async`. Sin embargo, **únicamente se puede utilizar** `await` **en la parte superior del archivo de un módulo**.
+
+#### Cómo utilizar top level await
+Anterior a ECMAScript 13, cuando se introdujo funciones asíncronas, si utilizabas `await` fuera de `async`, existirá un error de sintáxis.
+
+```JavaScript
+// Error
+await fetch(URL)
+// SyntaxError: await is only valid in async function
+```
+Ahora, con *top level await* esto es posible, sin ningún error. Esto puede servir para [importaciones de manera dinámica](https://platzi.com/clases/3504-ecmascript-nuevo/51779-dynamic-import/ "importaciones de manera dinámica") o iniciar la conexión de tus bases de datos. Siempre y cuando respetes que debe estar en la parte encima del archivo de tipo módulo.
+
+#### Lecturas recomendadas
+[Platzi Fake Store API](https://fakeapi.platzi.com/ "Platzi Fake Store API")
+[Curso de Gestión de Dependencias y Paquetes con NPM - Platzi](https://platzi.com/cursos/npm/ "Curso de Gestión de Dependencias y Paquetes con NPM - Platzi")
