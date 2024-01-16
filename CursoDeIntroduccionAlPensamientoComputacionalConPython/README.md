@@ -134,12 +134,12 @@ Resultado
 ```
 **Elementos basicos**
 
-![core items](images/core_items.jpg "core items")
+![core items](images/core_items.png "core items")
 
 **Expresion:**
 
-![expresion](images/expresion.jpg "Expresion")
+![expresion](images/expresion.png "Expresion")
 
 **Type**
 
-![Type](images/type.jpg "Type")
+![Type](images/type.png "Type")
