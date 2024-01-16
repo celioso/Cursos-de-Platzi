@@ -132,5 +132,14 @@ Resultado
 1
 >>> 2 ** 2
 ```
-Expresion:
-![expresion](images/expresion.png "hola")
+**Elementos basicos**
+
+![core items](images/core_items.jpg "core items")
+
+**Expresion:**
+
+![expresion](images/expresion.jpg "Expresion")
+
+**Type**
+
+![Type](images/type.jpg "Type")
