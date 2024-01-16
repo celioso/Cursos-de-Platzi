@@ -7,7 +7,11 @@ def datos ():
 def hola():
     print("Hola, bienvenido a nuestra compañia")
 
+def despedida():
+    print("Eso es todo")
+
 
 if __name__=="__main__":
     hola()
     datos()
+    despedida()
