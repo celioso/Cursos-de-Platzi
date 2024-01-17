@@ -143,3 +143,90 @@ Resultado
 **Type**
 
 ![Type](images/type.png "Type")
+
+### Cadenas y entradas
+
+**Cadenas** • Los objetos de tipo str pueden representarse con “ ” o ‘ ’. • El operador + tiene diferente significado según el tipo de dato (overloaded). Con cadenas significa concatenación. • El operador * es el operador de repetición con cadenas. • Las cadenas son inmutables.
+
+**Entradas** • Python tiene la función **input** para recibir datos del usuario del programa. • Input siempre regresa cadenas, por lo que si queremos utilizar otro tipo, tenemos que hacer type casting
+
+```python
+print (("Hip" * )+ " "+"Hurra")
+  File "<stdin>", line 1
+    print (("Hip" * )+ " "+"Hurra")
+                    ^
+SyntaxError: invalid syntax
+>>> print (("Hip" * 3)+ " "+"Hurra")
+HipHipHip Hurra
+>>> my_str = "platzi"
+>>> len(my_str)
+6
+>>> my_str[0]
+'p'
+>>> my_str[2]
+'a'
+>>> my_str[2:]
+'atzi'
+>>> my_str[:3]
+'pla'
+>>> my_str[:-2]
+'plat'
+>>> my_str[::2]
+'paz'
+>>> "Yo amo a " + my_str
+'Yo amo a platzi'
+>>>
+>>>
+>>>
+>>>
+>>>
+>>> f"Yo amo a {my_str}
+  File "<stdin>", line 1
+    f"Yo amo a {my_str}
+    ^
+SyntaxError: unterminated f-string literal (detected at line 1)
+>>> f"Yo amo a {my_str}"
+'Yo amo a platzi'
+>>> f"Yo amo a {my_str}" * 4
+'Yo amo a platziYo amo a platziYo amo a platziYo amo a platzi'
+>>> nombre = input("¿Cual es tú nombre?")
+¿Cual es tú nombre?Mario
+>>> nombre = input("¿Cual es tú nombre? ")
+¿Cual es tú nombre? Mario
+>>> print(nombre)
+Mario
+>>> print("Tu nombre es",nombre)
+Tu nombre es Mario
+>>> numero = input("Escriba un número: ")
+Escriba un número: 45
+>>> numero
+'45'
+>>> print
+<built-in function print>
+>>> print(type(numero))
+<class 'str'>
+>>> numero = int(input("Escribe un numero: "))
+Escribe un numero: 45
+>>>
+>>> print(type(numero))
+<class 'int'>
+>>> len(numero)
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+TypeError: object of type 'int' has no len()
+>>> len(str(numero))
+2
+>>>
+```
+
+### if and else
+
+![if_else](images/if_else.png"if_else")
+
+### if, elif and else
+
+![if_elif_else](images/if_elif_else.png"if_elif_else")
+
+```python
+
+```
