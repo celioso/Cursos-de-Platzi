@@ -1,4 +1,5 @@
-# Curso de Introducción al Pensamiento Computacional con Python test
+# Curso de Introducción al Pensamiento Computacional con Python - test
+
 1. ¿Qué es lo que aportó el Telar de Jaquard al concepto de computadora?
 **R//:** Tarjetas perforadas que representan información.
 
@@ -6,7 +7,7 @@
 **R//:** ENIAC
 3. ¿En qué rama del conocimiento se encuentran los algoritmos?
 
-**R//:** 
+**R//:** Imperativo
 
 4. ¿Con un lenguaje de programación de tipo “Turing Complete” se puede implementar cualquier algoritmo?
 
@@ -38,49 +39,44 @@
 
 **R//:** Python imprime 123456.
 
-12.
-Si ejecutas el siguiente código en la consola de Python:
+12. Si ejecutas el siguiente código en la consola de Python:
 
+```python
 a = True
 b = False
 print (a and b) 
+```
 ¿Cuál sería el resultado?
 
-False
+**R//:** False
 
-13.
-El condicional elif sirve para:
+13. El condicional elif sirve para:
 
-Encadenar otra condición en caso de que if sea falso.
+**R//:** Encadenar otra condición en caso de que if sea falso.
 
-14.
-¿Cuál es la ventaja de las iteraciones (loops) comparado con los programas ramíficados?
-Establecer que una instrucción se repita constantemente hasta llegar a un resultado en específico.
+14. ¿Cuál es la ventaja de las iteraciones (loops) comparado con los programas ramíficados?
+**R//:** Establecer que una instrucción se repita constantemente hasta llegar a un resultado en específico.
 
-15.
-El algoritmo de enumeración exhaustiva consiste en:
+15. El algoritmo de enumeración exhaustiva consiste en:
 
-Identificar todas las posibilidades para llegar a un resultado.
+**R//:** Identificar todas las posibilidades para llegar a un resultado.
 
-16.
-¿Cuál es la instrucción de Python que nos permite ver en consola el registro de las soluciones que están dando en un programa?
+16. ¿Cuál es la instrucción de Python que nos permite ver en consola el registro de las soluciones que están dando en un programa?
 
-print
-17.
-¿Qué hace eficiente al algoritmo de búsqueda binaria?
-Asigna un valor a cada elemento de un conjunto para compararlo y así encontrar una respuesta más rápida.
+**R//:** print
 
-REPASAR CLASE
-18.
-¿Es una buena práctica escribir largos archivos de código con programas ramificados?
-No
-19.
-La descomposición permite:
+17. ¿Qué hace eficiente al algoritmo de búsqueda binaria?
 
-Segmentar el código padre, identificar dónde se encuentra un error.
+**R//:** Buscar rápidamente cuando nuestro conjunto de datos está ordenado.
 
-REPASAR CLASE
-20.
-Una buena forma de identificar nuestros errores en el código es a través del:
+18. ¿Es una buena práctica escribir largos archivos de código con programas ramificados?
 
-debugger
+**R//:** No
+
+19. La descomposición permite:
+
+**R//:** Dividir el código en componentes que colaboran con un fin en común.
+
+20. Una buena forma de identificar nuestros errores en el código es a través del:
+
+**R//:** print statement
