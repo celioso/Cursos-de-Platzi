@@ -68,3 +68,10 @@ para correr el juego debe seguir las siguientes instrucciones en la terminal:
 cd game
 python3 main.py
 ```
+
+### ¿Qué es un ambiente virtual?
+
+Instalar a nivel global puede causar distintos problemas al momento de manejar diferentes proyectos, por ejemplo para algunos proyectos necesitaras otro tipo de version, libreria o modulos y para solucionar esto se creo un ambiente virtual en python el cual encapsula cada proyecto y no lo deja de forma compartida.
+
+![¿Qué es un ambiente virtual?1](https://static.platzi.com/media/user_upload/Captura%20de%20Pantalla%202022-10-21%20a%20la%28s%29%2012.52.15%20a.m.-ce482717-55b4-464b-964f-db56ce4adce1.jpg"¿Qué es un ambiente virtual?1")
+![¿Qué es un ambiente virtual?2](https://static.platzi.com/media/user_upload/Captura%20de%20Pantalla%202022-10-21%20a%20la%28s%29%2012.57.43%20a.m.-d3eac289-2ffb-465c-a818-7a91f9b3a661.jpg"¿Qué es un ambiente virtual?2")
