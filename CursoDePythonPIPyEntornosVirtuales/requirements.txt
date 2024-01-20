@@ -1,0 +1,8 @@
+matplotlib
+pandas
+seaborn
+scikit-learn
+numpy
+graphviz
+anaconda
+ads
