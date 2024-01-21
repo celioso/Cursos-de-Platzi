@@ -144,3 +144,44 @@ python3 main.py
 
 ![pasos](https://static.platzi.com/media/user_upload/Purple%20and%20White%20Simple%20Memo-13837b27-dd0d-40da-8767-4ac3f84afd91.jpg "pasos")
 
+### Python para Backend: web server con FastAPI
+
+- Navegar a proyecto Web
+
+`cd ../web-server`
+
+- Activar ambiente del proyecto
+
+`source env/bin/activate `
+
+- Agregar nuevas librerías FastAPI
+
+`pip3 install fastapi`
+
+- Agregar ASGI (Asynchronous Server Gateway Interface) Uvicorn
+
+`pip3 install "uvicorn[standard]"`
+
+- Verificar librerías instaladas
+
+`pip3 freeze`
+
+- Actualizar Requirements
+
+` pip3 freeze > requirements.txt`
+
+**Python para Backend: web server con FastAPI**
+
+uvicorn servidor web para correr mis aplicaciones como servidor
+
+```sh
+uvicorn main:app --reload # Para correr mi aplicación en un servidor # reaload para volver a cargar el comando cada vez que modifique el archivo principal
+```
+
+#### Lecturas recomendadas
+
+[fastAPI](https://fastapi.tiangolo.com/#installation "fastAPI")
+
+[Custom Response - HTML, Stream, File, others](https://fastapi.tiangolo.com/advanced/custom-response/#html-response "Custom Response - HTML, Stream, File, others")
+
+[curso-python-pip/web_server at master platzi/curso-pip*GitHub](https://github.com/platzi/curso-python-pip/tree/master/web-server "curso-python-pip/web_server at master platzi/curso-pip*GitHub")
