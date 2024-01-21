@@ -1,5 +1,25 @@
 # Curso de Python: PIP y Entornos Virtuales
 
+# Game Proyect
+
+para correr el juego debe seguir las siguientes instrucciones en la terminal:
+
+```sh
+cd game
+python3 main.py
+```
+
+# App Project
+
+```sh
+git clone
+cd app
+souerce venv/local/bin/activate
+pip3 install -r requirements.txt
+python3 main.py
+```
+
+
 ### Instalar en Windows
 
 #### Comandos Utilizados
@@ -60,15 +80,6 @@
 
 [gitignore.io](https://www.toptal.com/developers/gitignore "gitignore.io")
 
-# Game Proyect
-
-para correr el juego debe seguir las siguientes instrucciones en la terminal:
-
-```sh
-cd game
-python3 main.py
-```
-
 ### ¿Qué es un ambiente virtual?
 
 Instalar a nivel global puede causar distintos problemas al momento de manejar diferentes proyectos, por ejemplo para algunos proyectos necesitaras otro tipo de version, libreria o modulos y para solucionar esto se creo un ambiente virtual en python el cual encapsula cada proyecto y no lo deja de forma compartida.
@@ -105,3 +116,30 @@ Instalar a nivel global puede causar distintos problemas al momento de manejar d
 #### Verificar las instalaciones
 
 - pip3 freeze
+
+### requirements.txt
+
+Requirements.txt = Archivo que gestiona todas las dependencias y en que versiones se necesitan.
+
+Generar el archivo con el siguiente comando
+
+- pip3 freeze > requirements.txt
+Revisar lo que hay dentro del archivo
+
+* cat requirements.txt
+Instalar las dependencias necesarias para contribuir más rápido en proyectos
+
+- pip3 install -r requirements.txt
+Preparar archivo para contribución
+
+```sh
+git clone
+cd app
+python3 -m venv env
+source env/bin/activate
+pip3 install -r requirements.txt
+python3 main.py
+```
+
+![pasos](https://static.platzi.com/media/user_upload/Purple%20and%20White%20Simple%20Memo-13837b27-dd0d-40da-8767-4ac3f84afd91.jpg "pasos")
+
