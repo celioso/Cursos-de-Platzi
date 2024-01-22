@@ -270,3 +270,7 @@ Para otras distribuciones de Linux:
 - [Install Docker Engine on CentOS](https://docs.docker.com/engine/install/centos/ "Install Docker Engine on CentOS")
 - [Install Docker Engine on Debian](https://docs.docker.com/engine/install/debian/ "Install Docker Engine on Debian")
 - [Install Docker Engine on Fedora](https://docs.docker.com/engine/install/fedora/ "Install Docker Engine on Fedora")
+
+### Crear el contenedor
+
+`docker-compose -f docker_compose.ym build`
