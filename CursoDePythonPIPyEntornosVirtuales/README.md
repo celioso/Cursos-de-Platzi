@@ -91,20 +91,21 @@ Instalar a nivel global puede causar distintos problemas al momento de manejar d
  ### Usando entornos virtuales en Python
 
 #### Verificar donde esta python y pip
-- which python3
-- which pip3
+- `which python``
+- `which pip3`
 
 #### Si estas en linus o wsl debes instalar
 
-- sudo apt install -y python3-venv
+- `sudo apt install -y python3-venv`
 
 #### Poner cada proyecto en su propio ambiente, entrar en cada carpeta.
 
-- python3 -m venv env o virtualenv --python=python3 venv
+- `python -m venv env` en PowerShell o  `virtualenv --python=python3 venv` paraa linux o wls
 
 #### Activar el ambiente
 
-- source env/bin/activate
+- `env\Scripts\activate` en PowerShell
+- `source env/bin/activate` en linux o wls
 
 ### Salir del ambiente virtual
 
@@ -271,6 +272,43 @@ Para otras distribuciones de Linux:
 - [Install Docker Engine on Debian](https://docs.docker.com/engine/install/debian/ "Install Docker Engine on Debian")
 - [Install Docker Engine on Fedora](https://docs.docker.com/engine/install/fedora/ "Install Docker Engine on Fedora")
 
-### Crear el contenedor
+### Docker
+
+#### Crear contenedor normal mente
+
+Para construir el contenedor
+
+`docker-compose build`
+
+Debemos tener inicializado el docker
+
+Para lanzar digitamos el comando
+
+`docker-compose up -d`
+
+Para ver el estado del contenedor
+
+`docker-compose ps`
+
+Para ejecutar el contenedor
+
+`docker-compose exec app-csv bash`
+
+
+### Crear el contenedor como me toco
 
 `docker-compose -f docker_compose.ym build`
+
+### Lanzar el contenedor 
+
+`docker-compose -f docker_compose.yml up -d`
+
+### Estado de los contenedores 
+
+`docker-compose -f docker_compose.yml ps`
+
+### Ingresar al conteneror
+
+`docker-compose -f docker_compose.yml exec app-csv bash`
+
+y para salir del contenedor se usa `exit`
