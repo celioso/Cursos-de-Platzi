@@ -312,3 +312,61 @@ Para ejecutar el contenedor
 `docker-compose -f docker_compose.yml exec app-csv bash`
 
 y para salir del contenedor se usa `exit`
+
+[Video de docker](https://www.youtube.com/watch?v=4Dko5W96WHg "Video de docker")
+
+### ¿Cómo continuar tu carrera profesional con Python?
+
+Devs para los que usamos la PowerShell de Windows aqui les dejo algunos comandos:
+
+- Verificar donde esta python y pip
+
+`pip3 --version`
+
+- Crear el ambiente virtual en Windows PowerShell
+
+`python -m venv env`
+
+- Activar el ambiente en Windows PowerShell
+
+`.\env\Scripts\Activate.ps1`
+
+- Desactivar o salir del ambiente Virtual
+
+`deactivate`
+
+`pip install matplotlib==3.5.0`
+
+- Verificar las instalaciones
+
+`pip freeze`
+
+- Generar el archivo requirements
+
+`pip freeze > requirements.txt`
+
+- Instalar archivo requirements
+
+`pip install -r requirements.txt`
+
+### Comando de Docker
+
+Para crear el contenedor
+
+`docker compose build`
+
+- Para Correr el contenedor
+
+`docker compose up -d`
+
+- Para verificar el contenedor
+
+`docker compose ps`
+
+- Para ingresar al contenedor
+
+`docker compose exec app-csv bash`
+
+- Para bajar la aplicacion
+
+`docker compose down`

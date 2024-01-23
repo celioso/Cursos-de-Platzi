@@ -1,10 +1,10 @@
 version: '3'
 services:
-  app-csv:
+  web-server:
     build:
       context: .
       dockerfile: Dockerfile
     volumes:  # Para que se actualice automáticamente.
       - .:/app 
-    #ports:
-      #- '80:80'
+    ports:
+      - '80:80'
