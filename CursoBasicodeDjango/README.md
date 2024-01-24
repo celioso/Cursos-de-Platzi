@@ -682,7 +682,8 @@ class QuestionModelTests(TestCase):
         """"was_published_recently return False for question whose pub_date is in the future"""
         time = timezone.now() + datetime.timedelta(days=30)
         future_question = Question(question_text="¿quién es el mejor Course de Platzi?", pub_date=time)
-        self.assertIs(future_question.was_published_recenttly(), False)```
+        self.assertIs(future_question.was_published_recenttly(), False)
+```
 
 Luego regresamos a la shell y ejecutamos la prueba con el siguiente código `py manage.py test polls`, pero el método nos sigue arrojando true.
 
@@ -715,7 +716,8 @@ class IndexView(generic.ListView):
 
     def get_queryset(self):
         """Return the last five published question"""
-        return Question.objects.filter(pub_date__lte=timezone.now()).order_by("-pub_date")[:5]```
+        return Question.objects.filter(pub_date__lte=timezone.now()).order_by("-pub_date")[:5]
+```
 
 Luego creamos el testing.
 Para que no nos vuelva a suceder esto:
@@ -726,7 +728,8 @@ class QuestionIndexViewTests(TestCase):
         response = self.client.get(reverse("polls:index"))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "No polls are available.")
-        self.assertQuerysetEqual(response.context["latest_question_list"], [])```
+        self.assertQuerysetEqual(response.context["latest_question_list"], [])
+```
 
 Recordar que __lte me trae las preguntas presentes y del pasado, no las futuras.
 
