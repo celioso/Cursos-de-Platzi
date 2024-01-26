@@ -95,3 +95,36 @@ Para cada lanzamiento tenemos la posibilidad de **1/6** de que nos toque **1**, 
 
 `(1/6)^10 = 0.8333`
 
+### inferencia estadística
+
+La *inferencia estadística* es una rama de la estadística que se centra en el uso de muestras para hacer conclusiones o inferencias sobre una población más amplia. Implica el uso de técnicas y métodos estadísticos para estimar parámetros desconocidos, probar hipótesis y tomar decisiones basadas en los datos observados en la muestra.
+
+Aquí hay algunos conceptos clave relacionados con la inferencia estadística:
+
+#### Estimación de parámetros:
+
+- **Estimación puntual:** Consiste en proporcionar un único valor como estimación del parámetro desconocido de la población, utilizando estadísticas descriptivas como la media muestral, la mediana o la moda.
+
+- **Intervalo de confianza:** Proporciona un rango de valores dentro del cual se cree que se encuentra el parámetro de la población con cierto nivel de confianza. Se calcula a partir de la muestra y tiene en cuenta la variabilidad de los datos.
+
+### Pruebas de hipótesis:
+- **Hipótesis nula y alternativa:** En una prueba de hipótesis, se establece una hipótesis nula (H0), que generalmente representa la afirmación de que no hay efecto o diferencia, y una hipótesis alternativa (H1), que afirma lo contrario.
+
+- **Estadístico de prueba:** Es una medida calculada a partir de los datos de la muestra que se utiliza para evaluar la veracidad de la hipótesis nula.
+
+- **Valor p:** Es la probabilidad de obtener un estadístico de prueba al menos tan extremo como el observado, si la hipótesis nula es verdadera. Se compara con un nivel de significancia predefinido para decidir si se rechaza o no la hipótesis nula.
+
+### Tipos de inferencia estadística:
+- **Inferencia paramétrica:** Se basa en supuestos sobre la distribución de los datos en la población, como la normalidad, y utiliza parámetros poblacionales para hacer inferencias.
+
+- **Inferencia no paramétrica:** No requiere supuestos específicos sobre la distribución de los datos en la población y se basa en métodos que no dependen de parámetros poblacionales.
+
+### Aplicaciones:
+
+- La inferencia estadística se utiliza en una amplia gama de campos, incluyendo la medicina, la economía, la ciencia política, la ingeniería, entre otros, para tomar decisiones informadas basadas en datos observados en muestras.
+
+- En medicina, por ejemplo, se utilizan pruebas de hipótesis para evaluar la efectividad de nuevos tratamientos o para determinar si hay una asociación entre ciertos factores y enfermedades.
+
+- En negocios, la inferencia estadística se utiliza para tomar decisiones sobre precios, marketing, gestión de recursos humanos y planificación estratégica, entre otros aspectos.
+
+La inferencia estadística es una herramienta fundamental en el análisis de datos y la toma de decisiones en un entorno de incertidumbre, permitiendo a los investigadores y profesionales obtener conclusiones significativas a partir de muestras limitadas de datos.
