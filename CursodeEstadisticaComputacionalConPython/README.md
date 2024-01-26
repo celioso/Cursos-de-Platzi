@@ -69,11 +69,11 @@ La **probabilidad** es una medida de la certidumbre asociada a un evento o suces
 
 Al hablar de *probabilidad* preguntamos qué fracción de todos los posibles eventos tiene la propiedad que buscamos, por eso es importante poder calcular todas las posibilidades de un evento para entender su probabilidad. La probabilidad de que un *evento suceda* y de que* no suceda* es siempre **1**.
 
-- Ley del complemento:
+- **Ley del complemento:**
  - P(A) + P(~A) = 1
-- Ley multiplicativa:
+- **Ley multiplicativa:**
  - P(A y B) = P(A) * P(B)
-- Ley aditiva:
+- **Ley aditiva:**
  - Mutuamente exclusivos: P(A o B) = P(A) + P(B)
  - No exclusivos: P(A o B) = P(A) + P(B) - P(A y B)
 
@@ -94,3 +94,4 @@ Tenemos **6** posibilidades y el número **1** es una de ellas y el **2** es otr
 Para cada lanzamiento tenemos la posibilidad de **1/6** de que nos toque **1**, por lo que utilizamos la **ley multiplicativa**.
 
 `(1/6)^10 = 0.8333`
+

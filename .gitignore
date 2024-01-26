@@ -10,6 +10,7 @@
 *.zip
 
 .eve
+env/
 venv/
 Ingles/
 google-cloud-sdk/
