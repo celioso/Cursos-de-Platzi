@@ -12,6 +12,12 @@
 .eve
 env/
 venv/
+.env
+.venv
+env/
+ENV/
+env.bak/
+venv.bak/
 Ingles/
 google-cloud-sdk/
 __pycache__/
