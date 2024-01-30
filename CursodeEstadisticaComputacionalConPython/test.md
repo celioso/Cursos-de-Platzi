@@ -82,7 +82,8 @@
 
 21. La probabilidad de que estés estudiando en Platzi y de que seas Colombiano, ¿es menor a la probabilidad de que seas Colombiano?
 
-**R//=** Falso, cuando utilizamos un “y” tenemos que sumar probabilidades y esto nos daría un número mayor. **X**
+**R//=** Falso, cuando utilizamos un “y” tenemos que sumar probabilidades y esto nos daría un número mayor. **Esta respuesta no es correcta**
+
 
 22. El muestreo estratificado divide la población en subgrupos para no sesgar la muestra.
 
