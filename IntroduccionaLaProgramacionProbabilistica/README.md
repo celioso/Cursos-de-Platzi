@@ -220,6 +220,32 @@ Es sencillo de implementar y tiene aplicaciones en medicina, finanzas, agricultu
 
 Es computacionalmente muy costoso y no sirve con datos de alta dimensionalidad.
 
+### ¿Qué son las técnicas de agrupamiento?
+
+El agrupamiento es una técnica de Machine Learning que consiste, en pocas palabras, en dividir cierta población en grupos con la consecuencia de que los datos en un grupo sean más similares entre ellos que comparado con los otros grupos.
+
+Imagina que eres el dueño de una startup que hace e-commerce y quieres tener estrategias de venta para tus clientes. Es casi imposible diseñar una estrategia por cada individuo, pero se puede utilizar el agrupamiento para dividir a los clientes en grupos que tengan similitudes relevantes y así reducir el problema a unas cuantas estrategias.
+
+#### Tipos de agrupamiento
+
+Existen dos tipos de agrupamiento:
+
+- Agrupamiento estricto (hard clustering): cada dato pertenece a un grupo u otro, no hay puntos medios.
+- Agrupamiento laxo (soft clustering): en lugar de asignar un dato a un grupo, se asignan probabilidades a cada dato de pertenecer o no a un grupo.
+
+Un punto muy importante que debes considerar cuando ejecutas técnicas de agrupamiento es que debes definir muy claro a qué te refieres cuando hablas de similitud entre puntos, porque esto puede ayudarte a definir el algoritmo correcto para tus necesidades particulares.
+
+#### Modelos para determinar similitudes
+
+A grandes rasgos, existen cuatro aproximaciones para definir similitud:
+
+- Modelos conectivos: asumen que los puntos más similares son los que se encuentran más cercanos en el espacio de búsqueda. Recuerda que este espacio puede ser altamente dimensional cuando tus feature vectors definen muchas características a analizar. Una desventaja de este tipo de modelos es que no escalan para conjuntos de datos grandes, aunque es posible utilizar una muestra y aplicar técnicas de estadística inferencial para obtener resultados.
+- Modelos de centroide: definen similitud en términos de cercanía con el centroide del grupo. Los datos se agrupan al determinar cuál es el centroide más cercano.
+- Modelos de distribución: trata de asignar probabilidades a cada dato para determinar si pertenecen a una distribución específica o no (por ejemplo, normal, binomial, Poisson, etc.).
+- Modelos de densidad: analizan la densidad de los datos en diferentes regiones y dividen el conjunto en grupos, luego asignan los puntos de acuerdo a las áreas de densidad en las que se haya dividido el dataset.
+
+Acuérdate de no casarte con un modelo específico. Muchas de las mejores Ingenieras de Machine Learning y Científicas de Datos utilizan varios modelos con el mismo conjunto de datos para analizar el rendimiento de los diversos algoritmos que tienen a su disposición. Así que experimenta y siempre compara tus resultados antes de tomar una decisión.
+
 ## Otras tecnicas de clasificación
 
 La clasificación es un tipo de Machine Learning supervisado. Esto significa que para entrenar un modelo necesitamos un conjunto de datos (_dataset_) que ya tenga etiquetas (_labels_) para poder entrenar nuestros modelos.
@@ -254,3 +280,11 @@ Estos algoritmos se diferencian por tener la habilidad de generar figuras comple
 Este tipo de algoritmos nos permiten generar una árbol que tenemos que recorrer y tomar decisiones cada vez que avanzamos en un nivel. Por ejemplo:
 - Si un feature en análisis es mayor a 5, dibuja la línea y=2x+3, de lo contrario dibuja y=-3x+5
 - Si el feature siguiente es menor a 2, dibuja otra línea y así sucesivamente.
+
+#### Conclusiones
+​
+Recuerda que la decisión de qué algoritmo utilizar depende de la forma en la que tengas tus datos y la precisión que desees obtener (a cambio de excluir o incluir falsos positivos y negativos). Otro punto a considerar es que estos algoritmos deben ser entrenados con datos previos y la calidad de estos datos y del modelo subsecuente importan mucho para obtener la mejor clasificación.
+​
+Te invito a que consultes la documentación de Scikit-learn para que puedas profundizar en la forma en que funcionan estos algoritmos (y muchos otros) y puedas saber qué tipo de parámetros se pueden ajustar y cuál es la forma de los datos que esperan. Aquí está el vínculo a la documentación
+
+¡Compártenos tus descubrimientos!
