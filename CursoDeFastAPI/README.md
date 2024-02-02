@@ -36,7 +36,7 @@ def message():
 `uvicorn main:app`
 
 `uvicorn nombre_del_archivo:app --reload --host 0.0.0.0 --port 8000`
-
+uvicorn main:app --reload --host 127.0.0.1 --port 5000
 
 **nombre_del_archivo** es el nombre del archivo Python que contiene la aplicación FastAPI.
 - **`--reload`** habilita la recarga automática de la aplicación cuando se realizan cambios en el código.
