@@ -75,3 +75,4 @@ Y lo mejor es que todo esto lo estarás construyendo mientras aprendes FastAPI, 
 
 ![API](https://i.ibb.co/HgzHhTk/Captura-de-pantalla-2024-01-22-a-la-s-6-25-41-p-m.png)
 
+*****************************************
