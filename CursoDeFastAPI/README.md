@@ -78,3 +78,83 @@ Y lo mejor es que todo esto lo estarás construyendo mientras aprendes FastAPI, 
 ### Códigos de estado HTTP en FastAPI
 
 [HTTP response status codes](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status "HTTP response status codes")
+
+### Flujo de autenticación en FastAPI
+
+#### Flujo de autenticación
+Ahora empezaremos con el módulo de autenticaciones pero antes quiero explicarte un poco acerca de lo que estaremos realizando en nuestra aplicación y cómo será el proceso de autenticación y autorización.
+
+#### Ruta para iniciar sesión
+Lo que obtendremos como resultado al final de este módulo es la protección de determinadas rutas de nuestra aplicación para las cuales solo se podrá acceder mediante el inicio de sesión del usuario. Para esto crearemos una ruta que utilice el método POST donde se solicitarán los datos como email y contraseña.
+
+#### Creación y envío de token
+Luego de que el usuario ingrese sus datos de sesión correctos este obtendrá un token que le servirá para enviarlo al momento de hacer una petición a una ruta protegida.
+
+#### Validación de token
+Al momento de que nuestra API reciba la petición del usuario, comprobará que este le haya enviado el token y validará si es correcto y le pertenece. Finalmente se le dará acceso a la ruta que está solicitando.
+
+En la siguiente clase empezaremos con la creación de una función que nos va a permitir generar tokens usando la librería pyjwt.
+
+### Generando tokens con PyJWT
+
+instalamos la instancia con pip para generar el token
+
+`pip install pyjwt`
+
+si ya esta intalado lo podemos actualizar con:
+
+`python3 -m pip install --upgrade pip`
+
+se crea el archivo jwt_manager.py con el siguiente codigo:
+
+```python
+from jwt import encode
+
+def create_token(data: dict):
+    token: str = encode(payload=data, key = "my_secrete_key", algorithm = "HS256")
+    return token
+```
+
+en main.py importamos  from `jwt_manager import create_token`
+
+se crea el siguiente codigo:
+
+```python
+@app.post("/login", tags=["auth"])
+def login(user: User):
+    return user
+```
+
+Recomendacion de compañero para guardar datos semsibles:
+
+Es mejor guardar datos sensibles como la secretKey en las variables de entorno, son 3 pasos:
+
+1. Instalen
+
+`pip install python-dotenv`
+
+2. Crean un archivo en la raíz del proyecto con nombre y extencion *.env* y agregan las variables de entorno, en nuestro caso:
+
+`SECRET_KEY = secretKey`
+
+Ahora se accede a las variables de entorno así, en nuestro archivo* jwt_manager.py*:
+
+```python
+import os
+from dotenv import load_dotenv
+from jwt import encode, decode
+
+load_dotenv()
+
+secretKey = os.getenv("SECRET_KEY")
+
+
+def create_token(data: dict) -> str:
+    token: str = encode(payload=data, key=secretKey, algorithm="HS256")
+    return token
+
+
+def validate_token(token: str) -> dict:
+    data: dict = decode(token, key=secretKey, algorithms=["HS256"])
+    return data
+```
