@@ -75,4 +75,6 @@ Y lo mejor es que todo esto lo estarás construyendo mientras aprendes FastAPI, 
 
 ![API](https://i.ibb.co/HgzHhTk/Captura-de-pantalla-2024-01-22-a-la-s-6-25-41-p-m.png)
 
-aaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+### Códigos de estado HTTP en FastAPI
+
+[HTTP response status codes](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status "HTTP response status codes")
