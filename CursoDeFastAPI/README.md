@@ -196,3 +196,11 @@ Esta clase quizás está un poco diferente al resto, por si alguien tiene dudas 
 3. **engine** crea una instancia del resultado de lo que devuelve la funcion create_engine().
 4. **Session** guarda la session creada a partir del engine.
 5. **Base** se ha declarado pero su uso será explicado más adelante.
+
+### Creación de modelos con SQLAlchemy
+
+La "magia" detrás de la creación automática de la tabla "movies" en SQLAlchemy se debe a la clase Base de `config.database.py`, que es una instancia de `declarative_base()`. Al heredar de esta clase al definir la clase Movie, se establece una conexión con la base de datos. Al ejecutar `Base.metadata.create_all(bind=Engine)` en `main.py`, SQLAlchemy utiliza esa conexión para crear la tabla automáticamente. Este proceso simplifica la creación de tablas y se basa en la funcionalidad ORM de SQLAlchemy.
+
+Se soluciona instalando SQLAlchemy Flask-SQLAlchemy
+
+`sudo pip3 install SQLAlchemy Flask-SQLAlchemy`
