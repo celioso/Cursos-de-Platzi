@@ -1,12 +1,20 @@
-from fastapi import FastAPI, Body, Path, Query
+from fastapi import Depends, FastAPI, Body, HTTPException, Path, Query, Request
 from fastapi.responses import HTMLResponse, JSONResponse
 from pydantic import BaseModel, Field
 from typing import Optional, List
-from jwt_manager import create_token
+from jwt_manager import create_token, validate_token
+from fastapi.security import HTTPBearer
 
 app = FastAPI()
 app.title = "Mi aplicación con FastAPI"
 app.version = "0.0.1"
+
+class JWTBearer(HTTPBearer):
+    async def __call__(self, request: Request):
+        auth = await super().__call__(request)
+        data = validate_token(auth.credentials)
+        if data['email'] != "admin@gmail.com":
+            raise HTTPException(status_code=403, detail="Credenciales son invalidas") # .decode('utf-8') si sale algun problema Agrega .decode('utf-8')
 
 class User(BaseModel):
     email:str
@@ -14,9 +22,9 @@ class User(BaseModel):
 
 class Movie(BaseModel):
     id:Optional[int] = None
-    title:str = Field(min_length=5, max_length=15)
-    overview: str = Field(min_length=15, max_length=50)
-    year:int  = Field(le = 2022)
+    title:str = Field(min_length=3, max_length=15)
+    overview: str = Field(min_length=15, max_length=150)
+    year:int  = Field(le = 2024)
     rating:float = Field(ge=1, le=10)
     category: str = Field(min_length=3, max_length=20)
     class Config:
@@ -59,11 +67,14 @@ def masage():
 
 @app.post("/login", tags=["auth"])
 def login(user: User):
-    return user
+    if user.email == "admin@gmail.com" and user.password == "admin":
+        token: str = create_token(user.dict()).decode('utf-8')
+        return JSONResponse(status_code = 200, content=token)
+    return JSONResponse(content=["El correo o el usuario no son correctos"],status_code = 404)
 
-@app.get("/movies", tags = ["movies"], response_model = List[Movie], status_code = 200)
+@app.get('/movies', tags=['movies'], response_model=List[Movie], status_code=200, dependencies=[Depends(JWTBearer())])
 def get_movies() -> List[Movie]:
-    return JSONResponse(content=movies, status_code = 200)
+    return JSONResponse(status_code=200, content=movies)
 
 @app.get("/movies/{id}", tags = ["movies"], response_model = Movie)
 def get_movie(id: int = Path(ge=1, le=2000)) -> Movie:

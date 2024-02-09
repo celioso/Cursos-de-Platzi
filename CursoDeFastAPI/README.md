@@ -158,3 +158,41 @@ def validate_token(token: str) -> dict:
     data: dict = decode(token, key=secretKey, algorithms=["HS256"])
     return data
 ```
+
+### Instalación y configuración de SQLAlchemy
+- En las extensiones de VScode buscar SQLite Viewer e instalarlo.
+- También instalar el modulo de sqalchemy desde la terminal
+
+`pip install sqlalchemy`
+
+- Crear la carpeta config
+
+- Dentro de dicha carpeta crear el archivo __init__.py para que detecte la carpeta como un modulo.
+
+- Crear otro archivo llamado database.py donde añadiremos las configuraciones.
+
+```python
+import os
+from sqlalchemy import create_engine
+from sqlalchemy.orm.session import sessionmaker
+from sqlalchemy.ext.declarative import declarative_base
+
+sqlite_file_name = "database.sqlite"
+base_dir = os.path.dirname(os.path.realpath(__file__))
+
+database_url = f"sqlite:///{os.path.join(base_dir, sqlite_file_name)}"
+
+engine = create_engine(database_url, echo=True)
+
+Session = sessionmaker(bind=engine)
+
+Base = declarative_base()
+```
+
+Esta clase quizás está un poco diferente al resto, por si alguien tiene dudas de lo que se realizó (para repasar)
+
+1. **base_dir** (será nuestra url del archivo de sqlite).
+2. **database_url** une un string adicional con lo que declarameos de la ruta y nombre del archivo
+3. **engine** crea una instancia del resultado de lo que devuelve la funcion create_engine().
+4. **Session** guarda la session creada a partir del engine.
+5. **Base** se ha declarado pero su uso será explicado más adelante.
