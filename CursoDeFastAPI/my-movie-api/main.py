@@ -4,10 +4,14 @@ from pydantic import BaseModel, Field
 from typing import Optional, List
 from jwt_manager import create_token, validate_token
 from fastapi.security import HTTPBearer
+from config.database import Session, engine, Base
+from models.movie import Movie
 
 app = FastAPI()
 app.title = "Mi aplicación con FastAPI"
 app.version = "0.0.1"
+
+Base.metadata.create_all(bind=engine)
 
 class JWTBearer(HTTPBearer):
     async def __call__(self, request: Request):
@@ -68,7 +72,7 @@ def masage():
 @app.post("/login", tags=["auth"])
 def login(user: User):
     if user.email == "admin@gmail.com" and user.password == "admin":
-        token: str = create_token(user.dict()).decode('utf-8')
+        token: str = create_token(user.dict()) # .decode('utf-8')
         return JSONResponse(status_code = 200, content=token)
     return JSONResponse(content=["El correo o el usuario no son correctos"],status_code = 404)
 
