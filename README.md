@@ -8,7 +8,7 @@ Todos los curso de  Platzi
 
 [Curso Basico de Django](CursoBasicodeDjango)
 
-## FROND-END
+## FRONT-END
 
 
 [Curso Basico de Django](CursoBasicodeDjango)
