@@ -204,3 +204,25 @@ La "magia" detrás de la creación automática de la tabla "movies" en SQLAlchem
 Se soluciona instalando SQLAlchemy Flask-SQLAlchemy
 
 `sudo pip3 install SQLAlchemy Flask-SQLAlchemy`
+
+### SQLModel
+
+[SQLModel](https://sqlmodel.tiangolo.com/ "SQLModel")
+
+*SQLModel, bases de datos SQL en Python, diseñadas para brindar simplicidad, compatibilidad y solidez.*
+
+Documentación : [https://sqlmodel.tiangolo.com](https://sqlmodel.tiangolo.com "https://sqlmodel.tiangolo.com")
+
+Código fuente : [https://github.com/tiangolo/sqlmodel](https://github.com/tiangolo/sqlmodel "https://github.com/tiangolo/sqlmodel")
+
+SQLModel es una biblioteca para interactuar con bases de datos SQL desde código Python, con objetos Python. Está diseñado para ser intuitivo, fácil de usar, altamente compatible y robusto.
+
+SQLModel se basa en anotaciones de tipo Python y funciona con Pydantic y SQLAlchemy .
+
+Las características clave son:
+
+- **Escritura intuitiva**: excelente compatibilidad con el editor. Finalización por todas partes. Menos tiempo de depuración. Diseñado para ser fácil de usar y aprender. Menos tiempo leyendo documentos.
+- **Fácil de usar**: tiene valores predeterminados sensatos y hace mucho trabajo para simplificar el código que escribe.
+- **Compatible** : está diseñado para ser compatible con FastAPI , Pydantic y SQLAlchemy.
+- **Extensible**: tienes todo el poder de SQLAlchemy y Pydantic debajo.
+Breve : Minimiza la duplicación de código. Una anotación de un solo tipo hace mucho trabajo. No es necesario duplicar modelos en SQLAlchemy y Pydantic.
