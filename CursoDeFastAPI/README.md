@@ -226,3 +226,36 @@ Las características clave son:
 - **Compatible** : está diseñado para ser compatible con FastAPI , Pydantic y SQLAlchemy.
 - **Extensible**: tienes todo el poder de SQLAlchemy y Pydantic debajo.
 Breve : Minimiza la duplicación de código. Una anotación de un solo tipo hace mucho trabajo. No es necesario duplicar modelos en SQLAlchemy y Pydantic.
+
+### Manejo de errores y middlewares en FastAPI
+
+sando Pycharm me manda el siguiente error al agregar el Middleware "Expected type 'Type[_MiddlewareClass]' (matched generic type 'Type[_MiddlewareClass[ParamSpec("P")]]'), got 'Type[ErrorHandler]' instead "from starlette.requests import Request from starlette.responses import JSONResponse
+
+class ErrorHandler: async def __call__(self, request: Request, call_next): try: response = await call_next(request) return response except Exception as e: return JSONResponse({"error": str(e)}, status_code=500)
+
+y esta es la solución. El ErrorHandler debe ser de esta manera:
+
+```python
+from starlette.requests import Request
+from starlette.responses import JSONResponse
+
+
+class ErrorHandler:
+    async def __call__(self, request: Request, call_next):
+        try:
+            response = await call_next(request)
+            return response
+        except Exception as e:
+            return JSONResponse({"error": str(e)}, status_code=500)
+    from starlette.requests import Request
+from starlette.responses import JSONResponse
+
+
+class ErrorHandler:
+&#x20;   async def \_\_call\_\_(self, request: Request, call\_next):
+&#x20;       try:
+&#x20;           response = await call\_next(request)
+&#x20;           return response
+&#x20;       except Exception as e:
+&#x20;           return JSONResponse({"error": str(e)}, status\_code=500)
+```
