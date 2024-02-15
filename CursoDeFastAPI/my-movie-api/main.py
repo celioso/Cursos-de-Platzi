@@ -25,16 +25,16 @@ movies = [
 		"title": "Avatar",
 		"overview": "En un exuberante planeta llamado Pandora viven los Na'vi, seres que ...",
 		"year": "2009",
-		"rating": 7.8,
+		"rating": 8.9,
 		"category": "Acción"
 	},
     {
 		"id": 2,
-		"title": "Avatar",
-		"overview": "En un exuberante planeta llamado Pandora viven los Na'vi, seres que ...",
-		"year": "2009",
+		"title": "Godzilla vs. Kong",
+		"overview": "Cinco años después de que Godzilla derrotara a Ghidorah...",
+		"year": "2021",
 		"rating": 7.8,
-		"category": "Terror"
+		"category": "Acción"
 	}
 ]
 

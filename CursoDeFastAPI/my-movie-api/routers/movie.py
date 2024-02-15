@@ -8,29 +8,9 @@ from models.movie import Movie as MovieModel
 from fastapi.encoders import jsonable_encoder
 from middlewares.jwt_bearer import JWTBearer
 from services.movie import MovieService
+from schemas.movie import Movie
 
 movie_router = APIRouter()
-
-class Movie(BaseModel):
-    id:Optional[int] = None
-    title:str = Field(min_length=3, max_length=15)
-    overview: str = Field(min_length=15, max_length=150)
-    year:int  = Field(le = 2024)
-    rating:float = Field(ge=1, le=10)
-    category: str = Field(min_length=3, max_length=20)
-    class Config:
-        json_schema_extra = {
-            "example":
-                {
-                "id":1,
-                "title": "Mi película",
-                "overview":"Descripción de la película",
-                "year": 2022,
-                "rating":9.8,
-                "category": "Acción"
-			}
-            
-		}
 
 @movie_router.get('/movies', tags=['movies'], response_model=List[Movie], status_code=200, dependencies=[Depends(JWTBearer())])
 def get_movies() -> List[Movie]:
@@ -58,7 +38,7 @@ def get_movies_by_category(category: str):
 @movie_router.get('/movies/', tags=['movies'], response_model = List[Movie])
 def get_movies_by_category(category: str = Query(min_length=1, max_length=15)) -> List[Movie]:
     db = Session()
-    result = db.query(MovieModel).filter(MovieModel.category == category).all()
+    result = MovieService(db).get_movies_by_category(category)
     if not result:
         return JSONResponse(status_code=404, content = {"Message":"La categoría no existe."})  
     return JSONResponse(status_code = 200, content=jsonable_encoder(result))
@@ -66,23 +46,16 @@ def get_movies_by_category(category: str = Query(min_length=1, max_length=15)) -
 @movie_router.post("/movies/", tags = ["movies"], response_model = dict, status_code = 201)
 def create_movie(movie: Movie) -> dict:
     db = Session()
-    new_movie = MovieModel(**movie.dict())
-    db.add(new_movie)
-    db.commit()
+    MovieService(db).create_movie(movie)
     return JSONResponse(content={"message": "Se ha registrado la película"}, status_code = 201)
 
 @movie_router.put("/movies/{id}", tags = ["movies"], response_model = dict, status_code = 200)
 def update_movie(id: int, movie:Movie)  -> dict:
     db = Session()
-    result = db.query(MovieModel).filter(MovieModel.id == id).first()
+    result = MovieService(db).get_movie(id)
     if not result:
         return JSONResponse(status_code=404, content = {"Message":"El id no existe."}) 
-    result.title = movie.title
-    result.overview = movie.overview
-    result.year = movie.year
-    result.rating = movie.rating
-    result.category = movie.category
-    db.commit()
+    MovieService(db).update_movie(id, movie)
     return JSONResponse(content={"message": "Se ha modificado la película"}, status_code = 200)
             
 
