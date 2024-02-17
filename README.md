@@ -1,6 +1,6 @@
 # Cursos-de-Platzi
 
-Todos los curso de  Platzi
+Todos los curso de Platzi que he realizado
 
 ## Python
 
@@ -28,11 +28,12 @@ Todos los curso de  Platzi
 
 ## Linux server
 
-[Curso Basico de Django](CursoBasicodeDjango)
-[Curso Basico de Django](CursoBasicodeDjango)
-[Curso Basico de Django](CursoBasicodeDjango)
-[Curso Basico de Django](CursoBasicodeDjango)
-[Curso Basico de Django](CursoBasicodeDjango)
+- [Curso de Introducción a la Terminal y Línea de Comandos](Curso-de-Introducción-a-la-Terminal-y-Linea-de-Comandos)
+- [Curso Profesional de Git y GitHub](CursoProfesionaldeGityGitHub)
+- [Fundamentos de Ingeniería de Software](FundamentosDeIngenieriaDeSoftware)
+- [Curso Basico de Django](CursoBasicodeDjango)
+- [Curso Basico de Django](CursoBasicodeDjango)
+- [Curso Basico de Django](CursoBasicodeDjango)
 
 ## CD/CI
 
