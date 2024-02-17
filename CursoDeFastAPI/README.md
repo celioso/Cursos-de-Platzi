@@ -259,3 +259,5 @@ class ErrorHandler:
 &#x20;       except Exception as e:
 &#x20;           return JSONResponse({"error": str(e)}, status\_code=500)
 ```
+
+Guia del curso [Curso-fastapi-sql](https://github.com/platzi/curso-fastapi-sql/tree/01-configuracion-base-datos "Curso-fastapi-sql") Repositorio del profesor Pablo España
