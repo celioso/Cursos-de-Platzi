@@ -436,6 +436,7 @@ En el archivo index de la carpeta templates el siguiente código:
 ```
 
 en el archivo `views.py`  el models y modificamos el index como lo muestra el siguiente código:
+
 ```python
 from django.shortcuts import render
 from django.http import HttpResponse
@@ -462,6 +463,7 @@ def vote(request, question_id):
 ### Elevando el error 404
 
 vamos al archivo `views.py`  y en `detail` modificamos y importamos `get_object_or_404` como  lo muestra el codigo:
+
 ```python
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse
@@ -486,7 +488,9 @@ def result(request, question_id):
 def vote(request, question_id):
     return HttpResponse(f"Estás votando a la pregunta número{question_id}")
 ```
+
 luego creamos el archivo `detail.html` en la carpeta `templates\polls ` y agregamos el siguiente código:
+
 ```html
 <h1>{{question.question_text}}</h1>
 <ul>
@@ -497,6 +501,7 @@ luego creamos el archivo `detail.html` en la carpeta `templates\polls ` y agrega
 ```
 ### Formularios: lo básico
 trabajamos en el archivo `detail.py` y usamos el siguiente código:
+
 ```html
 <form action="{% url 'polls:vote' question.id %}" method="post">
 {% csrf_token %}
@@ -523,6 +528,7 @@ trabajamos en el archivo `detail.py` y usamos el siguiente código:
 ```
 ### Creando la vista vote
 en esta parte, se agrega el conteo de los votos en la carpeta polls en abrir el archivo views.py y agregamos el siguiente código:
+
 ```python
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, HttpResponseRedirect
@@ -655,7 +661,8 @@ ingresamos a `menage.py ` en la carpeta de nuestro proyecto con el código `py m
 ```python
 import datetime
 from django.utils import timezone
-from polls.models import Question```
+from polls.models import Question
+```
 
 después de cargas las modulos creamos nuestra pregunta:
 ` q = Question(question_text="¿Quién es el mejor Course Director de Platzi?", pub_date=timezone.now()+ datetime.timedelta(days=30))`
