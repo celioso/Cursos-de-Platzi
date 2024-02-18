@@ -313,3 +313,397 @@ Escribir nueva linea en el archivo fstab
 2. comprobar los cambios que hice al archivo fstab **cat /etc/fstab**
 3. activamos nuestro archivo especial como memoria swap **sudo swapon /swapfile**
 4. si queremos desactivar nuestro archivo para ya no usarlo como memoria swap solo usamos **sudo swapoff /swapfile y eliminar la linea del archivo fstab que configuramos anteriormente**.
+
+### Árbol de directorios
+
+El árbol de directorios en Linux es una estructura jerárquica de directorios y archivos que se utiliza para organizar y almacenar datos en un sistema operativo Linux. Este árbol de directorios comienza en el directorio raíz, representado por una sola barra (/), y se extiende a través de una serie de subdirectorios que se organizan en función de su función y contenido.
+
+***/bin:** Contiene archivos binarios ejecutables esenciales para el sistema.
+***/boot:** Contiene los archivos necesarios para arrancar el sistema.
+***/dev:** Contiene archivos de dispositivos que representan hardware y otros dispositivos del sistema.
+***/etc:** Contiene archivos de configuración del sistema. 
+***/home:** Contiene los directorios personales de los usuarios. 
+***/lib:** Contiene bibliotecas compartidas necesarias para los programas del sistema.
+***/media: **Contiene puntos de montaje para dispositivos extraíbles, como unidades flash USB y discos duros externos. 
+***/mnt:** Contiene puntos de montaje para sistemas de archivos temporales o permanentes. 
+***/opt: **Contiene programas y archivos adicionales del sistema. 
+***/proc:** Contiene información en tiempo real sobre el sistema y los procesos en ejecución. 
+***/root:** El directorio personal del usuario "root". 
+***/run:** Contiene archivos de estado del sistema y otros archivos temporales.
+***/sbin:** Contiene archivos binarios ejecutables esenciales para el sistema. 
+***/srv:** Contiene datos de servicio para servidores web y otros servicios de red.
+***/sys:** Contiene archivos de dispositivos virtuales que representan hardware y otros dispositivos del sistema. 
+***/tmp:** Contiene archivos temporales. 
+***/usr:** Contiene programas y archivos no esenciales del sistema. 
+***/var:** Contiene datos variables del sistema, como registros y archivos de caché. En general, el árbol de directorios en Linux está diseñado para proporcionar una estructura coherente y fácil de entender para el almacenamiento y la organización de datos del sistema, lo que hace que sea más fácil administrar y mantener sistemas Linux.
+
+![El árbol de directorios](https://static.platzi.com/media/user_upload/linux-jerarquia-directorios-47fb1d2a-2e8f-456c-a3da-df0ea7b6a888.jpg "El árbol de directorios")
+
+![](https://static.platzi.com/media/user_upload/rootyp5-99b79b61-363b-44e1-8fde-91ca4985cb3c.jpg)
+
+### Diferentes tipos de archivos
+
+![](https://static.platzi.com/media/user_upload/Screenshot%20from%202023-03-15%2010-06-15-ad974c28-466d-442f-b45b-9e8afb5ffb83.jpg)
+
+**Tipos de permisos**
+
+![](https://static.platzi.com/media/user_upload/linux-unix-tipos-de-permisos_21945_3_2-5b33ade2-18ba-4fa2-be4c-716b72c680a5.jpg)
+
+**Permisos y atributos**
+
+![](https://static.platzi.com/media/user_upload/permisosyatributos-78ed3a14-cc27-4903-903d-32d7e7712217.jpg)
+
+**permisos en sistema de archivos**
+
+![](https://static.platzi.com/media/user_upload/Permisos-en-sistema-de-archivos-a4c8e898-d784-4502-82f8-2ee2c23f2463.jpg)
+
+![](https://i.ibb.co/B4GzhM4/Screenshot-from-2023-06-14-19-11-34.png)
+
+### Conociendo los repositorios y paquetes
+
+Muy rara vez encontraremos usuarios experimentados de Linux que vayan a un sitio web para descargar un paquete de software como lo hacen los usuarios de Windows o macOs. En cambio, cada distribución de Linux tiene su lista de fuentes de donde obtiene la mayoría de sus paquetes de software. Estas fuentes también se denominan repositorios La siguiente figura ilustra el proceso de descarga de paquetes en su sistema Linux
+
+![](https://static.platzi.com/media/user_upload/package-4c182946-c7bc-42d5-bbac-16254ee20e98.jpg)
+
+**Conociendo los repositorios y paquetes**
+
+1. Repositorio Almacena los paquetes para que el usuario pueda descargarlos e instalar el software. Pertenecen a los distribuidores de Linux, aquí se liberan las actualizaciones de los paquetes.
+2. Paquetes Incluyen todos los archivos necesarios para ejecutar el software, hacen el proceso de instalación lo más sencillo posible, porque incluye los archivos binarios, de configuración y dependencias.
+- **.deb:** Formato de instalación de paquetes de Debian y Ubuntu. dpkg: herramienta que instala, desinstala y consulta.
+
+- **.rpm:** Formato de instalación de paquetes de Red Hat, CentOS, SUSE, Amazon Linux. rpm: herramienta que instala, desinstala y consulta.
+
+- rpm y dpkg
+
+**Comandos all-in-one**
+
+```sh
+-- install
+-- remove
+- l (list)
+- i (install)
+- q (query, acompaña con una bandera)
+- U (upgrade)
+- e (erase)
+```
+
+### ¿Qué es un manejador de paquetes?
+
+Un manejador de paquetes en Linux es un programa que se utiliza para instalar, actualizar, configurar y eliminar paquetes de software en un sistema Linux. Los manejadores de paquetes se encargan de todo el proceso de gestión de paquetes, desde la descarga del software hasta su instalación y eliminación.
+
+Algunos de los manejadores de paquetes más comunes en Linux incluyen:
+
+- **APT (Advanced Package Tool):** utilizado en distribuciones basadas en Debian, como Ubuntu y Linux Mint.
+- **YUM (Yellowdog Updater Modified):** utilizado en distribuciones basadas en Red Hat, como Fedora y CentOS.
+- **DNF (Dandified YUM):** utilizado en distribuciones basadas en Red Hat, como Fedora y CentOS (a partir de CentOS 8).
+- **Zypper:** utilizado en distribuciones basadas en SUSE, como openSUSE y SUSE Linux Enterprise.
+- **Pacman:** utilizado en Arch Linux y distribuciones derivadas de Arch.
+Cada manejador de paquetes tiene su propio conjunto de comandos y opciones para realizar diferentes tareas, como instalar, actualizar o eliminar paquetes de software. Los manejadores de paquetes son una parte fundamental del ecosistema de software de Linux, y permiten a los usuarios gestionar el software de una forma más fácil y segura.
+
+![Gestores de paquetes](https://static.platzi.com/media/user_upload/Gestores-de-paquetes-bbbcc489-201d-456a-a6bc-2a7930d3a33d.jpg "Gestores de paquetes")
+
+### Aprende a usar el manejador de paquetes
+
+Para usar APT en Ubuntu o Linux Mint, puedes utilizar los siguientes comandos:
+
+Actualizar la lista de paquetes disponibles en los repositorios:
+
+sudo apt update
+
+Instalar un paquete:
+
+sudo apt install <nombre_del_paquete>
+
+Actualizar todos los paquetes instalados en el sistema:
+
+sudo apt upgrade
+
+Eliminar un paquete:
+
+sudo apt remove <nombre_del_paquete>
+
+Buscar un paquete en los repositorios:
+
+apt search <nombre_del_paquete>
+
+Para usar DNF en Fedora o CentOS 8 (o versiones posteriores), puedes utilizar los siguientes comandos:
+
+- Actualizar la lista de paquetes disponibles en los repositorios:
+`sudo dnf update`
+
+- Instalar un paquete:
+`sudo dnf install <nombre_del_paquete>`
+
+- Actualizar todos los paquetes instalados en el sistema:
+`sudo dnf upgrade`
+
+- Eliminar un paquete:
+`sudo dnf remove <nombre_del_paquete>`
+
+- Buscar un paquete en los repositorios:
+-`sudo dnf search <nombre_del_paquete>`
+
+Ambos manejadores de paquetes tienen muchas más opciones y comandos disponibles, pero estos son algunos de los más comunes y útiles para empezar a trabajar con ellos.
+
+### ¿Cómo instalar software?
+
+En Linux, es común instalar software desde la línea de comandos utilizando el manejador de paquetes de la distribución que estés utilizando. El proceso para instalar un paquete es bastante sencillo y se realiza en unos pocos pasos:
+
+1. Actualiza la lista de paquetes disponibles en los repositorios utilizando el siguiente comando:
+- En distribuciones basadas en Debian, como Ubuntu o Linux Mint, utiliza:
+`sudo apt update`
+
+- En distribuciones basadas en Red Hat, como Fedora o CentOS, utiliza:
+`sudo dnf update`
+
+2. Busca el paquete que quieres instalar utilizando el comando de búsqueda correspondiente:
+
+- En distribuciones basadas en Debian, utiliza:
+`apt search <nombre_del_paquete>`
+
+- En distribuciones basadas en Red Hat, utiliza:
+`dnf search <nombre_del_paquete>`
+
+3. Una vez que encuentres el paquete que quieres instalar, utiliza el comando correspondiente para instalarlo:
+
+- En distribuciones basadas en Debian, utiliza:
+`sudo apt install <nombre_del_paquete>`
+
+- En distribuciones basadas en Red Hat, utiliza:
+`sudo dnf install <nombre_del_paquete>`
+
+4. Espera a que se complete la instalación del paquete. En algunos casos, se te pedirá que confirmes la instalación o que ingreses tu contraseña de administrador.
+
+Y eso es todo, ahora deberías tener el paquete instalado en tu sistema Linux y listo para ser utilizado. Ten en cuenta que, dependiendo del paquete que estés instalando, es posible que necesites reiniciar ciertos servicios o aplicaciones para que los cambios tengan efecto.
+
+### Manejo de repositorios a profundidad
+
+Existen repositorios con paquetes de uso privativo o no libre, que podemos activar en nuestro SO. Para ello se deberá tener en cuenta qué distribución tenemos o, más específicamente, qué manejador de paquetes. Siendo APT mucho más amigable, dado que podemos, por medio de un comando, conocer los repositorios existentes y activarlos con tan solo borrar el # inicial.
+
+En el caso de los RPM, los rpm fusión suplen esta necesidad de instalar paquetes por fuera de la licencia o filosofía de software libre del SO.
+
+**Manejadores APT**
+
+Para consultar los paquetes APT que tienes disponibles, ejecuta el siguiente comando
+`cat /etc/apt/sources.list`
+o, si deseas solo conocer los que actualmente tienes activos, puedes:
+`grep ^[^#] /etc/apt/sources.list →La expresión regular ^[^#] usada 
+en conjunto con grep hace que se filtren todos los resultados que inicien con #.`
+
+Ahora, si deseamos añadir repositorio que tampoco tenemos desactivado con el #. Debemos buscar en internet lo siguiente:
+
+ubuntu server multiverse repository
+
+Y la siguiente página es la más recomendada por sus guías sobre el mundo linux y su alta credibilidad:
+
+
+```sh
+[https://itsfoss.com/ubuntu-repositories/](https://itsfoss.com/ubuntu-repositories/)
+```
+Ahora, para manejadores APT, podemos encontrar dos tipos de repositorios externos:
+
+- **Los universe:** No incluyen software privativo. (solo software de código libre)
+- **Los multiverse:** Estos incluyen software privativo.
+Si quisieras instalar alguno de los anteriores paquetes, deberías utilizar el siguiente comando:
+
+```sh
+sudo add-apt-repository universe
+sudo add-apt-repository multiverse
+sudo apt update
+```
+
+**Manejadores RPM:**
+
+Para listar los repositorios con el manejador de paquetes RPM usamos el comando
+
+```sh
+dnf repolist
+dnf repolist all ->  te mostrará los repositorios que están desactivados.
+```
+Ahora, para añadir repositorios extras debes buscar en google:
+
+RPM fusión y entramos al siguiente link.
+`[rpmfusion.org](http://rpmfusion.org) `
+
+copiamos y pegamos los siguientes comandos
+
+```sh
+sudo dnf install --nogpgcheck https://dl.fedoraproject.org/pub/epel/epel-release-latest-$(rpm -E %rhel).noarch.rpm
+sudo dnf install --nogpgcheck https://mirrors.rpmfusion.org/free/el/rpmfusion-free-release-$(rpm -E %rhel).noarch.rpm https://mirrors.rpmfusion.org/nonfree/el/rpmfusion-nonfree-release-$(rpm -E %rhel).noarch.rpm
+```
+
+Finalmente, actualizamos los repositorios y, de preferencia, reiniciamos la consola o el sistema operativo.
+
+### ¿Qué es un proceso en Linux?
+
+Daemon (Demonio)
+En Linux, un **demonio (daemon)** es un **programa que se ejecuta en segundo plano** para realizar **tareas que no requieren la intervención del usuario** o que se deben realizar de forma continua, como la gestión del sistema, el monitoreo de servicios o la automatización de tareas.
+
+Ejemplos comunes:
+- Servidores web
+- Servidores de bases de datos
+- Servicios de correo electrónico.
+
+**Enviar señales a procesos en ejecución**
+
+`El comando "kill" -  send signal to a process`
+
+Al ejecutar el comando kill, se puede enviar una señal específica a un proceso para terminarlo, pausarlo, reanudarlo o realizar otras acciones.
+
+```shell
+kill <OPTION> <PID>     
+
+# Envia una señal al proceso con el ID especificado, por defecto SIGTERM
+```
+
+```shell
+-1             
+# SIGHUP, reinicia el proceso
+
+-2             
+# SIGINT, interrumpe el proceso
+
+-9             
+# SIGKILL, termina el proceso de manera forzosa
+
+-15           
+ # SIGTERM, termina el proceso de manera normal <opción por defecto>
+
+-19           
+ # SIGSTOP, pausa el proceso
+
+-18            
+# SIGCONT, reanuda el proceso
+```
+
+### Escaneo de procesos
+
+Para escanear un proceso en Linux, puedes utilizar varias herramientas, como ps, top, htop, pgrep, pidof, entre otras. A continuación, te mostraré algunos ejemplos con los comandos ps y top.
+
+Para escanear un proceso utilizando el comando ps, simplemente debes ejecutar el siguiente comando en la terminal:
+`ps aux | grep nombre_del_proceso`
+
+Donde nombre_del_proceso es el nombre del proceso que deseas escanear. Este comando mostrará una lista de procesos que coinciden con el nombre especificado.
+
+Si prefieres utilizar el comando top, puedes ejecutar el siguiente comando en la terminal:
+
+En Linux, puedes utilizar diferentes herramientas para realizar el escaneo de procesos y monitorear la actividad del sistema. A continuación, te mencionaré algunas de las opciones más comunes:
+
+**ps:** El comando ps (procesos) te permite obtener información sobre los procesos en ejecución. Puedes utilizar diversas opciones para filtrar la salida y obtener detalles específicos. Por ejemplo, ps aux muestra una lista detallada de todos los procesos del sistema.
+
+**top:** El comando top muestra una lista en tiempo real de los procesos en ejecución, actualizando la información periódicamente. Proporciona detalles como el uso de CPU, memoria, PID (identificador de proceso), entre otros. Puedes ordenar los procesos por diferentes criterios y enviar señales a procesos individuales desde la interfaz de top.
+
+**htop:** Similar a top, htop es una herramienta de monitoreo de procesos interactiva que muestra una lista en tiempo real de los procesos. Proporciona una interfaz más amigable y gráfica que top, permitiendo navegar y gestionar los procesos utilizando teclas de función.
+
+**pstree:** El comando pstree muestra una representación jerárquica de los procesos en ejecución. Puedes visualizar la relación entre los procesos padre e hijo en forma de árbol, lo que facilita la comprensión de la estructura del sistema.
+
+**lsof:** El comando lsof (list open files) muestra los archivos abiertos por los procesos en el sistema. También puedes utilizarlo para obtener información sobre los sockets de red y otros recursos abiertos por los procesos.
+
+Estas son solo algunas de las herramientas disponibles en Linux para el escaneo y monitoreo de procesos. Cada una tiene sus propias características y opciones adicionales, por lo que puedes explorar más sobre ellas consultando sus respectivas páginas de manual (man ps, man top, man htop, etc.) para obtener más detalles y aprender cómo utilizarlas eficientemente.
+
+**htop:** es una herramienta de monitoreo de procesos en tiempo real con una interfaz de usuario amigable y fácil de usar. Proporciona información similar a top, pero con opciones de filtrado y búsqueda avanzadas y una mejor visualización de la información.
+
+![](https://static.platzi.com/media/user_upload/htop-96ee5097-b009-47e2-8b56-47d85ff41ef0.jpg)
+
+**glances:** Proporciona información sobre el uso de recursos del sistema como la CPU, la memoria, el disco y la red, así como información sobre los procesos en ejecución. Glances también tiene una versión web que atraves de una API REST puede ser ejecutada en varias plataformas, incluyendo Linux, macOS y Windows.
+
+![](https://static.platzi.com/media/user_upload/glances-terminal-830x490-e5c11ee8-479c-4949-b07c-981faa149373.jpg)
+
+**bpytop:** Proporciona información sobre el uso de recursos del sistema como la CPU, la memoria, el disco y la red, así como información sobre los procesos en ejecución. También proporciona gráficos en tiempo real del uso de recursos y permite filtrar y ordenar los procesos según diferentes criterios.
+
+![](https://static.platzi.com/media/user_upload/bpytop-ubuntu-2-700b85d3-9109-433d-9b83-a20d4fe7cc32.jpg)
+
+### Manejo de procesos
+
+- **Running or runnable (R):** procesos que al ejecutarse se encuentran consumiendo recursos (de memoria o CPU). Cuando no esta en este estado, generalmente debido a que los recursos que el proceso requiere no están disponibles o están siendo usados por otro proceso, se dice que el proceso esta ‘durmiendo’ (sleep), pero hay dos tipos de estados de ‘dormir’ o de ‘sleep’: interrumpible y no interrumpible. El proceso sale del estado de ‘sueño’ al tener acceso a los recursos que necesita para continuar ejecutándose.
+- **Uninterruptible Sleep (D):** Este tipo de proceso no se pueden matar con una señal simple, ya que debe usarse una ‘sign kill’ para matar el proceso y que corresponde a un tipo de señal en particular.
+- **Interruptible Sleep (S):** Son procesos que pueden interrumpirse con señales normales siempre y cuando se encuentren en espera. Es importante recordar que las señales son mecanismos que permiten al sistema terminar con procesos de forma ‘amigable’ y sin repercusiones para su funcionamiento.
+- **Stopped (T):** Se refiere a procesos que han sido detenidos temporal o indefinidamente por un usuario. Se diferencia del estado en ‘sleep’ en el hecho de que un proceso que esta durmiendo sale de este estado al detectar que los recursos que necesita ya están disponibles.
+- **Zombie (Z):** Es un estado correspondiente a los proceso que están desvinculados de su proceso ‘padre’ y que no están ejecutándose.
+
+**Manejo de Procesos en Terminal**
+
+Al colocar el símbolo `&` al final de un comando, esté se sigue ejecutando en segundo plano. Ejemplo:
+
+`less archivo.txt &`
+
+Cuando un proceso pasa a segundo plano, se le añade un número identificador que sirve para manejar su estado (llamado ‘job ID’).
+
+1. Es posible usar el comando jobs -l para ver los procesos ejecutándose en segundo plano:
+`jobs -l `
+
+2. Para traer un proceso a 1er plano, se usa ‘fg’ más el identificador de trabajo del proceso (llamado regularmente ‘job ID’) en segundo plano:
+`fg job_ID`
+
+3. Otra forma de enviar un proceso a segundo plano o background es usando CTRL + Z. Sin embargo, al usar esta opción, el proceso es enviado a segundo plano en estado de ‘detenido’ o ‘stopped’.
+Ejemplo de ejecución en terminal:
+
+4. También es posible matar un proceso con el comando kill más el PID del proceso. Si el proceso esta en background, no funciona usar kill sin argumentos.
+`kill PID`
+
+5. Matar un proceso en segundo plano:
+`kill -s SIGKILL [PID]`
+
+6. Matar todos los procesos asociados a un comando o término:
+`killall [nombre_proceso]`
+
+Listado de opciones de señales más comunes para kill
+
+Formato:
+
+```shell
+kill <OPTION> <PID>     
+
+# Envia una señal al proceso con el ID especificado, por defecto SIGTERM
+```
+Opciones:
+
+```shell
+-1             
+# SIGHUP, reinicia el proceso
+
+-2             
+# SIGINT, interrumpe el proceso
+
+-9             
+# SIGKILL, termina el proceso de manera forzosa
+
+-15           
+ # SIGTERM, termina el proceso de manera normal <opción por defecto>
+
+-19           
+ # SIGSTOP, pausa el proceso
+
+-18            
+# SIGCONT, reanuda el proceso
+```
+
+### Creación y manejo de demonios
+
+Es un proceso de Linux que da un comportamiento de servicio a un programa: es decir, que se ejecuta en segundo plano sin la interacción de un usuario.
+
+- **systemd:** crea los demonios
+- **systemctl:** gestiona los demonios
+
+Para crear un demonio primero debes:
+
+- Crear el script o unit file que usará de base tu demonio, esto puedes hacerlo con Python u otro lenguaje de scripting.
+
+- Es importante crear el folder donde se alojará el unit file a nivel de root, de esta manera estará disponible para todos los usuarios.
+
+- Crear la carpeta en donde alojaremos la información generada por nuestro unit file.
+
+- ir a /etc/systemd/system y crear el script que beberá del primero para poder correr el demonio.
+
+reiniciamos los demonios con:
+` systemctl daemons-reload`
+- Habilitamos con:
+` systemctl enable loggerpython.service`
+- Activamos con:
+` systemctl start loggerpython.service`
+
+### Automatización de procesos con cron job
+
+![](https://static.platzi.com/media/user_upload/cron-job-format-1-b9a66ef5-2d87-472f-9c0c-e313bf3415f0.jpg)
+
+[CronJobs](https://ostechnix.com/a-beginners-guide-to-cron-jobs/ "CronJobs")
