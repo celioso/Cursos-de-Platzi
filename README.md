@@ -32,7 +32,7 @@ Todos los curso de Platzi que he realizado
 - [Curso Profesional de Git y GitHub](CursoProfesionaldeGityGitHub)
 - [Fundamentos de Ingeniería de Software](FundamentosDeIngenieriaDeSoftware)
 - [Curso de Introducción a la Administración de Servidores Linux](CursodeIntroducciónalaAdministracióndeServidoresLinux)
-- [Curso Basico de Django](CursoBasicodeDjango)
+- [Curso de Administración de Servidores Linux: Manejo de Recursos](CursodeAdministracióndeServidoresLinuxManejodeRecursos)
 - [Curso Basico de Django](CursoBasicodeDjango)
 
 ## CD/CI
