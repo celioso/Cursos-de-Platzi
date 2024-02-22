@@ -16,6 +16,14 @@ Todos los curso de Platzi que he realizado
 - [Curso de Estadística Computacional con Python](CursodeEstadisticaComputacionalConPython)
 - [Curso de Introducción al Pensamiento Probabilístico](IntroduccionaLaProgramacionProbabilistica)
 
+### Desarrollo Backend con Python y Django
+
+- [Curso Basico de Django](CursoBasicodeDjango)
+- [Curso Basico de Django](CursoBasicodeDjango)
+- [Curso Basico de Django](CursoBasicodeDjango)
+- [Curso Basico de Django](CursoBasicodeDjango)
+- [Curso Basico de Django](CursoBasicodeDjango)
+
 
 
 ## FRONT-END
