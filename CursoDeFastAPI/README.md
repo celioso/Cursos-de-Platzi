@@ -261,3 +261,71 @@ class ErrorHandler:
 ```
 
 Guia del curso [Curso-fastapi-sql](https://github.com/platzi/curso-fastapi-sql/tree/01-configuracion-base-datos "Curso-fastapi-sql") Repositorio del profesor Pablo España
+
+### Preparando el proyecto para desplegar a producción
+
+[GitHub - platzi/curso-fastapi-sql at 11-refactorizacion-final](https://github.com/platzi/curso-fastapi-sql/tree/11-refactorizacion-final)
+
+### Crear repositorio en GitLab
+
+inicia el git:
+`git init --initial-branch=main`
+
+agrega la conexion remota:
+`git remote add origin <Link del repositorio>`
+
+agregamos los cambioas al git
+`git add .`
+
+realizamos el commit:
+`git commit -m "deploy"`
+
+luego el push:
+
+`git push -u origin main`
+
+### Crear Droplet en Digital Ocean
+
+[Digita ocean](https://cloud.digitalocean.com "Digita ocean") o [render](https://render.com/ "render")
+
+### Crear Droplet en Digital Ocean
+
+[Digita ocean](https://cloud.digitalocean.com/login "Digita ocean") o [render](https://render.com/ "render")
+
+### Instalación de herramientas para el servidor
+
+- apt install git
+
+- apt install nginx
+
+- apt install nodejs
+
+- apt install npm
+
+- apt install pm2@latest -g
+
+- para chequear si pm2 esta funcionando:
+
+- pm2 status
+
+- instalar virtualenv de python
+
+- apt install python3-venv
+
+- crear el virtual env en el droplet
+
+- python3 -m venv venv
+
+- Activar el venv
+
+- En Linux
+
+- source venv/bin/activate
+
+- En Win
+
+- source venv/script/activate
+
+- Una vez activado instalar lo requirements del archivo requirements.txt
+
+- pip install -r requirements.txt
