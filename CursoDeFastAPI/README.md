@@ -1,5 +1,9 @@
 # Curso de FastAPP
 
+### web Service
+La aplicación se desplegó en render:
+[https://my-movie-api-xdsj.onrender.com](https://my-movie-api-xdsj.onrender.com)
+
 ### Configuración de un servidor con FastAPI
 
 **Creación de un entorno virtual (venv):** Se creó un entorno virtual utilizando venv. Un entorno virtual es un ambiente aislado que permite instalar y gestionar paquetes de Python específicos para un proyecto, sin afectar al sistema global.
@@ -288,9 +292,34 @@ luego el push:
 
 [Digita ocean](https://cloud.digitalocean.com "Digita ocean") o [render](https://render.com/ "render")
 
-### Crear Droplet en Digital Ocean
+### Crear Droplet en Render
 
-[Digita ocean](https://cloud.digitalocean.com/login "Digita ocean") o [render](https://render.com/ "render")
+[render](https://render.com/ "render")
+
+### Creando nuestra aplicación en Render
+Una vez que hayas creado tu cuenta, te dirigis a la sección Dashboard. Allí, clicamos en **New** `+``` y seleccionamos la opción **Web Service**
+
+Seleccionamos nuestro repositorio y click en Connect
+
+Vamos a rellenar la información de la siguiente forma:
+
+**Name**: Nombre de la APP
+
+**Region:** la que mas se acomode a su necesidad.
+
+**Branch:** Main por defecto
+
+**Root Directory:** opcional; El campo "Root Directory" en Render te permite especificar un directorio raíz diferente al directorio raíz de tu repositorio. Esto es útil cuando tienes una estructura de directorios más compleja en tu repositorio y deseas ejecutar tus comandos desde un directorio específico.
+
+**Runtime**:  El entorno en que se va a ejecutar para este proyecto se uso PYthon
+
+**Build Command**: pip install -r requirements.txt
+
+**Start Command:** se uso `uvicorn main:app --host 0.0.0.0 --port 8080`
+
+**Instance Type**: use Free
+
+y el link para ingresar al proyecto es [https://my-movie-api-xdsj.onrender.com/](https://my-movie-api-xdsj.onrender.com/)
 
 ### Instalación de herramientas para el servidor
 
@@ -329,5 +358,6 @@ luego el push:
 - Una vez activado instalar lo requirements del archivo requirements.txt
 
 - pip install -r requirements.txt
+
 
 ### End

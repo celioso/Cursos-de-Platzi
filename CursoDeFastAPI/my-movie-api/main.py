@@ -40,4 +40,5 @@ movies = [
 
 @app.get("/", tags = ["home"])
 def masage():
-    return HTMLResponse("<h1>Hello World!</h1>")
+    return HTMLResponse("<h1>Hello World!</h1>"
+                        "<p>Despliegue de App con FastAPP</p>")
