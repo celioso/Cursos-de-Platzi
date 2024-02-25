@@ -28,11 +28,11 @@ Todos los curso de Platzi que he realizado
 
 ## FRONT-END
 
-[Curso Basico de Django](CursoBasicodeDjango)
-[Curso Basico de Django](CursoBasicodeDjango)
-[Curso Basico de Django](CursoBasicodeDjango)
-[Curso Basico de Django](CursoBasicodeDjango)
-[Curso Basico de Django](CursoBasicodeDjango)
+- [Curso Basico de Django](CursoBasicodeDjango)
+- [Curso Basico de Django](CursoBasicodeDjango)
+- [Curso Basico de Django](CursoBasicodeDjango)
+- [Curso Basico de Django](CursoBasicodeDjango)
+- [Curso Basico de Django](CursoBasicodeDjango)
 
 ## Linux server
 
@@ -45,9 +45,9 @@ Todos los curso de Platzi que he realizado
 
 ## CD/CI
 
-[Curso Basico de Django](CursoBasicodeDjango)
+- [Curso Basico de Django](CursoBasicodeDjango)
 
 ## CLOUD SERVICES
 
 
-[Curso Basico de Django](CursoBasicodeDjango)
+- [Curso Basico de Django](CursoBasicodeDjango)
