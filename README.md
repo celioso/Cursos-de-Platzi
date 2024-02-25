@@ -1,6 +1,6 @@
 # Cursos-de-Platzi
 
-Todos los curso de Platzi que he realizado
+👽👽👍👍 Todos los curso de Platzi que he realizado 👍👍👽👽
 
 ## Python
 
@@ -28,7 +28,7 @@ Todos los curso de Platzi que he realizado
 
 ## FRONT-END
 
-[Curso-de-Introducción-a-la-Terminal-y-Linea-de-Comandos](Curso-de-Introducción-a-la-Terminal-y-Linea-de-Comandos)
+- [Curso-de-Introducción-a-la-Terminal-y-Linea-de-Comandos](Curso-de-Introducción-a-la-Terminal-y-Linea-de-Comandos)
 - [Curso Profesional de Git y GitHub](CursoProfesionaldeGityGitHub)
 - [Curso de Fundamentos de Python](Curso_de_Fundamentos_de_Python)
 - [Curso de Python:Comprehensions,Funciones y Manejo de Errores](CursodePythonComprehensions,FuncionesyManejodeErrores)
