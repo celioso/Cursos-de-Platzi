@@ -52,9 +52,9 @@
 
 ## CD/CI
 
-[Curso Basico de Django](CursoBasicodeDjango)
+- [Curso Basico de Django](CursoBasicodeDjango)
 
 ## CLOUD SERVICES
 
 
-[Curso Basico de Django](CursoBasicodeDjango)
+- [Curso Basico de Django](CursoBasicodeDjango)
