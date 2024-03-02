@@ -27,9 +27,9 @@
 - [Curso de Complejidad Algorítmica con Python](CursoDePOOyAlgoritmosConPython)
 - [Curso de Estructuras de Datos Lineales con Python](CursodeEstructurasdeDatosLinealesconPython)
 - [Curso de Introducción a Selenium con Python](CursoDeIntroduccionaSeleniumConPython)
-- [Curso Basico de Django](CursoBasicodeDjango)
-- [Curso Basico de Django](CursoBasicodeDjango)
-- [Curso Basico de Django](CursoBasicodeDjango)
+- [Curso de Fundamentos de Bases de Datos](Curso-de-Fundamentos-de-Bases-de-Datos)
+- [Curso Práctico de Python: Creación de un CRUD](CursoPracticodePythonCreaciondeunCRUD)
+- [Curso de Flask](Curso_de_Flask)
 
 
 
