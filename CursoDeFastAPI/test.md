@@ -52,10 +52,10 @@
 **R/:** Config
 
 18. **¿Qué parámetro puedes usar en la clase JSONResponse para enviar la información al cliente?**
-**R/:**  json
+**R/:**  json * Esta mal
 
 19. **¿Cuál es el nombre correcto del módulo para manejo de tokens?**
 **R/:**  pyjwt
 
 20. **¿Cómo podemos añadir una clase como dependencia de una ruta?**
-**R/:**  Usando el parámetro depends
+**R/:**  Usando el parámetro depends * Esta mal
