@@ -370,3 +370,5 @@ Para crear el contenedor
 - Para bajar la aplicacion
 
 `docker compose down`
+
+## End
