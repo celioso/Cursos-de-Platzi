@@ -1,25 +1,17 @@
 import unittest
-from pyunitreport import HTMLTestRunner
+from pyunitreport import HTMLtestRunner
 from selenium import webdriver
-
 
 class HelloWorld(unittest.TestCase):
 
-    def setUp(self):
-        self.driver = webdriver.Chrome(options=r"C:\Users\celio\OneDrive\Escritorio\programación\platzi\CursoDeIntroduccionaSeleniumConPython\software\chromedriver_win32\chromedriver.exe")
-        driver = self.driver
-        driver.implicitly_wait(10)
-
+    def setUp(self) -> None:
+        return super().setUp()
     
     def test_hello_world(self):
-        driver = self.driver
-        driver.get("https://www.platzi.com")
-
-    def test_visit_wikipedia(self):
-        self.driver.get("https://www.wikipedia.org")
+        pass
 
     def tearDown(self):
-        self.driver.quit()
+        return super().tearDown()
     
 if __name__ == "__main__":
-    unittest.main(verbosity=2, testRunner=HTMLTestRunner(output = "reportes", report_name = "hello-world-report"))
+    unittest.main(verbosity=2, testRunner=HTMLtestRunner(output="reportes", report_name = "hello-world-report"))
