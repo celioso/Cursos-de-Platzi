@@ -4,17 +4,23 @@ from selenium import webdriver
 
 class HelloWorld(unittest.TestCase):
 
-    def setUp(self):
-        self.driver = webdriver.Chrome(chrome_driver_path = r"C:\Users\celio\OneDrive\Escritorio\programación\platzi\CursoDeIntroduccionaSeleniumConPython\selenium\chromedriver.exe")
-        driver = self.driver
+    @classmethod
+    def setUp(cls):
+        chrome_driver_path = r'/chromedriver.exe'
+        cls.driver = webdriver.Chrome()
+        driver = cls.driver
         driver.implicitly_wait(10)
 
     def test_hello_world(self):
         driver = self.driver
         driver.get('https://www.platzi.com')
 
-    def tearDown(self):
-        self.driver.quit()
+    def test_visit_wikipedia(self):
+        self.driver.get("https://www.wikipedia.org")
 
+    @classmethod
+    def tearDownClass(cls):
+        cls.driver.quit()
+        
 if __name__ == "__main__":
     unittest.main(verbosity = 2, testRunner = HTMLTestRunner(output= 'reportes',report_name= 'helllo_world_report'))
