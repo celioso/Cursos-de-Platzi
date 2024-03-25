@@ -4,8 +4,6 @@
 *.ipa
 *.apk
 *.exe
-*.jpg
-*.pdf
 *.tar.gz
 *.zip
 
