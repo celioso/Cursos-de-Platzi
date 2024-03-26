@@ -1,4 +1,4 @@
-### Curso de FastAPI
+### Curso de Introducción a Selenium con Python
 
 1. **¿Cuál es la mayor ventaja de usar SQLAlchemy?**
 **R/:** Facilita el acceso a bases de datos relacionales mediante el mapeo de tablas a clases.
