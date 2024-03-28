@@ -265,7 +265,7 @@ send_keys(value) | Simula escribir o presionar teclas en un elemento | email_fie
 submit() | Envía un formulario o confirmación en un text area | search_field.submit()
 value_of_css_property(property_name) | Obtiene el valor de una propiedad CSS del elemento | header.value_of_css_property(‘background-color’)
 
-************************************************************************************************************************************************************************
+*******************************************************************************************************************************************************
 
 # Curso-de-introduccion-a-Selenium-con-Python
 Curso de introduccion a Selenium con Python realizado en Platzi
