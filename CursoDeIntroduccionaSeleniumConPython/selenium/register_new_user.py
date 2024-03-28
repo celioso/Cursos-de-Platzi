@@ -9,7 +9,7 @@ class RegisterNewUserTests(unittest.TestCase):
         chrome_driver_path = r"/chromedriver.exe"
         self.driver = webdriver.Chrome()
         driver = self.driver
-        driver.implicitly_wait(15)
+        driver.implicitly_wait(30)
         driver.maximize_window()
         driver.get("http://demo-store.seleniumacademy.com/")
         
@@ -45,12 +45,19 @@ class RegisterNewUserTests(unittest.TestCase):
         self.assertTrue(all(validate_from_list))
 
         first_name.send_keys("Camilo")
+        driver.implicitly_wait(2)
         middle_name.send_keys("Andres")
+        driver.implicitly_wait(2)
         last_name.send_keys("Torres")
+        driver.implicitly_wait(2)
         email_address.send_keys("camiloandres@hotmail.com")
+        driver.implicitly_wait(2)
         password.send_keys("1234567890")
+        driver.implicitly_wait(2)
         confirm_password.send_keys("1234567890")
+        driver.implicitly_wait(2)
         news_letter_subscription.click()
+        driver.implicitly_wait(2)
         submit_button.click()
 
         
