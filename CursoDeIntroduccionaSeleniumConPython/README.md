@@ -284,6 +284,8 @@ visibility_of_element_located(locator) | Espera a que el elemento indicado por s
 
 [Welcome to the-internet](https://the-internet.herokuapp.com/ "Welcome to the-internet")
 
+
+
 *******************************************************************************************************************************************************
 
 # Curso-de-introduccion-a-Selenium-con-Python
