@@ -1,6 +1,6 @@
 # Cursos-de-Platzi
 
-👽👽👍👍 Todos los curso de Platzi que he realizado 👍👍👽👽
+😎👽👽👍👍 Todos los curso de Platzi que he realizado 👍👍👽👽🤮😎
 
 ## Python
 
