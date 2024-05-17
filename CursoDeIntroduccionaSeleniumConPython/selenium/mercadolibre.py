@@ -46,14 +46,25 @@ class TestingMercadolibre(unittest.TestCase):
         prices = []
 
         for i in range(5):
-            article_name = driver.find_element(By.XPATH, f'/html/body/main/div/div[3]/section/ol/li[{i + 1}]/div/div/div[2]/div[1]/a/h2').text
-            
+            article_name = driver.find_element(By.XPATH, f'//li[{i + 1}]//h2').text
+
             articles.append(article_name)
             
-            article_price = driver.find_element(By.XPATH, f'/html/body/main/div/div[3]/section/ol/li[{i + 1}]/div/div/div[2]/div[2]/div[1]/div[1]/div/div/div/span[1]/span[2]').text
+            article_price = driver.find_element(By.XPATH, f'//li[{i + 1}]//span[contains(@class, "andes-money-amount__fraction")]').text
             prices.append(article_price)
 
         print(articles, prices)
+
+        # otra solucion
+
+        '''for i in range(8):
+            article_name = driver.find_element(By.XPATH, f'//li[{i + 1}]//h2').text
+            articles.append(article_name)
+            article_price = driver.find_element(By.XPATH, f'//li[{i + 1}]//span[contains(@class, "andes-money-amount__fraction")]').text
+            prices.append(article_price)
+
+        for i in range(8):
+            print(articles[i], "| Precio:", prices[i])'''
 
 
 
