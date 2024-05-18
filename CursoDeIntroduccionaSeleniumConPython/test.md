@@ -1,8 +1,8 @@
 ### Curso de Introducción a Selenium con Python
 
-1. **Curso de Introducción a Selenium con Python**
+1. **¿Qué es Selenium?**
 
-**R/:** 
+**R/:** Una suite de software para automatizar el navegador.
 
 2. **¿Cuáles son los componentes vigentes de la suite de Selenium?**
 
@@ -14,7 +14,7 @@
 
 4. **Son debilidades de Selenium:**
 
-**R/:** 
+**R/:** Manejo de asicronismo y generación de reportes.
 
 5. **¿Qué librerías complementan Selenium para generar pruebas efectivas?**
 
@@ -38,7 +38,7 @@
 
 10. **¿Qué es y para qué nos sirven las test suites?**
 
-**R/:** 
+**R/:** Una colección de tests que permiten validar el comportamiento en conjunto de las mismas
 
 11. **¿Con qué me permite interactuar la clase WebDriver de Selenium?**
 
@@ -78,7 +78,7 @@
 
 18. **Son todos métodos para automatizar la navegación:**
 
-**R/:**  
+**R/:** back(), forward(), refresh(), close(), quit() 
 
 19. **¿Qué hace el siguiente código?**
 
