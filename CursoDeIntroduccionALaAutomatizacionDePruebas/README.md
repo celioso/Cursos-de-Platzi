@@ -172,7 +172,7 @@ Las desventajas de capture/playback son:
 
 El *framework Linear Scripting* se asemeja a *Capture/Playback*, pero se diferencia en que el **linear scripting permite observar y manipular el código grabado**, mientras que en el **Caputure/playback** es inaccesible. Algunos autores los agrupan en el mismo tipo.
 
-![i1]("imagens/intro_automatizacion_pruebas01.png")
+![i1](images/intro_automatizacion_pruebas01.png)
 
 Las ventajas de linear scripting son:
 
@@ -191,7 +191,7 @@ El framework Structured Scripting permite **reutilizar el código** de los casos
 
 Esquema ilustrativo del framework Structured Scripting para automatización de pruebas
 
-![i2]("imagens/intro_automatizacion_pruebas02.png")
+![i2](images/intro_automatizacion_pruebas02.png)
 
 Las ventajas de *structured scripting* son:
 
@@ -209,7 +209,7 @@ Las desventajas de *structured scripting* son:
 
 El *framework Module Based* se basa en **módulos relacionados con los principios de la programación orientada a objetos** (POO). Los módulos están separados por una capa de abstracción, de tal forma que los cambios puedan ser realizados en las secciones de la aplicación.
 
-![i3]("imagens/intro_automatizacion_pruebas03.png")
+![i3](images/intro_automatizacion_pruebas03.png)
 
 Las ventajas del *Module Based* son:
 
@@ -227,7 +227,7 @@ El *framework Data-Driven* se basa en una estructura semejante a la de *Module B
 
 Por ejemplo, si se requiere probar un inicio de sesión, no es necesario ir al código y cambiar las credenciales manualmente, sino extraer la información de un archivo de Excel, bases de datos, API, entre otros.
 
-![i4]("imagens/intro_automatizacion_pruebas04.png")
+![i4](images/intro_automatizacion_pruebas04.png)
 
 Las ventajas de *Data driven* son:
 
@@ -244,7 +244,7 @@ Las desventajas de *Data driven* son:
 
 El *framework Keyword-Driven* consiste en **realizar acciones en el código a través de una palabra reservada** (*keyword*). Lo que hará será activar una determinada acción según el procedimiento (*step number*), por ejemplo en la siguiente imagen observarás que primero se ejecutará un inicio de sesión (*login*), después un clic en un botón (*clickButton*) y así sucesivamente.
 
-![i5]("imagens/intro_automatizacion_pruebas05.png")
+![i5](images/intro_automatizacion_pruebas05.png)
 
 Las ventajas de *Keyword-driven* son:
 
@@ -261,7 +261,7 @@ Las desventajas de *Keyword-driven* son:
 
 El *framework Hybrid* consiste en una combinación de *Data-driven y Keyword-driven*, en el cual se tiene la información que desea utilizar en una acción determinada por la palabra clave (*keyword*) en un determinado paso (*step number*).
 
-![i6]("imagens/intro_automatizacion_pruebas06.png")
+![i6](images/intro_automatizacion_pruebas06.png)
 
 ### Behavior Driven Development
 El *framework Behavior Driven Development* (BDD) es un marco de desarrollo impulsado por el desarrollo que contiene un lenguaje sencillo de leer para cualquiera. Normalmente, se utiliza un lenguaje natural *Gherkin* que consta de tres partes:
@@ -270,7 +270,7 @@ El *framework Behavior Driven Development* (BDD) es un marco de desarrollo impul
 - **When:** nos da el detonante de la acción.
 - **Then:** permite validar con un criterio de aceptación.
 
-![i7]("imagens/UvUUloL7.png")
+![i7](images/UvUUloL7.png)
 
 Las ventajas de *BDD* son:
 
@@ -319,3 +319,40 @@ Las desventajas de *BDD* son:
 - Impulsado por el comportamiento, usa palabras reservadas en un lenguaje llamado gherkin
  - Pros: mayor compatibilidad entre historias de usuario y test cases, claros resultados de pruebas, reutilización de código, data driven
  - Contras: Mucho tiempo, tiempo de planificación, conocimiento de Gherkin o lenguaje similar
+
+ ## Proceso de automatización de pruebas
+
+El **proceso de automatización de pruebas** consiste en integrar tus conocimientos de automatización, ventajas, desventajas, *frameworks* con tu flujo de trabajo o el de la empresa.
+
+### Ciclo de desarrollo de una aplicación o de una solución automatizada
+
+![pap1](images/pap1.png)
+
+Este ciclo es muy parecido al proceso que se emplea para el desarrollo de un sistema:
+
+- Análisis
+- Diseño
+- Desarrollo
+- Test
+- Deploy
+- Evolución
+
+### ¿Cómo se integra con otras metodologías?
+
+El proceso de automatización de pruebas se integra con otras metodologías, como Scrum, de la siguiente manera:
+
+![pap2](images/pap2.png)
+
+- El análisis de la automatización se basa en el diseño del sistema de desarrollo
+- El test requiere del despliegue de la automatización, ya que no es posible probar el sistema si la solución de la prueba no está lista para utilizarla.
+
+### ¿Cómo se integra con un equipo de pruebas manuales?
+
+El proceso de automatización de prueba se integra con otras metodologías y con pruebas manuales de la siguiente manera:
+
+![pap3](images/pap3.png)
+
+- El diseño del sistema también va a mejorar el análisis de las pruebas manuales.
+- El despliegue de las pruebas manuales mejorará el análisis de la automatización de pruebas.
+
+Por otro lado, no se podrá realizar una prueba en el sistema sin un despliegue de las pruebas automáticas y manuales. Esto permite desarrollar pruebas más estables y flujos que el negocio necesite.
