@@ -172,7 +172,7 @@ Las desventajas de capture/playback son:
 
 El *framework Linear Scripting* se asemeja a *Capture/Playback*, pero se diferencia en que el **linear scripting permite observar y manipular el código grabado**, mientras que en el **Caputure/playback** es inaccesible. Algunos autores los agrupan en el mismo tipo.
 
-![i1]("imagens/intro_automatizacion_pruebas01.png" "i1")
+![i1]("imagens/intro_automatizacion_pruebas01.png")
 
 Las ventajas de linear scripting son:
 
@@ -191,7 +191,7 @@ El framework Structured Scripting permite **reutilizar el código** de los casos
 
 Esquema ilustrativo del framework Structured Scripting para automatización de pruebas
 
-![i2]("imagens/intro_automatizacion_pruebas02.png" "i2")
+![i2]("imagens/intro_automatizacion_pruebas02.png")
 
 Las ventajas de *structured scripting* son:
 
@@ -209,7 +209,7 @@ Las desventajas de *structured scripting* son:
 
 El *framework Module Based* se basa en **módulos relacionados con los principios de la programación orientada a objetos** (POO). Los módulos están separados por una capa de abstracción, de tal forma que los cambios puedan ser realizados en las secciones de la aplicación.
 
-![i3]("imagens/intro_automatizacion_pruebas03.png" "i3")
+![i3]("imagens/intro_automatizacion_pruebas03.png")
 
 Las ventajas del *Module Based* son:
 
@@ -227,7 +227,7 @@ El *framework Data-Driven* se basa en una estructura semejante a la de *Module B
 
 Por ejemplo, si se requiere probar un inicio de sesión, no es necesario ir al código y cambiar las credenciales manualmente, sino extraer la información de un archivo de Excel, bases de datos, API, entre otros.
 
-![i4]("imagens/intro_automatizacion_pruebas04.png" "i4")
+![i4]("imagens/intro_automatizacion_pruebas04.png")
 
 Las ventajas de *Data driven* son:
 
@@ -244,7 +244,7 @@ Las desventajas de *Data driven* son:
 
 El *framework Keyword-Driven* consiste en **realizar acciones en el código a través de una palabra reservada** (*keyword*). Lo que hará será activar una determinada acción según el procedimiento (*step number*), por ejemplo en la siguiente imagen observarás que primero se ejecutará un inicio de sesión (*login*), después un clic en un botón (*clickButton*) y así sucesivamente.
 
-![i5]("imagens/intro_automatizacion_pruebas05.png" "i5")
+![i5]("imagens/intro_automatizacion_pruebas05.png")
 
 Las ventajas de *Keyword-driven* son:
 
@@ -261,7 +261,7 @@ Las desventajas de *Keyword-driven* son:
 
 El *framework Hybrid* consiste en una combinación de *Data-driven y Keyword-driven*, en el cual se tiene la información que desea utilizar en una acción determinada por la palabra clave (*keyword*) en un determinado paso (*step number*).
 
-![i6]("imagens/intro_automatizacion_pruebas06.png" "i6")
+![i6]("imagens/intro_automatizacion_pruebas06.png")
 
 ### Behavior Driven Development
 El *framework Behavior Driven Development* (BDD) es un marco de desarrollo impulsado por el desarrollo que contiene un lenguaje sencillo de leer para cualquiera. Normalmente, se utiliza un lenguaje natural *Gherkin* que consta de tres partes:
@@ -270,7 +270,7 @@ El *framework Behavior Driven Development* (BDD) es un marco de desarrollo impul
 - **When:** nos da el detonante de la acción.
 - **Then:** permite validar con un criterio de aceptación.
 
-![i7]("imagens/UvUUloL7.png" "i7")s
+![i7]("imagens/UvUUloL7.png")
 
 Las ventajas de *BDD* son:
 
