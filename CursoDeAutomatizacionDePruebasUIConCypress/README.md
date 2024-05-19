@@ -114,3 +114,47 @@ otra opción es modificar el package.json en test con el siguiente código.
 y lo iniciamos con:
 
 `npm run test`
+
+## Nuestra primera prueba
+
+Iniciar Cypress
+`npm run test`
+
+para ignorar los archivos de prueba que trae por defecto, se debe editar el archivo `cypress.config.js` en la versión v13.9.0
+como se muestra en el siguiente código.
+
+```json
+const { defineConfig } = require("cypress");
+
+module.exports = defineConfig({
+  e2e: {
+    setupNodeEvents(on, config) {
+      // implement node event listeners here
+    },
+  excludeSpecPattern: [
+    "cypress/e2e/1-getting-started/",
+    "cypress/e2e/2-advanced-examples/"
+    ],
+	"viewportWidth":1920,
+    "viewportHeight":1080
+  },
+});
+```
+viewportWidth es para el tamaño d ela ventan.
+
+Creamos un archivo llamado `primerPrueba.spec.cy.js` en las carpeta **cypress** luego en la carpeta **e2e**
+
+el archivo `primerPrueba.spec.cy.js` lleva el siguiente código.
+
+```json
+describe('Primer Suite de Pruebas', () => {
+        it('primer prueba', () => {
+            cy.visit('https://platzi.com');
+        });
+        it('segunda prueba', () => {
+            cy.visit('https://platzi.com');
+        });
+        it('tercera prueba', () => {
+            cy.visit('https://platzi.com');
+        });
+```

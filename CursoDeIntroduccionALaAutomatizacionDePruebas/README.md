@@ -356,3 +356,74 @@ El proceso de automatización de prueba se integra con otras metodologías y con
 - El despliegue de las pruebas manuales mejorará el análisis de la automatización de pruebas.
 
 Por otro lado, no se podrá realizar una prueba en el sistema sin un despliegue de las pruebas automáticas y manuales. Esto permite desarrollar pruebas más estables y flujos que el negocio necesite.
+
+## Automatización de pruebas en CI/CD
+
+La industria del software evoluciona rápidamente, por lo tanto, se debe construir y entregar valor constantemente. La integración continua y el despliegue continuo (CI/CD) consiste en **distribuir las aplicaciones lo más rápido** posible con la ayuda de la automatización de pruebas.
+
+En la siguiente imagen observarás la forma convencional (*Waterfall approach*) frente a la integración y despliegue continuo (CI/CD). La diferencia principal es la interconectividad del desarrollo del CI/CD.
+
+![apclcd1](images/apclcd1.png)
+
+### Ejemplos de soluciones automatizadas
+
+El primer ejemplo consiste en un repositorio de código (GitHub, GitLab, entre otros), en el cual se construyen las soluciones (*Build system*), después se implementan las pruebas (*Test framework*), y finalmente se libera y despliega.
+
+Esto ocurre cuando realizas un *commit* a una rama principal, entonces se ejecuta el *build*, después se realizan las pruebas. Esto permite integrar, liberar y desplegar de manera constante.
+
+![apclcd2](images/apclcd2.png)
+
+Pero esto puede cambiar dependiendo de las necesidades de la aplicación o de la empresa, por lo que puedes añadir más pasos, otras pruebas, validaciones, pero manteniendo el despliegue continuo.
+
+![apclcd3](images/apclcd3.png)
+
+### Beneficios de la automatización de pruebas en CI/CD
+
+Las ventajas que conlleva una integración y despliegue continuo son:
+
+- Mayor agilidad para un desarrollo más rápido.
+- Disminución de costos por la automatización de pruebas manuales y por la rapidez de entrega de valor de un producto.
+- Mayor seguridad en el despliegue a producción, evitando introducir bugs al momento de entregar el producto.
+- Aumento en la productividad y disminución de tiempos, permitiendo a los desarrolladores dedicar más tiempo a la solución de otros errores.
+
+Finalmente, **no existen desventajas** en el uso de pruebas automatizadas en el flujo de integración y despliegue continuo.
+
+## Herramientas para automatización de pruebas
+
+Existen varias herramientas para la automatización de pruebas, dependiendo para qué las vas a utilizar.
+
+Los siguientes ejemplos son *software* de código abierto, pero existen aplicaciones de pago que te ofrecerán servicios para mejorar tu desarrollo, como el soporte, configuración, solución de problemas. Por lo que debes ser capaz de evaluar las ventajas y desventajas de una herramienta de pago.
+
+### Unit testing
+
+Para pruebas unitarias, algunas herramientas para la automatización de pruebas son:
+
+- Jest y Mocha: se utilizan con el lenguaje de programación JavaScript
+- React/Vue Testing Library: para pruebas en el frontend
+- Enzyme
+
+![hap1.png](images/hap1.png)
+
+### API testing
+
+Para API testing, algunas herramientas para probar endpoints son: Rest assured, Postman, Insomnia.
+
+![hap2.png](images/hap2.png)
+
+### Web browser testing
+
+Para *Web browser testing*, algunas herramientas para interactuar con el navegador son: Selenium, Puppeteer, Playwright, Testcafe, Cypress.
+
+![hap3.png](images/hap3.png)
+
+### Mobile testing
+
+Para *Mobile testing*, algunas herramientas para la automatización de pruebas son: Appium, Detox, Calabash.
+
+![hap4.png](images/hap4.png)
+
+### Performance
+
+Algunas herramientas para probar el rendimiento son: Jmeter, Gatling.
+
+![hap5.png](images/hap5.png)
