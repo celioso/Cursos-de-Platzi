@@ -172,7 +172,7 @@ Las desventajas de capture/playback son:
 
 El *framework Linear Scripting* se asemeja a *Capture/Playback*, pero se diferencia en que el **linear scripting permite observar y manipular el código grabado**, mientras que en el **Caputure/playback** es inaccesible. Algunos autores los agrupan en el mismo tipo.
 
-![i1]("C:\Users\celio\OneDrive\Escritorio\programación\platimagens\intro_automatizacion_pruebas01.png" "i1")
+![i1]("imagens\intro_automatizacion_pruebas01.png" "i1")
 
 Las ventajas de linear scripting son:
 
@@ -191,7 +191,7 @@ El framework Structured Scripting permite **reutilizar el código** de los casos
 
 Esquema ilustrativo del framework Structured Scripting para automatización de pruebas
 
-![i2]("C:\Users\celio\OneDrive\Escritorio\programación\platzi\CursoDeIntroduccionALaAutomatizacionDePruebas\imagens\intro_automatizacion_pruebas02.png" "i2")
+![i2]("imagens\intro_automatizacion_pruebas02.png" "i2")
 
 Las ventajas de *structured scripting* son:
 
@@ -209,7 +209,7 @@ Las desventajas de *structured scripting* son:
 
 El *framework Module Based* se basa en **módulos relacionados con los principios de la programación orientada a objetos** (POO). Los módulos están separados por una capa de abstracción, de tal forma que los cambios puedan ser realizados en las secciones de la aplicación.
 
-![i3]("C:\Users\celio\OneDrive\Escritorio\programación\platzi\CursoDeIntroduccionALaAutomatizacionDePruebas\imagens\intro_automatizacion_pruebas03.png" "i3")
+![i3]("imagens\intro_automatizacion_pruebas03.png" "i3")
 
 Las ventajas del *Module Based* son:
 
@@ -227,7 +227,7 @@ El *framework Data-Driven* se basa en una estructura semejante a la de *Module B
 
 Por ejemplo, si se requiere probar un inicio de sesión, no es necesario ir al código y cambiar las credenciales manualmente, sino extraer la información de un archivo de Excel, bases de datos, API, entre otros.
 
-![i4]("C:\Users\celio\OneDrive\Escritorio\programación\platzi\CursoDeIntroduccionALaAutomatizacionDePruebas\imagens\intro_automatizacion_pruebas04.png" "i4")
+![i4]("imagens\intro_automatizacion_pruebas04.png" "i4")
 
 Las ventajas de *Data driven* son:
 
@@ -244,7 +244,7 @@ Las desventajas de *Data driven* son:
 
 El *framework Keyword-Driven* consiste en **realizar acciones en el código a través de una palabra reservada** (*keyword*). Lo que hará será activar una determinada acción según el procedimiento (*step number*), por ejemplo en la siguiente imagen observarás que primero se ejecutará un inicio de sesión (*login*), después un clic en un botón (*clickButton*) y así sucesivamente.
 
-![i5]("C:\Users\celio\OneDrive\Escritorio\programación\platzi\CursoDeIntroduccionALaAutomatizacionDePruebas\imagens\intro_automatizacion_pruebas05.png" "i5")
+![i5]("imagens\intro_automatizacion_pruebas05.png" "i5")
 
 Las ventajas de *Keyword-driven* son:
 
@@ -261,7 +261,7 @@ Las desventajas de *Keyword-driven* son:
 
 El *framework Hybrid* consiste en una combinación de *Data-driven y Keyword-driven*, en el cual se tiene la información que desea utilizar en una acción determinada por la palabra clave (*keyword*) en un determinado paso (*step number*).
 
-![i6]("C:\Users\celio\OneDrive\Escritorio\programación\platzi\CursoDeIntroduccionALaAutomatizacionDePruebas\imagens\intro_automatizacion_pruebas06.png" "i6")
+![i6]("imagens\intro_automatizacion_pruebas06.png" "i6")
 
 ### Behavior Driven Development
 El *framework Behavior Driven Development* (BDD) es un marco de desarrollo impulsado por el desarrollo que contiene un lenguaje sencillo de leer para cualquiera. Normalmente, se utiliza un lenguaje natural *Gherkin* que consta de tres partes:
@@ -270,7 +270,7 @@ El *framework Behavior Driven Development* (BDD) es un marco de desarrollo impul
 - **When:** nos da el detonante de la acción.
 - **Then:** permite validar con un criterio de aceptación.
 
-![i7]("C:\Users\celio\OneDrive\Escritorio\programación\platzi\CursoDeIntroduccionALaAutomatizacionDePruebas\imagens\UvUUloL7.png" "i7")s
+![i7]("imagens\UvUUloL7.png" "i7")s
 
 Las ventajas de *BDD* son:
 
@@ -285,3 +285,37 @@ Las desventajas de *BDD* son:
 - Mayor tiempo de planificación en la estructura del código y sus sentencias.
 - Conocimiento de Gherkin o similar.
 
+## Tipos de frameworks de automatización
+
+### Capture/Playback
+- Reproduce lo que hayas hecho durante la prueba
+ -  Pros: Se puede usar para el SUT (System under test) a nivel de GUI/API, inicialmente facil de configurar y usar.
+  -  Contras: Dificil de mantener. Implementación hasta que el sistema este disponible
+### Linear Scripting
+- Es parecido al anterior, pero puede ir por partes y se puede comentar a nivel de código
+ -  Pros: Se puede usar a nivel GUI o API y es facil de configurar
+ -  Contras: Cantidad de esfuerzo (se hace por partes), difícil de mantener, costo de mantenimiento lineal
+### Structured Scripting
+- Podemos reutilizar los scripts
+ - Pros: Reducción de mantenimiento, reutilización de secuencia de comandos, costo de construcción y mantenimiento
+ - Contras: mayor esfuerzo inicial, habilidades de programación, administración.
+### Module based
+- Basado en POO, cambios pueden ser por secciones
+ - Pros: Modular, scalable y flexible (fácil mantenimiento)
+ - Contras: Sin flexibilidad en datos
+### Data Driven
+-Tenemos mas entradas de prueba (no hardcoded)
+ - Pros: Costo, mayor cobertura, flexibilidad en ejecución
+ - Contras: Mas fuentes de datos, dominio de un lenguaje de programación
+### Keyword Driven
+- Parecido al data driven, pero tengo palabras que toman acciones basado en pasos
+ - Pros: Flexibilidad en creación de las pruebas, reutilizacion de código, no require conocimientos de secuencias de comando
+ - Contras: complejidad de aprendizaje, incremento de dificultad con mas palabras clave
+### Hybrid
+- Hibrido entre data driven y keyword driven
+ - Pros: Los de los dos anteriores
+ - Contras: Los de los dos anteriores
+### Behavior driven development
+- Impulsado por el comportamiento, usa palabras reservadas en un lenguaje llamado gherkin
+ - Pros: mayor compatibilidad entre historias de usuario y test cases, claros resultados de pruebas, reutilización de código, data driven
+ - Contras: Mucho tiempo, tiempo de planificación, conocimiento de Gherkin o lenguaje similar
