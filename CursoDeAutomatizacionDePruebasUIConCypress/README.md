@@ -158,3 +158,152 @@ describe('Primer Suite de Pruebas', () => {
             cy.visit('https://platzi.com');
         });
 ```
+
+## Navegación
+
+para este punto se utilizan los siguientes comandos:
+**cy.reload()**: que es para regresar la página.
+**cy.go("back") o cy.go(-1):** para regresar a la anterior página.
+**cy.go("forward") o cy.go(1):** para avanzar a la siguiente página.
+
+```json
+describe('Prueba de navegacion', () => {
+
+    it('Navegando a un sitio', () => {
+        cy.visit('https://platzi.com');
+    });
+
+
+    it('Recargar una pagina', () => {
+        cy.reload()
+    });
+
+    it('Force reload  una pagina', () => {
+        cy.visit('https://google.com');
+        cy.reload(true)
+    });
+
+    it('Navegar hacia atras en una pagina', () => {
+        cy.visit('https://google.com');
+        cy.visit('https://www.google.com/search?q=platzi&sxsrf=APq-WBsJmYoDdRVdbT5vkzyA6INN9o-OoA%3A1645072295957&source=hp&ei=p88NYtzpNpauytMPo56H6Aw&iflsig=AHkkrS4AAAAAYg3dt-lyynY6DU3aZCGsxCJKBESc0ZTy&ved=0ahUKEwic2c7u84X2AhUWl3IEHSPPAc0Q4dUDCAY&uact=5&oq=platzi&gs_lcp=Cgdnd3Mtd2l6EAMyBAgjECcyDgguEIAEELEDEMcBENEDMggIABCABBCxAzILCC4QgAQQxwEQrwEyBQgAEIAEMgUIABCABDIFCAAQgAQyBQgAEIAEMgUIABCABDIFCAAQgAQ6BwgjEOoCECc6CwguEIAEELEDEIMBOggIABCxAxCDAToLCAAQgAQQsQMQgwE6CAguEIAEELEDOgYIIxAnEBM6BAgAEEM6BwgAELEDEEM6BwgAEMkDEEM6CgguEMcBEKMCEEM6DgguEIAEELEDEIMBENQCULcEWNgNYKYQaAFwAHgAgAGAAYgBxgWSAQMwLjaYAQCgAQGwAQo&sclient=gws-wiz');
+        cy.go('back')
+        // cy.go(-1)
+    });
+
+    it('Navegar hacia adelante en una pagina', () => {
+        cy.visit('https://google.com');
+        cy.visit('https://www.google.com/search?q=platzi&sxsrf=APq-WBsJmYoDdRVdbT5vkzyA6INN9o-OoA%3A1645072295957&source=hp&ei=p88NYtzpNpauytMPo56H6Aw&iflsig=AHkkrS4AAAAAYg3dt-lyynY6DU3aZCGsxCJKBESc0ZTy&ved=0ahUKEwic2c7u84X2AhUWl3IEHSPPAc0Q4dUDCAY&uact=5&oq=platzi&gs_lcp=Cgdnd3Mtd2l6EAMyBAgjECcyDgguEIAEELEDEMcBENEDMggIABCABBCxAzILCC4QgAQQxwEQrwEyBQgAEIAEMgUIABCABDIFCAAQgAQyBQgAEIAEMgUIABCABDIFCAAQgAQ6BwgjEOoCECc6CwguEIAEELEDEIMBOggIABCxAxCDAToLCAAQgAQQsQMQgwE6CAguEIAEELEDOgYIIxAnEBM6BAgAEEM6BwgAELEDEEM6BwgAEMkDEEM6CgguEMcBEKMCEEM6DgguEIAEELEDEIMBENQCULcEWNgNYKYQaAFwAHgAgAGAAYgBxgWSAQMwLjaYAQCgAQGwAQo&sclient=gws-wiz');
+        cy.go('back')
+        cy.go('forward')
+        // cy.go(1)
+    });
+
+
+    it('Navegar hacia adelante en una pagina con chain command', () => {
+        cy.visit('https://google.com');
+        cy.visit('https://www.google.com/search?q=platzi&sxsrf=APq-WBsJmYoDdRVdbT5vkzyA6INN9o-OoA%3A1645072295957&source=hp&ei=p88NYtzpNpauytMPo56H6Aw&iflsig=AHkkrS4AAAAAYg3dt-lyynY6DU3aZCGsxCJKBESc0ZTy&ved=0ahUKEwic2c7u84X2AhUWl3IEHSPPAc0Q4dUDCAY&uact=5&oq=platzi&gs_lcp=Cgdnd3Mtd2l6EAMyBAgjECcyDgguEIAEELEDEMcBENEDMggIABCABBCxAzILCC4QgAQQxwEQrwEyBQgAEIAEMgUIABCABDIFCAAQgAQyBQgAEIAEMgUIABCABDIFCAAQgAQ6BwgjEOoCECc6CwguEIAEELEDEIMBOggIABCxAxCDAToLCAAQgAQQsQMQgwE6CAguEIAEELEDOgYIIxAnEBM6BAgAEEM6BwgAELEDEEM6BwgAEMkDEEM6CgguEMcBEKMCEEM6DgguEIAEELEDEIMBENQCULcEWNgNYKYQaAFwAHgAgAGAAYgBxgWSAQMwLjaYAQCgAQGwAQo&sclient=gws-wiz').go('back').go('forward')
+    });
+})
+```
+
+## Tipos de localizadores
+primero colocamos el siguiente código para corregir el error de consola.
+
+```javascript
+Cypress.on('uncaught:exception', (err, runnable) => {
+    // Registrar el error en la consola
+    console.error('Excepción no capturada', err);
+    
+    // Devolver false aquí previene que Cypress falle la prueba
+    return false;
+  });
+```
+
+Empezamos identificando los tag que tiene  la página.
+
+```javascript
+describe('Probando configuracion', () => {
+
+    it('Obteniendo por un tag', () => {
+        cy.visit('/automation-practice-form')
+        cy.get("input")    
+    });
+```
+
+El siguiente código es para identificar un tag,  atributo y un id.
+
+```javascript
+ it('Obteniendo por un de un atributo', () => {
+        cy.visit('/automation-practice-form')
+        cy.get('[placeholder="First Name"]')
+        
+    });
+
+    it('Obteniendo por un de un atributo y un tag', () => {
+        cy.visit('/automation-practice-form')
+        cy.get('input[placeholder="First Name"]')
+        
+    });
+
+    it('Obteniendo por un de un id', () => {
+        cy.visit('/automation-practice-form')
+        cy.get("#firstName")
+        
+    });
+
+    it('Obteniendo por un de un class', () => {
+        cy.visit('/automation-practice-form')
+        cy.get(".mr-sm-2.form-control")
+        
+    });
+```
+
+## Encontrando elementos
+
+Yo estoy utilizando Cypress versión 13 con Visual estudio Code, me funciona de la siguiente manera
+
+```javascript
+  it( "Usando Contains",  () =>{         
+
+//Para encntrar un elemento q contenga cierto texto           
+
+// cy.visit('/automation-practice-form')         
+
+// cy.get('input[placeholder="First Name"]')       
+
+cy.contains('Reading')       
+
+cy.get('.header-wrapper').contains('Widgets')
+```
+
+Selector |Recommended | Notes
+--------|-----------------|-------
+cy.get('button').click() | Never | Worst - too generic, no context.
+cy.get('.btn.btn-large').click() | Never | Bad. Coupled to styling. Highly subject to change.
+cy.get('#main').click() | Sparingly | Better. But still coupled to styling or JS event listeners.
+cy.get('[name="submission"]').click() |  Sparingly | Coupled to the name attribute which has HTML semantics.
+cy.contains('Submit').click()  | Depends | Much better. But still coupled to text content that may change.
+cy.get('[data-cy="submit"]').click() |  Always | Best. Isolated from all changes.
+
+Es otra forma de utilizar para buscar ciertos elementos. Cómo contains y elementos parent como se muestra en el siguiente código.
+
+```javascript
+it('usando Contains', () => {
+        cy.visit('/automation-practice-form')
+        cy.contains("Reading")
+        cy.contains(".header-wrapper","Widget")
+        
+    });
+
+    it('usando parent', () => {
+        cy.visit('/automation-practice-form')
+        //Obteniendo el elemento el padre
+        cy.get('input[placeholder="First Name"]').parent()
+        //Obteniendo el elemento el padres
+        cy.get('input[placeholder="First Name"]').parents()
+
+        cy.get('input[placeholder="First Name"]').parents().find("label")
+        
+        cy.get("form").find("label")
+    });
+```

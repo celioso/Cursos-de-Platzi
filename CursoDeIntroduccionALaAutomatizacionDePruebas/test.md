@@ -58,11 +58,11 @@
 
 15. **¿Qué es lo que alimenta el análisis del ciclo de Test Automation?**
 
-**R/:** 
+**R/:** El diseño del sistema que se está desarrollando.
 
 16. **¿Qué es necesario que esté terminado para poder entrar a la fase de "Test" del sistema que se está desarrollando?**
 
-**R/:** 
+**R/:** El despliegue de la Automatización y del equipo de Manual Testing.
 
 17. **¿Por qué la agilidad y la productividad son algunos de los beneficios de tener automatización de pruebas en CI/CD?**
 
@@ -70,7 +70,7 @@
 
 18. **¿Cuál es una desventaja de implementar la automatización de pruebas en tu flujo de CI/CD?**
 
-**R/:** 
+**R/:** EL ROI no vale la pena o No hay desventajas
 
 19. **Son ejemplos de herramientas de prueba de navegadores:**
 
