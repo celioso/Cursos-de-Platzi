@@ -307,3 +307,108 @@ it('usando Contains', () => {
         cy.get("form").find("label")
     });
 ```
+
+### Guardando elementos
+
+Yields
+[📚 Documentation](https://docs.cypress.io/api/commands/then#Yields "📚 Documentation") . Los "Yields" son punteros producidos mediante referencias por `.then`. Dichas referencias son modeladas idénticamente como Promesas en JavaScript, el resultado obtenido como retorno de un `then` es llamado como *Yield*. 
+
+`cy.get('.nav').then((nav) => {})`
+
+- Dentro de un función callback, tendremos clousers que permite manipular la referencias con el propósito de manipular valores o realizar algunas acciones. . En cuyo caso que se desea cambiar la operación a comandos de Cypress, utilizamos `.wrap`. [📚 Documentación](https://docs.cypress.io/api/commands/wrap "📚 Documentación")
+
+```javascript
+cy.wrap(1)
+  .then((num) => {
+    cy.wrap(num).should('equal', 1) // true
+  })
+  .should('equal', 1) // true
+```
+
+- Adicionalmente, con wrap podemos referencial:
+
+- **Objetos**
+
+```javascript
+const getName = () => {
+  return 'Jane Lane'
+}
+
+cy.wrap({ name: getName }).invoke('name').should('eq', 'Jane Lane')
+```
+
+- **Elementos**
+
+```javascript
+cy.get('form').within((form) => {
+  cy.wrap(form).should('have.class', 'form-container')
+})
+```
+
+- **Promesas como eventos**
+
+```javascript
+const myPromise = new Promise((resolve, reject) => {
+  setTimeout(() => {
+    resolve({
+      type: 'success',
+      message: 'It worked!',
+    })
+  }, 2500)
+})
+
+it('should wait for promises to resolve', () => {
+  cy.wrap(myPromise).its('message').should('eq', 'It worked!')
+})
+```
+
+## Aserciones
+
+### TDD VS BDD
+
+Cuando nos referimos a una **aserción**, nos estamos refiriendo a un hecho o verdad esperado y comprobado. . **TDD** o **Test Driven Development**, es un proceso de escritura de pruebas con la intención de especificar una funcionalidad. . Por su parte, **BDD** o **Behavior Driven Development**, es un proceso de escritura de pruebas con la intención de especificar una característica. . Ambas, son procesos complementarios cuya principal diferencia es el alcance. En concreto, **TDD** es una práctica de desarrollo mientras **BDD** es una metodología de aplicación, es decir, mientras una es escrita por desarrolladores, la otra es especifica por requerimientos de usuarios, respectivamente. 
+
+**Estilos de pruebas**
+
+Con Cypress, ya que incorpora librerías como Chai o extensiones para Sinon o jQuery, podemos describir pruebas mediante **BDD** (`expect/ should`) y/o mediante **TDD** (`assert`).
+
+```javascript
+Cypress.on('uncaught:exception', (err, runnable) => {
+    // Registrar el error en la consola
+    console.error('Excepción no capturada', err);
+    
+    // Devolver false aquí previene que Cypress falle la prueba
+    return false;
+  });
+
+describe("Aserciones", () => {
+
+    it('Asercion', () => {
+        cy.visit('/automation-practice-form')
+        cy.url().should("include", "demoqa.com")
+        cy.get("#firstName").should("be.visible").and("have.attr", "placeholder", "First Name")
+    });
+
+    it('Asercion 2', () => {
+        cy.visit('/automation-practice-form')
+        cy.url().should("include", "demoqa.com")
+        cy.get("#firstName").then((element)=>{
+            expect(element).to.be.visible
+            expect(element).to.have.attr("placeholder", "First Name")
+    })
+});
+
+    it('Asercion 3', () => {
+        cy.visit('/automation-practice-form')
+        cy.url().should("include", "demoqa.com")
+        cy.get("#firstName").then((element)=>{
+            assert.equal(element.attr("placeholder"),"First Name")
+    })
+})
+
+});
+```
+
+web de **cypress asserttions**
+
+[cypress](https://docs.cypress.io/guides/references/assertions "cypress")
