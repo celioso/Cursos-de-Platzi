@@ -11,6 +11,14 @@ module.exports = defineConfig({
     ],
     "viewportWidth":1920,
     "viewportHeight":1080,
-    "baseUrl": "https://demoqa.com" //para colocar la página de base
+    "baseUrl": "https://demoqa.com", //para colocar la página de base
+    setupNodeEvents(on, config) {
+      on('task', {
+        log(message){
+            console.log(`Soy el console log del task ${message}`)
+            return null
+        }
+    })
+    }
   },
 });

@@ -412,3 +412,164 @@ describe("Aserciones", () => {
 web de **cypress asserttions**
 
 [cypress](https://docs.cypress.io/guides/references/assertions "cypress")
+
+## Hooks
+
+[📚 Documentación](https://docs.cypress.io/guides/core-concepts/writing-and-organizing-tests#Hooks "📚 Documentación") Como lo indica la documentación de Cypress, los hooks son proveedores que permiten, mediante condicionales, realizar operaciones antes `before` / después `after` de un conjunto de pruebas o antes de `beforeEach`/ después `afterEach` prueba. . La versatilidad de su uso es, como bien lo indica el instructor, para encapsular bloques operativos como pipelines o flujos de trabajo. . Recordemos que Cypress es un framework que opera en diferentes capas, unitarias / integración E2E, que se puede complementar con librerías como Testing Library / Jest, por lo que dependiendo de su intención, podríamos atacar con mayor certeza casos de uso o requerimientos.
+
+```javascript
+before(() => {
+  // root-level hook
+  // runs once before all tests
+})
+
+beforeEach(() => {
+  // root-level hook
+  // runs before every test block
+})
+
+afterEach(() => {
+  // runs after each test block
+})
+
+after(() => {
+  // runs once all tests are done
+})
+
+describe('Hooks', () => {
+  before(() => {
+    // runs once before all tests in the block
+  })
+
+  beforeEach(() => {
+    // runs before each test in the block
+  })
+
+  afterEach(() => {
+    // runs after each test in the block
+  })
+
+  after(() => {
+    // runs once after all tests in the block
+  })
+})
+```
+
+[Repositorio de GitHub](https://github.com/javierfuentesm/CypressUIPlatzi/tree/hooks "Repositorio de GitHub")
+
+
+## Debuggear con Cypress
+
+ [Documentación](https://docs.cypress.io/guides/guides/debugging "Documentación") . Retomando lo visto en esta sesión, el proceso de inspección de un código (Debugger) nos permite analizar procesos secuenciales como estados, valores de retorno, interacciones, etc. .
+
+### Usando el Debugger de forma tradicional
+
+Cuando obtenemos un elemento `.get`, visitamos un sitio`.visit` / `.url` o montamos un componente` mount`, podemos encadenar un debugger mediante la funcionalidad `.then`.
+
+```javascript
+    it('button test"', () => {
+        cy.visit('/commands/querying')
+        cy.get('#query-btn').then((btn) => {
+          debugger
+         })
+    })
+```
+Cypress, expone adicionalmente el comando `.debug()` con el que al referenciar un elemento, podemos interactuar con él mediante la variable subject. .
+
+. O de manera complementaria, detener el proceso mediante el comando `.pause` (visto en esta sesión).
+
+Ahora tienes que agregar esto al `cypress.config.js`
+
+```javascript
+ setupNodeEvents(on, config) {
+      on('task', {
+        log(message){
+            console.log(`Soy el console log del task ${message}`)
+            return null
+        }
+    })
+    }
+```De la siguiente manera
+
+```js
+const { defineConfig } = require('cypress');
+
+module.exports = defineConfig({
+  e2e: {
+    chromeWebSecurity: false,
+    experimentalModifyObstructiveThirdPartyCode: true,
+    baseUrl: 'https://demoqa.com',
+    setupNodeEvents(on, config) {
+      // implement node event listeners here
+    },
+    excludeSpecPattern:[
+      "**/1-getting-started/*.js"
+    ],
+    "viewportWidth": 1920,
+    "viewportHeight": 1080,
+    testIsolation: false,
+    setupNodeEvents(on, config) {
+      on('task', {
+        log(message){
+            console.log(`Soy el console log del task ${message}`)
+            return null
+        }
+    })
+    }
+  },
+});
+```
+
+
+Si necesitan aprender más de los plugins y como se implementan actualmente, este es el link:
+
+<https://docs.cypress.io/api/plugins/writing-a-plugin>
+
+Ahí se comenta que el anterior método con la carpeta plugins está **Deprecated**, por lo que deberán leer lo nuevo.
+
+## Tipos de espera
+
+[📚 Documentación ](https://docs.cypress.io/api/commands/wait "📚 Documentación "). Cypress nos expone un comando para manipular la ejecución secuencial de nuestras pruebas. Con `wait` podemos manipular dos oepraciones:
+
+- `.wait(time)` Timer en milisegundos
+- `.wait(alias)` Alias de elementos identificados como `.as()`
+.
+
+**Nota. **La mayoría de las veces, no deberíamos expresar de manera arbitraria la espera [✨ Buenas prácticas](https://docs.cypress.io/guides/references/best-practices#Unnecessary-Waiting "✨ Buenas prácticas")
+
+Como fue visto en sesión, podemos definir un tiempo en milisegundos un bloque de código. Sin embargo, el uso del comando wait luce más mediante la ejecución en conjunto con formato alias. . Por ejemplo, podemos esperar por la resolución de una petición a una página basada por indice y realizar alguna operación de prueba:
+
+```javascript
+cy.intercept('/accounts/*').as('getAccount')
+cy.visit('/accounts/123')
+cy.wait('@getAccount').then((interception) => {})
+```
+
+O, supongamos que podamos esperar un código de respuesta en específico:
+
+
+```javascript
+cy.wait('@getAccount').its('response.statusCode').should('eq', 200)
+```
+
+### Practica
+
+Del sitio de pruebas en la sección de Waiting, tenemos el caso donde automatizamos un formulario que posteriormente, inspeccionamos la respuesta de ejecución con `wait`.
+
+```javascript
+    it('wait test"', () => {
+        cy.visit('/commands/waiting')
+
+        cy.get('.wait-input1').type('Wait 1000ms after typing')
+        cy.wait(1000)
+        cy.get('.wait-input2').type('Wait 1000ms after typing')
+        cy.wait(1000)
+        cy.get('.wait-input3').type('Wait 1000ms after typing')
+        cy.wait(1000)
+
+        cy.intercept('GET', '**/comments/*').as('getComment')
+        cy.get('.network-btn').click()
+        cy.wait('@getComment').its('response.statusCode').should('be.oneOf', [200, 304])
+
+    })
+```
