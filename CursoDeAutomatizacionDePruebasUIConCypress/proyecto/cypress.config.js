@@ -11,6 +11,7 @@ module.exports = defineConfig({
     ],
     "viewportWidth":1920,
     "viewportHeight":1080,
+    "video": false,  //true activa la creacion del video
     "baseUrl": "https://demoqa.com", //para colocar la página de base
     setupNodeEvents(on, config) {
       on('task', {

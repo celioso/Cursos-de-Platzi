@@ -4,10 +4,15 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-  "test": "cypress open"
+  "test:ui": "cypress open",
+  "test:headlees": "cypress run",
+  "test:headlees:chrome":"cypress run --browser chrome",
+  "test:headlees:firefox": "cypress run --browser firefox",
+  "test:headlees:edge": "cypress run --browser edge --spec cypress/e2e/pruebas/hooks.spec.cy.js"
+
   },
   "keywords": [],
-  "author": "",
+  "author": "Mario Alexander Vargas Celis",
   "license": "ISC",
   "devDependencies": {
     "cypress": "^13.9.0",

@@ -573,3 +573,77 @@ Del sitio de pruebas en la sección de Waiting, tenemos el caso donde automatiza
 
     })
 ```
+
+## Modos de ejecución en Cypress
+
+para iniciar la prueba sin abrir el navegador.
+Usamos el siguiente código en json de package.json
+
+```json
+{
+  "name": "proyecto",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+  "test:ui": "cypress open",
+  "test:headlees": "cypress run",
+  "test:headlees:chrome":"cypress run --browser chrome",
+  "test:headlees:firefox": "cypress run --browser firefox",
+  "test:headlees:edge": "cypress run --browser edge --spec cypress/e2e/pruebas/hooks.spec.cy.js"
+
+  },
+  "keywords": [],
+  "author": "Mario Alexander Vargas Celis",
+  "license": "ISC",
+  "devDependencies": {
+    "cypress": "^13.9.0",
+    "prettier": "^3.2.5"
+  }
+}
+
+```
+
+También para que el test corre en un navegador específico, se usa en descripción del archivo test se agrega el siguiente código.
+
+```javascript
+describe("Navegacion", {browser: "chrome"},()=>{
+	it("Navegar a nuestra primer pagina", ()=>{
+		cy.visit("https://www.platzi.com/")
+	})
+})
+```
+
+Si desea que en todos, excepto en uno en específico, solo lo colocamos con el siguiente código se escribe  `{browser: "!chrome"}`
+y  para activar el video usamos  `"video": false,  //true activa la creacion del video` en cypress.config.js
+
+```javascript
+const { defineConfig } = require("cypress");
+
+module.exports = defineConfig({
+  e2e: {
+    setupNodeEvents(on, config) {
+      // implement node event listeners here
+    },
+    excludeSpecPattern: [
+      "cypress/e2e/1-getting-started/",
+      "cypress/e2e/2-advanced-examples/"
+    ],
+    "viewportWidth":1920,
+    "viewportHeight":1080,
+    "video": false,  //true activa la creacion del video
+    "baseUrl": "https://demoqa.com", //para colocar la página de base
+    setupNodeEvents(on, config) {
+      on('task', {
+        log(message){
+            console.log(`Soy el console log del task ${message}`)
+            return null
+        }
+    })
+    }
+  },
+});
+
+```
+
+[https://docs.cypress.io/guides/guides/command-line](https://docs.cypress.io/guides/guides/command-line)
