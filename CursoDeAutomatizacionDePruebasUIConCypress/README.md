@@ -647,3 +647,59 @@ module.exports = defineConfig({
 ```
 
 [https://docs.cypress.io/guides/guides/command-line](https://docs.cypress.io/guides/guides/command-line)
+
+### Click
+
+[📚 Documentación](https://docs.cypress.io/api/commands/click#Actionability "📚 Documentación"). Como referencia, el comando click no permite ejecutar diferentes tipos eventos onClick:
+
+```javascript
+.click()
+.click(options)
+.click(position)
+.click(position, options)
+.click(x, y)
+.click(x, y, options)
+```
+
+Complementando la sesión, `click` es un comando que sigue el concepto de [Accionabilidad](https://docs.cypress.io/guides/core-concepts/interacting-with-elements#What-you-ll-learn "Accionabilidad").
+
+Un comando, se dice que es accionable cuando simula la interactividad del usuario.
+
+De esto, podemos mencionar que Cypress lanza el evento y espera por el navegador que cause un estado, del cual Cypress inspecciona el DOM y toma acción de ello para asegurar que dicho elemento está listo para efectuar una acción. .
+
+**Practicando**
+
+Tomando como ejercicio [Cypress Example](https://example.cypress.io/commands/actions "Cypress Example"), lanzaremos eventos de **click **para nuestro fin.
+
+```javascript
+cy.get('.action-btn').click()
+
+// clicking in the center of the element is the default
+cy.get('#action-canvas').click()
+
+cy.get('#action-canvas').click('topLeft')
+cy.get('#action-canvas').click('top')
+cy.get('#action-canvas').click('topRight')
+cy.get('#action-canvas').click('left')
+cy.get('#action-canvas').click('right')
+cy.get('#action-canvas').click('bottomLeft')
+cy.get('#action-canvas').click('bottom')
+cy.get('#action-canvas').click('bottomRight')
+
+// .click() accepts a an x and y coordinate
+// that controls where the click occurs :)
+cy.get('#action-canvas')
+  .click(80, 75)
+  .click(170, 75)
+  .click(80, 165)
+  .click(100, 185)
+  .click(125, 190)
+  .click(150, 185)
+  .click(170, 165)
+
+// click multiple elements by passing multiple: true
+cy.get('.action-labels>.label').click({ multiple: true })
+
+// Ignore error checking prior to clicking
+cy.get('.action-opacity>.btn').click({ force: true })
+```
