@@ -932,3 +932,51 @@ cy.get('#comparison')
 Delimitamos la búsqueda a partir del nodo `#comparasion`
 
 Si del anterior, en vez de ocupar find se ocupa `get`, tendríamos un resultado donde poseeríamos tanto el `div.test-title` como `div.feature`.
+
+## Trabajando con date pickers
+
+```javascript
+it.only("Interactuando con date picker", function(){
+        cy.visit("https://material.angular.io/components/datepicker/overview")
+        cy.get("datepicker-overview-example").find("input").eq(0).type("11/03/2022", { force: true })
+
+        cy.get("datepicker-overview-example").find("svg").click()
+        
+    })
+```
+
+## Trabajando con popups y tooltips
+
+### Events
+[📚 Documentación](https://docs.cypress.io/api/events/catalog-of-events#Event-Types "📚 Documentación"). Cypress nos permite gestionar el acto con respecto a una serie de eventos. Según sea el caso, podemos tener la necesidad, como lo vimos en al sesión, de escuchar `alert` y confirmar o cancelar las llamadas mediante el comportamiento `confirm`. Cypress categoriza de 3 formas los eventos (Aplicación, Cypress, Otros). . De la sesión, ocupamos el evento de aplicación `window:confirm` del cual Cypress auto confirma o rechaza `(return false) `el evento.
+
+```javascript
+cy.get('#confirmButton').click()
+cy.on('window:confirm',(confirm:Error)=>{
+    expect(confirm).to.equal(value:'Do you confirm action?")
+    return false
+})
+cy.contains('You selected cancel').should('exist')
+```
+
+### Events On DOM
+[📚 Documentación](https://docs.cypress.io/api/commands/trigger "📚 Documentación"). Cuando deseamos lanzar eventos sobre listeners, podemos utilizar el comando `trigger`. Recordemos que: .
+
+**trigger** solamente lanza el correspondiente evento pero no hace más
+
+Esto significa que nuestros listeners, serán invocados pero es de descripción manual definir su prueba como comportamiento. . Para más ejemplos de eventos, [🔗 Ejemplos de Cypress](https://docs.cypress.io/api/events/catalog-of-events#Examples "🔗 Ejemplos de Cypress")
+
+## Trabajando con elementos de drag and drop
+
+```javascript
+it.only("Interactuando con drag and drop",()=>{
+        cy.visit("/dragabble")
+        cy.get("#dragBox")
+            .trigger("mousedown",{
+                which:1, 
+                pageX:600,
+                pageY:100
+            }).trigger("mousemove",{which:1, pageX:100, pageY:600})
+            .trigger("mouseup")
+        })
+```

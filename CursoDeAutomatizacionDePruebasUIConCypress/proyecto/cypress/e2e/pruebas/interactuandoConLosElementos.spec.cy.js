@@ -132,7 +132,7 @@ describe("INteractuar con los elementos",()=>{
         //cy.get("#react-select-6-option-3").click()
     })
 
-    it.only("Interactuando con tablas", function(){
+    it("Interactuando con tablas", function(){
         cy.visit("https://www.w3schools.com/html/html_tables.asp")
         cy.get("#customers").find("th").each(($el)=>{
             cy.log($el.text())
@@ -153,4 +153,77 @@ describe("INteractuar con los elementos",()=>{
             expect(texto).to.equal("Maria Anders")
         })
     })
+
+    it("Interactuando con date picker", function(){
+        cy.visit("https://material.angular.io/components/datepicker/overview")
+        cy.get("datepicker-overview-example").find("input").eq(0).type("11/03/2022", { force: true })
+
+        cy.get("datepicker-overview-example").find("svg").click()
+        
+    })
+
+    it("Interactuando con date picker", function(){
+        cy.visit("/modal-dialogs")
+        cy.get("#showSmallModal").click()
+        cy.get("#closeSmallModal").click()
+         
+    })
+
+    it("Interactuando con date picker", function(){
+        cy.visit("/alerts")
+        
+       // const stub = cy.stub()
+        //cy.on("window:confirm",stub)
+
+        //cy.get("#confirmButton").click().then(()=>{
+            //expect(stub.getCall(0)).to.be.calledWith("Do you confirm action?")
+
+        //cy.get("#confirmButton")
+        //cy.on("window:confirm",(confirm)=>{
+         //   expect(confirm).to.equal("Do you confirm action?")
+
+       
+        //})
+
+        //cy.contains("You selected Ok").should("exist")
+
+        cy.get("#confirmButton")
+        cy.on("window:confirm",(confirm)=>{
+            expect(confirm).to.equal("Do you confirm action?")
+            return false
+        })
+
+        cy.contains("You selected Cancel").should("exist")
+    })
+
+    it("Interactuando con los tooltip", function(){
+        cy.visit("/tool-tips")
+        // cy.get("#toolTipButton").trigger("mouseover") // para quitarlo se usa mouseout
+        //cy.contains("You hovered over the Button").should("exist")
+        cy.get("#toolTipButton").trigger("mouseout") // para quitarlo se usa mouseout
+       
+        cy.contains("You hovered over the Button").should("not.exist")
+        
+    })
+
+    it("Interactuando con los tooltip", function(){
+        cy.visit("/tool-tips")
+        cy.get("#toolTipButton").trigger("mouseover") // para quitarlo se usa mouseout
+        cy.contains("You hovered over the Button").should("exist")
+        cy.get("#toolTipButton").trigger("mouseout") // para quitarlo se usa mouseout
+        cy.contains("You hovered over the Button").should("not.exist")
+        
+    })
+
+    it.only("Interactuando con drag and drop",()=>{
+        cy.visit("/dragabble")
+        cy.get("#dragBox")
+            .trigger("mousedown",{
+                which:1, 
+                pageX:600,
+                pageY:100
+            }).trigger("mousemove",{which:1, pageX:100, pageY:600})
+            .trigger("mouseup")
+        })
+        
 })
