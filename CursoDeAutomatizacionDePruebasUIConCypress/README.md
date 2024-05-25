@@ -703,3 +703,232 @@ cy.get('.action-labels>.label').click({ multiple: true })
 // Ignore error checking prior to clicking
 cy.get('.action-opacity>.btn').click({ force: true })
 ```
+
+## Trabajando con inputs
+
+Lista de algunos comandos para usar con el type:
+
+`{backspace}` = Borra el personaje a la izquierda del cursor.
+`{del}` = Borra el personaje a la derecha del cursor.
+`{downarrow}` = Mueve el cursor hacia abajo.
+`{end}` = Mueve el cursor al final de la línea.
+`{enter}` = Teclea la tecla Intro.
+`{esc}` = Teclea la tecla Escape.
+`{home}` = Mueve el cursor al principio de la línea.
+`{insert}` = Inserta un personaje a la derecha del cursor.
+`{leftarrow}` = Mueve el cursor a la izquierda.
+`{movetoend}` = Desplaza el cursor al final del elemento mecanizable.
+`{movetostart}` = Desplaza el cursor al inicio del elemento mecanizable.
+`{pagedown}` = Se desplaza hacia abajo.
+`{pageup}` = Se desplaza hacia arriba.
+`{rightarrow}` = Mueve el cursor a la derecha.
+`{selectall}` = Selecciona todo el texto creando un selection range.
+`{uparrow}` = Mueve el cursor hacia arriba.
+
+**Ejemplo:**
+
+```javascript
+it.only("Input type text", ()=>{
+        cy.visit("/automation-practice-form")
+        cy.get("#firstName").type("Mario")
+        cy.get("#lastName").type("Fuentes")
+
+        cy.get("#firstName").type("Mario")
+
+        cy.get("#firstName").type("{selectAll}{backspace}")
+        cy.get("#firstName").type("Otro nombre")
+        cy.get("#firstName").clear()
+
+    })
+```
+
+## Trabajando con checkboxes y radio botones
+
+[📚 Documentación](https://docs.cypress.io/api/commands/check#Syntax "📚 Documentación") . Como bien se mencionó en la sesión, tenemos la siguiente estructura:
+
+```html
+<div class="checkbox">
+   <label>
+      <input type="checkbox" value="checkbox1">
+         A Simple Checkbox
+   </label>
+</div>
+```
+
+Generalmente la anatomía nos permite relacionar un elemento label junto con su correspondiente input. Por ello, es posible que seleccionemos un elemento de tipo checkbox `[type="checkbox"]`, mediante su jerarquía o selectores de clase.
+
+```javascript
+// Check all matching or radio button elements.
+cy.get('.action-checkboxes [type="checkbox"]')
+  .check().should('be.checked')
+```
+
+La regla de sintaxis nos comenta que:
+
+```javascript
+.check()
+.check(value)
+.check(values)
+.check(options)
+.check(value, options)
+.check(values, options)
+```
+
+Por lo que al solicitar `check(value)` estamos marcando aquellos elementos con un cierto valor, por ejemplo:
+
+```html
+<form>
+  <input type="checkbox" id="subscribe" value="subscribe" />
+  <label for="subscribe">Subscribe to newsletter?</label>
+  <input type="checkbox" id="acceptTerms" value="accept" />
+  <label for="acceptTerms">Accept terms and conditions.</label>
+  <input type="checkbox" id="rejectTerms" value="reject" />
+  <label for="rejectTerms">Reject terms and conditions.</label>
+</form>
+```
+
+Donde para marcar el check con valor `accept` y `subscribe`, declaramos:
+
+```javascript
+cy.get('form input').check(['subscribe', 'accept'])
+```
+
+**Ejemplo:**
+
+```javascript
+it.only("Checkboxes y radio botones", ()=>{
+        cy.visit("/automation-practice-form")
+        //cy.get("#gender-radio-1").click()
+        //cy.get("#gender-radio-1").click({force:true})
+        //cy.get("#gender-radio-1").check({force:true})
+        cy.get('label[for="gender-radio-1"]').click()
+  
+        //cy.get('#hobbies-checkbox-1').click({force:true})
+        //cy.get('#hobbies-checkbox-1').check({force:true})
+        //cy.get('#hobbies-checkbox-1').uncheck({force:true})
+        cy.get('label[for="hobbies-checkbox-1"]').click()
+        cy.get('label[for="hobbies-checkbox-1"]').click()
+
+
+    })
+```
+
+## Extrayendo informacion y haciendo validaciones
+
+[📚 Documentación](https://docs.cypress.io/api/commands/invoke "📚 Documentación"). Como se vió en la sesión, `invoke` es un comando que lanza una funcionalidad enlazada al prototype de un elemento referenciado. De la documentación, supongamos que tenemos un elemento `container` que el cual forzaremos su estilo para que sea oculto y visible, mediante Cypress.
+
+```javascript
+cy.get('div.container')
+  .should('be.hidden') // element is hidden
+  .invoke('show') // call jquery method 'show' on the '.container'
+  .should('be.visible') // element is visible now
+  .find('input') // drill down into a child "input" element
+  .type('Cypress is great') // and type text
+```
+
+Supongamos que también deseamos un objeto que interactúa con una función como slave, por lo que podríamos definir
+
+```javascript
+const fn = (a, b, c) => {
+  return a + b + c
+}
+
+cy.wrap({ sum: fn })
+  .invoke('sum', 2, 4, 6)
+  .should('be.gt', 10) // true
+  .and('be.lt', 20) // true
+  .as("sumValue")
+
+cy.get('div.container')
+  .type("@sumValue")
+cy.get('@sumOperation').then((value) => cy.get('div.container [type="text"]').type(value))
+```
+
+## Trabajando con listas y dropdowns
+
+```javascript
+ it("Interactuando con los dropdown(select)", function(){
+        cy.visit("https://itera-qa.azurewebsites.net/home/automation")
+        cy.get(".custom-select").select(10)
+        cy.get(".custom-select").select("3").should("have.value", "3")
+        cy.get(".custom-select").select("Greece").should("have.value", "4")
+    })
+
+    it.only("Interactuando con los dropdown(select) dinamico", function(){
+        cy.visit("https://react-select.com/home")
+        cy.get("#react-select-6-input").type(" ")
+
+        cy.get("#react-select-6-listbox").children().each(($el, index, $list)=>{
+
+            if($el.text() === "Red"){
+                //$el.on("click")
+                $el.click()
+            }
+        })
+
+        //cy.get("#react-select-6-option-3").click()
+    })
+```
+
+[https://react-select.com/home](https://react-select.com/home)
+
+## Trabajando con tablas
+
+### Colecciones
+Complementando la sesión, anexo unos comandos que son comunes con el uso colecciones donde visualmente pudieran ser menús, tablas, o navegaciones. .
+
+- First [📚 Documentación](https://docs.cypress.io/api/commands/first "📚 Documentación")
+- Last [📚 Documentación](https://docs.cypress.io/api/commands/last "📚 Documentación")
+- Next [📚 Documentación](https://docs.cypress.io/api/commands/next "📚 Documentación")
+- NextAll [📚 Documentación](https://docs.cypress.io/api/commands/nextall "📚 Documentación")
+
+Por ejemplo, tomando este snipped:
+
+```javascript
+cy.get('#customers')
+    .find('th')
+    .eq(2)
+    .invoke('text')
+    .should('equal','Country')
+```
+
+Pudiéramos utilizar, `contains` y `next` para realizar una búsqueda similar:
+
+```javascript
+cy.get('#customers')
+   .contains('Contact')
+   .next()
+   .should('equal','Country')
+```
+
+Y además, tomando el `find` como una lista podríamos tener:
+
+```javascript
+ cy.get('#customers')
+    .find('th')
+    .should('have.length', 3)
+```
+
+### Diferencia entre Get y Find
+
+[📚 Documentación](https://docs.cypress.io/api/commands/get#Get-vs-Find "📚 Documentación"). El comando get inicia una búsqueda sobre los nodos principales para que con `find` empiece una búsqueda sobre la actual referencia. . Por ejemplo, dado el siguiente esquema:
+
+```html
+<div class="test-title">cy.get vs .find</div>
+<section id="comparison">
+  <div class="feature">Both are querying commands</div>
+</section>
+```
+
+Obtener el elemento `div` con clase `feature`
+
+```javascript
+cy.get('#comparison')
+  .find('div')
+  .should('have.length', 1)
+  .and('have.class', 'feature')
+```
+
+Delimitamos la búsqueda a partir del nodo `#comparasion`
+
+Si del anterior, en vez de ocupar find se ocupa `get`, tendríamos un resultado donde poseeríamos tanto el `div.test-title` como `div.feature`.
