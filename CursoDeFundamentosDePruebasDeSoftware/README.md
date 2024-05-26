@@ -62,4 +62,19 @@ Se realiza una prueba del sistema implementado para encontrar posibles fallas en
 8. Mantenimiento
 Se hace para todos los procedimientos correctivos (mantenimiento correctivo) y a las actualizaciones secundarias del software (mantenimiento continuo), junto con la actualización de las pruebas.
 
-Si hacemos las pruebas durante cada fase del ciclo de vida del software tendremos al final del ciclo un producto validado y robusto de acuerdo a las necesidades del cliente
+Si hacemos las pruebas durante cada fase del ciclo de vida del software tendremos al final del ciclo un producto validado y robusto de acuerdo a las necesidades del cliente.
+
+## Proceso de pruebas del software: Calidad y Defectos
+
+Todo lo anterior nos hace preguntarnos: ¿Qué es la calidad?
+
+La **calidad** es una percepción entre lo deseado, analizado y lo que vamos a entregar. La calidad la define el cliente, si esa persona esta satisfecha con lo entregado hasta ahí llega la calidad.
+
+- **Verificación**: Es ir en cada etapa revisando que se cumpla lo propuesto por el cliente.
+- **Validación**: Antes de entregar al cliente, validamos que efectivamente el conjunto de requerimientos esta siendo cumplido con lo entregado.
+- **Anomalia**: la manifestación de un error en el software.
+- **Error**: una acción humana que produce un resultado incorrecto.
+- **Defecto**: imperfección o deficiencia, el cual no cumple sus requerimientos o especificaciones y necesita ser reparado o remplazado.
+- **Fallo**: el cese de la habilidad de un producto de cumplir una función requerida o su inhabilidad de funcionar dentro de márgenes previamente especificados.
+- **Problema**: dificultad o incertidumbre experimentada por una o más personas, como resultado de un encuentro insatisfactorio con el sistema usado.
+Ya entendimos que es necesario definir un proceso que asegure un buen desarrollo del producto, que los estándares o herramientas implementadas deben ayudar a cubrir las métricas definidas para entonces evaluar si el producto tiene el porcentaje o grado de calidad esperado.
