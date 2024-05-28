@@ -268,3 +268,91 @@ Las estrategias de prueba son aquellas que nos permiten conocer por donde comenz
 - Pobre cobertura de pruebas
 - Falta de actualización
 - Mal manejo de versiones
+
+## Testing ágil
+
+Involucra a todos, no solo en al tester, todos en el equipo son tester. La persona con este rol se asegura de la mayor cobertura de pruebas tomando en cuenta todas las necesidades que cada uno de los miembros del equipo también esta intentando hacer que funcione. El tester tiene que definir si se esta cumpliendo con los requerimientos funciones y los del equipo.
+
+### Estrategias Ágiles:
+
+- El testing es de ““todo el equipo””
+- El testing puede ser independiente
+- Integración continua
+- Testing guiado por pruebas (Test Driven Development)
+- Desarrollo guiado por comportamiento (Behaviour Driven Development)
+- Desarrollo guiado por las pruebas de aceptación (Acceptance Test Driven Development)
+
+## Niveles de pruebas
+
+Vamos a ver diferentes estrategias de cómo podemos ir probando elementos por capas. Componentes, estructuras, etc.
+
+**Prueba de Componentes**: Componentes son aquellas cosas pequeñas que sueles ver en un video como el botón de pausa, volumen, adelantar, retroceder. Cada una de esas acciones son un componente.
+
+**Pruebas de integración**: Una aplicación tiene una serie de componentes que trabajando juntos forman un pequeño sistemas, pero cuando tienes varios de estos sistemas necesitas integrarlos entre ellos.
+
+**Prueba de sistema**: Esta parte incluye que estás tomando en cuenta el contexto, no es lo mismo tener las mismas pruebas para iOS, Android y Web.
+
+**Pruebas de aceptación**: Si ya probamos que nuestro elemento o acción funcionan, estás pruebas nos aseguran con o sin el cliente que tiene cubierta todas las necesidades requeridas en el software. Es la última verificación.
+
+## Tipos de pruebas
+
+Necesitamos tener otra clasificación adicional. En los niveles sabemos la profundidad de las pruebas, pero en los tipos independientemente de su profundidad son las técnicas que vamos a usar para encontrar los defectos.
+
+**Pruebas funcionales**: Cómo funciona un sistema, qué debe estar haciendo, cómo está interactuando el usuario con él.
+
+**Pruebas no-funcionales**: El usuario puede estar experimentando otro tipo de cosas que aún funcionando puede tener la sensación de lentitud, falta de legibilidad o claridad. Esas características de usabilidad están asociadas a estas pruebas.
+
+**Pruebas estructurales**: Tienen que ver con la tecnología y el stack usado para construir nuestro producto. Nos tenemos que asegurarnos que nuestra base de datos o servidor funcionen de la manera correcta. Son conocidas como pruebas de caja blanca.
+
+**Prueba de manejo de cambios**: Es probar nuevamente un componente ya probado para verificar que no ha sido impactado por actualizaciones.
+
+**Diferencia entre caja blanca, gris y negra** Aunque no se menciono a profundidad en esta clase, voy a explicar brevemente que significan:
+
+**Caja blanca/transparente**: es cuando probamos el sistema viendo como funciona por dentro. Por ejemplo, al tener muchos datos en una base de datos que nosotros conocemos de ante mano y hacer pruebas con esos datos.
+**Caja negra**: tiene que ver con hacer pruebas con datos, en este caso que no sabemos previamente. Aquí puede que descubramos un bug al no saber el tipo de datos que se podría ingresar.
+**Caja gris**: Una combinación de ambas cajas.
+
+## Pruebas estáticas y dinámicas
+
+Ya vimos los cuatro diferentes tipos de pruebas, pero estas también se separan en dos formas diferentes de trabajarlas.
+
+**Pruebas estáticas**: Muchas veces no son consideradas en los proyectos porque significa revisar código, documentación, verificar información documentada de la forma correcta.
+
+**Pruebas dinámicas**: Se enfocan en comportamientos externos visibles durante la ejecución del software.
+
+Pruebas estáticas y dinámicas Pruebas dinámicas: se enfocan principalmente en comportamientos externos visibles durante la ejecución del software. Pruebas estáticas: se basan en la examinación manual de los elementos que conforman la construcción del software. Que son los elementos:
+
+- Contratos, planes, calendario, presupuesto
+- análisis de requerimientos
+- Especificaciones o reglas de negocio: seguridad, técnicas
+- Definiciones de: historias de usuario, criterios de aceptación, mockups
+- El diseño de la arquitectura
+- Las pruebas (Testware), puntos de verificación CI
+- Guías de usuario
+- Evaluación/revisión del código
+
+**Beneficios:**
+
+- Detectar y corregir defectos de manera mas eficiente
+-Identificar y priorizar la ejecución de pruebas en etapas posteriores
+- Prevenir defectos
+-Cubrir aspectos: Inconsistencias, ambigüedades, contradicciones, inexactitudes, redundancia.
+- reducir el retrabajo
+- reducir el costo
+- Mejorar la comunicación
+
+## Definición y diseño de pruebas
+
+Esto es algo básico para cada tester. Hay varias cosas necesarias que debemos comprender y estar seguros de para qué lo hacemos.
+
+Tu obligación y por lo que vas a brillar es porque sabes **Encontrar Problemas, Documentarlos y Comunicarlos**. Es crucial documentar, diseñar y nuestros casos de prueba contengan la información necesaria para que se entienda el trabajo.
+
+### ¿Qué hace un tester?
+
+1. **Encontrar problemas**: Si no encuentra problemas antes de que el producto sea entregado al cliente, entonces su testing es ineficiente.
+
+2. **Documentar problemas**: Si cuando encuentra problemas no sabe documentar y reproducir los pasos correctos su testing genera retrabajo y sube el costo.
+
+3. **Comunicar problemas**: Si como representante de la calidad del producto no sabe argumentar y proteger los intereses del negocio o los clientes, entonces su testing no agrega valor.
+
+![Definicion de caso de prueba](images/fundamentosdepruebasdesoftware.png)
