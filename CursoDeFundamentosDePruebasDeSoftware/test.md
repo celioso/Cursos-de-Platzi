@@ -1,4 +1,4 @@
-## Curso de Automatización de Pruebas UI con Cypress
+# Curso de Fundamentos de Pruebas de Software
 
 1. **Una ventaja de Cypress es que permite trabajar con múltiples navegadores al mismo tiempo.**
 
