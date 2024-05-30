@@ -212,3 +212,221 @@ describe('Mi primer test en puppeteer',()=>{
     }, 30000);
 })
 ```
+
+## Esperar por los elementos
+
+## Interactuando con los elementos
+
+```javascript
+const puppeteer = require("puppeteer")
+
+describe('Interactuando con elementos',()=>{
+
+    it("Debe de abrir y cerrar el navegador", async()=>{
+        const browser = await puppeteer.launch({
+            headless:false,
+            defaultViewport: null, 
+        });
+
+        const page = await browser.newPage();
+        await page.goto("https://demo.guru99.com/test/simple_context_menu.html")
+
+        page.on("dialog", async(dialog) => {  //Se usa para cerrar las alertas
+
+            await dialog.accept()
+        })
+
+        //Click derecho
+
+        //await page.click("#authentication > span", {button: "right",delay:500});
+        //await new Promise((resolve) => setTimeout(resolve, 3000));
+
+        //Doble click
+
+        await page.click("#authentication > button", {clickCount:2, delay:500})
+        //await new Promise((resolve) => setTimeout(resolve, 3000));
+
+        await page.goto("https://devexpress.github.io/testcafe/example/");
+
+        await page.type("#developer-name", "Javier Lopez",{delay: 100});
+        await page.click("#remote-testing");
+        await page.click("#tried-test-cafe");
+        await page.type("#comments", "Esto es un comentario Hermano");
+        await page.click("#submit-button");
+        await new Promise((resolve) => setTimeout(resolve, 3000));
+
+        
+
+        await browser.close();
+    }, 350000);
+})
+```
+
+[Simple Context Menu](https://demo.guru99.com/test/simple_context_menu.html "Simple Context Menu")
+
+[TestCafe Example Page](https://devexpress.github.io/testcafe/example "TestCafe Example Page")
+
+## Esperar por los elementos
+
+```javascript
+const puppeteer = require("puppeteer")
+
+describe("Tipos de espera",()=>{
+
+    it("Mostrar todos los diferentes tipos de espera", async()=>{
+        const browser = await puppeteer.launch({
+            headless:false,
+            defaultViewport: null, 
+        });
+
+        const page = await browser.newPage();
+        await page.goto("https://platzi.com", {waitUntil: "networkidle2"})
+
+        //Espera explicita
+
+        await new Promise((resolve) => setTimeout(resolve, 3000));
+
+        //Espera por un css selector
+
+        //await page.waitForSelector("body > main > header > div > figure > svg")
+
+        //Espera por un xpath
+
+        //await page.waitForXPath("/html/body/main/header/div/figure/svg/g/path[1]");
+
+        await page.goto("https://demoqa.com/modal-dialogs", {waitUntil:"networkidle2"});
+
+        //await page.waitForSelector("#showSmallModal",{visible: true}); // con hidden es para cuando se oculte
+        
+        const button = await page.waitForSelector("#showSmallModal",{visible: true});
+
+        // Usar XPath para seleccionar el botón y asegurarse de que es visible
+        //const button = await page.waitForXPath('//*[@id="showSmallModal"]',{visible: true});
+        await button.click()
+        
+
+        await browser.close();
+    }, 350000);
+})
+```
+
+## Esperando por funciones
+
+```javascript
+ //Espera por función
+
+        await page.waitForFunction(()=> document.querySelector("#example-modal-sizes-title-sm").innerText === "Small Modal");
+        // Ejemplo para observar el viewport
+
+       // const observaResize = page.waitForFunction("window.innerWidth < 100");
+        //await page.setViewport({width:50, height:50});
+
+        //await observaResize;
+        
+        await page.click("#closeSmallModal");
+        await page.waitForFunction(()=> !document.querySelector("#example-modal-sizes-title-sm"));
+
+        await browser.close();
+```
+
+## Timeouts
+
+```javascript
+const puppeteer = require("puppeteer")
+
+describe("tomeout",()=>{
+    jest.setTimeout(10000);
+    it("uso de timeout", async()=>{
+        
+        const browser = await puppeteer.launch({
+            headless:false,
+            defaultViewport: null, 
+            //slowMo: 500
+        });
+
+        const page = await browser.newPage();
+        page.setDefaultTimeout(10000);
+        page.setDefaultNavigationTimeout(10000);
+        await page.goto("https://platzi.com", {waitUntil: "networkidle2"});
+        
+        const images = await page.$$eval("img",(imagenes) => imagenes.length,{
+            timeout:30000
+        });
+        console.log("images", images)
+
+        await browser.close();
+    });
+
+})
+```
+
+## Hooks
+
+```javascript
+const puppeteer = require("puppeteer")
+
+describe("Extrayendo informacion",()=>{
+
+    let browser
+    let page
+
+    beforeAll(async()=>{ //beforeAll lo inicia antes de las pruebas y beforeEach lo abre en cada prueba
+        browser = await puppeteer.launch({
+            headless:false,
+            defaultViewport: null, 
+            //slowMo: 500
+        });
+
+        page = await browser.newPage();
+        await page.goto("https://platzi.com", {waitUntil: "networkidle2"});
+    });
+
+    afterAll(async ()=>{ //afterAll lo cierra despuesde las pruebas yafterEach lo ciarra al terminar cada prueba
+        await browser.close();
+    })
+
+    it("Extraer el titulo de la pagina y url", async()=>{
+
+        const titulo = await page.title();
+        const url = await page.url();
+
+        console.log("titulo", titulo);
+        console.log("url", url);
+
+        
+
+        //await new Promise((resolve) => setTimeout(resolve, 3000));
+
+    },35000);
+
+    it("Extraer la información d eun elemento", async()=>{
+
+        await page.waitForSelector("body > main > header > div > nav > ul > li:nth-child(4) > a");
+
+        const nombreBoton = await page.$eval("body > main > header > div > nav > ul > li:nth-child(4) > a", (button) => button.textContent);
+
+        const [button] = await page.$x("/html/body/main/section[1]/a/div/div[2]/div[2]/button");
+        const propiedad = await button.getProperty("textContent");
+        const texto = await propiedad.jsonValue();
+
+        //console.log("texto", texto);
+
+        //Segunda Forma
+
+        const texto2 = await page.evaluate((name)=>name.testContent, button);
+
+        const button3 = await page.waitForXPath("/html/body/main/section[1]/a/div/div[2]/div[2]/button");
+        const texto3 = await page.evaluate((name)=>name.testContent, button3);
+        console.log("texto3", texto3);
+
+    },35000);  
+
+    it("Contar los elementos d euna pagina", async()=>{
+        
+        const images = await page.$$eval("img",(imagenes) => imagenes.length);
+        console.log("images", images)
+
+    },35000);
+
+},50000);
+```
