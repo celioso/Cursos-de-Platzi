@@ -18,4 +18,5 @@ env.bak/
 venv.bak/
 google-cloud-sdk/
 __pycache__/
+node_modules
 # CursoDeECMAScriptHistoriaYVersionesDeJavaScript/js/
