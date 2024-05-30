@@ -79,3 +79,136 @@ Para comenzar a usar Puppeteer, primero debes instalarlo en tu proyecto Node.js 
 `npm install puppeteer`
 
 Después de la instalación, puedes importar Puppeteer en tu script y comenzar a utilizar sus funciones para interactuar con el navegador web de manera programática.
+
+## Configuración de nuestro ambiente
+
+Instalador de Git: [https://git-scm.com/download/win](https://git-scm.com/download/win "https://git-scm.com/download/win")
+
+Instalador de NodeJS: [https://nodejs.org/es](https://nodejs.org/es "https://nodejs.org/es")
+
+Configuraciones del VSCode: [https://www.youtube.com/watch?v=uyEUVgNMvGI](https://www.youtube.com/watch?v=uyEUVgNMvGI "https://www.youtube.com/watch?v=uyEUVgNMvGI")
+
+Configurar Git con VS Code: [https://www.youtube.com/watch?v=Y9g3Yvx9PfA](https://www.youtube.com/watch?v=Y9g3Yvx9PfA "https://www.youtube.com/watch?v=Y9g3Yvx9PfA")
+
+Extensiones que instale en mi VSCode:
+
+- Community Material Theme
+- ESLint
+- JavaScript (ES6) code snippets
+- JavaScript and TypeScript Nightly
+- Jest Snippets
+- file-icons
+- Material Icon Theme
+- Material Theme
+- Material Theme Icons
+- Bracket Pair Color DLW
+
+### Instalar  puppeteer
+1. tener node.js y npm
+2. Por si quieres inicializar un repo con GIT→ `git init`
+3. Inicializar el proyecto con todas las config por defecto→ `npm init -y`
+ 4. Instalar **puppeteer** y** jest**; permite gestionar las pruebas → `npm i puppeteer jest` (si no funciona, instalar por separado)
+ - Opcional: dependencia de desarrollo; da formato al código y se acomoda solo → `npm i -D prettier`
+5. agregar archivo **.gitignore** → para que git ignoré los archivos/carpetas que le indiquemos, en este caso ignoramos; **node_modules**
+6. opcional: agregar archivo .prettierrc →
+
+```json
+{
+    "printWidth": 100,
+    "singleQuote": true,
+    "useTabs": true,
+    "tabWidth": 2,
+    "semi": false,
+    "trailingComma": "es5",
+    "bracketSameLine": true    
+}
+```
+
+[Configuration File · Prettier](https://prettier.io/docs/en/configuration.html "Configuration File · Prettier")
+
+## Abriendo y cerrando el navegador
+
+```javascript
+const puppeteer = require("puppeteer")
+
+describe('Mi primer test en puppeteer',()=>{
+
+    it("Debe de abrir y cerrar el navegador", async()=>{
+        const browser = await puppeteer.launch({
+            headless:false,
+        });
+        const page = await browser.newPage();
+        await page.goto("https://www.google.com");
+        await new Promise((resolve) => setTimeout(resolve, 5000));
+        await browser.close();
+    }, 20000);
+})
+```
+[Running with chrome rather than chromium · Issue #2757 · puppeteer/puppeteer · GitHub](https://github.com/puppeteer/puppeteer/issues/2757 "Running with chrome rather than chromium · Issue #2757 · puppeteer/puppeteer · GitHub")
+
+[Puppeteer quick start - Chrome Developers](https://developers.google.com/web/tools/puppeteer/get-started "Puppeteer quick start - Chrome Developers")
+
+## Opciones de lanzamiento
+
+```javascript
+const puppeteer = require("puppeteer")
+
+describe('Mi primer test en puppeteer',()=>{
+
+    it("Debe de abrir y cerrar el navegador", async()=>{
+        const browser = await puppeteer.launch({
+            headless:false,
+            slowMo: 0, // coloca en camara lenta el proceso
+            devtools: true, //Abre las herramientas de desarrollador
+            //defaultViewport:{
+            //    width:2100,
+            //    height:1080
+            //}
+
+            //args:["--window-size=1920,1080"], //tamaño d ela pantalla
+            defaultViewport: null, // colocaa al tamaño d ela ventana
+        });
+        const page = await browser.newPage();
+        await page.goto("https://www.google.com");
+        await new Promise((resolve) => setTimeout(resolve, 5000));
+        await browser.close();
+    }, 30000);
+})
+```
+
+## Navegación con Puppeteer
+
+```javascript
+const puppeteer = require("puppeteer")
+
+describe('Mi primer test en puppeteer',()=>{
+
+    it("Debe de abrir y cerrar el navegador", async()=>{
+        const browser = await puppeteer.launch({
+            headless:false,
+            defaultViewport: null, 
+        });
+        const page = await browser.newPage();
+        await page.goto("https://www.github.com");
+        //await new Promise((resolve) => setTimeout(resolve, 5000));
+        await page.waitForSelector("img");
+        //Recargar la pagina
+        await page.reload();
+        await page.waitForSelector("img");
+
+        //Navegar a otro sitio
+        await page.goto("https://www.platzi.com");
+        await page.waitForSelector('body > main > header > div > figure > svg > g > path:nth-child(2)');
+
+        await page.goBack();
+        await page.goForward();
+        //await page.waitForSelector("img");
+
+        // Abrir otra pagina
+        const page2 = await browser.newPage()
+        await page2.goto("https://www.google.com") 
+
+        await browser.close();
+    }, 30000);
+})
+```
