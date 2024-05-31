@@ -1,0 +1,20 @@
+{
+  "name": "proyectos",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest --forceExit --detectOpenHandles",
+    "test-emulacion-de-dispositivos": "jest --forceExit --detectOpenHandles __test__/emulacionDeDispositivos.test.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "jest": "^29.7.0",
+    "puppeteer": "^22.10.0"
+  },
+  "devDependencies": {
+    "prettier": "^3.2.5"
+  }
+}
