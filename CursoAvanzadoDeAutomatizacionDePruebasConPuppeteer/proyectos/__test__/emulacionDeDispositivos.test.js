@@ -12,7 +12,13 @@ describe("Emulando informacion",()=>{
             //slowMo: 500
         });
 
-        page = await browser.newPage();
+        //page = await browser.newPage();
+        //await page.goto("https://platzi.com", {waitUntil: "networkidle2"});
+
+        //para abtrir el navegador en modo incognito
+        page = await (await browser.createBrowserContext()).newPage(); //para acortar el codigo
+       // const context = await browser.createBrowserContext();
+        //page = await context.newPage();
         await page.goto("https://platzi.com", {waitUntil: "networkidle2"});
 
     },10000);
