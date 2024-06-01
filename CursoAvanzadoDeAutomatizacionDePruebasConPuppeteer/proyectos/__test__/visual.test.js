@@ -71,7 +71,7 @@ describe("Visual test",()=>{
 
         await page.waitForSelector("img");
 
-        await page.evaluate(() => (document.querySelectorAll("img") || []).forEach((img) => img.remove()));
+        //await page.evaluate(() => (document.querySelectorAll("img") || []).forEach((img) => img.remove()));
         
         const screenshot = await page.screenshot();
 
