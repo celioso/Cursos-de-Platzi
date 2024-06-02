@@ -462,3 +462,233 @@ describe("Accesibilidad",()=>{
 ```
 
 ## Puppeteer con Firefox
+
+instalar el producto PUPPETEER_PRODUCT:
+`PUPPETEER_PRODUCT=firefox npm install` o `PUPPETEER_PRODUCT=firefox npm install puppeteer` o `npx puppeteer browsers install firefox` para 2024.
+**Nota**: para volver a chrome se usa el siguiente codigo: `npx puppeteer browsers install chrome`.
+
+Actualización mayo de 2024:
+
+- Para instalar firefox para puppeteer usar: npx puppeteer browsers install firefox
+
+- Colocar en browser lo siguiente:
+
+```javascript
+browser = await puppeteer.launch({
+            headless: false,
+            defaultViewport: null,
+            product: 'firefox',
+            protocol: 'webDriverBiDi',
+        })
+```
+
+### Ejercicio de la clase
+
+```javascript
+const puppeteer = require("puppeteer")
+
+const {getText, getCount} = require("./lib/helpers")
+
+describe("Extrayendo informacion",()=>{
+
+        let browser
+        let page
+    
+        beforeAll(async()=>{
+            browser = await puppeteer.launch({
+                headless:true,
+                product: "firefox",
+                defaultViewport: null, 
+                protocol: 'webDriverBiDi',
+                //slowMo: 500
+            });
+
+            page = await browser.newPage();
+            await page.goto("https://platzi.com");
+
+        },10000);
+    
+        afterAll(async ()=>{ 
+            await browser.close();
+
+        },10000);
+
+    it("Extraer la información de un elemento", async()=>{
+        
+        await page.waitForSelector("body > main > header > div > nav > ul > li:nth-child(4) > a");
+
+        const nombreBoton = await getText(page, "body > main > header > div > nav > ul > li:nth-child(4) > a");
+        console.log("nombreBoton", nombreBoton)
+
+
+    }, 35000);  
+
+    it("Contar los elementos de una pagina", async()=>{
+        
+        const images = await getCount(page, "img");
+        console.log("images", images)
+
+    }, 35000);
+
+    it("Extraer el titulo de la pagina y url", async()=>{
+        
+        const titulo = await page.title();
+        const url = await page.url();
+
+        console.log("titulo", titulo);
+        console.log("url", url);
+
+        
+
+        //await new Promise((resolve) => setTimeout(resolve, 3000));
+
+    }, 35000);
+
+})
+```
+
+## Medir performance: page load
+
+### ¿Que es y para que sirve  `page load`?
+
+El evento **page load** se refiere al momento en que una página web y todos sus recursos dependientes (como hojas de estilo, scripts, imágenes y marcos secundarios) se han cargado completamente. Este evento es crucial tanto en el desarrollo web como en la automatización de navegadores porque marca el punto en el que el contenido de la página está totalmente disponible y listo para la interacción del usuario o de un script automatizado.
+
+### ¿Qué es el evento `page load`?
+- **Definición**: El evento page load se dispara cuando el navegador ha terminado de cargar el documento HTML inicial y todos los recursos dependientes (como imágenes, estilos y scripts).
+- **Momento de Activación**: Se activa cuando la propiedad readyState del documento cambia a complete, lo cual indica que todos los recursos de la página han sido completamente cargados.
+
+### ¿Para qué sirve el evento `page load`?
+- **Sincronización de Acciones**: En la automatización de navegadores y pruebas web, esperar a que se dispare el evento page load asegura que cualquier interacción con la página (como hacer clic en un botón o extraer información) se realiza solo después de que la página esté completamente cargada.
+- **Medición de Rendimiento**: Este evento es útil para medir el rendimiento de carga de una página web. Los desarrolladores pueden medir el tiempo desde que se inicia la navegación hasta que se completa la carga para optimizar el rendimiento.
+- **Evitar Errores**: Al asegurarse de que la página está completamente cargada antes de realizar cualquier acción, se reduce el riesgo de errores causados por elementos que aún no están disponibles o completamente renderizados.
+- **Experiencia del Usuario**: Para los desarrolladores, este evento es útil para mejorar la experiencia del usuario, garantizando que las interacciones solo ocurran cuando todo el contenido esté disponible y no mientras se está cargando.
+
+### Ejemplo de Uso en JavaScript
+
+Aquí hay un ejemplo simple de cómo puedes usar el evento load en JavaScript para ejecutar código solo después de que la página haya terminado de cargar:
+
+
+```javascript
+window.addEventListener('load', function() {
+    console.log('La página y todos los recursos están completamente cargados.');
+    // Aquí puedes ejecutar cualquier código que dependa de que la página esté completamente cargada
+});
+```
+
+
+### Ejemplo de Uso en Puppeteer
+
+En Puppeteer, un popular marco de automatización de navegadores, puedes esperar a que una página se cargue completamente antes de realizar acciones. Aquí hay un ejemplo:
+
+
+```javascript
+const puppeteer = require('puppeteer');
+
+(async () => {
+    const browser = await puppeteer.launch({ headless: false });
+    const page = await browser.newPage();
+
+    // Navegar a la página y esperar a que se cargue completamente
+    await page.goto('https://example.com', { waitUntil: 'load' });
+
+    // Realizar acciones después de que la página esté completamente cargada
+    const element = await page.$('selector');
+    const text = await page.evaluate(element => element.textContent, element);
+    console.log(text);
+
+    await browser.close();
+})();
+```
+
+En el ejemplo de Puppeteer, el método `goto` con la opción `{ waitUntil: 'load' }` asegura que el script espera hasta que el evento `page load` se dispare antes de proceder con las acciones subsecuentes. Esto garantiza que la página está completamente lista para cualquier interacción automatizada.
+
+### Resumen
+
+El evento page load es un indicador crucial en el ciclo de vida de una página web que marca el momento en que todo el contenido y los recursos de la página están completamente cargados y listos para ser utilizados. Este evento es especialmente importante en el desarrollo web y la automatización de pruebas para asegurar que las interacciones y mediciones se realicen solo cuando la página esté en su estado final y completamente preparada.
+
+codigo:
+
+```javascript
+const puppeteer = require("puppeteer");
+const {AxePuppeteer} = require("@axe-core/puppeteer")
+
+describe("Performance",()=>{
+
+        let browser
+        let page
+    
+        beforeAll(async()=>{
+            browser = await puppeteer.launch({
+                headless:true,
+                defaultViewport: null, 
+                //slowMo: 500
+            });
+
+            page = await browser.newPage();
+            //await page.goto("https://platzi.com", {waitUntil: "networkidle2"});
+
+        },10000);
+    
+        afterAll(async ()=>{ 
+            await browser.close();
+
+        });
+
+
+    /*test("Medir el performance de la automatizacion", async()=>{
+
+        await page.waitForSelector("img");
+        const metrics = await page.metrics();
+        console.log(metrics);
+    }, 35000);
+    
+    test("Medir el performance de la pagina", async()=>{
+
+        await page.waitForSelector("img");
+        const metrics2 = await page.evaluate(()=>JSON.stringify(window.performance));
+        console.log(metrics2);
+    }, 35000);*/
+
+    test("Medir el performance del page load", async()=>{
+        await page.tracing.start( {path: "profile.json"});
+        await page.goto("https://google.com");
+        await page.waitForSelector("img");
+        await page.tracing.stop()
+    }, 35000);
+
+    test("Medir el performance del page load con screenshorts", async()=>{
+        await page.tracing.start( {path: "profile.json", screenshots:true});
+        await page.goto("https://platzi.com");
+        await page.waitForSelector("img");
+        await page.tracing.stop()
+    }, 35000);
+
+    test("Medir el performance del page load con screenshorts y extrayendolos", async()=>{
+        const fs = require('fs')
+
+        await page.tracing.start( {path: "profile.json", screenshots:true});
+        await page.goto("https://platzi.com");
+        await page.waitForSelector("img");
+        await page.tracing.stop()
+        const tracing = JSON.parse(fs.readFileSync("./profile.json", "utf8"))
+        //Filtrar el JSON
+        const traceScreenShots = tracing.traceEvents.filter(
+            (x)=>
+            x.cat === 'disabled-by-default-devtools.screenshot' &&
+            x.name === 'Screenshot' &&
+            typeof x.args !== 'undefined' &&
+            typeof x.args.snapshot !== 'undefined'
+        );
+
+        //Iterar sobre este arreglo para crear la simagenes
+        traceScreenShots.forEach(function(snap, index){
+            fs.writeFile(`trace-screenshot-${index}.png`, snap.args.snapshot, 'base64', function(err){
+                if (err) {
+                    console.log('No pude crear el archivo', err)
+                };
+            });           
+        });
+
+    }, 35000);
+})
+```

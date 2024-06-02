@@ -48,7 +48,7 @@ describe("Extrayendo informacion",()=>{
 
     }, 35000);  
 
-    it("Contar los elementos d euna pagina", async()=>{
+    it("Contar los elementos de una pagina", async()=>{
         
         const images = await getCount(page, "img");
         console.log("images", images)

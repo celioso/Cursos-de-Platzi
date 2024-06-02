@@ -8,7 +8,7 @@
     "test-emulacion-de-dispositivos": "jest --forceExit --detectOpenHandles __test__/emulacionDeDispositivos.test.js",
     "test-prueba-libreria": "jest --forceExit --detectOpenHandles __test__/pruebaDeLibreria.test.js",
     "test-prueba-click": "jest --forceExit --detectOpenHandles __test__/visual.test.js",
-    "visual-test": "jest --updateSnapshot --forceExit --detectOpenHandles __test__/firefox.test.js"
+    "visual-test": "jest --updateSnapshot --forceExit --detectOpenHandles __test__/performance.test.js"
   },
   "keywords": [],
   "author": "",
