@@ -692,3 +692,168 @@ describe("Performance",()=>{
     }, 35000);
 })
 ```
+
+## Medir performance: first contentful paint
+
+```javascript
+const puppeteer = require("puppeteer");
+const {AxePuppeteer} = require("@axe-core/puppeteer")
+
+describe("first paint y first contentful paint",()=>{
+
+        let browser
+        let page
+    
+        beforeAll(async()=>{
+            browser = await puppeteer.launch({
+                headless:true,
+                defaultViewport: null, 
+                //slowMo: 500
+            });
+
+            page = await browser.newPage();
+            //await page.goto("https://platzi.com", {waitUntil: "networkidle2"});
+
+        },10000);
+    
+        afterAll(async ()=>{ 
+            await browser.close();
+
+        });
+
+    test("Medir el performance del first paint y first contentful paint", async()=>{
+
+        const navigationPromise = page.waitForNavigation();
+        await page.goto("https://platzi.com");
+        await navigationPromise
+
+        const firstPaint = JSON.parse(
+            await page.evaluate(()=>JSON.stringify(performance.getEntriesByName("first-paint")))
+        );
+
+        const firstContentfulPaint=JSON.parse(
+            await page.evaluate(()=>JSON.stringify(performance.getEntriesByName("first-contentful-paint")))
+        );
+        console.log('firstPaint ', firstPaint[0].startTime)
+        console.log('firstContentfulPaint ', firstContentfulPaint[0].startTime)
+        
+
+    }, 15000);
+
+    test("Medir el performance frames por segundos", async()=>{
+
+        const devtoolsProtocolClient = await page.target().createCDPSession();
+        await devtoolsProtocolClient.send("Overlay.setShowFPSCounter",{show:true});
+        await page.goto("https://platzi.com");
+
+        await page.screenshot({path:"framesPorSegundo.jpg", type:"jpeg"})
+
+    }, 15000);
+
+})
+```
+
+[lighthouse/puppeteer.md at master · GoogleChrome/lighthouse · GitHub](https://github.com/GoogleChrome/lighthouse/blob/main/docs/puppeteer.md "lighthouse/puppeteer.md at master · GoogleChrome/lighthouse · GitHub")
+
+## Inicializando nuestro framework
+
+//Pasos para arracar el proyecto del framework de jest con puppeteer
+
+1. npm init -y
+
+2. git init
+
+3. npm i puppeteer jest jest-puppeteer @types/jest babel-jest @babel/core @babel/preset-env
+
+4. Crear .gitignore
+
+5. `npx jest --init` o `node node_modules.bin\jest --init` o `node node_modules.bin\jest --init` //--> Esto inicializa la config de jest (Windows 10) o la que me funciono fue `npx jest --init`
+
+6. Respuestas:
+- √ Would you like to use Jest when running "test" script in "package.json"? ... yes
+- √ Would you like to use Typescript for the configuration file? ... no
+- √ Choose the test environment that will be used for testing » node
+- √ Do you want Jest to add coverage reports? ... no
+- √ Which provider should be used to instrument code for coverage? » babel
+- √ Automatically clear mock calls, instances, contexts and results before every test? ... no   
+✏️  Modified C:\Users\celio\OneDrive\Escritorio\programación\platzi\CursoAvanzadoDeAutomatizacionDePruebasConPuppeteer\Mi-framework\package.json
+
+📝  Configuration file created at C:\Users\celio\OneDrive\Escritorio\programación\platzi\CursoAvanzadoDeAutomatizacionDePruebasConPuppeteer\Mi-framework\jest.config.js
+
+7. En jest.config.js, descomentar y colocar {bail: 5, preset: "jest-puppeteer"}
+
+```javascript
+/** @type {import('jest').Config} */
+const config = {
+  // All imported modules in your tests should be mocked automatically
+  // automock: false,
+
+  // Stop running tests after `n` failures
+  bail: 5,
+```
+
+```javascript
+  // A preset that is used as a base for Jest's configuration
+  preset: "jest-puppeteer",
+```
+
+8. Crear archivo jest-puppeteer.config.js y pegarle dentro: 
+```javascript
+module.exports = {
+    launch: {
+        headless: false,
+        slowMo:100,
+    },
+    browserContext:"default"
+}
+```
+9. Intalar dependencia de desarrollo:
+`npm i -D prettier`
+
+10. se crea el archivo `.prettierrc` y se agrega el siguiente codigo:
+
+```javascript
+{
+    "printWidth": 100,
+    "singleQuote": true,
+    "useTabs": true,
+    "tabWidth": 2,
+    "semi": false,
+    "trailingComma": "es5",
+    "bracketSameLine": true    
+}
+```
+
+11. Se instala la dependencia de babel:
+`npm i @babel/core @babel/preset-env babel-jest`
+
+12. Crear archivo de babel.config.js y pegarle dentro: 
+
+```javascript
+module.exports = { 
+    presets: [ 
+        [ 
+            '@babel/preset-env', 
+            { 
+                targets: { 
+                    node:'current', 
+                }, 
+            }, 
+        ], 
+    ], 
+};
+```
+
+10. Crear carpeta de pruebas **__test__** y una prueba:
+
+```javascript
+describe("google", ()=>{
+
+    it("abrir  el navegador", async ()=>{
+        await page.goto("https://www.google.com/");
+        await new Promise((resolve) => setTimeout(resolve, 5000));
+    },8000);
+});
+```
+
+11. Crear una prueba para probar que todo funcione correctamente

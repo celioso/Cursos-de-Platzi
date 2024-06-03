@@ -24,19 +24,19 @@ describe("Performance",()=>{
         });
 
 
-    /*test("Medir el performance de la automatizacion", async()=>{
-
+    test("Medir el performance de la automatizacion", async()=>{
+        await page.goto("https://platzi.com", {waitUntil: "networkidle2"});
         await page.waitForSelector("img");
         const metrics = await page.metrics();
         console.log(metrics);
     }, 35000);
     
     test("Medir el performance de la pagina", async()=>{
-
+        await page.goto("https://platzi.com", {waitUntil: "networkidle2"});
         await page.waitForSelector("img");
         const metrics2 = await page.evaluate(()=>JSON.stringify(window.performance));
         console.log(metrics2);
-    }, 35000);*/
+    }, 35000);
 
     test("Medir el performance del page load", async()=>{
         await page.tracing.start( {path: "profile.json"});
@@ -60,6 +60,7 @@ describe("Performance",()=>{
         await page.waitForSelector("img");
         await page.tracing.stop()
         const tracing = JSON.parse(fs.readFileSync("./profile.json", "utf8"))
+        
         //Filtrar el JSON
         const traceScreenShots = tracing.traceEvents.filter(
             (x)=>
