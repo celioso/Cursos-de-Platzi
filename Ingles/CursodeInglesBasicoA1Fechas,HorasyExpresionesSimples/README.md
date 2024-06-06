@@ -862,3 +862,377 @@ Jackson is Sarah’s son.
 
 Who is Kira to Allison?
 Kira is Allison’s cousin.
+
+## Diferencias entre "there is" y "there are"
+
+Las expresiones there is y there are se utilizan para referirse a la existencia de algo.
+
+### There is
+
+La expresión there is se usa en los siguientes casos:
+
+1. Expresar la existencia de un solo elemento, es decir, en singular.
+
+*There is a coffee on the table - Hay un café en la mesa*
+
+2. Referirse a algo que físicamente no se puede ver o es desconocido.
+
+*There is something in my eyes - Hay algo en mis ojos*
+
+3. Referirse a cosas incontables (nouncontable), como por ejemplo el oxígeno, etc.
+
+*There is some milk in the fridge - Hay leche en el refrigerador*
+
+### There are
+
+*There are* se utiliza para hablar acerca de la existencia de **varios elementos**, es decir, en plural (dos o más elementos).
+
+*There are two dogs in the garden* – Hay dos perros es el jardín
+
+*There are five books on the desk* – Hay cinco libros en el escritorio
+
+**Con el uso de la siguiente imagen realiza varias oraciones usando las expresiones There is y There are.**
+
+![Practice: There is - There are](https://static.platzi.com/media/articlases/Images/e3bf6db6b41e4df4e1d6db832a6ec150YmrEOcKF3dADJuZ1-59.png ““Practice: There is - There are””)
+
+Ejemplo:
+There is a sofa.
+
+### There isn’t vs. There aren’t
+
+Estas expresiones indican la inexistencia de elementos.
+
+*There isn’t a bus stop near here.* – No hay parada de autobús cerca de aquí
+
+*There isn’t any cheese in the fridge* – No hay queso en el refrigerador
+
+*There aren’t any oranges in the basket* – No hay naranjas en la cesta
+
+*There aren’t any pens on the table* – No hay lápices en la mesa
+
+*There isn’t money in my wallet* - No hay dinero en mi billetera (cartera)
+
+*There aren’t students in the classroom* - No hay estudiantes en el aula
+
+### Oraciones interrogativas usando there is y there are
+
+Para formular preguntas usando there is y there are, solo se invierte el orden de las palabras de la siguiente manera:
+
+There are - **Are there…?**
+There is - **Is there…?**
+
+Por ejemplo:
+
+**Is there** a TV in your bedroom?
+Yes, there is a TV.
+
+**Are there** pets in your house?
+No, there aren’t pets in my house.
+
+### Ejercicio usando there is y there are
+
+Partiendo de la siguiente imagen, responde las preguntas que se formulan.
+
+![There is - There are](images/there.png)
+
+Respuestas:
+
+**Are there kids in the park?**
+Yes, there is one girl in the park.
+
+**Is there an adult with the kid?**
+No, there isn’t an adult with the kid.
+
+**Are there animals in the park?**
+No, there aren’t animals in the park.
+
+## Pronombres de sujeto y objeto en inglés
+
+En inglés es importante aprender la diferencia entre subject pronouns y object pronouns, ya que se establece un tratamiento diferente para ambos.
+
+### Pronombres personales o en función del sujeto
+
+El sujeto de una oración es la persona, animal o cosa que realiza la acción del verbo. Se utilizan los pronombres en función del sujeto cuando el pronombre es el sujeto de la oración. Este pronombre en inglés, a diferencia del español, debe figurar siempre.
+
+Los subject pronouns son:
+
+- I
+- You
+- He
+- She
+- It
+- We
+- They
+
+![Subject pronouns](images/sujectpronouns.png)
+
+### Pronombres en función del objeto
+
+En este caso, el sujeto de una oración es la persona, animal o cosa que recibe la acción del verbo. Generalmente, este pronombre se coloca a continuación del verbo al que complementa o a continuación de preposiciones como “for”, “to”, “with” y “at”.
+
+**Los object pronouns son:**
+
+Me
+You
+Him
+Her
+It
+Us
+Them
+![Object pronouns1](images/gtd.png)
+
+![Object pronouns or object](images/subjeproobs.png)
+
+### Ejercicios con subject pronouns y object pronouns
+
+Según lo que has estudiado, selecciona el pronombre correcto en los siguientes casos:
+
+1. Charles, where are _____ (you, them)?
+2. It’s _____ birthday present (she, her).
+3. I don’t like ____ (him, he).
+4. ____ have three brothers (I, Me).
+5. Tom is my friend. ____ ( He, Him) is very intelliget. I often play football with _____ (he, him).
+6. I need some help. Can you help ____ (I, me)?
+7. ____ (She, Her) needs some help. Please help ____(She, Her).
+8. The children are thirsty. Give ____ (they, them) a glass of water.
+
+Ahora, revisa tus respuestas:
+
+1. Charles, where are you?
+2. It’s her birthday present.
+3. I don’t like him.
+4. I have three brothers.
+5. Tom is my friend. He is very intelligent. I often play football with him
+6. I need some help. Can you help me?
+7. She needs some help. Please help her
+8. The children are thirsty. Give them a glass of water.
+
+## Diferencias entre el presente simple y el presente continuo en inglés
+
+El tiempo presente tiene dos formas diferentes para expresar situaciones: presente simple y presente continuo. Estos se usan para expresar acciones que ocurren en diferentes momentos.
+
+**El presente simple** tiene dos maneras de manifestarse:
+
+- Usando el verbo to be
+- Usando otros verbos diferentes al verbo to be
+
+**El presente continuo** o presente progresivo, como también se le conoce, indica acciones que están ocurriendo en el momento y se forma con la estructura gramatical:
+
+Pronoun + form of to be + verb + ing
+
+**Ejemplo:** We are dancing
+
+Es decir, el presente continuo se forma a través de la combinación del presente simple más la terminación ING.
+
+![Present continuous](images/presentcontin.png)
+
+### Recordando el uso del presente simple
+
+Para recordar a fondo el uso del presente simple con el verbo to be y otros verbos, puedes ir a esta clase. El presente simple se utiliza en los siguientes casos:
+
+1. Cuando quieres comunicar **estados o acciones permanentes**.
+
+**Ejemplo:** The earth is the third planet from the sun.
+
+2. Al manifestar estados o situaciones que son rutinarias o acciones que tienen periodicidad.
+**Ejemplo:** Every ten years is a decade.
+
+3. Para hablar de hábitos, rutinas o hechos que se repiten en lapsos de tiempo determinado.
+
+**Ejemplo:** I drink coffee every morning.
+
+4. Cuando das indicaciones, instrucciones y señales.
+
+**Ejemplo:** You go down this street to the cinema, then you turn right .
+
+5. Para transmitir citas, hechos o compromisos que pasarán en un tiempo determinado.
+
+**Ejemplo:** Tomorrow is my birthday!
+
+### Ejercicios usando el presente simple
+
+Selecciona la palabra o frase correcta:
+
+I **brush** my teeth every day.
+- am brushing
+- brush.
+
+En este caso la acción se realiza todos los días. Es una acción permanente. No se está realizando en el momento. Por esta razón, se trata del tiempo presente simple.
+
+2. She **has** two sisters.
+- has
+- Is having
+
+En este caso se repite la misma explicación del ejercicio anterior.
+
+3. I am cooking lunch right now
+- am cooking
+- cook
+
+En este caso, la acción se realiza en el mismo momento que se está hablando. Por tanto, se trata del tiempo presente continuo.
+
+### Oraciones en presente continuo
+
+La principal diferencia entre el presente simple y presente continuo está en su uso. El presente continuo indica acciones que suceden mientras hablamos, mientras que el presente simple se utiliza para expresar acciones habituales o situaciones permanentes.
+
+### Oraciones afirmativas usando presente continuo / Affirmative sentences using present continuous
+
+**Estructura gramatical:**
+
+Sujeto + verbo to be + verbo en gerundio (ING) + complemento
+
+**Ejemplo:**
+You are watching a video.
+Steve is washing his hair.
+Listen! The birds are singing.
+I am reading a great book.
+Jack is learning Italian.
+
+### Oraciones negativas usando presente continuo / Negative sentences using present continuous
+
+Estructura gramatical:
+
+Sujeto + verbo to be + not + verbo en gerundio + complemento
+
+**Ejemplo:**
+
+I’m not watching TV now.
+She isn’t doing her homework.
+We aren’t playing now.
+Peter is calling his brother.
+Steven is having a shower.
+
+### Oraciones interrogativas usando presente continuo / Interrogative sentences using present continuous
+
+**Estructura gramatical:**
+
+Verbo to be + sujeto + verbo en gerundio + complemento + ?
+
+**Ejemplo:**
+
+Are you enjoying the party?
+Is the bus coming?
+Is she opening her presents?
+Where are you going?
+What is he doing right now?
+
+**Let’s practice**
+
+1. Am I speaking French?
+No, you aren’t speaking French.
+You are speaking English.
+
+2. Is he watching TV?
+No, he isn’t watching TV.
+He is dancing.
+
+3. Is she resting at home?
+No, she isn’t resting at home.
+She is running in the park.
+
+### Responde las siguientes preguntas e identifica cuáles están en presente simple y cuáles en presente continuo:
+
+1. Where does your father work?
+2. Is he working right now?
+3. Where do you work?
+4. Are you working right now?
+
+## Ejercicio de escritura y lectura: Conoce a los demás
+
+Vamos a comprobar qué tanto te conocen a ti otras personas.
+
+Primero, **contesta las siguientes preguntas:**
+
+1. Do you like vegetables?
+2. Do you practice any sport?
+3. Do you live in a house or an apartment?
+4. Do you cook?
+5. Do you read often?
+6. For vacations, do you prefer the beach or the mountains?
+7. How many languages do you speak?
+8. Do you dance?
+9. Do you have any pets?
+10. Do you use the microwave at home?
+
+Ahora, solicita a un(a) conocido(a) que hable inglés que responda esas mismas preguntas sobre ti, para comprobar si acierta tus respuestas.
+
+**Resultados:**
+
+9-10 respuestas iguales: la persona te conoce muy bien.
+6 -8 respuestas iguales: está bien, pero probablemente necesitan compartir más tiempo juntos.
+3-5 respuestas iguales: oh, ¿quién es esa persona?
+1-3 respuestas iguales: definitivamente, esta persona no te conoce mucho.
+
+## Diálogo: Escogiendo el regalo perfecto
+
+Lee esta conversación entre dos amigos. Uno de ellos necesita comprar un regalo.
+
+**Nick:** Hi, Scott.
+**Scott:** Hi, Nick.
+**Nick:** I need your help.
+**Scott:** Sure, What’s up?
+**Nick:** Well, it’s my girlfriend’s birthday, but I don’t know what to get for her.
+**Scott:** You can buy some flowers.
+**Nick:** She doesn’t like flowers.
+**Scott:** What about some chocolates. Does she like chocolates?
+**Nick:** No, she doesn’t.
+**Scott:** Ummm. I see. Does she like plants?
+**Nick:** Plants? Yes, she does. She loves plants.
+**Scott:** Awesome! You can buy her a cactus, one that she can put in her office.
+**Nick:** That’s a great idea.
+**Scott:** And you can write her a letter.
+**Nick:** Wow! Yes, that’s awesome. Thank you.
+**Scott:** Of course, Nick. Good luck!
+
+**Responde las siguientes preguntas:**
+
+What does she like?
+What doesn’t she like?
+What will Nick buy for her?
+
+**Ahora, compara tus respuestas:**
+
+**What does she like?**
+She likes plants.
+
+**What doesn’t she like?**
+She doesn’t like flowers, and she doesn’t like chocolates.
+
+**What will Nick buy for her?**
+He will buy a cactus for her.
+
+### Cómo expresar gustos, desagrados y opiniones en inglés
+
+Cuando quieres (o te piden) expresar tu parecer sobre un tema, puedes responder hablando de lo que te gusta / **likes**, lo que no te gusta / **dislikes** y puedes dar una opinión abierta / **opinions.**
+
+### Likes
+
+Hay varias formas para expresar que algo te agrada. Por ahora, te mostramos estas tres:
+
+1. He likes chocolate.
+2. I love video games.
+3. We enjoy cooking.
+
+De las tres, love es la que hace más énfasis en que realmente nos gusta mucho algo.
+
+### Dislikes
+
+Igualmente, hay varias maneras para expresar que algo no te gusta, por ejemplo:
+
+1. We **don’t like** dancing.
+2. She **hates** fast food.
+3. They **dislike** jazz.
+
+Las tres opciones son correctas, pero ““hate”” es una forma de expresión más fuerte que las otras.
+
+### Opinions
+
+Cuando solicitan tu opinión sobre un asunto existen varias maneras para responder. Aquí tienes tres formas muy comunes:
+
+1. I **think** you are right.
+2. I **consider** we need it.
+3. I **believe** that´s not true.
+
+En la siguiente imagen puedes observar el uso adecuado de likes, dislikes y opinions.
+
+![Likes, dislikes and opinios](images/Likes,dislikesandopinios.png)
