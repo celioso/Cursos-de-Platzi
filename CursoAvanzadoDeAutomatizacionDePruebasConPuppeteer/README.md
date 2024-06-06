@@ -1223,3 +1223,149 @@ El proposito de los WHEN es describir la accion clave que el usuario realiza que
 El proposito de lo then es observar los resultados, estas observaciones tienen que estar relacionadas con el valor/beneficio en tu Feature.
 
 ![ejemplo](then.png)
+
+## Configurando codeceptjs con Gherkin y BDD 
+
+1. Open a new empty folder with your favorite Code Editor
+2. git init
+3. npm init -y
+4. npx create-codeceptjs .
+Nota. si muestra error tse tiene que seguir los siguientes pasos h eingresar los siguientes codigos:
+ - `npm install -g npm@latest`
+ - `npm cache clean --force`
+ - `npm config list`
+
+5. npm install codeceptjs puppeteer --save
+Nota: si tinen un erro, usar el siguiente codigo:
+ - `npm audit fix --force`
+ 
+6. npx codeceptjs init
+
+- Do you plan to write tests in TypeScript? No
+- Where are your tests located?** ./*_test.js**
+- What helpers do you want to use? **Puppeteer**
+- Where should logs, screenshots, and reports to be stored?** ./output**
+- Do you want to enable localization for tests? http English (no localization)
+**Configure helpers...**
+- [Puppeteer] Base url of site to be tested https://platzi.com/home
+- [Puppeteer] Show browser window **Yes**
+- [Puppeteer] Browser viewport size **1200x900**
+
+6. npx codeceptjs gherkin:init
+
+7. buscamos en las extenciones de visualcode el siguiente termino **ext:feature** he instalamos la siguiente extencion *Cucumber (Gherkin) Full Support*
+
+[codecept](https://codecept.io/quickstart/ "codecept Home")
+[Testing with Puppeteer | CodeceptJS](https://codecept.io/puppeteer "Testing with Puppeteer | CodeceptJS")
+
+[Behavior Driven Development | CodeceptJS](https://codecept.io/bdd/#bdd/ "Behavior Driven Development | CodeceptJS")
+
+## Creando un Scenario Outline
+
+### loginPage
+
+```javascript
+module.exports = new LoginPage();
+module.exports.LoginPage = LoginPage();
+
+const { I } = inject();
+
+class LoginPage {
+    constructor() {
+        this.navBar = '#navbarSupportedContent';
+        this.inputEmail = '#email';
+        this.inputPassword = '#password';
+        this.submitButton = '#submitBTN';
+        this.loginPageText = "#\#fadein > div.container-fluid > div > div > div.pt-3 > div > div > div > div.w-100.text-center.mt-3 > span";
+    }
+
+    visit() {
+        I.amOnPage('login');
+        I.waitForElement(this.navBar);
+        I.seeInCurrentUrl('login');
+    }
+
+    login(email, password) {
+        I.waitForElement(this.inputEmail);
+        I.fillField(this.inputEmail, email);
+        I.fillField(this.inputPassword, password);
+        I.click(this.submitButton);
+    }
+
+    validateLogin() {
+        I.waitForElement(this.loginPageText, 4);
+        I.see('juan camilo', this.loginPageText);
+        I.waitForElement(this.navBar, 4);
+    }
+}
+```
+
+### Login.feature
+
+```javascript
+Feature: Logging in
+
+Scenario: log in to the page
+
+    Given Im on the main page
+    When I fill in the form with my email: "wajav34577@jahsec.com" and my password: "123456789"
+    Then I should see the dashboard page
+
+@probando
+Scenario Outline: Scenario Outline for login
+    Given Im on the main page
+    When I fill in the form with my <Email> and my <password>
+    Then I should see the dashboard page
+
+    Examples:
+            | Email                  | Password    |
+            | jexusmaster@gmail.com  | Jexxus2334  |
+            | jesuscuadro@gmail.com  | Jexxus2334  |
+            | juanito@gmail.com      | Jexxus2334  |
+            | pepito@gmail.com       | Jexxus2334  |
+            | camila@gmail.com       | Jexxus2334  |
+            | sadsadasr@gmail.com    | Jexxus2334  |
+
+
+```
+
+loginsteps
+
+```javascript
+const { I, loginPage } = inject();
+
+Given('I am on the main page', () => {
+    loginPage.visit()
+});
+
+When(/^I fill the form with my email: "([^"]*)" and my password: "([^"]*)"$/, (email, password) => {
+    loginPage.login(email, password)
+});
+
+Then('I should see the dashboard page', () => {
+    loginPage.validateLogin()
+});
+
+When(/^I fill the form with my (.*) and my password: (.*)$/, (email, password) => {
+    loginPage.login(email, password)
+});
+```
+para realizar las pruebas se agrega `@probando` y en el archivo `packege.json` y agregmos un nuevo test `"test-dev": "npx codeceptjs run --grep '@probando' --verbose"`.
+
+## Generando reporte y agregando imágenes al reporte
+
+se instala el paquete allura:
+`npm install -g allure-commandline --save-dev`
+luego agregamos en codecept.conf.js en el area de plugins el siguiente codigo:
+```javascript
+allura: {
+      
+    },
+```
+para crear el reporte se crea un test con el codigo: `"npx codeceptjs run --features --plugins allurre"`
+
+[Allure Framework](https://docs.qameta.io/allure/ "Allure Framework")
+
+## Jenkins
+
+[jenkins](https://www.jenkins.io/doc/pipeline/tour/getting-started/ "jenkins")
