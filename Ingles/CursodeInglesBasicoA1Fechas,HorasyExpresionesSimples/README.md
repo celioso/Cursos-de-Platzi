@@ -633,3 +633,232 @@ The conversation is taking place at the airport
 Because he has a stopover in there
 - **What is Mike’s seat number?**
 Mike’s seat number is 16E
+
+## Cómo usar "can" y "can't"
+
+Can es un verbo modal que se usa para cuatro propósitos:
+
+1. Para expresar alguna habilidad o capacidad (ability).
+I can ride a bicycle.
+
+2. Para solicitar permiso (permission).
+Excuse me, teacher. Can I go to the bathroom?
+
+3. Para hacer una petición o solicitud (request).
+Excuse me, can I use your cell phone for a moment?
+
+4. Para expresar posibilidad (possibility).
+It can rain tonight.
+
+### Ejemplos de oraciones usando el verbo modal can
+
+- Affirmative sentence:
+He can speak three languages.
+
+- Negative sentence:
+He can´t speak three languages.
+
+- Interrogative sentence:
+Can he speak three languages?
+
+### Let’s practice
+
+Responde las siguientes preguntas:
+
+Can you drive?
+Can you play the piano?
+Can you swim?
+Can you speak French?
+
+**Escribe cinco oraciones de cosas que puedes hacer, por ejemplo:**
+
+I can speak Spanish.
+I can play the guitar.
+I can do visualizations in Tableau.
+I can use Python.
+I can use Excel and Power BI.
+
+**Escribe cinco oraciones de cosas que no puedes hacer, por ejemplo:**
+
+I can’t speak Italian.
+I cant’ dance very well.
+I can’t play basketball.
+I can’t ride a horse.
+I can´t cook very well.
+
+**Escribe cinco oraciones de cosas que otra persona que tú conozcas puede hacer, por ejemplo:**
+
+My wife can dance very well.
+My wife can cook delicious.
+My wife can ride a bike.
+My wife can sing.
+My wife can drive.
+
+**Escribe cinco oraciones de cosas que otra persona que tú conozcas no puede hacer, por ejemplo:**
+
+My wife can’t play chess.
+My wife can’t draw.
+My wife can’t speak English.
+My wife can’t write computer programs.
+My wife can’t play the violin.
+
+**Escribe cinco preguntas usando la palabra can, por ejemplo:**
+
+Can you play the piano?
+
+![can cant](images/can-cannot.png)
+
+## Diálogo: Usemos "can" y "can't"
+
+Lee con detenimiento la siguiente entrevista:
+
+**John**: Good morning, Rachel. Welcome. How are you today?
+**Rachel**: Good morning. Thank you. I’m doing great.
+**John**: All right, Rachel, let’s start. Can you use Python?
+**Rachel**: Yes, I can.
+**John**: Okay, and JavaScript, can you use it?
+**Rachel**: Absolutely.
+**John**: Oh wow! Your curriculum looks amazing.
+**Rachel**: Thank you very much.
+**John**: Now, a question for you. Can you work on the weekends?
+**Rachel**: Sorry, I can’t. I’m doing my Master’s degree on the weekends.
+**John**: Oh, that’s amazing. And can you speak other languages?
+**Rachel**: Yes. I can. I can speak English and I can speak Spanish.
+**John**: Oh fantastic, can you speak French?
+**Rachel**: No, I can’t, but I can speak Portuguese.
+**John**: Interesting Rachel. Thank you for your time.
+**Rachel**: You’re welcome and thank you.
+
+Responde qué cosas puede hacer Rachel y qué no puede hacer.
+
+¡Hazlo sin mirar las respuestas!
+
+Respuestas:
+
+Rachel can:
+- Use Python
+- Use JavaScript
+- Speak English, Spanish, and Portuguese
+
+Rachel can’t:
+- Work on the weekends
+- Speak French
+
+## Cómo usar 's para hablar de posesivos en inglés
+
+**’s** es una forma utilizada para indicar a quién o a qué pertenece algo. Es decir, establece una relación de pertenencia entre dos términos.
+
+Se forma agregando un apóstrofo y la “s” al nombre del propietario.
+
+**Ejemplos**
+
+John’s car is white.
+(El auto de John es blanco).
+
+Rachel’s coat is black.
+(El abrigo de Rachel es negro).
+
+### Usos más comunes de 's para expresar posesivos
+
+Dependiendo de quién es el sujeto de la oración, es decir, quien posee, la ’s se puede usar de varias formas.
+
+### Sustantivos en singular (singular nouns)
+
+Cuando los sustantivos se encuentran en singular siempre se debe colocar 's.
+
+- My sister’s car is black.
+- My teacher’s house is big.
+- Peter’s shirt is blue.
+
+### Sustantivos en plural (plural nouns)
+
+Si el sustantivo está en plural, solo se agrega el apóstrofo sin la letra ““s””. Lo mismo ocurre en el caso de palabras que terminan con ““s””.
+
+- The dogs’ plates are full.
+- The teachers’ desks are messy.
+
+### Nombres de personas
+
+En el caso de nombres de personas se cumple la misma regla de los sustantivos en singular, es decir, se agrega el apóstrofo y la letra ‘s’.
+
+- Kaleb’s house is big.
+
+Sin embargo, hay una excepción. En el caso de nombres de personas que terminen en la letra “s”, es opcional colocar ‘s’.
+
+Es válido colocar únicamente el apóstrofo, pero es obligatorio pronunciar la letra “s” aun cuando no se escriba. Por ejemplo:
+
+- Jame**s’** house is very old.
+- James**’s** house is very old.
+Se puede escribir James’ o James’s, pero siempre se debe pronunciar la ““s””, es decir, en ambos casos se debe pronunciar /yeimses/.
+
+### Dos o más personas
+
+En el caso de dos o más personas poseedoras se deben considerar dos aspectos:
+
+1. Si dos o más personas comparten una cosa en común, basta con colocar el apóstrofo al final de la última persona a la que se haga referencia. Ejemplo:
+
+Mary and Jack’s car is new.
+
+Esta se traduce: el carro de Mary y Jack es nuevo.
+Es decir, el objeto pertenece a ambos.
+
+2. Si dos o más personas poseen de manera independiente su propio objeto, se debe colocar el apóstrofo en cada persona a la que se haga referencia. Ejemplo:
+
+Mary’s and Jack’s cars are new.
+Esta se traduce: el caro de Mary y el carro de Jack son nuevos.
+Es decir, son carros diferentes.
+
+### Nombres compuestos
+
+En los nombres compuestos, se agrega el apóstrofo y la “s” al final de la última palabra. Ejemplo:
+
+My brother-in-law’s cousin.
+(El primo de mi cuñado.)
+
+My mother-in-law’s house is on the hill.
+(La casa de mi suegra está en la colina)
+
+### Let’s practice using possesives with 's
+
+A continuación se presentan grupos de oraciones para que las transformes en una expresión posesiva.
+
+1. My mom have a dog.
+The dog is big.
+
+2. Lucas has a car.
+The car is new.
+
+3. Steve has a daughter.
+Anna has a daughter.
+The daughters are smart.
+
+Respuesta.
+
+My mom’s dog is big.
+Lucas’ car is new.
+Steve’s and Anna’s daughters are smart.
+Mira el siguiente arbol familiar. Observa los ejemplos.
+
+![Family tree.jpg](https://static.platzi.com/media/articlases/Images/Family tree.jpg ““Family tree””)
+
+Ejemplos
+- Jack is Miranda’s father
+- Scott is Kira’s brother
+- Sarah is Steven’s wife
+
+Ahora, responde las siguientes preguntas:
+
+Who is Lorrie to Steven?
+Who is Jackson to Sarah?
+Who is Kira to Allison?
+
+**Respuestas**
+
+Who is Lorrie to Steven?
+Lorrie is Steven’s mother.
+
+Who is Jackson to Sarah?
+Jackson is Sarah’s son.
+
+Who is Kira to Allison?
+Kira is Allison’s cousin.

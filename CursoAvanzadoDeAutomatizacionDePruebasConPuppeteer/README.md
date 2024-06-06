@@ -1,5 +1,7 @@
 # Curso Avanzado de Automatización de Pruebas con Puppeteer
 
+[Click in Puppeteer: Guide to Master Puppeteer’s Clicking Methods](https://www.webshare.io/academy-article/puppeteer-click#:~:text=To%20use%20the%20XPath%20method%20in%20Puppeteer%2C%20you%20can%20leverage,element%20you%20want%20to%20click. "Click in Puppeteer: Guide to Master Puppeteer’s Clicking Methods")
+
 ## Emulación de dispositivos
 
 ```javascript
@@ -987,3 +989,237 @@ export default class BasePage {
 [Curso de Web Scraping con Python y Xpath - Platzi](https://platzi.com/clases/web-scraping/ "Curso de Web Scraping con Python y Xpath - Platzi")
 
 [Space & Beyond | Testim.io demo](https://demo.testim.io/ "Space & Beyond | Testim.io demo")
+
+## Hacer Un E2E
+
+### FlightsPage.js
+```javascrip
+import BasePage from "./BasePage";
+
+export default class FlightsPage extends BasePage {
+
+    constructor(){
+        super();
+        this.mainDiv="#tab-group-events"
+        this.inputs={
+            form:"#onereturn > div.col-lg-3.show.active > div.input-items.from_flights.show.active > div.form-floating > span > span.selection > span",
+            to:"#onereturn > div:nth-child(2) > div.input-items.flights_arrival.to_flights > div.form-floating > span > span.selection > span",
+            date:"#departure",
+            passengers:"#onereturn > div.col-lg-2 > div > div > div > a",
+            search:"#flights-search",
+            firstOption:"#onereturn > div.col-lg-2 > div > div > div > div",
+            moreAdultsPassengers:"#onereturn > div.col-lg-2 > div > div > div > div > div.dropdown-item.adult_qty.show.active > div > div > div.qtyInc > svg",
+
+        }
+        
+    }
+
+    async validatePage() {
+
+        await page.waitForNavigation({ waitUntil: "networkidle2"})
+        await page.waitForSelector(this.mainDiv);
+        await page.waitForSelector(this.inputs.form);
+        await page.waitForSelector(this.inputs.to);
+        await page.waitForSelector(this.inputs.date);
+        await page.waitForSelector(this.inputs.passengers);
+        await page.waitForSelector(this.inputs.search);
+
+    }
+
+    async selectFlighy(from, to, date, passengers) {
+        
+        await this.type(this.inputs.from, from);
+        await this.click(this.inputs.firstOption)
+
+        await this.type(this.inputs.to, to);
+        await this.click(this.inputs.firstOption);
+
+        await this.type(this.inputs.date, date);
+
+        if(passengers !==1){
+
+            await this.click(this.inputs.passengers);
+            for(let i = 0; i < passengers - 1; i++){
+                await this.click(this.inputs.moreAdultsPassengers)
+            }
+        }
+
+        await this.click(this.input.search)
+    }
+
+    async validateFligths() {
+    
+            await this.wait(5);
+    }
+}
+```
+
+### NavBar.js
+
+```javascrip
+import BasePage from "../pages/BasePage";
+
+export default class NavBar extends BasePage{
+
+    constructor(){
+        super()
+        this.navBar = "#\#fadein > header",
+        this.menu={
+            home:" #\#fadein > header > div > div.d-flex > a > img",
+            hotels:"#navbarSupportedContent > div.nav-item--left.ms-lg-5 > ul > li:nth-child(2) > a",
+            flights:"#navbarSupportedContent > div.nav-item--left.ms-lg-5 > ul > li:nth-child(1) > a",
+            
+        };
+    };
+
+    async validateNavBarIsPresent(){
+        await page.waitForSelector(this.navBar);
+        await page.waitForSelector(this.menu.home);
+        await page.waitForSelector(this.menu.hotels);
+        await page.waitForSelector(this.menu.flights);
+    }
+
+    async selectMenuItem(menuItem){
+        await this.click(this.menu[menuItem]);
+
+
+    }
+}
+```
+
+reservaUnVuelo.test.js
+```javascrip
+import LoginPage from "../pages/LoginPage";
+import FlightsPage from "../pages/FlightsPage";
+import Navbar from "../componets/NavBar";
+
+let loginPage;
+let flightsPage;
+let navBar;
+
+describe("Debemos iniciar sesion en la pagina", () => {
+
+    beforeAll(async () => {
+        loginPage = new LoginPage();
+        flightsPage = new FlightsPage();
+        navBar = new Navbar();
+
+    }, 10000); 
+
+    it("Debemos iniciar sesion", async () => {
+        await loginPage.visit();
+        await loginPage.login("wajav34577@jahsec.com", "123456789");
+    }, 30000);
+
+    /*it("Validar que esté en el dashboard", async () => {
+        await loginPage.validateLogin();
+    }, 30000);*/
+
+    it("Navegar hacia la pagina de vuelos", async () => {
+        await navBar.validateNavBarIsPresent();
+        await navBar.selectMenuItem("Flights")
+    }, 30000);
+
+    it("Validar que estemos en vuelos y seleccionar vuelos", async () => {
+        await flightsPage.validatePage();
+        await flightsPage.selectFlight("Mexico", "Paris", "20-11-2024", 5)
+    }, 30000);
+
+    it("Validar que hayamos buscado el vuelo", async () => {
+        await flightsPage.validateFligths();    
+    }, 30000);
+
+
+});
+```
+
+## Agregar reporte 
+se instala la siguiete extension:
+`npm i jest-html-reporter`
+
+en el archovo jest.config.js se agrega en siguiente codigo:
+
+```javascript
+// Use this configuration option to add custom reporters to Jest
+  reporters: [
+    'default',
+    [
+      './node_modules/jest-html-reporter',
+      {
+        pageTitle: 'Reporte de Pruebas'
+      },
+    ],
+  ],
+```
+
+## BDD y Gherkin
+
+### BDD (Behavior Driven Development) (Desarrollo dirigido por comportamiento)
+
+Es algo parecido al TDD (Test Driven Development) donde en ese tipo de desarrollo se escribe una prueba que falla y se desarrolla hasta que tenemos una prueba que va a pasar.
+
+El BDD sigue un poco eso, sin embargo aqui vamos a describir por medio de oraciones y texto lo que queremos lograr o el comportamiento de nuestra aplicacion. Pero ¿cuales son los beneficios?, bueno, un beneficio puede ser que nos va a dar un lenguaje en comun entres los skateholders, scrum master, desarrolladores, QA, automatizadores etc. Todos vamos a saber que vamos a probar, que es lo que tenemos que desarrollar, que es lo que vamos a validar y que es lo que queremos pedir que se desarrolle en nuestra aplicacion.
+
+**GHERKIN**
+
+Es un lenguaje especifico para el BDD y es un lenguaje de dominio legible para empresas, pero en algunas empresas se le conoce como DCL. Fue creado por Cucumber.
+
+Gherkin consta de un GIVEN (dado que) -WHEN (cuando) -THEN (luego)
+
+![bdd](bd_1.png)
+
+Syntaxis Gherkin
+
+```javascript
+Feature: Guess the word
+
+	# The first example has two steps
+	Scenario: Maker starts a game
+		When the Maker starts a game
+		Then the Maker waits for a Breaker to join
+
+	# The second example has three steps
+	Scenario: Breaker joins a game
+		Given the Maker has started a game with the word "silky"
+		When the Breaker joins the Maker's game
+		Then the Breaker must guess a word with 5 characters
+```
+**Feature**
+
+La caracteristica es un texto conciso, pero descriptivo de lo que se desea.
+
+- Se utiliza para describir una funcion de software y para agrupar diferentes escenarios.
+
+**Scenario**
+
+Un escenario es un ejemplo o ejemplos que ilustran alguna situacion empresarial determinable.
+
+Consiste en una lista de pasos.
+
+- Los escenarios siguen el mismo patron:
+ - Describe un contexto inicial.
+ - Describe un evento.
+ - Describe un resultado esperado.
+ 
+**Given**
+
+El proposito de los GIVEN es describir un estado del sistema conocido antes o precondiciones.
+
+**Ejemplos:**
+
+- Describir el estado inicial de la base de datos.
+- Describir el estado inicial de un usuario (p. Ej: registrado)
+
+**When**
+
+El proposito de los WHEN es describir la accion clave que el usuario realiza que desencadena la transicion del estado.
+
+**Ejemplos:**
+- Dar clic a un boton.
+- Hacer una peticion a un endpoint.
+
+**Then**
+
+El proposito de lo then es observar los resultados, estas observaciones tienen que estar relacionadas con el valor/beneficio en tu Feature.
+
+![ejemplo](then.png)

@@ -10,7 +10,7 @@ describe("Iniciar sesión en la página", () => {
     }, 10000); 
 
     it("Debería ir a la página", async () => {
-     
+        await loginPage.visit()
     }, 20000);
 
     it("Debería llenar los campos", async () => {

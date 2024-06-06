@@ -56,6 +56,7 @@ export default class BasePage {
     async type(selector, text, opts = {}) {
         try {
             await page.waitForSelector(selector);
+            await page.click(selector,{clickCount:3})
             await page.type(selector, text, opts);
         } catch (e) {
             throw new Error(`Error al escribir en el selector ${selector}`);
