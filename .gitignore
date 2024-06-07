@@ -19,4 +19,9 @@ venv.bak/
 google-cloud-sdk/
 __pycache__/
 node_modules/
+node_modules/
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
 # CursoDeECMAScriptHistoriaYVersionesDeJavaScript/js/
