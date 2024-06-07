@@ -1,7 +1,5 @@
 # Curso de Automatización de Test con Playwright
 
-# Curso de Automatización de Test con Playwright
-
 **instalación**
 
 1. abrimos vscode
