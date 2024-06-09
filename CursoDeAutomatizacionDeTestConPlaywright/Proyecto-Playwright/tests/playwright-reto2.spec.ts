@@ -1,11 +1,11 @@
 import { test, expect } from '@playwright/test';
 
 test.beforeEach(async ({ page }) => {
-  await page.goto('https://www.google.com/');
+  await page.goto('/');
 });
 
 test('Realizar una busqueda que no tenga resultados', async ({ page }) => {
-  await page.getByRole('button').click();
+  await page.getByRole('#DocSearch-Search-Icon').click();
 
   await page.getByPlaceholder('Search docs').click();
 

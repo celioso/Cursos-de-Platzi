@@ -32,7 +32,8 @@ pnpm: `pnpm dlx create-playwright`
 - Instalación del soporte de pruebas para navegadores
 
 ### Estructura del project
-Una vez elegido nuestras preferencias de configuración, el asistente anexará un conjunto de carpetas donde residirán nuestras pruebas. . De lo nuevo, lo más destacable será `playwright.config` . Este archivo, permitirá manipular la configuración de Playwright. .
+Una vez elegido nuestras preferencias de configuración, el asistente anexará un conjunto de carpetas donde residirán nuestras pruebas.  
+De lo nuevo, lo más destacable será `playwright.config` . Este archivo, permitirá manipular la configuración de Playwright. .
 
 ### Ejecución de pruebas y visualización de reportes
 
@@ -216,8 +217,8 @@ El desarrollo de pruebas, en una mal ejecución, terminará siendo un lastre que
 
 ### Separa la interfaz de usuario de la funcionalidad
 
-- En desarrollo, al planificar la arquitectura de aplicaciones Frontend, la mayoría recae en la generación de componentes e interfaces visuales. .
-- Un desarrollo, se deberá pensar en su desacoplamiento de elementos interaccionables con el usuario y su disposición en una página web. .
+- En desarrollo, al planificar la arquitectura de aplicaciones Frontend, la mayoría recae en la generación de componentes e interfaces visuales.
+- Un desarrollo, se deberá pensar en su desacoplamiento de elementos interaccionables con el usuario y su disposición en una página web.
 - Metodologías como BEM o Atomic Design, permiten su distribución de dichas entidades. Sin embargo, queda en incógnita la arquitectura general de la aplicación.Por ejemplo, el uso de librerías como ReactJS, prefieren dejar una abstracción de Hooks o contextos como una subcarpeta más que una arquitectura de controladores y servicios.
 
 ### Consultar elementos HTML basados en atributos que es poco probable que cambien
