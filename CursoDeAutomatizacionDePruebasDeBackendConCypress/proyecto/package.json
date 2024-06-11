@@ -4,7 +4,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "run:server":"json-server --watch db.json"
+    "run:server": "json-server --watch db.json"
   },
   "keywords": [],
   "author": "",
@@ -13,6 +13,8 @@
   "devDependencies": {
     "cypress": "^13.11.0",
     "json-server": "^1.0.0-beta.1",
+    "mysql": "^2.18.1",
+    "mysql2": "^3.10.0",
     "prettier": "^3.3.1"
   }
 }
