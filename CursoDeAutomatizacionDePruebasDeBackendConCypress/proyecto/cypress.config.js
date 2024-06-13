@@ -5,7 +5,7 @@ async function queryTestDb(query) {
     const connection = await mysql.createConnection({
         host: 'localhost', // Cambia esto según tu configuración
         user: 'root',      // Cambia esto según tu configuración
-        password: 'F22Raptor@',  // Cambia esto según tu configuración
+        password: '******',  // Cambia esto según tu configuración
         database: 'pruebas', // Cambia esto según tu configuración
     });
 
