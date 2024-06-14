@@ -431,3 +431,92 @@ describe('Prueba a la base de datos',function(){
 ```
 
 ## Pruebas con base de datos NoSQL con MongoDB
+
+Instalamos mongodb:
+
+`npm i mongodb` o `npm install mongodb`
+
+Aquí te muestro cómo puedes hacerlo:
+
+### Paso 1: Modificar` cypress.config.js`
+Abre tu archivo `cypress.config.js`.
+Registra la tarea `getListing` en el método `setupNodeEvents`.
+
+```javascript
+const { MongoClient } = require('mongodb');
+
+async function getListing() {
+  const client = new MongoClient('mongodb://localhost:27017', {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  });
+
+  try {
+    await client.connect();
+    const db = client.db('your-database-name'); // Reemplaza con el nombre de tu base de datos
+    const Clases = db.collection('clases'); //v ala coleccion 
+    const result = await Clases.find({}).limit(50).toArray();
+    return result;
+  } catch (e) {
+    console.error(e);
+    return [];
+  } finally {
+    await client.close();
+  }
+}
+
+module.exports = {
+  e2e: {
+    setupNodeEvents(on, config) {
+      on('task', {
+        getListing: getListing,
+      });
+    },
+  },
+};
+```
+
+### Paso 2: Crear Pruebas en Cypress
+Ahora, en tu archivo de pruebas en Cypress, puedes utilizar la tarea getListing como sigue:
+
+```javascript
+describe('Interacción con MongoDB a través de Cypress', () => {
+  it('select de mongo', function() {
+    cy.task('getListing').then(results => {
+      cy.log(results);
+      expect(results).to.have.length(50);
+    });
+  });
+});
+```
+
+### Paso 3: Verificar la Conexión y los Nombres
+
+Asegúrate de que:
+
+- La URL de MongoDB (`mongodb://localhost:27017`) y el nombre de la base de datos (`your-database-name`) sean correctos.
+- La colección `Clases` exista en tu base de datos y tenga documentos para retornar.
+
+**Resumen**
+
+1. Registrar Tarea en `cypress.config.js`:
+
+  - Define y registra la tarea getListing.
+
+2. Escribir Prueba en Cypress:
+
+ - Utiliza `cy.task('getListing')` en tu archivo de pruebas.
+ 
+Este enfoque te permitirá ejecutar tareas de base de datos desde tus pruebas de Cypress, asegurando que la tarea `getListing` esté correctamente registrada y utilizada.
+
+## Limpiar y crear base de datos NoSQL con MongoDB
+
+Recuerden que en MongoDB tenemos la siguiente estructura:
+
+1. Organización
+2. Proyectos
+3. Cloisters
+4. Base de datos
+5. Colecciones
+6. Documentos (registros en DB relaciones)
+Para efectos de backend para frontend, recomiendo realm de MongoDB para agilizar el desarrollo con no relaciones.

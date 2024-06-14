@@ -18,6 +18,7 @@
     "prettier": "^3.3.1"
   },
   "dependencies": {
+    "cypress-mongodb": "^6.2.0",
     "mongodb": "^6.7.0"
   }
 }
