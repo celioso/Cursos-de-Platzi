@@ -2,7 +2,7 @@ const { defineConfig } = require("cypress");
 const mysql = require('mysql2/promise');
 const { MongoClient } = require('mongodb');
 
-url= 'mongodb+srv://celioso1:<password>@cluster0.edssdgd.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
+const url= 'mongodb://localhost:27017/';
 
 async function queryTestDb(query) {
     const connection = await mysql.createConnection({
@@ -25,25 +25,28 @@ async function getListing() {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   });
+  console.log('Base de datos conectada')
 
   try {
     await client.connect();
+    console.log("Connected to MongoDB");
     const db = client.db('Empresa'); // Nombre de tu base de datos
     const Nombres = db.collection('Nombres'); // Nombre de tu colección
     const result = await Nombres.find({}).limit(50).toArray();
     return result;
   } catch (e) {
-    console.error(e);
+    console.error("Error connecting to MongoDB", e);
     return [];
   } finally {
     await client.close();
+    console.log("Disconnected from MongoDB")
   }
 }
 
 // Función para crear un documento de prueba en la colección Nombres
 
 // Función para crear un documento de prueba en la colección Nombres
-async function createPrueba(prueba) {
+async function createName(name) {
   const client = new MongoClient(url, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
@@ -53,17 +56,18 @@ async function createPrueba(prueba) {
     await client.connect();
     const db = client.db('Empresa'); // Nombre de tu base de datos
     const Nombres = db.collection('Nombres'); // Nombre de tu colección
-    return await Nombres.insertOne(prueba);
+    return await Nombres.insertOne(name);
   } catch (e) {
-    console.error(e);
+    console.error("Error connecting to MongoDB", e);
     return [];
   } finally {
     await client.close();
+    console.log("Disconnected from MongoDB")
   }
 }
 
 // Función para limpiar la colección Nombres (eliminar todos los documentos)
-async function clearPrueba() {
+async function clearNombres() {
   const client = new MongoClient(url, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
@@ -75,13 +79,13 @@ async function clearPrueba() {
     const Nombres = db.collection('Nombres'); // Nombre de tu colección
     return await Nombres.deleteMany({});
   } catch (e) {
-    console.error(e);
+    console.error("Error connecting to MongoDB", e);
     return [];
   } finally {
     await client.close();
+    console.log("Disconnected from MongoDB")
   }
 }
-
 
 module.exports = defineConfig({
   e2e: {
@@ -89,8 +93,9 @@ module.exports = defineConfig({
       on('task', {
         queryDb: queryTestDb,
         getListing: getListing,
-        createPrueba: createPrueba,
-        clearPrueba: clearPrueba
+        createName: createName,
+        clearNombres: clearNombres
+
     });
 
     return config;
@@ -102,7 +107,7 @@ module.exports = defineConfig({
       "**/2-advanced-examples/*.js"
     ],
 
-    //baseUrl:"http://localhost:3000/"
+    baseUrl:"http://localhost:3000/"
   },
 
   
