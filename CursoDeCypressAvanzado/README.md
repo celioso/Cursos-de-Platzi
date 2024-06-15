@@ -236,3 +236,107 @@ import 'cypress-xpath'
 [cypress-xpath - npm](https://www.npmjs.com/package/cypress-xpath)
 
 [GitHub - platzi/curso-cypress-avanzado at 5ta-clase-plugins-xpath](https://github.com/platzi/curso-cypress-avanzado/tree/5ta-clase-plugins-xpath)
+
+## ¿Qué son los Flaky Tests?
+
+### Flaky test
+
+Uno de los conceptos más desconocidos, pero a su vez más vividos, por los programadores es el «flaky test». Este concepto viene a referirse a la debilidad que tienen nuestros tests ya que son inestables y frágiles a cualquier cambio externo. Es decir, que el test se puede comportar diferente en cada ejecución presentando diferentes resultados (exitoso o fallido) sin haber realizado cambios en el código o en el test.
+Imagina que tienes un caso de uso que matricula a un estudiante con un curso determinado.
+
+```javascript
+class EnrollmentStudentUseCase
+{
+    private EnrollmentRepositoryInterface $enrollmentRepository;
+    private CourseApi $courseApi;
+
+    public function __construct(
+        EnrollmentRepositoryInterface $enrollmentRepository,
+        CourseApi $courseApi
+    ) {
+        $this->enrollmentRepository = $enrollmentRepository;
+        $this->courseApi = $courseApi;
+    }
+
+    public function make(
+        EnrollmentId $id,
+        EnrollmentStudentId $studentId,
+        EnrollmentCourseId $courseId
+    ): void {
+        $course = $this->courseApi->findByCourseId($courseId);
+
+        $enrollment = Enrollment::make(
+            $id,
+            $studentId,
+            $courseId,
+            $course->title()
+        );
+
+        $this->enrollmentRepository->save($enrollment);
+    }
+}
+```
+### Prueba unitaria
+
+```javascript
+final class EnrollmentStudentUseCaseTest extends MockeryTestCase
+{
+    /** @test */
+    public function it_should_enroll_student(): void
+    {
+        list($id, $title, $studentId, $courseId) = EnrollmentFaker::createValueObjectOne();
+        $enrollmentRepositoryInterfaceMock = $this->createEnrollmentRepositoryInterfaceMock();
+        $courseApi = new CourseApi();
+        $enrollmentMaker = new EnrollmentStudentUseCase($enrollmentRepositoryInterfaceMock, $courseApi);
+
+        $enrollmentMaker->make($id, $studentId, $courseId);
+    }
+
+    private function createEnrollmentRepositoryInterfaceMock(): EnrollmentRepositoryInterface
+    {
+        $mock = \Mockery::mock(EnrollmentRepositoryInterface::class);
+
+        $mock->shouldReceive('save')->once()->withArgs([Enrollment::class])->andReturnNull();
+
+        return $mock;
+    }
+}
+```
+
+El test depende de un servicio externo (CourseApi), si este servicio es bastante inestable el test fallará. Con lo cual, tendremos un flaky test. Una forma de resolver esto es mockeando la dependencia que tiene el caso de uso.
+A continuación dejo una lista de cosas que pueden hacer que nuestro tests se conviertan en un flaky test.
+- Timeouts
+- Asynchronous Waits
+- Cache
+- Order dependency
+- Time of day
+
+Para que la prueba se repita lo agragamos en archivo `cypress.config.js` y se agrega `retries:2,` el dos es el numero de intentos.
+
+```javascript
+
+module.exports = defineConfig({
+  e2e: {
+    baseUrl: "https://pokedexpokemon.netlify.app",
+    experimentalSessionAndOrigin: true,
+    setupNodeEvents(on, config) {
+      // implement node event listeners here
+    },
+    excludeSpecPattern:[
+      "**/1-getting-started/*.js",
+      "**/2-advanced-examples/*.js"
+    ],
+    retries:2,
+  },
+});
+```
+para configurar los dos modos de retries
+```javascript
+retries: {
+        runMode:2,
+        openMode: 0,
+    },
+```
+
+**runMode**: 2 = especifica que Cypress debe reintentar una prueba fallida hasta dos veces adicionales cuando se ejecuta en modo de ejecución.
+**openMode**: 0 especifica que Cypress no debe reintentar las pruebas cuando se ejecuta en modo abierto (es decir, utilizando el Cypress Test Runner de forma interactiva).
