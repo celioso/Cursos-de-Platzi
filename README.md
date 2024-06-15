@@ -31,8 +31,6 @@
 - [Curso Práctico de Python: Creación de un CRUD](CursoPracticodePythonCreaciondeunCRUD)
 - [Curso de Flask](Curso_de_Flask)
 
-
-
 ## FRONT-END
 
 - [Curso Basico de Django](CursoBasicodeDjango)
@@ -56,32 +54,20 @@
 
 ## CLOUD SERVICES
 
-
+- [Curso Basico de Django](CursoBasicodeDjango)
 - [Curso Basico de Django](CursoBasicodeDjango)
 
-- [Curso Basico de Django](CursoBasicodeDjango)
-
-
-- [Curso Basico de Django](CursoBasicodeDjango)
 
 ## QA y Automatización de Pruebas
 
 - [Curso de Introducción a Selenium con Python](CursoDeIntroduccionaSeleniumConPython)
-
-- [Curso de Introducción a Selenium con Python](CursoDeIntroduccionaSeleniumConPython)
-
-- [Curso de Introducción a Selenium con Python](CursoDeIntroduccionaSeleniumConPython)
-
-- [Curso de Introducción a Selenium con Python](CursoDeIntroduccionaSeleniumConPython)
-
-- [Curso de Introducción a Selenium con Python](CursoDeIntroduccionaSeleniumConPython)
-
-- [Curso de Introducción a Selenium con Python](CursoDeIntroduccionaSeleniumConPython)
-
-- [Curso de Introducción a Selenium con Python](CursoDeIntroduccionaSeleniumConPython)
-
-- [Curso de Introducción a Selenium con Python](CursoDeIntroduccionaSeleniumConPython)
-
-- [Curso de Introducción a Selenium con Python](CursoDeIntroduccionaSeleniumConPython)
-
-- [Curso de Introducción a Selenium con Python](CursoDeIntroduccionaSeleniumConPython)
+- [Curso de Fundamentos de Pruebas de Software](CursoDeFundamentosDePruebasDeSoftware)
+- [Curso de Introducción a la Automatización de Pruebas](CursoDeIntroduccionALaAutomatizacionDePruebas)
+- [Curso de Automatización de Pruebas con Puppeteer](CursoDeAutomatizacionDePruebasConPuppeteer)
+- [Curso Avanzado de Automatización de Pruebas con Puppeteer](CursoAvanzadoDeAutomatizacionDePruebasConPuppeteer)
+- [Curso de Automatización de Test con Playwright](CursoDeAutomatizacionDeTestConPlaywright)
+- [Curso de Automatización de Pruebas UI con Cypress](CursoDeAutomatizacionDePruebasUIConCypress)
+- [Curso de Automatización de Pruebas de Backend con Cypress](CursoDeAutomatizacionDePruebasDeBackendConCypress)
+- [Curso de Cypress Avanzado](CursoDeCypressAvanzado)
+- [Curso de Pruebas de Usabilidad]()
+- [Curso de Pruebas de Usabilidad]()

@@ -14,7 +14,7 @@
 
 4. **La siguiente línea de código debe retornar: cy.request('employees').its('headers').its('content-type').should('include', 'application/json)**
 
-**R/:** 
+**R/:** Si el retorno es un JSON o que el contenido es un JSON.
 
 5. **¿Cuál es el status code que se utiliza cuando una consulta se ejecutó con éxito?**
 
@@ -58,7 +58,7 @@
 
 15. **Los 'serverStatus' sirven para indicar el status del comando MySQL. Por ejemplo, serverStatus de valor 2 significa que la query fue exitosa.**
 
-**R/:** Verdadero
+**R/:** Verdadero.
 
 16. **¿Podemos crear una función que reciba el query como parámetro para las bases de datos no relacionales?**
 
