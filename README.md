@@ -63,3 +63,25 @@
 
 
 - [Curso Basico de Django](CursoBasicodeDjango)
+
+## QA y Automatización de Pruebas
+
+- [Curso de Introducción a Selenium con Python](CursoDeIntroduccionaSeleniumConPython)
+
+- [Curso de Introducción a Selenium con Python](CursoDeIntroduccionaSeleniumConPython)
+
+- [Curso de Introducción a Selenium con Python](CursoDeIntroduccionaSeleniumConPython)
+
+- [Curso de Introducción a Selenium con Python](CursoDeIntroduccionaSeleniumConPython)
+
+- [Curso de Introducción a Selenium con Python](CursoDeIntroduccionaSeleniumConPython)
+
+- [Curso de Introducción a Selenium con Python](CursoDeIntroduccionaSeleniumConPython)
+
+- [Curso de Introducción a Selenium con Python](CursoDeIntroduccionaSeleniumConPython)
+
+- [Curso de Introducción a Selenium con Python](CursoDeIntroduccionaSeleniumConPython)
+
+- [Curso de Introducción a Selenium con Python](CursoDeIntroduccionaSeleniumConPython)
+
+- [Curso de Introducción a Selenium con Python](CursoDeIntroduccionaSeleniumConPython)
