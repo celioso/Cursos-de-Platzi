@@ -6,6 +6,8 @@ module.exports = defineConfig({
     experimentalSessionAndOrigin: true,
     setupNodeEvents(on, config) {
       // implement node event listeners here
+      config.env.variable=process.env.NODE_ENV ?? 'NO HAY VARIABLE'; // INGRESA  ALAS VAIABLES DE ENTORNO
+      return config;
     },
     excludeSpecPattern:[
       "**/1-getting-started/*.js",
@@ -14,8 +16,15 @@ module.exports = defineConfig({
     //retries:2,
     /*retries: {
         runMode:2,
-        openMode: 0,
+        openMode: 0
     },*/
+
+    env:{
+      credentials: {
+        user: "username",
+        password: "password",
+      },
+    },
 
   },
 });

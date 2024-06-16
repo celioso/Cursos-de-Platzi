@@ -15,6 +15,12 @@ export class LoginPage {
         cy.visit('http://zero.webappsecurity.com/login.html');
     };
 
+    login(email, password) {
+        cy.get(this.userInput).type(email);
+        cy.get(this.passwordInput).type(password);
+        cy.get(this.loginButton).click();
+    };
+
     validateLoginPage(){
         cy.get(this.userInput).should("be.visible");
         cy.get(this.passwordInput).should("be.visible");
@@ -31,12 +37,6 @@ export class LoginPage {
         cy.get(this.tabs.transfer_founds_tab).should("be.visible");
     }
 
-    login(email, password){
-        cy.get(this.userInput).type(email);
-        cy.get(this.passwordInput).type(password);
-        cy.get(this.loginButton).click();
-
-    };
 };
 
 export const loginPage = new LoginPage();
