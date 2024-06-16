@@ -723,3 +723,65 @@ luego en el archivo packege.json se agrega un script con el sigiente codigo:
  ```
 
 [GitHub - platzi/curso-cypress-avanzado at 10-cypress-env](https://github.com/platzi/curso-cypress-avanzado/tree/10-cypress-env)
+
+## Visual testing
+
+instalar pluging
+`npm i -D cypress-image-snapshot --legacy-peer-deps` or `npm i -D cypress-image-snapshot --force`
+
+para activarlo vamos a cypress.config.js y agregamos el plugin:
+
+```javascript
+const { defineConfig } = require("cypress");
+const { addMatchImageSnapshotPlugin, } = require("cypress-image-snapshot/plugin");
+
+module.exports = defineConfig({
+  e2e: {
+    baseUrl: "https://pokedexpokemon.netlify.app",
+    experimentalSessionAndOrigin: true,
+    setupNodeEvents(on, config) {
+      // implement node event listeners here
+      addMatchImageSnapshotPlugin(on, config)
+      config.env.variable=process.env.NODE_ENV ?? 'NO HAY VARIABLE'; // INGRESA  ALAS VAIABLES DE ENTORNO
+      return config;
+    },
+```
+
+luego a "commnds.js" importamos el plugin con el siguiente codigo:
+
+```javascript
+import { addMatchImageSnapshotCommand } from "cypress-image-snapshot/command";
+
+addMatchImageSnapshotCommand({
+    failureThreshold:0.03,
+    failureThresholdType: "percent",
+    customDiffConfig: {threshold:0.1},
+    capture: "viewport",
+});
+```
+
+para actualizar el snapshot lo agregamos en package.json el siguiente codigo en scripts :
+
+```json
+    "test-update-snapshot": "cypress open --env updateSnapshots=true",
+```
+y iniciamo los test:
+
+```javascript
+describe("Visual testing", ()=>{
+
+        it('Mi prueba de regresion', ()=>{
+            cy.visit('/');
+
+            cy.wait(4000);
+            cy.scrollTo("bottom");
+            cy.matchImageSnapshot();
+        });
+
+        it("Segunda prueba a un solo elemento", ()=>{
+            cy.visit('/');
+            cy.contains("Bulbasaur").should("be.visible").matchImageSnapshot();
+    
+        });
+});
+```
