@@ -6,13 +6,13 @@ export class LoginPage {
         this.tabs = {
             account_summary_tab: "#account_summary_tab",
             account_activity_tab: "#account_activity_tab",
-            transfer_founds_tab: "#transfer_funds_tab",
+            transfer_funds_tab: "#transfer_funds_tab",
         };
         this.error = ".alert.alert-error";
     };
 
     visit() {
-        cy.visit('http://zero.webappsecurity.com/login.html');
+        cy.visit("http://zero.webappsecurity.com/login.html");
     };
 
     login(email, password) {
@@ -21,22 +21,21 @@ export class LoginPage {
         cy.get(this.loginButton).click();
     };
 
-    validateLoginPage(){
-        cy.get(this.userInput).should("be.visible");
+    validatePageLogin() {
         cy.get(this.passwordInput).should("be.visible");
+        cy.get(this.userInput).should("be.visible");
         cy.get(this.loginButton).should("be.visible");
     };
 
-    validateErrorLogin(){
-        cy.get(this.error).should("be.visible");
+    validateSuccessLogin() {
+        cy.get(this.tabs.account_summary_tab).should("be.visible");
+        cy.get(this.tabs.account_activity_tab).should("be.visible");
+        cy.get(this.tabs.transfer_funds_tab).should("be.visible");
     };
 
-    validateSuccessLogin(){
-        cy.get(this.tabs.account_activity_tab).should("be.visible");
-        cy.get(this.tabs.account_activity_tab).should("be.visible");
-        cy.get(this.tabs.transfer_founds_tab).should("be.visible");
-    }
-
+    validateErrorLogin() {
+        cy.get(this.error).should("be.visible");
+    };
 };
 
 export const loginPage = new LoginPage();

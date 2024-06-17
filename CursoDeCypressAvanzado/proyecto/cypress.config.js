@@ -1,6 +1,8 @@
 const { defineConfig } = require("cypress");
 const { addMatchImageSnapshotPlugin, } = require("cypress-image-snapshot/plugin");
 
+const values = {};
+
 module.exports = defineConfig({
   e2e: {
     baseUrl: "https://pokedexpokemon.netlify.app",
@@ -9,6 +11,20 @@ module.exports = defineConfig({
       // implement node event listeners here
       addMatchImageSnapshotPlugin(on, config)
       config.env.variable=process.env.NODE_ENV ?? 'NO HAY VARIABLE'; // INGRESA  ALAS VAIABLES DE ENTORNO
+
+      on("task", {
+        guardar(valor){
+          const key = Object.keys(valor)[0];
+
+          values[key] = valor[key];
+
+          return null;
+        },
+        obtener(key){
+          console.log('values', values);
+          return values[key] ?? "No hay valor";
+        },
+      });
       return config;
     },
     excludeSpecPattern:[

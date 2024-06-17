@@ -809,3 +809,105 @@ describe("Seguridad", ()=>{
     })
 });
 ```
+
+## Navegación entre pestañas del mismo sitio
+
+```javascipt
+describe("Seguridad", ()=>{
+
+    it('Navegar entre diferentes dominios', ()=>{
+        cy.visit('/');
+        cy.visit("https://todo-cypress-iota.vercel.app");
+        cy.get("#title").type("Titulo de prueba");
+    });
+
+    it.only("navego a un dominio", ()=>{
+        cy.visit("https://todo-cypress-iota.vercel.app");
+        cy.get("h1").invoke("text").as("titulo");
+    });
+
+    it.only("navego a otro dominio", ()=>{
+        cy.visit("/");
+        cy.log(this.titulo);
+        //cy.get("h1").invoke('text').as("titulo");
+    })
+});
+```
+
+## Navegar entre diferentes dominios en diferentes tests
+
+```javascript
+it.only("navego en dos dominios en el mismo test", ()=>{
+        cy.visit("/");
+        cy.get("h1")
+            .first()    
+            .invoke("text") 
+            .then((text)=>{
+            Cypress.env({
+                textito:text
+            })
+        });
+        cy.origin("https://todo-cypress-iota.vercel.app", {args:{texto: "Hola"}}, function ({texto}){
+            cy.visit('/');
+            cy.log(texto);
+            cy.log(Cypress.env());
+        });
+        cy.visit("/");
+        cy.get("h1").first().invoke("text").should("be.equal", Cypress.env('textico'));
+    });
+```
+[GitHub - platzi/curso-cypress-avanzado at 13/seguridad](https://github.com/platzi/curso-cypress-avanzado/tree/13/seguridad)
+
+## Navegar entre diferentes dominios en diferentes tests y compartir información entre ambas páginas
+
+Se agrega un nuevo plugin:
+
+```javascript
+const values = {}; // colocarlo al inicio
+
+baseUrl: "https://pokedexpokemon.netlify.app",
+    experimentalSessionAndOrigin: true,
+    setupNodeEvents(on, config) {
+      // implement node event listeners here
+      addMatchImageSnapshotPlugin(on, config)
+      config.env.variable=process.env.NODE_ENV ?? 'NO HAY VARIABLE'; // INGRESA  ALAS VAIABLES DE ENTORNO
+
+      on("task",{
+        guardar(valor){
+          const key = Object.keys(valor)[0];
+
+          values[key] = valor[key];
+          return null;
+        },
+        obtener(key){
+          console.log('values', values);
+          return values[key] ?? "No hay valor";
+        }
+      });
+      return config;
+    },
+```
+
+**test**
+
+```javascript
+it.only("Compartir informacion si usar session", ()=>{
+        cy.visit("/");
+        cy.get("h1").first().invoke("text").then((text) =>{
+            cy.task("guardar", {texto:text});
+        });
+    });
+
+    it.only("Compartir informacion si usar session 2", ()=>{
+        cy.visit("https://todo-cypress-iota.vercel.app");
+        cy.task("obtener", "texto").then((valor) =>{
+            cy.get("#title").type(valor);
+        })
+    });
+```
+
+[GitHub - platzi/curso-cypress-avanzado at 14/seguridad-plugin](https://github.com/platzi/curso-cypress-avanzado/tree/14/seguridad-plugin)
+
+## Cypress fixtures
+
+[GitHub - platzi/curso-cypress-avanzado at 16/data-driven-test](https://github.com/platzi/curso-cypress-avanzado/tree/16/data-driven-test)

@@ -6,38 +6,41 @@ describe('login con POM', ()=>{
     });
 
     it("Login erroneo", ()=>{
-        loginPage.validateLoginPage()
+        loginPage.validatePageLogin()
         loginPage.login('lalalal', 'kshhdytsd');
         loginPage.validateErrorLogin();
     });
 
     it("Login exitoso", ()=>{
-        loginPage.validateLoginPage()
+        loginPage.validatePageLogin()
         loginPage.login('username', 'password');
         loginPage.validateSuccessLogin();
     });
 
     it("Login exitoso con cy.env", ()=>{
-        loginPage.validateLoginPage();
+        loginPage.validatePageLogin();
         cy.log(Cypress.env());
 
-        loginPage.login(Cypress.env("credentials").user, Cypress.env("credentials").password);
+        loginPage.login(Cypress.env("credentials").user, 
+        Cypress.env("credentials").password
+            );
         loginPage.validateSuccessLogin();
     });
 
-    it("Login exitoso con cy.env.json", ()=>{
-        loginPage.validateLoginPage();
-        cy.log(Cypress.env());
+    it("login erroneo con cy.env.json", () => {
+        loginPage.validatePageLogin();
 
+        cy.log(Cypress.env());
         loginPage.login(
-            Cypress.env("credentials").user, 
+            Cypress.env("credentials").user,
             Cypress.env("credentials").password
-    );
-    //loginPage.validateErrorLogin();
+        );
+
+        loginPage.validateSuccessLogin();
     });
 
     it("Login erroneo desde la termina", ()=>{
-        loginPage.validateLoginPage();
+        loginPage.validatePageLogin();
         cy.log(Cypress.env());
 
         loginPage.login(
@@ -47,33 +50,45 @@ describe('login con POM', ()=>{
     });
 });
 
-describe.only("Login erroneo con configuracion",{
-env:{
-    usuarioErroneo:"error1",
-    passwordErroneo:"error2",
+describe(
+    "login erroneo con configuracion",
+    {
+        env: {
+            usuarioErroneo: "error1",
+            passwordErroneo: "error2",
+        },
     },
-},
-()=>{
-    beforeEach(() => {
+    () => {
+        beforeEach(() => {
+            loginPage.visit();
+        });
+
+        it("login erroneo", () => {
+            loginPage.validatePageLogin();
+            cy.log(Cypress.env());
+            loginPage.login(
+                Cypress.env("usuarioErroneo"),
+                Cypress.env("passwordErroneo")
+            );
+            loginPage.validateErrorLogin();
+        });
+
+        it("login erroneo con variables de entorno", () => {
+            loginPage.validatePageLogin();
+            cy.log(Cypress.env());
+            loginPage.login(Cypress.env("variable"), Cypress.env("variable")
+            );
+            loginPage.validateErrorLogin();
+        });
+    }
+);
+
+describe("Login con fixtures",()=>{
+    beforeEach(()=>{
         loginPage.visit();
     });
 
     it("login erroneo", ()=>{
-        loginPage.validateLoginPage();
-        cy.log(Cypress.env());
 
-        loginPage.login(
-            Cypress.env("UsuarioErroneo"), 
-            Cypress.env("passwordErroneo")
-        );
-        //loginPage.validateErrorLogin
     });
-
-    it("login erroneo con variables de entorno", () => {
-        loginPage.validatePageLogin();
-        cy.log(Cypress.env());
-        loginPage.login(Cypress.env("variable"), Cypress.env("variable"));
-        //loginPage.validateErrorLogin();
-      });
 });
-
