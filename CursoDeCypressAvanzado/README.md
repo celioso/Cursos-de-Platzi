@@ -910,4 +910,220 @@ it.only("Compartir informacion si usar session", ()=>{
 
 ## Cypress fixtures
 
+```javascript
+describe("Login con fixtures",()=>{
+    beforeEach(()=>{
+        loginPage.visit();
+    });
+
+    it("login erroneo 2", ()=>{
+        loginPage.validatePageLogin();
+
+        cy.fixture("credentials").then( credentials =>{
+            loginPage.login(credentials.email, credentials.password);
+        });
+
+        loginPage.validateErrorLogin();
+    });
+
+    it("login exitoso", ()=>{
+        loginPage.validatePageLogin();
+
+        cy.fixture("usuarios").then( credentials =>{
+            loginPage.login(credentials.email, credentials.password);
+        });
+
+        loginPage.validateErrorLogin();
+    });
+});
+
+const credentialsForUsers = [
+    {
+        nombre: "credentials",
+        titulo: "Login con credentials",
+    },
+    {
+        nombre: "usuarios",
+        titulo: "Login con users",
+    }
+]
+
+credentialsForUsers.forEach(credentials=>{
+    describe.only(credentials.titulo, () =>{
+        beforeEach(()=>{
+            loginPage.visit();
+        });
+
+        it('login exitoso con fixtures', () => {
+            loginPage.validatePageLogin();
+
+            cy.fixture(credentials.nombre).then(credentials => {
+                    loginPage.login(credentials.email, credentials.password);
+                }
+            );
+            loginPage.validateErrorLogin();
+        });
+    });
+});
+```
+
+el la carpeta de fixtures se crean dos json:
+
+credencials.json
+```json
+{
+    "email":"hello@cypress.io",
+    "password":"123456"
+}
+```
+usuarios.json
+
+```json
+{
+    "email":"hello@cypress.io",
+    "password":"123456"
+}
+```
+
 [GitHub - platzi/curso-cypress-avanzado at 16/data-driven-test](https://github.com/platzi/curso-cypress-avanzado/tree/16/data-driven-test)
+
+## Configuración de plugins y steps dinámicos
+
+para este tema se instala mas plugin
+
+`npm @cypress/webpack-preprocessor @badeball/cypress-cucumber-preprocessor`, `npm i @badeball/cypress-cucumber-preprocessor @cypress/webpack-preprocessor --legacy-peer-deps` y `npm install webpack --legacy-peer-deps`
+Los links de las dependencias requeridas en la clase
+
+[badeball/cypress-cucumber-preprocessor](https://www.npmjs.com/package/@badeball/cypress-cucumber-preprocessor) [cypress/webpack-preprocessor](https://www.npmjs.com/package/@cypress/webpack-preprocessor)
+
+configuracion de `cypress.config.js`
+
+```javascript
+const { defineConfig } = require("cypress");
+const { addMatchImageSnapshotPlugin, } = require("cypress-image-snapshot/plugin");
+const webpack = require("@cypress/webpack-preprocessor");
+const preprocessor = require("@badeball/cypress-cucumber-preprocessor");
+
+const values = {};
+
+async function setupNodeEvents(on, config){
+
+    addMatchImageSnapshotPlugin(on, config);
+
+    config.env.variable=process.env.NODE_ENV ?? 'NO HAY VARIABLE'; // INGRESA  ALAS VAIABLES DE ENTORNO
+
+    on("task", {
+      guardar(valor){
+        const key = Object.keys(valor)[0];
+
+        values[key] = valor[key];
+
+        return null;
+      },
+      obtener(key){
+        console.log('values', values);
+        return values[key] ?? "No hay valor";
+      },
+    });
+
+    await preprocessor.addCucumberPreprocessorPlugin(on, config);
+    
+    on(
+      "file:preprocessor",
+      webpack({
+        webpackOptions: {
+          resolve: {
+            extensions: [".ts", ".js"],
+          },
+          module: {
+            rules: [
+              {
+                test: /\.feature$/,
+                use: [
+                  {
+                    loader: "@badeball/cypress-cucumber-preprocessor/webpack",
+                    options: config,
+                  },
+                ],
+              },
+            ],
+          },
+        },
+      })
+    );
+    return config;
+};
+
+module.exports = defineConfig({
+  e2e: {
+    baseUrl: "https://pokedexpokemon.netlify.app",
+    experimentalSessionAndOrigin: true,
+    specPattern: "**/*.feature",
+    supportFile: false,
+    setupNodeEvents,
+ 
+    excludeSpecPattern:[
+      "**/1-getting-started/*.js",
+      "**/2-advanced-examples/*.js"
+    ],
+    //retries:2,
+    /*retries: {
+        runMode:2,
+        openMode: 0
+    },*/
+
+    env:{
+      credentials: {
+        user: "username",
+        password: "password",
+      },
+    },
+    specPattern:"**/*.feature",
+  },
+});
+```
+
+**login.js**
+
+```javascript
+const {
+    Given,
+    When,
+    Then,
+} = require('@badeball/cypress-cucumber-preprocessor');
+const {loginPage} = require("../../pageObjects/loginPage.js");
+
+Given('I am on the login page', () => {
+    loginPage.visit();
+    loginPage.validatePageLogin();
+});
+
+When(`I fill in my login and password with {string} and {string}`, (username, password) => {
+    loginPage.login(username, password);
+});
+
+Then('I should validate that I\'m logged in', () => {
+    loginPage.validateSuccessLogin();
+});
+```
+
+**login.feature**
+
+gherkin
+
+```vbnet
+Feature: Login test
+
+    Scenario: I login with correct credentials
+        Given I am on the login page
+        When I fill in my login and password with "username" and "password"
+        Then I should validate that I'm logged in
+```
+
+[GitHub - platzi/curso-cypress-avanzado at 17/bdd](https://github.com/platzi/curso-cypress-avanzado/tree/17/bdd)
+
+## Shared Step Definitions
+
+
+
+[GitHub - platzi/curso-cypress-avanzado at 18/bdd-shared-steps](https://github.com/platzi/curso-cypress-avanzado/tree/18/bdd-shared-steps)

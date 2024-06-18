@@ -88,7 +88,52 @@ describe("Login con fixtures",()=>{
         loginPage.visit();
     });
 
-    it("login erroneo", ()=>{
+    it("login erroneo 2", ()=>{
+        loginPage.validatePageLogin();
 
+        cy.fixture("credentials").then( credentials =>{
+            loginPage.login(credentials.email, credentials.password);
+        });
+
+        loginPage.validateErrorLogin();
+    });
+
+    it("login exitoso", ()=>{
+        loginPage.validatePageLogin();
+
+        cy.fixture("usuarios").then( credentials =>{
+            loginPage.login(credentials.email, credentials.password);
+        });
+
+        loginPage.validateErrorLogin();
+    });
+});
+
+const credentialsForUsers = [
+    {
+        nombre: "credentials",
+        titulo: "Login con credentials",
+    },
+    {
+        nombre: "usuarios",
+        titulo: "Login con users",
+    }
+]
+
+credentialsForUsers.forEach(credentials=>{
+    describe.only(credentials.titulo, () =>{
+        beforeEach(()=>{
+            loginPage.visit();
+        });
+
+        it('login exitoso con fixtures', () => {
+            loginPage.validatePageLogin();
+
+            cy.fixture(credentials.nombre).then(credentials => {
+                    loginPage.login(credentials.email, credentials.password);
+                }
+            );
+            loginPage.validateErrorLogin();
+        });
     });
 });

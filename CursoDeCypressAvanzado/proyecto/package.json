@@ -18,5 +18,10 @@
     "cypress-image-snapshot": "^4.0.1",
     "cypress-xpath": "^2.0.1",
     "prettier": "^3.3.2"
+  },
+  "dependencies": {
+    "@badeball/cypress-cucumber-preprocessor": "^20.0.7",
+    "@cypress/webpack-preprocessor": "^6.0.2",
+    "webpack": "^5.92.0"
   }
 }
