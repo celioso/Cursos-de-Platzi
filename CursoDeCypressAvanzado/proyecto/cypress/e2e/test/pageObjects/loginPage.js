@@ -22,8 +22,8 @@ export class LoginPage {
     };
 
     validatePageLogin() {
-        cy.get(this.passwordInput).should("be.visible");
         cy.get(this.userInput).should("be.visible");
+        cy.get(this.passwordInput).should("be.visible");
         cy.get(this.loginButton).should("be.visible");
     };
 

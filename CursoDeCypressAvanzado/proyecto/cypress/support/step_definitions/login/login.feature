@@ -1,5 +1,6 @@
 Feature: Login test
 
+    @probando
     Scenario: I login with correct credentials
         Given I am on the login page
         When I fill in my email and password with "username" and "password"

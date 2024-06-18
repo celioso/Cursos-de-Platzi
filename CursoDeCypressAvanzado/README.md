@@ -1109,7 +1109,7 @@ Then('I should validate that I\'m logged in', () => {
 
 **login.feature**
 
-gherkin
+**gherkin**
 
 ```vbnet
 Feature: Login test
@@ -1123,7 +1123,68 @@ Feature: Login test
 [GitHub - platzi/curso-cypress-avanzado at 17/bdd](https://github.com/platzi/curso-cypress-avanzado/tree/17/bdd)
 
 ## Shared Step Definitions
+ primer paso se debe pasar la carpeta **login** a la carpeta **support**, se crea una con el nombre **step_difinitions** se crean los archivos navigation
 
+**navigation.js**
 
+```javascript
+const {
+    Given,
+    When,
+    Then,
+} = require('@badeball/cypress-cucumber-preprocessor');
+const {loginPage} = require("../../pageObjects/loginPage");
+
+Given('I am on the home page', () => {
+    loginPage.validateSuccessLogin();
+});
+
+When('I click on the Account Activity Nav', ()=> {
+    cy.contains("Account Activity").click();
+});
+
+Then('I should see the Account Activity content',()=> {
+    cy.contains("Show Transactions").should("be.visible");
+});
+```
+
+**navigation.feature**
+
+```vbnet
+Feature: NavigationBar
+
+#  esto va a fallar porque no esta en shared steps teneos que mover login.js en shared steps
+    Background:
+        Given I am on the login page
+        When I fill in my email and password with "username" and "password"
+
+    Scenario: Navigate to the Feature Navigation Bar
+        Given I am on the home page
+        When I click on the Account Activity Nav
+        Then I should see the Account Activity content
+```
 
 [GitHub - platzi/curso-cypress-avanzado at 18/bdd-shared-steps](https://github.com/platzi/curso-cypress-avanzado/tree/18/bdd-shared-steps)
+
+## Data Driven Test por medio de Scenarios Outline
+
+se crea un nuevo script en package.json con el código:
+`"cucumber:tag":"cypress run --env tags=@probando"`
+
+para correrlo en modo gengles:
+`npx cypress run`
+
+para iniciar solo una prueba en especifico se usa el sigiente código `npm run cucumber:tags`
+y colocar @ y darle un nombre al que se desea correr:
+
+```vbnet
+Feature: Login test
+
+    @probando
+    Scenario: I login with correct credentials
+        Given I am on the login page
+        When I fill in my email and password with "username" and "password"
+        Then I should validate that I'm logged in
+```
+
+[GitHub - platzi/curso-cypress-avanzado at 19/bdd-scenario-outline](https://github.com/platzi/curso-cypress-avanzado/tree/19/bdd-scenario-outline)

@@ -10,10 +10,18 @@ Given('I am on the login page', () => {
     loginPage.validatePageLogin();
 });
 
+/*When(`I fill in my email and password with {string} and {string}`, (username, password) => {
+    loginPage.login(username, password);
+});*/
+
+Then('I should validate that I\'m logged in', () => {
+    loginPage.validateSuccessLogin();
+});
+
 When(`I fill in my email and password with {string} and {string}`, (username, password) => {
     loginPage.login(username, password);
 });
 
-Then('I should validate that I\'m logged in', () => {
-    loginPage.validateSuccessLogin();
+Then('I should validate that I am not logged in', ()=> {
+    loginPage.validateErrorLogin();
 });
