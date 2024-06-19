@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<testsuites name="Mocha Tests" time="4.644" tests="1" failures="0">
-  <testsuite name="Root Suite" timestamp="2024-06-18T23:02:33" tests="0" file="cypress\e2e\test\features\navigation\navigation.feature" time="0.000" failures="0">
-  </testsuite>
-  <testsuite name="NavigationBar" timestamp="2024-06-18T23:02:33" tests="1" time="4.639" failures="0">
-    <testcase name="NavigationBar Navigate to the Feature Navigation Bar" time="3.006" classname="Navigate to the Feature Navigation Bar">
-    </testcase>
-  </testsuite>
-</testsuites>

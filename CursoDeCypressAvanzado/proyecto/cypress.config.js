@@ -59,6 +59,7 @@ async function setupNodeEvents(on, config) {
 module.exports = defineConfig({
   projectId: 'wg5uey',
 
+  reporter: "cypress-multi-reporters",
   reporterOptions: {
     configFile: "reporter-config.json",
   },
@@ -77,6 +78,8 @@ module.exports = defineConfig({
         user: "username",
         password: "password",
       },
+      allure: true,
+      allureClearSkippedTests: true,
     },
   },
 });
