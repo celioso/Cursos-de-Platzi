@@ -1188,3 +1188,110 @@ Feature: Login test
 ```
 
 [GitHub - platzi/curso-cypress-avanzado at 19/bdd-scenario-outline](https://github.com/platzi/curso-cypress-avanzado/tree/19/bdd-scenario-outline)
+
+## Múltiples reportes
+
+Dependencias usadas en la clase.
+
+-`npm i cypress-multi-reporters --legacy-peer-deps` [cypress-multi-reporters](https://www.npmjs.com/package/cypress-multi-reporters)
+- `npm i junit-report-merger --legacy-peer-deps`[junit-report-merger](https://www.npmjs.com/package/junit-report-merger)
+- `npm install mocha-junit-reporter --save-dev --force` [mochawesome](https://www.npmjs.com/package/mochawesome)
+- `npm i mochawesome --legacy-peer-deps`, `npm i mochawesome-marge --force`, `npm i mochawesome-report-generator --legacy-peer-deps`, `npm i mochawesome-merge@4.3.0 --legacy-peer-deps`, `npm install mochawesome mochawesome-merge mochawesome-report-generator --save-dev --legacy-peer-deps` y `npm install mochawesome mochawesome-merge mochawesome-report-generator --save-dev --legacy-peer-deps`[mochaweso](https://www.npmjs.com/package/mochawesome-merge)
+
+para la configuración de tiene que agregar el siguiente código en cypress.config.js
+
+```javascript
+module.exports = defineConfig({
+  reporter:"cypress-multi-reporters",
+  reporterOptions: {
+    configFile:"reporter-config.json",
+  },
+  e2e: {
+```
+
+Se crea el archivo reporter-config.json el la raiz:
+```json
+{
+    "reporterEnabled": "mocha-junit-reporter, mochawesome",
+    "mochaJunitReporterReporterOptions": {
+        "mochaFile": "cypress/results/junit/results-[hash].xml"
+    },
+    "reporterOptions":{
+        "reportDir": "cypress/results/mochawesome",
+        "overwrite": false,
+        "html": false,
+        "json": true
+    }
+}
+```
+
+archivo **package.json**
+
+se agregan lo scripts de test
+
+```javascript
+"cucumber": "cypress run",
+    "cucumber:tags": "cypress run --env tags=@probando",
+    "delete:results": "rm -r cypress/results/* || true",
+    "report": "cypress run --reporter cypress-multi-reporters --reporter-options configFile=reporter-config.json",
+    "mochawesome:report": "npx mochawesome-merge \"cypress/results/mochawesome/*.json\" > mochawesome.json && npx marge mochawesome.json",
+    "junit:reports": "jrm cypress/results/junit/combined-report.xml \"cypress/results/junit/*.xml\""
+```
+
+[https://github.com/platzi/curso-cypress-avanzado/tree/20/reportes](https://github.com/platzi/curso-cypress-avanzado/tree/20/reportes)
+
+## Allure report
+
+instala el plugin:
+
+`npm @shelex/cypress-allure-plugin`
+
+[allure report](https://allurereport.org/docs/install-for-linux/)
+
+## Cypress con docker container
+se crea el archivo  
+
+```yaml
+FROM cypress/base:16
+
+RUN mkdir /app
+WORKDIR /app
+
+copy . / app
+
+# RUN npm install --legacy-peer-deps
+
+RUN npm install --save-dev @babel/core @babel/preset-env babel-loader webpack
+
+RUN npx cypress install
+
+#RUN $(npm bin)/cypress verify
+
+
+CMD ["npm", "run", "allure-results"]
+```
+
+docker-compose.yml
+
+```yml
+version: '3.8'
+services:
+  cypress_compose:
+    build:
+      context: ./
+      dockerfile: ./Dockerfile
+    volumes:
+      - ./dockerReports:/app/allure-results
+```
+
+para iniciar la creacion de la imagen:
+
+`docker build .`
+
+Para iniciar la prueba se usa el siguiente código
+
+`docker-compose up`
+
+da los resultados en la sigiente dirección **/dockerReports:/app/allure-results**
+
+## Usando dashboard de Cypress

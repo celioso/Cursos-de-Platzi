@@ -10,11 +10,3 @@ Feature: loginOutline
             | username2 | password3 |
             | username3 | passsord3 |
             | userna4e3 | pa4ssord3 |
-            | username3 | passwor3  |
-            | username2 | password3 |
-            | username3 | passsord3 |
-            | userna4e3 | pa4ssord3 |
-            | username3 | passwor3  |
-            | username2 | password3 |
-            | username3 | passsord3 |
-            | userna4e3 | pa4ssord3 |

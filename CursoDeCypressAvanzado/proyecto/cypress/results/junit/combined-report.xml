@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="20" failures="0" time="13.543">
+  <testsuite name="Root Suite" timestamp="2024-06-18T23:02:33" tests="0" file="cypress\e2e\test\features\navigation\navigation.feature" time="0" failures="0"></testsuite>
+  <testsuite name="NavigationBar" timestamp="2024-06-18T23:02:33" tests="2" time="4.908" failures="0">
+    <testcase name="NavigationBar Navigate to the Feature Navigation Bar" time="3.006" classname="Navigate to the Feature Navigation Bar"></testcase>
+    <testcase name="NavigationBar Navigate to the Feature Navigation Bar" time="3.188" classname="Navigate to the Feature Navigation Bar"></testcase>
+  </testsuite>
+  <testsuite name="Login test" timestamp="2024-06-18T22:24:29" tests="2" time="5.337" failures="0">
+    <testcase name="Login test I login with correct credentials" time="2.873" classname="I login with correct credentials"></testcase>
+    <testcase name="Login test I login with correct credentials" time="2.977" classname="I login with correct credentials"></testcase>
+  </testsuite>
+  <testsuite name="loginOutline" timestamp="2024-06-18T22:24:37" tests="16" time="13.543" failures="0">
+    <testcase name="loginOutline I login with correct credentials (example #1)" time="1.603" classname="I login with correct credentials (example #1)"></testcase>
+    <testcase name="loginOutline I login with correct credentials (example #2)" time="0.935" classname="I login with correct credentials (example #2)"></testcase>
+    <testcase name="loginOutline I login with correct credentials (example #3)" time="0.942" classname="I login with correct credentials (example #3)"></testcase>
+    <testcase name="loginOutline I login with correct credentials (example #4)" time="0.952" classname="I login with correct credentials (example #4)"></testcase>
+    <testcase name="loginOutline I login with correct credentials (example #5)" time="0.883" classname="I login with correct credentials (example #5)"></testcase>
+    <testcase name="loginOutline I login with correct credentials (example #6)" time="0.905" classname="I login with correct credentials (example #6)"></testcase>
+    <testcase name="loginOutline I login with correct credentials (example #7)" time="0.929" classname="I login with correct credentials (example #7)"></testcase>
+    <testcase name="loginOutline I login with correct credentials (example #8)" time="0.879" classname="I login with correct credentials (example #8)"></testcase>
+    <testcase name="loginOutline I login with correct credentials (example #9)" time="0.920" classname="I login with correct credentials (example #9)"></testcase>
+    <testcase name="loginOutline I login with correct credentials (example #10)" time="0.906" classname="I login with correct credentials (example #10)"></testcase>
+    <testcase name="loginOutline I login with correct credentials (example #11)" time="0.922" classname="I login with correct credentials (example #11)"></testcase>
+    <testcase name="loginOutline I login with correct credentials (example #12)" time="0.917" classname="I login with correct credentials (example #12)"></testcase>
+    <testcase name="loginOutline I login with correct credentials (example #1)" time="1.477" classname="I login with correct credentials (example #1)"></testcase>
+    <testcase name="loginOutline I login with correct credentials (example #2)" time="0.906" classname="I login with correct credentials (example #2)"></testcase>
+    <testcase name="loginOutline I login with correct credentials (example #3)" time="0.915" classname="I login with correct credentials (example #3)"></testcase>
+    <testcase name="loginOutline I login with correct credentials (example #4)" time="0.905" classname="I login with correct credentials (example #4)"></testcase>
+  </testsuite>
+</testsuites>
