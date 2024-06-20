@@ -1201,12 +1201,91 @@ Dependencias usadas en la clase.
 para la configuración de tiene que agregar el siguiente código en cypress.config.js
 
 ```javascript
+const { defineConfig } = require("cypress");
+const { addMatchImageSnapshotPlugin } = require("cypress-image-snapshot/plugin");
+const webpack = require("@cypress/webpack-preprocessor");
+const preprocessor = require("@badeball/cypress-cucumber-preprocessor");
+
+const values = {};
+
+async function setupNodeEvents(on, config) {
+
+  addMatchImageSnapshotPlugin(on, config);
+
+  config.env.variable = process.env.NODE_ENV ?? 'NO HAY VARIABLE'; // INGRESA  ALAS VAIABLES DE ENTORNO
+
+  on("task", {
+    guardar(valor) {
+      const key = Object.keys(valor)[0];
+
+      values[key] = valor[key];
+
+      return null;
+    },
+    obtener(key) {
+      console.log('values', values);
+      return values[key] ?? "No hay valor";
+    },
+  });
+
+  await preprocessor.addCucumberPreprocessorPlugin(on, config);
+
+  on(
+    "file:preprocessor",
+    webpack({
+      webpackOptions: {
+        resolve: {
+          extensions: [".ts", ".js"],
+        },
+        module: {
+          rules: [
+            {
+              test: /\.feature$/,
+              use: [
+                {
+                  loader: "@badeball/cypress-cucumber-preprocessor/webpack",
+                  options: config,
+                },
+              ],
+            },
+          ],
+        },
+      },
+    })
+  );
+
+
+
+  return config;
+}
+
 module.exports = defineConfig({
-  reporter:"cypress-multi-reporters",
+  projectId: 'wg5uey',
+
+  reporter: "cypress-multi-reporters",
   reporterOptions: {
-    configFile:"reporter-config.json",
+    configFile: "reporter-config.json",
   },
   e2e: {
+    baseUrl: "https://pokedexpokemon.netlify.app",
+    experimentalSessionAndOrigin: true,
+    specPattern: "**/*.feature",
+    supportFile: false,
+    setupNodeEvents,
+    excludeSpecPattern: [
+      "**/1-getting-started/*.js",
+      "**/2-advanced-examples/*.js"
+    ],
+    env: {
+      credentials: {
+        user: "username",
+        password: "password",
+      },
+      allure: true,
+      allureClearSkippedTests: true,
+    },
+  },
+});
 ```
 
 Se crea el archivo reporter-config.json el la raiz:
@@ -1216,7 +1295,7 @@ Se crea el archivo reporter-config.json el la raiz:
     "mochaJunitReporterReporterOptions": {
         "mochaFile": "cypress/results/junit/results-[hash].xml"
     },
-    "reporterOptions":{
+    "reporterOptions": {
         "reportDir": "cypress/results/mochawesome",
         "overwrite": false,
         "html": false,
@@ -1244,7 +1323,15 @@ se agregan lo scripts de test
 
 instala el plugin:
 
-`npm @shelex/cypress-allure-plugin`
+`npm @shelex/cypress-allure-plugin --legacy-peer-deps`
+`npm install --save-dev @shelex/cypress-allure-plugin allure-commandline --legacy-peer-deps`
+
+`npm install --save-dev cypress-cucumber-preprocessor --legacy-peer-deps`
+`npm install --save-dev @badeball/cypress-cucumber-preprocessor --legacy-peer-deps`
+`npm install --save-dev @badeball/cypress-webpack-preprocessor --force`
+`npm install --save-dev @badeball/cypress-cucumber-preprocessor/browserify --force`
+
+
 
 [allure report](https://allurereport.org/docs/install-for-linux/)
 
@@ -1283,6 +1370,10 @@ services:
     volumes:
       - ./dockerReports:/app/allure-results
 ```
+
+iniciar docker:
+
+`docker login -u <tu_nombre_de_usuario> -p <tu_contraseña>`
 
 para iniciar la creacion de la imagen:
 

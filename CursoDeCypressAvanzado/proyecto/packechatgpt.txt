@@ -1,0 +1,84 @@
+const { defineConfig } = require("cypress");
+const { addMatchImageSnapshotPlugin } = require("cypress-image-snapshot/plugin");
+const webpack = require("@cypress/webpack-preprocessor");
+const { addCucumberPreprocessorPlugin } = require("@badeball/cypress-cucumber-preprocessor");
+const allureWriter = require("@shelex/cypress-allure-plugin/writer");
+const { allureCypress } = require("allure-cypress/reporter");
+
+const values = {};
+
+async function setupNodeEvents(on, config) {
+  // Configuración de plugins
+  addMatchImageSnapshotPlugin(on, config);
+  allureCypress(on);
+
+  // Configuración de variables de entorno
+  config.env.variable = process.env.NODE_ENV ?? 'NO HAY VARIABLE';
+
+  // Definición de tareas personalizadas
+  on("task", {
+    guardar(valor) {
+      const key = Object.keys(valor)[0];
+      values[key] = valor[key];
+      return null;
+    },
+    obtener(key) {
+      console.log('values', values);
+      return values[key] ?? "No hay valor";
+    },
+  });
+
+  // Añadir plugin del preprocesador de Cucumber
+  await addCucumberPreprocessorPlugin(on, config);
+
+  // Configuración del preprocesador Webpack
+  const webpackOptions = {
+    resolve: {
+      extensions: ['.js', '.jsx', '.ts', '.tsx', '.feature'],
+      fallback: {
+        util: false,
+      },
+    },
+    module: {
+      rules: [
+        {
+          test: /\.feature$/,
+          use: [
+            {
+              loader: "@badeball/cypress-cucumber-preprocessor/webpack",
+              options: config,
+            },
+          ],
+        },
+      ],
+    },
+  };
+
+  on("file:preprocessor", webpack({ webpackOptions }));
+
+  // Añadir el escritor de Allure
+  allureWriter(on, config);
+
+  return config;
+};
+
+module.exports = defineConfig({
+  projectId: 'wg5uey',
+  e2e: {
+    baseUrl: "https://pokedexpokemon.netlify.app",
+    specPattern: "**/*.feature",
+    supportFile: false,
+    setupNodeEvents,
+    excludeSpecPattern: [
+      "**/1-getting-started/*.js",
+      "**/2-advanced-examples/*.js"
+    ],
+    env: {
+      credentials: {
+        user: "username",
+        password: "password",
+      },
+      allureClearSkippedTests: true,
+    },
+  },
+});

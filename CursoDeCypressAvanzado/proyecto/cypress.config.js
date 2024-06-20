@@ -2,6 +2,7 @@ const { defineConfig } = require("cypress");
 const { addMatchImageSnapshotPlugin } = require("cypress-image-snapshot/plugin");
 const webpack = require("@cypress/webpack-preprocessor");
 const preprocessor = require("@badeball/cypress-cucumber-preprocessor");
+const allureWriter = require("@shelex/cypress-allure-plugin/writer");
 
 const values = {};
 
@@ -51,21 +52,20 @@ async function setupNodeEvents(on, config) {
     })
   );
 
-
-
+//allureWriter(on, config);
+on("file:preprocessor", webpack);
   return config;
 }
 
 module.exports = defineConfig({
   projectId: 'wg5uey',
 
-  reporter: "cypress-multi-reporters",
   reporterOptions: {
     configFile: "reporter-config.json",
   },
   e2e: {
     baseUrl: "https://pokedexpokemon.netlify.app",
-    experimentalSessionAndOrigin: true,
+    //experimentalSessionAndOrigin: true, 
     specPattern: "**/*.feature",
     supportFile: false,
     setupNodeEvents,
@@ -78,8 +78,20 @@ module.exports = defineConfig({
         user: "username",
         password: "password",
       },
-      allure: true,
-      allureClearSkippedTests: true,
     },
+
+    //retries: 2,
+    // retries: {
+    //   // Configure retry attempts for `cypress run`
+    //   // Default is 0
+    //   runMode: 2,
+    //   // Configure retry attempts for `cypress open`
+    //   // Default is 0
+    //   openMode: 0,
+    // },
   },
 });
+
+/*
+
+*/
