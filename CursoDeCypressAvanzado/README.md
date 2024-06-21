@@ -1331,9 +1331,39 @@ instala el plugin:
 `npm install --save-dev @badeball/cypress-webpack-preprocessor --force`
 `npm install --save-dev @badeball/cypress-cucumber-preprocessor/browserify --force`
 
+## Instalar allure Report
 
+--legacy-peer-deps
+[Allure Report Documentation](https://allurereport.org/docs/cypress/)
+[allure report linix](https://allurereport.org/docs/install-for-linux/)
 
-[allure report](https://allurereport.org/docs/install-for-linux/)
+- Instale la herramienta de línea de comandos Allure Report: 
+`npm install --save-dev allure-commandline --legacy-peer-deps`
+
+- Instale el adaptador Allure Cypress.
+`npm install --save-dev allure-cypress --legacy-peer-deps`
+
+- En la **e2e** sección de su [script de configuración de Cypress](https://docs.cypress.io/guides/references/configuration) , defina una `setupNodeEvents()` función que llame `allureCypress()`, como se muestra en el ejemplo.
+
+Pase las opciones de configuración si es necesario, consulte [Configuración de Allure Cypress](https://allurereport.org/docs/cypress-configuration/).
+
+```javascript
+const { defineConfig } = require("cypress");
+const { allureCypress } = require("allure-cypress/reporter");
+
+module.exports = defineConfig({
+  e2e: {
+    setupNodeEvents(on, config) {
+      allureCypress(on);
+    },
+  },
+});
+```
+
+- En su archivo de soporte E2E , importe los comandos de Allure Cypress.
+```javascript
+import "allure-cypress/commands";
+```
 
 ## Cypress con docker container
 se crea el archivo  
@@ -1381,8 +1411,14 @@ para iniciar la creacion de la imagen:
 
 Para iniciar la prueba se usa el siguiente código
 
-`docker-compose up`
+`docker-compose up --build` 
 
 da los resultados en la sigiente dirección **/dockerReports:/app/allure-results**
 
 ## Usando dashboard de Cypress
+
+El script de ejecucion del DASHBOARD
+
+
+`"run:dashboard":"cypress run --record --key [Recorder Key]"`
+Un resumen de la clase JoaquinDemarchi Notion

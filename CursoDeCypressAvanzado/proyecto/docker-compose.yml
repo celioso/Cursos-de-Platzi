@@ -5,4 +5,7 @@ services:
       context: ./
       dockerfile: ./Dockerfile
     volumes:
-      - ./dockerReports:/app/allure-results
+      - ./dockerReports:/app/allure-report
+    stdin_open: true
+    tty: true
+    command: npm run cucumber:tags
