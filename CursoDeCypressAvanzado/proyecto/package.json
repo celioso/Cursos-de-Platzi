@@ -43,6 +43,8 @@
     "webpack-cli": "^5.1.4"
   },
   "dependencies": {
+    "cy2": "^4.0.9",
+    "cypress-cloud": "^1.10.2",
     "cypress-multi-reporters": "^1.6.4",
     "junit-report-merger": "^7.0.0",
     "mochawesome": "^7.1.3",

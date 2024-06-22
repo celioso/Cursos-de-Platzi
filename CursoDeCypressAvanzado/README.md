@@ -1422,3 +1422,32 @@ El script de ejecucion del DASHBOARD
 
 `"run:dashboard":"cypress run --record --key [Recorder Key]"`
 Un resumen de la clase JoaquinDemarchi Notion
+
+## Alternativas gratuitas al Dashboard de Cypress
+
+[Sorry Cypress - Open Source Cypress Dashboard](https://docs.sorry-cypress.dev/guide/get-started)
+
+se instala `npm install cy2 cypress` o `npm install cypress-cloud cypress` 
+luego lo corremos en Docker:
+`docker run -p 1234:1234 agoldis/sorry-cypress-director`
+
+se inicia la prueba:
+
+`npx cypress-cloud run --parallel --record --key somekey --ci-build-id hello-cypress`
+
+para descargar la imagenes de docker
+
+```yml
+# get docker-compose file
+curl --output docker-compose.minio.yml https://raw.githubusercontent.com/sorry-cypress/sorry-cypress/master/docker-compose.minio.yml
+
+# start the services
+docker-compose -f ./docker-compose.minio.yml up`javascript
+
+```
+
+para correr la prueba `cypress-cloud run --parallel --record --key somekey --ci-build-id hello-cypress` 
+
+## Cypress Scenario recorder plugin
+
+**Cypress Scenerio Recorder** como estencion en google 

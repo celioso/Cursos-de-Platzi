@@ -69,5 +69,5 @@
 - [Curso de Automatización de Pruebas UI con Cypress](CursoDeAutomatizacionDePruebasUIConCypress)
 - [Curso de Automatización de Pruebas de Backend con Cypress](CursoDeAutomatizacionDePruebasDeBackendConCypress)
 - [Curso de Cypress Avanzado](CursoDeCypressAvanzado)
-- [Curso de Pruebas de Usabilidad]()
-- [Curso de Pruebas de Usabilidad]()
+- [Curso de Pruebas de Usabilidad](CursoDePruebasDeUsabilidad)
+- [Curso de Testing de Videojuegos](CursoDeTestingDeVideojuegos)
