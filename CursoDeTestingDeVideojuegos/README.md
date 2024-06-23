@@ -151,3 +151,62 @@ En el proceso de testing podemos encontrarnos con los siguientes tipos de bugs:
 - **Framerate**: el juego va a un framerate inferior al que debería funcionar. Visualmente se observa en forma de saltos en la imagen y movimientos poco fluidos.
 - **Audio**: el sonido del juego no corresponde con lo que está ocurriendo en pantalla. Puede suceder con la música, las voces o los efectos de sonido.
 - **Legal**: se refiere a problemas con el uso de marcas registradas y propiedad intelectual dentro del juego.
+
+## Áreas de un juego y bugs duplicados
+
+Al momento de reportar es importante saber nombrar las áreas del juego donde se detecta un error. Recuerda que se trata no sólo de reportar el bug sino de facilitarle el trabajo al programador que debe solucionarlo. En esta clase identificamos las diferentes **áreas del juego** como menú principal, pop-ups, mapa del mundo, menú de configuraciones, *splash screen, head up display, ingame*, pantalla de carga.
+
+Cuando encuentres un error en un área que no está identificada o que sea exclusiva para el videjuego que estás probando, nómbrala de la manera más sencilla y descriptiva posible.
+
+**Duplicar un error** que ya ha sido reportado demuestra un problema de atención y comunicación con nuestro equipo que le causa pérdidas de tiempo y dinero a la empresa. Debemos verificar con nuestro equipo y en la base de datos que cada bug que detectamos no haya sido reportado antes.
+
+## Sistema de Trabajo
+
+Para ser buenos tester debemos ser disciplinados en nuestro trabajo. En esta clase aprenderemos el día a día del trabajo del tester.
+
+En primer lugar debemos asegurarnos de que los equipos que requerimos para llevar a cabo nuestro trabajo (consolas, teléfonos, cables, nuestro computador) estén preparados. Luego recibimos una asignación del trabajo que nos corresponde. Ser disciplinados nos permitirá llevar a cabo nuestro trabajo de forma ordenada y eficiente.
+
+## Test plan
+
+Manos a la obra. Vamos a hacer el test plan para testear nuestro videojuego. Empezamos por diseñar el test plan o plan de pruebas.
+
+Vamos a redactar los casos de prueba, empezando por la descarga del juego. A medida que vamos avanzando en el juego encontramos diferentes casos de prueba e iremos haciendo una anotación por cada uno. Ese es nuestro trabajo al desarrollar un plan de prueba. Una vez terminamos de redactar todos los casos de prueba los trasladamos a una hoja de cálculo.
+
+## Organizando nuestro test plan
+
+Ahora vamos a construir nuestro primer documento de pruebas.
+El documento de pruebas contiene una portada que hace referencia al juego que estamos revisando y tiene una pestaña por cada área del juego. En estas se especifica en diferentes columnas el caso de prueba, el resultado observado, la información del caso de prueba, y un id de bug. Este id es generado por la empresa mediante el programa que empleemos para el reporte de errores. Los resultados observados se reportan mediante un código de color, donde verde quiere decir que está bien y rojo representa la aparición de un bug.
+
+Una vez que tenemos la estructura para nuestra batería de pruebas, la replicamos para cada nivel del juego.
+
+## Continuando el proceso de creación de test Plan y tu primera batería de pruebas
+
+Continuamos con el proceso de construcción de nuestro plan de pruebas agregando los casos de prueba que vamos encontrando y su respectiva ubicación en las áreas del juego.
+
+El documento de pruebas contiene una portada que hace referencia al juego que estamos revisando y tiene una pestaña por cada área del juego. En estas se especifica en diferentes columnas el caso de prueba, el resultado observado, la información del caso de prueba, y un id de bug.
+
+Una vez que tenemos la estructura para nuestra batería de pruebas, la replicamos para cada nivel del juego.
+
+## Baterías de pruebas especiales
+
+Batería de pruebas y test plan son sinónimos. En esta clase veremos dos tipos especiales de baterías de pruebas. Son casos especiales porque no son baterías que se realicen dentro del proceso de control de calidad sino antes de empezar dicho proceso.
+
+- **Smoke test**: es una batería de pruebas que hace el equipo de programación antes de entregar el videojuego para las pruebas. Consiste en evaluar las funciones de instalación y arranque para varios dispositivos.
+
+- **Bootcheck**: es el chequeo de arranque por parte del equipo de QA e incluye casos de prueba de instalación y arranque, además de algunas funciones básicas del primer nivel y la integración con Facebook. Esta será la primera batería de pruebas que llevemos a cabo en cada juego.
+
+## Testing en celulares
+
+Actualmente el mayor potencial de mercado dentro del testing es en dispositivos móviles, especialmente en Android.
+
+En esta clase veremos las particularidades de iOS y Android en cuanto a testing. Al testear en teléfonos móviles debemos tener en cuenta el factor de las interrupciones por parte de las notificaciones y otras funcionalidades inherentes al hardware. Por lo tanto, parte de las baterías de pruebas es chequear cómo estas interrupciones afectan el juego.
+
+Otro factor para tener en cuenta son las diferencias entre los sistemas operativos iOS y Android, particularmente las diferencias entre la variedad de modelos disponibles en **Android** que van desde gama baja hasta gama alta. En estos modelos es necesario verificar la respuesta del juego frente acciones como cerrar una tapa, deslizar un teclado o girar el teléfono.
+
+En cuanto a **iOS**, no existe tanta variedad de dispositivos, pero un factor para tener en cuenta es el botón ringer, que sirve para silenciar el teléfono.
+
+Para el reporte de bugs en dispositivos móviles, debemos tomar un video o un screenshot que muestren el problema. Adicionalmente, debemos resaltar en la imagen la ubicación específica del bug. Para grabar los videos no debemos instalar programas que capturen la pantalla sino grabar con la ayuda de otro dispositivo externo y posteriormente comprimir el video para que no sea tan pesado.
+
+El **crashlog** es una información generada por el teléfono y que resulta muy valiosa para el programador en el caso de detectar errores críticos. El software Xcode nos permite extraer desde un computador el crashlog para dispostivios iOS.
+
+[uTest](https://www.utest.com/articles/compressing-video-files-to-less-than-20-of-original-size)
