@@ -210,3 +210,186 @@ Para el reporte de bugs en dispositivos móviles, debemos tomar un video o un sc
 El **crashlog** es una información generada por el teléfono y que resulta muy valiosa para el programador en el caso de detectar errores críticos. El software Xcode nos permite extraer desde un computador el crashlog para dispostivios iOS.
 
 [uTest](https://www.utest.com/articles/compressing-video-files-to-less-than-20-of-original-size)
+
+## Guía Android
+
+### Guia Android + Instalación + Interrupciones
+
+Instalación de una versión de prueba (build):
+
+1º Activar modo de depuración USB:
+
+[https://elandroidelibre.elespanol.com/2015/01/como-activar-el-modo-depuracion-usb-en-android.html](https://elandroidelibre.elespanol.com/2015/01/como-activar-el-modo-depuracion-usb-en-android.html)
+
+[https://www.phonetransfer.org/turn-on-usb-debugging-mode-on-android-5-0-lollipop.html?lang=es](https://www.phonetransfer.org/turn-on-usb-debugging-mode-on-android-5-0-lollipop.html?lang=es)
+
+[https://www.youtube.com/watch?v=GyxVa88BO9Y](https://www.youtube.com/watch?v=GyxVa88BO9Y)
+
+2º Descargar e instalar
+
+Descarga la aplicación (que siempre tendrá una extensión .apk) desde donde te indique tu responsable de pruebas. Una vez la hayas descargado a tu móvil simplemente haz tap en ella y dile que quieres instalarla, y ya está instalada en tu dispositivo!
+
+Botones genéricos en Android:
+
+Al ser Android una plataforma no estandarizada en hardware, las descripciones varían dependiendo del teléfono móvil, pero en general son estas:
+
+Botón Home (dibujo de una casa): Este botón pone la aplicación que se está ejecutando en modo de espera y devuelve al usuario al dashboard. Al hacer una pulsación larga realiza una función distinta que varía dependiendo del modelo.
+
+- Botón Menú (Rectángulo): Activa opciones especiales (si las tuviera) dentro de la aplicación. Al hacer una pulsación larga realiza una función distinta que varía dependiendo del modelo.
+
+- Botón Back (Flecha hacia la izquierda): Si el usuario está desplazándose entre menús le devuelve al anterior, si no hay menú anterior al que regresar pone la aplicación en modo de espera y devuelve al usuario al dashboard.
+
+- Botón Search (Lupa): Está muy en desuso, dependiendo del móvil lleva al navegador o a un motor de búsqueda dentro del teléfono. Al hacer una pulsación larga realiza una función distinta que varía dependiendo del modelo.
+
+- Controles de volumen: Suelen estar en los laterales. Los usaremos para probar si funcionan dentro de la aplicación.
+
+- Power, Lock: Es el botón de encendido, lo usaremos para poner el móvil en reposo y para hacer apagado y simulación de apagado.
+![movil](Captura1.png)
+
+- Landscape Mode: Es cuando visualizamos el móvil en modo horizontal.
+
+- Portrait Mode: Es cuando visualizamos el móvil en modo vertical.
+![portrait Mode](Captura2.jpg)
+
+Interrupciones:
+
+Llamada de voz: recibir una llamada mientras estás jugando, aceptándola y también rechazándola, ¿el juego se comporta como debería?
+
+SMS: recibir un SMS mientras juegas, ¿el juego se comporta como debería?
+
+Clamshell, slider o móviles rotatorios. Existen teléfonos con forma de concha (clamshell) que se deslizan en dos partes (slider) o que rotan su pantalla, ¿qué ocurre cuando los abro? ¿El juego se comporta como debería?
+
+Lock/Unlock: poner el juego en modo de espera de manera manual, ¿qué ocurre cuando hago esto? ¿El juego se comporta como debería?
+
+USB Cable: ¿Qué ocurre cuando conecto y desconecto el cable usb? ¿El juego se comporta como debería?
+
+Headphones: ¿Qué ocurre cuando conecto y desconecto los cascos de escuchar música? ¿El juego se comporta como debería?
+
+Controles de Volumen: ¿Qué ocurre cuando subo y bajo el volumen mientras juego? ¿Funciona bien?
+
+Calendario/Alarmas: ¿Qué ocurre cuando saltan las alarmas de mi móvil? , ¿El juego se comporta como debería?
+
+Idle: Idle se refiere a cuando tenemos puesto un ajuste en Android para que la pantalla se apague sola después de un tiempo, ¿qué ocurre cuando hago esto y luego vuelvo a activar el teléfono? ¿El juego se comporta como debería?
+
+## Testing en celulares Android
+
+### Cómo extraer el Crash Log (o Console Log) en Android
+
+En esta lectura vamos a ver como extraer el Crash Log (o Console Log) de los dispositivos Android. A diferencia de los dispositivos de Apple, este proceso (debido a la falta de procesos estandarizados dentro del SO de Google) puede ser un poco más peliagudo, pero no os preocupéis. En esta lectura abordaremos 3 maneras de extraer dicho registro sin mayores complicaciones, veremos cómo hacerlo desde el ordenador (Windows), desde una app para dispositivos rooteados y desde una alternativa llamada Minimal ADB, vamos allá:
+
+Vamos a empezar con la más sencilla de todas, una aplicación dentro del propio dispositivo que registra el console log. Para hacer correr esta aplicación deberemos tener rooteado el dispositivo, es posible que algunos os preguntéis si es o no es buena opción tener el dispositivo rooteado y además corriendo una app por debajo de la que estamos testeando: la respuesta es que no hay ningún problema, siempre y cuando solo usemos el root para correr esta app, si nos dedicamos a instalar apps que necesitan acceso root estamos intoxicando el entorno de pruebas y no será valido para un testeo 100% valido, pero si única y exclusivamente usamos el root para extraer el console log, al ser un impacto mínimo en el sistema, no habrá problema ninguno. La aplicación en cuestión se llama CATLOG y la podéis encontrar en el siguiente enlace:
+
+- Catlog: [https://play.google.com/store/apps/details?id=com.nolanlawson.logcat&hl=en](https://play.google.com/store/apps/details?id=com.nolanlawson.logcat&hl=en)
+
+También podéis usar las siguientes alternativas:
+
+- Logcat reader:
+[https://play.google.com/store/apps/details?id=com.dp.logcatapp](https://play.google.com/store/apps/details?id=com.dp.logcatapp)
+
+- aLogcat:
+[https://play.google.com/store/apps/details?id=rs.pedjaapps.alogcatroot.app](https://play.google.com/store/apps/details?id=rs.pedjaapps.alogcatroot.app)
+
+Como en la clase de crash log para iOS, aquí haremos lo mismo, es decir, una vez detectemos el error o el crash que queremos registrar, miraremos la hora e iremos a la aplicación que hayamos instalado para registrar el console log. Una vez veamos la hora, pararemos el servicio de registro y copiaremos desde la hora del error, hasta el final, y una vez extraído ese fichero en cualquier documento de texto lo añadiremos a nuestro bug y lo enviaremos.
+
+Ahora vamos a ver una opción intermedia, Minimal ADB and Fastboot for Windows:
+
+En esta ocasión haremos uso no solo del dispositivo sino también del ordenador. Deberemos de bajar los drivers de nuestro dispositivo y el programa Minimal ADB and Fastboot for Windows. Este programa simplifica las acciones de registro del console log que ofrece el SDK de Android haciendo la tarea mucho más sencilla y práctica.
+
+Os he puesto un enlace a un tutorial de U-Test Academy para que, además de aprender a usar este programa, os empecéis a familiarizar con esta parte de U-Test; como os he dicho anteriormente, U-Test tiene una sección gigantesca de tutoriales donde podemos encontrar multitud de herramientas y soluciones para nuestros problemas de testeo. Son guías creadas por los usuarios, así que, quien sabe, es posible que tu escribas dentro de poco una guía para esta comunidad 😉
+
+Aquí os dejo el enlace:
+
+[https://www.utest.com/articles/capturing-android-crashlogs-on-windows-with-adb](https://www.utest.com/articles/capturing-android-crashlogs-on-windows-with-adb)
+
+Y por último, la opción menos amigable, aunque para muchos no supondrá un problema, para otros puede volverse un poco tediosa.
+
+Lo primero de todo es instalar el SDK de Android en vuestro ordenador:
+
+[https://android.es/tag/sdk/](https://android.es/tag/sdk/)
+
+Después deberéis, como en la opción anterior, instalar los drivers de vuestro dispositivo, y a continuación ejecutar desde el terminal del Android SDK el siguiente código:
+
+adb shell logcat > log.txt
+
+Una vez hecho esto se habrá guardado en la carpeta raíz de vuestro Android SDK el fichero log.txt, deberéis abrirlo y, como siempre, buscar la hora en la que ha ocurrido el error y copiar todo el texto hasta el final para posteriormente incluirlo como fichero adjunto de dicho bug.
+
+Os dejo un enlace a un tutorial en StackOverflow donde podéis ver el proceso paso por paso:
+
+[https://stackoverflow.com/questions/2882253/how-do-i-get-the-logfile-from-an-android-device#2888222]
+(https://stackoverflow.com/questions/2882253/how-do-i-get-the-logfile-from-an-android-device#2888222)
+Una nota importante: para usar cualquiera de estos métodos debéis de tener SIEMPRE activada la opción de depuración USB dentro de las Opciones de desarrollador de vuestro dispositivo Android, si no ninguno de estos 3 métodos funcionará.
+
+Activar las opciones de desarrollador en Android:
+
+[https://developer.android.com/studio/run/device#setting-up](https://developer.android.com/studio/run/device#setting-up)
+
+## Guía iOS
+
+### Guía iOS + Instalación + Interrupciones
+
+Instalación de una versión de prueba (build):
+
+1. Descargate iTunes
+2. Descarga el fichero (siempre con extensión .ipa)
+3. Doble click al fichero y se vinculará directamente con iTunes
+4. Dentro de iTunes ve a la sección del teléfono o tablet y dentro de esa sección a Apps
+5. Allí verás la build, márcala y dale a “Sincronizar”
+6. Una vez haya terminado el proceso ya tendrás la build instalada en tu iPhone o iPad
+
+Botones:
+
+- Power: botón de encendido. Modelos hasta el iPhone SE lo tienen en la parte superior, en iPhone 6 y en adelante, en el lateral derecho.
+
+- Home: botón circular en la parte inferior del teléfono.
+
+- Volumen: teclas de volumen en el lateral izquierdo.
+
+- Ringer: es un botón tipo switch situado próximo a los controles de volumen, sirve para silenciar el teléfono.
+
+- TouchID: función de reconocimiento dactilar disponible desde los modelos 5S, situada en el botón Home.
+
+![phone](Captura3.jpg)
+
+- Landscape Mode: es cuando visualizamos el móvil en modo horizontal.
+
+- Portrait Mode: es cuando visualizamos el móvil en modo vertical.
+
+![landscape](Captura2.jpg)
+
+Interrupciones:
+
+- Llamada de voz: recibir una llamada mientras estás jugando, aceptándola y también rechazándola ¿El juego se comporta como debería?
+
+- SMS: Recibir un SMS mientras juegas, ¿el juego se comporta como debería?
+
+- Lock/Unlock: poner el juego en modo de espera de manera manual ¿Qué ocurre cuando hago esto? ¿El juego se comporta como debería?
+
+- Cable iOS: ¿Qué ocurre cuando conecto y desconecto el cable iOS? ¿El juego se comporta como debería?
+
+- Headphones: ¿Qué ocurre cuando conecto y desconecto los cascos de escuchar música? ¿El juego se comporta como debería?
+
+- Controles de volumen: ¿Qué ocurre cuando subo y bajo el volumen mientras juego? ¿Funciona bien?
+
+- Calendario/Alarmas: ¿Qué ocurre cuando saltan las alarmas de mi móvil? ¿El juego se comporta como debería?
+
+- Ringer: ¿Qué ocurre con la función Ringer? ¿El juego se comporta como debería cuando la activo y la desactivo?
+
+## Testing en consolas
+
+Los conocimientos que hemos adquirido en este curso, a pesar de que están enfocados en el testing en dispositivos móviles, son también aplicables al testing en consolas. Hacer testing en consolas se diferencia del testing en dispositivos móviles principalmente por el hardware involucrado. Se utilizan consolas especializadas para el testing con herramientas y funcionalidades adicionales que facilitan el trabajo del testing.
+
+## uTest: creando tu perfil
+
+### ¿Que es uTest? ¿Cómo funciona?
+
+uTest es la plataforma de pruebas online más grande del mundo, donde puedes crear tu perfil para prestar tus servicios como tester para algunas de las compañías más importantes.
+
+En esta clase aprenderemos paso a paso cómo crear nuestro perfil en uTest. Hay dos tipos de perfiles:
+
+- **Lite User**: te permite acceder a la universidad de uTest para capacitarte como tester.
+- **Full User**: te permite unirte a proyectos como tester. Ambas opciones son gratuitas.
+En el dashboard de uTest encontramos los ciclos de prueba en los que estamos invitados, las acciones pendientes, los proyectos activos y terminados.
+
+También veremos los pagos que tenemos pendientes e información de interés de la comunidad de uTest. En esta pantalla también podremos agregar información a nuestro perfil. Las tareas urgentes de los proyectos en los que participamos también aparecerán aquí.
+
+Nuestro primer proyecto en uTest se llama sandbox y no es pago, es la forma en la que la plataforma se asegura de que tengamos las habilidades necesarias para participar en proyectos reales.

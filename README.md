@@ -33,7 +33,7 @@
 
 ## FRONT-END
 
-- [Curso Basico de Django](CursoBasicodeDjango)
+- [Curso de Docker](CursoDeDocker)
 - [Curso Basico de Django](CursoBasicodeDjango)
 - [Curso Basico de Django](CursoBasicodeDjango)
 - [Curso Basico de Django](CursoBasicodeDjango)
