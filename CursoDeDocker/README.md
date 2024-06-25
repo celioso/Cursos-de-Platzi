@@ -322,6 +322,271 @@ luego matamos la db  y los datos quedan en mi pc.
 para cargar los datos en el contenedor usamos el siguiente codigo: ` docker run -d --name db -v $(pwd)/mongodata:/dtaba/db mongo`
 
 1. docker exec -it db bash
-2. mongosh
-3. use platzi
-4. db.users.find()
+2. mongosh = Ingresar al la base de datos
+3. use platzi usar y si no crea la base de datos
+4. db.users.insert({"name":"carlos"}) = crear usuarios
+5. db.users.find() ver el contenido de la bas ede datso
+
+solucion al problama que no cargaba la base de datos:
+
+Encontré dos soluciones:
+
+La primera es que se debe de crear un volumen en docker con el siguiente comando.
+
+`docker volume create --name mongodata`
+
+luego continuando con los comandos que se dan en este video, se reemplazaría la ruta local que obtienes del pwd por el nombre del volumen que has creado. Algo así:
+
+`docker run -d --name db --v mongodata:/data/db mongo`
+
+La segunda es cambiar la ruta en la que te encuentras. Hice un cambio de ruta en la línea de comandos de la siguiente manera:
+
+`cd ~`
+
+Este comando nos lleva al home (~) de la distribucion (de esta afirmación no estoy del todo seguro)
+
+Luego en esa ruta creas la carpeta para hacer las pruebas de la clase
+
+`mkdir mongodata`
+
+Finalmente, introducirías el comando para ejecutar poniendo la ruta local de la siguiente manera:
+
+`docker run -d --name db --v ~/mongodata:/data/db mongo`
+
+y LISTO.
+
+## Volúmenes
+
+`docker volume ls` = ver los volume que tiene docker
+`docker volume create <namevolume>` = crea un volumen
+`docker run -d --name <namecountainer> --mount src=dbdata,dst=/data/db mongo` = cra un contenedor con el volumen que se creo
+`docker inspect db`= ver las especificaciones del contenedor.
+` docker volume rm <nameVolume>`= eliminar un volumen
+
+Usar volúmenes, conservar datos dentro fuera de los contenedores **¿QUÉ SON LOS VOLUME?** Los volúmenes son el mecanismo preferido para conservar los datos generados y utilizados por los contenedores de Docker. Si bien los montajes de enlace dependen de la estructura del directorio y el sistema operativo de la máquina host, Docker administra completamente los volúmenes. Los volúmenes tienen varias ventajas sobre los montajes vinculantes: 
+
+### Ventajas
+
+- Mayor seguridad al compartir archivos entre contenedores, los archivos los maneja directamente docker esto implica que, cualquier persona no puedes acceder a estos archivos.
+- Los volúmenes son más fáciles de respaldar o migrar que enlazar montajes.
+- Puede administrar volúmenes mediante los comandos de la CLI de Docker o la API de Docker.
+- Los volúmenes funcionan tanto en contenedores de Linux como de Windows.
+- Los volúmenes se pueden compartir de forma más segura entre varios contenedores.
+- Los controladores de volumen le permiten almacenar volúmenes en hosts remotos o proveedores en la nube, para cifrar el contenido de los volúmenes o para agregar otras funciones.
+- Los nuevos volúmenes pueden tener su contenido pre cargado por un contenedor.
+- Los volúmenes en Docker Desktop tienen un rendimiento mucho mayor que los montajes de enlace de hosts de Mac y Windows.
+- Además, los volúmenes suelen ser una mejor opción que los datos persistentes en la capa de escritura de un contenedor, porque un volumen no aumenta el tamaño de los contenedores que lo usan y el contenido del volumen existe fuera del ciclo de vida de un contenedor determinado. ++Desventajas++
+- Una de las desventajas es que si se desea visualizar los archivos desde la máquina hosts es mucho más complicado. Referencia: [https://docs.docker.com/storage/volumes/](https://docs.docker.com/storage/volumes/ "https://docs.docker.com/storage/volumes/")
+
+### Pasos para conservar datos fuera de los contenedores con volúmenes.
+
+1. crear el volumen
+2. verificar que el volumen fue creado
+3. crear un nuevo contenedor basado en una imagen de mongo e indicarle que guardará o usará los datos de un volumen
+4. Es opcional, pero se puede inspeccionar el contenedor para visualizar si el volumen quedo configurado.
+5. Acceder al bash de nuestro contenedor,
+6. Acceder a mongo
+7. Crear una bases de datos y usarla
+8. Realizar una inserción de datos en la base de datos
+9. Confirmar la inserción en la base de datos
+10. Salir del contenedor
+11. borrar contenedor.  **Pasos para crear un nuevo contenedor y usar un volumen anteriormente creado**.
+
+12. Crear un nuevo contenedor basado en una imagen de mongo e indicarle que guardará o usará los datos de un volumen anteriormente creado
+13. Acceder al bash de nuestro contenedor,
+14. Acceder a mongo
+15. Usar la bases de datos creadas
+16. Confirmar la inserción en la base de datos, que fue realizada anteriormente
+
+### Ejecución de los pasos para conservar datos fuera de los contenedores con usando volúmenes,
+
+1. $ sudo docker volume create dbdata
+2. $ sudo docker volume ls
+3. $ sudo docker run -d --name db --mount src =dbdata,dst=/data/db mongo
+4. $ sudo docker inspect db
+5. $ sudo docker exec -it db bash
+6. $ mongo
+7. use platzi
+8. db.users.insert({"nombre":"guido"})
+9. db.users.find()
+10. $ exit
+11. sudo docker rm -f
+
+**Ejecución de los pasos para crear un nuevo contenedor y usar un volumen anteriormente creado.**
+
+12. $ sudo docker run -d --name db --mount src=dbdata,dst=/data/db mongo
+13. $ sudo docker exec -it db bash
+14. $ mongo
+15. show dbs
+16. use platzi
+17. db.users.find()
+
+**Explicación de los comandos de volumen** Asignar un volume aun contenedor 
+`$ docker run -d --name <nombre c> --mount src =<carpeta L>,dst=<carpeta C> <nombre i>`
+
+```bash
+parámetros
+
+	<nombre c>: 
+		nombre del contenedor, así se llamará localmente
+<path L>: 
+	directorio local
+<path C>: 
+	directorio del contenedor
+< nombre i>:
+	nombre de la imagen
+
+flag
+--name: 
+	asigna un nombre de forma local a nuestro contenedor
+-d or --detach: 
+	Inicia un contenedor sin asociar el input/output del contenedor al terminal.
+    --mount  src =<volume F>,dst=<Carpeta d>:
+	Se indica  el  src es igual al volumen fuente, dst es igual a la carpeta destino, es decir a la carpeta del contenedor donde se genera los datos
+```
+### Ejemplo:
+
+`$ sudo docker run -d --name db --mount  src =dbdata,dst=/data/db mongo`
+
+Crear un volumen 
+`$ sudo docker volume create <nombre de volumen>`
+
+```bash
+volume create:
+	Crear volumen 
+<nombre de volumen>:
+	Nombre Volumen
+```
+**Ejemplo: **
+`$ sudo docker volume create dbdata`
+
+Listar los volúmenes creados `$ sudo docker volume ls`
+
+`volumen ls:`
+
+listar o mostrar los volúmenes Ejemplo: `$ sudo docker volume ls`
+
+## Insertar y extraer archivos de un contenedor
+
+se crea un archivo para pasar al contenedor:
+`touch prueba.txt`
+
+para cer el contenido del archivo se usa `cat prueba.txt`images
+
+se crea el cintenedor `docker run -d --name <container> <images> tail -f /dev/null` Ejemplo: `docker run -d --name copytest ubuntu tail -f /dev/null`
+
+ingresa al contenedor `docker exec -it <container> bash` Ejemplo:`docker exec -it copytest bash`
+
+creamos una nueva carpeta `mkdir <foldername>` Ejemplo:`mkdir testing`
+
+se sale `exit`
+
+pasamos el archivo al contenedor `docker cp <filename> <container>:<destination-route file>` Ejemplo:`docker cp prueba.txt copytest:/testing/test.txt`
+
+se puede realizar al contrario tambien del contenedor a local con el código `docker cp <container>:<foldername destination_foldername>` Ejemplo: `docker cp copytest:/testing localtesting`
+
+## Construyendo una imagen propia
+
+crear una carpeta: `mkdir <foldername>`
+abrir visual code `code .`
+costruir una imagen ubuntu llamado platzi en el directorio local: `docker build -t ubuntu:platzi .`
+para ver las imagenes: `docker image ls`
+ingresamos al contenedor: `docker run -it ubuntu:platzi`
+tenemos que logearnos para poder subir la imagen: `docker login`
+docker tag ubuntu para renombrearla: `docker tag <repositorio> <user>/ubuntu:platzi`  y el resto es la imagen y luego de los : es la version Ej:`docker tag ubuntu:platzi <user>/ubuntu:platzi` 
+para subir la imagen: `docker push <user>/ubuntu:platzi`
+
+![comandos de la clase](./images/images.png)
+
+## El sistema de capas
+
+para ver las capas: `docker history ubuntu:platzi`
+
+```bash
+IMAGE          CREATED          CREATED BY                                      SIZE      COMMENT
+c3b0195d12e6   29 minutes ago   RUN /bin/sh -c touch /usr/src/hola-platzi.tx…   0B        buildkit.dockerfile.v0
+<missing>      2 weeks ago      /bin/sh -c #(nop)  CMD ["/bin/bash"]            0B
+<missing>      2 weeks ago      /bin/sh -c #(nop) ADD file:5601f441718b0d192…   78.1MB        
+<missing>      2 weeks ago      /bin/sh -c #(nop)  LABEL org.opencontainers.…   0B
+<missing>      2 weeks ago      /bin/sh -c #(nop)  LABEL org.opencontainers.…   0B
+<missing>      2 weeks ago      /bin/sh -c #(nop)  ARG LAUNCHPAD_BUILD_ARCH     0B
+<missing>      2 weeks ago      /bin/sh -c #(nop)  ARG RELEASE                  0B
+```
+para visualizar mejor se usa dive para ver mejor estructurado el history
+[dive](https://github.com/wagoodman/dive)
+
+instalar en linux
+
+```bash
+DIVE_VERSION=$(curl -sL "https://api.github.com/repos/wagoodman/dive/releases/latest" | grep '"tag_name":' | sed -E 's/.*"v([^"]+)".*/\1/')
+curl -OL https://github.com/wagoodman/dive/releases/download/v${DIVE_VERSION}/dive_${DIVE_VERSION}_linux_amd64.deb
+sudo apt install ./dive_${DIVE_VERSION}_linux_amd64.deb
+```
+
+![install dive](./images/installdive.png)
+
+Para ver con dive:
+`dive <imagen>` Ej: `dive ubuntu:platzi`
+
+```Dockerfile
+FROM ubuntu:latest
+
+RUN touch /usr/src/hola-platzi.txt
+
+RUN rm /usr/src/hola-platzi.txt
+```
+
+## Usando Docker para desarrollar aplicaciones
+
+clonar primero el repositorio de prueba: `git clone https://github.com/platzi/docker`
+
+se crea la imagen `docker build -t platziapp .`
+
+para ver las image `docker image ls`
+
+para correr el contenedor `docker run --rm -p 3000:3000 platziapp` y --rm se usa para cuando se detenga el contenedor lo borre -p es para asignar el puerto del contenedor y el otro es el de la maquina.
+
+Ejemplo como utilizar docker para el desarrollo
+
+1. Creamos una carpeta y nos posicionamos dentro de esa carpeta.
+2. Luego Clonamos un proyecto de github y nos posicionamos dentro del proyecto clonado
+3. Verificamos que los archivos estén allí
+4. Realizamos la construcción de la imagen.
+
+**Parámetro -t o tag** : Indica el tag de la imagen a construir. 
+**Parámetro** : indica el directorio de trabajo
+
+5. Verificar que la imagen ha sido creada.
+6. Crear el contenedor basado en la imagen anteriormente creada y:
+Parámetro `--rm` para que, al detenerse. el contenedor se borre Parámetro `-p` indicar que el puerto del host:contenedor están asociados.
+
+7. Comprobar que el contenedor recién creado este activo
+8. Comprobar que el contenedor puede recibir petición desde el navegador, mostrará un error porque la nuestro contenedor no está asociado a ninguna bases de mongo.
+
+**Ejecución de los pasos**
+
+1. mkdir docker-pj && cd docker-pj
+2. $ git clone https://github.com/platzi/docker && cd docker
+3. ll
+4. code .
+5. $ sudo docker build -t platziapp .
+6. $ sudo docker image ls
+7. $ sudo docker run --rm -p 3000:3000 platziapp
+8. $ sudo docker ps
+9. localhost:3000
+
+Explicación de docker file
+
+```Dockerfile
+FROM node:12
+
+COPY [".", "/usr/src/"]
+
+WORKDIR /usr/src
+
+RUN npm install
+
+EXPOSE 3000
+
+CMD ["node", "index.js"]
+```
