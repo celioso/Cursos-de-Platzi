@@ -590,3 +590,160 @@ EXPOSE 3000
 
 CMD ["node", "index.js"]
 ```
+
+## Aprovechando el caché de capas para estructurar correctamente tus imágenes
+
+cambiamos el Dockerfile
+
+```bash
+FROM node:14
+
+COPY ["package.json","package-lock.json", "/usr/src/"]
+
+WORKDIR /usr/src
+
+RUN npm install
+
+COPY [".", "/usr/src/"]
+
+EXPOSE 3000
+
+CMD ["npx","nodemon","-L", "index.js"]
+```
+
+luego creamos la imagen `docker build -t platziapp .`
+
+luego se inicia el contenedor `docker run --rm -p 3000:3000 -v $(pwd)/index.js:/usr/src/index.js platziapp` 
+
+## Docker networking: colaboración entre contenedores
+
+ve las redes de docker: `docker network ls`
+crear una nueva red y --attachable es para conectar mas contenedores: `docker network create --attachable platzinet`
+Inspeccionar las red: `docker network inspect platzinet`
+se crea un contenedor con mongo: `docker run -d --name db mongo`
+conectar el contenedor a la red creada: `docker network connect platzinet db`
+Se crea un contenedo que se conecte con mongo: `docker run -d --name app -p 3000:3000 --env MONGO_URL=mongodb://db:27017/test platziapp`
+se conecta el contenedor platzinet con app: `docker network connect platzinet app`
+ver la red platzinet: `docker inspect platzinet`
+
+## Docker Compose: la herramienta todo en uno
+
+subir en docker compose: `docker-compose up`
+subir el contenedor y no se detenga : `docker-compose up -d`
+
+[Install Docker Compose | Docker Documentation ](https://docs.docker.com/compose/install/)
+
+## Subcomandos de Docker Compose
+
+Para ejecutar comandos de docker compose desde afuera es necesario pasarle la ruta en del archivo con la opción `-f`
+
+
+`docker-compose -f path/to/docker-compose.yml up -d`
+
+Todo lo demás se puede hacer igual
+
+`docker-compose -f path/to/docker-compose.yml logs app`
+
+Esta opción brinda versatilidad, pues también se puede utilizar para especificar un archivo de compose diferente, por ejemplo:
+
+`docker-compose -f docker-compose.production.yml up -d`
+
+ver los logs: `docker-compose logs` y ver uno especifico se utiliza `docker-compose logs app`
+
+ver los logs en tiempo real: `docker-compose logs -f app`
+para correr un comando en un contenedor: `docker-compose exec app bash`
+para remover el contenedor : `docker-compose down`
+
+## Docker Compose como herramienta de desarrollo
+
+```yml
+version: "3.8"
+
+services:
+  app:
+    build: .
+    environment:
+      MONGO_URL: "mongodb://db:27017/test"
+    depends_on:
+      - db
+    ports:
+      - "3000:3000"
+
+  db:
+    image: mongo
+```
+
+se construye el compose: `docker-compose build`
+subir el compose: `docker-compose up -d`
+para hacer campios y lo realize en el contenedor: `docker-compose build app`
+luego si se utiliza de nuevo el `docker-compose up -d` para que se cargue los cambios
+```yml
+version: "3.8"
+
+services:
+  app:
+    build: .
+    environment:
+      MONGO_URL: "mongodb://db:27017/test"
+    depends_on:
+      - db
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/usr/src
+
+  db:
+    image: mongo
+```
+
+para que se actualize de inmediato:
+
+se agrega en binario command: 
+```yml
+version: "3.8"
+
+services:
+  app:
+    build: .
+    environment:
+      MONGO_URL: "mongodb://db:27017/test"
+    depends_on:
+      - db
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/usr/src
+      - /usr/src/node_modules
+    command: npx nodemon -L index.js
+
+  db:
+    image: mongo
+```
+lo subimos de nuevo: `docker-compose up -d` y lo arrancamos ` docker-compose logs -f app`
+
+## Compose en equipo: override
+
+se crea un archivo `touch docker-compose.override.yml`
+luego: `docker-compose up -d`
+ y s econstruye: `docker-compose build`
+ para crear dos instancias: `docker-compose up -d --scale app=2`
+
+ para crear dos instancias y se crea un rango en los puestos:
+ ```yml
+ version: "3.8"
+
+services:
+  app:
+    image: platziapp
+    environment:
+      MONGO_URL: "mongodb://db:27017/test"
+    depends_on:
+      - db
+    ports:
+      - "3000-3001:3000"
+
+  db:
+    image: mongo
+ ```
+ con esto corre la app en los dos puestos asignados
+ para terminar el contenedor: `docker-compose down`
