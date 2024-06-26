@@ -725,8 +725,10 @@ lo subimos de nuevo: `docker-compose up -d` y lo arrancamos ` docker-compose log
 
 se crea un archivo `touch docker-compose.override.yml`
 luego: `docker-compose up -d`
- y s econstruye: `docker-compose build`
- para crear dos instancias: `docker-compose up -d --scale app=2`
+y se construye: `docker-compose build`
+ingesa al bash: `docker-compose exec app bash`
+ya adentro se usa `env` para ver si cargo la barriable
+para crear dos instancias: `docker-compose up -d --scale app=2`
 
  para crear dos instancias y se crea un rango en los puestos:
  ```yml
@@ -747,3 +749,24 @@ services:
  ```
  con esto corre la app en los dos puestos asignados
  para terminar el contenedor: `docker-compose down`
+
+ Para disponer de múltiples contenedores (**escalar**) de un mismo servicio, se requiere habilitar un rango de puertos en el host (máquina donde corre Docker), se realiza mediante la instrucción puerto [PUERTO-PUERTO]. Para escalar un servicio se puede usar el flag **“--scale”** en el comando up:
+
+
+`docker-compose up -d --scale [nameService]=[numberContainers]`
+También se dispone del comando scale:
+
+
+`docker-compose scale [service]=[number] [service2]=[number2]`
+Fuente: https://docs.docker.com/compose/reference/scale/
+
+## Administrando tu ambiente de Docker
+
+para mostraar todos los comandos del Manage containers: `docker container prue`
+para eliminar todos los contenedores: `docker container prune`
+borra todos los contenedores inactivos y corriendo: `docker rm -f $(docker ps -aq)`
+para eliminar todo all stopped containers,all networks not used by at least one container, all dangling images, unused build cache: `docker system prune`
+para asignarle memoria al contenedo con memoria maxima de 1g: `docker run -d --name app --memory 1g platziapp`
+para ver cuanto esta consumiendo el contenedor de menoria: `docker stats`
+
+## Deteniendo contenedores correctamente: SHELL vs. EXEC
