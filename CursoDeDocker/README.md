@@ -769,4 +769,165 @@ para eliminar todo all stopped containers,all networks not used by at least one 
 para asignarle memoria al contenedo con memoria maxima de 1g: `docker run -d --name app --memory 1g platziapp`
 para ver cuanto esta consumiendo el contenedor de menoria: `docker stats`
 
+Eliminar Volúmenes
+Para listar todos los volúmenes:
+
+```bash
+docker volume ls
+```
+Para eliminar un volumen específico:
+
+```bash
+docker volume rm <nombre_volumen>
+```
+Para eliminar todos los volúmenes no utilizados (que no son utilizados por ningún contenedor):
+
+```bash
+docker volume prune
+```
+### Eliminar Imágenes
+
+Para listar todas las imágenes:
+
+```bash
+docker images
+```
+
+Para eliminar una imagen específica:
+
+```bash
+docker rmi <id_imagen>
+```
+Para eliminar todas las imágenes no utilizadas (imágenes colgantes):
+
+```bash
+docker image prune
+```
+Para eliminar todas las imágenes:
+
+```bash
+docker rmi $(docker images -a -q)
+```
+
+### Ejemplos de Comandos
+1. Eliminar todos los volúmenes:
+
+```bash
+docker volume prune -f
+```
+
+2. Eliminar todas las imágenes:
+
+```bash
+docker rmi $(docker images -a -q)
+```
+
+3. Eliminar una imagen específica (reemplaza `<id_imagen>` con el ID real):
+
+```bash
+docker rmi <id_imagen>
+```
+
+### Combinando Comandos en un Script
+
+Si deseas automatizar este proceso, puedes crear un script en bash:
+
+```bash
+#!/bin/bash
+
+# Eliminar todos los volúmenes
+docker volume prune -f
+
+# Eliminar todas las imágenes
+docker rmi $(docker images -a -q)
+
+echo "Todos los volúmenes e imágenes han sido eliminados."
+```
+Guarda este script en un archivo, por ejemplo, limpiar-docker.sh, hazlo ejecutable y ejecútalo:
+
+```bash
+chmod +x limpiar-docker.sh
+./limpiar-docker.sh
+```
+
+Esto eliminará todos los volúmenes no utilizados y todas las imágenes de Docker en tu sistema. Ten cuidado al ejecutar estos comandos, especialmente en un entorno de producción, ya que eliminarán permanentemente los datos.
+
 ## Deteniendo contenedores correctamente: SHELL vs. EXEC
+
+se dirige al archivo de avanzado y la carpeta loopel cuntenedor
+
+se crea el contenedor: `docker build -t loop .`
+se inicia el contenedor: `docker run -d --name looper loop` 
+para detener el contenedor: `docker stop looper`
+para mostrar el ps del ultimo proceso -l: `docker ps -l`
+eliminar el contenedor y se demora en realizar la eliminación: `docker rm looper`
+s erepite de nuevo la creacion del contenedor: `docker run -d --name looper loop`
+detien el contemedor de inmediato: `docker kill looper`
+se repiten los pasos `docker rm looper` y s ecrea de nuevo el contenedor `docker run -d --name looper loop` 
+para ver los procesos del contenedor: `docker exec looper ps -ef`
+se elimina el contenedor `docker rm -f looper` para realizar otor ejercicio se realiza un build de nuevo para cargar los cambios del **Dockerfile** con `docker build -t loop .` y correr el looper `docker run -d --name looper loop` y se utiliza el codigo para ver los procesos `docker exec looper ps -ef` y  luego se detiene `docker stop looper` y para ver el exit `docker ps -l`
+
+Shell: Ejecuta el proceso como hijo del shell
+
+```Dockerfile
+FROM ubuntu:trusty
+COPY ["loop.sh", "/"]
+CMD /loop.sh
+```
+
+Exec: Ejecuta el comando como principal
+
+```Dockerfile
+FROM ubuntu:trusty
+COPY ["loop.sh", "/"]
+CMD ["/loop.sh"]
+```
+
+## Contenedores ejecutables: ENTRYPOINT vs CMD
+se sale de la carpeta loop y s eingresa a la ping
+
+```Dockerfile
+FROM ubuntu:trusty
+CMD ["/bin/ping", "-c", "3", "localhost"]
+```
+
+se construye la imagen: `docker build -t ping .`
+se crea el contenedor: `docker run --name pinger ping`
+se elimina el contenedor `docker rm pinger`
+creamos de nuevo con los siguientes cambios: `docker run --name pinger ping hostname` y `hostname` muestra el nombre del host de mi maquina
+para ver el hostname creado: `docker ps -l`
+
+se nuevo se sigue los siguientes pasos
+
+1. `docker rm -f pinger`
+```Dockerfile
+FROM ubuntu:trusty
+ENTRYPOINT ["/bin/ping", "-c", "3"]
+CMD ["localhost"]
+```
+2. `docker build -t ping .`
+3. `docker run --name pinger ping` hace ping en la red local
+4. `docker rm -f pinger` se elimina para realizar el otro ejercicio
+5. `docker run --name pinger ping google.co` Hace pin en otra red en esta con google
+6. ` docker ps -l`
+
+## El contexto de build
+
+se construye el Dockerfile: `docker build -t prueba .`
+en este tema se utiliza los archivos .dockeringore que funciona igual que .gitignore
+se corre el contenedor: `docker run -d --rm --name app prueba`
+luego `docker ps`
+ingresr al contenedor: `docker exec -it app bash`
+
+## Multi-stage build
+
+se crea la imagen: `docker build -t prodapp -f build/production.Dockerfile .` despues de -f se da la direccion del Dockerfile que se desea usar como imagen, s epuede ver el peso con `docker image ls`
+cre crea otra con `docker run -d --name prod prodapp`
+se ingresa al contenedor: `docker exec -it prod bash`
+
+## Docker-in-Docker
+se crea el contenedor anfitrion: `docker run -it --rm -v /var/run/docker.sock:/var/run/docker.sock docker:19.03.12`
+dentro del contenedor se crea otro con: `docker run -d --name app prodapp`
+para utilizar dive desde `docker run --rm -it -v /var/run/docker.sock:/var/run/docker.sock -v $(which docker):/bin/docker wagoodman/dive:latest prodapp`
+
+
