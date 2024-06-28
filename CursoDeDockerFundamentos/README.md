@@ -207,3 +207,253 @@ ver la documentacion de build:
 ver la documentacion de build:
 
 `docker run --help`
+
+## Mi primera imagen de Docker
+
+se crea el archivo Dockerfile:
+
+```Docherfile
+FROM nginx:latest
+
+# Path: /usr/share/nginx/html
+COPY /sitio /usr/share/nginx/html  
+```
+
+## Creación de imágenes con Dockerfile
+
+se crea con: `docker build .`
+para elimina la imagen: `docker rmi -f <Image id>`
+crear la imagen con nombre: `docker build -t <nombre:tag>` Ej: `docker build -t sitioweb:latest .`
+
+ver la imagen: `docker images`
+
+ejecutar el contenedor: `docker run -it --rm -d -p 8080:80 --name web sitioweb`
+- -it: En forma interactiva para ver los logs
+
+- --rm: elimina las versiones anteriores del contenedor
+
+- -d: el contenedor se ejecuta en un segundo plano
+
+- -p: mapea el puerto del contenedor con el puerto de la aplicación para exponerla
+
+- --name: nombre del contenedor
+
+- Finalmente agregar el nombre de la imagen
+
+## Administrar mis imágenes de Docker
+
+Comandos para Imágenes
+
+Construir una imagen a partir de un archivo Dockerfile `docker build -t <nombre_de_imagen>` 
+Construir una imagen desde un archivo Dockerfile sin la caché `docker build -t <nombre_de_imagen> . -no-cache`
+Listar imágenes locales docker images Eliminar una imagen `docker rmi <nombre_imagen>` 
+Eliminar todas las imágenes no utilizadas docker image prune Inicie sesión en Docker `docker login -u <nombredeusuario>` 
+Publica una imagen en Docker Hub `docker push <nombre_usuario>/<nombre_imagen>` 
+Buscar una imagen en Hub `docker search <nombre_imagen>` 
+Extraer una imagen de un Docker Hub `docker pull <nombre_imagen>`
+buscar la imagen por tag: `docker images --filter=reference='*:1.5'`
+para ver IMAGE ID real o completo de la imagen: `docker images --no-trunc`
+para cambiar el tag de la image: `docker image tag sitioweb:latest amin/sitioweb:latest`
+eliminar imagenes: `docker rmi amin/sitioweb:latest`
+elimina imegenes por id: `docker rmi -f <IMAGEID>`
+
+[CLI Cheat Sheet](./images/cliCheatSheet.png)
+
+## Administrar mis contenedores de Docker
+
+### Comandos para contenedores
+
+Crea y ejecuta un contenedor a partir de una imagen, con un nombre personalizado:
+
+`docker run --name <nombre_contenedor> <nombre_imagen>`
+
+Ejecutar un contenedor con y publicar un puerto(s) del contenedor al host.
+
+`docker run -p <puerto_host>:<puerto_contenedor> <nombre_imagen>`
+
+Ejecutar un contenedor en segundo plano
+
+`docker run -d <nombre_imagen>`
+
+Iniciar o detener un contenedor existente:
+
+`docker start|stop <nombre_del_contenedor> (o <id_del_contenedor>)`
+
+Eliminar un contenedor detenido:
+
+`docker rm <nombre_del_contenedor>`
+
+Abrir un shell dentro de un contenedor en ejecución:
+
+``docker exec -it <nombre_del_contenedor> sh o bash``
+
+Obtener y seguir los logs de un contenedor:
+
+`docker logs -f <nombre_contenedor>`
+
+Inspeccionar un contenedor en ejecución:
+
+`docker inspect <nombre_del_contenedor> (o <id_del_contenedor>)`
+
+Para listar los contenedores actualmente en ejecución:
+
+`docker ps`
+
+Listar todos los contenedores docker (en ejecución y parados):
+
+`docker ps --all`
+
+Ver las estadísticas de uso de recursos
+
+`docker container stats`
+
+## Mejorando mi Dockefile
+
+Explicación de instrucciones especificadas en el archivo Dockerfile:
+
+- WORKDIR = ubicacion donde se creara la aplicacion
+- COPY = copiar archivo local al entorno docker
+- RUN = ejecutar un comando dentro del contenedor
+- COPY . . = copiamos los fuentes dentro del WORKDIR especificado
+- CMD = ejecutar comando sh
+
+Desde la ruta del Dockerfile corremos
+
+`docker build -t app_python .`
+
+luego arrancamos el contenedor como es flask corre en el puerto 5000 `docker run -it --rm -d -p 8080:5000 --name web_app_python app_python`
+Ejemplo: `docker run -it --rm -d -p 8080:80 -v ./sitio:/usr/share/nginx/html/sitio --name web nginx`
+
+ya podremos ver la api en la ruta
+
+## Configurar volúmenes básicos en Docker
+
+Docker: Manejo y potencial de los volúmenes
+
+Docker ha revolucionado el mundo del desarrollo de aplicaciones con diversas características poderosas, entre las cuales destaca el uso de volúmenes. Estos no son meros espacios de almacenamiento, sino que actúan como puentes dinámicos de datos entre nuestro entorno local y los contenedores ejecutándose en Docker, permitiendo una interacción directa y en tiempo real con nuestras aplicaciones. Vamos a desvelar esta funcionalidad y explorar cómo aprovechar su potencial en distintos escenarios.
+
+### ¿Qué son los volúmenes en Docker?
+
+Los volúmenes en Docker ofrecen la capacidad de compartir una unidad de disco o carpeta entre tu equipo local y un contenedor activo. Importante distinguir, estamos hablando de contenedores y no imágenes Docker; son entidades ya en ejecución que permiten la manipulación de datos en vivo.
+
+### ¿Cuáles son los escenarios de uso de los volúmenes?
+
+Los volúmenes sirven en múltiples contextos. Por ejemplo, podrías querer actualizar un sitio web en tiempo real sin detener tu contenedor. O tal vez, en análisis de datos, necesitas insertar nuevos datos mientras procesos están corriendo. Los volúmenes son clave para mantener esa fluidez de trabajo.
+
+### ¿Cómo configurar un volumen en Docker?
+
+Configurar un volumen es simple y aquí te muestro cómo:
+
+- **Paso 1**: Dentro de tu entorno local, crear una carpeta (por ejemplo, `assets`) para alojar los archivos a compartir.
+- **Paso 2**: Preparar tu `Dockerfile` o el comando de ejecución de Docker con el parámetro `-v`, especificando la ruta local y su destino en el contenedor.
+- **Paso 3**: Ejecutar el contenedor con la configuración de volumen y verificar su funcionamiento mediante Docker Desktop o comandos como `docker ps`.
+
+### ¿Cómo afectan los cambios locales al contenedor?
+
+Cuando usas volúmenes, los cambios que realices localmente, como actualizar un archivo HTML o eliminar una imagen, se reflejarán instantáneamente en el contenedor. Esto te permite iterar de manera ágil sobre tu proyecto sin la necesidad de reiniciar o reconstruir el contenedor.
+
+### ¿Cuál es la diferencia entre volumen y copiar en Docker?
+
+La decisión de utilizar volumen o el comando COPY en tu Dockerfile depende del flujo de trabajo que desees emplear:
+
+- **Uso de volúmenes**: Ideal para proyectos dinámicos donde los archivos y datos cambian con frecuencia.
+- **Uso del comando COPY**: Mejor para proyectos estáticos, donde los recursos no necesitarán actualizaciones posteriores al despliegue inicial.
+
+Elegir apropiadamente entre crear un volumen o copiar información dentro de tu imagen de Docker puede ser decisivo para la eficiencia y agilidad de tu proyecto. Espero que estas directrices te sirvan para optimizar tu flujo de trabajo con Docker y aprovechar al máximo el potencial de los volúmenes. ¡Continúa aprendiendo y experimentando!
+
+## Configurar redes básicas en Docker
+
+`-p 8080:80` Asigna el puerto 8080 del host Docker al puerto TCP 80 del contenedor.
+
+`-p 192.168.1.100:8080:80` Asigna el puerto 8080 en el host Docker IP 192.168.1.100 al puerto TCP 80 en el contenedor.
+
+`-p 8080:80/udp` Asigna el puerto 8080 del host Docker al puerto UDP 80 del contenedor.
+
+`-p 8080:80/tcp -p 8080:80/udp` Asigna el puerto TCP 8080 en el host Docker al puerto TCP 80 en el contenedor, y asigna el puerto UDP 8080 en el host Docker al puerto UDP 80 en el contenedor.
+
+crear el contenedor: `docker run -it --rm -d -p 8080:80 --name web1 nginx1`
+crear contenedor con ip local `docker run -it --rm -d -p 127.0.0.1:8080:80 --name web nginx`
+
+inspeccionar el contenedor: `docker inspect web` 
+
+ver lar redes: `docker network ls`
+establese una red local con el contenedor: `docker network create platzinet`
+
+## ¡Mi primera imagen en Docker Hub!
+
+Dicen que saber utilizar Docker es parte del perfil de un ingeniero de DevOps y estoy parcialmente de acuerdo, no creo deba existir esa posición pero pienso que todos los ingenieros de software deben saber DevOps. A continuación podrás ver una imagen que muestra todas las habilidades que DevOps incluye.
+
+![Disciplinas de DevOps](./images/DisciplinasdeDevOps.png)
+
+Ahora que sabemos esto. ¿Qué tal si mezclamos a dos de ellas? Los contenedores de Docker y la creación de un script de bash que nos permita con un simple comando de bash crear una imagen y publicarla en Docker Hub.
+¡Todo en un solo comando!
+
+### Crea un archivo de bash
+
+Comienza por ubicarte en donde esté tu archivo Docker favorito, yo usaré el linktree que utilicé en varias de las clases del curso de Docker:Fundamentos. Ahí agrega un archivo llamado [publicar.sh](http://publicar.sh/)
+
+A ese archivo debemos comenzar por agregarle un encabezado que sirva para definir a este archivo como un script ejecutable de bash, eso es muy fácil de hacerlo, solo escribe:
+
+`#!/bin/bash`
+
+[binbash.png](./images/binbash.png)
+
+Ahora podemos indicarle al usuario que todo comenzará con la palabra echo que sirve para imprimir mensajes al usuario.
+
+`echo "Es momento de publicar tu imagen"`
+
+Después vamos a crear la imagen con el tag adecuado y obvio, volver a notificar a nuestro usuario.
+
+```bash
+docker build -t aminespinoza/linktree .
+echo "¡A publicar amigos!"
+```
+Seguimos con el comando de publicación de Docker y un mensaje para ver que ya todo está listo.
+
+```bash
+docker push aminespinoza/linktree
+echo "Imagen publicada"
+```
+
+Ahora es momento de probar tu script. ¿Vamos? Escribe en tu terminal
+
+`./publicar.sh`
+[consile1](./images/imagess1.png)
+[console2](./images/imagess.png)
+[console3](./images/imagess3.png)
+
+Está fenomenal que con una sola línea ahora publiques tus imágenes ¿no crees? Además ¿te cuento un secreto? Esto también es la primera pieza que podrías pensar en trabajar para entornos de integración y despliegues continuos.
+
+### En conclusión
+
+Todo está bien con este script ¿cierto? La cosa es que de aquí puedes comenzar a pensar en modificar este script para hacerlo mucho más útil. ¿Qué tal colocar variables para el tag de la imagen de Docker? ¿Y si agregamos unas líneas para ver que la imagen ya fue publicada? ¿Qué tal si agregamos la ubicación del Dockerfile de manera dinámica?
+
+¿Lo ves? ¡Hay muchísimo por mejorar y aprovechar aquí! Te recomiendo que dediques tiempo a este script y en cómo mejorarlo, te dará muy buena experiencia para poder ejercitar tus habilidades de bash aprovechando lo que ya sabes de Docker.
+
+Lecturas recomendadas
+
+[Cómo crear tu cuenta en Docker Hub](https://platzi.com/blog/como-crear-tu-cuenta-en-docker-hub/)
+
+[Cómo utilizar registros privados de Docker](https://platzi.com/blog/como-utilizar-registros-privados-de-docker/)
+
+Docker Hub es un servicio proporcionado por Docker para encontrar y compartir imágenes de contenedores con su equipo. Más información y búsqueda de imágenes en [https://hub.docker.com](https://hub.docker.com/)
+
+Inicie sesión en Docker
+
+`docker login -u <nombredeusuario>`
+
+Publica una imagen en Docker Hub
+
+`docker push <nombre_usuario>/<nombre_imagen>`
+
+Buscar una imagen en Hub
+
+`docker search <nombre_imagen>`
+
+Extraer una imagen de un Docker Hub
+
+`docker pull <nombre_imagen>`
+
+para logearse
+
+`docker login`
