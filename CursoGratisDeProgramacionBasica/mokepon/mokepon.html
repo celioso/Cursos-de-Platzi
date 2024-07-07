@@ -4,6 +4,7 @@
         <meta charset = "utf-8"/>
         <title>MOKEPON! 🔥💧🌱</title>      
         <link rel="stylesheet" href = "css/styles.css">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
     </head>
     <body>
 
@@ -25,8 +26,6 @@
                 <input type = "radio" name = "mascota" id = "pydos"/>-->
             </div>
 
-            
-            
             <!--Hipodoge -> Agua
             Capipepo -> Tierra
             Ratigueya -> Fuego
@@ -35,6 +34,17 @@
             Pydos -> Tierra y Fuego-->
 
             <button id = "boton-mascotas">Seleccionar</button>
+        </section>
+        
+        <section id="ver-mapa">
+            <h2 class="subtitle">Recorre el mapa con tú mokepon 🔥💧🌱</h2>
+            <canvas id = "mapa"></canvas>
+            <button onmouseup="detenerMovimiento()" onmousedown="moverArriba()">🔼⬆️</button>
+            <div>
+                <button onmouseup="detenerMovimiento()" onmousedown="moverIzquierda()">◀️⬅️</button>
+                <button onmouseup="detenerMovimiento()" onmousedown="moverAbajo()">🔽⬇️</button>
+                <button onmouseup="detenerMovimiento()" onmousedown="moverDerecha()">▶️➡️</button>
+            </div>
         </section>
 
         <section id = "seleccionar-ataque">
@@ -56,12 +66,12 @@
                 
             <div class="ataques">
                 <div class="ataques-jugador">
-                    <p id = "vidas-jugador">3</p>
+                    <p id = "vidas-jugador">0</p>
                     <p id = "mascota-jugador" style = "color:aqua"></p>
                     <div id="ataque-del-jugador"></div>
                 </div>
                 <div class="ataques-enemigo">
-                    <p id="vidas-enemigo">3</p>
+                    <p id="vidas-enemigo">0</p>
                     <p id = "mascota-enemigo" style = "color:blue"></p>
                     <div id="ataque-del-enemigo"></div>
                 </div>             

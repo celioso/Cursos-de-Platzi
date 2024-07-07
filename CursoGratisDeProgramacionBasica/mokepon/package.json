@@ -1,0 +1,14 @@
+{
+  "name": "mokepon",
+  "version": "1.0.0",
+  "description": "Juego de mokepon",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Mario Alexander Vargas Celis",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}
