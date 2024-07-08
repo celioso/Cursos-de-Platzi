@@ -375,3 +375,251 @@ Muchos de los verbos HTTP son intercambiable. O sea, siempre podrás obtener dat
 ### Conclusión
 
 Muchos conceptos, mucha información nueva para ti. Te aconsejo que vuelvas a ver esta clase en varias oportunidades para consolidar el conocimiento, ya que todos los conceptos vistos aquí, te acompañarán el resto de tu vida como desarrollador de software.
+
+## Express.js y fetch: API REST con JavaScript
+
+Te encuentras desarrollando tu primer backend y tu primera API. Un backend está compuesto por múltiples endpoints que serán utilizados por el front-end. Es momento de conectar ambos mundos.
+
+### ¿Qué es un endpoint?
+Un nuevo término que debes conocer y que siempre te acompañará. Llamamos *endpoint*, o punto final, a **cada URL que el backend exponer para que el front-end utilice**, ya sea para la obtención de datos, creación, actualización, etc.
+
+Cada acción que tu backend pueda realizar, la misma se ejecutará a través de un endpoint.
+
+### Creando tu primer endpoint
+
+Crear un endpoint con ExpressJS para enviar datos a un cliente es muy sencillo. Ya tienes tu servidor levantado, al mismo vamos a agregarle endpoints para la obtención de datos.
+
+```javascript
+const express = require('express');
+const app = express();
+const port = 3000;
+
+// Endpoint para obtener datos
+app.get('/datos', (req, res) => {
+  const datos = '12345';
+  res.send(datos);
+});
+
+app.listen(port, () => {
+  console.log(`¡Servidor listo!`);
+});
+```
+
+Observa el endpoint `/datos`, el mismo devuelve un número. Accede a este endpoint desde la URL `localhost:3000/datos` y visualizarás los mismos en el navegador.
+
+Pero la obtención de esta información por parte de un cliente no suele realizarse directamente por el navagador. En su lugar, utilizamos un cliente HTTP para lograr conectar en backend y el front-end.
+
+### Conexión de backend y front-end
+
+Las consultas por parte de un front-end al backend se realizan por medio de un cliente HTTP. El mismo es una librería que te permitirá hacer consultas a los endpoints y obtener información.
+
+Encontrarás muchos clientes HTTP en NPM. Para este ejemplo, usaremos uno llamado fetch que es propio de Javascript y no tendremos que instalar ninguna dependencia.
+
+En los archivos JS de tu front-end, puedes realizar solicitudes HTTP de la siguiente manera:
+
+```javascript
+fetch('http://localhost:3000/datos')
+  .then(response => response.json())
+  .then(data => {
+    console.log(data);      // 12345
+  });
+```
+
+Al ejecutar esta función asíncrona, obtendrás los datos del backend en la variable data pudiendo manipular los mismos y mostrarlos en el HTML de tu página.
+
+### Problemas de CORS
+
+Puedes tener con un problema trivial al querer realizar consultas a un backend. Mejor dicho… vas a tener este problema.
+
+CORS es un pequeño problema con el que te toparás mil veces en tu vida como programador. Pero no te preocupes, es de fácil resolución.
+
+La consola de desarrollo de los navegadores te permitirá obtener más información cuando las cosas no funcionen. Si te encuentras con un error similar a:
+
+![Ejemplo problema de CORS](./mokepon/assets/assetsREADME/cors.png "Ejemplo problema de CORS")
+
+
+Indica un problema de CORS que significa, por sus siglas en español, Intercambio de Recursos de Origen Cruzado. Es una **medida de seguridad de los backend para que no cualquier cliente, o cualquier front-end, realice consultas al mismo**.
+
+El backend debe permitir explícitamente que un cliente haga consultas, de lo contrario rechazará las mismas.
+
+Habilita CORS instalando su respectiva dependencia con npm install cors y realizando la importación de la misma.
+
+```javascript
+// Importamos CORS
+const cors = require('cors');
+
+// Activamos CORS
+app.use(cors());
+```
+
+De esta forma, el backend está listo para recibir consultas y el front-end podrá obtener los datos y trabajar con los mismos.
+
+### Conclusión
+
+Acabas de dar tu primer paso en el desarrollo full-stack, o sea, en el desarrollo backend y front-end. ¡Felicidades!
+
+Es solo el primer paso para integrar estos los dos mundos y poder visualizar en un front-end, los datos que el backend procesa o almacena en una base de datos.
+
+## JSON y POST: mokepon online
+
+**El intercambio de información entre un backend y un frontend** puede realizarse de varias formas. Será importante para ti como programador identificar cuándo utilizar cada uno de ellas.
+
+### Notación de Objetos de Javascript
+
+JSON, o *Javascript Object Notation* es un **estándar para la transferencia de datos entre dos sistemas**. Hoy en día, casi todos los protocolos de Internet funcionan por detrás con JSON cuando se trata de enviar y recibir información.
+
+Su sintaxis es algo particular y puede causar confusión al principio. Comprendamos cómo se estructura un JSON y para qué nos servirá:
+
+![Estructura de un JSON](./mokepon/assets/assetsREADME/EstructuradeunJSON.png "Estructura de un JSON")
+
+Un JSON está compuesto por claves para acceder a determinados valores.
+
+![Composicion de un JSON](./mokepon/assets/assetsREADME/ComposiciondeunJSON.png "Composicion de un JSON")
+
+El formato JSON no deja de ser texto simple. Para acceder a su información, debemos “parsearlo” para convertir el mismo en un objeto y así poder obtener el valor de sus datos. Para lograr esto, empleamos la función propia de JavaScript JSON.parse(').
+
+![Manipulacion de un JSON](./mokepon/assets/assetsREADME/ManipulaciondeunJSON.png "Manipulacion de un JSON")
+
+Un JSON es un objeto y dentro del mismo puede tener datos del tipo numéricos, texto, booleanos u otros objetos.
+
+### Habilitando JSON en ExpressJS
+
+Para enviar y recibir información en formato JSON con ExpressJS, debes activarlo de forma muy simple.
+
+```javascript
+// Importamos y creamos la aplicación de Express
+const express = require('express');
+const app = express();
+
+// Activamos el formato JSON
+app.use(express.json());
+```
+
+Con esta simple línea de código, tus endpoints ya puede procesar información en formato JSON.
+
+### Envío de parámetros al backend
+
+Otra manera de enviar información al backend es a través de los parámetros de URL. Los mismos componen y son parte de la URL, por lo tanto, serán obligatorios.
+
+Presta atención al siguiente endpoint:
+
+```javascript
+// Creamos un endpoint del tipo POST
+app.post('/datos/:id', (req, res) => {
+    const id = req.param.id;      // Capturamos parámetros de URL
+    const body = req.body;        // Capturamos el cuerpo de la solicitud
+    console.log(id);
+    console.log(body);
+})
+```
+
+Observa el `:id`, el mismo espera recibir un identificador o un número de forma dinámica para utilizar en el código. Puedes capturar este dato por su nombre req.param.id. Si te das cuenta, req es un objeto que tiene un sub-objeto llamado `param` y dentro posee este el parámetro que envía el cliente desde el front-end.
+
+```json
+{
+    "req": {
+        "param": {
+            "id": 123
+        }
+    }
+}
+```
+
+Puedes enviar este parámetro de URL más información en el cuerpo de la solicitud en formato JSON desde el front-end con el siguiente `fetch`:
+
+```javascript
+const id = 123;
+fetch(`http://localhost:3000/datos/${id}`, {    // Parámetro de URL
+    method: 'post',          // Indicamos que el endpoint es un POST
+    headers: {
+      'Content-Type': 'application/json'        // Indicamos que estamos enviando un JSON
+    },
+    body: JSON.stringify({    // Creamos un JSON con la información para el backend
+      datos: '12345'
+    })
+  })
+  .then(response => response.json())
+  .then(data => {
+    console.log(data);        // Recibimos la respuesta del backend
+  });
+```
+
+Los endpoints puede recibir un JSON en el *body* o el cuerpo de la solicitud. En el mismo puedes enviar tanta información como el backend necesite. Mientras que los parámetros de URL se suelen utilizar para enviar IDs o identificadores de una solo registro.
+
+### Conclusión
+
+Dos formas de enviar información al backend o recibirlas en el front-end, JSON y parámetros de URL. Poco a poco entenderás cuándo usar cada uno. Cuando se trata de mucha información o un solo dato.
+
+Más allá del lenguaje de programación que estamos utilizando, en este caso Javascript junto con NodeJS y ExpressJS, todos funcionan exactamente de la misma manera. Si aprendes a hacerlo con un lenguaje, los conceptos te servirán por siempre para cualquier otro que quieras aprender.
+
+pasos:
+
+instalar cors: `npm install cors`
+
+## Mokepones dinámicos en el mapa
+
+A medida que tu aplicación crezca y tengas más y más código, habrá errores, es inevitable tenerlos. **Los errores en un software se denominan BUG y el proceso de identificarlos y solucionarlo lo conocemos como DEBUGGING**.
+
+### Errores en una aplicación
+
+Te habrás dado cuenta de que la palabra BUG significa Insecto o bicho en inglés. Este término se originó en el siglo XIX cuando se construían complicadas y enormes máquinas. A estas máquinas se les llegaban a meter bichos (BUGS) y estorbaban el movimiento de alguna de sus piezas haciendo que fallaran.
+
+El término Bug comenzó a popularizarse en los años '40 cuando operadores de una gran máquina encontraron una polilla atascada en el interior de la misma.
+
+![Primer BUG de la historia de la computacion](./mokepon/assets/assetsREADME/PrimerBUG.png "Primer BUG de la historia de la computacion")
+
+Pegaron el bicho a un reporte explicando los motivos de los fallos de la máquina y desde entonces **decimos “bug” cuando nuestra aplicación tiene un error**.
+
+### Proceso de solución de bugs
+
+Hay diversos tipos de bugs dependiendo la gravedad del error que esté causando en un sistema. El proceso de identificar los mismos y solucionarlos es conocido como “Debug” o “Debuging”.
+
+Las [herramientas para desarrolladores](https://platzi.com/cursos/devtools/ "herramientas para desarrolladores") de los navegadores serán tu mejor aliado y te darán mucha información para localizar un fallo y solucionarlo.
+
+### Conclusión
+
+Bug y Debug, dos términos del cual oirás mucho al respecto a medida que te sumerjas en el mundo del desarrollo de software.
+
+“Puedes demostrar la presencia de bugs en una aplicación, pero no puedes demostrar la ausencia de los mismos.” (Vuelve a leer esta frase). No es posible demostrar que un sistema funciona bien al 100%. Puede haber bugs en donde sea y por este motivo también existen profesionales expertos en encontrarlos denominados Testers.
+
+Te toparás con bugs toda tu vida como programador. Aprender a debuguear de acuerdo al lenguaje o a la tecnología que estés utilizando te permitirá solucionar los mismos.
+
+## Optimizando el mapa del juego
+
+Una aplicación utiliza datos de diversas fuentes y tipos y a medida que esta crece, utilizará cada vez más. Conocer diversas **herramientas para manipular la información** te servirá para tomar decisiones sobre cuál utilizar dependiendo la necesidad.
+
+### Manipulación de arrays en Javascript
+
+Ya sabes lo que es un array, un conjunto de datos que pueden o no ser del mismo tipo.
+
+[Los arrays permiten muchas operaciones](https://platzi.com/cursos/arrays/ "Los arrays permiten muchas operaciones") como la obtención de su longitud con `arr.length` o recorrer cada elemento con **arr.foreach()**. Veamos una serie de otras funciones que te serán muy útiles de ahora en adelante.
+
+**Map**: La función `arr.map()` permite, además de recorrer cada elemento de un array, devolver otro array modificado a partir del original.
+
+```javascript
+const arr = [1, 2, 3, 4, 5];
+const new_arr = arr.map(e => {
+    // Sumamos 1 a los elementos pares
+    if (e % 2 == 0)
+        return e + 1;
+    else
+        return e;
+});
+console.log(new_arr);    // [1, 3, 3, 5, 5]
+```
+
+**Filter**: La función `arr.filter()` permite recorrer y filtrar elementos de un array para obtener un sub-array con menos cantidad de elementos a partir de una condición lógica.
+
+```javascript
+const arr = [1, 2, 3, 4, 5];
+const new_arr = arr.filter(e => {
+    // Devolvemos solo los elementos pares
+    if (e % 2 == 0)
+        return true;
+});
+console.log(new_arr);    // [2, 4]
+```
+
+*Map y Filter* son solo las dos primeras funciones de Javascript para manipular arrays que tienes que conocer. Poco a poco irás conociendo otras. Hasta el momento, practica creando arrays de datos y comprendiendo cómo funcionan estas.
+
+Estas funciones son propias de Javascript y puedes utilizarlas tanto en el backend como en el front-end. En el futuro, podrás descubir herramientas similares de manipulación de datos para otros lenguajes de programación.
