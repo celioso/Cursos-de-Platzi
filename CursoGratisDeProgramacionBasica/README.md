@@ -33,7 +33,7 @@ Cada tipo de archivo es interpretado de una forma diferente por el navegador par
 
 Cuando te encuentras viendo un video aquí en Platzi o en YouTube, los servidores envían cada fotograma del video en el orden que les corresponde para que el navegador web pueda reproducir el video y múltiples usuarios puedan verlo en tiempo real.
 
-![Streaming de datos](./mokepon/assets/assetsREADME/Streamingdedatos.png "Streaming de datos")
+![Streaming de datos](./assetsREADME/Streamingdedatos.png "Streaming de datos")
 
 ### Envió de datos
 
@@ -41,7 +41,7 @@ Un tercer tipo de intercambio de información entre un servidor y un cliente es 
 
 Un servidor puede enviar información de estudiantes, clases y cursos al cliente para que este construya la interfaz con los mismos y el usuario pueda interactuar con los datos.
 
-![name json](./mokepon/assets/assetsREADME/namejson.png "name json")
+![name json](./assetsREADME/namejson.png "name json")
 
 Los datos suelen intercambiarse a través un formato de texto conocido como JSON o *Javascript Object Notation*. JSON es el estándar más utilizado hoy en día para intercambiar información entre aplicaciones y definir estructuras en los daots. El aspecto de este tipo de información es como el siguiente:
 
@@ -100,17 +100,17 @@ En el backend no hay HTML, por lo que no podrás utilizar NodeJS para su manipul
 
 La instalación de NodeJS en tu ordenador es muy sencilla. Ingresa a su [página oficial](https://nodejs.org/en/ "página oficial") y has la descarga dependiendo tu sistema operativo.
 
-![Descarga de NodeJS](./mokepon/assets/assetsREADME/nodejs.png "Descarga de NodeJS")
+![Descarga de NodeJS](./assetsREADME/nodejs.png "Descarga de NodeJS")
 
 Te recomiendo que siempre instales la versión LTS (*Long Term Support*), dado que la misma tendrá soporte y mantenimiento por al menos 5 años. También utiliza versiones pares. Las versiones Current o las versiones impares suelen estar en desarrollo y pueden tener algún error o vulnerabilidad.
 
 **NodeJS viene acompañado de otra tecnología denominada NPM** (Node Package Manager). El mismo nos ayudará a inicializar un nuevo proyecto o instalar cualquier tipo de dependencia que necesitemos para desarrollar nuestra aplicación.
 
-![NodeJS y NPM](./mokepon/assets/assetsREADME/nodejsnpm.png "NodeJS y NPM")
+![NodeJS y NPM](./assetsREADME/nodejsnpm.png "NodeJS y NPM")
 
 Una vez realizada la instalación, puedes utilizar una serie de comandos desde una terminal para corroborar su correcto funcionamiento. Utiliza el comando node -v para verificar la versión de NodeJS y npm -v para visualizar la versión de NPM.
 
-![version.png](./mokepon/assets/assetsREADME/version.png "version.png")
+![version.png](./assetsREADME/version.png "version.png")
 
 NodeJS será, tal vez, tu primer acercamiento al desarrollo backend en el lado del servidor. Mucho de lo que ya conoces sobre Javascript te servirá para NodeJS y lo complementaremos con otras características propias que exploraremos en las próximas clases.
 
