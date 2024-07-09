@@ -3,7 +3,7 @@
     <head>
         <meta charset = "utf-8"/>
         <title>MOKEPON! 🔥💧🌱</title>      
-        <link rel="stylesheet" href = "css/styles.css">
+        <link rel="stylesheet" href = "./css/styles.css">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
     </head>
     <body>
@@ -39,11 +39,31 @@
         <section id="ver-mapa">
             <h2 class="subtitle">Recorre el mapa con tú mokepon 🔥💧🌱</h2>
             <canvas id = "mapa"></canvas>
-            <button onmouseup="detenerMovimiento()" onmousedown="moverArriba()">🔼⬆️</button>
+            <button 
+                ontouchstart="moverArriba()"
+                onmousedown="moverArriba()"
+                ontouchend="detenerMovimiento()"  
+                onmouseup="detenerMovimiento()" 
+                >🔼⬆️</button>
             <div>
-                <button onmouseup="detenerMovimiento()" onmousedown="moverIzquierda()">◀️⬅️</button>
-                <button onmouseup="detenerMovimiento()" onmousedown="moverAbajo()">🔽⬇️</button>
-                <button onmouseup="detenerMovimiento()" onmousedown="moverDerecha()">▶️➡️</button>
+                <button
+                    ontouchstart="moverIzquierda()"
+                    onmousedown="moverIzquierda()"
+                    ontouchend="detenerMovimiento()" 
+                    onmouseup="detenerMovimiento()" 
+                >◀️⬅️</button>
+                <button
+                    ontouchstart="moverAbajo()"
+                    onmousedown="moverAbajo()"
+                    ontouchend="detenerMovimiento()" 
+                    onmouseup="detenerMovimiento()" 
+                >🔽⬇️</button>
+                <button
+                    ontouchstart="moverDerecha()"
+                    onmousedown="moverDerecha()"
+                    ontouchend="detenerMovimiento()" 
+                    onmouseup="detenerMovimiento()" 
+                >▶️➡️</button>
             </div>
         </section>
 
