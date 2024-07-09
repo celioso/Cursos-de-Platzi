@@ -623,3 +623,41 @@ console.log(new_arr);    // [2, 4]
 *Map y Filter* son solo las dos primeras funciones de Javascript para manipular arrays que tienes que conocer. Poco a poco irás conociendo otras. Hasta el momento, practica creando arrays de datos y comprendiendo cómo funcionan estas.
 
 Estas funciones son propias de Javascript y puedes utilizarlas tanto en el backend como en el front-end. En el futuro, podrás descubir herramientas similares de manipulación de datos para otros lenguajes de programación.
+
+## Batalla entre jugadores
+
+Te encuentras muy cerca de finalizar tu primer backend y tu primera aplicación completa. ¡Solo un esfuerzo más!
+
+### El último esfuerzo
+
+Si tu proyecto aún no funciona como debe, te recomiendo realizar una comparación con [el código de los profesores](https://github.com/platzi/curso-programacion-basica/tree/81-consumiendo-api-ataques-enemigo "el código de los profesores") que lo crearon originalmente. También puedes compartir y buscar ayuda en la sección de comentarios.
+
+Notarás que el código fuente se encuentra alojado en una plataforma llamada [GitHub que utiliza un software llamado Git](https://platzi.com/cursos/git-github/ "GitHub que utiliza un software llamado Git"). **Git será uno de tus próximos pasos en el mundo de la programación** y GitHub es una “red social para programadores”. La misma te permite llevar un control de versiones del código fuente y es la herramienta perfecta para guardar tu código.
+
+Te tocará aprender Git en el futuro. De momento, concentra tu energía en finalizar tu primera aplicación. Solo falta desarrollar unos endpoints más para completar el videojuego.
+
+## Consumiendo la API de ataques del enemigo
+
+Si te encuentras aquí, es porque acabas de finalizar tu primer proyecto de software. ¡Felicidades! Hagamos un repaso juntos sobre lo que consiste el desarrollo backend.
+
+### Repaso del desarrollo backend
+
+A lo largo de estas últimas clases, has desarrollado el backend de tu aplicación y has aprendido todos los siguientes conceptos:
+
+- ¿Qué es un backend?
+- Diferencias backend y front-end
+- Arquitectura cliente/servidor
+- Lenguajes de backend: NodeJS y NPM
+- Interfaces de línea de comandos
+- Servidor web local con ExpressJS
+- HTTP y tipos de solicitudes
+- API, URI, URL, URN
+- Transferencia de información y JSON
+
+Mucha nueva información para ti. Te aseguro que todo lo visto en este curso no deja de ser la base del mundo de la programación y dentro poco tiempo serán temas triviales de todos los días y muy fáciles de comprender.
+
+Repasa cada tema que no recuerdes. La mejor forma de aprender algo es explicarlo. Intenta explicarle a un amigo o familiar qué es HTTP, o cuáles son las diferencias entre un backend y un frontend.
+
+Fueron más de 80 clases en total a lo largo de este curso para desarrollar tu videojuego. Ya solo queda probar el mismo en la siguiente clase.
+
+[GitHub - platzi/curso-programacion-basica at 81-consumiendo-api-ataques-enemigo](https://github.com/platzi/curso-programacion-basica/tree/81-consumiendo-api-ataques-enemigo)
