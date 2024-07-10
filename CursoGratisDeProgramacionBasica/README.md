@@ -195,7 +195,7 @@ Una de las dependencias más antiguas, pero completamente vigente y recomendada,
 
 Siempre que instales una dependencia de terceros que se encuentren en NPM, te aconsejo que ingreses a su respectiva página para obtener más información de la librería.
 
-![ExpressJS en NPM](./mokepon/assets/assetsREADME/ExpressJSenNPM.png "ExpressJS en NPM")
+![ExpressJS en NPM](./assetsREADME/ExpressJSenNPM.png "ExpressJS en NPM")
 
 La [página de ExpressJS en NPM](https://www.npmjs.com/package/express "página de ExpressJS en NPM") indica que la mismo posee más de 24 millones de descargas en la última semana. Además de encontrar más información como el repositorio en [GitHub](https://platzi.com/cursos/git-github/ "GitHub") y ejemplos básicos de instalación y uso de la librería, licencia, entre otros datos.
 
@@ -282,13 +282,13 @@ Los dominios son también llamados URI y están compuestos por varias partes.
 
 URI son las siglas en español de **Identificador de Recursos Uniforme** y es ese **identificador único de una página web**. El mismo está compuesto por dos partes, una URL (Localizador de Recursos Uniforme) y una URN (Nombre de Recurso Uniforme).
 
-![Composición de una URI](./mokepon/assets/assetsREADME/ComposiciondeunaURI.png "Composición de una URI")
+![Composición de una URI](./assetsREADME/ComposiciondeunaURI.png "Composición de una URI")
 
 ### Composición de una URI
 
 Dentro de una URI, podemos identificas varias partes que componen a la misma:
 
-![Partes de una URI](./mokepon/assets/assetsREADME/PartesdeunaURI.png "Partes de una URI")
+![Partes de una URI](./assetsREADME/PartesdeunaURI.png "Partes de una URI")
 
 **- URI:**
  - Esquema: Protocolo que la URI utiliza, pudiendo ser HTTP o HTTPS.
@@ -470,15 +470,15 @@ JSON, o *Javascript Object Notation* es un **estándar para la transferencia de 
 
 Su sintaxis es algo particular y puede causar confusión al principio. Comprendamos cómo se estructura un JSON y para qué nos servirá:
 
-![Estructura de un JSON](./mokepon/assets/assetsREADME/EstructuradeunJSON.png "Estructura de un JSON")
+![Estructura de un JSON](./assetsREADME/EstructuradeunJSON.png "Estructura de un JSON")
 
 Un JSON está compuesto por claves para acceder a determinados valores.
 
-![Composicion de un JSON](./mokepon/assets/assetsREADME/ComposiciondeunJSON.png "Composicion de un JSON")
+![Composicion de un JSON](./assetsREADME/ComposiciondeunJSON.png "Composicion de un JSON")
 
 El formato JSON no deja de ser texto simple. Para acceder a su información, debemos “parsearlo” para convertir el mismo en un objeto y así poder obtener el valor de sus datos. Para lograr esto, empleamos la función propia de JavaScript JSON.parse(').
 
-![Manipulacion de un JSON](./mokepon/assets/assetsREADME/ManipulaciondeunJSON.png "Manipulacion de un JSON")
+![Manipulacion de un JSON](./assetsREADME/ManipulaciondeunJSON.png "Manipulacion de un JSON")
 
 Un JSON es un objeto y dentro del mismo puede tener datos del tipo numéricos, texto, booleanos u otros objetos.
 
@@ -566,7 +566,7 @@ Te habrás dado cuenta de que la palabra BUG significa Insecto o bicho en inglé
 
 El término Bug comenzó a popularizarse en los años '40 cuando operadores de una gran máquina encontraron una polilla atascada en el interior de la misma.
 
-![Primer BUG de la historia de la computacion](./mokepon/assets/assetsREADME/PrimerBUG.png "Primer BUG de la historia de la computacion")
+![Primer BUG de la historia de la computacion](./assetsREADME/PrimerBUG.png "Primer BUG de la historia de la computacion")
 
 Pegaron el bicho a un reporte explicando los motivos de los fallos de la máquina y desde entonces **decimos “bug” cuando nuestra aplicación tiene un error**.
 
