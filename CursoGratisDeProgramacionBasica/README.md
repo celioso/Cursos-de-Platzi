@@ -17,7 +17,7 @@ Si estás leyendo esto, es gracias a que tu navegador web (o aplicación mobile)
 
 La Internet moderna funciona a través de la arquitectura cliente/servidor. **Donde el cliente realiza peticiones de datos al servidor y este responde con los mismos**.
 
-![Arquitectura cliente](./mokepon/assets/assetsREADME/Arquitecturacliente.png)
+![Arquitectura cliente](./assetsREADME/Arquitecturacliente.png)
 
 
 Un servidor puede responder de varias formas o con diferentes tipos de información dependiendo el tipo de petición del cliente.
@@ -25,7 +25,7 @@ Un servidor puede responder de varias formas o con diferentes tipos de informaci
 Envío de páginas web
 Cuando ingresas a [https://platzi.com/](https://platzi.com/ "https://platzi.com/") el servidor realiza un tipo de respuesta enviándole al cliente, al navegador web, archivos para la construcción de una página web.
 
-![navegador web](./mokepon/assets/assetsREADME/navegadorweb.png "navegador web")
+![navegador web](./assetsREADME/navegadorweb.png "navegador web")
 
 Cada tipo de archivo es interpretado de una forma diferente por el navegador para construir la página. Incluso puedes enviar archivos multimedia como imágenes o videos.
 
@@ -435,7 +435,7 @@ CORS es un pequeño problema con el que te toparás mil veces en tu vida como pr
 
 La consola de desarrollo de los navegadores te permitirá obtener más información cuando las cosas no funcionen. Si te encuentras con un error similar a:
 
-![Ejemplo problema de CORS](./mokepon/assets/assetsREADME/cors.png "Ejemplo problema de CORS")
+![Ejemplo problema de CORS](./assetsREADME/cors.png "Ejemplo problema de CORS")
 
 
 Indica un problema de CORS que significa, por sus siglas en español, Intercambio de Recursos de Origen Cruzado. Es una **medida de seguridad de los backend para que no cualquier cliente, o cualquier front-end, realice consultas al mismo**.
