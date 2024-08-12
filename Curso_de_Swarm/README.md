@@ -149,12 +149,6 @@ docker swarm init --advertise-addr 192.168.0.18
 docker swarm join --token <TOKEN> <MANAGER-IP>:<PORT>
 docker swarm join --token SWMTKN-1-32cege8duoof9cr405bi1fsmcga831l6fcecmznp5cxcfdc3vg-ci6f98tjfy9fzhr2swmmo3ter 192.168.0.18:2377
 ```
-- Creamos otra nueva instancia en play-with-docker (+ ADD NEW INSTANCE)
-
-```bash
-docker swarm join --token <TOKEN> <MANAGER-IP>:<PORT>
-docker swarm join --token SWMTKN-1-32cege8duoof9cr405bi1fsmcga831l6fcecmznp5cxcfdc3vg-ci6f98tjfy9fzhr2swmmo3ter 192.168.0.18:2377
-```
 - Nos dirigimos a la terminal del nodo MANAGER, observamos los 3 nodos
 
 ```bash
@@ -262,7 +256,7 @@ docker service update --rollback-parallelism 0 pinger
 `docker service inspect pinger`
 `docker service  update --update-parallelism 4 --update-order start-first pinger`
 `docker service inspect pinger`
-`docker service update --args 2ping www.facebook.com" pinger`
+`docker service update --args ping www.facebook.com" pinger`
 `docker service ps pinger`
 `docker service update --update-failure-action rollback --update-max-failure-ratio 0.5 pinger`
 `docker service update --rollback-parallelism 0 pinger`
@@ -272,3 +266,277 @@ docker service update --rollback-parallelism 0 pinger
 - `docker service update --update-parallelism <n> --update-order <start-first> <servicename>`: configura los n nodos que se actualizaran en paralelo, así como se indica el update order.
 - `docker service update --update-failure-action rollback --update-max-failure-ratio <n> <servicename>`: configura el max n de fallas de un update antes de realizar un rollback del servicio.
 - `docker service update --rollback-parallelism <n> <servicename>`: configura los n nodos que se haran rollback en paralelo, [0=todos]
+
+## Exponiendo aplicaciones al mundo exterior
+
+exacto solo sigue los mismos comandos de la clase
+
+
+`git clone git@github.com:platzi/swarm.git`
+`cd swarm/hostname`
+`docker build -t <your-docker-hub-id>/swarm-hostname`
+`docker login --username <your-user-id>`
+`docker push <your-docker-hub-id>/swarm-hostname`
+
+y despues en labs.docker
+
+
+```bash
+docker service create -d --name app --publish 3000:3000 --replicas=3 <your-user-id>/swarm-hostname
+  ```
+
+  ver los sertvicios `docker service ps app`
+  para ver desde el depliegue se utiliza el `curl<el link de lab.swarm>` ejemplo: `curl http://ip172-18-0-26-cqsdt4aim2rg00c1oeag-3000.direct.labs.play-with-docker.com/` y el  responde desde un contenedor distinto.
+
+[Page not found · GitHub](https://github.com/platzi/swarm)
+
+## El Routing Mesh
+
+**Routing Mesh** nos ayuda a que, teniendo un servicio escalado en swarm que tiene mas nodos que servicios y esos servicios están expuestos en un puerto; cuando hacemos un request a un servicio en ese puerto de alguna manera la petición llega y no se pierden en algún nodo que no puede contenerlo en ese puerto o en un contenedor.
+
+Routing Mesh ayuda a llevar la petición y que esta no se pierda si la cantidad de los contenedores es diferente a la cantidad de nodos.
+
+`docker service scale app=6`
+`docker service ps app`
+`docker ps`
+`docker network ls`
+`docker service create --name app --publish 3000:3000 --replicas=3 <your-user-id>/swarm-hostname:latest`
+
+ver redes: `docker network ls`
+
+[Use swarm mode routing mesh | Docker Documentation](https://docs.docker.com/engine/swarm/ingress/)
+
+## Restricciones de despliegue
+
+Todo funciono. Una clase excelente y practica.
+
+- Vamos a crear un servicio nuevo
+`docker service create --name viz -p 8080:8080 --constraint=node.role==manager --mount=type=bind,src=/var/run/docker.sock,dst=/var/run/docker.sock dockersamples/visualizer`
+
+- Verificiamos
+
+`docker service ps viz`
+
+- Haremos que todos nuestros servicios corran en workers
+
+`docker service update --constraint-add node.role==worker --update-parallelism=0 app`
+
+http://192.168.5.151:8080/
+
+## Disponibilidad de nodos
+
+En el visualizer podemos ver que todas las tareas siguen corriendo en el "“worker 1"”, esto sucede porque el planificador de Docker Swarm no va a replanificar o redistribuir la carga de un servicio o de contenedores a menos que tenga que hacerlo; para solucionar esto, debemos forzar un redeployment o una actualización que se logra cambiando el valor de una variable que no sirva para nada.
+
+`docker service update -d --env-add UNA_VARIABLE=de-entorno --update-parallelism=0 app`
+
+`docker service ps app`
+
+- Como hacemos decirle que esto de aqui sacamelo
+
+```bash
+docker node ls
+docker node inspect --pretty worker2
+```
+- Le pasamos las replicas a los otros workers, es decir le quitamos replicas nuestro worker2
+
+```bash
+docker node update --availability drain worker2
+```
+- Vamos a nuestro worker1 y observamos que tiene mucha carga
+- Vamos a nuestro manager, verificamos que nuetro worker2 esta en modo DRAIN y lo cambiamos a ACTIVE (observamos que no redistribuye las replicas a worker2)
+```bash
+docker node ls
+docker node update --availability active worker2
+```
+- Con este metodo podemos redistribuir, enviando las tareas a otros workers
+```bash
+docker service update -d --env-add UNA_VARIABLE=de-entorno --update-parallelism=0 app
+docker service ps app
+```
+`docker node ls`
+`docker  node inspect --pretty worker2`
+`docker node update --availability drain worker2` deactivar el worker2 
+`docker node update --availability active worker2` activar el worker2 
+`docker service update -d --env-add UNA_VARIABLE=de-entorno --update-parallelism=0 app`
+`docker service rm app` eliminar la app
+
+Disponibilidad de un nodo:
+
+- **active**: El nodo trabaja de forma coordinada con el Swarm y puede recibir nuevas tareas.
+**pause**. El nodo deja de recibir nuevas tareas de manera indefinida, pero no desecha las que ya tiene corriendo.
+**drain**: Le indica a Swarm que vacíe todas las tareas del nodo y lo mantenga así de manera indefinida. Si un servicio requiere un número definido de réplicas, Swarm redistribuye la respectiva carga del nodo drenado a otro nodo disponible.
+Ver más en [Administrar nodos de Swarm.](https://docs.docker.com/engine/swarm/manage-nodes/)
+
+## Networking y service discovery
+
+vamos a ver como es el networking al momento de trabajar con swarm, vamos a poder inspeccionar que tenemos en la red. Todo esto, utilizando el repositorio que encuentras en los enlaces del curso
+
+[https://docs.docker.com/network/overlay/](https://docs.docker.com/network/overlay/ "https://docs.docker.com/network/overlay/")
+
+- Nos situamos en manager1 y creamos una nueva red
+
+```bash
+docker service rm app
+docker network ls
+docker network create --driver overlay app-net
+```
+- Vamos a usar los archivos de swarm/networking en nuestro local.
+
+```bash
+cd swarm/networking
+docker build -t borisvargas/swarm-networking .
+docker push borisvargas/swarm-networking
+```
+- Nos situamos en manager. Creamos el servicio de mongo
+
+```bash
+docker service create -d --name db --network app-net mongo
+docker service ps db
+```
+- Creamos el servicio de app
+
+```bash
+docker service create -d --name app --network app-net -p 3000:3000 <your-user-id>/swarm-networking
+docker service ps app
+docker service update --env-add MONGO_URL=mongodb://db/test app
+docker exec -it <ID_CONTAINER_DB> bash
+# mongo
+> use test
+> db.pings.find()
+> db.pings.find()
+```
+- Esta es la manera como se comunican en un entorno de swarm
+
+```bash
+docker network inspect app-net
+```
+Las redes en docker son muy potentes y simplifican trabajo.
+
+`docker network `
+`docker network create --driver overlay app-net`
+`docker network inspect app-net`
+`docker build -t <your-user-id>/networking .`
+`docker login`
+`docker push <your-user-id>/networking`
+`docker service create -d --name db --network app-net mongo`
+`docker service ps db`
+`docker service create --name app --network app-net -p 3000:3000 <your-user-id>/networking`
+`docker service ps app`
+`docker service update --env-add MONGO_URL=mongodb://db/test app`
+`docker ps`
+`docker exec -it 0491a70c18cf bash`
+`mongo`
+`use test`
+`db.pings.find()`
+`docker network inspect app-net`
+
+[Use overlay networks | Docker Documentation](https://docs.docker.com/network/overlay/)
+
+## Docker Swarm stacks
+
+Con Docker Swarm Stacks (un archivo) se puede controlar cómo se van a despliegan los servicios utilizando los stacks. Siempre es bueno utilizar un archivo porque este puede ser versionado (Git) y se tiene un archivo que va a describir la arquitectura de la aplicación.
+
+- Nos dirigimos a nuestro repositorio https://github.com/platzi/swarm, a la carpeta stack.
+
+```bash
+cd swarm/stacks
+cat stackfile.yml
+```
+
+- Nos dirigimos a nuestro manager1
+```bash
+docker service rm app db
+docker network rm app-net
+vim stackfile.yml
+```
+sen el editor escogemos pegar con `:set paste`, para ver el contenido del archivo se utiliza `cat stackfile.yml`
+
+Modo de comandos
+i: entrar al modo de inserción
+v: entrar al modo visual (selección de palabras)
+V: entrar al modo visual (selección de líneas)
+w: avanzar al principio de la siguiente palabra
+e: avanzar al final de la siguiente palabra
+b: retroceder al principio de la palabra anterior
+y: copiar (yank) se usa con otros comando para seleccionar texto a copiar
+d: borrar (el texto borrado se copia al portapapeles, o sea que también hace la función de cortar)
+p: pegar
+u: deshacer
+:w: guardar fichero actual
+:q: salir
+:tabe : abrir nueva pestaña con un archivo, si se omite se abre un nuevo buffer vacío
+gt: mover a la siguiente pestaña
+gT: mover a la anterior pestaña
+h, j, k, l: mover cursor una posición a la izquierda, abajo, arriba y a la derecha
+
+```bash
+###########stackfile.yml##############
+version: "3"
+
+services:
+  app:
+    image: borisvargas/swarm-networking
+    environment:
+      MONGO_URL: "mongodb://db:27017/test"
+    depends_on:
+      - db
+    ports:
+      - "3000:3000"
+
+  db:
+    image: mongo
+######################################
+```
+
+```bash
+docker stack deploy --compose-file stackfile.yml app
+
+docker stack ls
+
+docker stack ps app
+
+docker stack services app
+```
+- Quiero que los servicios esten en los workers
+
+```bash
+vim stackfile.yml
+```
+
+
+```bash
+###########stackfile.yml##############
+version: "3"
+
+services:
+  app:
+    image: borisvargas/swarm-networking
+    environment:
+      MONGO_URL: "mongodb://db:27017/test"
+    depends_on:
+      - db
+    ports:
+      - "3000:3000"
+    deploy:
+      placement:
+        constraints: [node.role==worker]
+
+  db:
+    image: mongo
+######################################
+```
+`docker stack deploy --compose-file stackfile.yml app`
+`docker stack rm app`
+
+comandos usados:
+
+`docker service rm app`
+`docker service rm db`
+`docker network rm app-net`
+`docker stack deploy --compose-file stackfile.yml app`
+`docker service ls`
+`docker stack ls`
+`docker stack ps app`
+`docker stack services app`
+`docker service scale app_app=3`
+`docker stack rm app`
