@@ -540,3 +540,113 @@ comandos usados:
 `docker stack services app`
 `docker service scale app_app=3`
 `docker stack rm app`
+
+## Reverse proxy: muchas aplicaciones, un sólo dominio
+
+Reverse proxy es una técnica, es un servicio que está escuchando y que toma una decisión con la petición que esta entrando y hace un proxy hacia uno de los servicios que tiene que atender esa petición.
+
+Existe una herramienta llamada traefik, el cual es un intermediario entre las peticiones que vienen del internet a nuestra infraestructura.
+
+Que tal, tuve un pequeño problema. Cuando intente correr el comando, se quedan como en un ciclo, entonces cancele y revise los logs con
+
+```bash
+docker service logs proxy 
+```
+
+Y me mandaba este mensaje.
+
+2019/10/21 00:26:42 command traefik error: failed to decode configuration from flags: field not found, node: docker
+
+Y para arreglarlo, solo tuve que definir la versión de traefik y cambiar esta parte
+
+```bash
+  --docker.swarmMode
+```
+
+Por
+
+```bash
+--docker.swarmmode
+```
+
+
+El comando final quedo así:
+
+```bash
+docker service create --name proxy --constraint=node.role==manager -p 80:80 -p 9090:8080 --mount type=bind,src=/var/run/docker.sock,dst=/var/run/docker.sock --network proxy-net traefik:1.5 --docker --docker.swarmmode --docker.domain=domain.ca --docker.watch --api
+```
+
+comandos:
+
+- `docker network create --driver overlay proxy-net`
+- `docker service create --name proxy --constraint=node.role==manager -p 80:80 -p 9090:8080 --mount type=bind,src=/var/run/docker.sock,dst=/var/run/docker.sock --network proxy-net traefik --docker --docker.swarmmode --docker.domain=dbz.com --docker.watch --api`
+- `docker service create  --name app1 --network proxy-net --label traefik.port=3000 celismario/swarm-hostname`
+- `curl -H 'Host: app1.dbz.com' http://localhost`
+- `docker service create  --name app2 --network proxy-net --label traefik.port=3000 celismario/swarm-hostname`
+- `curl -H "Host: app2.dbz.com" http://localhost`
+- `docker service update --image baezdavidsan/networking app2`
+- `curl -H "Host: app1.dbz.com" http://localhost`
+- `curl -H "Host: app2.dbz.com" http://localhost`
+ 
+[Traefik - The Cloud Native Edge Router / Reverse Proxy / Load Balancer](https://traefik.io/)
+
+## Arquitectura de un swarm productivo
+
+ Para que Docker Swarm funcione (utilizando buenas practicas), tiene que haber un número impar de Managers. -En la arquitectura de Swarm debe haber un Nodo Manager Leader que toma la decisión final (creación, asignación, destrucción, tareas, servicios, etc.) y los otros replican lo que dice el líder. -Cada cierto tiempo se rota el Status Leader entre los nodos Managers utilizando un algoritmo: [Raft] Utilizado en Clustering.
+
+- Como mínimo necesitamos tres manager.
+- Podemos configurar grupos de workers según la necesidad de computo.
+- El número de manager debe ser impar. Hay un único líder, y se rotan el liderazgo en un intervalo de tiempo
+
+Si, se usan los labels y el parámetro constrain, aquí tienes un ejemplo [https://success.docker.com/article/using-contraints-and-labels-to-control-the-placement-of-containers](https://success.docker.com/article/using-contraints-and-labels-to-control-the-placement-of-containers)
+
+## Administración remota de swarm productivo
+
+Las herramientas de administración en Docker Swarm deben persistir en disco (su estado interno, la administración) y la mejor manera de almacenar cosas en Docker son los volúmenes.
+
+En esta clase aprenderemos una forma fácil simple e intituiva de administrar nuestro docker swarm de manera remota. No es la única que existe, así que te invitamos a probar y a dejarnos en los comentarios otras formas que encuentres.
+
+Lecturas recomendadas
+
+[Docker for Azure persistent data volumes | Docker Documentation](https://docs.docker.com/docker-for-azure/persistent-data-volumes/)
+
+[REX-Ray](https://rexray.io/)
+
+[Portainer | Simple management UI for Docker](https://portainer.io/)
+
+[GitHub - dockersamples/example-voting-app: Example Docker Compose app](https://github.com/dockersamples/example-voting-app)
+
+**comandos**
+
+- `docker volume create portainer_data`
+- `docker volume ls`
+- `docker service create --name portainer -p 9000:9000 --constraint node.role==manager --mount type=bind,src=/var/run/docker.sock,dst=/var/run/docker.sock --mount type=volume,src=portainer_data,dst=/data portainer/portainer -H unix:///var/run/docker.sock`
+- `docker stack ls`
+- `docker stack ps voting`
+- `docker service ps voting_worker`
+http://192.168.5.150:5000/
+http://192.168.5.150:5001/
+
+## Consideraciones adicionales para un swarm produtivo
+
+```bash
+docker service create -d \
+-e CLEAN_PERIOD=900 \
+-e DELAY_TIME=600 \
+--log-driver json-file \
+--log-opt max-size=1m \
+--log-opt max-file=2 \
+--name=cleanup \
+--mode global \
+--mount type=bind,source=/var/run/docker.sock,target=/var/run/docker.sock \
+meltwater/docker-cleanup
+```
+
+`docker service ls`
+
+Lecturas recomendadas
+[GitHub - meltwater/docker-cleanup: Automatic Docker image, container and volume cleanup](https://github.com/meltwater/docker-cleanup)
+
+[Configure logging drivers | Docker Documentation](https://docs.docker.com/config/containers/logging/configure/)
+
+[GitHub - stefanprodan/swarmprom: Docker Swarm instrumentation with Prometheus, Grafana, cAdvisor, Node Exporter and Alert Manager](https://github.com/stefanprodan/swarmprom)
