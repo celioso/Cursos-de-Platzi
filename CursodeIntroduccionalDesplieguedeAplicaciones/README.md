@@ -91,3 +91,24 @@ Nota: En el Stack de Java y Oracle también se puede intercambiar Apache Tomcat 
 [GitHub - santiaguf/spacex-platzi: Web application that show info of SpaceX using spaceX API](https://github.com/santiaguf/spacex-platzi)
 
 [Repositorio Spacex](https://github.com/santiaguf/spacex-platzi)
+
+En mi cuenta principal de github tengo el repositorio apuntando a un subdominio diferente [https://sb.js.org/](https://sb.js.org) , te reto a que luego de realizar esta clase, configures tu repo con [js.org](https://js.org/)
+
+## Despliegue en Surge
+
+se instala surge `npm install --global surge`
+luego `surge`
+
+Por su fuera de su interés, dejo el paso a paso del despliegue en Surge:
+
+**Nota**: si no reconoce "npm" deberás instalar nodeJs y continuar con el paso a paso del despliegue en Surge.
+[Surge.sh](./images/surge.jpg)
+
+si hay algun problema con el dominio ya que otro lo esta usando se usa `surge login` el pedira correo y contraseña.
+luego se utiliza `surge --domain your-new-subdomain.surge.sh` para el dominio deseado y listo.
+
+[Web en suge](spacex-platzi-master-practica.surge.sh)
+
+[Surge](http://surge.sh/)
+
+[SpaceX Platzi](http://foregoing-loss.surge.sh/index.html)
