@@ -1,73 +1,122 @@
-### Curso de Docker: Fundamentos
+### Curso de Swarm
 
-1. **¿Cuál de las siguientes palabras reservadas es la que te permite mover un archivo de tu entorno local a tu imagen de Docker?**
+1. **Indica cúal de las siguientes afirmaciones es verdadera:**
 
-**R/:** COPY
+**R/:** En el escalado vertical el límite está dado por la potencia máxima que puedas conseguir en una máquina, mientras que en la escalabilidad horizontal está dado por cuántas máquinas puedas conseguir para correr tu carga, y tu capacidad de distribuir carga entre ellas.
 
-2. **¿Cuál es el orden adecuado de los conceptos más relevantes en Docker?**
+2. **Una manera muy popular para garantizar la disponibilidad de una aplicación es escalarla verticalmente**
 
-**R/:** Dockerfile, imagen y contenedor
+**R/:** Falso
 
-3. **¿Cómo se llama la herramienta que te permite desplegar todos tus contenedores de manera local con un solo comando?**
+3. **Indica la opción que mejor describe qué es Docker Swarm**
 
-**R/:** Docker Compose
+**R/:** La solución de clustering nativa de Docker, para escalar aplicaciones y distribuir carga entre múltiples máquinas que corren Docker
 
-4. **¿Qué comando utilizarías para mostrar todos tus contenedores locales?**
+4. **Indica cuál de los siguientes no es un tipo de nodo de un cluster de Docker Swarm:**
 
-**R/:** docker ps
+**R/:** Scheduler
 
-5. **¿Cómo se debe llamar el archivo de Docker Compose para desplegar un conjunto de imágenes?**
+5. **Todos los comandos de Docker que se ejecuten en un nodo manager funcionarán igual en un nodo worker**
 
-**R/:** docker-compose.yml
+**R/:** Falso
 
-6. **¿Qué parámetro debo colocar en el comando docker run para que yo me comunique al puerto 5600 y Docker lo haga con el puerto 5300 a la aplicación?**
+6. **Una aplicación que no cumple los 12 factores…**
 
-**R/:** -p 5600:5300
+**R/:** siempre podrá correr en un contenedor, pero cuantos menos factores cumpla más difícil será aprovechar las funcionalidades de Docker y Docker Swarm.
 
-7. **¿Qué comando debes utilizar para conocer toda la información de un contenedor de Docker?**
+7. **El comando para inicializar un Docker Swarm es:**
 
-**R/:** docker inspect
+**R/:** docker swarm init
 
-8. **¿Qué palabra reservada debes usar en un Dockerfile para ejecutar un comando de terminal?**
+8. **El join token de un swarm es el mismo para cualquier tipo de nodo, y para decidir si unirse como manager o worker debe pasarse una opción al comando `docker swarm join`**
 
-**R/:** RUN
+**R/:** Falso
 
-9. **¿Cuál es el parámetro en el comando docker run que reemplaza la palabra VOLUME en un Dockerfile?**
+9. **Si queremos inicializar un swarm en una máquina que tiene más de una interfaz de red, podemos especificar cuál debe usar para escuchar peticiones de nodos que quieren unirse al swarm usando la opción `--advertise-add`r**
 
-**R/:** -v origen:destino
+**R/:** Verdadero
 
-10. **¿Cuál de las siguientes palabras NO es una palabra reservada de un Dockerfile?**
+10. **Si ejecuto `docker swarm ini`t en un nodo manager de un swarm existente, lo que ocurre es:**
 
-**R/:** PASTE
+**R/:** El nodo abandona el swarm existente e inicializa un nuevo swarm, del cual es el único nodo, manager y líder
 
-11. **¿Cuál es el comando que debes utilizar para generar un archivo comprimido a partir de una imagen de Docker?**
+11. **Si quiero inspeccionar el estado del nodo de swarm en el que estoy, sin saber el ID del nodo, el comando que debo usar es:**
 
-**R/:** docker save
+**R/:** docker node inspect self
 
-12. **¿Cómo puedo eliminar una imagen de Docker desde la línea de comandos?**
+12. **El comando para crear un servicio de Docker Swarm es**
 
-**R/:** docker rmi
+**R/:** docker service create
 
-13. **Selecciona el fragmento de código que permite a docker compose desplegar un servicio**
+13. **La principal diferencia entre `docker service ls` y `docker ps` es que el primero nos muestra la lista de servicios en todo el cluster de Docker Swarm y que el segundo nos muestra la lista de contenedores en el nodo donde ejecutamos el comando.**
 
-**R/:** backend: image: backend build: context: ./backend dockerfile: Dockerfile ports: - "5000:5000"
+**R/:** Verdadero
 
-14. **¿Cuál es la secuencia adecuada de etiquetado de una imagen para poder ser publicada en Docker Hub?**
+14. **Indicar cuál de las siguientes cosas no suceden cuando se ejecuta un comando `docker service create`**
 
-**R/:** nombreDeUsuario/repositorio:version
+**R/:** Se construye una imagen para cada tarea del servicio nuevo
 
-15. **¿Cuál es el parámetro dentro del comando docker run que te permite ver lo que la consola de la aplicación está mostrando?**
+15. **¿El comando para ver la lista de tareas de un servicio llamado “un-servicio” es:**
 
-**R/:** -it
+**R/:** docker service ps un-servicio
 
-16. **¿Cómo debes escribir la instrucción en tu Dockerfile para montar un volumen en tu contenedor?**
+16. **Al ejecutar el comando docker service rm un-servicio lo que ocurre es:**
 
-**R/:** VOLUME /var/log/app
+**R/:** Se elimina “un-servicio”, y de esta manera el scheduler indica a los nodos que tienen tareas de dicho servicio que pueden terminarlas. Dichos nodos se ocupan de eliminar las tareas y los contenedores asociados.
 
-17. **¿Qué comando utilizarías para mostrar todas tus imágenes locales?**
+17. **Si queremos que nuestra terminal no quede bloqueada al ejecutar un comando de swarm que puede necesitar que un número de operaciones converjan, podemos usar la opción `-d` o `--dettach`**
 
-**R/:** docker images
+**R/:** Verdadero
 
-18. **¿Qué comando debes utilizar para crear una red personalizada en Docker?**
+18. **El comando para actualizar cualquier aspecto de la configuración de un servicio de Docker Swarm es**
 
-**R/:** docker network create
+**R/:** docker service update
+
+19. **Los comandos `docker service scale mi-servicio=10` y `docker service update --replicas=10 mi-servicio` son equivalentes**
+
+**R/:** Verdadero
+
+20. **El comando `docker service rollback` nos permite elegir de un número determinado de versiones anteriores del servicio a las cuales podemos volver**
+
+**R/:** Falso
+
+21. **Para garantizar que nunca habrá menos contenedores durante un `service update` o `service rollback` de los que había antes de ejecutar el comando, las opciones indicadas son, respectivamente `--update-order start-first` y `--rollback-order start-first`**
+
+**R/:** Verdadero
+
+22. **En un `docker service update`, combinar las opciones `--update-order stop-first` y `--update-parallelism=0` es una mala idea porque:**
+
+**R/:** Elimina todas las tareas del servicio e intenta crear las nuevas tareas todas en simultáneo, lo cual nos deja durante todo ese tiempo con downtime.
+
+23. **Dado un swarm de 3 nodos y un servicio "un-servicio"con una sóla réplica que publica el puerto 3000, si hacemos `docker service update --replicas=5 un-servicio`, lo que ocurre es:**
+
+**R/:** El servicio escala a 5 réplicas y todas publican su puerto 3000, independientemente de la cantidad de nodos disponibles.
+
+24. **Para crear un servicio de alpine cuyas tareas sólo pueden correr en nodos worker, el comando adecuado es:**
+
+**R/:** docker service create --constraint=node.role==worker alpine
+
+25. **Un nodo cuya disponibilidad está en modo drain puede planificar tareas, sólo que con menos prioridad que el resto de los nodos.**
+
+**R/:** Falso
+
+26. **Para poder intercomunicar contenedores de distintos servicios de un Docker Swarm es necesario conectarlos a al menos una misma red de tipo overlay**
+
+**R/:** Verdadero
+
+27. **Los contenedores de dos servicios distintos, conectados a la misma red overlay, pueden alcanzarse entre sí utilizando el nombre se servicio destino como hostname.**
+
+**R/:** Verdadero
+
+28. **
+La principal diferencia entre cómo `docker-compose` y `docker stack deploy` tratan a un compose file es:**
+
+**R/:** El atributo deployment sólo funciona para docker stack deploy
+
+29. **Indica cuál de los siguientes no es un número de managers indicado para un swarm productivo:**
+
+**R/:** 1
+
+30. **Si un servicio necesita poder ver el estado del swarm para ofrecer su funcionalidad, es absolutamente necesario restringir dicho servicio a los nodos manager**
+
+**R/:** Verdadero
