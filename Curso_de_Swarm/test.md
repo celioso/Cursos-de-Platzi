@@ -108,8 +108,7 @@
 
 **R/:** Verdadero
 
-28. **
-La principal diferencia entre cómo `docker-compose` y `docker stack deploy` tratan a un compose file es:**
+28. **La principal diferencia entre cómo `docker-compose` y `docker stack deploy` tratan a un compose file es:**
 
 **R/:** El atributo deployment sólo funciona para docker stack deploy
 
