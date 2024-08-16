@@ -1452,3 +1452,436 @@ for clave, valor in diccionario.items():
 ```
 
 Los diccionarios son muy útiles para almacenar y gestionar datos que tienen una relación directa de mapeo entre un identificador (clave) y sus características o atributos (valor).
+
+## Estructuras condicionales
+
+En programación, las estructuras condicionales son esenciales para tomar decisiones basadas en ciertas condiciones. Por ejemplo, al usar la instrucción `IF` en Python, se puede verificar si una variable cumple con una condición específica y ejecutar el código correspondiente.
+
+### ¿Cómo se usa la estructura IF en Python?
+
+Para utilizar el `IF`, primero se define una variable, por ejemplo, `x = 10`. Luego, se escribe la estructura condicional usando la palabra reservada `IF` seguida de la condición, como `if x > 5:`. Si esta condición es verdadera, se ejecuta el código dentro del `IF`, que debe estar indentado.
+
+```python
+x = 10
+if x > 5:
+    print("x es mayor que 5")
+```
+
+### ¿Qué pasa si la condición del IF es falsa?
+
+Si la condición del `IF` no se cumple, se puede utilizar la instrucción `else` para manejar el caso contrario. Por ejemplo, si `x` es menor o igual a 5, se ejecutará el bloque de código dentro del else.
+
+```python
+x = 3
+if x > 5:
+    print("x es mayor que 5")
+else:
+    print("x es menor o igual a 5")
+```
+
+### ¿Cómo se manejan múltiples condiciones?
+
+Cuando hay múltiples condiciones, se puede usar `elif` (else if). Esto permite agregar condiciones adicionales entre `if` y `else`.
+
+```python
+x = 5
+if x > 5:
+    print("x es mayor que 5")
+elif x == 5:
+    print("x es igual a 5")
+else:
+    print("x es menor que 5")
+```
+
+### ¿Cómo se manejan múltiples condiciones en un solo IF?
+
+Para evaluar múltiples condiciones en una sola sentencia `IF`, se pueden utilizar los operadores lógicos` and` y `or`. El operador `and` requiere que ambas condiciones sean verdaderas, mientras que el operador `or` requiere que al menos una condición sea verdadera.
+
+```python
+x = 15
+y = 30
+if x > 10 and y > 25:
+    print("x es mayor que 10 y y es mayor que 25")
+if x > 10 or y > 35:
+    print("x es mayor que 10 o y es mayor que 35")
+```
+
+### ¿Qué es la negación en las condiciones?
+
+La palabra reservada `not `se utiliza para negar una condición. Si una condición es verdadera, not la convierte en falsa, y viceversa.
+
+```python
+x = 15
+if not x > 20:
+    print("x no es mayor que 20")
+```
+
+### ¿Cómo se anidan las estructuras IF?
+
+Los `IF` anidados permiten evaluar condiciones dentro de otras condiciones. Esto es útil para verificar múltiples niveles de requisitos.
+
+```python
+isMember = True
+age = 15
+if isMember:
+    if age >= 15:
+        print("Tienes acceso ya que eres miembro y mayor que 15")
+    else:
+        print("No tienes acceso ya que eres miembro, pero menor a 15 años")
+else:
+    print("No eres miembro y no tienes acceso")
+```
+
+Las **estructuras condicionales** en Python te permiten tomar decisiones en tu código basadas en condiciones específicas. Estas estructuras ejecutan bloques de código diferentes dependiendo de si una condición se evalúa como `True` o `False`.
+
+### Estructuras Condicionales en Python
+
+1. **`if`**: Evalúa una condición. Si la condición es `True`, ejecuta el bloque de código correspondiente.
+2. **`elif`** (else if): Se utiliza para evaluar múltiples condiciones. Si la condición anterior es `False`, se evalúa la siguiente condición.
+3. **`else`**: Se ejecuta si todas las condiciones anteriores son `False`.
+
+### Sintaxis Básica
+
+```python
+if condición:
+    # Bloque de código si la condición es True
+elif otra_condición:
+    # Bloque de código si la primera condición es False y esta es True
+else:
+    # Bloque de código si todas las condiciones anteriores son False
+```
+
+### Ejemplo Simple:
+
+```python
+edad = 18
+
+if edad >= 18:
+    print("Eres mayor de edad.")
+else:
+    print("Eres menor de edad.")
+```
+
+En este ejemplo, si la variable `edad` es mayor o igual a 18, se imprime "Eres mayor de edad". De lo contrario, se imprime "Eres menor de edad".
+
+### Uso de `elif` para Múltiples Condiciones:
+
+```python
+nota = 85
+
+if nota >= 90:
+    print("Sobresaliente")
+elif nota >= 80:
+    print("Notable")
+elif nota >= 70:
+    print("Aprobado")
+else:
+    print("Reprobado")
+```
+
+En este caso, dependiendo del valor de `nota`, se imprime la calificación correspondiente. Si la `nota` es 85, se imprime "Notable".
+
+### Condicionales Anidadas:
+
+Puedes anidar estructuras `if`, `elif`, y `else` dentro de otras para crear condiciones más complejas.
+
+```python
+edad = 20
+licencia = True
+
+if edad >= 18:
+    if licencia:
+        print("Puedes conducir.")
+    else:
+        print("Necesitas una licencia para conducir.")
+else:
+    print("No tienes la edad suficiente para conducir.")
+```
+
+Aquí, primero se verifica si la persona es mayor de edad. Si lo es, se verifica si tiene licencia de conducir. Dependiendo de estas dos condiciones, se decide si puede conducir o no.
+
+### Operadores Lógicos en Condicionales:
+
+Puedes usar operadores lógicos como `and`, `or`, y `not` para combinar varias condiciones en una sola.
+
+```python
+edad = 25
+tiene_permiso = True
+
+if edad >= 18 and tiene_permiso:
+    print("Puedes entrar al evento.")
+else:
+    print("No puedes entrar al evento.")
+```
+
+En este ejemplo, la persona solo puede entrar al evento si es mayor de edad y tiene permiso. Si cualquiera de estas condiciones es `False`, no se le permitirá la entrada.
+
+### Expresiones Condicionales (Operador Ternario):
+
+Python también permite escribir condicionales simples en una sola línea usando el operador ternario.
+
+```python
+mensaje = "Mayor de edad" if edad >= 18 else "Menor de edad"
+print(mensaje)
+```
+
+Este código es equivalente al ejemplo anterior, pero en una sola línea. Si `edad >= 18`, `mensaje` será "Mayor de edad". De lo contrario, será "Menor de edad".
+
+### Ejemplo Completo:
+
+```python
+temperatura = 30
+
+if temperatura > 30:
+    print("Hace mucho calor.")
+elif 20 <= temperatura <= 30:
+    print("El clima es agradable.")
+elif 10 <= temperatura < 20:
+    print("Hace un poco de frío.")
+else:
+    print("Hace mucho frío.")
+```
+
+En este ejemplo, dependiendo de la `temperatura`, se imprime un mensaje que describe cómo está el clima. La estructura `elif` permite evaluar varios rangos de temperatura.
+
+Las estructuras condicionales son fundamentales para controlar el flujo de ejecución en los programas, permitiendo que el código tome decisiones dinámicamente según las condiciones dadas.
+
+## Bucles y Control de Iteraciones
+
+Aprender a automatizar el proceso de iteración en listas utilizando bucles y controles de iteración es fundamental para optimizar el manejo de datos en Python.
+
+### ¿Cómo iterar una lista usando un bucle for?
+
+Para iterar sobre una colección de datos, podemos usar un bucle for. Aquí se muestra cómo acceder a cada elemento de una lista de números del 1 al 6:
+
+```python
+numbers = [1, 2, 3, 4, 5, 6]
+for i in numbers:
+    print(f"i es igual a: {i}")
+```
+
+En este ejemplo, `i` representa cada elemento de la lista `numbers`.
+
+### ¿Cómo iterar usando la función range?
+
+La función `range` permite generar una secuencia de números. Se puede especificar el inicio, el fin y el paso:
+
+```python
+for i in range(10):
+    print(i)  # Imprime del 0 al 9
+
+for i in range(3, 10):
+    print(i)  # Imprime del 3 al 9
+```
+
+### ¿Cómo usar condicionales dentro de un bucle for?
+
+Se pueden incluir condicionales dentro del bucle for para realizar operaciones específicas:
+
+```python
+frutas = ["manzana", "pera", "uva", "naranja", "tomate"]
+for fruta in frutas:
+    if fruta == "naranja":
+        print("naranja encontrada")
+    print(fruta)
+```
+
+### ¿Cómo funciona el bucle while?
+
+El bucle while ejecuta un bloque de código mientras se cumpla una condición:
+
+```python
+x = 0
+while x < 5:
+    print(x)
+    x += 1
+```
+
+### ¿Qué hacer para evitar bucles infinitos?
+
+Es importante modificar la condición dentro del bucle while para evitar que se ejecute indefinidamente:
+
+```python
+x = 0
+while x < 5:
+    print(x)
+    x += 1
+```
+
+### ¿Cómo usar break y continue en bucles?
+
+La palabra clave `break` se utiliza para salir del bucle prematuramente, mientras que continue omite la iteración actual y pasa a la siguiente:
+
+```python
+for i in numbers:
+    if i == 3:
+        break
+    print(i)  # Termina al llegar a 3
+
+for i in numbers:
+    if i == 3:
+        continue
+    print(i)  # Omite el 3
+```
+
+Los **bucles** y el **control de iteraciones** son herramientas fundamentales en la programación que te permiten ejecutar un bloque de código repetidamente. Python ofrece varios tipos de bucles y mecanismos para controlar cómo se ejecutan estas iteraciones.
+
+### Tipos de Bucles
+
+1. **`for`**: Se utiliza para iterar sobre una secuencia (como una lista, tupla, diccionario, conjunto o cadena) o sobre un rango de números.
+2. **`while`**: Repite un bloque de código mientras una condición dada sea `True`.
+
+### Bucle `for`
+
+El bucle `for` en Python es ideal para iterar sobre los elementos de una secuencia. La sintaxis básica es la siguiente:
+
+```python
+for elemento in secuencia:
+    # Bloque de código a ejecutar
+```
+
+#### Ejemplo: Iterar sobre una lista
+
+```python
+numeros = [1, 2, 3, 4, 5]
+
+for numero in numeros:
+    print(numero)
+```
+
+En este ejemplo, el bucle `for` recorre la lista `numeros` y `numero` toma el valor de cada elemento en la lista durante cada iteración.
+
+#### Ejemplo: Usando `range()`
+
+La función `range()` se utiliza comúnmente con `for` para generar una secuencia de números.
+
+```python
+for i in range(5):  # Esto genera los números 0 a 4
+    print(i)
+```
+
+El código anterior imprime los números del 0 al 4. También puedes especificar un inicio, fin y un paso:
+
+```python
+for i in range(1, 10, 2):
+    print(i)
+# Salida: 1, 3, 5, 7, 9
+```
+
+### Bucle `while`
+
+El bucle `while` repite un bloque de código mientras una condición sea `True`. La sintaxis básica es:
+
+```python
+while condición:
+    # Bloque de código a ejecutar
+```
+
+#### Ejemplo: Contador con `while`
+
+```python
+contador = 0
+
+while contador < 5:
+    print(contador)
+    contador += 1
+```
+
+Este código comienza con `contador = 0` y sigue incrementándolo hasta que llega a 5. En cada iteración, se imprime el valor actual de `contador`.
+
+### Control de Iteraciones
+
+Python ofrece varias formas de controlar la ejecución de bucles:
+
+1. **`break`**: Termina el bucle inmediatamente.
+2. **`continue`**: Salta la iteración actual y pasa a la siguiente.
+3. **`else`**: Un bloque que se ejecuta cuando el bucle termina de manera normal, es decir, sin que se haya usado `break`.
+
+#### Ejemplo: Uso de `break`
+
+```python
+for i in range(10):
+    if i == 5:
+        break
+    print(i)
+# Salida: 0, 1, 2, 3, 4
+```
+
+El bucle se detiene cuando `i` llega a 5, debido a la instrucción `break`.
+
+#### Ejemplo: Uso de `continue`
+
+```python
+for i in range(10):
+    if i % 2 == 0:
+        continue
+    print(i)
+# Salida: 1, 3, 5, 7, 9
+```
+
+Aquí, `continue` hace que el bucle salte la iteración actual si `i` es par, por lo que solo se imprimen los números impares.
+
+#### Ejemplo: Uso de `else` con Bucles
+
+El bloque `else` en un bucle se ejecuta solo si el bucle no se interrumpe con `break`.
+
+```python
+for i in range(5):
+    print(i)
+else:
+    print("Bucle completado.")
+# Salida:
+# 0
+# 1
+# 2
+# 3
+# 4
+# Bucle completado.
+```
+
+Si el bucle se completa sin interrupciones, se ejecuta el bloque `else`. Sin embargo, si se usa `break`, el bloque `else` se omite.
+
+#### Ejemplo: `else` con `break`
+
+```python
+for i in range(5):
+    if i == 3:
+        break
+    print(i)
+else:
+    print("Bucle completado.")
+# Salida:
+# 0
+# 1
+# 2
+```
+
+En este caso, como el bucle se interrumpe con `break` cuando `i` es igual a 3, el bloque `else` no se ejecuta.
+
+### Bucles Anidados
+
+Puedes anidar bucles dentro de otros bucles para trabajar con estructuras de datos más complejas, como matrices.
+
+```python
+for i in range(3):
+    for j in range(2):
+        print(f"i = {i}, j = {j}")
+```
+
+Este código tiene un bucle `for` dentro de otro `for`. Para cada valor de `i`, el bucle interno recorre todos los valores de `j`.
+
+### Bucles Infinito con `while`
+
+Si la condición de un `while` siempre es verdadera, el bucle se ejecutará indefinidamente. Esto se conoce como un bucle infinito.
+
+```python
+while True:
+    respuesta = input("¿Quieres salir? (s/n): ")
+    if respuesta == 's':
+        break
+```
+
+Este ejemplo sigue preguntando al usuario si quiere salir hasta que la respuesta sea `'s'`.
+
+Estos son los fundamentos de los bucles y el control de iteraciones en Python. Son herramientas esenciales para ejecutar tareas repetitivas y para gestionar la lógica de flujo en tus programas.
+
