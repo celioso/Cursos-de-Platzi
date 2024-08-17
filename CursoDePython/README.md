@@ -2099,3 +2099,194 @@ calculadora()
 Es crucial tener en cuenta el tipo de datos que se manejan, validar entradas del usuario y asegurarse de que las funciones se llamen correctamente para evitar errores en la ejecución.
 
 [PEP 8 – Style Guide for Python Code | peps.python.org](https://www.python.org/dev/peps/pep-0008/ "PEP 8 – Style Guide for Python Code | peps.python.org")
+
+## Funciones Lambda y Programación Funcional en Python
+
+
+### ¿Cómo utilizar lambda para operaciones básicas?
+
+Para realizar operaciones sencillas con lambda, no necesitamos especificar el nombre de la función. Solo requerimos parámetros y la operación deseada. Por ejemplo, para sumar dos números, podemos definir una función lambda así:
+
+```python
+sumar = lambda a, b: a + b
+print(sumar(10, 4))
+```
+
+### ¿Cómo utilizar lambda para multiplicaciones?
+
+Podemos adaptar fácilmente lambda para realizar otras operaciones como la multiplicación:
+
+```python
+multiplicar = lambda a, b: a * b
+print(multiplicar(80, 4))
+```
+
+### ¿Cómo aplicar lambda a elementos de una lista con map?
+
+Cuando trabajamos con listas y queremos aplicar una función a cada elemento, map es útil junto con lambda. Por ejemplo, para obtener el cuadrado de los números del 0 al 10:
+
+```python
+numeros = list(range(11))
+cuadrados = list(map(lambda x: x ** 2, numeros))
+print("Cuadrados:", cuadrados)
+```
+
+### ¿Cómo filtrar elementos de una lista con lambda y filter?
+
+Lambda también es útil para filtrar elementos que cumplen ciertas condiciones. Por ejemplo, para obtener los números pares de una lista:
+
+```python
+numeros_pares = list(filter(lambda x: x % 2 == 0, numeros))
+print("Pares:", numeros_pares)
+```
+
+Como hemos visto, lambda ofrece una forma más sencilla de trabajar con funciones en Python sin comprometer su eficiencia. En la próxima clase, exploraremos temas más complejos donde las funciones serán el foco principal.
+
+Las **funciones lambda** y la **programación funcional** en Python son conceptos poderosos que permiten escribir código más conciso, flexible y expresivo. Vamos a explorarlos en detalle.
+
+### Funciones Lambda
+
+Una **función lambda** en Python es una función anónima, es decir, una función que no tiene nombre y se define en una sola línea usando la palabra clave `lambda`. Estas funciones son útiles para operaciones simples y cortas que se pueden definir rápidamente sin la necesidad de una función formal.
+
+#### Sintaxis de una Función Lambda
+
+```python
+lambda argumentos: expresión
+```
+
+- **`argumentos`**: Son los parámetros que la función tomará.
+- **`expresión`**: Es una única expresión que se evalúa y devuelve como resultado de la función.
+
+#### Ejemplo Simple
+
+```python
+# Función lambda que suma dos números
+suma = lambda x, y: x + y
+
+# Usar la función lambda
+resultado = suma(3, 5)
+print(resultado)  # Salida: 8
+```
+
+En este ejemplo, `suma` es una función lambda que toma dos argumentos, `x` y `y`, y devuelve su suma.
+
+### Uso de Funciones Lambda con Funciones Integradas
+
+Las funciones lambda son comúnmente usadas junto con funciones integradas como `map()`, `filter()`, y `sorted()`.
+
+#### `map()`
+
+`map()` aplica una función a todos los elementos de una secuencia.
+
+```python
+numeros = [1, 2, 3, 4]
+cuadrados = list(map(lambda x: x ** 2, numeros))
+print(cuadrados)  # Salida: [1, 4, 9, 16]
+```
+
+Aquí, `map()` aplica la función lambda a cada elemento de la lista `numeros`, devolviendo una nueva lista con los resultados.
+
+#### `filter()`
+
+`filter()` filtra los elementos de una secuencia según una función que devuelve `True` o `False`.
+
+```python
+numeros = [1, 2, 3, 4, 5, 6]
+pares = list(filter(lambda x: x % 2 == 0, numeros))
+print(pares)  # Salida: [2, 4, 6]
+```
+
+En este ejemplo, `filter()` utiliza la función lambda para seleccionar solo los números pares de la lista.
+
+#### `sorted()`
+
+`sorted()` ordena los elementos de una secuencia. Puedes usar una función lambda para definir la clave de ordenamiento.
+
+```python
+puntos = [(1, 2), (3, 1), (5, 4), (2, 0)]
+ordenado_por_y = sorted(puntos, key=lambda punto: punto[1])
+print(ordenado_por_y)  # Salida: [(2, 0), (3, 1), (1, 2), (5, 4)]
+```
+
+En este caso, `sorted()` ordena la lista de tuplas según el segundo elemento de cada tupla.
+
+### Programación Funcional en Python
+
+La **programación funcional** es un paradigma de programación que trata a las funciones como ciudadanos de primera clase, lo que significa que pueden ser pasadas como argumentos, retornadas desde otras funciones y asignadas a variables.
+
+#### Principios Clave:
+
+1. **Funciones como Primeras Clases**: Las funciones pueden ser asignadas a variables, almacenadas en estructuras de datos, y pasadas como argumentos.
+2. **Inmutabilidad**: Prefiere el uso de datos inmutables, lo que significa que las estructuras de datos no se modifican después de su creación.
+3. **Funciones Puras**: Una función pura es aquella que, dado el mismo conjunto de argumentos, siempre devuelve el mismo resultado y no tiene efectos secundarios.
+
+#### Funciones de Orden Superior
+
+Una función de orden superior es una función que toma una o más funciones como argumentos, o devuelve una función como resultado.
+
+##### Ejemplo: Función de Orden Superior
+
+```python
+def aplicar_operacion(operacion, x, y):
+    return operacion(x, y)
+
+suma = lambda x, y: x + y
+resultado = aplicar_operacion(suma, 5, 3)
+print(resultado)  # Salida: 8
+```
+
+En este ejemplo, `aplicar_operacion` es una función de orden superior que recibe otra función `operacion` y dos números, aplicando `operacion` a estos números.
+
+#### Composición de Funciones
+
+La composición de funciones implica combinar funciones pequeñas para crear una función más compleja.
+
+```python
+def doble(x):
+    return x * 2
+
+def incrementar(x):
+    return x + 1
+
+def compuesto(f, g, x):
+    return f(g(x))
+
+resultado = compuesto(doble, incrementar, 3)
+print(resultado)  # Salida: 8
+```
+
+Aquí, `compuesto` toma dos funciones (`f` y `g`) y un valor `x`, y aplica `g` a `x`, luego aplica `f` al resultado de `g(x)`.
+
+### Funciones Integradas para Programación Funcional
+
+- **`map(función, iterable)`**: Aplica `función` a cada elemento de `iterable`.
+- **`filter(función, iterable)`**: Filtra `iterable` dejando solo los elementos donde `función` devuelva `True`.
+- **`reduce(función, iterable)`**: Acumula los elementos de `iterable` aplicando `función` secuencialmente (requiere importar desde `functools`).
+
+#### Ejemplo: `reduce()`
+
+```python
+from functools import reduce
+
+numeros = [1, 2, 3, 4]
+producto = reduce(lambda x, y: x * y, numeros)
+print(producto)  # Salida: 24
+```
+
+Aquí, `reduce()` multiplica todos los números de la lista `numeros`.
+
+### Ventajas y Consideraciones
+
+- **Ventajas**:
+  - Código más conciso y expresivo.
+  - Facilita la creación de funciones reutilizables y composables.
+  - Fomenta la inmutabilidad y la transparencia referencial.
+
+- **Consideraciones**:
+  - El abuso de funciones lambda puede hacer que el código sea difícil de leer.
+  - La programación funcional puede ser menos intuitiva para principiantes en comparación con paradigmas más imperativos.
+
+### Conclusión
+
+Las funciones lambda y la programación funcional en Python ofrecen herramientas potentes para escribir código más modular, limpio y expresivo. Si bien no siempre es necesario adoptar la programación funcional en su totalidad, comprender estos conceptos y utilizarlos cuando sean apropiados puede mejorar la eficiencia y legibilidad de tu código.
+
