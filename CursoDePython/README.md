@@ -2505,3 +2505,201 @@ Resultado:
 En este ejemplo, `pass` permite definir la estructura de la función sin implementar la lógica de inmediato, evitando errores de indentación y permitiendo continuar con el desarrollo del código.
 
 A medida que utilices nuevas herramientas en Python, como librerías y otros tipos de datos, te encontrarás con excepciones específicas de esas herramientas. Familiarizarte con las excepciones comunes de cada librería te permitirá manejarlas de manera más efectiva y escribir código más robusto. Recuerda, el manejo adecuado de excepciones no solo mejora tu código, sino que también te convierte en un programador más competente y confiable.
+
+### ¿Cómo realizar una función recursiva en Python?
+
+La recursividad es una técnica fundamental en programación donde una función se llama a sí misma para resolver problemas complejos de manera más sencilla y estructurada.
+
+### ¿Cómo se aplica la recursividad en el cálculo del factorial?
+
+La recursividad se entiende mejor con ejemplos prácticos. El factorial de un número se define como el producto de todos los números desde ese número hasta 1. Por ejemplo, el factorial de 5 (5!) es 5 * 4 * 3 * 2 * 1.
+
+En código Python, la función factorial se puede definir recursivamente de la siguiente manera:
+
+```python
+def factorial(n):
+    if n == 0:
+        return 1
+    else:
+        return n * factorial(n - 1)
+```
+
+Este código sigue dos casos clave en la recursividad:
+
+- **Caso base:** cuando n es 0, la función retorna 1.
+- **Caso recursivo:** cuando n es mayor que 0, la función retorna n multiplicado por el factorial de n-1.
+
+### ¿Cómo funciona la recursividad en la serie de Fibonacci?
+
+La serie de Fibonacci es otra aplicación clásica de la recursividad. En esta serie, cada número es la suma de los dos anteriores, comenzando con 0 y 1. La fórmula es:
+
+`[ F(n) = F(n-1) + F(n-2) ]`
+
+El código Python para calcular el número n-ésimo en la serie de Fibonacci usando recursividad es el siguiente:
+
+```python
+def fibonacci(n):
+    if n == 0:
+        return 0
+    elif n == 1:
+        return 1
+    else:
+        return fibonacci(n-1) + fibonacci(n-2)
+```
+
+Aquí también se siguen dos casos:
+
+- **Caso base:** cuando n es 0 o 1, la función retorna n.
+- **Caso recursivo:** para otros valores de n, la función retorna la suma de fibonacci(n-1) y fibonacci(n-2).
+
+### Fundamentos de Programación Orientada a Objetos en Python
+
+La programación orientada a objetos (POO) es un paradigma de la programación que se basa en organizar el software en objetos, los cuales son instancias de clases. Las clases actúan como plantillas genéricas que definen atributos y comportamientos. Por ejemplo, una clase “Persona” puede tener atributos como nombre, apellido y fecha de nacimiento.
+
+### ¿Cómo se crean clases y objetos en Python?
+
+Para crear una clase en Python, se utiliza la palabra reservada class seguida del nombre de la clase con la primera letra en mayúscula. Dentro de la clase, se define un constructor con la función `__init__`. Esta función inicializa los atributos del objeto.
+
+#### Ejemplo de creación de una clase y objeto
+
+```python
+class Persona:
+    def __init__(self, nombre, edad):
+        self.nombre = nombre
+        self.edad = edad
+    
+    def saludar(self):
+        print(f"Hola, mi nombre es {self.nombre} y tengo {self.edad} años")
+
+# Crear objetos de la clase Persona
+persona1 = Persona("Ana", 30)
+persona2 = Persona("Luis", 25)
+
+persona1.saludar()
+persona2.saludar()
+```
+
+### ¿Qué son los métodos en una clase?
+
+Los métodos son funciones definidas dentro de una clase que operan sobre los objetos de la misma. En el ejemplo anterior, saludar es un método de la clase Persona.
+
+### ¿Cómo manejar una cuenta bancaria con POO?
+
+Un ejemplo práctico de POO es la gestión de una cuenta bancaria. Creamos una clase BankAccount con métodos para depositar y retirar dinero, así como para activar y desactivar la cuenta.
+
+### Ejemplo de clase BankAccount
+
+```python
+class BankAccount:
+    def __init__(self, account_holder, balance):
+        self.account_holder = account_holder
+        self.balance = balance
+        self.is_active = True
+    
+    def deposit(self, amount):
+        if self.is_active:
+            self.balance += amount
+            print(f"Se ha depositado {amount}. Saldo actual: {self.balance}")
+        else:
+            print("No se puede depositar, cuenta inactiva")
+    
+    def withdraw(self, amount):
+        if self.is_active:
+            if amount <= self.balance:
+                self.balance -= amount
+                print(f"Se ha retirado {amount}. Saldo actual: {self.balance}")
+            else:
+                print("Fondos insuficientes")
+        else:
+            print("No se puede retirar, cuenta inactiva")
+    
+    def deactivate(self):
+        self.is_active = False
+        print("La cuenta ha sido desactivada")
+    
+    def activate(self):
+        self.is_active = True
+        print("La cuenta ha sido activada")
+
+# Crear objetos de la clase BankAccount
+cuenta1 = BankAccount("Ana", 500)
+cuenta2 = BankAccount("Luis", 1000)
+
+cuenta1.deposit(500)
+cuenta2.withdraw(100)
+cuenta1.deactivate()
+cuenta1.deposit(200)
+cuenta1.activate()
+cuenta1.deposit(200)
+```
+
+### ¿Cómo se crean y manejan objetos en Python?
+
+La creación de objetos sigue una sintaxis similar a la de la creación de variables, pero usando el nombre de la clase seguido de los parámetros necesarios para el constructor.
+
+### Ejemplo de uso de la clase BankAccount
+
+```python
+# Creación de cuentas
+cuenta1 = BankAccount("Ana", 500)
+cuenta2 = BankAccount("Luis", 1000)
+
+# Realización de operaciones
+cuenta1.deposit(500)
+cuenta2.withdraw(100)
+cuenta1.deactivate()
+cuenta1.deposit(200)  # No se puede depositar, cuenta inactiva
+cuenta1.activate()
+cuenta1.deposit(200)  # Depósito exitoso
+```
+
+## Fundamentos de la Programación Orientada a Objetos (POO)
+
+La Programación Orientada a Objetos es un paradigma de programación que organiza el diseño del software en torno a objetos. Los objetos son instancias de clases, que pueden tener atributos (datos) y métodos (funciones).
+
+**Conceptos Clave**
+
+- **Clase:** Es un molde o plantilla que define los atributos y métodos que tendrán los objetos.
+- **Objeto:** Es una instancia de una clase.
+- **Atributo:** Es una variable que pertenece a una clase o a un objeto.
+- **Método:** Es una función que pertenece a una clase o a un objeto.
+- **Herencia:** Es un mecanismo por el cual una clase puede heredar atributos y métodos de otra clase.
+- **Encapsulamiento:** Es el concepto de ocultar los detalles internos de un objeto y exponer sólo lo necesario.
+- **Polimorfismo:** Es la capacidad de diferentes clases de ser tratadas como instancias de la misma clase a través de una interfaz común.
+
+La Programación Orientada a Objetos (POO) es un paradigma de programación que se basa en el uso de **objetos** para diseñar y desarrollar aplicaciones. Este enfoque se centra en crear software que sea modular, reutilizable y más fácil de mantener. Aquí están los fundamentos clave de la POO:
+
+### 1. **Clases y Objetos**
+   - **Clase:** Una clase es un molde o plantilla que define las propiedades (atributos) y comportamientos (métodos) que tendrán los objetos creados a partir de ella. Por ejemplo, una clase `Coche` podría tener atributos como `color`, `marca`, y `modelo`, y métodos como `arrancar()` o `frenar()`.
+   - **Objeto:** Un objeto es una instancia de una clase. Es un elemento concreto que se crea a partir de una clase, con valores específicos para sus atributos. Por ejemplo, un objeto de la clase `Coche` podría ser un coche rojo de la marca `Toyota` y modelo `Corolla`.
+
+### 2. **Encapsulamiento**
+   - El encapsulamiento consiste en ocultar los detalles internos de un objeto y exponer sólo lo necesario. Esto se logra mediante el uso de **modificadores de acceso** como `private`, `protected`, y `public`, que controlan qué partes de un objeto pueden ser accedidas o modificadas desde fuera de su clase. Esto protege los datos y asegura que solo se modifiquen de manera controlada.
+
+### 3. **Herencia**
+   - La herencia permite crear nuevas clases basadas en clases existentes. Una clase que hereda de otra (llamada **subclase** o **clase derivada**) toma los atributos y métodos de la clase base (llamada **superclase** o **clase padre**), y puede añadir o modificar funcionalidades. Esto fomenta la reutilización del código y la creación de jerarquías de clases. Por ejemplo, si tenemos una clase `Vehículo`, podemos crear una subclase `Coche` que herede de `Vehículo`.
+
+### 4. **Polimorfismo**
+   - El polimorfismo permite que un mismo método o función pueda tener diferentes comportamientos según el objeto que lo invoque. Existen dos tipos principales de polimorfismo:
+     - **Polimorfismo en tiempo de compilación (sobrecarga):** Permite definir varios métodos con el mismo nombre pero diferentes parámetros.
+     - **Polimorfismo en tiempo de ejecución (sobreescritura):** Permite que una subclase redefina un método de su superclase para modificar su comportamiento.
+
+### 5. **Abstracción**
+   - La abstracción consiste en representar conceptos esenciales sin incluir detalles de implementación específicos. Las clases abstractas y las interfaces son herramientas que permiten definir métodos sin implementarlos, dejando que las clases derivadas proporcionen la implementación. Esto facilita la creación de sistemas flexibles y extensibles.
+
+### 6. **Modularidad**
+   - La POO promueve la división del software en módulos o componentes independientes (objetos), que pueden ser desarrollados, testeados y mantenidos por separado, pero que funcionan juntos como un todo coherente.
+
+### 7. **Relaciones entre Objetos**
+   - Las clases y objetos pueden relacionarse de varias maneras, como:
+     - **Asociación:** Una relación donde un objeto utiliza a otro.
+     - **Agregación:** Una forma más débil de asociación, donde un objeto contiene referencias a otros objetos.
+     - **Composición:** Una forma más fuerte de agregación, donde un objeto contiene y controla completamente a otros objetos.
+
+### Ventajas de la POO:
+- **Reutilización de código:** Las clases pueden reutilizarse en diferentes partes de un programa o en diferentes proyectos.
+- **Facilidad de mantenimiento:** El encapsulamiento y la modularidad facilitan la localización y corrección de errores.
+- **Facilidad de expansión:** La herencia y la abstracción permiten agregar nuevas funcionalidades sin alterar el código existente.
+- **Flexibilidad:** El polimorfismo permite que el código sea más flexible y fácil de extender.
+
+Estos fundamentos hacen de la POO un enfoque poderoso y ampliamente utilizado en el desarrollo de software moderno.
