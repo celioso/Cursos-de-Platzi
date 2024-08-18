@@ -161,3 +161,150 @@ Django es un framework de desarrollo web en Python que sigue el patrón de dise�
 Esta arquitectura permite que el desarrollo sea modular y escalable, lo que facilita la creación y mantenimiento de aplicaciones web complejas.
 
 [Glossary | Django documentation | Django](https://docs.djangoproject.com/en/5.0/glossary/#term-MTV "Glossary | Django documentation | Django")
+
+### Qué es el patrón MVT (Model, View y Template)
+
+### ¿Cómo se definen los modelos en Django?
+
+Los modelos en Django se utilizan para guardar datos. Crearemos una clase llamada Carro, que hereda de models.Model. Esta clase tendrá un campo title de tipo models.TextField, con un max_length definido para limitar la cantidad de texto que puede aceptar.
+
+```python
+from django.db import models
+
+class Carro(models.Model):
+    title = models.TextField(max_length=255)
+```
+
+### ¿Cómo se definen las vistas en Django?
+
+Las vistas en Django se encargan de buscar datos y devolverlos al template. Una vista se define como un método que recibe un request y retorna una response. Usaremos render para pasar el request y el template a la vista.
+
+```python
+from django.shortcuts import render
+
+def myView(request):
+    car_list = [{'title': 'BMW'}, {'title': 'Mazda'}]
+    context = {'car_list': car_list}
+    return render(request, 'myFirstApp/carlist.html', context)
+```
+
+### ¿Cómo se crean y utilizan los templates en Django?
+
+Los templates son archivos HTML que reciben datos de las vistas. Para que Django los reconozca, creamos una carpeta llamada templates dentro de nuestra aplicación y luego otra con el nombre de la aplicación. Dentro, creamos el archivo `carlist.html`.
+
+
+```html
+<html>
+<head>
+    <title>Car Listtitle>
+head>
+<body>
+    <h1>Lista de Carrosh1>
+    <ul>
+    {% for car in car_list %}
+        <li>{{ car.title }}li>
+    {% endfor %}
+    ul>
+body>
+html>
+```
+
+### ¿Cómo se registran las aplicaciones en Django?
+
+Para que Django reconozca nuestra nueva aplicación, debemos agregarla a la lista INSTALLED_APPS en el archivo settings.py.
+
+```html
+INSTALLED_APPS = [
+    ...
+    'myFirstApp',
+]
+```
+
+### ¿Cómo se configuran las URLs en Django?
+
+Creamos un archivo urls.py en nuestra aplicación y definimos la ruta para nuestra vista. Luego, incluimos esta configuración en el archivo urls.py principal del proyecto.
+
+```python
+from django.urls import path
+from .views import myView
+
+urlpatterns = [
+    path('carlist/', myView, name='carlist'),
+]
+from django.contrib import admin
+from django.urls import path, include
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('myFirstApp/', include('myFirstApp.urls')),
+]
+```
+
+### ¿Cómo se conectan las vistas y templates en Django?
+
+Pasamos los datos desde la vista al template usando un contexto. En el template, usamos etiquetas Django para iterar sobre los datos y mostrarlos.
+
+
+```python
+{% for car in car_list %}
+    
+  {{ car.title }}
+
+{% endfor %}
+```
+
+El patrón MVT (Model-View-Template) es un patrón de arquitectura utilizado en el desarrollo de aplicaciones web, particularmente en el marco de trabajo Django para Python. Es similar al patrón MVC (Model-View-Controller) pero tiene algunas diferencias clave. Aquí se describe cada componente:
+
+1. **Model (Modelo):**
+   - Es la capa que maneja la lógica de negocio y la interacción con la base de datos. Define la estructura de los datos, los comportamientos y las relaciones entre los datos.
+   - En Django, los modelos se definen como clases de Python que heredan de `django.db.models.Model`. Cada clase representa una tabla en la base de datos, y los atributos de la clase representan las columnas de esa tabla.
+
+2. **View (Vista):**
+   - En MVT, la vista es responsable de la lógica de la aplicación y de procesar las solicitudes del usuario. Interactúa con el modelo para obtener los datos necesarios y selecciona la plantilla adecuada para renderizar la respuesta.
+   - En Django, una vista se define como una función o clase que recibe una solicitud web y devuelve una respuesta web. Las vistas pueden manejar diferentes tipos de solicitudes (GET, POST, etc.) y realizar acciones como consultar la base de datos, procesar formularios, y mucho más.
+
+3. **Template (Plantilla):**
+   - Las plantillas son la capa de presentación que se utiliza para renderizar la interfaz de usuario. Es donde se define la estructura HTML, junto con cualquier lógica de presentación, para mostrar los datos al usuario.
+   - En Django, las plantillas son archivos HTML que pueden contener un lenguaje de plantillas específico (Django Template Language) para insertar datos dinámicos, realizar iteraciones, y condicionales dentro del HTML.
+
+### Diferencias con MVC:
+- En MVC, el controlador es el que maneja la lógica de la aplicación, mientras que en MVT, esta responsabilidad recae sobre la vista. 
+- En MVC, la vista solo se encarga de la presentación, mientras que en MVT, la plantilla (Template) cumple este rol.
+
+### Ejemplo de Flujo en Django:
+1. **Solicitud**: El usuario hace una solicitud a la aplicación web.
+2. **Vista**: La vista correspondiente maneja la solicitud, interactúa con el modelo para obtener los datos necesarios.
+3. **Modelo**: Si es necesario, se consulta el modelo para obtener o modificar datos.
+4. **Plantilla**: La vista selecciona una plantilla y pasa los datos obtenidos del modelo a la plantilla.
+5. **Respuesta**: La plantilla genera la respuesta en HTML que se envía de vuelta al usuario.
+
+### Introducción a Modelos y Bases de Datos
+
+La “M” en el patrón MVC se refiere al Modelo, que es crucial para manejar datos de la base de datos en Django. En lugar de utilizar listas con datos estáticos en las vistas, ahora trabajaremos con datos provenientes del modelo, aprovechando el ORM de Django.
+
+### ¿Qué es el ORM en Django?
+
+El ORM (Object-Relational Mapping) en Django nos permite definir clases de Python que se relacionan directamente con las tablas de la base de datos. De esta forma, evitamos escribir sentencias SQL, ya que todo se maneja mediante Python.
+
+### ¿Cómo se define una clase de modelo en Django?
+
+Para definir un modelo, creamos una clase en el archivo `models.py`. Cada clase de modelo se corresponde con una tabla en la base de datos. Por ejemplo, si definimos la clase `Car`, esta se convertirá en una tabla con el nombre `Car` en la base de datos.
+
+### ¿Qué son las migraciones en Django?
+
+Las migraciones son un sistema que Django usa para aplicar y revertir cambios en la base de datos. Cuando creamos o modificamos un modelo, generamos migraciones que se pueden aplicar para crear o actualizar tablas en la base de datos.
+
+**Aplicar una migración**
+
+- Creamos la clase `Car` con un atributo `title`.
+- Ejecutamos la migración hacia adelante para crear la tabla `Car` en la base de datos.
+- Si agregamos un campo `year` a la clase `Car`, otra migración aplicará este cambio a la tabla.
+
+**Revertir una migración**
+
+- Si es necesario, podemos revertir una migración para volver al estado anterior de la tabla.
+- Por ejemplo, al revertir la migración del campo `year`, la tabla `Car` quedará como antes de agregar dicho campo.
+
+### ¿Cómo permite Django ser independiente del motor de base de datos?
+
+Django ORM es compatible con varios motores de base de datos. En este curso, utilizaremos SQLite para ejemplos iniciales y PostgreSQL para el proyecto final.
