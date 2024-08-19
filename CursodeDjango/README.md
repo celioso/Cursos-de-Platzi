@@ -856,3 +856,63 @@ autores_ordenados = Author.objects.order_by('name')
 for autor in autores_ordenados:
     print(autor.name)
 ```
+
+```shell
+python manage.py shell
+Python 3.12.2 (tags/v3.12.2:6abddd9, Feb  6 2024, 21:26:36) [MSC v.1937 64 bit (AMD64)]
+Type 'copyright', 'credits' or 'license' for more information
+IPython 8.26.0 -- An enhanced Interactive Python. Type '?' for help.
+
+In [1]: from my_first_app.models import Book, Publisher, Author, Profile, Pu 
+   ...: blisher
+
+In [2]: Author.objects.count()
+Out[2]: 2
+
+In [4]: Author.objects.first()
+Out[4]: <Author: Audry>
+
+In [5]: Author.objects.last()
+Out[5]: <Author: Pydanny>
+
+In [6]: Author??
+Init signature: Author(*args, **kwargs)
+Docstring:      Author(id, name, birth_date)
+Source:
+class Author(models.Model):
+    name = models.TextField(max_length=200)
+    birth_date = models.DateField()
+
+    def __str__(self):
+        return self.name
+File:           c:\users\celio\onedrive\escritorio\programación\platzi\cursodedjango\django_concepts\my_first_project\my_first_app\models.py
+Type:           ModelBase
+Subclasses:
+
+In [7]: Author.objects.create(name="Luis Martinez", birth_date="1990-12-05") 
+   ...:
+Out[7]: <Author: Luis Martinez>
+
+In [8]: Author.objects.all()
+Out[8]: <QuerySet [<Author: Audry>, <Author: Pydanny>, <Author: Luis Martinez>]>
+
+In [10]: Author.objects.filter(name="Pydanny")
+Out[10]: <QuerySet [<Author: Pydanny>]>
+
+In [11]: Author.objects.filter(name="Luis Martinez").delete()
+Out[11]: (1, {'my_first_app.Author': 1})
+
+In [12]: Author.objects.all()
+Out[12]: <QuerySet [<Author: Audry>, <Author: Pydanny>]>
+artinez", birth_date="1990-12-05"
+    ...: )
+Out[13]: <Author: Luis Martinez>
+
+In [14]: Author.objects.all()
+Out[14]: <QuerySet [<Author: Audry>, <Author: Pydanny>, <Author: Luis Martinez>]>
+
+In [15]: Author.objects.all().order_by('name')
+Out[15]: <QuerySet [<Author: Audry>, <Author: Luis Martinez>, <Author: Pydanny>]>
+
+In [16]:
+```
