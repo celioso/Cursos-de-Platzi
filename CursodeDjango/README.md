@@ -308,3 +308,551 @@ Las migraciones son un sistema que Django usa para aplicar y revertir cambios en
 ### ¿Cómo permite Django ser independiente del motor de base de datos?
 
 Django ORM es compatible con varios motores de base de datos. En este curso, utilizaremos SQLite para ejemplos iniciales y PostgreSQL para el proyecto final.
+
+## Gestión de Modelos y Bases de Datos en Django con SQLite
+
+La migración de modelos en Django es un proceso fundamental para mantener la base de datos en sincronía con las clases del proyecto. Este artículo explora el uso de comandos para migrar modelos en Django, específicamente cómo manejar la migración de un modelo llamado “carro”.
+
+### ¿Cómo identificar migraciones pendientes en Django?
+
+Al ejecutar el comando `python manage.py runserver`, puedes encontrar un error que indica migraciones pendientes. Este mensaje significa que las tablas correspondientes a tus clases de Django no están creadas en la base de datos, lo que impide el correcto funcionamiento del proyecto.
+
+### ¿Cómo crear migraciones en Django?
+
+Para crear migraciones, usa el comando `python manage.py makemigrations`. Este comando genera un archivo en la carpeta de migraciones con la creación de la tabla correspondiente al modelo “carro”.
+
+### ¿Cómo aplicar migraciones en Django?
+
+Una vez creadas las migraciones, se deben aplicar usando `python manage.py migrate`. Esto ejecuta todas las migraciones y crea las tablas necesarias en la base de datos.
+
+### ¿Cómo verificar la base de datos en Django?
+
+Puedes revisar la base de datos usando `python manage.py dbshell`. Este comando te conecta a la base de datos definida en el archivo `settings.py`. En este caso, se utilizó SQLite, que es fácil de usar pero no ideal para producción debido a su baja concurrencia.
+
+### ¿Cómo configurar la base de datos en Django?
+
+La configuración de la base de datos se encuentra en el archivo `settings.py` bajo el diccionario `DATABASES`. Django soporta múltiples motores de base de datos como PostgreSQL, MariaDB, MySQL, Oracle y SQLite. En este curso, se utilizará PostgreSQL.
+
+**Lecturas recomendadas**
+
+[SQLite Documentation](https://www.sqlite.org/docs.html "SQLite Documentation")
+[django-admin and manage.py | Django documentation | Django](https://docs.djangoproject.com/en/5.0/ref/django-admin/#dbshell "django-admin and manage.py | Django documentation | Django")
+[Settings | Django documentation | Django](https://docs.djangoproject.com/en/5.0/ref/settings/#databases "Settings | Django documentation | Django")
+
+### Inserción de Datos con Django
+
+### ¿Cómo se agrega un nuevo campo a una tabla en Django?
+
+Para agregar un nuevo campo a una tabla existente, necesitas modificar la clase del modelo correspondiente. Por ejemplo, si deseas añadir el campo “año” a la clase Carro, lo haces así:
+
+- Añade el campo como un `TextField` con un `MaxLength` de 4, ya que solo necesitas almacenar valores como 2022, 2023, etc.
+
+```python
+class Carro(models.Model):
+    ...
+    año = models.TextField(max_length=4, null=True)
+```
+
+### ¿Qué pasos se siguen después de modificar el modelo?
+
+Después de agregar el nuevo campo al modelo, sigue estos pasos:
+
+1. **Guardar los cambios en el archivo del modelo:** No olvides guardar el archivo después de realizar modificaciones.
+2. **Crear nuevas migraciones:** Ejecuta el comando `python manage.py makemigrations`. Si no detecta cambios, verifica si guardaste el archivo.
+3. **Aplicar las migraciones**: Ejecuta `python manage.py migrate`. Este comando actualiza la base de datos con la nueva estructura.
+
+### ¿Cómo se soluciona el error de campo no nulo?
+
+Si intentas crear un campo no nulo en una tabla que ya contiene datos, Django te pedirá resolver cómo manejar los registros existentes. Puedes:
+
+- Proveer un valor por defecto.
+- Permitir valores nulos.
+
+En este ejemplo, se permite que el campo “año” sea nulo (`null=True`), para evitar problemas con registros anteriores.
+
+### ¿Cómo se utiliza el ORM de Django para interactuar con los datos?
+
+Una vez aplicado el nuevo campo, puedes usar el ORM de Django para interactuar con la base de datos. Usamos el comando `python manage.py shell` para acceder al shell interactivo de Django.
+
+**Ejemplo de cómo crear un nuevo registro:**
+
+1. Importar el modelo:
+`from my_first_app.models import Carro`
+
+2. Crear una instancia de Carro:
+`nuevo_carro = Carro(titulo='BMW', año='2023')`
+
+3. Guardar la instancia en la base de datos:
+`nuevo_carro.save()`
+
+### ¿Cómo mejorar la visualización de los objetos en el shell?
+
+Define el método `__str__` en tu modelo para que la representación textual del objeto sea más clara:
+
+```python
+class Carro(models.Model):
+    ...
+    def __str__(self):
+        return f"{self.titulo} - {self.año}"
+```
+
+### ¿Cómo agregar un nuevo atributo y practicar?
+
+Añadir un nuevo atributo, como el color del carro, sigue los mismos pasos:
+
+1. Modifica la clase del modelo para incluir el nuevo campo.
+2. Guarda el archivo.
+3. Ejecuta los comandos `makemigrations` y `migrate`.
+4. Utiliza el shell para crear y guardar nuevos registros con el atributo color.
+
+## Actualización y Eliminación de Datos en Django
+
+Para tener en cuenta! 💡
+
+Definir el método `__str__` en los modelos de Django es una buena práctica que proporciona una representación legible y significativa del objeto, facilitando la depuración y mejorando la usabilidad de la interfaz de administración. Si no se define, se usará la representación por defecto, que es menos informativa.
+
+## Creación y Gestión de Relaciones entre Modelos en Django
+
+Aprender a relacionar tablas es fundamental para manejar datos interconectados en Django
+
+### ¿Cómo crear la clase Publisher?
+
+Para iniciar, creamos la clase `Publisher` que hereda de `models.Model`. Incluimos atributos como `name` y `address` utilizando `models.TextField` con un `max_length` de 200, un valor que puedes ajustar según tus necesidades de datos.
+
+```python
+class Publisher(models.Model):
+    name = models.TextField(max_length=200)
+    address = models.TextField(max_length=200)
+
+    def __str__(self):
+        return self.name
+```
+
+### ¿Cómo definir la clase Book?
+
+La clase `Book` también hereda de `models.Model` y contiene atributos como `title`, `publication_date` y `publisher`. Utilizamos `models.DateField` para manejar fechas y establecemos una relación con `Publisher` usando `models.ForeignKey`.
+
+```python
+class Book(models.Model):
+    title = models.TextField(max_length=200)
+    publication_date = models.DateField()
+    publisher = models.ForeignKey(Publisher, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.title
+```
+
+### ¿Cómo relacionar Book con Publisher usando ForeignKey?
+
+La relación se establece con `models.ForeignKey`, donde especificamos el modelo relacionado (`Publisher`) y el comportamiento al eliminar (`on_delete=models.CASCADE`). Esto asegura que si un editor se elimina, también se eliminarán sus libros.
+
+### ¿Cómo aplicar migraciones?
+
+Para aplicar estos cambios a la base de datos, creamos y aplicamos las migraciones con los comandos:
+
+```python
+python manage.py makemigrations
+python manage.py migrate
+```
+
+### ¿Cómo usar la shell interactiva?
+
+Para facilitar la interacción con la base de datos, instalamos ipython con:
+
+`pip install ipython`
+
+Esto mejora la experiencia en la shell permitiendo autocompletar y otras funcionalidades útiles.
+
+### ¿Cómo crear y guardar registros en la shell?
+
+Dentro de la shell, primero creamos un `Publisher` y luego un `Book` relacionado.
+
+```python
+from myapp.models import Publisher, Book
+
+publisher = Publisher(name="Editorial Example", address="123 Main St")
+publisher.save()
+
+book = Book(title="Two Scoops of Django", publication_date="2024-07-17", publisher=publisher)
+book.save()
+```
+
+En Django, los modelos representan la estructura de los datos en tu aplicación, y cada modelo generalmente corresponde a una tabla en la base de datos. Django proporciona varios tipos de campos para definir los modelos, cada uno de los cuales se utiliza para almacenar diferentes tipos de datos. A continuación, se presentan algunos de los modelos de campo más comunes y sus usos:
+
+### 1. **`models.CharField`**
+- **Descripción**: Se utiliza para almacenar texto de longitud limitada.
+- **Argumentos clave**:
+  - `max_length`: Longitud máxima del campo (obligatorio).
+- **Ejemplo**:
+  ```python
+  class Product(models.Model):
+      name = models.CharField(max_length=100)
+  ```
+
+### 2. **`models.TextField`**
+- **Descripción**: Se utiliza para almacenar texto largo sin límite de longitud.
+- **Ejemplo**:
+  ```python
+  class BlogPost(models.Model):
+      content = models.TextField()
+  ```
+
+### 3. **`models.IntegerField`**
+- **Descripción**: Almacena enteros.
+- **Ejemplo**:
+  ```python
+  class Order(models.Model):
+      quantity = models.IntegerField()
+  ```
+
+### 4. **`models.FloatField`**
+- **Descripción**: Almacena números de punto flotante.
+- **Ejemplo**:
+  ```python
+  class Product(models.Model):
+      price = models.FloatField()
+  ```
+
+### 5. **`models.DecimalField`**
+- **Descripción**: Almacena números decimales precisos, generalmente utilizados para precios y cantidades monetarias.
+- **Argumentos clave**:
+  - `max_digits`: Número total de dígitos en el número.
+  - `decimal_places`: Número de dígitos después del punto decimal.
+- **Ejemplo**:
+  ```python
+  class Product(models.Model):
+      price = models.DecimalField(max_digits=10, decimal_places=2)
+  ```
+
+### 6. **`models.BooleanField`**
+- **Descripción**: Almacena valores `True` o `False`.
+- **Ejemplo**:
+  ```python
+  class UserProfile(models.Model):
+      is_active = models.BooleanField(default=True)
+  ```
+
+### 7. **`models.DateField`**
+- **Descripción**: Almacena una fecha (sin hora).
+- **Argumentos clave**:
+  - `auto_now_add`: Establece la fecha automáticamente cuando el objeto es creado.
+  - `auto_now`: Actualiza la fecha cada vez que el objeto es guardado.
+- **Ejemplo**:
+  ```python
+  class Event(models.Model):
+      event_date = models.DateField()
+  ```
+
+### 8. **`models.DateTimeField`**
+- **Descripción**: Almacena una fecha y hora.
+- **Argumentos clave**:
+  - `auto_now_add`: Establece la fecha y hora automáticamente cuando el objeto es creado.
+  - `auto_now`: Actualiza la fecha y hora cada vez que el objeto es guardado.
+- **Ejemplo**:
+  ```python
+  class Event(models.Model):
+      event_datetime = models.DateTimeField(auto_now_add=True)
+  ```
+
+### 9. **`models.TimeField`**
+- **Descripción**: Almacena una hora del día.
+- **Ejemplo**:
+  ```python
+  class Schedule(models.Model):
+      start_time = models.TimeField()
+  ```
+
+### 10. **`models.EmailField`**
+- **Descripción**: Un campo de texto que valida que la entrada sea una dirección de correo electrónico.
+- **Ejemplo**:
+  ```python
+  class Contact(models.Model):
+      email = models.EmailField()
+  ```
+
+### 11. **`models.URLField`**
+- **Descripción**: Un campo de texto que valida que la entrada sea una URL.
+- **Ejemplo**:
+  ```python
+  class Website(models.Model):
+      url = models.URLField()
+  ```
+
+### 12. **`models.SlugField`**
+- **Descripción**: Almacena texto breve sin espacios, ideal para URLs amigables.
+- **Ejemplo**:
+  ```python
+  class Article(models.Model):
+      slug = models.SlugField(unique=True)
+  ```
+
+### 13. **`models.ForeignKey`**
+- **Descripción**: Define una relación uno a muchos entre dos modelos.
+- **Argumentos clave**:
+  - `on_delete`: Define el comportamiento cuando el objeto relacionado es eliminado.
+  - `related_name`: Nombre de la relación inversa.
+- **Ejemplo**:
+  ```python
+  class Author(models.Model):
+      name = models.CharField(max_length=100)
+
+  class Book(models.Model):
+      author = models.ForeignKey(Author, on_delete=models.CASCADE)
+  ```
+
+### 14. **`models.OneToOneField`**
+- **Descripción**: Define una relación uno a uno entre dos modelos.
+- **Ejemplo**:
+  ```python
+  class Profile(models.Model):
+      user = models.OneToOneField(User, on_delete=models.CASCADE)
+  ```
+
+### 15. **`models.ManyToManyField`**
+- **Descripción**: Define una relación muchos a muchos entre dos modelos.
+- **Ejemplo**:
+  ```python
+  class Course(models.Model):
+      name = models.CharField(max_length=100)
+      students = models.ManyToManyField(Student)
+  ```
+
+### 16. **`models.FileField` y `models.ImageField`**
+- **Descripción**: Almacena rutas a archivos y/o imágenes cargadas.
+- **Argumentos clave**:
+  - `upload_to`: Ruta donde se guardarán los archivos.
+- **Ejemplo**:
+  ```python
+  class Document(models.Model):
+      file = models.FileField(upload_to='documents/')
+  
+  class Photo(models.Model):
+      image = models.ImageField(upload_to='photos/')
+  ```
+
+### 17. **`models.JSONField`**
+- **Descripción**: Almacena datos en formato JSON.
+- **Ejemplo**:
+  ```python
+  class Product(models.Model):
+      metadata = models.JSONField()
+  ```
+
+### 18. **`models.UUIDField`**
+- **Descripción**: Almacena un valor UUID (Identificador Único Universal).
+- **Ejemplo**:
+  ```python
+  import uuid
+  
+  class MyModel(models.Model):
+      id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+  ```
+
+### 19. **`models.AutoField`**
+- **Descripción**: Campo entero que se incrementa automáticamente (ID de la tabla).
+- **Ejemplo**:
+  ```python
+  class MyModel(models.Model):
+      id = models.AutoField(primary_key=True)
+  ```
+
+### 20. **`models.BigAutoField`**
+- **Descripción**: Similar a `AutoField`, pero con una capacidad mayor (utilizado para tablas con gran cantidad de registros).
+- **Ejemplo**:
+  ```python
+  class BigModel(models.Model):
+      id = models.BigAutoField(primary_key=True)
+  ```
+
+### Resumen
+
+Django proporciona una gran variedad de campos de modelo para cubrir casi cualquier necesidad de almacenamiento de datos. Estos campos permiten definir de manera clara y concisa la estructura de la base de datos, facilitando la gestión y manipulación de los datos en tu aplicación. Además, gracias a la integración de Django con diferentes bases de datos, estos modelos funcionan de manera consistente y eficiente, independientemente del motor de base de datos que estés utilizando.
+
+shell
+```shell
+python manage.py shell
+Type 'copyright', 'credits' or 'license' for more information
+IPython 8.26.0 -- An enhanced Interactive Python. Type '?' for help.
+
+In [1]: from my_first_app.models import Book, Publisher, Author
+
+In [2]: audry = Author(name="Audry", birth_date="2022-12-05")
+
+In [3]: audry.save()
+
+In [4]: pydanny = Author(name="Pydanny", birth_date="2023-12-05")
+
+In [5]: pydanny.save()
+
+In [6]: book
+---------------------------------------------------------------------------
+NameError                                 Traceback (most recent call last)
+Cell In[6], line 1
+----> 1 book
+
+NameError: name 'book' is not defined
+
+In [7]: book = Book.objects.first()
+
+In [8]: book
+Out[8]: <Book: Two Scoops of Django>
+
+In [9]: book.authors
+Out[9]: <django.db.models.fields.related_descriptors.create_forward_many_to_many_manager.<locals>.ManyRelatedManager at 0x27443ecce90>
+
+In [10]: book.authors.set(pydanny)
+---------------------------------------------------------------------------
+TypeError                                 Traceback (most recent call last)  
+Cell In[10], line 1
+----> 1 book.authors.set(pydanny)
+
+File ~\OneDrive\Escritorio\programación\platzi\CursodeDjango\venv\Lib\site-packages\django\db\models\fields\related_descriptors.py:1325, in create_forward_many_to_many_manager.<locals>.ManyRelatedManager.set(self, objs, clear, through_defaults)
+   1322 def set(self, objs, *, clear=False, through_defaults=None):
+   1323     # Force evaluation of `objs` in case it's a queryset whose value 
+   1324     # could be affected by `manager.clear()`. Refs #19816.
+hrough, instance=self.instance)
+   1328     with transaction.atomic(using=db, savepoint=False):
+
+TypeError: 'Author' object is not iterable
+
+In [11]: authors_list = [pydanny, audry]
+
+In [12]: print(authors_list)
+[<Author: Pydanny>, <Author: Audry>]
+
+In [13]: book.authors.set(authors_list)
+```
+
+**Lecturas recomendadas**
+
+[Model field reference | Django documentation | Django](https://docs.djangoproject.com/en/5.0/ref/models/fields//#field-types "Model field reference | Django documentation | Django")
+
+## Relaciones Uno a Uno (1:1) en Django
+
+Explorar la relación uno a uno en Django puede parecer complejo, pero es fundamental para construir aplicaciones sólidas.
+
+### ¿Cómo se crea una clase en Django?
+
+Para empezar, imaginemos que tenemos una clase Profile que contiene información pública del autor. Este perfil incluirá:
+
+- Un campo de URL para el sitio web del autor.
+- Una biografía con un máximo de 500 caracteres.
+
+Aquí está el código inicial para la clase `Profile`:
+
+```python
+class Profile(models.Model):
+    website = models.URLField(max_length=200)
+    biography = models.TextField(max_length=500)
+    author = models.OneToOneField(Author, on_delete=models.CASCADE)
+```
+
+### ¿Cómo se maneja la relación uno a uno?
+
+Para relacionar el perfil con el autor, utilizamos `OneToOneField`. Esto asegura que cada autor tenga un solo perfil y viceversa. Además, agregamos el parámetro `on_delete=models.CASCADE` para que si se elimina un autor, también se elimine su perfil.
+
+### ¿Cómo se crean y se sincronizan las migraciones?
+
+1. **Crear migraciones:** Ejecutamos `python manage.py makemigrations`.
+2. **Sincronizar con la base de datos:** Usamos `python manage.py migrate`.
+
+### ¿Cómo verificamos la creación de un perfil en la consola de Django?
+
+1. **Abrir la shell de Django:** Ejecutamos `python manage.py shell`.
+2. **Importar los modelos:**` from myapp.models import Author, Profile`.
+3. **Buscar un autor existente:**`author = Author.objects.first()`.
+4. **Crear un perfil:**
+
+```python
+profile = Profile.objects.create(
+    website="http://example.com",
+    biography="Lorem Ipsum",
+    author=author
+)
+```
+
+### ¿Cómo verificar los datos en la base de datos?
+
+Usamos comandos SQL para verificar los datos:
+
+`SELECT * FROM myapp_profile WHERE author_id = 1;`
+
+### ¿Qué ocurre cuando se elimina un autor?
+Si un autor se borra, su perfil también se eliminará gracias a `on_delete=models.CASCADE`.
+
+**Lecturas recomendadas**
+
+[Making queries | Django documentation | Django](https://docs.djangoproject.com/en/stable/topics/db/queries/ "Making queries | Django documentation | Django")
+[Model field reference | Django documentation | Django](https://docs.djangoproject.com/en/stable/ref/models/fields/#django.db.models.OneToOneField "Model field reference | Django documentation | Django")
+
+
+## Queries y Filtros en Django: Optimización y Estrategias Avanzadas
+
+Los managers en Django son una herramienta poderosa que permite realizar diversas acciones dentro de las listas de objetos de un modelo, como contar, traer el primero o el último elemento, crear nuevos registros y mucho más.
+
+Para contar los autores que están creados, utilizamos el manager por defecto llamado `objects` y el método `count`.
+
+```python
+author_count = Author.objects.count()
+print(f"Hay {author_count} autores.")
+```
+
+### ¿Cómo traer el primer y último autor creado?
+
+Para obtener el primer y último autor, podemos usar los métodos `first` y `last` del manager `objects`.
+
+```python
+primer_autor = Author.objects.first()
+print(f"El primer autor es: {primer_autor.name}")
+
+ultimo_autor = Author.objects.last()
+print(f"El último autor es: {ultimo_autor.name}")
+```
+
+### ¿Cómo crear nuevos autores con el manager?
+
+Podemos crear un nuevo autor directamente en la base de datos utilizando el método create del manager.
+
+```python
+nuevo_autor = Author.objects.create(name="Luis Martínez", birthday="1980-01-01")
+print(f"Nuevo autor creado: {nuevo_autor.name}")
+
+```
+### ¿Cómo traer una lista de autores?
+
+Para obtener una lista de todos los autores, utilizamos el método all del manager, que nos devuelve un queryset.
+
+```python
+autores = Author.objects.all()
+for autor in autores:
+    print(autor.name)
+```
+
+### ¿Cómo filtrar autores?
+
+Podemos filtrar autores utilizando el método `filter`, que permite especificar condiciones basadas en los campos del modelo.
+
+```python
+autores_filtrados = Author.objects.filter(name="Pydanny")
+for autor in autores_filtrados:
+    print(f"Autor filtrado: {autor.name}")
+```
+
+### ¿Cómo borrar un autor filtrado?
+
+Primero, filtramos el autor que queremos borrar y luego aplicamos el método `delete`.
+
+```python
+Author.objects.filter(name="Luis Martínez").delete()
+print("Autor borrado.")
+```
+
+### ¿Cómo ordenar autores?
+
+Podemos ordenar los autores utilizando el método `order_by`.
+
+```python
+autores_ordenados = Author.objects.order_by('name')
+for autor in autores_ordenados:
+    print(autor.name)
+```
