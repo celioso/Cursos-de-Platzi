@@ -1002,7 +1002,7 @@ urlpatterns = [
 
 [URL dispatcher | Django documentation | Django](https://docs.djangoproject.com/en/5.0/topics/http/urls/#path-converters "URL dispatcher | Django documentation | Django")
 
-### Vistas Basadas en Clases en Django
+## Vistas Basadas en Clases en Django
 
 Las vistas son un componente crucial en Django, permitiendo la interacción entre las URLs y la lógica de negocio.
 
@@ -1079,4 +1079,233 @@ Asegúrate de importar las vistas desde el módulo correcto. Utiliza el autocomp
 
 **Lecturas recomendadas**
 
-[Class-based views | Django documentation | Django](https://docs.djangoproject.com/en/stable/topics/class-based-views/ "Class-based views | Django documentation | Django")
+[Class-based views | Django documentation | Django](https://docs.djangoproject.com/en/5.1/ref/class-based-views/ "Class-based views | Django documentation | Django")
+
+## Personalización de Interfaz con Plantillas en Django
+
+Exploraremos los templates en Django y sus funcionalidades avanzadas que los diferencian del HTML estándar. Aprenderemos cómo los templates nos permiten mostrar contenido dinámico en el navegador, validar variables, recorrer listas y aplicar filtros para modificar valores antes de mostrarlos. También veremos cómo reutilizar contenido común mediante el archivo base HTML.
+
+### ¿Qué son los templates en Django?
+
+Los templates en Django son archivos HTML que incluyen funcionalidades adicionales para mostrar contenido dinámico. A diferencia del HTML puro, los Django templates permiten:
+
+- Mostrar variables
+- Realizar validaciones con `if`
+- Recorrer listas con `for`
+
+### ¿Cómo se muestran variables en un template?
+Para mostrar variables, se encierran en dobles llaves `{{ }}`. Por ejemplo, para mostrar una variable llamada var del contexto, se usaría:
+
+`{{ var }}`
+
+### ¿Qué son y cómo se utilizan los filtros en Django?
+
+Los filtros permiten modificar el valor de una variable antes de mostrarla. Se usan con un pipe | seguido del nombre del filtro. Por ejemplo, para mostrar solo el día y mes de una fecha:
+
+`{{ fecha_nacimiento|date:"m/d" }}`
+
+Los filtros pueden concatenarse. Por ejemplo, convertir el resultado en minúsculas:
+
+`{{ fecha_nacimiento|date:"m/d"|lower }}`
+
+### ¿Qué son los tags en Django y cómo se utilizan?
+
+Los tags agregan funcionalidades adicionales al código HTML. Se abren con {% %} y pueden incluir:
+
+- `if`: para validaciones
+- `for`: para recorrer listas
+- `url`: para mostrar URLs dinámicas
+
+Algunos tags requieren una etiqueta de cierre. Por ejemplo, `if` y `for`:
+
+```html
+{% if condition %}
+    <!-- contenido -->
+{% endif %}
+```
+
+### ¿Qué es el archivo base HTML en Django?
+
+El archivo base.html permite definir contenido común para ser reutilizado en la aplicación. Se crean bloques que pueden extenderse en otros archivos. Por ejemplo:
+
+```html
+<!-- base.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{% block title %}{% endblock %}</title>
+</head>
+<body>
+    <div id="content">
+        {% block content %}
+        {% endblock %}
+    </div>
+</body>
+</html>
+```
+
+Para reutilizar este contenido:
+
+```html
+<!-- new_template.html -->
+{% extends "base.html" %}
+{% block content %}
+    <!-- contenido específico -->
+{% endblock %}
+```
+
+Las plantillas en Django son una parte esencial del framework, que permiten separar la lógica del servidor (backend) de la presentación (frontend). El sistema de plantillas de Django utiliza archivos HTML con marcadores especiales que permiten insertar datos dinámicos y lógica básica.
+
+Aquí tienes una explicación de cómo funcionan las plantillas en Django y cómo utilizarlas:
+
+### 1. **Creación de Plantillas**
+Una plantilla es básicamente un archivo HTML que puede contener etiquetas de Django para renderizar contenido dinámico.
+
+#### Ejemplo básico de plantilla (`car_list.html`):
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Listado de carros</title>
+</head>
+<body>
+    <h1>Listado de carros</h1>
+    <ul>
+        {% for car in cars %}
+            <li>{{ car.name }} - {{ car.brand }}</li>
+        {% empty %}
+            <li>No hay carros disponibles.</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
+```
+
+### 2. **Directorio de Plantillas**
+Django busca las plantillas en una carpeta llamada `templates` dentro de cada aplicación o en una carpeta global especificada en tu proyecto.
+
+#### Estructura típica de carpetas:
+```
+my_first_app/
+    ├── templates/
+        └── my_first_app/
+            └── car_list.html
+```
+
+### 3. **Configuración de Plantillas en `settings.py`**
+Asegúrate de que el ajuste `TEMPLATES` en tu archivo `settings.py` esté configurado correctamente. Si usas plantillas dentro de las aplicaciones, deberías tener algo como esto:
+
+```python
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [],  # Aquí puedes agregar directorios de plantillas globales si los tienes
+        'APP_DIRS': True,  # Activa la búsqueda de plantillas en las aplicaciones
+        'OPTIONS': {
+            'context_processors': [
+                'django.template.context_processors.debug',
+                'django.template.context_processors.request',
+                'django.contrib.auth.context_processors.auth',
+                'django.contrib.messages.context_processors.messages',
+            ],
+        },
+    },
+]
+```
+
+### 4. **Renderizar Plantillas en una Vista**
+Para utilizar una plantilla, debes renderizarla en tu vista usando la función `render()`. Esta función toma el `request`, el nombre de la plantilla y un contexto con los datos que quieres pasar a la plantilla.
+
+#### Ejemplo de vista:
+```python
+from django.shortcuts import render
+from .models import Car
+
+def car_list(request):
+    cars = Car.objects.all()  # Obtén todos los carros
+    return render(request, 'my_first_app/car_list.html', {'cars': cars})
+```
+
+### 5. **Sintaxis de Plantillas**
+
+- **Variables**: Para mostrar datos dinámicos en una plantilla, utiliza las dobles llaves `{{ }}`.
+  
+  Ejemplo:
+  ```html
+  <p>Nombre del carro: {{ car.name }}</p>
+  ```
+
+- **Etiquetas**: Las etiquetas de plantilla se usan para control de flujo, como bucles, condiciones, etc. Se colocan dentro de `{% %}`.
+
+  Ejemplo de un bucle:
+  ```html
+  {% for car in cars %}
+      <p>{{ car.name }} - {{ car.brand }}</p>
+  {% endfor %}
+  ```
+
+- **Filtros**: Los filtros permiten modificar el valor de una variable en la plantilla. Se aplican con el símbolo `|`.
+
+  Ejemplo:
+  ```html
+  <p>{{ car.name|upper }}</p>  <!-- Convierte el nombre del carro a mayúsculas -->
+  ```
+
+### 6. **Herencia de Plantillas**
+Django permite la herencia de plantillas, lo que significa que puedes tener una plantilla base que otras plantillas extienden.
+
+#### Plantilla base (`base.html`):
+```html
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Mi sitio{% endblock %}</title>
+</head>
+<body>
+    <header>
+        <h1>Mi aplicación de carros</h1>
+    </header>
+    <div>
+        {% block content %}
+        <!-- El contenido específico de cada página irá aquí -->
+        {% endblock %}
+    </div>
+    <footer>
+        <p>Derechos reservados © 2024</p>
+    </footer>
+</body>
+</html>
+```
+
+#### Plantilla que hereda de `base.html` (`car_list.html`):
+```html
+{% extends "my_first_app/base.html" %}
+
+{% block title %}Listado de carros{% endblock %}
+
+{% block content %}
+    <h2>Listado de carros</h2>
+    <ul>
+        {% for car in cars %}
+            <li>{{ car.name }} - {{ car.brand }}</li>
+        {% empty %}
+            <li>No hay carros disponibles.</li>
+        {% endfor %}
+    </ul>
+{% endblock %}
+```
+
+### 7. **Bloques de Plantilla**
+Los bloques, como `block title` y `block content`, son marcadores en la plantilla base que otras plantillas pueden sobrescribir. Esto facilita la creación de estructuras de página comunes.
+
+### 8. **Contexto en las Plantillas**
+El contexto en Django es el conjunto de variables que pasas desde la vista a la plantilla. Estas variables son accesibles mediante las dobles llaves `{{ variable }}`.
+
+### Resumen:
+- **Plantillas**: Archivos HTML que contienen variables y lógica básica para generar contenido dinámico.
+- **Variables y etiquetas**: Se utilizan para insertar datos dinámicos o lógica de control.
+- **Herencia de plantillas**: Permite definir una estructura base y extenderla en diferentes páginas.
+- **Renderización**: Usa la función `render()` en tus vistas para renderizar una plantilla con los datos del contexto.
+
+Si necesitas más detalles o ejemplos, ¡déjame saber!

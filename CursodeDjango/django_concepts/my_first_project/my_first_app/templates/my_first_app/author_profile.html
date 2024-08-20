@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <head>AUTHOR PROFILE</head>
+    <main>
+        <article>
+            <header>
+                <h1>{{ profile.author.name}}</h1>
+                <h2>Fecha de nacimiento: <time>{{ profile.author.birth_date }}</time></h2>
+            </header>
+            <footer>
+                <p> {{ profile.biography }} </p>
+                <a href="{{ profile.website}}" 
+                traget ="_black"
+                title = "Go to website of author">
+                {{ profile.website }}
+            </a>
+            </footer>
+        </article>
+    </main>
+</body>
+</html>
