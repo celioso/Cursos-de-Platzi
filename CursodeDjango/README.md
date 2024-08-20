@@ -916,3 +916,167 @@ Out[15]: <QuerySet [<Author: Audry>, <Author: Luis Martinez>, <Author: Pydanny>]
 
 In [16]:
 ```
+
+## Gestión de URLs en Django: Configuración, Rutas y Mejores Prácticas
+
+Configurar las URLs en Django es esencial para organizar tu proyecto y facilitar la navegación.
+
+### ¿Cómo crear un archivo de URLs en Django?
+
+Primero, debes crear un archivo urls.py en cada aplicación que desarrolles. Por ejemplo, si tienes una aplicación llamada `MyFirstApp`, debes crear un archivo `urls.py` dentro de esta aplicación.
+
+- **Crear el archivo:** En la aplicación MyFirstApp, crea un archivo llamado urls.py.
+- **Copiar y pegar configuración básica:** Puedes copiar la configuración básica de otro archivo de URLs y modificarla según sea necesario.
+- **Eliminar enlaces e importaciones innecesarias:** Mantén solo lo necesario para tu aplicación.
+
+```python
+from django.urls import path
+from . import views
+
+urlpatterns = [
+    path('listado/', views.myView, name='listado'),
+]
+```
+
+### ¿Cómo incluir URLs de una aplicación en el proyecto?
+
+Para incluir las URLs de una aplicación en el proyecto principal, sigue estos pasos:
+
+1. **Modificar el archivo de URLs del proyecto:** Agrega un nuevo path que incluya las URLs de tu aplicación.
+
+```python
+from django.urls import include, path
+
+urlpatterns = [
+    path('carros/', include('myFirstApp.urls')),
+]
+```
+
+2. Importar el include: Asegúrate de importar include desde django.urls.
+
+### ¿Cómo configurar un servidor de desarrollo?
+
+Para probar los cambios, ejecuta el servidor de desarrollo:
+
+`python manage.py runserver`
+
+Esto iniciará el servidor y podrás ver los cambios en tiempo real.
+
+### ¿Cómo crear URLs dinámicas?
+Para crear URLs que acepten parámetros dinámicos, sigue estos pasos:
+
+1. **Definir una URL dinámica:** Utiliza los caracteres `< y >` para especificar el tipo de dato y el nombre del parámetro.
+
+```python
+urlpatterns = [
+    path('detalle/<int:id>/', views.detalle, name='detalle'),
+]
+```
+
+2. **Modificar la vista para aceptar parámetros:** Asegúrate de que tu vista acepte los parámetros correspondientes.
+
+```python
+def detalle(request, id):
+    return HttpResponse(f"El ID es {id}")
+```
+
+### ¿Cómo manejar diferentes tipos de datos en URLs?
+
+Django permite convertir diferentes tipos de datos en las URLs, como enteros y cadenas de texto:
+
+1. **Enteros:** Utiliza `<int:nombre>` para enteros.
+
+2. Cadenas de texto: Utiliza `<str:nombre>` para cadenas de texto.
+
+```python
+urlpatterns = [
+    path('marca/<str:brand>/', views.marca, name='marca'),
+]
+```
+
+### ¿Cómo probar URLs dinámicas en el navegador?
+1. **Probar con enteros:** Accede a una URL que requiera un entero, como `detalle/1/`.
+2. **Probar con cadenas de texto:** Accede a una URL que requiera una cadena de texto, como `marca/mazda/`.
+
+**Lecturas recomendadas**
+
+[URL dispatcher | Django documentation | Django](https://docs.djangoproject.com/en/5.0/topics/http/urls/#path-converters "URL dispatcher | Django documentation | Django")
+
+### Vistas Basadas en Clases en Django
+
+Las vistas son un componente crucial en Django, permitiendo la interacción entre las URLs y la lógica de negocio.
+
+### ¿Cómo crear vistas en Django?
+
+Para mantener el código organizado, es ideal ubicar las vistas en un archivo dedicado. Si tienes vistas definidas en el archivo de URLs, el primer paso es moverlas al archivo `views.py`. Asegúrate de renombrar las vistas si tienen nombres duplicados y de importar las dependencias necesarias, como HttpResponse.
+
+### ¿Cómo manejar vistas basadas en funciones?
+
+Las vistas basadas en funciones (FBV) son simples de implementar y adecuadas para lógica no compleja. Reciben el objeto `request` y devuelven un `HttpResponse`. Aquí un ejemplo básico:
+
+```python
+from django.http import HttpResponse
+
+def MyTestView(request):
+    return HttpResponse("Hello, this is a test view")
+```
+
+### ¿Cómo explorar el objeto request en Django?
+
+El objeto `request` en Django contiene información relevante sobre la solicitud HTTP. Para explorar sus atributos, puedes utilizar el shell de Django:
+
+```python
+from django.http import HttpRequest
+
+request = HttpRequest()
+print(request.__dict__)
+```
+
+Esto te permitirá inspeccionar las propiedades del `request`, como el método HTTP, el usuario autenticado, entre otros.
+
+### ¿Por qué usar vistas basadas en clases?
+
+Las vistas basadas en clases (CBV) facilitan la reutilización de código y la modularidad. Son más adecuadas para lógica compleja y permiten utilizar métodos integrados de Django. Para convertir una vista basada en funciones a una basada en clases:
+
+1. Define una clase que herede de una vista genérica de Django.
+2. Implementa métodos como `get_context_data` para manejar el contexto.
+
+Aquí un ejemplo de una CBV:
+
+```python
+from django.views.generic import TemplateView
+
+class CarListView(TemplateView):
+    template_name = "car_list.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['cars'] = Car.objects.all()
+        return context
+```
+
+### ¿Cómo conectar una vista basada en clases a una URL?
+
+Para conectar una CBV a una URL, utiliza el método `as_view()` en el archivo de URLs:
+
+```python
+from django.urls import path
+from .views import CarListView
+
+urlpatterns = [
+    path('cars/', CarListView.as_view(), name='car-list')
+]
+```
+
+### ¿Cómo evitar errores comunes al importar vistas?
+
+Asegúrate de importar las vistas desde el módulo correcto. Utiliza el autocompletado del editor con precaución y verifica los importes en la documentación de Django.
+
+### ¿Cuáles son las diferencias clave entre FBV y CBV?
+
+- **FBV:** Simplicidad y facilidad de implementación para tareas básicas.
+- **CBV:** Modularidad y reutilización, ideal para lógica compleja y uso de métodos predefinidos.
+
+**Lecturas recomendadas**
+
+[Class-based views | Django documentation | Django](https://docs.djangoproject.com/en/stable/topics/class-based-views/ "Class-based views | Django documentation | Django")
