@@ -1408,3 +1408,285 @@ Lecturas recomendadas
 
 [Django - Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=batisteo.vscode-django "Django - Visual Studio Marketplace")
 
+## Creación del Modelo para la Aplicación 'Products' en Django
+
+Crear una aplicación de administración de productos en una cafetería puede parecer complejo, pero siguiendo unos pasos claros, es más sencillo de lo que parece. En este artículo, exploraremos cómo crear y configurar un modelo de producto utilizando Django.
+
+### ¿Cómo creamos la aplicación de productos?
+
+Para empezar, debemos crear una nueva aplicación dentro de nuestro proyecto de Django. Desde la consola, ejecutamos los siguientes comandos:
+
+- Manage
+- Startup
+- Products
+
+Esto generará una nueva carpeta llamada “products”. Recuerda siempre registrar las aplicaciones creadas. Vamos a `Settings`, buscamos `Installed Apps` y añadimos `Product`.
+
+### ¿Cómo definimos los modelos?
+
+Después de registrar la aplicación, procedemos a crear los modelos. Iniciamos con el modelo `Product` que hereda de `Model`. El primer campo será `Name`, definido como un `TextField` con un `MaxLength` de 200 caracteres.
+
+### ¿Qué es Verbose Name y cómo lo utilizamos?
+
+El Verbose `Name` nos permite especificar cómo queremos que se visualice cada campo para el usuario final. Por ejemplo, para `Name` podemos definir un `verbose_name`.
+
+### ¿Qué otros campos añadimos? 
+Aparte de `Name`, añadimos otros campos importantes:
+
+- **Description:** `TextField` con `MaxLength` de 300.
+- **Price:** `DecimalField` con `max_digits` de 10 y `decimal_places` de 2.
+- **Available:** `BooleanField` con `default=True`.
+- **Photo**: `ImageField` con `upload_to='logos'`, permitiendo valores nulos (`null=True`) y en blanco (`blank=True`).
+
+### ¿Cómo formateamos el código y solucionamos errores de dependencias?
+Para mantener el código limpio, utilizamos la extensión `Black`. Hacemos clic derecho, seleccionamos `Format Document Width` y elegimos `Black Formatter`.
+
+Si el editor no encuentra las dependencias, debemos asegurarnos de que Visual Studio Code esté utilizando el entorno virtual correcto. Seleccionamos el entorno correcto en la parte inferior del editor y recargamos la ventana con *Command P* o *Control P* seguido de `reload window`.
+
+¿Cómo añadimos un método str?
+Para una representación textual del modelo, añadimos un método `__str__` que retorna el nombre del producto.
+
+## Cómo Crear Migraciones de Datos en Django
+
+Nuestro modelo de producto ha sido actualizado con un nuevo campo: image field. Al intentar crear las migraciones, el sistema muestra un error indicando que no se puede usar image field porque Pillow no está instalado. No hay que preocuparse, la solución es instalar Pillow. Siguiendo la sugerencia del error, ejecutamos `pip install Pillow`. Ahora, volvemos a correr `make migrations` y el error desaparece, logrando así la primera migración de nuestra aplicación de productos.
+
+### ¿Cómo se soluciona el error al crear migraciones?
+
+El error ocurre porque Pillow, una librería necesaria para manejar campos de imagen, no está instalada. La solución es instalarla con `pip install Pillow`.
+
+### ¿Qué hacemos después de instalar Pillow?
+
+Después de instalar Pillow, es importante:
+
+- Verificar que funciona corriendo nuevamente make migrations.
+- Asegurarse de agregar la dependencia a `requirements.txt` para evitar problemas en producción. Utiliza `pip freeze` para ver la versión instalada y añade `Pillow` al archivo.
+
+### ¿Por qué es importante agregar Pillow a requirements.txt?
+
+Cuando instalamos dependencias localmente, debemos asegurarnos de que estén en `requirements.txt` para que también se instalen en el entorno de producción. Esto se hace para evitar errores y asegurar que todas las librerías necesarias estén disponibles.
+
+### ¿Qué permite hacer Pillow con los campos de imagen?
+
+Pillow permite realizar validaciones en imágenes, como asegurarse de que las imágenes subidas cumplan con ciertas características en cuanto a resolución.
+
+### ¿Qué sigue después de las migraciones?
+
+Después de realizar las migraciones, tienes la base para construir vistas, conectarlas a URLs y crear un listado de productos. Te animo a que lo intentes, lo subas a tu repositorio y compartas el enlace en el sistema de comentarios.
+
+**Lecturas recomendadas**
+
+[Pillow (PIL Fork) 10.4.0 documentation](https://pillow.readthedocs.io/ "Pillow (PIL Fork) 10.4.0 documentation")
+
+## Creación de la Aplicación 'Products' con Formularios en Django
+
+La funcionalidad de formularios en Django permite a los desarrolladores crear, validar y gestionar formularios de manera eficiente y organizada. A continuación, exploraremos cómo crear formularios en Django paso a paso.
+
+### ¿Cómo se crean formularios en Django?
+
+Para crear un nuevo formulario en Django, primero se debe crear una clase que herede de forms.Form. Esta clase contendrá todos los campos que queremos incluir en el formulario.
+
+1. **Crear el archivo [forms.py](http://forms.py/ "forms.py"):**
+
+```python
+from django import forms
+
+class ProductForm(forms.Form):
+    name = forms.CharField(max_length=200, label='Nombre')
+    description = forms.CharField(max_length=300, label='Descripción')
+    price = forms.DecimalField(max_digits=10, decimal_places=2, label='Precio')
+    available = forms.BooleanField(initial=True, label='Disponible', required=False)
+    photo = forms.ImageField(label='Foto', required=False)
+```
+
+### ¿Cómo se manejan los datos del formulario en Django?
+
+Una vez que el formulario está creado, necesitamos definir cómo manejar los datos cuando el usuario envía el formulario. Esto incluye validar los datos y guardarlos en la base de datos.
+
+2. **Método save para guardar datos:**
+
+```python
+def save(self):
+    from .models import Product
+    data = self.cleaned_data
+    Product.objects.create(
+        name=data['name'],
+        description=data['description'],
+        price=data['price'],
+        available=data['available'],
+        photo=data['photo']
+    )
+```
+
+### ¿Cómo se crea la vista para el formulario?
+
+La vista conecta el formulario con el template y maneja el request del usuario. Usaremos una vista genérica de Django para simplificar este proceso.
+
+3. **Crear la vista:**
+
+from django.views.generic.edit import FormView
+from django.urls import reverse_lazy
+from .forms import ProductForm
+
+```python
+class ProductFormView(FormView):
+    template_name = 'products/add_product.html'
+    form_class = ProductForm
+    success_url = reverse_lazy('product_list')
+
+    def form_valid(self, form):
+        form.save()
+        return super().form_valid(form)
+```
+
+### ¿Cómo se configuran las URLs para la vista?
+
+Es necesario configurar las URLs para que la vista esté accesible desde el navegador.
+
+4. **Configurar [urls.py](http://urls.py/ "urls.py"):**
+
+```python
+from django.urls import path
+from .views import ProductFormView
+
+urlpatterns = [
+    path('add/', ProductFormView.as_view(), name='add_product')
+]
+```
+
+### ¿Cómo se crea el template para el formulario?
+
+El template define la estructura HTML del formulario y cómo se renderiza en la página web.
+
+5. **Crear el template add_product.html:**
+
+```html
+<h1>Agregar Producto</h1>
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Agregar</button>
+</form>
+```
+
+### ¿Qué es el CSRF token y por qué es importante?
+
+El CSRF token es una medida de seguridad que protege contra ataques de tipo Cross-Site Request Forgery. Django lo incluye automáticamente en los formularios para asegurar que las solicitudes provengan de fuentes confiables.
+
+### ¿Cómo se maneja la redirección después de enviar el formulario?
+
+La redirección después del envío del formulario se maneja configurando el parámetro `success_url` en la vista, utilizando `reverse_lazy` para obtener la URL de destino.
+
+### ¿Cómo se valida y guarda el producto?
+
+Cuando el formulario es válido, el método `form_valid` se encarga de llamar al método `save` del formulario para guardar el producto en la base de datos.
+
+```bash
+python manage.py shell
+Python 3.12.2 (tags/v3.12.2:6abddd9, Feb  6 2024, 21:26:36) [MSC v.1937 64 bit (AMD64)]
+Type 'copyright', 'credits' or 'license' for more information
+IPython 8.26.0 -- An enhanced Interactive Python. Type '?' for help.
+
+In [1]: from products.models import Product
+
+In [2]: Product.objects.first()
+Out[2]: <Product: Latte>
+
+In [3]: Product.objects.first().__dict__
+Out[3]: 
+{'_state': <django.db.models.base.ModelState at 0x14e0b965940>,
+ 'id': 1,
+ 'name': 'Latte',
+ 'description': 'D',
+ 'price': Decimal('5.00'),
+ 'available': True,
+ 'photo': ''}
+```
+
+**Lecturas recomendadas**
+
+[Working with forms | Django documentation | Django](https://docs.djangoproject.com/en/stable/topics/forms/ "Working with forms | Django documentation | Django")
+
+## Django Admin
+
+Explorar la funcionalidad del Django Admin es esencial para aprovechar al máximo el potencial de Django en la gestión de aplicaciones web.
+
+### ¿Qué es el Django Admin?
+
+Django Admin es una herramienta integrada en Django que permite administrar modelos y objetos a través de una interfaz web intuitiva y fácil de configurar.
+
+### ¿Cómo accedemos al Django Admin?
+
+Primero, asegúrate de que el proyecto de Django esté corriendo. Luego, accede a la URL “/admin”. Aparecerá una página de inicio de sesión con el título “Django Administration”.
+
+### ¿Cómo creamos un superusuario?
+
+Para acceder al admin, necesitas un superusuario. Detén el servidor y ejecuta el comando `createsuperuse`r. Proporciona un nombre de usuario, correo electrónico y contraseña. Reinicia el servidor y usa estas credenciales para iniciar sesión en el admin.
+
+### ¿Cómo registramos un modelo en el Django Admin?
+
+1. Abre el archivo `admin.py` dentro de tu aplicación.
+2. Crea una nueva clase que herede de `admin.ModelAdmin`.
+3. Importa tu modelo con `from .models` import Product.
+4. Registra el modelo usando `admin.site.register(Product, ProductAdmin)`.
+
+### ¿Cómo personalizamos la vista de lista en el Django Admin?
+
+Puedes añadir campos a la lista de visualización usando `list_display`:
+
+```python
+class ProductAdmin(admin.ModelAdmin):
+    list_display = ('name', 'price')
+```
+
+Esto muestra los campos `name` y `price` en la lista de productos.
+
+### ¿Cómo agregamos funcionalidad de búsqueda?
+
+Añade el atributo `search_fields` en la clase del administrador:
+
+```python
+class ProductAdmin(admin.ModelAdmin):
+    search_fields = ('name',)
+```
+
+Esto permite buscar productos por nombre.
+
+### ¿Cómo editamos y guardamos productos?
+
+Desde la lista de productos, haz clic en un producto para abrir el formulario de edición. Realiza los cambios necesarios y selecciona una de las opciones de guardado.
+
+### ¿Cómo añadimos imágenes a los productos?
+
+1. Asegúrate de tener un campo de imagen en tu modelo.
+2. Sube una imagen a través del formulario de edición.
+3. Configura las URLs para servir archivos estáticos agregando la configuración en `urls.py`:
+
+```python
+from django.conf.urls.static import static
+from django.conf import settings
+
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+```
+
+### ¿Cómo administramos múltiples productos?
+
+Selecciona varios productos usando los checkboxes y aplica acciones en masa, como eliminar.
+
+### ¿Cómo configuramos la visualización de imágenes en la lista de productos?
+
+Configura las URLs de los archivos estáticos y media para que Django sepa dónde encontrarlas. Asegúrate de importar y utilizar correctamente `static` y `settings` en tu archivo urls.py.
+
+### ¿Cómo agregamos un nuevo campo al modelo?
+
+Para agregar un nuevo campo, como la fecha de creación, modifica el modelo y actualiza la clase del administrador para mostrarlo en la lista:
+
+```python
+class ProductAdmin(admin.ModelAdmin):
+    list_display = ('name', 'price', 'created_at')
+```
+
+**Lecturas recomendadas**
+
+[The Django admin site | Django documentation | Django](https://docs.djangoproject.com/en/5.0/ref/contrib/admin/ "The Django admin site | Django documentation | Django")
+
+[Crispy Tailwind](https://github.com/django-crispy-forms/crispy-tailwind "Crispy Tailwind")
