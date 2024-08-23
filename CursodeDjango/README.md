@@ -1802,3 +1802,496 @@ Luego, visita [http://localhost:8000/api/products/](http://localhost:8000/api/pr
 **Lecturas recomendadas**
 
 [Quickstart - Django REST framework](https://www.django-rest-framework.org/tutorial/quickstart/ "Quickstart - Django REST framework")
+
+## Configurar PostgreSQL en AWS con Django
+
+Preparar una aplicación para producción requiere asegurar que el entorno de desarrollo sea compatible con el entorno de producción. Aquí exploramos cómo configurar una base de datos PostgreSQL local y en AWS para asegurar una transición fluida.
+
+### ¿Por qué cambiar de base de datos para producción?
+
+El entorno de producción puede tener muchos usuarios simultáneos, lo que exige una base de datos capaz de manejar múltiples conexiones de manera eficiente. SQLite, aunque útil para desarrollo, no es ideal para producción. PostgreSQL, por otro lado, ofrece la capacidad necesaria para manejar estas demandas.
+
+### ¿Cómo configurar PostgreSQL localmente?
+
+1. Modificar configuración en Django:
+
+- Abrir el archivo settings.py en el proyecto.
+- Buscar la sección de configuración de la base de datos y reemplazar SQLite con PostgreSQL.
+- Ejemplo de configuración:
+
+```python
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'mydatabase',
+        'USER': 'mydatabaseuser',
+        'PASSWORD': 'mypassword',
+        'HOST': 'localhost',
+        'PORT': '',
+    }
+}
+```
+
+2. Verificar conexión:
+
+- Ejecutar psql -h localhost para asegurarse de que PostgreSQL está instalado y configurado correctamente.
+- Crear y migrar la base de datos con python manage.py migrate.
+
+### ¿Qué errores pueden surgir al configurar PostgreSQL?
+
+Un error común es la falta de la librería `psycopg2`. Este problema se soluciona instalando la librería necesaria:
+
+`pip install psycopg2-binary`
+
+Esta librería permite a Django comunicarse con PostgreSQL de manera eficiente.
+
+### ¿Cómo configurar PostgreSQL en AWS?
+
+1. **Crear una instancia en AWS RDS:**
+
+- Iniciar sesión en AWS y buscar RDS.
+- Crear una instancia de base de datos PostgreSQL usando la capa gratuita.
+- Configurar el nombre de la base de datos, usuario y contraseña.
+
+2. Configurar reglas de seguridad:
+
+- Acceder a los grupos de seguridad y editar las reglas de ingreso y egreso para permitir el tráfico desde la IP local.
+
+3. Conectar Django a AWS RDS:
+
+- Modificar el archivo settings.py para incluir las credenciales de AWS RDS.
+- Ejemplo:
+
+```python
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'mydatabase',
+        'USER': 'mydatabaseuser',
+        'PASSWORD': 'mypassword',
+        'HOST': 'mydatabase.amazonaws.com',
+        'PORT': '5432',
+    }
+}
+```
+
+- Asegurarse de no incluir credenciales sensibles en el repositorio.
+
+### ¿Cómo manejar las credenciales de manera segura?
+
+Es crucial no almacenar las credenciales en el archivo `settings.py` para evitar comprometer la seguridad del proyecto. Utilizar variables de entorno o servicios de gestión de secretos es la mejor práctica para mantener la seguridad de la información sensible.
+
+**Lecturas recomendadas**
+
+[PostgreSQL: Downloads](https://www.postgresql.org/download/ "PostgreSQL: Downloads")
+
+[Databases | Django documentation | Django](https://docs.djangoproject.com/en/stable/ref/databases/ "Databases | Django documentation | Django")
+
+[Free Cloud Computing Services - AWS Free Tier](https://aws.amazon.com/free "Free Cloud Computing Services - AWS Free Tier")
+
+## Variables de entorno en Django
+
+Aprender a manejar información sensible es crucial para la seguridad de cualquier proyecto. Jango facilita este proceso mediante su librería Django Environment, la cual permite gestionar credenciales fuera del archivo de configuración principal.
+
+### ¿Cómo instalar Django Environment?
+
+Para comenzar, instala Django Environment desde la terminal usando el comando:
+
+`pip install django-environ`
+
+Luego, ve a tu archivo `settings.py` y añade la importación de la librería al principio del archivo:
+
+`import environ`
+
+### ¿Cómo configurar las variables de entorno?
+
+Primero, crea una nueva instancia de la librería y define las variables en el archivo `settings.py`:
+
+env = environ.Env()
+
+Luego, mueve tus credenciales sensibles a un archivo `.env` en la raíz del proyecto, asegurándote de no subir este archivo al repositorio:
+
+`DATABASE_PASSWORD=my_secure_password`
+
+En `settings.py`, reemplaza las credenciales directas con las variables de entorno:
+
+```python
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': env('DATABASE_NAME'),
+        'USER': env('DATABASE_USER'),
+        'PASSWORD': env('DATABASE_PASSWORD'),
+        'HOST': env('DATABASE_HOST'),
+        'PORT': env('DATABASE_PORT'),
+    }
+}
+```
+
+### ¿Cómo cargar las variables de entorno?
+
+Para que Django reconozca el archivo `.env`, debes cargarlo en tu configuración. Agrega la siguiente línea en la parte superior de `settings.py`:
+
+`environ.Env.read_env(os.path.join(BASE_DIR, '.env'))`
+
+Esto permitirá que las variables definidas en `.env` sean accesibles desde el entorno de Django.
+
+### ¿Qué hacer si la variable no se carga?
+
+Si las variables no se cargan automáticamente, puedes exportarlas manualmente en tu entorno antes de ejecutar el servidor de Django:
+
+`export DATABASE_PASSWORD=my_secure_password`
+
+### ¿Cómo simplificar la configuración de la base de datos?
+
+Jango Environment ofrece métodos útiles como db_url que simplifican aún más la configuración:
+
+```python
+DATABASES = {
+    'default': env.db(),
+}
+```
+
+Define todas las credenciales en una única variable en el archivo .env:
+
+`DATABASE_URL=postgres://user:password@host:port/dbname`
+
+Este método reduce el número de configuraciones manuales, facilitando la administración de variables.
+
+### ¿Qué ventajas ofrece Django Environment?
+
+Usar Django Environment para gestionar credenciales ofrece múltiples beneficios:
+
+- **Seguridad mejorada**: Mantén credenciales fuera del código fuente.
+- **Facilidad de uso**: Simplifica la configuración de la base de datos.
+- **Colaboración segura**: Permite compartir código sin exponer información sensible.
+
+**Lecturas recomendadas**
+
+[django-environ](https://django-environ.readthedocs.io/en/latest/ "django-environ")
+
+El error que estás viendo indica que Django no puede conectarse a la base de datos PostgreSQL alojada en Amazon RDS (o en otro servidor remoto). Este error ocurre principalmente por las siguientes razones:
+
+### 1. **Problemas de Conexión**
+   - **Conexión rechazada** o **timeout**: Esto puede deberse a problemas de conectividad o configuración incorrecta.
+
+### 2. **Posibles causas y soluciones**
+
+#### 1. **Base de datos no accesible**
+   - **Verifica la conectividad a la base de datos**: Asegúrate de que la instancia de RDS o el servidor donde está alojada la base de datos está funcionando y aceptando conexiones desde tu máquina.
+   - **Prueba de conectividad**: Desde tu terminal, intenta hacer `ping` o conectarte al puerto de la base de datos para verificar si está accesible. Por ejemplo, intenta conectarte desde `psql` (el cliente de PostgreSQL):
+
+     ```bash
+     psql -h database-1.cloka288krli.us-east-1.rds.amazonaws.com -U username -d dbname
+     ```
+
+   - Si no puedes conectarte desde la terminal, asegúrate de que la base de datos esté encendida y accesible en el puerto correcto.
+
+#### 2. **Configuración incorrecta de la base de datos**
+   - **Verifica la configuración en `settings.py`**: Asegúrate de que los detalles de la conexión a la base de datos en tu archivo `settings.py` sean correctos. La configuración debería verse algo así:
+
+     ```python
+     DATABASES = {
+         'default': {
+             'ENGINE': 'django.db.backends.postgresql',
+             'NAME': 'nombre_de_base_de_datos',
+             'USER': 'usuario',
+             'PASSWORD': 'contraseña',
+             'HOST': 'database-1.cloka288krli.us-east-1.rds.amazonaws.com',
+             'PORT': '5432',  # El puerto estándar para PostgreSQL
+         }
+     }
+     ```
+
+   - **Asegúrate de que los valores sean correctos**, incluidos el nombre de la base de datos, el usuario y la contraseña.
+
+#### 3. **Reglas de seguridad o cortafuegos**
+   - **Verifica las reglas de seguridad del servidor**: Si estás utilizando Amazon RDS o algún otro servicio en la nube, asegúrate de que las reglas de seguridad permiten conexiones entrantes en el puerto 5432 (puerto estándar de PostgreSQL) desde la dirección IP de tu máquina.
+   
+     - Para Amazon RDS, puedes revisar las reglas de **Security Group** asociado a tu instancia y agregar las IPs de las máquinas que pueden acceder.
+   
+   - **Cortafuegos local**: Asegúrate de que no haya un firewall en tu red local o en tu máquina que esté bloqueando el tráfico hacia el puerto 5432.
+
+#### 4. **Servidor PostgreSQL en el host correcto**
+   - Verifica que el servidor PostgreSQL esté en el host correcto (`database-1.cloka288krli.us-east-1.rds.amazonaws.com`) y esté en ejecución. Si no tienes control directo sobre ese servidor, asegúrate de que el administrador lo esté ejecutando correctamente.
+
+### 3. **Alternativa para tests locales: usar SQLite**
+   Si sólo estás ejecutando pruebas en tu máquina local y no necesitas conectarte a la base de datos remota, puedes cambiar temporalmente a SQLite para ejecutar tus tests. Para hacerlo, ajusta el `DATABASES` en tu `settings.py` solo para entornos de prueba locales:
+
+   ```python
+   if 'test' in sys.argv:
+       DATABASES = {
+           'default': {
+               'ENGINE': 'django.db.backends.sqlite3',
+               'NAME': ':memory:',
+           }
+       }
+   ```
+
+   Esto cambiará la base de datos a una base de datos en memoria solo cuando ejecutes pruebas (`python manage.py test`).
+
+### 4. **Verificar las credenciales de acceso**
+   Asegúrate de que las credenciales (usuario, contraseña) que has configurado en `settings.py` tienen los permisos necesarios para conectarse y acceder a la base de datos remota.
+
+Revisa estas posibles causas, especialmente la conectividad y la configuración en `settings.py`, y ajusta según sea necesario.
+
+## ¿Cómo usar Unit Testing en Django?
+
+El **unit testing** en Django es una herramienta poderosa para probar de manera automatizada las funcionalidades de tu aplicación. Django ofrece una integración directa con el módulo `unittest` de Python a través de su framework de pruebas. Aquí te explico cómo empezar a utilizar unit testing en Django:
+
+### 1. **Configurar un entorno de prueba**
+
+Django crea automáticamente un entorno de prueba al ejecutar pruebas, incluyendo la creación de una base de datos temporal, lo que asegura que las pruebas no afecten los datos reales.
+
+### 2. **Estructura básica de una prueba en Django**
+Las pruebas se suelen colocar en un archivo llamado `tests.py` dentro de cada aplicación de Django. El archivo básico tiene el siguiente formato:
+
+```python
+from django.test import TestCase
+from .models import MiModelo
+
+class MiModeloTestCase(TestCase):
+    def setUp(self):
+        # Esta función se ejecuta antes de cada test. Aquí puedes preparar datos de prueba.
+        MiModelo.objects.create(campo1="dato1", campo2="dato2")
+
+    def test_campo1_valor(self):
+        # Prueba para verificar si el valor del campo1 es correcto.
+        objeto = MiModelo.objects.get(campo1="dato1")
+        self.assertEqual(objeto.campo1, "dato1")
+```
+
+### 3. **Métodos de prueba comunes**
+- `setUp()`: Se ejecuta antes de cada prueba individual y es útil para preparar datos que serán utilizados en cada test.
+- `tearDown()`: Se ejecuta después de cada prueba, y puedes usarlo para limpiar los datos si es necesario (aunque Django lo hace automáticamente al final de cada prueba).
+- Métodos de `unittest` como `assertEqual`, `assertTrue`, `assertFalse`, etc., son usados para realizar las verificaciones.
+
+### 4. **Ejecutar pruebas**
+Para ejecutar las pruebas de tu proyecto Django, usa el comando:
+
+```bash
+python manage.py test
+```
+
+Esto ejecutará todas las pruebas en los archivos `tests.py` de todas las aplicaciones del proyecto.
+
+### 5. **Pruebas para modelos**
+Puedes probar la lógica de negocio y las relaciones de tus modelos de esta manera:
+
+```python
+from django.test import TestCase
+from .models import MiModelo
+
+class MiModeloTestCase(TestCase):
+    def setUp(self):
+        # Crea un objeto para probar
+        self.objeto = MiModelo.objects.create(campo1="prueba", campo2="valor")
+
+    def test_campo1_valor(self):
+        # Verifica que el campo1 tiene el valor correcto
+        self.assertEqual(self.objeto.campo1, "prueba")
+
+    def test_string_representation(self):
+        # Prueba el método __str__ del modelo
+        self.assertEqual(str(self.objeto), "prueba")
+```
+
+### 6. **Pruebas para vistas**
+Puedes usar el cliente de pruebas que Django ofrece para probar tus vistas:
+
+```python
+from django.test import TestCase
+from django.urls import reverse
+
+class MiVistaTestCase(TestCase):
+    def test_vista_principal(self):
+        # Utiliza el cliente de pruebas para simular una solicitud GET
+        response = self.client.get(reverse('nombre_de_la_vista'))
+        # Verifica que la respuesta es 200 OK
+        self.assertEqual(response.status_code, 200)
+        # Verifica si el contenido contiene algún texto específico
+        self.assertContains(response, "Texto esperado")
+```
+
+### 7. **Pruebas para formularios**
+Puedes probar la lógica de validación y envío de formularios de la siguiente manera:
+
+```python
+from django.test import TestCase
+from .forms import MiFormulario
+
+class MiFormularioTestCase(TestCase):
+    def test_formulario_valido(self):
+        form = MiFormulario(data={'campo1': 'valor válido'})
+        self.assertTrue(form.is_valid())
+
+    def test_formulario_invalido(self):
+        form = MiFormulario(data={'campo1': ''})
+        self.assertFalse(form.is_valid())
+```
+
+### 8. **Pruebas para URLs**
+Asegúrate de que las rutas de tus vistas están configuradas correctamente:
+
+```python
+from django.test import SimpleTestCase
+from django.urls import reverse, resolve
+from .views import mi_vista
+
+class URLTestCase(SimpleTestCase):
+    def test_url_resuelve_a_vista(self):
+        # Verifica que la URL resuelve a la vista correcta
+        url = reverse('nombre_de_la_vista')
+        self.assertEqual(resolve(url).func, mi_vista)
+```
+
+### 9. **Pruebas para API (si usas Django REST Framework)**
+Si trabajas con una API, también puedes hacer pruebas para verificar el comportamiento de tus endpoints:
+
+```python
+from rest_framework.test import APITestCase
+from rest_framework import status
+from django.urls import reverse
+from .models import MiModelo
+
+class MiAPITestCase(APITestCase):
+    def test_api_lista(self):
+        url = reverse('mi_api_lista')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+```
+
+### 10. **Estrategia para pruebas unitarias**
+- **Cubre la lógica de negocio**: Asegúrate de probar cualquier cálculo, reglas de negocio y flujos de datos en los modelos.
+- **Prueba todas las vistas críticas**: Asegúrate de que las vistas devuelvan la respuesta adecuada.
+- **Prueba formularios y validaciones**: La lógica de validación en formularios debe ser robusta y a prueba de errores.
+- **Prueba integraciones y APIs**: Si usas APIs, verifica que los endpoints funcionen como se espera.
+  
+### 11. **Ejemplo completo de pruebas**
+
+```python
+from django.test import TestCase
+from django.urls import reverse
+from .models import Producto
+
+class ProductoTestCase(TestCase):
+    def setUp(self):
+        self.producto = Producto.objects.create(nombre="Café", precio=5.00)
+
+    def test_producto_creado(self):
+        producto = Producto.objects.get(nombre="Café")
+        self.assertEqual(producto.precio, 5.00)
+
+    def test_vista_producto_lista(self):
+        response = self.client.get(reverse('productos'))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Café")
+
+    def test_formulario_producto_valido(self):
+        form_data = {'nombre': 'Té', 'precio': 4.00}
+        response = self.client.post(reverse('crear_producto'), data=form_data)
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(Producto.objects.filter(nombre='Té').exists())
+```
+
+### Resumen
+
+- **TestCase**: Es el contenedor básico para las pruebas en Django.
+- **Comandos**: Usa `python manage.py test` para ejecutar las pruebas.
+- **Verificaciones**: Métodos como `assertEqual`, `assertTrue`, y `assertContains` permiten verificar el comportamiento esperado.
+
+Este flujo de trabajo te ayudará a garantizar que tu aplicación funcione como se espera a través de pruebas automatizadas.
+
+## Debugging en Django
+
+Preparar un proyecto para despliegue en AWS puede ser desafiante, pero siguiendo algunos pasos esenciales, podemos asegurar que todo funcione correctamente. Aquí revisaremos cómo asegurarnos de que nuestro proyecto esté listo para ser ejecutado en un servidor de AWS, incluyendo la configuración de dependencias, ajustes en el routing y la documentación necesaria.
+
+### ¿Cómo aseguramos que el archivo requirements.txt esté completo?
+
+- Verificar que todas las librerías utilizadas estén listadas en el archivo `requirements.txt`.
+- Asegurarnos de que las versiones de las librerías sean correctas.
+- Utilizar el comando `pip install -r path/to/requirements.txt` para instalar todas las dependencias.
+- Si hay errores, revisar el archivo `requirements.txt` y corregir las versiones incorrectas.
+- Confirmar la instalación correcta con `pip freeze` y actualizar el archivo `requirements.txt` si es necesario.
+
+### ¿Qué hacer si no se muestran las URLs correctas en el home del proyecto?
+
+- Asegurarse de que no estamos retornando un 404 en la página principal.
+- Mostrar la lista de productos en el home configurando las URLs adecuadamente.
+- Modificar las rutas en el archivo `urls.py` para que la lista de productos sea la primera en ser validada.
+- Guardar los cambios y ejecutar el proyecto para verificar que la lista de productos aparezca en la raíz del proyecto.
+
+### ¿Por qué es importante un archivo README?
+
+- Compartir con otros desarrolladores cómo configurar y ejecutar el proyecto.
+- Incluir información sobre las diferentes aplicaciones dentro del proyecto, como `users` y `products`.
+- Explicar los requerimientos del proyecto y proporcionar enlaces de clonación.
+- Crear y mantener un archivo `README.md` en el root del proyecto, detallando todos estos aspectos.
+
+### ¿Cómo formatear el código de manera consistente?
+
+- Utilizar herramientas como Black para mantener un formato de código consistente.
+- Instalar Black y ejecutarlo para unificar el uso de comillas y otros estilos de código.
+- Confirmar que Black sigue las normas de PEP 8, el estándar de estilo de código en Python.
+- Integrar Black en el proceso de desarrollo para mantener la consistencia en todo el proyecto.
+
+### ¿Qué hacer antes del despliegue en AWS?
+
+- Revisar y corregir cualquier error o bug en la aplicación.
+- Crear una cuenta en AWS si aún no se tiene.
+- Estar preparado para el despliegue en AWS, siguiendo las instrucciones y recomendaciones específicas para este entorno.
+
+**Lecturas recomendadas**
+
+[Black Formatter - Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=ms-python.black-formatter "Black Formatter - Visual Studio Marketplace")
+
+[PEP 8 – Style Guide for Python Code | peps.python.org](https://peps.python.org/pep-0008/ "PEP 8 – Style Guide for Python Code | peps.python.org")
+
+[Free Cloud Computing Services - AWS Free Tier](https://aws.amazon.com/free/ "Free Cloud Computing Services - AWS Free Tier")
+
+## Desplegar aplicaciones de Django en AWS
+
+Desplegar una aplicación en AWS puede ser sencillo utilizando Elastic Beanstalk, un servicio que automatiza la infraestructura necesaria.
+
+### ¿Qué es Elastic Beanstalk y cómo funciona?
+
+Elastic Beanstalk es un servicio de AWS que permite desplegar y gestionar aplicaciones rápidamente. Basta con enviar el código, y el servicio se encarga de crear y gestionar la infraestructura necesaria.
+
+### ¿Cómo se configura la CLI de Elastic Beanstalk?
+
+Con las credenciales listas, sigue estos pasos para configurar la CLI:
+
+1. Instala Elastic Beanstalk CLI siguiendo el [enlace de instalación](https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/eb-cli3.html "enlace de instalación").
+2. Ejecuta eb init y responde las preguntas sobre la región, el ID de acceso y la clave secreta.
+3. Configura el nombre de la aplicación y la versión de Python.
+4. Indica si utilizarás CodeCommit (en este caso, no, ya que se usa GitHub).
+5. Configura una llave SSH para conectarte a los servidores.
+
+### ¿Cómo se despliega la aplicación?
+
+1. Crea un environment de producción con `eb create coffee-shop-production`.
+2. El servicio creará la infraestructura necesaria, incluyendo instancias y configuraciones de seguridad.
+3. Verifica el estado del environment con `eb status`.
+
+### ¿Cómo se solucionan errores comunes durante el despliegue?
+
+- **Configuración incorrecta del módulo WSGI**: Configura el path correctamente en eb config.
+- **Variable de entorno faltante**: Crea la variable con eb setenv.
+- **Error en `ALLOWED_HOSTS` de Django**: Agrega el dominio correspondiente en el archivo de configuración de Django.
+
+### ¿Cómo se gestionan archivos estáticos en Django?
+
+Para asegurarte de que los archivos estáticos de Django se sirvan correctamente:
+
+1. Ejecuta `python manage.py collectstatic`.
+2. Configura el directorio de archivos estáticos en el archivo `settings.py`.
+
+### ¿Qué otros proveedores de nube se pueden considerar?
+
+AWS es una opción recomendada por su estabilidad y escalabilidad, pero también puedes explorar alternativas como DigitalOcean y Google Cloud Platform (GCP) para desplegar tus proyectos.
+
+**Lecturas recomendadas**
+
+[Using the Elastic Beanstalk command line interface (EB CLI) - AWS Elastic Beanstalk](https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/eb-cli3.html "Using the Elastic Beanstalk command line interface (EB CLI) - AWS Elastic Beanstalk")
+
+[Simplified EB CLI installation mechanism.](https://github.com/aws/aws-elastic-beanstalk-cli-setup "Simplified EB CLI installation mechanism.")

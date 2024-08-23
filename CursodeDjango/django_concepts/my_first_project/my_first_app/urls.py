@@ -20,10 +20,9 @@ from .views import my_test_view, my_view, CarListView
 from my_first_app.views import author_profile_show
 
 urlpatterns = [
-    #path("listado/", my_view),
+    # path("listado/", my_view),
     path("listado/", CarListView.as_view()),
     path("detalle/<int:id>", my_test_view),
     path("marcas/<str:brand>", my_test_view),
     path("author_profile/<int:id>", author_profile_show),
-    
 ]
