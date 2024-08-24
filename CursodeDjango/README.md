@@ -2251,6 +2251,8 @@ Preparar un proyecto para despliegue en AWS puede ser desafiante, pero siguiendo
 
 ## Desplegar aplicaciones de Django en AWS
 
+**NOTA**: Para este módulo utilicé wsl
+
 Desplegar una aplicación en AWS puede ser sencillo utilizando Elastic Beanstalk, un servicio que automatiza la infraestructura necesaria.
 
 ### ¿Qué es Elastic Beanstalk y cómo funciona?
