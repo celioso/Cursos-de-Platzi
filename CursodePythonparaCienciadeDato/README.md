@@ -664,3 +664,368 @@ print(arr_2d)
 - **Indexación avanzada**: Permite seleccionar varios elementos específicos a la vez.
 
 Estas técnicas son muy poderosas para manipular y acceder a datos de manera eficiente en NumPy. ¿Te gustaría profundizar en algún aspecto específico?
+
+## Broadcasting y Operaciones Lógicas en NumPy
+
+### ¿Qué es broadcasting en NumPy?
+
+**Broadcasting** es una funcionalidad poderosa en NumPy que permite realizar operaciones aritméticas en arrays de diferentes tamaños y formas de manera eficiente. En lugar de iterar sobre cada elemento de los arrays para realizar las operaciones, NumPy extiende automáticamente los arrays más pequeños para que coincidan con las dimensiones de los más grandes, sin duplicar datos. Esto no solo optimiza el uso de la memoria, sino que también acelera significativamente las operaciones.
+
+El broadcasting permite que las operaciones entre arrays de diferentes dimensiones se realicen como si todos los arrays tuvieran la misma forma. NumPy extiende los arrays más pequeños a la forma del más grande de manera implícita, facilitando las operaciones sin necesidad de copiar los datos.
+
+### Aplicaciones de Broadcasting
+
+- **Aplicación de Descuentos**: Supongamos que tenemos un array que representa los precios de varios productos y otro array con un descuento porcentual que se aplica a todos los productos. Con broadcasting, podemos aplicar el descuento sin necesidad de un bucle explícito.
+
+```python
+import numpy as np
+
+prices = np.array([100, 200, 300])
+discount = np.array([0.9])
+discounted_prices = prices * discount
+print(discounted_prices)  # Output: [ 90. 180. 270.]
+```
+
+- **Operaciones con Arrays Multidimensionales**: Podemos realizar operaciones elementales entre arrays de diferentes dimensiones.
+
+```python
+a = np.array([[0.0, 0.0, 0.0],
+              [10.0, 10.0, 10.0],
+              [20.0, 20.0, 20.0],
+              [30.0, 30.0, 30.0]])
+b = np.array([1.0, 2.0, 3.0])
+result = a + b
+print(result)
+# Output:
+# [[ 1.  2.  3.]
+#  [11. 12. 13.]
+#  [21. 22. 23.]
+#  [31. 32. 33.]]
+```
+
+### Importancia del Broadcasting
+
+Broadcasting es crucial porque permite escribir código más conciso y legible, evitando bucles explícitos y aprovechando las optimizaciones internas de NumPy para realizar operaciones de manera rápida y eficiente. Esto es especialmente útil en análisis de datos y aprendizaje automático, donde se manejan grandes volúmenes de datos y se requieren cálculos rápidos.
+
+### Reglas de Broadcasting
+
+Para que el broadcasting funcione, las dimensiones de los arrays deben cumplir ciertas reglas:
+
+1. **Comparación desde la Última Dimensión**: Las dimensiones se comparan desde la última hacia la primera.
+2. **Dimensiones Compatibles**: Dos dimensiones son compatibles si son iguales o si una de ellas es 1.
+
+Ejemplos:
+
+- **Escalar y Array 1D:**
+
+```python
+a = np.array([1, 2, 3])
+b = 2
+result = a * b
+print(result)  # Output: [2 4 6]
+```
+
+- **Array 1D y Array 2D:**
+
+```python
+a = np.array([[1, 2, 3], [4, 5, 6], [7, 8, 9]])
+b = np.array([1, 0, 1])
+result = a * b
+print(result)
+# Output:
+# [[1 0 3]
+#  [4 0 6]
+#  [7 0 9]]
+```
+
+- **Array 2D y Array 3D:**
+
+```python
+a = np.array([[[1], [2], [3]], [[4], [5], [6]]])
+b = np.array([1, 2, 3])
+result = a * b
+print(result)
+# Output:
+# [[[ 1  2  3]
+#   [ 2  4  6]
+#   [ 3  6  9]]
+#
+#  [[ 4  8 12]
+#   [ 5 10 15]
+#   [ 6 12 18]]]
+```
+
+Broadcasting en NumPy es una técnica esencial para realizar operaciones aritméticas de manera eficiente en arrays de diferentes tamaños y formas. Entender y aplicar las reglas de broadcasting permite escribir código más limpio y optimizado, crucial para tareas de análisis de datos y aprendizaje automático.
+
+Explora estas funcionalidades y descubre cómo broadcasting puede mejorar la eficiencia de tus cálculos en Python.
+
+**Lecturas recomendadas**
+
+[Broadcasting — NumPy v2.0 Manual](https://numpy.org/doc/stable/user/basics.broadcasting.html "Broadcasting — NumPy v2.0 Manual")
+
+[numpy.hstack — NumPy v2.0 Manual](https://numpy.org/doc/stable/reference/generated/numpy.hstack.html "numpy.hstack — NumPy v2.0 Manual")
+
+[numpy.vstack — NumPy v2.0 Manual](https://numpy.org/doc/stable/reference/generated/numpy.vstack.html "numpy.vstack — NumPy v2.0 Manual")
+
+## Elementos Únicos y sus Conteos: Copias y Vistas
+
+En **NumPy**, puedes obtener los **elementos únicos** y sus **conteos** utilizando varias funciones útiles como `np.unique()`. También es importante entender la diferencia entre **copias** y **vistas** cuando trabajas con arrays. A continuación, desglosamos estos temas.
+
+### Elementos Únicos y sus Conteos
+
+#### `np.unique()`
+La función `np.unique()` devuelve los elementos únicos de un array. También puedes obtener los conteos de cuántas veces aparece cada elemento único.
+
+```python
+import numpy as np
+
+# Crear un array con elementos repetidos
+array = np.array([1, 2, 2, 3, 3, 3, 4, 4, 4, 4])
+
+# Obtener los elementos únicos
+unicos = np.unique(array)
+
+# Obtener los elementos únicos y sus conteos
+unicos, conteos = np.unique(array, return_counts=True)
+
+print("Elementos únicos:", unicos)
+print("Conteos:", conteos)
+```
+
+### Salida:
+```
+Elementos únicos: [1 2 3 4]
+Conteos: [1 2 3 4]
+```
+
+### Copias y Vistas en NumPy
+
+Cuando trabajas con arrays en NumPy, debes entender si estás manipulando **copias** o **vistas** de un array. Esto afecta el rendimiento y el comportamiento cuando modificas arrays.
+
+#### 1. **Vistas (Views)**:
+- Una **vista** es una referencia al array original. Cambios en la vista afectan al array original.
+- Al usar técnicas como **slicing** (`:`), NumPy crea una vista, no una copia.
+
+```python
+# Crear un array original
+array_original = np.array([1, 2, 3, 4, 5])
+
+# Crear una vista del array
+vista = array_original[:3]
+
+# Modificar la vista
+vista[0] = 100
+
+print("Array original después de modificar la vista:", array_original)
+print("Vista:", vista)
+```
+
+### Salida:
+```
+Array original después de modificar la vista: [100   2   3   4   5]
+Vista: [100   2   3]
+```
+
+#### 2. **Copias**:
+- Una **copia** es un nuevo array en memoria. Cambios en la copia no afectan al array original.
+- Para crear una copia explícita, se usa `np.copy()`.
+
+```python
+# Crear un array original
+array_original = np.array([1, 2, 3, 4, 5])
+
+# Crear una copia del array
+copia = np.copy(array_original)
+
+# Modificar la copia
+copia[0] = 100
+
+print("Array original después de modificar la copia:", array_original)
+print("Copia:", copia)
+```
+
+### Salida:
+```
+Array original después de modificar la copia: [1 2 3 4 5]
+Copia: [100   2   3   4   5]
+```
+
+### Resumen:
+- **Elementos Únicos**: Usa `np.unique()` para obtener los elementos únicos y sus conteos.
+- **Vistas**: Son referencias al array original. Modificar una vista afecta el array original.
+- **Copias**: Son nuevos arrays en memoria. Modificar una copia no afecta el array original.
+
+¿Te gustaría algún ejemplo más o más detalles sobre estos temas?
+
+### **Elementos Únicos y sus Conteos: Copias y Vistas en NumPy**
+
+#### **Elementos Únicos y Conteos**
+
+Para encontrar **elementos únicos** y sus **conteos** en un array de **NumPy**, puedes usar la función `np.unique()`, que devuelve los elementos sin duplicados. Esta función tiene la opción de devolver cuántas veces aparece cada elemento único en el array.
+
+**Ejemplo**:
+```python
+import numpy as np
+
+# Crear un array con elementos duplicados
+array = np.array([1, 2, 2, 3, 3, 3, 4, 4, 4, 4])
+
+# Obtener elementos únicos y sus conteos
+unicos, conteos = np.unique(array, return_counts=True)
+
+print("Elementos únicos:", unicos)
+print("Conteos:", conteos)
+```
+
+### **Salida**:
+```
+Elementos únicos: [1 2 3 4]
+Conteos: [1 2 3 4]
+```
+
+Aquí, `np.unique()` nos da:
+- **Elementos únicos**: `[1, 2, 3, 4]`
+- **Conteos**: `[1, 2, 3, 4]`, donde el número `1` aparece una vez, `2` aparece dos veces, y así sucesivamente.
+
+#### **Copias y Vistas en NumPy**
+
+Cuando trabajas con arrays en NumPy, es fundamental saber si estás creando **copias** o **vistas** de un array, ya que esto influye en el rendimiento y en cómo se manejan los datos.
+
+1. **Vistas (Views)**:
+   - Una vista es una referencia a los mismos datos en memoria que el array original.
+   - Modificar una vista afectará el array original.
+   - Las vistas se crean de forma automática cuando realizas **slicing** o ciertos tipos de operaciones de cambio de forma.
+
+   **Ejemplo de Vista**:
+   ```python
+   # Crear un array
+   array_original = np.array([1, 2, 3, 4, 5])
+
+   # Crear una vista mediante slicing
+   vista = array_original[:3]
+
+   # Modificar la vista
+   vista[0] = 100
+
+   print("Array original:", array_original)
+   print("Vista:", vista)
+   ```
+
+   ### **Salida**:
+   ```
+   Array original: [100   2   3   4   5]
+   Vista: [100   2   3]
+   ```
+
+   Aquí, al modificar la vista, el array original también cambia, ya que la vista está referenciando los mismos datos en memoria.
+
+2. **Copias**:
+   - Una copia es un nuevo array en memoria. Modificar la copia no afectará el array original.
+   - Para crear una copia explícita de un array en NumPy, utiliza `np.copy()`.
+
+   **Ejemplo de Copia**:
+   ```python
+   # Crear un array
+   array_original = np.array([1, 2, 3, 4, 5])
+
+   # Crear una copia del array
+   copia = np.copy(array_original)
+
+   # Modificar la copia
+   copia[0] = 100
+
+   print("Array original:", array_original)
+   print("Copia:", copia)
+   ```
+
+   ### **Salida**:
+   ```
+   Array original: [1 2 3 4 5]
+   Copia: [100   2   3   4   5]
+   ```
+
+   En este caso, al modificar la copia, el array original no cambia, ya que la copia es independiente.
+
+### **Diferencias clave entre Copias y Vistas**:
+- **Vista**: Comparte la misma memoria que el array original. Es más eficiente en términos de uso de memoria, pero cualquier cambio en la vista también cambia el array original.
+- **Copia**: Un nuevo array con una nueva asignación de memoria. No afecta al array original cuando se modifica.
+
+### **Resumen**:
+- Para obtener **elementos únicos y sus conteos**, usa `np.unique()` con `return_counts=True`.
+- Las **vistas** son referencias a los mismos datos y son más eficientes en cuanto a memoria, pero modificar la vista también modifica el array original.
+- Las **copias** crean un nuevo array en memoria, lo que te permite modificar el nuevo array sin afectar el original.
+
+Este conocimiento es esencial para trabajar con eficiencia y control en el manejo de grandes conjuntos de datos con NumPy.
+
+## Transformación de Arrays: Reshape y Manipulación
+
+Aprender a transponer y transformar matrices, invertir arrays y aplanar arrays multidimensionales son habilidades esenciales para manejar grandes volúmenes de datos y realizar cálculos complejos de manera eficiente. Usando la librería NumPy en Python, estas operaciones no solo son fáciles de implementar sino también altamente optimizadas para trabajar con grandes conjuntos de datos.
+
+### Transposición de Matrices
+
+La transposición de una matriz es una operación que intercambia sus filas y columnas, esencial en el álgebra lineal y la manipulación de datos científicos. En NumPy, se puede transponer una matriz usando matrix.T, lo que convierte las filas en columnas y viceversa.
+
+```python
+import numpy as np
+matrix = np.array([[1, 2, 3], [4, 5, 6], [7, 8, 9]])
+transposed_matrix = matrix.T
+print("Matriz original:\n", matrix)
+print("Matriz transpuesta:\n", transposed_matrix)
+```
+
+### Cambiar la Forma (Reshape) de un Array
+La función `reshape` permite cambiar la forma de un array sin cambiar sus datos. Es importante asegurarse de que el número total de elementos permanezca constante.
+
+Por ejemplo, un array de 12 elementos puede ser remodelado en una matriz de 3x4, 4x3, 2x6, etc., pero no en una matriz de 5x3.
+
+```python
+# Crea un array con los números del 1 al 12
+array = np.arange(1, 13)  
+# Cambia la forma del array a una matriz de 3 filas y 4 columnas
+reshaped_array = array.reshape(3, 4)  
+print("Array original:", array)
+print("Array reshaped a 3x4:\n", reshaped_array)
+```
+
+- np.arange(1, 13) crea un array unidimensional de 12 elementos.
+- array.reshape(3, 4) reorganiza este array en una matriz de 3 filas y 4 columnas. El número total de elementos (12) debe ser el mismo antes y después del reshaping.
+
+Asegúrate de que el número total de elementos en la nueva forma coincide con el número total de elementos en el array original. De lo contrario, se producirá un ValueError.
+
+### ¿Cómo se invierte un array en NumPy?
+
+En el procesamiento de señales y en algoritmos de inversión de datos, es muy común invertir un array, lo que implica cambiar el orden de sus elementos de forma que el primer elemento se convierta en el último y viceversa.
+
+```python
+# Crea un array con los números del 1 al 5
+array = np.array([1, 2, 3, 4, 5])  
+# Invierte el array
+reversed_array = array[::-1]  
+print("Array original:", array)
+print("Array invertido:", reversed_array)
+```
+
+`array[::-1]` Invierte el array utilizando slicing. `array[start:stop:step] `es la notación general para slicing en Python, donde start es el índice inicial, stop es el índice final (excluido), y step es el tamaño del paso. Al omitir `start` y `stop` y usar 1 como step, se obtiene una copia del array en orden inverso.
+
+Siempre debes asegurarte de que los índices `start`, `stop`, y `step` estén configurados correctamente para evitar errores de indexación.
+
+### Flattening de Arrays Multidimensionales
+
+El aplanamiento de arrays es el proceso de convertir un array multidimensional en un array unidimensional, es útil en algoritmos que requieren una entrada lineal o para operaciones de agregación. En NumPy, se puede aplanar un array usando flatten().
+
+```python
+ # Crea un array 2D
+multi_array = np.array([[1, 2, 3], [4, 5, 6], [7, 8, 9]]) 
+# Aplana el array 2D a 1D
+flattened_array = multi_array.flatten()  
+print("Array multidimensional:\n", multi_array)
+print("Array aplanado:", flattened_array)
+```
+
+`multi_array.flatten()` convierte un array 2D en un array 1D, esencialmente “aplanando” la estructura multidimensional. Esto es útil para algoritmos que requieren una entrada unidimensional o para facilitar operaciones de agregación.
+
+La operación `flatten()` siempre crea una copia, así que debes asegurarte de que esto es lo que deseas para evitar problemas de memoria.
+
+**Lecturas recomendadas**
+
+[numpy.reshape](https://numpy.org/doc/stable/reference/generated/numpy.reshape.html "numpy.reshape")
