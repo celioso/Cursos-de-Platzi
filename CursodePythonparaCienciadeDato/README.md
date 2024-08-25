@@ -2437,3 +2437,409 @@ Estos son algunos ejemplos clave para la creación y manipulación de columnas e
 [pandas.Series.apply](https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.apply.html "pandas.Series.apply")
 
 [pandas.DataFrame.apply](https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.apply.html "pandas.DataFrame.apply")
+
+## Agrupaciones con groupby
+
+En **Pandas**, la función `groupby()` se utiliza para agrupar datos en un DataFrame según una o más columnas. Esta función es muy poderosa y se combina comúnmente con operaciones de agregación, como sumas, promedios, conteos, entre otros.
+
+A continuación te explico cómo usar `groupby()` con ejemplos:
+
+### 1. **Agrupar y aplicar una función de agregación**
+
+El uso más común de `groupby()` es agrupar los datos por una columna y aplicar una función de agregación como `sum()`, `mean()`, `count()`, etc.
+
+#### Ejemplo básico:
+```python
+import pandas as pd
+
+# Crear un DataFrame de ejemplo
+data = {
+    'nombre': ['Ana', 'Juan', 'Pedro', 'Ana', 'Juan', 'Pedro'],
+    'ciudad': ['Madrid', 'Barcelona', 'Sevilla', 'Madrid', 'Barcelona', 'Sevilla'],
+    'ventas': [200, 150, 100, 250, 300, 120],
+    'anio': [2021, 2021, 2021, 2022, 2022, 2022]
+}
+df = pd.DataFrame(data)
+
+# Agrupar por la columna 'nombre' y sumar las ventas
+resultado = df.groupby('nombre')['ventas'].sum()
+print(resultado)
+```
+
+**Resultado:**
+```
+nombre
+Ana      450
+Juan     450
+Pedro    220
+Name: ventas, dtype: int64
+```
+
+### 2. **Agrupar por múltiples columnas**
+
+Puedes agrupar los datos por más de una columna para realizar análisis más complejos.
+
+```python
+# Agrupar por 'nombre' y 'ciudad' y calcular el promedio de ventas
+resultado = df.groupby(['nombre', 'ciudad'])['ventas'].mean()
+print(resultado)
+```
+
+**Resultado:**
+```
+nombre  ciudad    
+Ana     Madrid        225.0
+Juan    Barcelona     225.0
+Pedro   Sevilla       110.0
+Name: ventas, dtype: float64
+```
+
+### 3. **Aplicar varias funciones de agregación**
+
+Puedes aplicar múltiples funciones de agregación al mismo tiempo utilizando el método `agg()`.
+
+```python
+# Agrupar por 'ciudad' y aplicar múltiples funciones de agregación
+resultado = df.groupby('ciudad')['ventas'].agg(['sum', 'mean', 'max', 'min'])
+print(resultado)
+```
+
+**Resultado:**
+```
+             sum   mean  max  min
+ciudad                             
+Barcelona    450  225.0  300  150
+Madrid       450  225.0  250  200
+Sevilla      220  110.0  120  100
+```
+
+### 4. **Filtrar resultados después de agrupar**
+
+Puedes filtrar los grupos después de agrupar usando `filter()`, que te permite aplicar una condición para eliminar grupos específicos.
+
+```python
+# Filtrar ciudades donde la suma de ventas es mayor a 300
+resultado = df.groupby('ciudad').filter(lambda x: x['ventas'].sum() > 300)
+print(resultado)
+```
+
+**Resultado:**
+```
+   nombre      ciudad  ventas  anio
+0    Ana       Madrid     200  2021
+1   Juan   Barcelona     150  2021
+3    Ana       Madrid     250  2022
+4   Juan   Barcelona     300  2022
+```
+
+### 5. **Agrupación y conteo**
+
+Si deseas contar el número de ocurrencias en cada grupo, puedes usar `count()` o `size()`.
+
+```python
+# Contar el número de ventas por cada ciudad
+resultado = df.groupby('ciudad').size()
+print(resultado)
+```
+
+**Resultado:**
+```
+ciudad
+Barcelona    2
+Madrid       2
+Sevilla      2
+dtype: int64
+```
+
+### 6. **Iterar sobre grupos**
+
+Puedes iterar sobre los grupos formados por `groupby()` usando un bucle `for`. Cada iteración te da el nombre del grupo y el sub-DataFrame correspondiente.
+
+```python
+# Iterar sobre los grupos por 'nombre'
+for nombre, grupo in df.groupby('nombre'):
+    print(f"Nombre: {nombre}")
+    print(grupo)
+```
+
+**Resultado:**
+```
+Nombre: Ana
+  nombre  ciudad  ventas  anio
+0    Ana  Madrid     200  2021
+3    Ana  Madrid     250  2022
+Nombre: Juan
+  nombre      ciudad  ventas  anio
+1   Juan   Barcelona     150  2021
+4   Juan   Barcelona     300  2022
+Nombre: Pedro
+  nombre   ciudad  ventas  anio
+2  Pedro  Sevilla     100  2021
+5  Pedro  Sevilla     120  2022
+```
+
+### 7. **Agrupar y rellenar valores faltantes**
+
+Si tienes valores faltantes, puedes usar `groupby()` junto con `transform()` para aplicar funciones sobre los grupos y rellenar esos valores.
+
+```python
+# Rellenar valores faltantes con la media del grupo
+df['ventas'] = df.groupby('ciudad')['ventas'].transform(lambda x: x.fillna(x.mean()))
+print(df)
+```
+
+### 8. **Agrupaciones con varias columnas y múltiples operaciones**
+
+Si necesitas realizar varias operaciones en columnas diferentes, puedes usar `agg()` para especificar las funciones para cada columna.
+
+```python
+# Agrupar por 'anio' y aplicar funciones diferentes a 'ventas' y 'anio'
+resultado = df.groupby('anio').agg({
+    'ventas': ['sum', 'mean'],
+    'anio': 'count'
+})
+print(resultado)
+```
+
+### 9. **Restablecer el índice después de `groupby()`**
+
+A veces, después de agrupar, el índice del resultado puede no ser el esperado. Puedes restablecer el índice con `reset_index()`.
+
+```python
+# Agrupar por 'nombre' y restablecer el índice
+resultado = df.groupby('nombre')['ventas'].sum().reset_index()
+print(resultado)
+```
+
+**Resultado:**
+```
+   nombre  ventas
+0     Ana     450
+1    Juan     450
+2   Pedro     220
+```
+
+Estos son algunos de los usos más comunes de `groupby()` en **Pandas** para trabajar con datos agrupados. Si tienes algún caso específico o más preguntas sobre esto, no dudes en preguntar.
+
+[pandas.DataFrame.groupby](https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.groupby.html "pandas.DataFrame.groupby")
+
+## Filtrado de Datos con Condiciones en Pandas
+
+En **Pandas**, el filtrado de datos basado en condiciones es una operación clave para seleccionar filas de un **DataFrame** que cumplan ciertos criterios. Aquí te muestro varias formas de hacerlo con ejemplos.
+
+### 1. **Filtrado básico con una condición**
+Puedes filtrar filas de un DataFrame usando operadores lógicos como `==`, `>`, `<`, etc.
+
+#### Ejemplo:
+```python
+import pandas as pd
+
+# Crear un DataFrame de ejemplo
+df = pd.DataFrame({
+    'nombre': ['Ana', 'Juan', 'Pedro', 'Lucía'],
+    'edad': [25, 30, 22, 28],
+    'ciudad': ['Madrid', 'Barcelona', 'Sevilla', 'Madrid']
+})
+
+# Filtrar filas donde la edad sea mayor a 25
+filtro = df[df['edad'] > 25]
+print(filtro)
+```
+
+**Resultado:**
+```
+  nombre  edad      ciudad
+1   Juan    30  Barcelona
+3  Lucía    28     Madrid
+```
+
+### 2. **Filtrado con múltiples condiciones**
+Puedes combinar múltiples condiciones usando operadores lógicos: 
+- `&` para "y" lógico (AND).
+- `|` para "o" lógico (OR).
+- `~` para "no" lógico (NOT).
+
+Recuerda siempre encerrar cada condición entre paréntesis cuando combines varias.
+
+#### Ejemplo con `&` (AND):
+```python
+# Filtrar filas donde la edad sea mayor a 25 y la ciudad sea Madrid
+filtro = df[(df['edad'] > 25) & (df['ciudad'] == 'Madrid')]
+print(filtro)
+```
+
+**Resultado:**
+```
+  nombre  edad  ciudad
+3  Lucía    28  Madrid
+```
+
+#### Ejemplo con `|` (OR):
+```python
+# Filtrar filas donde la edad sea mayor a 25 o la ciudad sea Sevilla
+filtro = df[(df['edad'] > 25) | (df['ciudad'] == 'Sevilla')]
+print(filtro)
+```
+
+**Resultado:**
+```
+  nombre  edad      ciudad
+1   Juan    30  Barcelona
+2  Pedro    22     Sevilla
+3  Lucía    28     Madrid
+```
+
+### 3. **Filtrar con la función `isin()`**
+La función `isin()` es útil para filtrar filas que coincidan con una lista de valores específicos en una columna.
+
+#### Ejemplo:
+```python
+# Filtrar filas donde la ciudad sea Madrid o Sevilla
+filtro = df[df['ciudad'].isin(['Madrid', 'Sevilla'])]
+print(filtro)
+```
+
+**Resultado:**
+```
+  nombre  edad   ciudad
+0    Ana    25   Madrid
+2  Pedro    22  Sevilla
+3  Lucía    28   Madrid
+```
+
+### 4. **Filtrar filas con valores nulos (`isnull()` y `notnull()`)**
+Puedes filtrar filas que contengan valores nulos (`NaN`) usando `isnull()` o `notnull()`.
+
+#### Ejemplo:
+```python
+# Crear un DataFrame con valores nulos
+df2 = pd.DataFrame({
+    'nombre': ['Ana', 'Juan', 'Pedro', 'Lucía'],
+    'edad': [25, None, 22, 28],
+    'ciudad': ['Madrid', 'Barcelona', None, 'Madrid']
+})
+
+# Filtrar filas donde haya valores nulos en la columna 'edad'
+filtro = df2[df2['edad'].isnull()]
+print(filtro)
+```
+
+**Resultado:**
+```
+  nombre  edad      ciudad
+1   Juan   NaN  Barcelona
+```
+
+#### Filtrar filas donde no haya valores nulos en la columna 'edad':
+```python
+filtro = df2[df2['edad'].notnull()]
+print(filtro)
+```
+
+**Resultado:**
+```
+  nombre  edad   ciudad
+0    Ana  25.0   Madrid
+2  Pedro  22.0     None
+3  Lucía  28.0   Madrid
+```
+
+### 5. **Filtrar con condiciones complejas (`query()` method)**
+Pandas también proporciona el método `query()` para hacer filtrados con condiciones usando una sintaxis similar a SQL.
+
+#### Ejemplo:
+```python
+# Filtrar filas donde la edad sea mayor a 25 y la ciudad sea Madrid usando query()
+filtro = df.query('edad > 25 and ciudad == "Madrid"')
+print(filtro)
+```
+
+**Resultado:**
+```
+  nombre  edad  ciudad
+3  Lucía    28  Madrid
+```
+
+### 6. **Filtrar con texto (`str.contains()`)**
+Si necesitas filtrar datos basados en cadenas de texto, puedes usar `str.contains()` para buscar patrones en columnas de tipo string.
+
+#### Ejemplo:
+```python
+# Filtrar filas donde la ciudad contenga la letra 'M'
+filtro = df[df['ciudad'].str.contains('M')]
+print(filtro)
+```
+
+**Resultado:**
+```
+  nombre  edad  ciudad
+0    Ana    25  Madrid
+3  Lucía    28  Madrid
+```
+
+### 7. **Filtrar usando índices**
+También puedes filtrar filas basándote en el índice de las filas usando `.loc[]` o `.iloc[]`.
+
+#### Ejemplo con `.loc[]`:
+```python
+# Filtrar filas con índices específicos
+filtro = df.loc[[0, 2]]
+print(filtro)
+```
+
+**Resultado:**
+```
+  nombre  edad   ciudad
+0    Ana    25   Madrid
+2  Pedro    22  Sevilla
+```
+
+#### Ejemplo con `.iloc[]` (por posición):
+```python
+# Filtrar las primeras dos filas
+filtro = df.iloc[:2]
+print(filtro)
+```
+
+**Resultado:**
+```
+  nombre  edad      ciudad
+0    Ana    25      Madrid
+1   Juan    30  Barcelona
+```
+
+### 8. **Filtrar filas únicas (`drop_duplicates()`)**
+Si quieres eliminar filas duplicadas, puedes usar `drop_duplicates()`.
+
+#### Ejemplo:
+```python
+# Eliminar filas duplicadas en todas las columnas
+filtro = df.drop_duplicates()
+print(filtro)
+```
+
+#### Ejemplo eliminando duplicados basados en una sola columna:
+```python
+# Eliminar filas duplicadas basadas solo en la columna 'nombre'
+filtro = df.drop_duplicates(subset='nombre')
+print(filtro)
+```
+
+### 9. **Filtrar filas por rango de valores (`between()`)**
+El método `between()` permite filtrar filas dentro de un rango.
+
+#### Ejemplo:
+```python
+# Filtrar filas donde la edad esté entre 23 y 30
+filtro = df[df['edad'].between(23, 30)]
+print(filtro)
+```
+
+**Resultado:**
+```
+  nombre  edad      ciudad
+1   Juan    30  Barcelona
+3  Lucía    28     Madrid
+```
+
+Estos son algunos ejemplos básicos y avanzados para filtrar datos en **Pandas** utilizando diversas condiciones. Si tienes algún caso específico o necesitas más detalles, ¡hazme saber!
