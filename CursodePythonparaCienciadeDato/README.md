@@ -1029,3 +1029,1365 @@ La operación `flatten()` siempre crea una copia, así que debes asegurarte de q
 **Lecturas recomendadas**
 
 [numpy.reshape](https://numpy.org/doc/stable/reference/generated/numpy.reshape.html "numpy.reshape")
+
+### Visualización y Almacenamiento de Datos con NumPy
+
+### Visualización y Almacenamiento de Datos con NumPy
+
+NumPy ofrece múltiples métodos para visualizar, almacenar y recuperar datos, lo que es esencial para el análisis eficiente de datos. Aquí tienes algunas herramientas clave que puedes utilizar:
+
+### 1. **Visualización de Datos en NumPy**
+
+#### A) **Imprimir arrays**
+La forma más sencilla de visualizar los datos en un array de NumPy es imprimiéndolos en la consola:
+```python
+import numpy as np
+
+# Crear un array de ejemplo
+array = np.array([[1, 2, 3], [4, 5, 6]])
+
+# Imprimir el array
+print(array)
+```
+
+#### B) **Propiedades útiles para visualizar**
+NumPy proporciona varias propiedades útiles para entender la estructura y características de los arrays:
+
+- `array.shape`: Devuelve la forma (dimensiones) del array.
+- `array.size`: Devuelve el número total de elementos.
+- `array.ndim`: Devuelve el número de dimensiones.
+- `array.dtype`: Devuelve el tipo de datos de los elementos del array.
+
+```python
+print("Forma del array:", array.shape)
+print("Número de elementos:", array.size)
+print("Dimensiones:", array.ndim)
+print("Tipo de datos:", array.dtype)
+```
+
+#### C) **Visualización gráfica con Matplotlib**
+Puedes utilizar Matplotlib junto con NumPy para visualizar los datos en gráficos:
+
+```python
+import matplotlib.pyplot as plt
+
+# Crear datos con NumPy
+x = np.linspace(0, 10, 100)
+y = np.sin(x)
+
+# Graficar
+plt.plot(x, y)
+plt.title("Seno de x")
+plt.show()
+```
+
+### 2. **Almacenamiento y Carga de Datos en NumPy**
+
+#### A) **Guardar arrays en archivos**
+NumPy permite guardar arrays en archivos binarios o de texto.
+
+- **Formato binario (npy):** Almacena datos en un formato eficiente de espacio y rápido de leer.
+  
+  ```python
+  # Guardar un array en formato .npy
+  np.save('array_guardado.npy', array)
+  ```
+
+- **Formato de texto (txt o csv):** Puedes guardar los datos en un formato legible como CSV.
+  
+  ```python
+  # Guardar un array en formato de texto
+  np.savetxt('array_guardado.txt', array, delimiter=',')
+  ```
+
+#### B) **Cargar arrays desde archivos**
+Puedes cargar datos guardados previamente en los formatos binario o de texto.
+
+- **Cargar desde un archivo .npy:**
+  
+  ```python
+  # Cargar el array desde un archivo .npy
+  array_cargado = np.load('array_guardado.npy')
+  print(array_cargado)
+  ```
+
+- **Cargar desde un archivo de texto:**
+  
+  ```python
+  # Cargar el array desde un archivo de texto
+  array_cargado_txt = np.loadtxt('array_guardado.txt', delimiter=',')
+  print(array_cargado_txt)
+  ```
+
+### 3. **Almacenamiento de Múltiples Arrays**
+
+- **Formato zip (npz):** Puedes almacenar múltiples arrays en un solo archivo comprimido:
+
+  ```python
+  # Guardar varios arrays en un archivo .npz
+  np.savez('arrays.npz', array1=array, array2=array * 2)
+  
+  # Cargar los arrays desde un archivo .npz
+  arrays = np.load('arrays.npz')
+  print(arrays['array1'])
+  print(arrays['array2'])
+  ```
+
+### Conclusión
+NumPy proporciona herramientas muy útiles para visualizar datos en consola, almacenarlos de forma eficiente y recuperarlos cuando sea necesario. Estas capacidades permiten manejar grandes conjuntos de datos y trabajar de manera efectiva en proyectos de análisis numérico y científico.
+
+## Optimización y escalabilidad en NumPy
+
+Hoy en día, los conjuntos de datos crecen a un ritmo exponencial, y las empresas necesitan procesar grandes volúmenes de datos de manera eficiente. Como analista o científico de datos, es esencial aprender a manejar y optimizar el uso de arrays grandes para garantizar un buen rendimiento.
+
+En esta clase, aprenderás estrategias clave para manejar arrays grandes, optimizar el uso de memoria y realizar operaciones paralelas utilizando múltiples núcleos.
+
+### Dividir y Conquistar
+
+Una estrategia eficaz para manejar grandes volúmenes de datos es dividir los arrays en bloques más pequeños. Esto reduce la carga de memoria y facilita el procesamiento.
+
+Imagina que estás trabajando con el histórico de ventas de una tienda. Procesar toda la información de una vez puede ser impráctico, pero dividir los datos en bloques más pequeños puede hacer una gran diferencia.
+
+```python
+import numpy as np
+
+# Crear un array grande de un millón de elementos aleatorios
+large_array = np.random.rand(1000000)
+
+# Dividir en bloques más pequeños
+block_size = 100000
+for i in range(0, len(large_array), block_size):
+    block = large_array[i:i+block_size]
+    # Realizar operaciones en el bloque
+    print(f"Procesando bloque {i//block_size + 1}")
+```
+
+Este código divide un array grande en bloques de 100,000 elementos para procesarlos por partes, evitando agotar la memoria del sistema. Esta técnica es fundamental para manejar grandes volúmenes de datos de manera eficiente.
+
+### Uso de Memoria y Optimización
+
+Optimizar el uso de memoria es crucial cuando se trabaja con grandes volúmenes de datos.
+
+Aquí te comparto dos estrategias efectivas:
+
+### Tipos de Datos Eficientes
+
+Utilizar tipos de datos más eficientes puede reducir significativamente el uso de memoria. Por ejemplo, cambiar de `float64` a `float32` puede reducir el tamaño del array a la mitad, lo que es crucial cuando se trabaja con grandes volúmenes de datos
+
+```python
+# Array con tipo de dato float64
+array_float64 = np.array([1.0, 2.0, 3.0], dtype=np.float64)
+print("Uso de memoria float64:", array_float64.nbytes)
+
+# Array con tipo de dato float32
+array_float32 = np.array([1.0, 2.0, 3.0], dtype=np.float32)
+print("Uso de memoria float32:", array_float32.nbytes)
+```
+
+En este ejemplo, se crean dos arrays: uno de tipo `float64` y otro de tipo `float32`. Usar `float32` en lugar de `float64` puede reducir el uso de memoria a la mitad, lo que es esencial para eficientar el manejo de grandes datasets.
+
+### Operaciones In-place
+
+Realizar operaciones in-place puede reducir el uso de memoria al evitar la creación de arrays temporales. Esto es especialmente útil cuando se necesita actualizar los valores de un array sin duplicarlo en la memoria.
+
+```python
+array = np.array([1, 2, 3, 4, 5])
+array += 1  # Operación in-place
+print("Array después de operación in-place:", array)
+```
+
+Con **+=1** realizamos una operación in-place sobre un array, incrementando cada elemento en 1. Las operaciones in-place modifican el array original sin crear uno nuevo, lo que ahorra memoria.
+
+### Operaciones Paralelas y Uso de Múltiples Núcleos
+
+Además de optimizar el uso de memoria, es fundamental acelerar el procesamiento de grandes arrays. Para ello, es esencial utilizar operaciones paralelas y múltiples núcleos.
+
+### Uso de `numexpr` para Operaciones Paralelas
+
+`numexpr` es una biblioteca que permite realizar operaciones numéricas de manera más eficiente utilizando múltiples núcleos. Esto puede acelerar significativamente el procesamiento de grandes arrays.
+
+```python
+import numexpr as ne
+import numpy as np
+
+# Crear dos arrays grandes
+a = np.random.rand(1000000)
+b = np.random.rand(1000000)
+
+# Usando numexpr para operación paralela
+result = ne.evaluate('a + b')
+
+print("Operación paralela completada con numexpr")
+```
+
+Este código compara el tiempo de ejecución de una operación de suma en arrays grandes utilizando `numexpr` para realizar la operación en paralelo y sin `numexpr`.
+
+Usar numexpr puede acelerar significativamente el procesamiento, lo que es crucial para manejar grandes volúmenes de datos de manera eficiente.
+
+### Uso de `joblib` para Paralelización
+
+`joblib` f facilita la paralelización de tareas, permitiendo distribuir el trabajo entre múltiples núcleos del procesador. Esto es útil para tareas que pueden dividirse en partes independientes, como el procesamiento de grandes arrays.
+
+```python
+from joblib import Parallel, delayed
+
+def process_block(block):
+    return np.sum(block)
+
+large_array = np.random.rand(1000000)
+block_size = 100000
+blocks = [large_array[i:i+block_size] for i in range(0, len(large_array), block_size)]
+results = Parallel(n_jobs=-1)(delayed(process_block)(block) for block in blocks)
+print("Resultados de la paralelización:", results)
+```
+
+Utilizamos `joblib` para paralelizar el procesamiento de un array grande dividido en bloques. Cada bloque se suma de forma paralela en múltiples núcleos del procesador, mejorando la eficiencia del procesamiento.
+
+Manejar y optimizar arrays grandes es crucial en el análisis de datos para garantizar un rendimiento eficiente. Estrategias como dividir arrays en bloques, utilizar tipos de datos eficientes y realizar operaciones paralelas pueden mejorar significativamente la velocidad y eficiencia del procesamiento de datos. Estas técnicas son esenciales en diversos campos, desde la bioinformática hasta el análisis financiero, permitiendo el manejo eficaz de grandes volúmenes de datos.
+
+Estas herramientas y estrategias te permitirán manejar datos de manera más eficiente, lo cual es fundamental en el mundo de la ciencia de datos. Practicar estos conceptos y técnicas puede convertirte en un experto en la optimización y escalabilidad con NumPy.
+
+## Pandas para Manipulación de Datos
+
+[Online retail.csv](https://drive.google.com/drive/folders/17DfmdHXEGd8FWXMiHP6OqjVY-6iNommX?usp=sharing "Online retail.csv")
+Datos obtenidos de Daqing Chen, Sai Liang Sain, and Kun Guo, Data mining for the online retail industry: A case study of RFM model-based customer segmentation using data mining, Journal of Database Marketing and Customer Strategy Management, Vol. 19, No. 3, pp. 197â€“208, 2012 (Published online before print: 27 August 2012. doi: 10.1057/dbm.2012.17).
+
+### Pandas para Manipulación de Datos
+
+**Pandas** es una librería poderosa y flexible de Python que se utiliza principalmente para manipulación, análisis y limpieza de datos. Proporciona dos estructuras de datos principales: **Series** (para datos unidimensionales) y **DataFrames** (para datos bidimensionales), que permiten trabajar con conjuntos de datos de manera eficiente.
+
+A continuación, te explico las principales funcionalidades de Pandas para la manipulación de datos:
+
+---
+
+### 1. **Creación de DataFrames**
+
+Un **DataFrame** es la estructura principal en Pandas. Es una tabla bidimensional con columnas etiquetadas de diferentes tipos (numéricas, de texto, etc.). Puedes crear DataFrames de varias maneras.
+
+#### A) A partir de un diccionario:
+```python
+import pandas as pd
+
+# Crear un DataFrame desde un diccionario
+data = {
+    'Nombre': ['Ana', 'Luis', 'Carlos'],
+    'Edad': [23, 45, 36],
+    'Ciudad': ['Madrid', 'Barcelona', 'Valencia']
+}
+df = pd.DataFrame(data)
+print(df)
+```
+
+#### B) A partir de un archivo CSV:
+```python
+df = pd.read_csv('archivo.csv')
+```
+
+---
+
+### 2. **Indexación y Selección de Datos**
+
+Pandas ofrece diversas formas para seleccionar y filtrar datos en un DataFrame.
+
+#### A) Selección de columnas:
+```python
+# Seleccionar una columna
+edades = df['Edad']
+
+# Seleccionar múltiples columnas
+df_subset = df[['Nombre', 'Edad']]
+```
+
+#### B) Selección de filas por etiqueta o posición:
+```python
+# Seleccionar por posición (iloc)
+primera_fila = df.iloc[0]
+
+# Seleccionar por etiqueta (loc)
+fila_ana = df.loc[df['Nombre'] == 'Ana']
+```
+
+#### C) Filtrado de datos:
+Puedes aplicar condiciones para filtrar filas.
+
+```python
+# Filtrar filas donde la edad es mayor de 30
+mayores_de_30 = df[df['Edad'] > 30]
+```
+
+---
+
+### 3. **Operaciones Básicas**
+
+#### A) Descripción rápida de los datos:
+Puedes obtener un resumen rápido de tu conjunto de datos con `describe()` o con métodos como `mean()`, `sum()`, etc.
+
+```python
+df.describe()  # Resumen estadístico de las columnas numéricas
+```
+
+#### B) Renombrar columnas:
+```python
+df.rename(columns={'Nombre': 'Nombre_Completo'}, inplace=True)
+```
+
+#### C) Ordenar los datos:
+```python
+df.sort_values(by='Edad', ascending=False, inplace=True)  # Ordenar por edad descendente
+```
+
+---
+
+### 4. **Manejo de Valores Nulos**
+
+Los valores faltantes o nulos son comunes en los conjuntos de datos y es importante gestionarlos correctamente.
+
+#### A) Identificar valores nulos:
+```python
+df.isnull().sum()  # Contar valores nulos por columna
+```
+
+#### B) Eliminar filas o columnas con valores nulos:
+```python
+df.dropna(inplace=True)  # Eliminar filas con valores nulos
+```
+
+#### C) Rellenar valores nulos:
+```python
+df.fillna(value=0, inplace=True)  # Rellenar valores nulos con 0
+```
+
+---
+
+### 5. **Transformación de Datos**
+
+Pandas permite aplicar funciones a las columnas o filas para transformar los datos.
+
+#### A) Aplicar funciones a columnas:
+```python
+# Calcular 10% de descuento en una columna de precios
+df['Precio_Descuento'] = df['Precio'].apply(lambda x: x * 0.9)
+```
+
+#### B) Agrupar datos:
+Puedes agrupar datos y realizar agregaciones.
+
+```python
+# Agrupar por la columna 'Ciudad' y calcular la edad media
+df_grouped = df.groupby('Ciudad')['Edad'].mean()
+```
+
+#### C) Pivotar datos:
+```python
+df_pivot = df.pivot_table(values='Edad', index='Ciudad', columns='Sexo', aggfunc='mean')
+```
+
+---
+
+### 6. **Fusión y Unión de DataFrames**
+
+Pandas ofrece diversas formas de combinar y fusionar DataFrames.
+
+#### A) Concatenar DataFrames:
+```python
+df_concatenado = pd.concat([df1, df2])
+```
+
+#### B) Fusión (Join) de DataFrames:
+```python
+df_merged = pd.merge(df1, df2, on='clave_común', how='inner')  # Tipos: 'inner', 'left', 'right', 'outer'
+```
+
+---
+
+### 7. **Visualización de Datos con Pandas**
+
+Aunque Pandas no es una librería de visualización por sí sola, se integra fácilmente con **Matplotlib** para generar gráficos rápidos.
+
+#### A) Gráficos rápidos:
+```python
+df['Edad'].plot(kind='hist')  # Histograma de la columna 'Edad'
+```
+
+#### B) Gráficos avanzados con Matplotlib:
+```python
+import matplotlib.pyplot as plt
+
+df['Edad'].plot(kind='bar')
+plt.show()
+```
+
+---
+
+### 8. **Exportar Datos**
+
+Después de manipular los datos, puedes exportarlos a diversos formatos.
+
+#### A) Exportar a CSV:
+```python
+df.to_csv('archivo_modificado.csv', index=False)
+```
+
+#### B) Exportar a Excel:
+```python
+df.to_excel('archivo_modificado.xlsx', index=False)
+```
+
+---
+
+### 9. **Optimización en Pandas**
+
+#### A) Tipos de datos adecuados:
+Usar los tipos de datos correctos en Pandas puede reducir el uso de memoria y mejorar el rendimiento. Por ejemplo, puedes convertir columnas de enteros a enteros de menor tamaño (`int8`, `int16`), o columnas categóricas a `category`.
+
+```python
+df['Categoría'] = df['Categoría'].astype('category')
+```
+
+#### B) Uso eficiente de `apply` y `vectorización`:
+Evita el uso excesivo de `apply` en funciones que pueden vectorizarse, ya que `apply` es más lento en comparación con las operaciones vectorizadas.
+
+---
+
+### Conclusión
+
+Pandas proporciona una amplia gama de herramientas para manipular y analizar datos de manera eficiente y flexible. Desde la selección y filtrado de datos hasta la limpieza, transformación y visualización, Pandas es una herramienta esencial para cualquier científico de datos o analista. Con la optimización adecuada y un buen conocimiento de las técnicas avanzadas, puedes trabajar con grandes volúmenes de datos de manera eficiente.
+
+**Lecturas recomendadas**
+
+[Descargable Online Retail CSV](https://www.dropbox.com/scl/fi/ae6e9qzi754nq4mo3rvl2/online_retail.csv?rlkey=uhi83o2mexi1d4qm1ijaw1wvc&st=ca8q8xgv&dl=0 "Descargable Online Retail CSV")
+
+[Kaggle: Your Machine Learning and Data Science Community](https://www.kaggle.com/ "Kaggle: Your Machine Learning and Data Science Community")
+
+[UCI Machine Learning Repository](https://archive.ics.uci.edu/ "UCI Machine Learning Repository")
+
+[Online Retail](https://www.kaggle.com/datasets/tunguz/online-retail "Online Retail")
+
+## Creación de DataFrames en Pandas
+
+![DALL·E.png](./images/DALL·E.png "DALL·E.png")
+
+Pandas es una biblioteca de Python diseñada específicamente para la manipulación y el análisis de datos. Su popularidad en la comunidad de ciencia de datos se debe a su facilidad de uso, su integración con otras bibliotecas como NumPy y Matplotlib, y la capacidad de manejar grandes volúmenes de datos de manera eficiente. Python, por su parte, es un lenguaje de programación versátil y ampliamente utilizado en diversas áreas de la tecnología, lo que lo convierte en una elección natural para el análisis de datos.
+
+### ¿Por qué Pandas y Python?
+
+1. **Facilidad de Uso**: La sintaxis de Pandas es intuitiva y fácil de aprender. Permite realizar operaciones complejas de manera sencilla, lo que facilita la limpieza y manipulación de datos.
+2. **Eficiencia**: Pandas está optimizado para realizar operaciones en grandes conjuntos de datos de manera rápida y eficiente.
+3. **Flexibilidad**: Puede manejar diferentes tipos de datos y formatos, como CSV, Excel, JSON, SQL, entre otros.
+4. **Integración**: Se integra perfectamente con otras bibliotecas de Python como NumPy, Matplotlib, y Scikit-learn, lo que permite una amplia gama de análisis y visualizaciones.
+
+### Procesos de Limpieza de Datos en Pandas
+
+Cuando trabajamos con datos reales, es común encontrar datos faltantes, inconsistencias, y errores. Pandas proporciona una amplia gama de herramientas para limpiar y preparar los datos para el análisis. Estos son algunos de los procesos por los que pasará un archivo CSV en Pandas:
+
+1. **Lectura de Datos**: El primer paso es leer los datos desde el archivo CSV utilizando pd.read_csv().
+2. **Conversión de Tipos de Datos**: A menudo es necesario convertir tipos de datos, por ejemplo, convertir fechas de texto a objetos datetime.
+3. **Eliminación de Filas o Columnas**: Es común eliminar filas o columnas innecesarias o que contienen muchos valores faltantes.
+4. **Imputación de Datos Faltantes**: Los valores faltantes pueden ser imputados utilizando técnicas como el relleno con la media, mediana, o un valor constante.
+5. **Eliminación de Duplicados**: Los datos duplicados pueden ser identificados y eliminados para asegurar la integridad de los datos.
+6. **Filtrado de Datos**: Filtrar los datos para enfocarse en subconjuntos específicos basados en condiciones lógicas.
+7. **Creación de Nuevas Columnas**: Generar nuevas columnas derivadas de las existentes para facilitar el análisis.
+
+### ¿Qué es un DataFrame?
+
+Un DataFrame es una estructura de datos bidimensional en Pandas, similar a una tabla en una base de datos o una hoja de cálculo en Excel. Está compuesto por filas y columnas, donde cada columna puede contener un tipo de dato diferente (números, cadenas, fechas, etc.). Los DataFrames son extremadamente útiles para la manipulación, análisis y visualización de datos.
+
+A continuación, exploraremos diversas formas de crear DataFrames en Pandas, utilizando diferentes fuentes de datos:
+
+### 1. Leer Datos desde un Archivo CSV
+
+La forma más común de crear un DataFrame es leyendo datos desde un archivo CSV. Vamos a utilizar el dataset de ventas retail que hemos estado manejando. Los estudiantes también pueden descargar un dataset de las plataformas mencionadas anteriormente o de donde ellos gusten para hacer la extracción de datos. Esto les permitirá tener el proyecto de retail y otro proyecto adicional que ellos elijan.
+```python
+
+import pandas as pd
+
+# Leer el dataset de ventas desde un archivo CSV
+file_path = "/content/online_retail.csv"
+sales_data = pd.read_csv(file_path)
+
+# Mostrar las primeras filas del DataFrame
+print(sales_data.head())
+```
+
+### 2. Crear DataFrames desde Arrays de NumPy
+
+Pandas se integra perfectamente con NumPy, lo que permite crear DataFrames a partir de arrays de NumPy. Esto es útil cuando trabajamos con datos numéricos y necesitamos realizar análisis o transformaciones más complejas.
+
+```python
+import numpy as np
+
+# Crear un array de NumPy
+data = np.array([[1, 2, 3], [4, 5, 6], [7, 8, 9]])
+
+# Crear un DataFrame desde el array
+df_from_array = pd.DataFrame(data, columns=['A', 'B', 'C'])
+
+# Mostrar el DataFrame
+print(df_from_array)
+```
+
+### 3. Crear DataFrames desde Listas de Python
+
+También pueden crearse DataFrames a partir de listas de Python. Esto incluye listas de listas y listas de diccionarios.
+
+### 3.1. Listas de Listas
+
+```python
+# Crear una lista de listas
+data = [[1, 'John', 22], [2, 'Anna', 24], [3, 'Mike', 21]]
+
+# Crear un DataFrame desde la lista de listas
+df_from_list = pd.DataFrame(data, columns=['ID', 'Name', 'Age'])
+
+# Mostrar el DataFrame
+print(df_from_list)
+```
+
+### 3.2. Listas de Diccionarios
+
+```python
+# Crear una lista de diccionarios
+data = [{'ID': 1, 'Name': 'John', 'Age': 22}, {'ID': 2, 'Name': 'Anna', 'Age': 24}, {'ID': 3, 'Name': 'Mike', 'Age': 21}]
+
+# Crear un DataFrame desde la lista de diccionarios
+df_from_dict_list = pd.DataFrame(data)
+
+# Mostrar el DataFrame
+print(df_from_dict_list)
+```
+
+### 4. Crear DataFrames desde Diccionarios
+
+Los diccionarios de Python son una estructura de datos flexible y comúnmente utilizada para crear DataFrames.
+
+### 4.1. Diccionarios de Listas
+
+```python
+# Crear un diccionario de listas
+data = {'ID': [1, 2, 3], 'Name': ['John', 'Anna', 'Mike'], 'Age': [22, 24, 21]}
+
+# Crear un DataFrame desde el diccionario de listas
+df_from_dict = pd.DataFrame(data)
+
+# Mostrar el DataFrame
+print(df_from_dict)
+```
+
+### 4.2. Diccionarios de Series
+
+```python
+# Crear un diccionario de Series
+data = {
+    'ID': pd.Series([1, 2, 3]),
+    'Name': pd.Series(['John', 'Anna', 'Mike']),
+    'Age': pd.Series([22, 24, 21])
+}
+
+# Crear un DataFrame desde el diccionario de Series
+df_from_series_dict = pd.DataFrame(data)
+
+# Mostrar el DataFrame
+print(df_from_series_dict)
+```
+
+### 5. Crear DataFrames desde Archivos Excel
+Pandas puede leer archivos Excel directamente y convertirlos en DataFrames.
+
+```python
+# Leer el dataset desde un archivo Excel
+file_path = "/content/online_retail.xlsx"
+df_from_excel = pd.read_excel(file_path)
+
+# Mostrar las primeras filas del DataFrame
+print(df_from_excel.head())
+```
+
+### 6. Crear DataFrames desde Archivos JSON
+
+Pandas facilita la lectura de archivos JSON que son comunes en aplicaciones web y APIs.
+
+```python
+# Leer el dataset desde un archivo JSON
+file_path = "/content/online_retail.json"
+df_from_json = pd.read_json(file_path)
+
+# Mostrar las primeras filas del DataFrame
+print(df_from_json.head())
+```
+
+### 7. Crear DataFrames desde Archivos HTML
+
+También puede extraer tablas directamente de archivos HTML o páginas web.
+
+```python
+# Leer el dataset desde una tabla HTML
+url = "https://example.com/table.html"
+dfs = pd.read_html(url)
+
+# Mostrar el primer DataFrame extraído
+print(dfs[0].head())
+```
+
+### Uso de Google Drive para Acceder a Archivos
+Para facilitar el acceso y manejo de archivos, podemos utilizar Google Drive. Aquí se explica cómo montar Google Drive en un entorno de Google Colab:
+
+```python
+from google.colab import drive
+
+# Montar Google Drive
+drive.mount('/content/drive')
+
+# Especificar la ruta del archivo en Google Drive
+file_path = "/content/drive/My Drive/online_retail.csv"
+
+# Leer el archivo CSV desde Google Drive
+sales_data = pd.read_csv(file_path)
+
+# Mostrar las primeras filas del DataFrame
+print(sales_data.head())
+```
+
+
+### Proyecto de Retail y Proyecto Personal
+
+![DALL·E-2024-07-31-11.31.56-A-clean-and-modern-data-analysis-portfolio.png](./images/DALL·E-2024-07-31-11.31.56-A-clean-and-modern-data-analysis-portfolio.png "DALL·E-2024-07-31-11.31.56-A-clean-and-modern-data-analysis-portfolio.png")
+
+Durante este curso, trabajaremos en un proyecto de análisis de datos utilizando el dataset de ventas retail. Además, debes seleccionar un dataset de tu preferencia en la plataformas Open Source como [Kaggle](https://www.kaggle.com/ "Kaggle") o [Machine learning Repository](https://archive.ics.uci.edu/ "Machine learning Repository") para hacer la extracción de datos. Esto te permitirá tener el proyecto de retail y otro proyecto adicional al finalizar el curso. Esta práctica te ayudará a aplicar los conceptos aprendidos en diferentes contextos y con diferentes tipos de datos.
+
+Recuerda aplicar cada clase a ambos datasets y también experimentar con las variaciones de ejemplos. Además en cada clase encontrarás lecturas en la descripción para enriquecer el tema avanzado y que no se te escape ningún concepto
+
+**Lecturas recomendadas**
+
+[pandas.DataFrame](https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html "pandas.DataFrame")
+
+## Estructuras de Datos en Pandas y Funciones
+
+### Funciones de Resumen y Estadísticas en Pandas
+
+Vamos a explorar algunas funciones de resumen y estadísticas que podemos utilizar con nuestro DataFrame.
+
+### Uso de `describe()` para obtener un resumen estadístico.
+
+```python
+# Resumen estadístico
+summary = retail_data.describe()
+print("Resumen estadístico:\\n", summary)
+```
+
+### Cálculo de la media y mediana.
+
+#### Media:
+
+```python
+mean_value = retail_data['Quantity'].mean()
+print("Media de Quantity:", mean_value)
+```
+
+####  Mediana:
+
+```python
+median_value = retail_data['Quantity'].median()
+print("Mediana de Quantity:", median_value)
+```
+
+#### Suma y conteo de valores.
+#### Suma:
+
+```python
+total_sum = retail_data['Quantity'].sum()
+print("Suma de Quantity:", total_sum)
+```
+
+#### Conteo de valores:
+
+```python
+count_values = retail_data['Quantity'].count()
+print("Conteo de Quantity:", count_values)
+```
+
+#### Desviación estándar y varianza.
+#### Desviación estándar:
+
+```python
+std_dev = retail_data['Quantity'].std()
+print("Desviación estándar de Quantity:", std_dev)
+```
+
+#### Varianza
+
+```python
+variance = retail_data['Quantity'].var()
+print("Varianza de Quantity:", variance)
+```
+
+#### Mínimo, Máximo y Producto.
+##### Mínimo:
+
+```python
+min_value = retail_data['Quantity'].min()
+print("Mínimo de Quantity:", min_value)
+```
+
+##### Máximo:
+
+```python
+max_value = retail_data['Quantity'].max()
+print("Máximo de Quantity:", max_value)
+```
+
+##### Producto:
+
+```python
+prod_value = retail_data['Quantity'].prod()
+print("Producto de Quantity:", prod_value)
+```
+
+### Estructuras de Datos en Pandas y Funciones
+
+Pandas proporciona dos estructuras de datos principales: **Series** y **DataFrame**, que permiten el análisis y manipulación de datos de una manera muy eficiente.
+
+---
+
+### 1. **Series**
+
+Una **Series** es una estructura unidimensional similar a un array, lista o columna de una tabla. Cada elemento en una Series tiene una **etiqueta** o **índice**, lo que la convierte en una estructura de datos similar a un diccionario, con pares clave-valor.
+
+#### Creación de una Serie:
+
+```python
+import pandas as pd
+
+# Crear una Serie desde una lista
+serie = pd.Series([10, 20, 30, 40])
+
+# Crear una Serie con índices personalizados
+serie_personalizada = pd.Series([100, 200, 300], index=['a', 'b', 'c'])
+
+print(serie)
+print(serie_personalizada)
+```
+
+**Funciones importantes en Series:**
+
+- **.head()**: Devuelve los primeros elementos de la Serie.
+- **.tail()**: Devuelve los últimos elementos de la Serie.
+- **.sum()**: Suma de todos los elementos.
+- **.mean()**: Media de los elementos.
+- **.max(), .min()**: Máximo y mínimo valor de la Serie.
+- **.describe()**: Proporciona un resumen estadístico.
+- **.value_counts()**: Cuenta los valores únicos en la Serie.
+
+---
+
+### 2. **DataFrame**
+
+Un **DataFrame** es una estructura de datos bidimensional con columnas etiquetadas, que puede contener datos de diferentes tipos (números, cadenas, booleanos). Es la estructura más utilizada en Pandas y se puede entender como una tabla de datos similar a una hoja de cálculo o una tabla SQL.
+
+#### Creación de un DataFrame:
+
+```python
+# Crear un DataFrame desde un diccionario
+data = {
+    'Nombre': ['Ana', 'Luis', 'Carlos'],
+    'Edad': [23, 45, 36],
+    'Ciudad': ['Madrid', 'Barcelona', 'Valencia']
+}
+
+df = pd.DataFrame(data)
+
+print(df)
+```
+
+#### Funciones comunes en DataFrame:
+
+- **.shape**: Muestra las dimensiones (filas, columnas) del DataFrame.
+- **.info()**: Proporciona información sobre el DataFrame (tipo de datos, valores nulos, etc.).
+- **.describe()**: Devuelve estadísticas descriptivas de las columnas numéricas.
+- **.head(n)**: Muestra las primeras `n` filas del DataFrame.
+- **.tail(n)**: Muestra las últimas `n` filas.
+- **.columns**: Devuelve los nombres de las columnas.
+- **.dtypes**: Devuelve los tipos de datos de las columnas.
+
+#### Indexación en DataFrames:
+Puedes acceder a columnas, filas o subconjuntos de datos mediante diferentes métodos.
+
+- **Acceder a columnas**:
+
+```python
+# Acceder a una columna específica
+df['Nombre']
+
+# Acceder a varias columnas
+df[['Nombre', 'Edad']]
+```
+
+- **Acceder a filas** (con `.loc[]` o `.iloc[]`):
+
+```python
+# Acceder a una fila por etiqueta (índice)
+df.loc[0]
+
+# Acceder a una fila por posición
+df.iloc[0]
+```
+
+---
+
+### 3. **Funciones para Manipulación de Datos**
+
+#### A) **Seleccionar Datos**
+
+Puedes seleccionar datos de un DataFrame utilizando **condiciones**:
+
+```python
+# Filtrar filas donde la edad sea mayor que 30
+df_filtrado = df[df['Edad'] > 30]
+print(df_filtrado)
+```
+
+#### B) **Añadir, Modificar y Eliminar Columnas**
+
+- **Añadir columnas**:
+```python
+df['Salario'] = [3000, 4000, 5000]  # Añadir una nueva columna
+```
+
+- **Modificar columnas**:
+```python
+df['Edad'] = df['Edad'] + 5  # Incrementar la edad en 5 años
+```
+
+- **Eliminar columnas**:
+```python
+df = df.drop(columns=['Salario'])  # Eliminar la columna 'Salario'
+```
+
+#### C) **Agrupación y Agregación de Datos**
+
+- **groupby()**: Agrupa los datos según una columna y aplica funciones agregadas como sum, mean, count, etc.
+
+```python
+df_agrupado = df.groupby('Ciudad')['Edad'].mean()
+print(df_agrupado)
+```
+
+#### D) **Operaciones de Fusión y Unión**
+
+- **concat()**: Para unir DataFrames vertical u horizontalmente.
+  
+```python
+df1 = pd.DataFrame({'A': [1, 2], 'B': [3, 4]})
+df2 = pd.DataFrame({'A': [5, 6], 'B': [7, 8]})
+
+df_concatenado = pd.concat([df1, df2], axis=0)  # Unión vertical
+```
+
+- **merge()**: Para combinar DataFrames sobre la base de columnas o índices comunes.
+
+```python
+df_left = pd.DataFrame({'key': ['A', 'B', 'C'], 'left_value': [1, 2, 3]})
+df_right = pd.DataFrame({'key': ['B', 'C', 'D'], 'right_value': [4, 5, 6]})
+
+df_merge = pd.merge(df_left, df_right, on='key', how='inner')  # Unión por 'key'
+print(df_merge)
+```
+
+#### E) **Manejo de Datos Faltantes**
+
+- **isnull()**: Devuelve un DataFrame con valores `True` donde hay valores nulos.
+- **dropna()**: Elimina filas o columnas con valores nulos.
+- **fillna()**: Rellena los valores nulos con un valor específico.
+
+```python
+df = pd.DataFrame({'A': [1, None, 3], 'B': [4, 5, None]})
+
+# Rellenar valores nulos
+df_relleno = df.fillna(0)
+
+# Eliminar filas con valores nulos
+df_sin_na = df.dropna()
+```
+
+#### F) **Ordenar Datos**
+
+- **sort_values()**: Ordena los datos por valores de una columna.
+  
+```python
+df_ordenado = df.sort_values(by='Edad', ascending=False)
+print(df_ordenado)
+```
+
+---
+
+### 4. **Funciones Estadísticas en Pandas**
+
+Pandas tiene una variedad de funciones estadísticas útiles para análisis de datos:
+
+- **.sum()**: Suma de los valores.
+- **.mean()**: Media de los valores.
+- **.median()**: Mediana de los valores.
+- **.std()**: Desviación estándar.
+- **.corr()**: Correlación entre columnas.
+- **.count()**: Número de valores no nulos.
+  
+```python
+# Ejemplo de uso de funciones estadísticas
+df['Edad'].mean()   # Media de la columna 'Edad'
+df['Edad'].std()    # Desviación estándar
+df.corr()           # Correlación entre las columnas numéricas
+```
+
+---
+
+### Conclusión
+
+Pandas es una herramienta muy poderosa para la manipulación y análisis de datos. Con sus estructuras de datos principales (Series y DataFrame) y una amplia gama de funciones y métodos, es posible realizar operaciones complejas de manera eficiente. Esencial para la ciencia de datos, análisis financiero, procesamiento de archivos grandes y más.
+
+**Lecturas recomendadas**
+
+[How to calculate summary statistics- Pandas](https://pandas.pydata.org/docs/getting_started/intro_tutorials/06_calculate_statistics.html "How to calculate summary statistics- Pandas")
+
+## Uso de iloc y loc en Pandas
+
+Seleccionar datos es una operación fundamental en cualquier análisis de datos. En Pandas, las dos formas más comunes de seleccionar datos son `iloc` y `loc`.
+
+### iloc[] - Indexación por Enteros
+
+`iloc` se utiliza para la indexación basada en enteros, permitiendo seleccionar filas y columnas por su posición.
+
+**Ejemplos de uso de `iloc`:**
+
+### 1. Seleccionar una fila específica:
+
+```python
+import pandas as pd
+file_path = "online_retail.csv"
+retail_data = pd.read_csv(file_path)
+
+# Seleccionar la primera fila
+primera_fila = retail_data.iloc[0]
+print("Primera fila:\n", primera_fila)
+```
+
+### 2. Seleccionar múltiples filas:
+
+```python
+# Seleccionar las primeras cinco filas
+primeras_cinco_filas = retail_data.iloc[:5]
+print("Primeras cinco filas:\n", primeras_cinco_filas)
+```
+
+### 3. Seleccionar una fila y una columna específica:
+
+```python
+# Seleccionar el valor en la primera fila y tercera columna
+valor = retail_data.iloc[0, 2]
+print("Valor en la primera fila y tercera columna:", valor)
+```
+
+### 4. Seleccionar múltiples filas y columnas:
+
+```python
+# Seleccionar las primeras cinco filas y las primeras tres columnas
+subset = retail_data.iloc[:5, :3]
+print("Subset de las primeras cinco filas y tres columnas:\n", subset)
+```
+
+### loc[] - Indexación por Etiquetas
+loc se utiliza para la indexación basada en etiquetas, permitiendo seleccionar filas y columnas por sus nombres.
+
+**Ejemplos de uso de `loc`:**
+
+### 1. Seleccionar una fila específica por su índice:
+
+# Seleccionar la fila con índice 3
+fila_indice_3 = retail_data.loc[3]
+print("Fila con índice 3:\n", fila_indice_3)
+
+### 2. Seleccionar múltiples filas por sus índices:
+
+```python
+# Seleccionar filas con índices de 0 a 4
+filas_indices_0_a_4 = retail_data.loc[0:4]
+print("Filas con índices de 0 a 4:\n", filas_indices_0_a_4)
+```
+
+**Nota**: Con `loc`, el índice final es inclusivo. `retail_data.loc[0:4]` selecciona 5 filas, incluyendo la fila con índice 4.
+
+### 3. Seleccionar una columna específica por su nombre:
+
+```python
+# Seleccionar la columna 'Quantity'
+columna_quantity = retail_data.loc[:, 'Quantity']
+print("Columna 'Quantity':\n", columna_quantity.head())
+```
+
+### 4. Seleccionar múltiples columnas por sus nombres:
+
+```python
+# Seleccionar las columnas 'Quantity' y 'UnitPrice'
+columnas_quantity_unitprice = retail_data.loc[:, ['Quantity', 'UnitPrice']]
+print("Columnas 'Quantity' y 'UnitPrice':\n", columnas_quantity_unitprice.head())
+```
+
+### 5. Seleccionar columnas por rango de nombres:
+
+```python
+# Seleccionar columnas por rango de nombres
+subset_columns = retail_data.loc[:, 'Column1':'Column5']
+print("Columnas desde 'Column1' hasta 'Column5':\n", subset_columns.head())
+```
+
+### Diferencias Clave entre `iloc` y `loc`
+
+**1. Basado en Enteros vs. Etiquetas:**
+
+ - `iloc`: selecciona datos por posición usando índices enteros.
+ - `loc`: selecciona datos por etiquetas usando nombres de índices y columnas.
+
+**2. Inclusión del Último Índice:**
+
+ - `iloc`: excluye el último índice en un rango.
+ - `loc`: incluye el último índice en un rango.
+
+**Ejercicio Práctico**
+
+**1. Seleccionar Subconjuntos de Datos:**
+
+ - Utiliza `iloc` para seleccionar las primeras 10 filas y las primeras 2 columnas del dataset de retail.
+ - Utiliza `loc` para seleccionar todas las filas y las columnas `Quantity` y `UnitPrice`.
+
+**2. Acceso Específico:**
+
+ - Utiliza `iloc` para seleccionar el valor en la quinta fila y la segunda columna.
+ - Utiliza `loc` para seleccionar todas las filas donde el país es United Kingdom y mostrar las columnas Quantity y UnitPrice.
+
+### Código de Ejemplo
+
+```python
+import pandas as pd
+
+# Leer el dataset de retail desde un archivo CSV
+file_path = "online_retail.csv"
+retail_data = pd.read_csv(file_path)
+
+# Seleccionar las primeras 10 filas y las primeras 2 columnas utilizando iloc
+subset_iloc = retail_data.iloc[:10, :2]
+print("Primeras 10 filas y 2 columnas utilizando iloc:\n", subset_iloc)
+
+# Seleccionar todas las filas y las columnas 'Quantity' y 'UnitPrice' utilizando loc
+subset_loc = retail_data.loc[:, ['Quantity', 'UnitPrice']]
+print("Columnas 'Quantity' y 'UnitPrice' utilizando loc:\n", subset_loc.head())
+
+# Seleccionar el valor en la quinta fila y la segunda columna utilizando iloc
+valor_iloc = retail_data.iloc[4, 1]
+print("Valor en la quinta fila y segunda columna utilizando iloc:", valor_iloc)
+
+# Seleccionar todas las filas donde el país es 'United Kingdom' y mostrar las columnas 'Quantity' y 'UnitPrice' utilizando loc
+subset_uk = retail_data.loc[retail_data['Country'] == 'United Kingdom', ['Quantity', 'UnitPrice']]
+print("Filas de 'United Kingdom' con columnas 'Quantity' y 'UnitPrice' utilizando loc:\n", subset_uk.head())
+```
+
+En **Pandas**, los métodos **`iloc`** y **`loc`** se utilizan para acceder a datos en un **DataFrame** o **Series** basándose en diferentes criterios de indexación. Estos dos métodos son esenciales para seleccionar, filtrar o modificar subconjuntos de datos en un DataFrame.
+
+---
+
+### **1. `iloc`: Indexación basada en la posición**
+
+- **`iloc`** se utiliza para seleccionar datos basándose en la **posición** numérica (es decir, los índices) de las filas y columnas.
+- Funciona de manera similar a la indexación de listas en Python, es decir, por **números de posición**.
+  
+#### Sintaxis de `iloc`:
+
+```python
+df.iloc[fila, columna]
+```
+
+- `fila`: Especifica la(s) fila(s) por posición (puede ser un número o un rango).
+- `columna`: Especifica la(s) columna(s) por posición (puede ser un número o un rango).
+
+#### Ejemplos de `iloc`:
+
+```python
+import pandas as pd
+
+# Crear un DataFrame de ejemplo
+data = {'Nombre': ['Ana', 'Luis', 'Carlos'],
+        'Edad': [23, 45, 36],
+        'Ciudad': ['Madrid', 'Barcelona', 'Valencia']}
+
+df = pd.DataFrame(data)
+
+# Seleccionar la primera fila (posición 0)
+print(df.iloc[0])
+
+# Seleccionar las primeras dos filas y todas las columnas
+print(df.iloc[0:2, :])
+
+# Seleccionar la segunda fila y la tercera columna (índice 1 y 2)
+print(df.iloc[1, 2])
+
+# Seleccionar las dos primeras filas y la primera columna (índice 0)
+print(df.iloc[0:2, 0])
+```
+
+---
+
+### **2. `loc`: Indexación basada en etiquetas**
+
+- **`loc`** se utiliza para seleccionar datos basándose en las **etiquetas** (índices) de filas y columnas.
+- Funciona con **etiquetas de índice**, que pueden ser enteros, cadenas o cualquier tipo de etiqueta asignada a las filas o columnas.
+  
+#### Sintaxis de `loc`:
+
+```python
+df.loc[etiqueta_fila, etiqueta_columna]
+```
+
+- `etiqueta_fila`: Especifica la(s) fila(s) por su índice (puede ser una etiqueta específica o un rango).
+- `etiqueta_columna`: Especifica la(s) columna(s) por su nombre.
+
+#### Ejemplos de `loc`:
+
+```python
+# Seleccionar la fila con índice 0 (la primera fila)
+print(df.loc[0])
+
+# Seleccionar la fila donde el índice es 1
+print(df.loc[1])
+
+# Seleccionar las filas con índice 0 y 1, y todas las columnas
+print(df.loc[0:1, :])
+
+# Seleccionar todas las filas y la columna 'Edad'
+print(df.loc[:, 'Edad'])
+
+# Seleccionar la fila con índice 0 y las columnas 'Nombre' y 'Edad'
+print(df.loc[0, ['Nombre', 'Edad']])
+```
+
+---
+
+### **Diferencias clave entre `iloc` y `loc`:**
+
+1. **Criterio de indexación**:
+   - **`iloc`** usa la **posición numérica** para seleccionar filas y columnas.
+   - **`loc`** usa las **etiquetas o nombres de índice** para seleccionar filas y columnas.
+
+2. **Inclusión de los límites**:
+   - Con **`iloc`**, el último valor en un rango es **excluido** (similar a la indexación de listas en Python).
+   - Con **`loc`**, los límites en los rangos de filas **son incluidos**.
+
+3. **Tipo de selección**:
+   - **`iloc`** es más útil cuando trabajas con posiciones numéricas.
+   - **`loc`** es más intuitivo cuando trabajas con etiquetas o nombres de columnas.
+
+---
+
+### Ejemplos adicionales para mostrar las diferencias:
+
+#### Usando `iloc` para seleccionar por posiciones:
+```python
+# Seleccionar la primera fila (posición 0) y la primera columna (posición 0)
+df.iloc[0, 0]  # Resultado: 'Ana'
+```
+
+#### Usando `loc` para seleccionar por etiquetas:
+```python
+# Seleccionar la primera fila (índice 0) y la columna 'Nombre'
+df.loc[0, 'Nombre']  # Resultado: 'Ana'
+```
+
+#### Seleccionar un subconjunto con `iloc` y `loc`:
+```python
+# Con iloc: Seleccionar las dos primeras filas y todas las columnas
+df.iloc[0:2, :]
+
+# Con loc: Seleccionar las filas con índices 0 y 1, y todas las columnas
+df.loc[0:1, :]
+```
+
+---
+
+### Resumen
+
+- **`iloc`** es para seleccionar datos **por posiciones numéricas**.
+- **`loc`** es para seleccionar datos **por etiquetas de filas y nombres de columnas**.
+
+Ambos son muy útiles para acceder y manipular datos en **DataFrames** y **Series** de Pandas, y la elección entre ellos depende del tipo de indexación que estés utilizando.
+
+**Lecturas recomendadas**
+
+[pandas.DataFrame.iloc](https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.iloc.html "pandas.DataFrame.iloc")
+
+[pandas.DataFrame.loc](https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.loc.html "pandas.DataFrame.loc")
+
+## Manejo de Datos Faltantes en Pandas
+
+El manejo de **datos faltantes** es una de las tareas más comunes cuando se trabaja con conjuntos de datos en **Pandas**. Los valores faltantes suelen estar representados como `NaN` (Not a Number) en los DataFrames de Pandas, y hay varias formas de **identificar, eliminar o imputar** estos valores según las necesidades del análisis.
+
+Aquí te muestro las principales técnicas y funciones para gestionar los datos faltantes:
+
+---
+
+### 1. **Identificación de Datos Faltantes**
+
+Para identificar valores faltantes en un DataFrame o Serie de Pandas, puedes utilizar los siguientes métodos:
+
+#### **`isnull()` y `notnull()`**
+- **`isnull()`**: Devuelve `True` para cada celda que contenga un valor nulo (`NaN`).
+- **`notnull()`**: Devuelve `True` para cada celda que **no** sea nula.
+
+```python
+import pandas as pd
+import numpy as np
+
+# Crear un DataFrame con valores faltantes
+data = {'Nombre': ['Ana', 'Luis', np.nan],
+        'Edad': [23, np.nan, 36],
+        'Ciudad': ['Madrid', 'Barcelona', 'Valencia']}
+
+df = pd.DataFrame(data)
+
+# Identificar valores faltantes
+print(df.isnull())
+
+# Identificar valores que no son faltantes
+print(df.notnull())
+```
+
+---
+
+### 2. **Eliminación de Datos Faltantes**
+
+Si decides eliminar las filas o columnas con datos faltantes, Pandas ofrece varias formas de hacerlo.
+
+#### **`dropna()`**
+Este método elimina filas o columnas que contienen valores nulos.
+
+```python
+# Eliminar todas las filas que tienen al menos un valor faltante
+df_sin_na_filas = df.dropna()
+
+# Eliminar columnas que tienen al menos un valor faltante
+df_sin_na_columnas = df.dropna(axis=1)
+
+# Eliminar solo las filas en las que todos los valores son nulos
+df_sin_na_filas_todos = df.dropna(how='all')
+
+# Eliminar filas solo si tienen más de un valor nulo
+df_sin_na_thresh = df.dropna(thresh=2)
+```
+
+- `axis=0`: Elimina las filas (esto es predeterminado).
+- `axis=1`: Elimina las columnas.
+- `how='any'`: Elimina la fila o columna si **cualquier** valor es nulo (por defecto).
+- `how='all'`: Elimina la fila o columna si **todos** los valores son nulos.
+- `thresh=N`: Requiere que la fila o columna tenga al menos `N` valores no nulos para no ser eliminada.
+
+---
+
+### 3. **Rellenar Datos Faltantes**
+
+En lugar de eliminar los datos, a veces es mejor **rellenar** los valores faltantes con una aproximación. Esto es conocido como **imputación de datos**.
+
+#### **`fillna()`**
+Rellena los valores nulos con un valor específico.
+
+```python
+# Rellenar los valores faltantes con un valor constante
+df_rellenado = df.fillna(0)
+
+# Rellenar los valores faltantes con el valor anterior (forward fill)
+df_forward_fill = df.fillna(method='ffill')
+
+# Rellenar los valores faltantes con el valor siguiente (backward fill)
+df_backward_fill = df.fillna(method='bfill')
+
+# Rellenar los valores faltantes con la media de una columna
+df['Edad'] = df['Edad'].fillna(df['Edad'].mean())
+```
+
+- `method='ffill'`: Propaga el último valor conocido hacia adelante.
+- `method='bfill'`: Propaga el siguiente valor conocido hacia atrás.
+- `value`: Puedes asignar cualquier valor constante, como `0` o una cadena.
+
+---
+
+### 4. **Reemplazar Datos Faltantes con Métodos Estadísticos**
+
+A veces es más efectivo reemplazar los valores faltantes con la **media, mediana o moda** de una columna, especialmente cuando trabajas con variables numéricas.
+
+#### **Imputación con Media, Mediana o Moda**
+```python
+# Rellenar los valores faltantes con la media de una columna
+df['Edad'] = df['Edad'].fillna(df['Edad'].mean())
+
+# Rellenar los valores faltantes con la mediana de una columna
+df['Edad'] = df['Edad'].fillna(df['Edad'].median())
+
+# Rellenar los valores faltantes con la moda de una columna
+df['Edad'] = df['Edad'].fillna(df['Edad'].mode()[0])
+```
+
+- **Media (`mean`)**: Útil cuando los datos son distribuidos normalmente.
+- **Mediana (`median`)**: Mejor para datos con distribuciones asimétricas o con outliers.
+- **Moda (`mode`)**: Se usa más en datos categóricos.
+
+---
+
+### 5. **Interpolar Datos Faltantes**
+
+En casos donde los datos tienen una relación temporal o secuencial, puedes usar la interpolación para estimar los valores faltantes.
+
+#### **`interpolate()`**
+Calcula valores intermedios para los valores nulos.
+
+```python
+# Interpolación de valores faltantes linealmente
+df_interpolado = df['Edad'].interpolate()
+```
+
+---
+
+### 6. **Detectar Columnas con Muchos Datos Faltantes**
+
+En ciertos casos, puede que desees eliminar o investigar columnas que tengan muchos valores faltantes. Puedes detectar fácilmente estas columnas con:
+
+```python
+# Contar valores faltantes por columna
+missing_data = df.isnull().sum()
+
+# Mostrar columnas con más de un valor faltante
+print(missing_data[missing_data > 1])
+```
+
+---
+
+### 7. **Modificar el DataFrame con Datos Faltantes**
+
+Algunas veces es útil modificar el DataFrame original para cambiar cómo Pandas maneja los datos faltantes.
+
+#### **`replace()`**
+Te permite reemplazar valores específicos (incluidos los `NaN`).
+
+```python
+# Reemplazar valores NaN con un valor específico
+df_reemplazado = df.replace(np.nan, 'Desconocido')
+```
+
+---
+
+### Resumen
+
+- **Identificación de datos faltantes**: Con `isnull()` y `notnull()`.
+- **Eliminación de datos faltantes**: Usando `dropna()` para eliminar filas o columnas.
+- **Rellenar datos faltantes**: Con `fillna()`, usando valores constantes, estadísticos o propagación de valores.
+- **Interpolación**: Rellenar secuencialmente usando `interpolate()`.
+- **Reemplazo**: Usando `replace()` para sustituir los valores `NaN` con otros valores.
+
+El manejo adecuado de los datos faltantes asegura que los análisis sean precisos y las conclusiones sean más confiables.
+
+**Lecturas recomendadas**
+
+[Working with missing data — pandas 2.2.2 documentation](https://pandas.pydata.org/docs/user_guide/missing_data.html "Working with missing data — pandas 2.2.2 documentation")
