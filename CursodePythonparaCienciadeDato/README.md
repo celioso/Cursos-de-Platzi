@@ -1258,8 +1258,6 @@ Datos obtenidos de Daqing Chen, Sai Liang Sain, and Kun Guo, Data mining for the
 
 A continuación, te explico las principales funcionalidades de Pandas para la manipulación de datos:
 
----
-
 ### 1. **Creación de DataFrames**
 
 Un **DataFrame** es la estructura principal en Pandas. Es una tabla bidimensional con columnas etiquetadas de diferentes tipos (numéricas, de texto, etc.). Puedes crear DataFrames de varias maneras.
@@ -1282,8 +1280,6 @@ print(df)
 ```python
 df = pd.read_csv('archivo.csv')
 ```
-
----
 
 ### 2. **Indexación y Selección de Datos**
 
@@ -1315,8 +1311,6 @@ Puedes aplicar condiciones para filtrar filas.
 mayores_de_30 = df[df['Edad'] > 30]
 ```
 
----
-
 ### 3. **Operaciones Básicas**
 
 #### A) Descripción rápida de los datos:
@@ -1336,8 +1330,6 @@ df.rename(columns={'Nombre': 'Nombre_Completo'}, inplace=True)
 df.sort_values(by='Edad', ascending=False, inplace=True)  # Ordenar por edad descendente
 ```
 
----
-
 ### 4. **Manejo de Valores Nulos**
 
 Los valores faltantes o nulos son comunes en los conjuntos de datos y es importante gestionarlos correctamente.
@@ -1356,8 +1348,6 @@ df.dropna(inplace=True)  # Eliminar filas con valores nulos
 ```python
 df.fillna(value=0, inplace=True)  # Rellenar valores nulos con 0
 ```
-
----
 
 ### 5. **Transformación de Datos**
 
@@ -1382,8 +1372,6 @@ df_grouped = df.groupby('Ciudad')['Edad'].mean()
 df_pivot = df.pivot_table(values='Edad', index='Ciudad', columns='Sexo', aggfunc='mean')
 ```
 
----
-
 ### 6. **Fusión y Unión de DataFrames**
 
 Pandas ofrece diversas formas de combinar y fusionar DataFrames.
@@ -1397,8 +1385,6 @@ df_concatenado = pd.concat([df1, df2])
 ```python
 df_merged = pd.merge(df1, df2, on='clave_común', how='inner')  # Tipos: 'inner', 'left', 'right', 'outer'
 ```
-
----
 
 ### 7. **Visualización de Datos con Pandas**
 
@@ -1417,8 +1403,6 @@ df['Edad'].plot(kind='bar')
 plt.show()
 ```
 
----
-
 ### 8. **Exportar Datos**
 
 Después de manipular los datos, puedes exportarlos a diversos formatos.
@@ -1433,8 +1417,6 @@ df.to_csv('archivo_modificado.csv', index=False)
 df.to_excel('archivo_modificado.xlsx', index=False)
 ```
 
----
-
 ### 9. **Optimización en Pandas**
 
 #### A) Tipos de datos adecuados:
@@ -1446,8 +1428,6 @@ df['Categoría'] = df['Categoría'].astype('category')
 
 #### B) Uso eficiente de `apply` y `vectorización`:
 Evita el uso excesivo de `apply` en funciones que pueden vectorizarse, ya que `apply` es más lento en comparación con las operaciones vectorizadas.
-
----
 
 ### Conclusión
 
@@ -1647,7 +1627,6 @@ sales_data = pd.read_csv(file_path)
 print(sales_data.head())
 ```
 
-
 ### Proyecto de Retail y Proyecto Personal
 
 ![DALL·E-2024-07-31-11.31.56-A-clean-and-modern-data-analysis-portfolio.png](./images/DALL·E-2024-07-31-11.31.56-A-clean-and-modern-data-analysis-portfolio.png "DALL·E-2024-07-31-11.31.56-A-clean-and-modern-data-analysis-portfolio.png")
@@ -1746,8 +1725,6 @@ print("Producto de Quantity:", prod_value)
 
 Pandas proporciona dos estructuras de datos principales: **Series** y **DataFrame**, que permiten el análisis y manipulación de datos de una manera muy eficiente.
 
----
-
 ### 1. **Series**
 
 Una **Series** es una estructura unidimensional similar a un array, lista o columna de una tabla. Cada elemento en una Series tiene una **etiqueta** o **índice**, lo que la convierte en una estructura de datos similar a un diccionario, con pares clave-valor.
@@ -1776,8 +1753,6 @@ print(serie_personalizada)
 - **.max(), .min()**: Máximo y mínimo valor de la Serie.
 - **.describe()**: Proporciona un resumen estadístico.
 - **.value_counts()**: Cuenta los valores únicos en la Serie.
-
----
 
 ### 2. **DataFrame**
 
@@ -1830,8 +1805,6 @@ df.loc[0]
 # Acceder a una fila por posición
 df.iloc[0]
 ```
-
----
 
 ### 3. **Funciones para Manipulación de Datos**
 
@@ -1917,8 +1890,6 @@ df_ordenado = df.sort_values(by='Edad', ascending=False)
 print(df_ordenado)
 ```
 
----
-
 ### 4. **Funciones Estadísticas en Pandas**
 
 Pandas tiene una variedad de funciones estadísticas útiles para análisis de datos:
@@ -1936,8 +1907,6 @@ df['Edad'].mean()   # Media de la columna 'Edad'
 df['Edad'].std()    # Desviación estándar
 df.corr()           # Correlación entre las columnas numéricas
 ```
-
----
 
 ### Conclusión
 
@@ -2090,8 +2059,6 @@ print("Filas de 'United Kingdom' con columnas 'Quantity' y 'UnitPrice' utilizand
 
 En **Pandas**, los métodos **`iloc`** y **`loc`** se utilizan para acceder a datos en un **DataFrame** o **Series** basándose en diferentes criterios de indexación. Estos dos métodos son esenciales para seleccionar, filtrar o modificar subconjuntos de datos en un DataFrame.
 
----
-
 ### **1. `iloc`: Indexación basada en la posición**
 
 - **`iloc`** se utiliza para seleccionar datos basándose en la **posición** numérica (es decir, los índices) de las filas y columnas.
@@ -2131,8 +2098,6 @@ print(df.iloc[1, 2])
 print(df.iloc[0:2, 0])
 ```
 
----
-
 ### **2. `loc`: Indexación basada en etiquetas**
 
 - **`loc`** se utiliza para seleccionar datos basándose en las **etiquetas** (índices) de filas y columnas.
@@ -2166,8 +2131,6 @@ print(df.loc[:, 'Edad'])
 print(df.loc[0, ['Nombre', 'Edad']])
 ```
 
----
-
 ### **Diferencias clave entre `iloc` y `loc`:**
 
 1. **Criterio de indexación**:
@@ -2181,8 +2144,6 @@ print(df.loc[0, ['Nombre', 'Edad']])
 3. **Tipo de selección**:
    - **`iloc`** es más útil cuando trabajas con posiciones numéricas.
    - **`loc`** es más intuitivo cuando trabajas con etiquetas o nombres de columnas.
-
----
 
 ### Ejemplos adicionales para mostrar las diferencias:
 
@@ -2207,8 +2168,6 @@ df.iloc[0:2, :]
 df.loc[0:1, :]
 ```
 
----
-
 ### Resumen
 
 - **`iloc`** es para seleccionar datos **por posiciones numéricas**.
@@ -2227,8 +2186,6 @@ Ambos son muy útiles para acceder y manipular datos en **DataFrames** y **Serie
 El manejo de **datos faltantes** es una de las tareas más comunes cuando se trabaja con conjuntos de datos en **Pandas**. Los valores faltantes suelen estar representados como `NaN` (Not a Number) en los DataFrames de Pandas, y hay varias formas de **identificar, eliminar o imputar** estos valores según las necesidades del análisis.
 
 Aquí te muestro las principales técnicas y funciones para gestionar los datos faltantes:
-
----
 
 ### 1. **Identificación de Datos Faltantes**
 
@@ -2255,8 +2212,6 @@ print(df.isnull())
 # Identificar valores que no son faltantes
 print(df.notnull())
 ```
-
----
 
 ### 2. **Eliminación de Datos Faltantes**
 
@@ -2285,8 +2240,6 @@ df_sin_na_thresh = df.dropna(thresh=2)
 - `how='all'`: Elimina la fila o columna si **todos** los valores son nulos.
 - `thresh=N`: Requiere que la fila o columna tenga al menos `N` valores no nulos para no ser eliminada.
 
----
-
 ### 3. **Rellenar Datos Faltantes**
 
 En lugar de eliminar los datos, a veces es mejor **rellenar** los valores faltantes con una aproximación. Esto es conocido como **imputación de datos**.
@@ -2312,8 +2265,6 @@ df['Edad'] = df['Edad'].fillna(df['Edad'].mean())
 - `method='bfill'`: Propaga el siguiente valor conocido hacia atrás.
 - `value`: Puedes asignar cualquier valor constante, como `0` o una cadena.
 
----
-
 ### 4. **Reemplazar Datos Faltantes con Métodos Estadísticos**
 
 A veces es más efectivo reemplazar los valores faltantes con la **media, mediana o moda** de una columna, especialmente cuando trabajas con variables numéricas.
@@ -2334,8 +2285,6 @@ df['Edad'] = df['Edad'].fillna(df['Edad'].mode()[0])
 - **Mediana (`median`)**: Mejor para datos con distribuciones asimétricas o con outliers.
 - **Moda (`mode`)**: Se usa más en datos categóricos.
 
----
-
 ### 5. **Interpolar Datos Faltantes**
 
 En casos donde los datos tienen una relación temporal o secuencial, puedes usar la interpolación para estimar los valores faltantes.
@@ -2347,8 +2296,6 @@ Calcula valores intermedios para los valores nulos.
 # Interpolación de valores faltantes linealmente
 df_interpolado = df['Edad'].interpolate()
 ```
-
----
 
 ### 6. **Detectar Columnas con Muchos Datos Faltantes**
 
@@ -2376,8 +2323,6 @@ Te permite reemplazar valores específicos (incluidos los `NaN`).
 df_reemplazado = df.replace(np.nan, 'Desconocido')
 ```
 
----
-
 ### Resumen
 
 - **Identificación de datos faltantes**: Con `isnull()` y `notnull()`.
@@ -2391,3 +2336,104 @@ El manejo adecuado de los datos faltantes asegura que los análisis sean preciso
 **Lecturas recomendadas**
 
 [Working with missing data — pandas 2.2.2 documentation](https://pandas.pydata.org/docs/user_guide/missing_data.html "Working with missing data — pandas 2.2.2 documentation")
+
+## Creación y Manipulación de Columnas en Pandas
+
+En **Pandas**, crear y manipular columnas es una tarea fundamental cuando se trabaja con **DataFrames**. A continuación te explico cómo puedes hacerlo mediante ejemplos:
+
+### 1. **Crear nuevas columnas**
+Puedes crear una nueva columna asignando un valor o una expresión a una nueva etiqueta de columna.
+
+#### 1.1 Asignar un valor constante
+```python
+import pandas as pd
+
+# Crear un DataFrame de ejemplo
+df = pd.DataFrame({
+    'nombre': ['Ana', 'Juan', 'Pedro'],
+    'edad': [25, 30, 22]
+})
+
+# Crear una nueva columna con un valor constante
+df['ciudad'] = 'Madrid'
+print(df)
+```
+
+#### 1.2 Crear una columna con valores calculados
+Puedes basar los valores de una nueva columna en las existentes.
+
+```python
+# Crear una nueva columna basada en operaciones con otras columnas
+df['edad_en_10_anos'] = df['edad'] + 10
+print(df)
+```
+
+### 2. **Modificar columnas existentes**
+Puedes modificar los valores de las columnas ya existentes realizando operaciones sobre ellas.
+
+```python
+# Modificar los valores de una columna existente
+df['edad'] = df['edad'] * 2
+print(df)
+```
+
+### 3. **Eliminar columnas**
+Para eliminar columnas, puedes usar `drop()`.
+
+#### 3.1 Eliminar una columna
+```python
+# Eliminar una columna
+df = df.drop('edad_en_10_anos', axis=1)  # axis=1 indica que es una columna
+print(df)
+```
+
+#### 3.2 Eliminar múltiples columnas
+```python
+# Eliminar varias columnas
+df = df.drop(['edad', 'ciudad'], axis=1)
+print(df)
+```
+
+### 4. **Renombrar columnas**
+Para cambiar el nombre de las columnas puedes usar el método `rename()`.
+
+```python
+# Renombrar columnas
+df = df.rename(columns={'nombre': 'Nombre Completo'})
+print(df)
+```
+
+### 5. **Usar `apply` para crear una columna compleja**
+Puedes usar `apply()` para aplicar una función personalizada y crear una nueva columna.
+
+```python
+# Crear una columna basada en una función personalizada
+df['categoria_edad'] = df['edad'].apply(lambda x: 'Joven' if x < 30 else 'Adulto')
+print(df)
+```
+
+### 6. **Asignar múltiples columnas a la vez**
+Puedes asignar varias columnas nuevas en una sola operación.
+
+```python
+# Asignar múltiples columnas a la vez
+df[['altura', 'peso']] = [[165, 70], [175, 85], [180, 90]]
+print(df)
+```
+
+### 7. **Reordenar las columnas**
+Si quieres cambiar el orden de las columnas, puedes hacerlo reindexando las columnas.
+
+```python
+# Reordenar las columnas
+df = df[['Nombre Completo', 'edad', 'altura', 'peso']]
+print(df)
+```
+
+Estos son algunos ejemplos clave para la creación y manipulación de columnas en **Pandas**. Si necesitas algo más específico, ¡avísame!
+
+**Lecturas recomendadas**
+
+[pandas.Series.apply](https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.apply.html "pandas.Series.apply")
+
+[pandas.DataFrame.apply](https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.apply.html "pandas.DataFrame.apply")
