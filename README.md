@@ -31,33 +31,6 @@
 - [Curso Práctico de Python: Creación de un CRUD](CursoPracticodePythonCreaciondeunCRUD)
 - [Curso de Flask](Curso_de_Flask)
 
-## FRONT-END
-
-- [Curso de Docker](CursoDeDocker)
-- [Curso Basico de Django](CursoBasicodeDjango)
-- [Curso Basico de Django](CursoBasicodeDjango)
-- [Curso Basico de Django](CursoBasicodeDjango)
-- [Curso Basico de Django](CursoBasicodeDjango)
-
-## Linux server
-
-- [Curso de Introducción a la Terminal y Línea de Comandos](Curso-de-Introducción-a-la-Terminal-y-Linea-de-Comandos)
-- [Curso Profesional de Git y GitHub](CursoProfesionaldeGityGitHub)
-- [Fundamentos de Ingeniería de Software](FundamentosDeIngenieriaDeSoftware)
-- [Curso de Introducción a la Administración de Servidores Linux](CursodeIntroducciónalaAdministracióndeServidoresLinux)
-- [Curso de Administración de Servidores Linux: Manejo de Recursos](CursodeAdministracióndeServidoresLinuxManejodeRecursos)
-- [Curso de Introducción al Desarrollo Backend](NuevoCursoDeIntroducciónAlDesarrolloBackend)
-
-## CD/CI
-
-- [Curso Basico de Django](CursoBasicodeDjango)
-
-## CLOUD SERVICES
-
-- [Curso Basico de Django](CursoBasicodeDjango)
-- [Curso Basico de Django](CursoBasicodeDjango)
-
-
 ## QA y Automatización de Pruebas
 
 - [Curso de Introducción a Selenium con Python](CursoDeIntroduccionaSeleniumConPython)
@@ -71,3 +44,41 @@
 - [Curso de Cypress Avanzado](CursoDeCypressAvanzado)
 - [Curso de Pruebas de Usabilidad](CursoDePruebasDeUsabilidad)
 - [Curso de Testing de Videojuegos](CursoDeTestingDeVideojuegos)
+
+## Linux server
+
+- [Curso de Introducción a la Terminal y Línea de Comandos](Curso-de-Introducción-a-la-Terminal-y-Linea-de-Comandos)
+- [Curso Profesional de Git y GitHub](CursoProfesionaldeGityGitHub)
+- [Fundamentos de Ingeniería de Software](FundamentosDeIngenieriaDeSoftware)
+- [Curso de Introducción a la Administración de Servidores Linux](CursodeIntroducciónalaAdministracióndeServidoresLinux)
+- [Curso de Administración de Servidores Linux: Manejo de Recursos](CursodeAdministracióndeServidoresLinuxManejodeRecursos)
+- [Curso de Introducción al Desarrollo Backend](NuevoCursoDeIntroducciónAlDesarrolloBackend)
+
+## Análisis y Manipulación de Datos con Python
+
+- [Curso de Python](CursoDePython)
+- [Curso de Python: Comprehensions, Funciones y Manejo de Errores](CursodePythonComprehensions,FuncionesyManejodeErrores)
+- [Curso de Introducción a la Terminal y Línea de Comandos](Curso-de-Introducción-a-la-Terminal-y-Linea-de-Comandos)
+- [Curso Profesional de Git y GitHub](CursoProfesionaldeGityGitHub)
+- [Curso de Entorno de Trabajo para Ciencia de Datos con Jupyter Notebooks y Anaconda](cursentornotrabajotiencidatosjupyternotebooksanaconda)
+- [Curso de Python para Ciencia de Datos](CursodePythonparaCienciadeDato)
+- [Curso de Visualización de Datos con Matplotlib y Seaborn](CursoBasicodeVisualizaciondeDatosconMatplotlibySeaborn)
+- [Curso de Análisis Exploratorio de Datos](CursoDeAnálisisExploratorioDeDatos)
+- [Curso de Configuración Profesional de Entorno de Trabajo para Ciencia de Datos](CursodeConfiguracionProfesionaldeEntornodeTrabajoparaCienciadeDatos)
+- [Curso de Manejo de Datos Faltantes: Detección y Exploración]()
+- [Curso de Manejo de Datos Faltantes: Imputación]()
+
+## FRONT-END
+
+- [Curso de Docker](CursoDeDocker)
+- [Curso de Django](CursodeDjango)
+- [Curso de Django Intermedio Testing, StaticFiles, DjangoAdmin](CursodeDjangoIntermedioTesting,StaticFiles,DjangoAdmin)
+
+## CD/CI
+
+- [Curso Basico de Django](CursoBasicodeDjango)
+
+## CLOUD SERVICES
+
+- [Curso Basico de Django](CursoBasicodeDjango)
+- [Curso Basico de Django](CursoBasicodeDjango)
