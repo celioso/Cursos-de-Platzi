@@ -2843,3 +2843,1406 @@ print(filtro)
 ```
 
 Estos son algunos ejemplos básicos y avanzados para filtrar datos en **Pandas** utilizando diversas condiciones. Si tienes algún caso específico o necesitas más detalles, ¡hazme saber!
+
+## Reestructuración de Datos: Pivot y Reshape en Pandas
+
+En **Pandas**, la reestructuración de datos mediante las funciones `pivot`, `pivot_table`, `melt`, y `stack/unstack` permite reorganizar y transformar **DataFrames** en diferentes formatos. Estas funciones son útiles para cambiar el formato de los datos, reorganizarlos o preparar resúmenes.
+
+A continuación te explico cómo funcionan estas técnicas con ejemplos:
+
+### 1. **`pivot()` para reorganizar columnas**
+El método `pivot()` reorganiza los datos de un DataFrame al transformar columnas en índices, y los valores en filas.
+
+#### Ejemplo:
+```python
+import pandas as pd
+
+# Crear un DataFrame de ejemplo
+df = pd.DataFrame({
+    'fecha': ['2023-01', '2023-02', '2023-01', '2023-02'],
+    'ciudad': ['Madrid', 'Madrid', 'Barcelona', 'Barcelona'],
+    'ventas': [250, 300, 200, 210]
+})
+
+# Reorganizar el DataFrame usando 'fecha' como índice, 'ciudad' como columnas y 'ventas' como valores
+pivot_df = df.pivot(index='fecha', columns='ciudad', values='ventas')
+print(pivot_df)
+```
+
+**Resultado:**
+```
+ciudad    Barcelona  Madrid
+fecha                        
+2023-01      200.0   250.0
+2023-02      210.0   300.0
+```
+
+### 2. **`pivot_table()` para agregar datos**
+La función `pivot_table()` es similar a `pivot()`, pero permite realizar agregaciones si hay duplicados en los datos. Esto es útil cuando hay valores repetidos y deseas aplicar una función de agregación como `sum()`, `mean()`, etc.
+
+#### Ejemplo con agregación:
+```python
+# Crear un DataFrame con datos repetidos
+df = pd.DataFrame({
+    'fecha': ['2023-01', '2023-01', '2023-02', '2023-02'],
+    'ciudad': ['Madrid', 'Madrid', 'Barcelona', 'Barcelona'],
+    'ventas': [250, 300, 200, 210]
+})
+
+# Crear una tabla dinámica usando 'fecha' como índice, 'ciudad' como columnas y 'ventas' como valores, agregando con sum
+pivot_table_df = df.pivot_table(index='fecha', columns='ciudad', values='ventas', aggfunc='sum')
+print(pivot_table_df)
+```
+
+**Resultado:**
+```
+ciudad    Barcelona  Madrid
+fecha                        
+2023-01      200.0    550.0
+2023-02      210.0      NaN
+```
+
+### 3. **`melt()` para transformar de formato ancho a largo**
+El método `melt()` transforma un **DataFrame** de formato ancho (donde los datos están en columnas) a formato largo (donde los datos se combinan en una columna única de valores).
+
+#### Ejemplo:
+```python
+# Crear un DataFrame en formato ancho
+df_wide = pd.DataFrame({
+    'fecha': ['2023-01', '2023-02'],
+    'Madrid': [250, 300],
+    'Barcelona': [200, 210]
+})
+
+# Convertir el DataFrame a formato largo usando melt()
+df_long = pd.melt(df_wide, id_vars='fecha', var_name='ciudad', value_name='ventas')
+print(df_long)
+```
+
+**Resultado:**
+```
+      fecha      ciudad  ventas
+0  2023-01      Madrid     250
+1  2023-02      Madrid     300
+2  2023-01   Barcelona     200
+3  2023-02   Barcelona     210
+```
+
+### 4. **`stack()` y `unstack()` para reestructuración de índices jerárquicos**
+`stack()` y `unstack()` son métodos que permiten manipular índices jerárquicos (índices multi-nivel). 
+
+- **`stack()`** convierte columnas en filas.
+- **`unstack()`** convierte filas en columnas.
+
+#### Ejemplo de `stack()`:
+```python
+# Crear un DataFrame con multi-índice
+df_multi = df.pivot(index='fecha', columns='ciudad', values='ventas')
+
+# Aplicar stack() para convertir las columnas en índices
+stacked_df = df_multi.stack()
+print(stacked_df)
+```
+
+**Resultado:**
+```
+fecha     ciudad    
+2023-01   Barcelona    200
+           Madrid      250
+2023-02   Barcelona    210
+           Madrid      300
+dtype: int64
+```
+
+#### Ejemplo de `unstack()`:
+```python
+# Aplicar unstack() para convertir los índices de nuevo en columnas
+unstacked_df = stacked_df.unstack()
+print(unstacked_df)
+```
+
+**Resultado:**
+```
+ciudad    Barcelona  Madrid
+fecha                        
+2023-01      200.0   250.0
+2023-02      210.0   300.0
+```
+
+### 5. **`wide_to_long()` para transformar varias columnas en una**
+La función `wide_to_long()` es útil cuando tienes varias columnas que representan variables relacionadas y deseas convertirlas en una sola.
+
+#### Ejemplo:
+```python
+# Crear un DataFrame con varias columnas
+df_wide = pd.DataFrame({
+    'id': [1, 2],
+    'nombre': ['Ana', 'Pedro'],
+    'edad_2021': [25, 30],
+    'edad_2022': [26, 31]
+})
+
+# Convertir el DataFrame a formato largo usando wide_to_long()
+df_long = pd.wide_to_long(df_wide, stubnames='edad', i='id', j='anio')
+print(df_long)
+```
+
+**Resultado:**
+```
+         nombre  edad
+id anio                
+1  2021     Ana    25
+   2022     Ana    26
+2  2021   Pedro    30
+   2022   Pedro    31
+```
+
+### 6. **`transpose()` para intercambiar filas y columnas**
+El método `transpose()` intercambia filas por columnas y viceversa.
+
+#### Ejemplo:
+```python
+# Transponer el DataFrame
+df_transposed = df_wide.transpose()
+print(df_transposed)
+```
+
+**Resultado:**
+```
+                0      1
+id              1      2
+nombre        Ana  Pedro
+edad_2021      25     30
+edad_2022      26     31
+```
+
+### 7. **`set_index()` y `reset_index()` para trabajar con índices**
+El método `set_index()` permite establecer una columna como índice, y `reset_index()` revierte la operación para convertir el índice en columna.
+
+#### Ejemplo con `set_index()`:
+```python
+# Establecer la columna 'fecha' como índice
+df_indexed = df.set_index('fecha')
+print(df_indexed)
+```
+
+**Resultado:**
+```
+          ciudad  ventas
+fecha                    
+2023-01   Madrid     250
+2023-01   Madrid     300
+2023-02   Barcelona     200
+2023-02   Barcelona     210
+```
+
+#### Ejemplo con `reset_index()`:
+```python
+# Restablecer el índice como columna
+df_reset = df_indexed.reset_index()
+print(df_reset)
+```
+
+**Resultado:**
+```
+      fecha      ciudad  ventas
+0  2023-01      Madrid     250
+1  2023-01      Madrid     300
+2  2023-02   Barcelona     200
+3  2023-02   Barcelona     210
+```
+
+### Resumen de funciones:
+
+- **`pivot()`**: Convierte columnas en filas según un índice.
+- **`pivot_table()`**: Similar a `pivot()`, pero permite agregaciones.
+- **`melt()`**: Transforma de formato ancho a largo.
+- **`stack()`**: Convierte columnas en índices.
+- **`unstack()`**: Convierte índices en columnas.
+- **`wide_to_long()`**: Convierte varias columnas relacionadas en una columna única.
+- **`transpose()`**: Intercambia filas y columnas.
+- **`set_index()`**: Establece una columna como índice.
+- **`reset_index()`**: Convierte un índice en columna.
+
+Estas funciones permiten transformar los datos en diferentes formas según tus necesidades. Si tienes alguna duda sobre cómo aplicarlas en tu caso, ¡déjame saber!
+
+**Lecturas recomendadas**
+Reshaping and pivot tables
+[Reshaping and pivot tables](https://pandas.pydata.org/docs/user_guide/reshaping.html "Reshaping and pivot tables")
+
+## Fusión de DataFrames en Pandas
+
+Combinar datos de múltiples tablas es esencial para integrar información de diferentes fuentes en el análisis de datos. Pandas ofrece funciones como `merge()`, `concat()` y `join()` que facilitan esta tarea de manera eficiente y flexible.
+A continuación, exploraremos cómo utilizar estas funciones con ejemplos prácticos que te ayudarán a dominar la combinación de DataFrames en tus proyectos de análisis de datos.
+
+### ¿Cómo se utiliza la función merge()?
+
+La función `merge()` en Pandas permite combinar DataFrames de manera similar a las uniones en SQL, basándose en una o más claves comunes.
+
+**Unión Interna (Inner Join)**
+
+Combina solo las filas con claves coincidentes en ambos DataFrames.
+
+```python
+import pandas as pd
+
+# Crear DataFrames de ejemplo
+df1 = pd.DataFrame({
+    'key': ['A', 'B', 'C'],
+    'value1': [1, 2, 3]
+})
+
+df2 = pd.DataFrame({
+    'key': ['B', 'C', 'D'],
+    'value2': [4, 5, 6]
+})
+
+# Realizar un merge interno
+inner_merged = pd.merge(df1, df2, on='key', how='inner')
+print("Unión Interna:\n", inner_merged)
+```
+
+**Unión Externa (Outer Join)**
+
+Incluye todas las filas de ambos DataFrames, rellenando con NaN donde no haya coincidencias.
+
+```python
+# Realizar un merge externo
+outer_merged = pd.merge(df1, df2, on='key', how='outer')
+print("Unión Externa:\n", outer_merged)
+```
+
+**Unión Izquierda (Left Join)**
+
+Devuelve todas las filas del DataFrame izquierdo y las filas coincidentes del DataFrame derecho.
+
+```python
+# Realizar un merge izquierda
+left_merged = pd.merge(df1, df2, on='key', how='left')
+print("Unión Izquierda:\n", left_merged)
+```
+
+**Unión Derecha (Right Join)**
+
+Devuelve todas las filas del DataFrame derecho y las filas coincidentes del DataFrame izquierdo.
+
+```python
+# Realizar un merge derecha
+right_merged = pd.merge(df1, df2, on='key', how='right')
+print("Unión Derecha:\n", right_merged)
+```
+
+**¿Cómo se aplica la función `concat()`?**
+
+La función `concat()` se usa para concatenar DataFrames a lo largo de un eje, ya sea apilándolos verticalmente o combinándolos horizontalmente.
+
+**Concatenación Vertical**
+
+Apila los DataFrames uno sobre otro de forma vertical.
+
+```python
+ # Crear DataFrames de ejemplo
+    df3 = pd.DataFrame({
+        'A': ['A0', 'A1', 'A2'],
+        'B': ['B0', 'B1', 'B2']
+    })
+    
+    df4 = pd.DataFrame({
+        'A': ['A3', 'A4', 'A5'],
+        'B': ['B3', 'B4', 'B5']
+    })
+    
+    # Concatenar verticalmente
+    vertical_concat = pd.concat([df3, df4])
+    print("Concatenación Vertical:\n", vertical_concat)
+```
+
+**Concatenación Horizontal**
+
+Combina los DataFrames uno al lado del otro.
+
+```python
+# Concatenar horizontalmente
+    horizontal_concat = pd.concat([df3, df4], axis=1)
+    print("Concatenación Horizontal:\n", horizontal_concat)
+```
+
+**¿Cómo funciona la función `join()`?**
+
+La función `join()` permite combinar DataFrames en función del índice o una columna clave, similar a merge(), pero más simplificado para uniones basadas en índices.
+
+**Join con Índice**
+
+Combina DataFrames utilizando el índice como la clave de unión.
+
+```python
+# Crear DataFrames de ejemplo con índices
+df5 = pd.DataFrame({
+    'A': ['A0', 'A1', 'A2'],
+    'B': ['B0', 'B1', 'B2']
+}, index=['K0', 'K1', 'K2'])
+
+df6 = pd.DataFrame({
+    'C': ['C0', 'C1', 'C2'],
+    'D': ['D0', 'D1', 'D2']
+}, index=['K0', 'K2', 'K3'])
+
+# Realizar un join
+joined = df5.join(df6, how='inner')
+print("Join con Índice:\n", joined)
+```
+
+La fusión de **DataFrames** en **Pandas** es una operación clave para combinar datos de diferentes fuentes, similar a las uniones de tablas en SQL. Se puede realizar de diferentes maneras, dependiendo de cómo deseas combinar los conjuntos de datos. Las funciones principales para fusionar son `merge()`, `join()`, y `concat()`.
+
+### 1. **`merge()` para fusionar DataFrames**
+El método `merge()` es el más común para fusionar dos **DataFrames** basándose en una o más columnas o índices en común. Ofrece varias opciones de tipo de unión (join), como **inner**, **outer**, **left**, y **right**.
+
+#### Tipos de uniones:
+
+- **Inner join**: Devuelve solo las filas que tienen correspondencias en ambos DataFrames.
+- **Left join**: Devuelve todas las filas del DataFrame izquierdo y solo las que coinciden del DataFrame derecho.
+- **Right join**: Devuelve todas las filas del DataFrame derecho y solo las que coinciden del DataFrame izquierdo.
+- **Outer join**: Devuelve todas las filas de ambos DataFrames, completando con `NaN` donde no haya correspondencias.
+
+#### Ejemplo básico de `merge()`:
+```python
+import pandas as pd
+
+# Crear dos DataFrames de ejemplo
+df1 = pd.DataFrame({
+    'id': [1, 2, 3, 4],
+    'nombre': ['Ana', 'Pedro', 'Juan', 'Lucía']
+})
+
+df2 = pd.DataFrame({
+    'id': [3, 4, 5, 6],
+    'ciudad': ['Madrid', 'Sevilla', 'Valencia', 'Barcelona']
+})
+
+# Fusión usando la columna 'id'
+df_merged = pd.merge(df1, df2, on='id', how='inner')
+print(df_merged)
+```
+
+**Resultado (inner join):**
+```
+   id nombre    ciudad
+0   3   Juan    Madrid
+1   4  Lucía   Sevilla
+```
+
+#### Otros tipos de uniones:
+
+- **Left join**:
+```python
+df_left = pd.merge(df1, df2, on='id', how='left')
+print(df_left)
+```
+**Resultado:**
+```
+   id nombre    ciudad
+0   1    Ana       NaN
+1   2  Pedro       NaN
+2   3   Juan    Madrid
+3   4  Lucía   Sevilla
+```
+
+- **Right join**:
+```python
+df_right = pd.merge(df1, df2, on='id', how='right')
+print(df_right)
+```
+**Resultado:**
+```
+   id nombre    ciudad
+0   3   Juan    Madrid
+1   4  Lucía   Sevilla
+2   5    NaN  Valencia
+3   6    NaN  Barcelona
+```
+
+- **Outer join**:
+```python
+df_outer = pd.merge(df1, df2, on='id', how='outer')
+print(df_outer)
+```
+**Resultado:**
+```
+   id nombre    ciudad
+0   1    Ana       NaN
+1   2  Pedro       NaN
+2   3   Juan    Madrid
+3   4  Lucía   Sevilla
+4   5    NaN  Valencia
+5   6    NaN  Barcelona
+```
+
+### 2. **Fusión en base a múltiples columnas**
+También puedes fusionar DataFrames basándote en más de una columna.
+
+#### Ejemplo:
+```python
+df1 = pd.DataFrame({
+    'id': [1, 2, 3, 4],
+    'nombre': ['Ana', 'Pedro', 'Juan', 'Lucía'],
+    'ciudad': ['Madrid', 'Sevilla', 'Valencia', 'Barcelona']
+})
+
+df2 = pd.DataFrame({
+    'id': [3, 4, 5, 6],
+    'ciudad': ['Valencia', 'Barcelona', 'Madrid', 'Sevilla'],
+    'ventas': [200, 150, 300, 400]
+})
+
+# Fusión usando tanto 'id' como 'ciudad'
+df_multi_merge = pd.merge(df1, df2, on=['id', 'ciudad'], how='inner')
+print(df_multi_merge)
+```
+
+**Resultado:**
+```
+   id    nombre    ciudad  ventas
+0   3     Juan  Valencia     200
+1   4    Lucía  Barcelona     150
+```
+
+### 3. **`concat()` para concatenar DataFrames**
+El método `concat()` se utiliza para apilar DataFrames uno encima del otro (unión vertical) o uno al lado del otro (unión horizontal).
+
+#### Concatenación vertical (por filas):
+```python
+# Crear dos DataFrames de ejemplo
+df1 = pd.DataFrame({
+    'id': [1, 2],
+    'nombre': ['Ana', 'Pedro']
+})
+
+df2 = pd.DataFrame({
+    'id': [3, 4],
+    'nombre': ['Juan', 'Lucía']
+})
+
+# Concatenar los DataFrames por filas
+df_concat = pd.concat([df1, df2], axis=0)
+print(df_concat)
+```
+
+**Resultado:**
+```
+   id  nombre
+0   1    Ana
+1   2  Pedro
+0   3   Juan
+1   4  Lucía
+```
+
+#### Concatenación horizontal (por columnas):
+```python
+# Crear dos DataFrames de ejemplo con el mismo número de filas
+df3 = pd.DataFrame({
+    'edad': [25, 30],
+    'ciudad': ['Madrid', 'Barcelona']
+})
+
+# Concatenar por columnas
+df_concat_cols = pd.concat([df1, df3], axis=1)
+print(df_concat_cols)
+```
+
+**Resultado:**
+```
+   id  nombre  edad    ciudad
+0   1    Ana    25    Madrid
+1   2  Pedro    30  Barcelona
+```
+
+### 4. **`join()` para combinar DataFrames basados en el índice**
+El método `join()` se utiliza para combinar DataFrames usando sus índices en lugar de una columna específica. Esto es útil cuando ya tienes índices bien definidos en los DataFrames.
+
+#### Ejemplo:
+```python
+# Crear dos DataFrames con índices
+df1 = pd.DataFrame({
+    'nombre': ['Ana', 'Pedro'],
+    'edad': [25, 30]
+}, index=['A', 'B'])
+
+df2 = pd.DataFrame({
+    'ciudad': ['Madrid', 'Barcelona'],
+    'ventas': [100, 200]
+}, index=['A', 'B'])
+
+# Hacer join usando el índice
+df_join = df1.join(df2)
+print(df_join)
+```
+
+**Resultado:**
+```
+  nombre  edad     ciudad  ventas
+A    Ana    25     Madrid     100
+B  Pedro    30  Barcelona     200
+```
+
+#### Usando `join()` con diferentes índices:
+Si los índices no coinciden, puedes usar el argumento `how` para especificar el tipo de unión (por defecto es `left`).
+
+```python
+df3 = pd.DataFrame({
+    'ciudad': ['Sevilla', 'Valencia'],
+    'ventas': [150, 250]
+}, index=['C', 'D'])
+
+df_join_outer = df1.join(df3, how='outer')
+print(df_join_outer)
+```
+
+**Resultado:**
+```
+  nombre  edad     ciudad  ventas
+A    Ana  25.0     Madrid    100.0
+B  Pedro  30.0  Barcelona    200.0
+C    NaN   NaN    Sevilla    150.0
+D    NaN   NaN   Valencia    250.0
+```
+
+### Resumen de funciones:
+
+- **`merge()`**: Fusiona dos DataFrames basado en columnas comunes, con soporte para diferentes tipos de uniones (inner, outer, left, right).
+- **`concat()`**: Concatenación de DataFrames por filas (vertical) o columnas (horizontal).
+- **`join()`**: Combina DataFrames usando índices, con soporte para diferentes tipos de uniones.
+  
+Estas operaciones son útiles para consolidar datos de diferentes fuentes y reorganizar la información de manera eficiente. Si tienes algún caso específico o necesitas más detalles, ¡déjame saber!
+
+**Lecturas recomendadas**
+
+[Merge, join, concatenate and compare](https://pandas.pydata.org/docs/user_guide/merging.html "Merge, join, concatenate and compare")
+
+## Graficación de Datos con Matplotlib
+
+**Matplotlib** es una de las bibliotecas más populares en Python para la visualización de datos. Permite crear gráficos simples y avanzados de manera fácil y flexible. Aquí te presento las funciones más comunes para graficar datos usando **Matplotlib**, junto con ejemplos prácticos.
+
+### Instalación de Matplotlib
+
+Si no tienes Matplotlib instalado, puedes hacerlo usando pip:
+
+```bash
+pip install matplotlib
+```
+
+### Importar Matplotlib
+El módulo principal de Matplotlib es `pyplot`, que se suele importar como `plt`.
+
+```python
+import matplotlib.pyplot as plt
+```
+
+### 1. **Gráfico de Línea**
+El gráfico de líneas es útil para mostrar la evolución de los datos a lo largo del tiempo.
+
+#### Ejemplo:
+```python
+import matplotlib.pyplot as plt
+
+# Datos de ejemplo
+x = [1, 2, 3, 4, 5]
+y = [2, 3, 5, 7, 11]
+
+# Crear gráfico de línea
+plt.plot(x, y)
+
+# Agregar etiquetas y título
+plt.xlabel('X')
+plt.ylabel('Y')
+plt.title('Gráfico de Línea')
+
+# Mostrar gráfico
+plt.show()
+```
+
+### 2. **Gráfico de Barras**
+El gráfico de barras es ideal para comparar cantidades entre diferentes categorías.
+
+#### Ejemplo:
+```python
+# Datos de ejemplo
+categorias = ['A', 'B', 'C', 'D']
+valores = [4, 7, 1, 8]
+
+# Crear gráfico de barras
+plt.bar(categorias, valores)
+
+# Agregar etiquetas y título
+plt.xlabel('Categorías')
+plt.ylabel('Valores')
+plt.title('Gráfico de Barras')
+
+# Mostrar gráfico
+plt.show()
+```
+
+#### Gráfico de barras horizontal:
+```python
+plt.barh(categorias, valores)
+plt.xlabel('Valores')
+plt.ylabel('Categorías')
+plt.title('Gráfico de Barras Horizontal')
+plt.show()
+```
+
+### 3. **Gráfico de Dispersión**
+El gráfico de dispersión se utiliza para representar puntos en un plano y observar la relación entre dos variables.
+
+#### Ejemplo:
+```python
+# Datos de ejemplo
+x = [1, 2, 3, 4, 5]
+y = [2, 4, 5, 7, 10]
+
+# Crear gráfico de dispersión
+plt.scatter(x, y)
+
+# Agregar etiquetas y título
+plt.xlabel('X')
+plt.ylabel('Y')
+plt.title('Gráfico de Dispersión')
+
+# Mostrar gráfico
+plt.show()
+```
+
+### 4. **Histograma**
+Los histogramas muestran la distribución de un conjunto de datos, dividiendo los valores en intervalos (bins).
+
+#### Ejemplo:
+```python
+import numpy as np
+
+# Datos de ejemplo
+data = np.random.randn(1000)
+
+# Crear histograma
+plt.hist(data, bins=30)
+
+# Agregar etiquetas y título
+plt.xlabel('Valores')
+plt.ylabel('Frecuencia')
+plt.title('Histograma')
+
+# Mostrar gráfico
+plt.show()
+```
+
+### 5. **Gráfico Circular (Pie Chart)**
+El gráfico circular se utiliza para mostrar la proporción de diferentes categorías.
+
+#### Ejemplo:
+```python
+# Datos de ejemplo
+etiquetas = ['A', 'B', 'C', 'D']
+valores = [15, 25, 35, 25]
+
+# Crear gráfico circular
+plt.pie(valores, labels=etiquetas, autopct='%1.1f%%')
+
+# Agregar título
+plt.title('Gráfico Circular')
+
+# Mostrar gráfico
+plt.show()
+```
+
+### 6. **Gráficos con Subplots**
+Puedes crear múltiples gráficos en una misma figura usando **subplots**.
+
+#### Ejemplo:
+```python
+# Crear una figura con dos subgráficos
+fig, axs = plt.subplots(1, 2, figsize=(10, 4))
+
+# Subplot 1: Gráfico de línea
+axs[0].plot([1, 2, 3, 4], [1, 4, 9, 16])
+axs[0].set_title('Gráfico de Línea')
+
+# Subplot 2: Gráfico de barras
+axs[1].bar(['A', 'B', 'C', 'D'], [5, 7, 3, 8])
+axs[1].set_title('Gráfico de Barras')
+
+# Ajustar la separación entre subplots
+plt.tight_layout()
+
+# Mostrar gráficos
+plt.show()
+```
+
+### 7. **Personalización de Gráficos**
+
+Puedes personalizar diferentes aspectos de los gráficos, como los colores, estilos de líneas, y más.
+
+#### Cambiar color y estilo de línea:
+```python
+# Crear gráfico de línea con personalización
+plt.plot([1, 2, 3, 4], [1, 4, 2, 3], color='green', linestyle='--', marker='o')
+plt.title('Gráfico Personalizado')
+plt.show()
+```
+
+#### Personalizar los ejes:
+```python
+# Personalización de los límites de los ejes
+plt.plot([1, 2, 3, 4], [10, 20, 25, 30])
+plt.xlim(0, 5)  # Limitar el eje X
+plt.ylim(5, 35)  # Limitar el eje Y
+plt.title('Gráfico con Límites Personalizados')
+plt.show()
+```
+
+### 8. **Agregar Leyendas**
+Las leyendas son útiles para identificar diferentes conjuntos de datos en un mismo gráfico.
+
+#### Ejemplo:
+```python
+# Crear dos series de datos
+plt.plot([1, 2, 3, 4], [1, 4, 9, 16], label='Cuadrado')
+plt.plot([1, 2, 3, 4], [1, 8, 27, 64], label='Cubo')
+
+# Agregar leyenda
+plt.legend()
+
+# Mostrar gráfico
+plt.show()
+```
+
+### 9. **Guardar Gráficos**
+Puedes guardar los gráficos en formato PNG, PDF u otros formatos.
+
+#### Ejemplo:
+```python
+# Crear gráfico y guardarlo como imagen
+plt.plot([1, 2, 3, 4], [10, 20, 25, 30])
+plt.title('Gráfico Guardado')
+
+# Guardar gráfico
+plt.savefig('grafico.png')
+
+# Mostrar gráfico
+plt.show()
+```
+
+### 10. **Gráfico de Área**
+Los gráficos de área son útiles para mostrar cómo una cantidad cambia en el tiempo.
+
+#### Ejemplo:
+```python
+# Datos de ejemplo
+x = [1, 2, 3, 4, 5]
+y = [1, 4, 6, 8, 10]
+
+# Crear gráfico de área
+plt.fill_between(x, y, color="skyblue", alpha=0.4)
+plt.plot(x, y, color="Slateblue", alpha=0.6)
+
+# Mostrar gráfico
+plt.show()
+```
+
+### Resumen de Funciones:
+
+- **`plot()`**: Para gráficos de línea.
+- **`bar()` y `barh()`**: Para gráficos de barras (vertical y horizontal).
+- **`scatter()`**: Para gráficos de dispersión.
+- **`hist()`**: Para histogramas.
+- **`pie()`**: Para gráficos circulares.
+- **`subplots()`**: Para múltiples gráficos en una sola figura.
+- **`legend()`**: Para agregar leyendas.
+- **`savefig()`**: Para guardar gráficos.
+
+Estos son solo algunos ejemplos básicos, pero Matplotlib es extremadamente versátil. Puedes personalizar casi todos los aspectos de los gráficos. Si necesitas ayuda con un gráfico en particular o más detalles, ¡déjame saber!
+
+**Lecturas recomendadas**
+
+[Matplotlib — Visualization with Python](https://matplotlib.org/ "Matplotlib — Visualization with Python")
+
+## Manejo de Series Temporales en Pandas
+
+El manejo de **series temporales** es fundamental cuando trabajamos con datos que incluyen fechas y tiempos. **Pandas** proporciona herramientas poderosas para manipular, analizar y visualizar series temporales de manera eficiente. Aquí te explico las operaciones clave que puedes realizar con **Pandas** para trabajar con datos de tipo temporal.
+
+### 1. **Creación de Series Temporales**
+
+#### Crear una serie de fechas:
+Puedes crear una serie de fechas usando `pd.date_range()`.
+
+```python
+import pandas as pd
+
+# Crear una serie de fechas desde el 1 de enero de 2023, con 10 días de frecuencia
+fechas = pd.date_range(start='2023-01-01', periods=10, freq='D')
+print(fechas)
+```
+
+#### Crear un DataFrame con una columna de fechas:
+```python
+# Crear un DataFrame con fechas y datos
+data = pd.DataFrame({
+    'fecha': pd.date_range('2023-01-01', periods=10, freq='D'),
+    'valor': range(10)
+})
+print(data)
+```
+
+### 2. **Conversión de Fechas (Datetime)**
+Si tienes una columna de fechas como texto, puedes convertirla a formato **datetime** usando `pd.to_datetime()`.
+
+```python
+# Crear un DataFrame con fechas como cadenas
+data = pd.DataFrame({
+    'fecha': ['2023-01-01', '2023-01-02', '2023-01-03'],
+    'valor': [10, 20, 30]
+})
+
+# Convertir la columna 'fecha' a formato datetime
+data['fecha'] = pd.to_datetime(data['fecha'])
+print(data.dtypes)
+```
+
+### 3. **Indexación y Selección por Fechas**
+Cuando trabajas con series temporales, a menudo querrás usar las fechas como índice. Esto facilita la selección de datos basados en intervalos de tiempo.
+
+#### Establecer una columna de fechas como índice:
+```python
+data.set_index('fecha', inplace=True)
+print(data)
+```
+
+#### Selección de datos por fecha:
+```python
+# Seleccionar datos de una fecha específica
+print(data.loc['2023-01-02'])
+
+# Seleccionar datos por rango de fechas
+print(data.loc['2023-01-01':'2023-01-03'])
+```
+
+### 4. **Resampling (Re-Muestreo)**
+El **resampling** permite agrupar datos por diferentes frecuencias de tiempo (como días, meses, o años). Es útil para agregar, promediar o tomar la suma de datos en diferentes intervalos de tiempo.
+
+#### Ejemplo de re-muestreo a frecuencia mensual:
+```python
+# Crear un DataFrame con datos diarios
+data = pd.DataFrame({
+    'fecha': pd.date_range(start='2023-01-01', periods=100, freq='D'),
+    'valor': range(100)
+})
+data.set_index('fecha', inplace=True)
+
+# Re-muestrear a frecuencia mensual y sumar los valores
+data_mensual = data.resample('M').sum()
+print(data_mensual)
+```
+
+#### Frecuencias comunes para resampling:
+- `D`: Día.
+- `M`: Mes.
+- `Y`: Año.
+- `H`: Hora.
+- `T`: Minuto.
+
+### 5. **Shifting y Lagging**
+El desplazamiento (`shift()`) se utiliza para mover datos hacia adelante o hacia atrás en el tiempo. Esto es útil para calcular diferencias entre períodos consecutivos.
+
+#### Ejemplo de `shift()`:
+```python
+# Desplazar los valores hacia abajo
+data['valor_shift'] = data['valor'].shift(1)
+print(data)
+```
+
+#### Calcular la diferencia entre períodos:
+```python
+# Calcular la diferencia entre un valor y el anterior
+data['diferencia'] = data['valor'] - data['valor'].shift(1)
+print(data)
+```
+
+### 6. **Ventanas Móviles (Rolling Windows)**
+Las ventanas móviles permiten aplicar funciones (como media, suma, etc.) sobre ventanas deslizantes de datos temporales.
+
+#### Ejemplo de media móvil:
+```python
+# Calcular la media móvil de 3 días
+data['media_movil'] = data['valor'].rolling(window=3).mean()
+print(data)
+```
+
+### 7. **Frecuencias de Fechas Personalizadas**
+Pandas permite trabajar con diferentes frecuencias de tiempo, no solo días o meses. Puedes crear series de tiempo con frecuencias personalizadas, como días laborables (`B`), horas (`H`), semanas (`W`), etc.
+
+#### Ejemplo de días laborables:
+```python
+# Crear una serie temporal solo con días laborables
+fechas_laborables = pd.date_range(start='2023-01-01', periods=10, freq='B')
+print(fechas_laborables)
+```
+
+#### Frecuencias comunes:
+- `B`: Días laborables.
+- `W`: Semanas.
+- `H`: Horas.
+- `T` o `min`: Minutos.
+- `S`: Segundos.
+
+### 8. **Visualización de Series Temporales**
+Podemos usar **Matplotlib** para visualizar datos de series temporales.
+
+#### Ejemplo de gráfico de línea para una serie temporal:
+```python
+import matplotlib.pyplot as plt
+
+# Crear una serie temporal con datos aleatorios
+data = pd.DataFrame({
+    'fecha': pd.date_range(start='2023-01-01', periods=100, freq='D'),
+    'valor': np.random.randn(100).cumsum()
+})
+data.set_index('fecha', inplace=True)
+
+# Graficar la serie temporal
+data['valor'].plot(title='Serie Temporal')
+plt.xlabel('Fecha')
+plt.ylabel('Valor')
+plt.show()
+```
+
+### 9. **Resampling con Agregaciones Personalizadas**
+Además de sumar o promediar, puedes aplicar cualquier función personalizada al re-muestrear los datos.
+
+#### Ejemplo de re-muestreo con agregación personalizada:
+```python
+# Re-muestrear por mes y aplicar diferentes agregaciones
+data_resample = data.resample('M').agg({
+    'valor': ['sum', 'mean', 'max']
+})
+print(data_resample)
+```
+
+### 10. **Manipulación Avanzada de Series Temporales**
+
+#### Descomposición estacional:
+Puedes descomponer una serie temporal en sus componentes estacionales, tendencia y residuales usando `statsmodels`.
+
+```python
+from statsmodels.tsa.seasonal import seasonal_decompose
+
+# Descomponer la serie temporal
+resultado = seasonal_decompose(data['valor'], model='additive', period=30)
+
+# Graficar los resultados de la descomposición
+resultado.plot()
+plt.show()
+```
+
+#### Ajuste de zonas horarias (time zones):
+Pandas permite ajustar y convertir zonas horarias de manera eficiente.
+
+```python
+# Convertir a zona horaria UTC
+data = data.tz_localize('UTC')
+
+# Convertir a una nueva zona horaria
+data = data.tz_convert('America/New_York')
+print(data)
+```
+
+### Resumen de Operaciones Clave:
+- **`pd.date_range()`**: Para crear series de fechas.
+- **`pd.to_datetime()`**: Para convertir columnas de fechas.
+- **`set_index()`**: Para establecer fechas como índice.
+- **`resample()`**: Para cambiar la frecuencia temporal.
+- **`shift()`**: Para desplazar datos en el tiempo.
+- **`rolling()`**: Para aplicar funciones sobre ventanas móviles.
+- **`tz_localize()` y `tz_convert()`**: Para ajustar zonas horarias.
+  
+Con estas herramientas puedes manejar series temporales de manera eficiente en Pandas. Si tienes alguna duda o quieres profundizar en un tema específico, ¡avísame!
+
+### Tipos de Graficas
+
+En **Pandas**, la función `plot()` es una forma conveniente de crear gráficos directamente a partir de **DataFrames** o **Series** sin necesidad de escribir demasiado código. Uno de sus parámetros más importantes es `kind`, que define el tipo de gráfico que se va a generar.
+
+### Tipos de Gráficas Disponibles con `kind`
+
+A continuación se muestran los diferentes tipos de gráficos que puedes crear utilizando el parámetro `kind` en **Pandas**.
+
+#### Sintaxis Básica
+```python
+df.plot(kind='tipo_de_grafico')
+```
+
+### 1. **Gráfico de Línea** (`kind='line'`)
+Este es el tipo de gráfico predeterminado. Ideal para mostrar la evolución de los datos a lo largo del tiempo.
+
+```python
+import pandas as pd
+import numpy as np
+
+# Crear un DataFrame de ejemplo
+df = pd.DataFrame({
+    'x': pd.date_range('2023-01-01', periods=100),
+    'y': np.random.randn(100).cumsum()
+})
+
+# Gráfico de línea
+df.plot(x='x', y='y', kind='line', title='Gráfico de Línea')
+```
+
+### 2. **Gráfico de Barras** (`kind='bar'`)
+Los gráficos de barras son útiles para comparar diferentes categorías.
+
+```python
+# Crear un DataFrame de ejemplo
+df = pd.DataFrame({
+    'categoría': ['A', 'B', 'C', 'D'],
+    'valor': [4, 7, 1, 8]
+})
+
+# Gráfico de barras
+df.plot(x='categoría', y='valor', kind='bar', title='Gráfico de Barras')
+```
+
+### 3. **Gráfico de Barras Horizontales** (`kind='barh'`)
+Es el mismo gráfico de barras, pero las barras se dibujan horizontalmente.
+
+```python
+df.plot(x='categoría', y='valor', kind='barh', title='Gráfico de Barras Horizontales')
+```
+
+### 4. **Gráfico de Histograma** (`kind='hist'`)
+Un histograma muestra la distribución de los datos dividiéndolos en intervalos (bins).
+
+```python
+# Crear datos de ejemplo
+df = pd.DataFrame({
+    'data': np.random.randn(1000)
+})
+
+# Gráfico de histograma
+df.plot(kind='hist', bins=30, title='Histograma')
+```
+
+### 5. **Gráfico de Dispersión (Scatter)** (`kind='scatter'`)
+Se utiliza para mostrar la relación entre dos variables continuas.
+
+```python
+# Crear un DataFrame de ejemplo
+df = pd.DataFrame({
+    'x': np.random.rand(50),
+    'y': np.random.rand(50)
+})
+
+# Gráfico de dispersión
+df.plot(x='x', y='y', kind='scatter', title='Gráfico de Dispersión')
+```
+
+### 6. **Gráfico de Área** (`kind='area'`)
+El gráfico de área es similar al de líneas, pero las áreas debajo de las líneas están rellenas.
+
+```python
+# Crear un DataFrame de ejemplo
+df = pd.DataFrame(np.random.rand(10, 3), columns=['A', 'B', 'C'])
+
+# Gráfico de área
+df.plot(kind='area', alpha=0.4, title='Gráfico de Área')
+```
+
+### 7. **Gráfico de Cajas (Boxplot)** (`kind='box'`)
+Los boxplots o gráficos de cajas muestran la distribución de un conjunto de datos mostrando los cuartiles y los valores atípicos.
+
+```python
+# Crear un DataFrame de ejemplo
+df = pd.DataFrame(np.random.randn(10, 4), columns=['A', 'B', 'C', 'D'])
+
+# Gráfico de cajas
+df.plot(kind='box', title='Gráfico de Cajas')
+```
+
+### 8. **Gráfico Hexbin** (`kind='hexbin'`)
+Este gráfico es útil para grandes conjuntos de datos y muestra la densidad de puntos en una cuadrícula hexagonal. Requiere dos columnas (ejes X e Y).
+
+```python
+# Crear un DataFrame de ejemplo
+df = pd.DataFrame({
+    'x': np.random.randn(1000),
+    'y': np.random.randn(1000)
+})
+
+# Gráfico hexbin
+df.plot(x='x', y='y', kind='hexbin', gridsize=25, title='Gráfico Hexbin')
+```
+
+### 9. **Gráfico de Pastel (Pie Chart)** (`kind='pie'`)
+Se utiliza para mostrar la proporción de diferentes categorías. Solo funciona en una serie (no en todo el DataFrame).
+
+```python
+# Crear una Serie de ejemplo
+serie = pd.Series([10, 20, 30], index=['A', 'B', 'C'])
+
+# Gráfico de pastel
+serie.plot(kind='pie', title='Gráfico de Pastel', autopct='%1.1f%%')
+```
+
+### 10. **Gráfico de Densidad (KDE)** (`kind='kde'`)
+Un gráfico de densidad estima la distribución de los datos de forma continua.
+
+```python
+# Crear datos de ejemplo
+df = pd.DataFrame({
+    'data': np.random.randn(1000)
+})
+
+# Gráfico de densidad
+df.plot(kind='kde', title='Gráfico de Densidad')
+```
+
+### Personalización de Gráficos
+
+- **`title`**: Agrega un título al gráfico.
+- **`xlabel` y `ylabel`**: Etiquetas para los ejes X e Y.
+- **`legend`**: Para mostrar la leyenda.
+- **`color`**: Para cambiar el color de las series o barras.
+- **`grid`**: Muestra la cuadrícula en el gráfico.
+
+### Ejemplo General:
+```python
+import pandas as pd
+import numpy as np
+
+# Crear un DataFrame de ejemplo
+df = pd.DataFrame(np.random.rand(10, 3), columns=['A', 'B', 'C'])
+
+# Gráfico de área con título y leyenda
+df.plot(kind='area', alpha=0.5, title='Gráfico de Área')
+plt.xlabel('Índice')
+plt.ylabel('Valores')
+plt.grid(True)
+plt.show()
+```
+
+### Resumen de Tipos de Gráficos:
+
+- `line`: Gráfico de línea (predeterminado).
+- `bar`: Gráfico de barras.
+- `barh`: Gráfico de barras horizontales.
+- `hist`: Histograma.
+- `scatter`: Gráfico de dispersión.
+- `area`: Gráfico de área.
+- `box`: Gráfico de cajas (boxplot).
+- `hexbin`: Gráfico hexbin (dispersión con densidad).
+- `pie`: Gráfico circular.
+- `kde`: Gráfico de densidad.
+
+Con estas opciones, puedes crear muchos tipos de gráficos directamente en Pandas. Si necesitas más detalles o un ejemplo específico, ¡avísame!
+
+**Lecturas recomendadas**
+
+[pandas.Series.dt.strftime](https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.dt.strftime.html "pandas.Series.dt.strftime")
+[pandas.to_datetime](https://pandas.pydata.org/docs/reference/api/pandas.to_datetime.html "pandas.to_datetime")
+
+## Creación de Portafolio de Análisis de Datos
+
+¡Felicidades por llegar al final del curso!
+Ahora es el momento de completar tu portafolio donde recapitularemos todo lo aprendido.
+
+A lo largo del curso, hemos discutido varios recursos que puedes utilizar para crear tu portafolio, incluyendo:
+
+1. Código en Google Colaboratory o Visual Studio Code.
+2. Reportes generados.
+3. Insights obtenidos.
+4. Repositorio en GitHub.
+
+En este proyecto, utilizaremos el dataset online_retail.csv para limpiar, analizar y visualizar datos, con el objetivo de obtener información valiosa para los stakeholders de una empresa.
+
+### Paso 1. Instalación y Configuración
+
+Antes de comenzar, asegúrate de tener instalados los paquetes necesarios. Puedes instalarlos utilizando pip:
+
+`pip install numpy pandas matplotlib`
+
+### Paso 2. Cargar los Datos
+
+Importa las librerías necesarias y carga el dataset:
+
+```python
+import pandas as pd
+
+# Cargar el dataset
+df = pd.read_csv('ruta/al/archivo/online_retail.csv')
+```
+
+### Paso 3. Exploración Inicial de los Datos
+
+Explorar los datos es esencial para entender su estructura, identificar patrones y detectar posibles problemas. Esta fase nos ayuda a formular hipótesis y definir el enfoque del análisis.
+
+```python
+# Mostrar las primeras filas del dataframe
+print(df.head())
+
+# Información general del dataframe
+print(df.info())
+
+# Estadísticas descriptivas
+print(df.describe())
+```
+
+### Paso 4. Limpieza de Datos
+
+La limpieza de datos elimina errores e inconsistencias, asegurando que los análisis sean precisos y confiables. Datos sucios pueden llevar a conclusiones incorrectas y afectar negativamente la toma de decisiones.
+
+**Eliminar datos nulos:**
+
+```python
+# Eliminar filas con valores nulos
+df.dropna(inplace=True)
+Eliminar duplicados:
+
+# Eliminar filas duplicadas
+df.drop_duplicates(inplace=True)
+Filtrar datos incorrectos:
+
+# Filtrar registros con cantidades negativas
+df = df[df['Quantity'] > 0]
+```
+
+### Paso 5. Análisis Exploratorio de Datos (EDA)
+
+El análisis exploratorio o EDA nos permite comprender mejor nuestros datos y descubrir relaciones, patrones o anomalías. Esta etapa es crucial para preparar el terreno para el análisis más profundo y la modelización.
+
+**Distribución de las ventas por país:**
+
+```python
+# Ventas por país
+ventas_pais = df['Country'].value_counts()
+print(ventas_pais)
+```
+
+**Productos más vendidos:**
+
+```python
+# Top 10 productos más vendidos
+top_productos = df['Description'].value_counts().head(10)
+print(top_productos)
+```
+
+### Paso 6. Visualización de Datos
+
+Las visualizaciones son esenciales para comunicar hallazgos de manera clara y efectiva. Facilitan la comprensión de patrones y tendencias que podrían no ser evidentes en una tabla de datos.
+
+**Gráfico de barras de ventas por país:**
+
+```python
+import matplotlib.pyplot as plt
+
+# Gráfico de barras
+ventas_pais.plot(kind='bar', figsize=(12, 6))
+plt.title('Ventas por País')
+plt.xlabel('País')
+plt.ylabel('Número de Ventas')
+plt.show()
+```
+
+**Gráfico de productos más vendidos:**
+
+```python
+# Gráfico de barras de productos más vendidos
+top_productos.plot(kind='bar', figsize=(12, 6))
+plt.title('Top 10 Productos Más Vendidos')
+plt.xlabel('Producto')
+plt.ylabel('Cantidad Vendida')
+plt.show()
+```
+
+### Paso 7. Generar Informes
+
+Los informes sintetizan el análisis y presentan los hallazgos de manera estructurada. Son fundamentales para comunicar los resultados a los stakeholders y apoyar la toma de decisiones basada en datos.
+
+**Resumen del análisis:**
+
+```python
+# Crear un resumen del análisis
+resumen = {
+    'Total Ventas': df['Quantity'].sum(),
+    'Total Clientes': df['CustomerID'].nunique(),
+    'Ventas por País': ventas_pais.to_dict(),
+    'Top Productos': top_productos.to_dict()
+}
+
+# Guardar el resumen en un archivo
+import json
+with open('resumen_analisis.json', 'w') as f:
+    json.dump(resumen, f, indent=4)
+
+print("Resumen del análisis guardado en 'resumen_analisis.json'")
+```
+
+### Paso 8. Creación de Nuevas Columnas e Insights Adicionales
+
+La creación de nuevas columnas nos permite derivar información adicional y realizar análisis más profundos. Podemos generar métricas clave que faciliten la interpretación de los datos y la toma de decisiones.
+
+**Calcular el monto total de cada transacción:**
+
+```python
+# Crear una nueva columna para el monto total de cada transacción
+df['TotalAmount'] = df['Quantity'] * df['UnitPrice']
+```
+
+**Identificar las fechas con mayor número de ventas:**
+
+```python
+# Convertir la columna 'InvoiceDate' a formato datetime
+df['InvoiceDate'] = pd.to_datetime(df['InvoiceDate'])
+
+# Crear una nueva columna para el día de la semana
+df['DayOfWeek'] = df['InvoiceDate'].dt.day_name()
+
+# Ventas por día de la semana
+ventas_dia = df['DayOfWeek'].value_counts()
+print(ventas_dia)
+```
+
+**Calcular las ventas mensuales:**
+
+```python
+# Crear una nueva columna para el mes
+df['Month'] = df['InvoiceDate'].dt.month
+
+# Ventas mensuales
+ventas_mensuales = df.groupby('Month')['TotalAmount'].sum()
+print(ventas_mensuales)
+```
+
+**Visualización de las ventas mensuales:**
+
+```python
+# Gráfico de líneas de ventas mensuales
+ventas_mensuales.plot(kind='line', figsize=(12, 6))
+plt.title('Ventas Mensuales')
+plt.xlabel('Mes')
+plt.ylabel('Monto Total de Ventas')
+plt.show()
+```
+
+A lo largo del curso, hemos recorrido los pasos esenciales para limpiar y analizar datos utilizando Python; con el dataset online_retail.csv, aplicamos buenas prácticas de programación y análisis, y generamos información valiosa que puede ser utilizada por los stakeholders para tomar decisiones informadas.
+¡Te invito a seguir explorando y aplicando estos conceptos en tus propios proyectos para desarrollar tus habilidades en ciencia de datos!
+
+#### Para crear un portafolio de Análisis de Datos sigue estas recomendaciones:
+
+A la hora de armar un portafolio de análisis de datos con cualquier dataset, ten en cuenta lo siguiente:
+
+1. **Conoce el área y el objetivo:** Antes de comenzar, asegúrate de entender el contexto y los objetivos del análisis. ¿Qué preguntas necesitas responder? ¿Quiénes son los stakeholders?
+2. **Explora los datos:** Realiza una exploración inicial para familiarizarte con la estructura y el contenido del dataset. Puedes identificar posibles problemas o áreas de interés.
+3. **Limpia los datos:** La calidad de los datos es crucial. Asegúrate de eliminar valores nulos, duplicados y cualquier dato que no sea válido.
+4. **Realiza un análisis exploratorio:** Utiliza técnicas de análisis exploratorio para descubrir patrones, tendencias y relaciones en los datos.
+5. **Crea nuevas columnas:** Deriva nuevas métricas y columnas que puedan aportar valor al análisis.
+6. **Visualiza los datos:** Utiliza gráficos y visualizaciones para comunicar tus hallazgos de manera efectiva. Asegúrate de que sean claras y fáciles de interpretar.
+7. **Genera informes:** Documenta tus hallazgos y conclusiones en informes estructurados. Esto facilitará la comunicación con los stakeholders y respaldará tus recomendaciones.
+8. **Sé claro y conciso:** Utiliza nombres descriptivos para variables y columnas. Asegúrate de que tu código y tus informes sean fáciles de seguir y entender.
+9. **Itera y mejora:** El análisis de datos es un proceso iterativo. Revisa tus resultados, solicita feedback y mejora continuamente tu trabajo.
+
+Siguiendo estas recomendaciones, estarás en camino de crear un portafolio de análisis de datos sólido y profesional.
