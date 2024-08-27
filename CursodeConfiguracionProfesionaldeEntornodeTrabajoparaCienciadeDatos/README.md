@@ -611,3 +611,234 @@ Si todo está bien, el pre-hook se ejecutará antes de que se genere el proyecto
 ### Resumen
 
 Los **hooks** en Cookiecutter son una poderosa forma de personalizar aún más tus plantillas de proyectos, permitiéndote automatizar tareas complejas y mantener la flexibilidad. Con ellos puedes ejecutar validaciones previas o tareas de post-procesamiento de manera eficiente, optimizando el flujo de trabajo del desarrollo de proyectos.
+
+## Distribuir plantilla de proyecto
+
+Para distribuir una plantilla de proyecto de manera eficiente, puedes utilizar varias estrategias que permiten compartir y reutilizar la plantilla con otros desarrolladores o equipos. A continuación te explico algunos enfoques comunes para distribuir tu plantilla:
+
+### 1. **Distribuir la plantilla usando Git**
+
+Puedes almacenar la plantilla del proyecto en un repositorio Git y compartirlo con otras personas. Esto permite que cualquiera clone o descargue el repositorio para crear nuevos proyectos.
+
+#### Paso 1: Crear un repositorio en Git
+
+- Crea un repositorio Git, ya sea localmente o en una plataforma como **GitHub**, **GitLab**, **Bitbucket**, etc.
+- Inicializa el repositorio en tu plantilla:
+  ```bash
+  git init
+  git add .
+  git commit -m "Plantilla de proyecto"
+  ```
+
+#### Paso 2: Subir el repositorio a GitHub (u otro servicio)
+
+- Si usas GitHub, crea un nuevo repositorio en la plataforma, luego sigue las instrucciones para conectarlo a tu repositorio local:
+
+  ```bash
+  git remote add origin https://github.com/tu_usuario/tu_repositorio.git
+  git push -u origin master
+  ```
+
+#### Paso 3: Clonar el repositorio
+
+Quienquiera que quiera utilizar la plantilla puede clonar el repositorio y empezar a trabajar:
+
+```bash
+git clone https://github.com/tu_usuario/tu_repositorio.git
+```
+
+### 2. **Distribuir con Cookiecutter**
+
+Si estás usando **Cookiecutter** para tu plantilla, también puedes compartirla a través de un repositorio Git, y los usuarios podrán generar nuevos proyectos basados en la plantilla de forma interactiva.
+
+#### Paso 1: Crear el repositorio Git con tu plantilla Cookiecutter
+
+Sigue los mismos pasos mencionados anteriormente para crear un repositorio con tu plantilla de Cookiecutter.
+
+#### Paso 2: Distribuir la plantilla con Cookiecutter
+
+Una vez que la plantilla esté disponible en GitHub u otra plataforma de control de versiones, otros desarrolladores pueden generar un proyecto basado en tu plantilla usando **Cookiecutter**.
+
+Por ejemplo, si la plantilla está en `https://github.com/tu_usuario/mi_plantilla_cookiecutter`, puedes ejecutar el siguiente comando:
+
+```bash
+cookiecutter https://github.com/tu_usuario/mi_plantilla_cookiecutter
+```
+
+### 3. **Distribuir como paquete en PyPI (para plantillas Python)**
+
+Si has creado una plantilla específica para proyectos en Python, puedes empaquetarla como un paquete de Python y distribuirla a través de **PyPI**. Esto permite que cualquiera instale tu plantilla con `pip`.
+
+#### Paso 1: Crear el archivo `setup.py`
+
+Define el archivo `setup.py` en tu plantilla para describir el paquete:
+
+```python
+from setuptools import setup, find_packages
+
+setup(
+    name='nombre_de_tu_plantilla',
+    version='0.1',
+    packages=find_packages(),
+    include_package_data=True,
+    entry_points={
+        'console_scripts': [
+            'iniciar_proyecto=nombre_de_tu_plantilla.main:start_project',
+        ],
+    },
+)
+```
+
+#### Paso 2: Subir el paquete a PyPI
+
+Regístrate en [PyPI](https://pypi.org/) y usa las herramientas como **twine** para subir tu paquete:
+
+```bash
+pip install twine
+python setup.py sdist
+twine upload dist/*
+```
+
+Después de subir el paquete, otros usuarios pueden instalar y ejecutar tu plantilla con `pip`:
+
+```bash
+pip install nombre_de_tu_plantilla
+iniciar_proyecto
+```
+
+### 4. **Compartir la plantilla como un archivo comprimido (ZIP/TAR)**
+
+Si prefieres no usar control de versiones, puedes distribuir tu plantilla como un archivo comprimido.
+
+#### Paso 1: Empaquetar la plantilla
+
+Crea un archivo ZIP o TAR de la plantilla:
+
+```bash
+zip -r mi_plantilla.zip /ruta/a/mi_plantilla
+```
+
+#### Paso 2: Compartir el archivo
+
+Puedes compartir este archivo a través de correo electrónico, almacenamiento en la nube (Google Drive, Dropbox, etc.), o cualquier otro medio. Los usuarios solo tendrán que descomprimir el archivo y comenzar a usar la plantilla.
+
+### 5. **Distribuir usando gestores de plantillas (como Yeoman o otros)**
+
+Si estás desarrollando plantillas para otras tecnologías como JavaScript, puedes usar herramientas específicas como **Yeoman**, que es un generador de scaffolding para proyectos web. Crearías un generador con Yeoman, lo empaquetarías, y otros desarrolladores podrían usarlo para generar nuevos proyectos con el comando:
+
+```bash
+yo nombre-de-tu-generador
+```
+
+### 6. **Publicar en un repositorio de plantillas (marketplaces o comunidades)**
+
+- **Cookiecutter Templates**: Publica tu plantilla en el directorio oficial de Cookiecutter para que esté disponible para otros usuarios. Puedes encontrarlo en [cookiecutter's repository](https://github.com/cookiecutter/cookiecutter).
+- **GitHub Marketplace**: Puedes publicar tus plantillas en GitHub Marketplace si tienes scripts o configuraciones que pueden ser útiles para otros.
+- **Plantillas en PyPI**: Si tienes plantillas para Python, puedes publicarlas en PyPI para que estén fácilmente disponibles a través de `pip`.
+
+### Resumen
+
+- **Git**: Almacena y distribuye la plantilla en un repositorio remoto.
+- **Cookiecutter**: Genera nuevos proyectos basados en plantillas interactivamente.
+- **PyPI**: Empaqueta tu plantilla como un paquete Python.
+- **ZIP**: Empaqueta la plantilla en un archivo comprimido y distribúyela.
+- **Yeoman**: Usado para plantillas JavaScript/web.
+
+## Manejo de rutas del sistema: OS
+
+### Objetivo
+
+Crear la ruta “./data/raw/” independiente del sistema operativo. En este caso usaremos os, un módulo de Python que sirve para manejar rutas.
+
+**IMPORTANTE**: cerciórate de que estás trabajando en el entorno correcto.
+
+### Implementación
+
+Dentro del notebook de jupyter:
+
+```bash
+import os
+
+CURRENT_DIR = os.getcwd()  # Ruta actual de trabajo
+DATA_DIR = os.path.join(CURRENT_DIR, os.pardir, "data", "raw")  # Ruta objetivo (os.pardir: ruta padre)
+
+os.path.exists(DATA_DIR)  # Revisa si el path existe
+os.path.isdir(DATA_DIR)  # Revisa si es un directorio
+
+os.listdir(DATA_DIR)  # Itera por los archivos dentro del directorio
+
+os.mkdir(os.path.join(DATA_DIR, "os"))  # Crea la carpeta *"os"*
+```
+
+**Lecturas recomendadas**
+
+[os.path — Common pathname manipulations — Python 3.9.7 documentation](https://docs.python.org/3/library/os.path.html "os.path — Common pathname manipulations — Python 3.9.7 documentation")
+
+## Manejo de rutas del sistema: Pathlib
+
+### Objetivo
+
+Crear la ruta “./data/raw/” independiente del sistema operativo. Ahora usaremos pathlib, otro módulo de Python.
+
+### Implementación
+
+Dentro del notebook de jupyter:
+
+```python
+import pathlib
+
+pathlib.Path()  # Genera un objeto Unix Path o 
+
+CURRENT_DIR = pathlib.Path().resolve()  # Path local completo
+DATA_DIR = CURRENT_DIR.parent.joinpath("data", "raw")  # Directorio objetivo
+
+DATA_DIR.exists()  # Revisa si el directorio existe
+DATA_DIR.is_dir()  # Revisa si es un directorio
+```
+
+Utiliza el método “parent” para obtener el directorio padre y de ahí concatenar el path de las carpetas “data” y “raw”.
+
+Puedes crear una carpeta dentro de un directorio, usando el método “mkdir”:
+
+`DATA_DIR.joinpath("<nombre_carpeta>").mkdir()`
+
+Para buscar la ruta de un archivo dentro del proyecto, usando regex:
+
+`list(DATA_DIR.glob("<nombre_archivo>"))`
+
+**Lecturas recomendadas**
+
+[pathlib — Object-oriented filesystem paths — Python 3.9.7 documentation](https://docs.python.org/3/library/pathlib.html "pathlib — Object-oriented filesystem paths — Python 3.9.7 documentation")
+
+## Manejo de rutas del sistema: PyFilesystem
+
+### Objetivo
+
+Crear la ruta “./data/raw/” independiente del sistema operativo. Ahora usaremos PyFilesystem2.
+
+### Implementación
+
+Dentro del notebook de jupyter:
+
+```python
+import fs
+
+fs.open_fs(".")  # Abre una conexión con el path actual (OSFS)
+
+CURRENT_DIR = fs.open_fs(".")
+
+CURRENT_DIR.exists(".")  # Revisa si el directorio existe
+DATA_DIR.listdir(".")  # Muestra el contenido dentro de la ruta.
+```
+
+- PyFilesystem2 genera un objeto OSFS (Operating System Filesystem).
+
+- El inconveniente con este módulo es que el objeto OSFS solo detecta los objetos que existen en la ruta actual, por lo que si intentas acceder a un archivo ubicado en el directorio padre “…” te saltará un *IndexError*.
+
+- Si necesitas que el objeto OSFS también detecte el directorio padre, además de las carpetas “data” y “raw”, vuelve a generar el objeto de la siguiente forma:
+
+`fs.open_fs("../data/raw/")  # Ruta objetivo`
+
+**Lecturas recomendadas**
+
+[Introduction — PyFilesystem 2.4.13 documentation](https://docs.pyfilesystem.org/en/latest/introduction.html "Introduction — PyFilesystem 2.4.13 documentation")
