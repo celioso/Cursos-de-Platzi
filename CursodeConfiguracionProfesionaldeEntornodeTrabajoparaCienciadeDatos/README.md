@@ -842,3 +842,129 @@ DATA_DIR.listdir(".")  # Muestra el contenido dentro de la ruta.
 **Lecturas recomendadas**
 
 [Introduction — PyFilesystem 2.4.13 documentation](https://docs.pyfilesystem.org/en/latest/introduction.html "Introduction — PyFilesystem 2.4.13 documentation")
+
+## Crear referencias relativas de archivos
+
+### Objetivo
+
+Necesitamos encontrar una forma de evitar que nuestro proyecto se rompa cuando movamos de lugar un archivo dentro del proyecto, para esto usaremos Referencias Relativas.
+
+### Implementación
+
+**Usando PyProjRoot:**
+
+```python
+import pyprojroot
+
+pyprojroot.here()  # Esto es un Posix Path (pathlib)
+pyprojroot.here().joinpath("data", "raw") 
+```
+
+- El path en pyprojroot se construye desde la raíz, no desde el path del archivo que lo ejecuta.
+- Puedes mover el archivo a cualquier parte de la carpeta del proyecto, pero los paths no se romperán.
+
+**Usando PyHere:**
+
+```python
+import pyhere
+
+pyhere.here()  # También regresa un Posix Path
+```
+
+- El directorio que regresa es el directorio padre del directorio actual.
+
+### Comparación
+
+Estas dos líneas de código regresan el mismo resultado:
+
+```python
+pyprojroot.here("data").joinpath("raw")
+pyhere.here().resolve() / "data" / "raw"
+```
+
+- Estas dos librerías sirven para crear shortcuts. Para esto, se puede usar la siguiente función:
+
+```python
+def make_dir_function(dir_name):
+    def dir_function(*args):
+        return pyprojroot.here()joinpath(dir_name, *args)
+    return dir_function
+
+
+data_dir = make_dir_function("data")
+data_dir("raw", "pathlib")  # Devuelve el path personalizado
+```
+
+- Puedes crear la cantidad de shortcuts que tu proyecto necesite.
+
+## Descarga de plantilla y configuración de ambiente virtual
+
+Descarga e Instalación
+Para instalar y ejecutar la plantilla a usar, en el caso práctico, en una terminal escribir:
+
+```python
+conda activate <nombre_entorno_cookiecutter>
+cookiecutter https://github.com/jvelezmagic/cookiecutter-conda-data-science
+```
+
+Durante la instalación de la plantilla y para que puedas reproducir el proyecto del profesor, elige las siguientes opciones:
+
+- **Select project packages**: Minimal
+- **Python version**: 3.9
+
+### Activación
+
+Para activar el proyecto, ejecutar lo siguiente en consola:
+
+```python
+cd <nombre_carpeta_proyecto>
+conda env create --file environment.yml
+conda list python
+code .
+```
+
+**Lecturas recomendadas**
+
+[GitHub - drivendata/cookiecutter-data-science: A logical, reasonably standardized, but flexible project structure for doing and sharing data science work.](https://github.com/drivendata/cookiecutter-data-science "GitHub - drivendata/cookiecutter-data-science: A logical, reasonably standardized, but flexible project structure for doing and sharing data science work.")
+
+[GitHub - jvelezmagic/cookiecutter-conda-data-science](https://github.com/jvelezmagic/cookiecutter-conda-data-science "GitHub - jvelezmagic/cookiecutter-conda-data-science")
+
+## Utilizar proyecto como un módulo de Python
+
+Una vez descargado, puedes instalar un proyecto como módulo de Python usando el siguiente comando en la terminal:
+
+`pip install --editable .`
+
+Para que se reinicie el kernel, cada vez que reimportes los módulos después de hacer un cambio en estos, agrega esto en la primera celda:
+
+```python
+%load_ext autoreload
+%autoreload 2
+```
+
+- El hacer el autoreload te ayuda a externalizar trozos de código en archivos .py, como la creación de gráficos.
+- Los notebooks son buenos para hacer exploración, pero no para producción.
+
+**Lecturas recomendadas**
+
+[curso-entorno-avanzado-ds/1.0-jvelezmagic-full.ipynb at final_project · platzi/curso-entorno-avanzado-ds · GitHub](https://github.com/platzi/curso-entorno-avanzado-ds/blob/final_project/final_project/notebooks/1.0-jvelezmagic-full.ipynb "curso-entorno-avanzado-ds/1.0-jvelezmagic-full.ipynb at final_project · platzi/curso-entorno-avanzado-ds · GitHub")
+
+[Curso para Crear tus Proyectos de Ciencia de Datos - Platzi](https://platzi.com/cursos/proyectos-data-science "Curso para Crear tus Proyectos de Ciencia de Datos - Platzi")
+
+## Flujo de trabajo de los notebooks
+
+### Recomendaciones
+
+- Crear subcarpetas dentro de la carpeta de notebooks para mayor organización del código.
+
+- Se recomienda utilizar un sistema de nombrado de los notebooks, como el siguiente:
+
+`<número_notebook>-<nombre_programador>-<nombre_notebook>.ipynb`
+
+- También puedes exportar el notebook a texto plano (archivo .py).
+
+**Lecturas recomendadas**
+
+[Curso para Crear tus Proyectos de Ciencia de Datos - Platzi](https://platzi.com/cursos/proyectos-data-science "Curso para Crear tus Proyectos de Ciencia de Datos - Platzi")
+
+[curso-entorno-avanzado-ds/final_project at final_project · platzi/curso-entorno-avanzado-ds · GitHub](https://github.com/platzi/curso-entorno-avanzado-ds/tree/final_project/final_project "curso-entorno-avanzado-ds/final_project at final_project · platzi/curso-entorno-avanzado-ds · GitHub")
