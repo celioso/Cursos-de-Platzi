@@ -11,9 +11,9 @@
         <div class="row">
             <div class="col-xs-12">
                 <h2 class="text-capitalize">Test Result</h2>
-                <p class='attribute'><strong>Start Time: </strong>2024-05-16 21:07:43</p>
-                <p class='attribute'><strong>Duration: </strong>9.769s</p>
-                <p class='attribute'><strong>Status: </strong>Pass: 1</p>
+                <p class='attribute'><strong>Start Time: </strong>2024-06-21 09:33:37</p>
+                <p class='attribute'><strong>Duration: </strong>39.336s</p>
+                <p class='attribute'><strong>Status: </strong>Error: 1</p>
             </div>
         </div>
         <div class="row">
@@ -27,17 +27,48 @@
                     </thead>
                     <tbody>
                         
-                            <tr class='success'>
+                            <tr class='warning'>
                                 <td class="col-xs-9">test_search_ps4 (__main__.TestingMercadolibre)</td>
                                 <td class="col-xs-3">
-                                    <span class="label label-success">
+                                    <span class="label label-warning">
                                         
-                                            Pass
+                                            Error
                                         
                                     </span>
                                     
+                                        &nbsp<button class="btn btn-default btn-xs">View</button>
+                                    
                                 </td>
                             </tr>
+                            
+                                <tr style="display:none;">
+                                    <td class="col-xs-9">
+                                        <p>NoSuchElementException</p>
+                                        <p>Message: no such element: Unable to locate element: {"method":"css selector","selector":"#\:R2m55e6\:-menu-list-option-price_desc > div > div > span"}
+  (Session info: chrome=126.0.6478.61); For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#no-such-element-exception
+Stacktrace:
+#0 0x5a81367da69a <unknown>
+#1 0x5a81364bd0dc <unknown>
+#2 0x5a8136509931 <unknown>
+#3 0x5a8136509a21 <unknown>
+#4 0x5a813654e234 <unknown>
+#5 0x5a813652c89d <unknown>
+#6 0x5a813654b5c3 <unknown>
+#7 0x5a813652c613 <unknown>
+#8 0x5a81364fc4f7 <unknown>
+#9 0x5a81364fce4e <unknown>
+#10 0x5a81367a086b <unknown>
+#11 0x5a81367a4911 <unknown>
+#12 0x5a813678c35e <unknown>
+#13 0x5a81367a5472 <unknown>
+#14 0x5a8136770cbf <unknown>
+#15 0x5a81367ca098 <unknown>
+#16 0x5a81367ca270 <unknown>
+#17 0x5a81367d97cc <unknown>
+#18 0x706478894ac3 <unknown>
+</p>
+                                    </td>
+                                </tr>
                             
                         
                         <tr>
@@ -45,7 +76,7 @@
                                Total Test Runned: 1
                             </td>
                             <td>
-                                <span>Pass: 1</span>
+                                <span>Error: 1</span>
                             </td>
                         </tr>
                     </tbody>
