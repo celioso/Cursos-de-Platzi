@@ -7,3 +7,4 @@ pyreadr
 seaborn
 session-info
 upsetplot
+nbformat

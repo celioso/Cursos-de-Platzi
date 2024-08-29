@@ -540,3 +540,178 @@ print(s.stats.range())  # Salida: 4
 5. **Encadenamiento con `pipe()`**: Facilita la lectura y escritura de código con operaciones encadenadas.
 
 Estas técnicas te permiten hacer que Pandas sea aún más flexible y personalizado según las necesidades de tus proyectos.
+
+## Tabulación de valores faltantes
+
+La **tabulación de valores faltantes** en un conjunto de datos es una práctica esencial en el preprocesamiento para la limpieza y preparación de los datos. En **Pandas**, podemos realizar esta tabulación para obtener un resumen claro de cuántos valores faltantes tiene cada columna, lo que nos permite entender mejor la calidad de los datos y tomar decisiones informadas sobre su manejo.
+
+### 1. **Tabulación básica de valores faltantes**
+
+Pandas ofrece el método `isnull()` que genera un DataFrame de booleanos (True si el valor es nulo y False en caso contrario), y `sum()` para contar el número de valores nulos por columna.
+
+#### Ejemplo:
+
+```python
+import pandas as pd
+
+# Crear un DataFrame con algunos valores faltantes
+data = {
+    'Nombre': ['Ana', 'Luis', None, 'Carlos', 'Pedro'],
+    'Edad': [29, None, 22, None, 35],
+    'Ciudad': ['Madrid', 'Barcelona', None, 'Sevilla', 'Valencia']
+}
+
+df = pd.DataFrame(data)
+
+# Contar los valores faltantes por columna
+faltantes = df.isnull().sum()
+
+print(f"Valores faltantes por columna:\n{faltantes}")
+```
+
+#### Salida:
+
+```
+Valores faltantes por columna:
+Nombre    1
+Edad      2
+Ciudad    1
+dtype: int64
+```
+
+En este ejemplo, la columna `Edad` tiene 2 valores faltantes, mientras que las columnas `Nombre` y `Ciudad` tienen 1 valor faltante cada una.
+
+### 2. **Tabulación de valores faltantes en porcentaje**
+
+También es útil obtener el porcentaje de valores faltantes por columna para tener una idea de la magnitud de los datos faltantes.
+
+#### Ejemplo:
+
+```python
+# Porcentaje de valores faltantes por columna
+porcentaje_faltantes = df.isnull().mean() * 100
+
+print(f"Porcentaje de valores faltantes por columna:\n{porcentaje_faltantes}")
+```
+
+#### Salida:
+
+```
+Porcentaje de valores faltantes por columna:
+Nombre    20.0
+Edad      40.0
+Ciudad    20.0
+dtype: float64
+```
+
+### 3. **Tabulación de valores faltantes por fila**
+
+Si deseas tabular los valores faltantes por cada fila, puedes utilizar el mismo enfoque pero con el parámetro `axis=1` en la función `sum()`.
+
+#### Ejemplo:
+
+```python
+# Contar los valores faltantes por fila
+faltantes_filas = df.isnull().sum(axis=1)
+
+print(f"Valores faltantes por fila:\n{faltantes_filas}")
+```
+
+#### Salida:
+
+```
+Valores faltantes por fila:
+0    0
+1    1
+2    2
+3    1
+4    0
+dtype: int64
+```
+
+Esto muestra cuántos valores faltan en cada fila del DataFrame.
+
+### 4. **Visualización de valores faltantes**
+
+La librería **seaborn** tiene una función `heatmap()` que permite visualizar los valores faltantes de forma gráfica.
+
+#### Ejemplo:
+
+```python
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+# Crear un mapa de calor de los valores faltantes
+sns.heatmap(df.isnull(), cbar=False, cmap='viridis')
+plt.title("Valores Faltantes")
+plt.show()
+```
+
+Esto genera un gráfico de calor donde los valores nulos aparecen en un color distinto, facilitando la identificación de patrones en los datos faltantes.
+
+### 5. **Resumen de valores faltantes en múltiples datasets**
+
+Si tienes varios DataFrames y deseas obtener un resumen de los valores faltantes en todos ellos, puedes escribir una función que procese cada uno y devuelva un resumen.
+
+#### Ejemplo:
+
+```python
+# Supongamos que tenemos varios DataFrames
+df1 = df
+df2 = pd.DataFrame({
+    'Producto': ['A', 'B', None, 'C', 'D'],
+    'Precio': [100, None, 150, 200, 250],
+    'Stock': [None, 50, 60, None, 30]
+})
+
+datasets = {'df1': df1, 'df2': df2}
+
+# Función para obtener el resumen de valores faltantes
+def resumen_valores_faltantes(datasets):
+    for name, dataset in datasets.items():
+        print(f"Dataset: {name}")
+        print(dataset.isnull().sum(), "\n")
+
+# Llamar la función
+resumen_valores_faltantes(datasets)
+```
+
+#### Salida:
+
+```
+Dataset: df1
+Nombre    1
+Edad      2
+Ciudad    1
+dtype: int64 
+
+Dataset: df2
+Producto    1
+Precio      1
+Stock       2
+dtype: int64 
+```
+
+### Conclusión
+
+La tabulación de valores faltantes es un paso crucial para evaluar la integridad de los datos. En **Pandas**, puedes hacerlo fácilmente utilizando métodos como `isnull()` y `sum()` para obtener conteos o porcentajes de valores faltantes por columna o fila, y con herramientas de visualización como **seaborn**, puedes obtener un análisis más visual de los datos incompletos. Esto te permitirá decidir si debes rellenar, eliminar o imputar estos valores antes de realizar análisis adicionales.
+
+El error que estás viendo (`ModuleNotFoundError: No module named 'nbformat'`) se debe a que te falta el módulo `nbformat`, que es necesario para ejecutar notebooks desde otro notebook utilizando la magia `%run`.
+
+Para resolverlo, simplemente instala el paquete `nbformat` usando pip:
+
+### Solución:
+
+1. Abre una celda en tu Jupyter Notebook o tu terminal y ejecuta el siguiente comando:
+
+   ```bash
+   pip install nbformat
+   ```
+
+2. Luego, intenta de nuevo ejecutar el notebook con el comando `%run`:
+
+   ```python
+   %run pandas-missing-extension.ipynb
+   ```
+
+Eso debería solucionar el problema y permitirte ejecutar el notebook correctamente.
