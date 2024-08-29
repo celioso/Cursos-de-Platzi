@@ -715,3 +715,354 @@ Para resolverlo, simplemente instala el paquete `nbformat` usando pip:
    ```
 
 Eso debería solucionar el problema y permitirte ejecutar el notebook correctamente.
+
+## Visualización de valores faltantes
+
+Para visualizar los valores faltantes en un DataFrame de Pandas, hay varias formas efectivas, y puedes aprovechar bibliotecas de visualización como `matplotlib`, `seaborn`, o incluso herramientas específicas como `missingno`. A continuación, te mostraré algunas de las formas más comunes.
+
+### 1. Usar `missingno` para visualizar los valores faltantes
+
+La biblioteca `missingno` es una excelente opción para visualizar los valores faltantes de manera rápida y efectiva.
+
+#### Instalación:
+Si no tienes instalada la biblioteca `missingno`, puedes instalarla con pip:
+
+```bash
+pip install missingno
+```
+
+#### Ejemplo de uso:
+Una vez instalada, puedes usarla para visualizar los valores faltantes en tu DataFrame.
+
+```python
+import missingno as msno
+import matplotlib.pyplot as plt
+
+# Supongamos que riskfactors_df es tu DataFrame
+msno.matrix(riskfactors_df)
+plt.show()
+
+# También puedes utilizar un heatmap de correlación de valores faltantes
+msno.heatmap(riskfactors_df)
+plt.show()
+```
+
+- **`msno.matrix()`**: Muestra una vista visual de los valores faltantes y no faltantes en el DataFrame.
+- **`msno.heatmap()`**: Visualiza las correlaciones de valores faltantes entre las columnas del DataFrame.
+
+### 2. Usar un `heatmap` con Seaborn para visualizar valores faltantes
+
+Puedes crear un heatmap usando `seaborn` para representar los valores faltantes.
+
+#### Instalación:
+Si no tienes instalada `seaborn`, instálala con pip:
+
+```bash
+pip install seaborn
+```
+
+#### Ejemplo de uso:
+
+```python
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+# Crear un mapa de calor donde se visualicen los valores faltantes
+plt.figure(figsize=(10,6))
+sns.heatmap(riskfactors_df.isnull(), cbar=False, cmap='viridis')
+plt.title("Mapa de calor de valores faltantes")
+plt.show()
+```
+
+Este heatmap marcará con un color los valores que son nulos (True) y con otro color los que no lo son (False).
+
+### 3. Usar un gráfico de barras con Matplotlib
+
+Puedes visualizar los valores faltantes de cada columna usando un gráfico de barras.
+
+```python
+import pandas as pd
+import matplotlib.pyplot as plt
+
+# Contar los valores faltantes por columna
+missing_values = riskfactors_df.isnull().sum()
+
+# Filtrar las columnas con valores faltantes
+missing_values = missing_values[missing_values > 0]
+
+# Crear gráfico de barras
+missing_values.plot(kind='bar', figsize=(10,6))
+plt.title("Valores faltantes por columna")
+plt.xlabel("Columnas")
+plt.ylabel("Número de valores faltantes")
+plt.show()
+```
+
+Este gráfico de barras te mostrará cuántos valores faltantes tienes en cada columna.
+
+### 4. Mostrar la distribución de valores faltantes con un conteo
+
+Si prefieres simplemente contar los valores faltantes sin visualización gráfica:
+
+```python
+# Contar los valores faltantes en cada columna
+missing_summary = riskfactors_df.isnull().sum()
+print(missing_summary)
+```
+
+Estas son algunas de las formas más útiles para identificar y visualizar los valores faltantes en tus datos. Dependiendo de la naturaleza de tu proyecto, puedes optar por una u otra, o combinarlas para obtener una visión más clara de los datos faltantes.
+
+## Codificación de valores faltantes
+
+La codificación de valores faltantes en un conjunto de datos es una parte importante del preprocesamiento de datos antes de realizar análisis o entrenar modelos. Hay varias estrategias para manejar los valores faltantes dependiendo del contexto y de los datos en cuestión. A continuación te explico algunas técnicas comunes usando `pandas` para la codificación y manejo de valores faltantes.
+
+### 1. **Eliminar los valores faltantes**
+   - Si los valores faltantes son pocos, puedes eliminarlos de forma segura sin perder información relevante.
+
+   ```python
+   import pandas as pd
+
+   # Cargar un DataFrame de ejemplo
+   df = pd.DataFrame({
+       'Producto': ['A', 'B', 'C', 'D', 'E'],
+       'Precio': [100, 200, None, 150, None]
+   })
+
+   # Eliminar filas con valores faltantes
+   df_clean = df.dropna()
+
+   print(df_clean)
+   ```
+
+### 2. **Rellenar valores faltantes con un valor específico (imputación simple)**
+   - Puedes rellenar los valores faltantes con un valor como la media, mediana, moda o un número fijo.
+
+   ```python
+   # Rellenar valores faltantes con la media de la columna 'Precio'
+   df['Precio'] = df['Precio'].fillna(df['Precio'].mean())
+
+   print(df)
+   ```
+
+   - **Rellenar con un valor fijo**:
+
+   ```python
+   # Rellenar valores faltantes con 0
+   df['Precio'] = df['Precio'].fillna(0)
+   ```
+
+### 3. **Interpolación de valores faltantes**
+   - La interpolación estima valores faltantes utilizando el patrón de los datos adyacentes.
+
+   ```python
+   # Rellenar valores faltantes usando interpolación
+   df['Precio'] = df['Precio'].interpolate()
+
+   print(df)
+   ```
+
+### 4. **Codificación de valores faltantes con un marcador**
+   - A veces, en lugar de imputar, es útil codificar los valores faltantes con un marcador (ej. 'Desconocido' o 'Sin datos').
+
+   ```python
+   # Rellenar valores faltantes con una cadena 'Desconocido'
+   df['Producto'] = df['Producto'].fillna('Desconocido')
+
+   print(df)
+   ```
+
+### 5. **Codificación con etiquetas binarias**
+   - Puedes crear una columna binaria adicional que marque si un valor estaba o no ausente en una columna original.
+
+   ```python
+   # Crear una columna binaria que indica si el valor estaba ausente
+   df['Faltante_Precio'] = df['Precio'].isnull().astype(int)
+
+   print(df)
+   ```
+
+### 6. **Imputación con técnicas avanzadas (KNN, Regresión, etc.)**
+   - Herramientas más avanzadas como **K-Nearest Neighbors (KNN)** o regresión pueden ser utilizadas para imputar valores faltantes basados en otras variables. Para esto, puedes usar bibliotecas como `sklearn`.
+
+   ```python
+   from sklearn.impute import KNNImputer
+
+   # Ejemplo de imputación usando KNN
+   imputer = KNNImputer(n_neighbors=2)
+   df[['Precio']] = imputer.fit_transform(df[['Precio']])
+
+   print(df)
+   ```
+
+### Conclusión:
+El enfoque más adecuado para manejar los valores faltantes depende del contexto del problema, la cantidad de datos faltantes, y la naturaleza de los datos. Puedes combinar varias estrategias según tus necesidades para asegurar que los valores faltantes no afecten negativamente el análisis o modelo.
+
+Si quieres ejemplos más específicos de cómo aplicar estas técnicas a tus datos, ¡házmelo saber!
+
+## Conversión de valores faltantes implícitos en explícitos
+
+La **conversión de valores faltantes implícitos en explícitos** es una técnica para transformar valores "ocultos" o "implícitos" que pueden representar la falta de datos en un formato claro y explícito dentro de un DataFrame. Los valores faltantes implícitos son aquellos que no se encuentran explícitamente como `NaN` pero representan una ausencia o falta de datos por otras razones, como valores de cero, valores negativos, cadenas vacías, o un valor especial.
+
+### Ejemplos comunes de valores faltantes implícitos:
+- **Cadenas vacías** (`''`)
+- **Valores de 0** en contextos donde el 0 no tiene un significado válido.
+- **Valores negativos** que representan datos faltantes.
+- **Códigos especiales** como `-1` o `9999` para indicar que no hay datos.
+
+### Proceso para convertir valores faltantes implícitos en explícitos (`NaN`):
+
+#### 1. **Convertir cadenas vacías o específicas en NaN:**
+   Si tienes cadenas vacías o un valor especial que representa datos faltantes, puedes convertirlos en `NaN`.
+
+   ```python
+   import pandas as pd
+   import numpy as np
+
+   # Crear un DataFrame con valores faltantes implícitos
+   df = pd.DataFrame({
+       'Producto': ['A', '', 'C', 'D', ''],
+       'Precio': [100, 0, -1, 150, 200]
+   })
+
+   # Convertir cadenas vacías ('') en NaN
+   df['Producto'] = df['Producto'].replace('', np.nan)
+
+   print(df)
+   ```
+
+   Salida:
+   ```
+   Producto  Precio
+   0        A     100
+   1      NaN       0
+   2        C      -1
+   3        D     150
+   4      NaN     200
+   ```
+
+#### 2. **Convertir valores numéricos especiales en NaN:**
+   A veces, ciertos valores numéricos (como 0 o -1) pueden representar valores faltantes implícitos en tu conjunto de datos.
+
+   ```python
+   # Convertir valores especiales (0 y -1) en NaN
+   df['Precio'] = df['Precio'].replace([0, -1], np.nan)
+
+   print(df)
+   ```
+
+   Salida:
+   ```
+   Producto  Precio
+   0        A   100.0
+   1      NaN     NaN
+   2        C     NaN
+   3        D   150.0
+   4      NaN   200.0
+   ```
+
+#### 3. **Utilizar condiciones para identificar valores faltantes implícitos:**
+   En algunos casos, necesitarás aplicar condiciones para definir cuándo un valor debe considerarse faltante.
+
+   ```python
+   # Suponer que los valores menores a 0 son valores faltantes implícitos
+   df['Precio'] = df['Precio'].apply(lambda x: np.nan if x < 0 else x)
+
+   print(df)
+   ```
+
+#### 4. **Uso de `replace()` para convertir múltiples valores en NaN:**
+   La función `replace()` también permite reemplazar varios valores que consideres implícitamente faltantes con `NaN`.
+
+   ```python
+   # Reemplazar valores de -1 y 0 en la columna 'Precio' con NaN
+   df['Precio'] = df['Precio'].replace([-1, 0], np.nan)
+
+   print(df)
+   ```
+
+#### 5. **Uso de `mask()` para crear condiciones complejas:**
+   La función `mask()` permite definir condiciones lógicas más avanzadas para identificar valores faltantes.
+
+   ```python
+   # Reemplazar valores mayores a 100 con NaN (ejemplo condicional)
+   df['Precio'] = df['Precio'].mask(df['Precio'] > 100)
+
+   print(df)
+   ```
+
+### Resumen:
+La conversión de valores faltantes implícitos en explícitos permite mejorar la calidad de los datos y facilita el análisis. Hacer explícitos los valores faltantes con `NaN` facilita el uso de las herramientas de Pandas para manejar valores nulos, como `fillna()`, `dropna()`, o cualquier técnica de imputación o filtrado.
+
+Si tienes un caso más específico, ¡puedo ayudarte con una solución detallada!
+
+## Exponer filas faltantes implícitas en explícitas
+
+**Exponer filas faltantes implícitas en explícitas** se refiere a identificar y hacer explícitas las filas que, aunque no tengan valores `NaN` visibles, están incompletas o contienen información que representa datos faltantes de forma implícita. Este tipo de situación ocurre cuando ciertos valores tienen un significado especial que indica una ausencia de datos, o cuando una combinación de valores sugiere que faltan datos.
+
+### Proceso para exponer filas faltantes implícitas en explícitas:
+
+1. **Identificación de filas faltantes implícitas:**
+   Las filas que contienen valores implícitos faltantes suelen tener valores como `0`, `-1`, o cadenas vacías (`''`). Estas filas pueden necesitar ser convertidas en explícitas.
+
+2. **Uso de `mask()` o `apply()` para detectar condiciones implícitas:**
+   Si sabes qué condiciones representan datos faltantes, puedes usar estas funciones para transformar los datos y hacer los valores explícitos (`NaN`).
+
+3. **Crear nuevas filas o marcar datos incompletos con `NaN`:**
+   Utilizando `mask()`, `apply()`, o `replace()` para convertir esas filas implícitas en explícitas, reemplazando valores o filas enteras con `NaN`.
+
+### Ejemplo práctico:
+
+Supongamos que tienes un DataFrame donde los valores faltantes están representados de forma implícita, como valores `0` o `-1` en la columna de precios o productos vacíos.
+
+```python
+import pandas as pd
+import numpy as np
+
+# Ejemplo de DataFrame con valores faltantes implícitos
+data = {'Producto': ['A', 'B', 'C', 'D', 'E'],
+        'Cantidad': [10, 0, 5, -1, 8],
+        'Precio': [100, 0, -1, 150, 0]}
+
+df = pd.DataFrame(data)
+print("DataFrame original:")
+print(df)
+
+# Definir condiciones implícitas para filas faltantes
+# Suponemos que 'Cantidad' o 'Precio' con 0 o -1 representan valores faltantes
+df_masked = df.mask((df['Cantidad'] <= 0) | (df['Precio'] <= 0))
+
+print("\nDataFrame con filas faltantes explícitas:")
+print(df_masked)
+```
+
+### Salida esperada:
+```
+DataFrame original:
+  Producto  Cantidad  Precio
+0        A        10     100
+1        B         0       0
+2        C         5      -1
+3        D        -1     150
+4        E         8       0
+
+DataFrame con filas faltantes explícitas:
+  Producto  Cantidad  Precio
+0        A      10.0   100.0
+1        B       NaN     NaN
+2        C       5.0     NaN
+3        D       NaN   150.0
+4        E       8.0     NaN
+```
+
+### Explicación:
+1. **Identificación de valores implícitos:** Hemos definido que los valores `0` o `-1` en las columnas `Cantidad` y `Precio` son faltantes de forma implícita.
+2. **Uso de `mask()`:** La función `mask()` aplica la condición y reemplaza los valores que cumplen con `NaN`.
+3. **Exposición explícita:** Ahora, los valores que estaban implícitamente faltantes (como `0` o `-1`) se muestran como `NaN`, haciendo evidente qué datos están faltando.
+
+### Resumen de técnicas para identificar y exponer filas faltantes implícitas:
+- **`mask()`**: Para identificar y reemplazar valores que cumplen con una condición específica.
+- **`apply()`**: Para aplicar una función personalizada fila por fila para determinar si una fila es faltante de forma implícita.
+- **`replace()`**: Para reemplazar valores específicos en el DataFrame.
+- **`isnull()` y `notnull()`**: Para comprobar si los datos contienen valores explícitamente faltantes.
+
+Este proceso facilita el análisis posterior y asegura que las técnicas para manejar datos faltantes se apliquen correctamente.
