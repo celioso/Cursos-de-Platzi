@@ -1,0 +1,9 @@
+pyjanitor
+missingno
+numpy
+matplotlib
+pandas
+pyreadr
+seaborn
+session-info
+upsetplot
