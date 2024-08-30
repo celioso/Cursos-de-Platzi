@@ -1550,3 +1550,291 @@ plt.show()
 Si quieres agregar etiquetas adicionales o cambiar el estilo del gráfico, puedes usar las opciones de **Seaborn** y **Matplotlib** para personalizar colores, tamaños de puntos o títulos.
 
 Este scatterplot te ayudará a visualizar cómo los valores faltantes afectan la relación entre dos variables.
+
+## Correlación de nulidad
+
+La **correlación de nulidad** te permite evaluar si la ausencia de datos en una columna está relacionada con la ausencia de datos en otra columna. Esta técnica es útil para detectar patrones en los valores faltantes.
+
+En Python, puedes calcular la correlación de nulidad utilizando la **matriz de nulidad** de un DataFrame. La función `isnull()` genera una matriz booleana que puedes usar para calcular correlaciones entre las columnas.
+
+### Ejemplo de Correlación de Nulidad:
+
+```python
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+# Crear un DataFrame de ejemplo con algunos valores faltantes
+data = {'Variable1': [1, 2, None, 4, 5, 6, None, 8, 9, 10],
+        'Variable2': [5, None, 7, 8, 9, 10, None, 12, 13, 14],
+        'Variable3': [None, 1, 2, None, 4, None, 6, 7, 8, 9]}
+df = pd.DataFrame(data)
+
+# Crear la matriz de nulidad (True para valores nulos)
+nullity_matrix = df.isnull()
+
+# Calcular la correlación de nulidad
+nullity_corr = nullity_matrix.corr()
+
+# Visualizar la correlación de nulidad con un heatmap
+plt.figure(figsize=(8, 6))
+sns.heatmap(nullity_corr, annot=True, cmap='coolwarm')
+plt.title('Correlación de Nulidad entre Variables')
+plt.show()
+```
+
+### Explicación:
+1. **`isnull()`**: Crea una matriz donde `True` representa valores faltantes.
+2. **`corr()`**: Calcula la correlación entre las columnas en términos de la presencia o ausencia de valores nulos. Un valor cercano a 1 indica que las columnas tienden a tener valores nulos al mismo tiempo; un valor cercano a 0 sugiere que no hay correlación.
+3. **`heatmap()`**: Visualiza la matriz de correlación de nulidad.
+
+### Interpretación:
+- Si la correlación de nulidad es alta (cercana a 1), significa que cuando una columna tiene valores faltantes, es probable que la otra también los tenga.
+- Si la correlación es baja o cercana a 0, significa que la ausencia de datos en una columna no está relacionada con la otra.
+
+## Eliminación de valores faltantes: pairwise y listwise
+
+La eliminación de valores faltantes es una técnica común para manejar datos incompletos. Las dos principales estrategias son **eliminación por pares (pairwise deletion)** y **eliminación por lista (listwise deletion)**.
+
+### 1. **Eliminación por Lista (Listwise Deletion)**
+En este método, se eliminan las filas que contienen algún valor faltante en cualquiera de las variables involucradas en el análisis. Este enfoque es simple pero puede resultar en la pérdida de mucha información si hay muchos valores faltantes.
+
+#### Ejemplo en Pandas:
+
+```python
+import pandas as pd
+
+# Crear un DataFrame de ejemplo con algunos valores faltantes
+data = {'Variable1': [1, 2, None, 4, 5],
+        'Variable2': [5, None, 7, 8, 9],
+        'Variable3': [None, 1, 2, None, 4]}
+df = pd.DataFrame(data)
+
+# Eliminación por lista: se eliminan filas que contengan algún valor nulo
+df_listwise = df.dropna()
+
+print("DataFrame después de la eliminación por lista:")
+print(df_listwise)
+```
+
+#### Ventajas:
+- Fácil de implementar.
+- Asegura que se utilicen solo datos completos.
+  
+#### Desventajas:
+- Puede llevar a la eliminación de muchas filas si hay muchas variables con valores faltantes.
+  
+---
+
+### 2. **Eliminación por Pares (Pairwise Deletion)**
+En la eliminación por pares, se realiza un análisis variable por variable, eliminando solo las filas donde la variable involucrada tenga valores faltantes. Esto permite que se utilicen la mayor cantidad posible de datos, aunque algunas comparaciones se hacen con menos datos que otras.
+
+Este enfoque es útil para calcular correlaciones o regresiones entre pares de variables, ya que solo se eliminan los valores faltantes en las variables involucradas en el análisis particular.
+
+#### Ejemplo de correlación usando eliminación por pares:
+
+```python
+# Calcular correlación por pares (omitimos valores faltantes sólo para el par de columnas analizado)
+pairwise_corr = df.corr(method='pearson', min_periods=1)
+
+print("Correlación por pares:")
+print(pairwise_corr)
+```
+
+#### Ventajas:
+- Se utiliza la mayor cantidad posible de datos.
+- Es útil cuando se tiene una gran cantidad de valores faltantes y no se quiere perder información.
+
+#### Desventajas:
+- Los resultados pueden no ser consistentes entre análisis de diferentes variables, ya que se usan subconjuntos distintos de datos.
+
+---
+
+### Comparación entre Listwise y Pairwise:
+- **Listwise deletion** es más estricto y consistente pero puede resultar en una pérdida significativa de datos.
+- **Pairwise deletion** conserva más información, pero las comparaciones entre diferentes análisis pueden basarse en distintos subconjuntos de datos, lo que puede complicar la interpretación.
+
+## Imputación básica de datos
+
+La **imputación de datos** es una técnica para reemplazar valores faltantes en un conjunto de datos con valores estimados, evitando así la eliminación de información útil. Existen varias estrategias para la imputación, desde técnicas básicas hasta métodos más complejos. A continuación, exploraremos las técnicas básicas de imputación:
+
+### 1. **Imputación con una constante (valor fijo)**
+Una técnica sencilla consiste en reemplazar los valores faltantes por un valor constante, como `0`, una cadena vacía o un valor que tenga sentido para el contexto.
+
+#### Ejemplo en Pandas:
+```python
+import pandas as pd
+
+# Crear un DataFrame de ejemplo con valores faltantes
+data = {'Variable1': [1, None, 3, None, 5],
+        'Variable2': [None, 2, None, 4, None]}
+df = pd.DataFrame(data)
+
+# Imputar valores faltantes con un valor constante (por ejemplo, 0)
+df_constant = df.fillna(0)
+
+print("Imputación con un valor constante:")
+print(df_constant)
+```
+
+### 2. **Imputación con la media**
+Este método reemplaza los valores faltantes con la **media** de la variable. Es adecuado cuando los datos están distribuidos simétricamente, pero puede no ser ideal en presencia de valores atípicos.
+
+#### Ejemplo en Pandas:
+```python
+# Imputar valores faltantes con la media de cada columna
+df_mean = df.fillna(df.mean())
+
+print("Imputación con la media:")
+print(df_mean)
+```
+
+### 3. **Imputación con la mediana**
+La **mediana** es una opción útil cuando los datos tienen una distribución asimétrica o contienen valores atípicos, ya que la mediana es menos sensible a estos.
+
+#### Ejemplo en Pandas:
+```python
+# Imputar valores faltantes con la mediana de cada columna
+df_median = df.fillna(df.median())
+
+print("Imputación con la mediana:")
+print(df_median)
+```
+
+### 4. **Imputación con la moda**
+Para variables categóricas o discretas, es común imputar los valores faltantes con la **moda**, que es el valor más frecuente en la variable.
+
+#### Ejemplo en Pandas:
+```python
+# Imputar valores faltantes con la moda de cada columna
+df_mode = df.fillna(df.mode().iloc[0])
+
+print("Imputación con la moda:")
+print(df_mode)
+```
+
+### 5. **Imputación hacia adelante (Forward Fill)**
+Este método, también conocido como **"forward fill"**, reemplaza los valores faltantes con el último valor válido previo.
+
+#### Ejemplo en Pandas:
+```python
+# Imputación hacia adelante (forward fill)
+df_ffill = df.fillna(method='ffill')
+
+print("Imputación hacia adelante:")
+print(df_ffill)
+```
+
+### 6. **Imputación hacia atrás (Backward Fill)**
+El método **"backward fill"** rellena los valores faltantes utilizando el siguiente valor válido en la columna.
+
+#### Ejemplo en Pandas:
+```python
+# Imputación hacia atrás (backward fill)
+df_bfill = df.fillna(method='bfill')
+
+print("Imputación hacia atrás:")
+print(df_bfill)
+```
+
+---
+
+### Comparación de Técnicas:
+
+- **Constante:** Útil cuando un valor específico tiene sentido, pero puede distorsionar el análisis si no se selecciona correctamente.
+- **Media/Mediana/Moda:** Conservan la tendencia central de los datos, pero no tienen en cuenta la varianza o estructura de los mismos.
+- **Forward/Backward Fill:** Buenas para datos temporales o secuenciales, pero pueden no ser adecuadas si los valores cercanos no son representativos.
+
+Estas técnicas básicas son útiles en muchas situaciones, pero si los datos faltantes son significativos o no están distribuidos al azar, puede ser necesario recurrir a métodos más avanzados como imputación múltiple o modelos predictivos.
+
+## Bonus: visualización múltiple de imputaciones
+
+La visualización de múltiples imputaciones te permite comparar cómo diferentes técnicas de imputación afectan los datos faltantes. Esto es útil para evaluar el impacto de las imputaciones y decidir cuál es la más adecuada para el análisis. A continuación, veremos cómo hacer esto utilizando **matplotlib**, **seaborn**, y varias técnicas de imputación en **pandas**.
+
+### Pasos para visualizar múltiples imputaciones:
+
+1. **Crear un conjunto de datos con valores faltantes.**
+2. **Imputar los valores faltantes utilizando diferentes métodos.**
+3. **Visualizar las imputaciones en gráficos para comparar los resultados.**
+
+### Ejemplo en Python:
+
+#### 1. Crear el conjunto de datos
+
+```python
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Crear un DataFrame de ejemplo con valores faltantes
+np.random.seed(0)
+data = {'Variable1': [1, np.nan, 3, np.nan, 5, 6, np.nan, 8, 9, 10],
+        'Variable2': [7, 6, np.nan, 4, 3, 2, np.nan, 5, 6, np.nan]}
+df = pd.DataFrame(data)
+
+print("Datos originales con valores faltantes:")
+print(df)
+```
+
+#### 2. Aplicar múltiples métodos de imputación
+
+```python
+# Imputación con la media
+df_mean = df.copy()
+df_mean['Variable1'] = df['Variable1'].fillna(df['Variable1'].mean())
+df_mean['Variable2'] = df['Variable2'].fillna(df['Variable2'].mean())
+
+# Imputación con la mediana
+df_median = df.copy()
+df_median['Variable1'] = df['Variable1'].fillna(df['Variable1'].median())
+df_median['Variable2'] = df['Variable2'].fillna(df['Variable2'].median())
+
+# Imputación hacia adelante (forward fill)
+df_ffill = df.copy()
+df_ffill.fillna(method='ffill', inplace=True)
+
+# Imputación hacia atrás (backward fill)
+df_bfill = df.copy()
+df_bfill.fillna(method='bfill', inplace=True)
+```
+
+#### 3. Visualizar las imputaciones
+
+Vamos a graficar cada imputación y compararlas.
+
+```python
+# Configurar las subplots
+fig, axes = plt.subplots(2, 2, figsize=(12, 10))
+
+# Datos originales
+sns.scatterplot(ax=axes[0, 0], x=np.arange(len(df)), y=df['Variable1'], label='Variable1', color='blue')
+sns.scatterplot(ax=axes[0, 0], x=np.arange(len(df)), y=df['Variable2'], label='Variable2', color='red')
+axes[0, 0].set_title("Datos Originales")
+
+# Imputación con la media
+sns.scatterplot(ax=axes[0, 1], x=np.arange(len(df_mean)), y=df_mean['Variable1'], label='Variable1', color='blue')
+sns.scatterplot(ax=axes[0, 1], x=np.arange(len(df_mean)), y=df_mean['Variable2'], label='Variable2', color='red')
+axes[0, 1].set_title("Imputación con la Media")
+
+# Imputación hacia adelante
+sns.scatterplot(ax=axes[1, 0], x=np.arange(len(df_ffill)), y=df_ffill['Variable1'], label='Variable1', color='blue')
+sns.scatterplot(ax=axes[1, 0], x=np.arange(len(df_ffill)), y=df_ffill['Variable2'], label='Variable2', color='red')
+axes[1, 0].set_title("Imputación Hacia Adelante (Forward Fill)")
+
+# Imputación hacia atrás
+sns.scatterplot(ax=axes[1, 1], x=np.arange(len(df_bfill)), y=df_bfill['Variable1'], label='Variable1', color='blue')
+sns.scatterplot(ax=axes[1, 1], x=np.arange(len(df_bfill)), y=df_bfill['Variable2'], label='Variable2', color='red')
+axes[1, 1].set_title("Imputación Hacia Atrás (Backward Fill)")
+
+plt.tight_layout()
+plt.show()
+```
+
+### Explicación:
+- **Subplot 1**: Muestra los datos originales con los valores faltantes.
+- **Subplot 2**: Muestra los datos imputados con la **media**.
+- **Subplot 3**: Visualiza los datos con imputación **forward fill**.
+- **Subplot 4**: Presenta la imputación con **backward fill**.
+
+Cada gráfico te permite comparar los métodos y cómo afectan los valores imputados. Esto te ayuda a evaluar cuál técnica es la más adecuada para tu análisis.
