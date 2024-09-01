@@ -66,7 +66,7 @@
 - [Curso de Análisis Exploratorio de Datos](CursoDeAnálisisExploratorioDeDatos)
 - [Curso de Configuración Profesional de Entorno de Trabajo para Ciencia de Datos](CursodeConfiguracionProfesionaldeEntornodeTrabajoparaCienciadeDatos)
 - [Curso de Manejo de Datos Faltantes: Detección y Exploración](CursodeManejodeDatosFaltantesDeteccionyExploracion)
-- [Curso de Manejo de Datos Faltantes: Imputación]()
+- [Curso de Manejo de Datos Faltantes: Imputación](CursodeManejodeDatosFaltantesImputacion)
 
 ## FRONT-END
 

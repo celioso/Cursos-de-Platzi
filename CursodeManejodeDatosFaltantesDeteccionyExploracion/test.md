@@ -52,7 +52,7 @@
 
 13. **`pyjanitor` es una implementación del paquete de R `janitor`, y provee una API para limpieza de datos en Python. ¿Cuál de las siguientes funciones podríamos utilizar para exponer los valores faltantes implícitos?**
 
-**R/:** 
+**R/:** janitor.complete()
 
 14. **¿Cuál de los siguientes elementos es un mecanismo de acción de los valores faltantes?**
 
@@ -101,3 +101,28 @@
 25. **¿Cuál podría ser una desventaja de la imputación de un único valor como la media, mediana o moda?**
 
 **R/:** Puede sesgar los resultados y perder la correlación entre variables.
+
+26. **Pandas es una librería increíble para el manejo de datos tabulares, no obstante, sus métodos y estructuras pueden no satisfacer tus necesidades completamente. Para ello, Pandas ofrece opciones para extenderlo y ajustarlo a tus requerimientos. ¿Cuál de los siguientes decoradores puede ayudarte a registrar un acceso a funciones y propiedades de un DataFrame?**
+
+**R/:** pandas.api.extensions.register_dataframe_accessor()
+
+27. **Tabular es una forma práctica de expresar valores, magnitudes u otros datos por medio de tablas, pero antes de llegar a una tabla, siempre es bueno comenzar con ___.**
+
+**R/:** Resúmenes simples, como números.
+
+28. **¿Qué significa que puedan existir valores faltantes implícitos?**
+
+**R/:** Un valor faltante implícito indica que el valor faltante debería estar incluido en el conjunto de datos, sin que éste lo diga o lo especifique de forma directa.
+
+28. **Llegas a tu trabajo, observas que algunas personas faltaron por enfermedad y te das cuenta que esas personas se sentaban relativamente cerca . ¿Qué tipo de mecanismo de valores faltantes podría estar actuando?**
+
+**R/:** Missing At Random (MAR).
+
+29. **La variable X_2_NA te indica si existen o no valores para la variable X_2.**
+**Sospechas que la variable X, podría estar relacionada con la presencia de valores faltantes. ¿Cuál de las siguientes acciones no podría realizarse de primera mano para ganar ideas sobre esta relación??**
+
+**R/:** Realizar un gráfico de scatter plot de X_1 y X_2 coloreado por la variable X_2_NA.
+
+30. **¿Qué busca mostrar el gráfico de dendograma de nulidad?**
+
+**R/:** Agrupar columnas que tiene una alta correlación de nulidad.
