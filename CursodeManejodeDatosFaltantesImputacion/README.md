@@ -549,3 +549,160 @@ print(transformed_df)
 ### Consideraciones adicionales:
 - **One-Hot Encoding** es particularmente útil cuando no existe una relación de orden entre las categorías.
 - Si tienes muchas categorías, este método puede aumentar significativamente el número de columnas, lo cual es algo a tener en cuenta al trabajar con grandes volúmenes de datos.
+
+## Métodos de imputación de valores faltantes
+
+La **imputación de valores faltantes** consiste en estimar los valores ausentes en un conjunto de datos utilizando diversos métodos. Estos métodos pueden ser simples o complejos, dependiendo de la cantidad de datos faltantes y de la naturaleza del problema. Aquí se describen los métodos más comunes para la imputación de valores faltantes.
+
+### 1. **Imputación Simple**
+Estos métodos son fáciles de implementar y son adecuados cuando la cantidad de datos faltantes es pequeña.
+
+#### a. **Imputación con la Media**
+Se reemplazan los valores faltantes por el valor medio de la variable. Es útil cuando los datos están distribuidos de manera uniforme y no hay grandes outliers.
+```python
+df['column'] = df['column'].fillna(df['column'].mean())
+```
+
+#### b. **Imputación con la Mediana**
+Utiliza la mediana para reemplazar los valores faltantes. Es más robusta que la media en presencia de outliers.
+```python
+df['column'] = df['column'].fillna(df['column'].median())
+```
+
+#### c. **Imputación con la Moda**
+Para variables categóricas, la imputación con la moda reemplaza los valores faltantes con la categoría más frecuente.
+```python
+df['column'] = df['column'].fillna(df['column'].mode()[0])
+```
+
+### 2. **Imputación Basada en Reglas**
+Se puede usar información contextual o reglas específicas del dominio para imputar valores faltantes.
+
+#### a. **Imputación Condicional**
+Si una variable tiene una relación lógica con otra, se pueden utilizar reglas basadas en esta relación.
+```python
+df.loc[(df['edad'] > 18) & (df['estado_civil'].isnull()), 'estado_civil'] = 'Soltero'
+```
+
+### 3. **Imputación Multivariante**
+Este tipo de imputación usa información de múltiples variables para estimar los valores faltantes. Es más precisa, pero más compleja.
+
+#### a. **Imputación por Regresión**
+Utiliza un modelo de regresión (lineal o no lineal) para predecir los valores faltantes a partir de otras variables en el conjunto de datos.
+
+```python
+from sklearn.linear_model import LinearRegression
+
+# Selección de datos sin valores nulos
+train_data = df.dropna(subset=['column_with_missing_values'])
+train_X = train_data[['predictor_1', 'predictor_2']]
+train_y = train_data['column_with_missing_values']
+
+# Entrenamiento del modelo
+model = LinearRegression()
+model.fit(train_X, train_y)
+
+# Predicción de los valores faltantes
+df.loc[df['column_with_missing_values'].isnull(), 'column_with_missing_values'] = model.predict(df[['predictor_1', 'predictor_2']])
+```
+
+#### b. **Imputación Múltiple (Multiple Imputation by Chained Equations, MICE)**
+Este método realiza imputaciones múltiples utilizando una secuencia de modelos de regresión, para luego promediar los resultados. Es robusto y maneja la incertidumbre en los valores imputados.
+
+```python
+from sklearn.experimental import enable_iterative_imputer
+from sklearn.impute import IterativeImputer
+
+# Imputación iterativa
+imputer = IterativeImputer()
+df_imputed = pd.DataFrame(imputer.fit_transform(df))
+```
+
+### 4. **Imputación con K-Nearest Neighbors (KNN)**
+Este método utiliza los valores de las observaciones más cercanas (k-nearest neighbors) para imputar los valores faltantes. Funciona bien cuando los datos tienen relaciones no lineales entre variables.
+
+```python
+from sklearn.impute import KNNImputer
+
+# Imputación con KNN
+imputer = KNNImputer(n_neighbors=5)
+df_imputed = pd.DataFrame(imputer.fit_transform(df), columns=df.columns)
+```
+
+### 5. **Imputación por Forward y Backward Filling**
+Este método llena los valores faltantes utilizando los valores no nulos anteriores o posteriores. Es común en datos de series temporales.
+
+#### a. **Forward Fill**
+Rellena los valores faltantes con el último valor no nulo anterior.
+```python
+df['column'] = df['column'].fillna(method='ffill')
+```
+
+#### b. **Backward Fill**
+Rellena los valores faltantes con el siguiente valor no nulo.
+```python
+df['column'] = df['column'].fillna(method='bfill')
+```
+
+### Comparación de Métodos
+
+| **Método**             | **Ventajas**                                           | **Desventajas**                                                |
+|------------------------|--------------------------------------------------------|---------------------------------------------------------------|
+| Media, Mediana, Moda    | Rápido y fácil de implementar                          | Puede introducir sesgos o distorsionar la distribución         |
+| Regresión              | Usa la relación entre variables                        | Complejidad, depende de la calidad del modelo                  |
+| KNN                    | Captura relaciones no lineales                         | Computacionalmente costoso para grandes conjuntos de datos     |
+| MICE                   | Imputación robusta y manejo de incertidumbre           | Complejo de implementar y costoso en tiempo de cálculo         |
+| Forward/Backward Fill   | Útil en datos de series temporales                     | Puede generar datos poco realistas en ciertos escenarios       |
+
+### Conclusión
+Elegir el método adecuado de imputación depende del tipo de datos, el contexto y la cantidad de datos faltantes. Para conjuntos de datos pequeños o problemas simples, los métodos como la media o la mediana pueden ser suficientes, mientras que para datos más complejos se recomienda el uso de técnicas multivariantes como la imputación por regresión o MICE.
+
+## Imputación por media, mediana y moda
+
+La **imputación por media, mediana y moda** es uno de los métodos más simples y comunes para manejar valores faltantes. Estos métodos son fáciles de implementar y proporcionan una solución rápida, especialmente cuando los valores faltantes son pocos. A continuación, te explico cada uno de estos enfoques:
+
+### 1. **Imputación por Media**
+La imputación por media reemplaza los valores faltantes de una variable numérica por el promedio de todos los valores no faltantes de esa variable. 
+
+- **Ventajas**: Es fácil de calcular e implementar.
+- **Desventajas**: Puede distorsionar la distribución de los datos, especialmente si hay outliers, y puede subestimar la varianza.
+
+```python
+# Imputación por media
+df['columna'] = df['columna'].fillna(df['columna'].mean())
+```
+
+### 2. **Imputación por Mediana**
+La imputación por mediana utiliza el valor central de los datos para reemplazar los valores faltantes. Es más robusta que la media en presencia de valores atípicos.
+
+- **Ventajas**: La mediana es menos sensible a outliers, por lo que es más adecuada para datos sesgados.
+- **Desventajas**: Al igual que con la media, puede reducir la variabilidad en los datos.
+
+```python
+# Imputación por mediana
+df['columna'] = df['columna'].fillna(df['columna'].median())
+```
+
+### 3. **Imputación por Moda**
+Para variables categóricas, la imputación por moda reemplaza los valores faltantes con la categoría más frecuente en los datos.
+
+- **Ventajas**: Es útil para variables categóricas.
+- **Desventajas**: Si hay varias categorías con frecuencias similares, puede no ser representativo imputar con la moda.
+
+```python
+# Imputación por moda (valores categóricos)
+df['columna'] = df['columna'].fillna(df['columna'].mode()[0])
+```
+
+### Comparación y Aplicaciones
+| **Método**  | **Aplicación**                          | **Ventajas**                                           | **Desventajas**                                         |
+|-------------|-----------------------------------------|--------------------------------------------------------|--------------------------------------------------------|
+| **Media**   | Variables numéricas sin muchos outliers | Fácil de implementar, rápida                           | Sensible a outliers, puede alterar la distribución      |
+| **Mediana** | Variables numéricas con outliers        | Menos afectada por outliers                            | Puede no capturar la variabilidad original de los datos |
+| **Moda**    | Variables categóricas                   | Útil para variables con categorías repetitivas          | No funciona bien si no hay una categoría dominante      |
+
+### Consideraciones
+- **Reducción de la varianza**: Al utilizar la media, mediana o moda, se reduce la variabilidad en los datos, lo que puede ser perjudicial en algunos análisis.
+- **Sesgo**: Estos métodos suponen que los valores faltantes son aleatorios. Si los valores faltantes tienen un patrón, la imputación por media, mediana o moda puede introducir sesgos.
+
+Este enfoque es más adecuado cuando hay pocos valores faltantes y no se requiere una alta precisión. Para conjuntos de datos con muchas variables o relaciones complejas, se pueden usar métodos más avanzados como la imputación multivariante o la regresión.
