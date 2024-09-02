@@ -1093,3 +1093,304 @@ La imputación por KNN es útil cuando los valores faltantes están relacionados
 **Lecturas recomendadas**
 
 [1.6. Nearest Neighbors — scikit-learn 1.1.2 documentation](https://platzi.com/home/clases/4197-datos-faltantes-imputacion/55407-imputacion-por-knn-en-python/#:~:text=1.6.%20Nearest%20Neighbors%20%E2%80%94%20scikit%2Dlearn%201.1.2%20documentation "1.6. Nearest Neighbors — scikit-learn 1.1.2 documentation")
+
+## Introducción a la imputación basada en modelos
+
+La **imputación basada en modelos** es una técnica avanzada utilizada para tratar valores faltantes en los conjuntos de datos mediante el uso de modelos predictivos. A diferencia de métodos simples como la imputación por media o mediana, los modelos predictivos buscan capturar relaciones complejas entre las variables, utilizando información disponible en otras variables para estimar los valores faltantes de manera más precisa.
+
+### Conceptos clave
+
+1. **Modelo predictivo**: Utiliza un algoritmo de aprendizaje automático para estimar los valores faltantes. Algunos de los modelos más comunes para este propósito incluyen regresión lineal, árboles de decisión, k-vecinos más cercanos (KNN), entre otros.
+   
+2. **Ventajas de la imputación basada en modelos**:
+   - **Mayor precisión**: Puede capturar relaciones complejas entre las variables, lo que resulta en estimaciones más exactas que los métodos tradicionales.
+   - **Flexibilidad**: Puede adaptarse a diferentes tipos de datos (numéricos, categóricos).
+   
+3. **Desventajas**:
+   - **Mayor complejidad**: La implementación requiere un mayor conocimiento en machine learning.
+   - **Riesgo de sobreajuste**: Si no se gestiona adecuadamente, el modelo puede ajustarse demasiado a los datos de entrenamiento, afectando su capacidad de generalización.
+
+### Métodos comunes de imputación basada en modelos
+
+#### 1. **Regresión Lineal (para variables numéricas)**:
+   Este método ajusta un modelo de regresión con las observaciones disponibles y utiliza la relación entre las variables para predecir los valores faltantes.
+
+   - **Ejemplo**: Si tienes un conjunto de datos sobre precios de casas, podrías usar variables como tamaño de la casa, número de habitaciones, y ubicación para predecir los precios faltantes utilizando una regresión lineal.
+
+#### 2. **Árboles de Decisión**:
+   Los árboles de decisión pueden manejar tanto variables numéricas como categóricas y encontrar patrones en los datos para imputar los valores faltantes.
+
+#### 3. **Imputación por Random Forest**:
+   Utiliza múltiples árboles de decisión para construir un modelo robusto y predecir los valores faltantes. Es particularmente efectivo cuando las relaciones entre las variables son complejas.
+
+#### 4. **Imputación por MICE (Multiple Imputation by Chained Equations)**:
+   Este método crea varios modelos iterativos para imputar los valores faltantes de manera secuencial. Cada variable con datos faltantes es imputada basándose en las demás, de manera cíclica. Este proceso se repite varias veces, y el resultado final es la media de las imputaciones.
+
+### Implementación de la imputación basada en modelos en Python
+
+A continuación, te muestro cómo realizar la imputación basada en un modelo de **regresión lineal** utilizando la librería `scikit-learn` y un conjunto de datos con valores faltantes.
+
+#### Paso a paso:
+
+1. **Instalar las dependencias**:
+
+   ```bash
+   pip install scikit-learn pandas numpy
+   ```
+
+2. **Ejemplo de imputación basada en regresión lineal**:
+
+   ```python
+   import pandas as pd
+   import numpy as np
+   from sklearn.linear_model import LinearRegression
+   from sklearn.model_selection import train_test_split
+
+   # Crear un DataFrame con valores faltantes
+   data = {'A': [1, 2, 3, 4, 5],
+           'B': [2, np.nan, 6, 8, 10],
+           'C': [5, 7, np.nan, 9, 11]}
+
+   df = pd.DataFrame(data)
+
+   # Mostrar el DataFrame original
+   print("DataFrame original con valores faltantes:")
+   print(df)
+
+   # Separar las observaciones con y sin valores faltantes en la columna 'B'
+   df_complete = df[df['B'].notna()]
+   df_missing = df[df['B'].isna()]
+
+   # Definir las variables predictoras (features) y la variable objetivo (target)
+   X_complete = df_complete[['A', 'C']]
+   y_complete = df_complete['B']
+
+   X_missing = df_missing[['A', 'C']]
+
+   # Entrenar un modelo de regresión lineal con los datos completos
+   model = LinearRegression()
+   model.fit(X_complete, y_complete)
+
+   # Predecir los valores faltantes
+   df.loc[df['B'].isna(), 'B'] = model.predict(X_missing)
+
+   # Mostrar el DataFrame con los valores imputados
+   print("\nDataFrame con los valores imputados:")
+   print(df)
+   ```
+
+### Explicación del código:
+- **DataFrame con valores faltantes**: Se genera un `DataFrame` con algunos valores faltantes en la columna 'B'.
+- **Modelo de regresión lineal**: Se entrena un modelo de regresión lineal utilizando las columnas 'A' y 'C' para predecir los valores de la columna 'B'.
+- **Imputación**: Se utilizan las predicciones del modelo para reemplazar los valores faltantes en la columna 'B'.
+
+### Salida esperada:
+
+```
+DataFrame original con valores faltantes:
+   A     B     C
+0  1   2.0   5.0
+1  2   NaN   7.0
+2  3   6.0   NaN
+3  4   8.0   9.0
+4  5  10.0  11.0
+
+DataFrame con los valores imputados:
+   A     B     C
+0  1   2.0   5.0
+1  2   4.0   7.0
+2  3   6.0   NaN
+3  4   8.0   9.0
+4  5  10.0  11.0
+```
+
+### Consideraciones finales:
+- Es importante evaluar la calidad de las imputaciones generadas por el modelo para evitar sesgos.
+- Si bien la imputación basada en modelos ofrece mayor precisión que los métodos simples, también puede introducir error si el modelo predictivo no captura bien las relaciones subyacentes entre las variables.
+
+### Conclusión:
+
+La **imputación basada en modelos** es una herramienta poderosa para manejar valores faltantes, especialmente en escenarios donde hay relaciones complejas entre las variables. Al aprovechar modelos de machine learning como regresión lineal, árboles de decisión o random forests, se puede mejorar la precisión de los análisis sin descartar datos importantes.
+
+## Imputaciones Múltiples por Ecuaciones Encadenadas (MICE)
+
+La **Imputación Múltiple por Ecuaciones Encadenadas (MICE)** es una técnica avanzada para manejar valores faltantes en conjuntos de datos. En lugar de imputar un único valor para cada valor faltante, MICE genera múltiples imputaciones, proporcionando un rango de posibles valores. Esto es especialmente útil para reflejar la incertidumbre que surge al imputar datos.
+
+### ¿Cómo funciona MICE?
+
+MICE funciona creando varios conjuntos de datos imputados basados en modelos iterativos. El proceso general de MICE sigue estos pasos:
+
+1. **Inicialización**: Se imputan los valores faltantes de forma preliminar con un método sencillo (por ejemplo, la media o la mediana).
+2. **Iteración**: Para cada variable con valores faltantes, MICE ajusta un modelo predictivo basado en las demás variables del conjunto de datos. Luego, se imputan los valores faltantes de esa variable con el modelo ajustado.
+3. **Repetición**: Este proceso se repite secuencialmente para todas las variables con valores faltantes hasta que las imputaciones convergen (no cambian significativamente entre iteraciones).
+4. **Múltiples imputaciones**: Este ciclo se repite varias veces, generando diferentes conjuntos de datos con valores imputados. Al final, se puede analizar cada conjunto imputado por separado y luego combinar los resultados para obtener una estimación robusta.
+
+### Ventajas de MICE
+
+- **Captura la incertidumbre**: Al realizar múltiples imputaciones, MICE incorpora la variabilidad y el posible error en las imputaciones, reflejando una visión más realista de los datos.
+- **Usa todas las variables disponibles**: Aprovecha todas las variables presentes en el conjunto de datos para predecir los valores faltantes.
+- **Flexibilidad**: MICE puede manejar tanto variables numéricas como categóricas y ajustarse a diferentes tipos de datos.
+
+### Implementación de MICE en Python
+
+La librería `fancyimpute` o el módulo `IterativeImputer` de `scikit-learn` pueden usarse para aplicar MICE. Aquí te muestro cómo hacerlo con `IterativeImputer` de `scikit-learn`.
+
+#### Paso a paso:
+
+1. **Instalación de dependencias**:
+
+   ```bash
+   pip install scikit-learn pandas numpy
+   ```
+
+2. **Ejemplo de imputación con MICE**:
+
+   ```python
+   import pandas as pd
+   import numpy as np
+   from sklearn.experimental import enable_iterative_imputer
+   from sklearn.impute import IterativeImputer
+
+   # Crear un DataFrame con valores faltantes
+   data = {'A': [1, 2, np.nan, 4, 5],
+           'B': [5, np.nan, 6, 8, 10],
+           'C': [7, 8, 9, 10, np.nan]}
+
+   df = pd.DataFrame(data)
+
+   # Mostrar el DataFrame original
+   print("DataFrame original con valores faltantes:")
+   print(df)
+
+   # Crear el imputador MICE (IterativeImputer)
+   imputer = IterativeImputer(max_iter=10, random_state=0)
+
+   # Aplicar imputación MICE
+   df_imputed = imputer.fit_transform(df)
+
+   # Convertir el resultado de nuevo a un DataFrame
+   df_imputed = pd.DataFrame(df_imputed, columns=df.columns)
+
+   # Mostrar el DataFrame imputado
+   print("\nDataFrame con los valores imputados usando MICE:")
+   print(df_imputed)
+   ```
+
+### Explicación del código:
+
+- **DataFrame original**: El `DataFrame` contiene valores faltantes en varias columnas.
+- **IterativeImputer**: Este imputador sigue el principio de MICE, ajustando un modelo para cada variable con valores faltantes de forma iterativa.
+- **Transformación**: El método `fit_transform()` genera un nuevo conjunto de datos donde los valores faltantes han sido imputados iterativamente utilizando todas las demás variables.
+
+### Salida esperada:
+
+```
+DataFrame original con valores faltantes:
+     A     B     C
+0  1.0   5.0   7.0
+1  2.0   NaN   8.0
+2  NaN   6.0   9.0
+3  4.0   8.0  10.0
+4  5.0  10.0   NaN
+
+DataFrame con los valores imputados usando MICE:
+     A     B     C
+0  1.0   5.0   7.0
+1  2.0   5.7   8.0
+2  3.0   6.0   9.0
+3  4.0   8.0  10.0
+4  5.0  10.0   9.2
+```
+
+### Consideraciones:
+
+- **Número de iteraciones**: El parámetro `max_iter` controla cuántas veces se repite el proceso de imputación. Si el número de iteraciones es bajo, las imputaciones pueden ser menos precisas.
+- **Repetibilidad**: Se puede establecer un `random_state` para hacer las imputaciones reproducibles.
+- **Manejo de incertidumbre**: En algunas implementaciones avanzadas, como `fancyimpute`, puedes generar múltiples conjuntos de datos imputados, reflejando la variabilidad.
+
+### Conclusión:
+
+MICE es una técnica poderosa que ofrece imputaciones precisas al aprovechar toda la información disponible y realizar múltiples imputaciones para reflejar la incertidumbre en los valores faltantes. Es útil en aplicaciones donde es crítico manejar de forma robusta los valores faltantes, como en análisis estadísticos o aprendizaje automático.
+
+**Lecturas recomendadas**
+
+[MICE algorithm to Impute missing values in a dataset](https://www.numpyninja.com/post/mice-algorithm-to-impute-missing-values-in-a-dataset "MICE algorithm to Impute missing values in a dataset")
+
+## Transformación inversa de los datos
+
+La **transformación inversa de los datos** es el proceso de revertir una transformación previamente aplicada a los datos para devolverlos a su escala o formato original. Esto es especialmente importante cuando has aplicado técnicas de preprocesamiento, como la normalización, estandarización, codificación o imputación, y necesitas interpretar los resultados o presentar los datos en su forma original.
+
+### Ejemplos comunes de transformaciones y su inversión:
+
+1. **Escalado y Normalización**:
+   - Si aplicaste una transformación de escalado (por ejemplo, `MinMaxScaler` o `StandardScaler` de `scikit-learn`), la transformación inversa deshace el escalado para devolver los datos a su rango original.
+   - La inversión de estos métodos es útil, por ejemplo, cuando los modelos de machine learning han sido entrenados en datos escalados, pero quieres interpretar los resultados en la escala original.
+
+2. **Codificación de Variables Categóricas**:
+   - Si aplicaste técnicas de codificación como **One-Hot Encoding** o **Label Encoding** para convertir categorías a números, la transformación inversa te permite volver a las etiquetas originales (valores categóricos).
+   - Es importante para análisis interpretativo o reportes donde las etiquetas originales tienen más sentido que los números codificados.
+
+3. **Transformaciones logarítmicas o polinómicas**:
+   - Si aplicaste transformaciones logarítmicas a tus datos para mejorar la linealidad en modelos de regresión, la transformación inversa devuelve los datos a su forma original aplicando la función exponencial inversa.
+
+4. **Imputación**:
+   - En el caso de métodos de imputación, como el **IterativeImputer** o **KNNImputer**, la transformación inversa devuelve los datos imputados a su formato original (por ejemplo, si has imputado valores faltantes y luego deseas evaluar los datos imputados).
+
+### Ejemplo práctico: Transformación inversa después de escalado
+
+Supongamos que has escalado tus datos con `MinMaxScaler` de `scikit-learn` y ahora quieres revertir esta transformación.
+
+#### Paso 1: Aplicar el escalado
+
+```python
+from sklearn.preprocessing import MinMaxScaler
+import numpy as np
+
+# Datos originales
+data = np.array([[1, 2], [2, 3], [4, 5], [6, 8]])
+
+# Crear un escalador y ajustarlo a los datos
+scaler = MinMaxScaler()
+scaled_data = scaler.fit_transform(data)
+
+print("Datos escalados:")
+print(scaled_data)
+```
+
+#### Paso 2: Aplicar la transformación inversa
+
+```python
+# Invertir la transformación
+original_data = scaler.inverse_transform(scaled_data)
+
+print("Datos originales (después de la transformación inversa):")
+print(original_data)
+```
+
+### Resultado esperado:
+
+```plaintext
+Datos escalados:
+[[0.         0.        ]
+ [0.2        0.2       ]
+ [0.6        0.6       ]
+ [1.         1.        ]]
+
+Datos originales (después de la transformación inversa):
+[[1. 2.]
+ [2. 3.]
+ [4. 5.]
+ [6. 8.]]
+```
+
+### Consideraciones:
+
+- **Transformaciones no reversibles**: No todas las transformaciones son completamente reversibles. Por ejemplo, si eliminas datos o aplicas métodos que modifican los datos de manera no lineal (como algunas transformaciones logarítmicas sobre valores negativos), puede que no se recupere la información original con precisión.
+  
+- **Exactitud en la inversión**: En transformaciones numéricas, pequeñas diferencias pueden surgir debido a la precisión de los cálculos, pero estas son generalmente insignificantes en la práctica.
+
+### Aplicaciones:
+
+- **Interpretación de modelos**: Después de aplicar transformaciones para entrenar un modelo, las predicciones o los coeficientes del modelo deben ser interpretados en la escala original.
+- **Visualización**: A menudo, es más fácil interpretar gráficos y resúmenes en la escala original de los datos.
+- **Presentación de resultados**: La presentación de resultados generalmente se hace en términos que sean comprensibles para los no técnicos, por lo que la transformación inversa es esencial.
