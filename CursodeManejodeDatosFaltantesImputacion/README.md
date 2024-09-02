@@ -706,3 +706,390 @@ df['columna'] = df['columna'].fillna(df['columna'].mode()[0])
 - **Sesgo**: Estos métodos suponen que los valores faltantes son aleatorios. Si los valores faltantes tienen un patrón, la imputación por media, mediana o moda puede introducir sesgos.
 
 Este enfoque es más adecuado cuando hay pocos valores faltantes y no se requiere una alta precisión. Para conjuntos de datos con muchas variables o relaciones complejas, se pueden usar métodos más avanzados como la imputación multivariante o la regresión.
+
+## Imputación por llenado hacia atrás y hacia adelante
+
+La **imputación por llenado hacia atrás y hacia adelante** es una técnica comúnmente utilizada para manejar valores faltantes en series temporales. Estos métodos aprovechan la continuidad temporal de los datos para rellenar los valores faltantes con el valor más cercano disponible en el tiempo.
+
+### 1. **Llenado hacia adelante (Forward Fill)**
+Este método rellena los valores faltantes con el último valor conocido anterior. Es decir, se "arrastra" el último valor observado hacia adelante para completar los valores faltantes.
+
+- **Aplicación**: Útil cuando se asume que los valores no cambian drásticamente en cortos períodos de tiempo o cuando un valor faltante puede ser razonablemente estimado como el mismo que el anterior.
+- **Ventajas**: Es fácil de aplicar y respeta la estructura temporal de los datos.
+- **Desventajas**: Si hay grandes cambios entre períodos, este método puede introducir sesgos.
+
+```python
+# Imputación hacia adelante (forward fill)
+df['columna'] = df['columna'].fillna(method='ffill')
+```
+
+### 2. **Llenado hacia atrás (Backward Fill)**
+Este método rellena los valores faltantes con el siguiente valor disponible, es decir, "arrastra" el siguiente valor conocido hacia atrás.
+
+- **Aplicación**: Se usa cuando el valor futuro es una buena aproximación del valor faltante o cuando los datos faltantes deberían parecerse a los valores que siguen.
+- **Ventajas**: Es útil cuando los valores futuros se pueden asumir similares a los faltantes.
+- **Desventajas**: Similar al llenado hacia adelante, puede introducir sesgos si hay fluctuaciones grandes en los datos.
+
+```python
+# Imputación hacia atrás (backward fill)
+df['columna'] = df['columna'].fillna(method='bfill')
+```
+
+### 3. **Combinación de ambos métodos**
+En algunas situaciones, puedes combinar ambos métodos, primero llenando hacia adelante y luego hacia atrás, para asegurar que los valores faltantes en el medio de los datos se llenen de alguna manera.
+
+```python
+# Primero hacia adelante, luego hacia atrás
+df['columna'] = df['columna'].fillna(method='ffill').fillna(method='bfill')
+```
+
+### Ejemplo
+Imagina un conjunto de datos de temperaturas diarias donde algunos días no se registraron datos. Si utilizamos **forward fill**, los valores faltantes serán reemplazados por la última temperatura registrada. Si usamos **backward fill**, serán reemplazados por la próxima temperatura conocida.
+
+```python
+import pandas as pd
+import numpy as np
+
+# Ejemplo de DataFrame con valores faltantes
+data = {'fecha': pd.date_range('2023-01-01', periods=10),
+        'temperatura': [30, np.nan, np.nan, 35, 33, np.nan, 32, 31, np.nan, 30]}
+
+df = pd.DataFrame(data)
+
+# Llenado hacia adelante
+df_ffill = df.fillna(method='ffill')
+
+# Llenado hacia atrás
+df_bfill = df.fillna(method='bfill')
+
+print(df_ffill)
+print(df_bfill)
+```
+
+### Consideraciones
+- **Patrones temporales**: Estos métodos son particularmente útiles en series temporales, donde los valores faltantes ocurren de forma secuencial.
+- **Sesgo potencial**: Como estos métodos suponen que el valor pasado o futuro es una buena aproximación para el valor faltante, pueden introducir sesgos si hay cambios bruscos en los datos.
+- **Casos extremos**: Si los primeros o últimos valores en la serie están faltando, no habrá valores anteriores o futuros con los cuales reemplazarlos, lo que dejará esos valores como `NaN`.
+
+Estos métodos son simples, efectivos y no requieren supuestos complejos, pero es importante evaluar si son adecuados en función de la naturaleza de los datos.
+
+## Imputación por interpolación
+
+La **imputación por interpolación** es un método para estimar valores faltantes en un conjunto de datos, particularmente útil en series temporales o cuando se espera que los datos cambien de manera continua o progresiva. Este método utiliza la tendencia y el comportamiento de los valores circundantes para estimar el valor faltante.
+
+### Tipos de interpolación:
+
+1. **Interpolación lineal**:
+   Es el método más básico. Estima los valores faltantes asumiendo que los datos varían de manera lineal entre los puntos observados.
+
+   ```python
+   # Interpolación lineal
+   df['columna'] = df['columna'].interpolate(method='linear')
+   ```
+
+2. **Interpolación polinómica**:
+   Utiliza un polinomio de grado `n` para ajustar los valores entre los puntos. Es más flexible que la lineal, pero también puede ser más propensa a oscilar en los extremos.
+
+   ```python
+   # Interpolación polinómica (grado 2)
+   df['columna'] = df['columna'].interpolate(method='polynomial', order=2)
+   ```
+
+3. **Interpolación basada en splines**:
+   Utiliza splines cúbicos o de otro grado para suavizar las curvas entre los puntos. Es útil para datos que no siguen un patrón lineal simple, pero que aún deben mantener una curva suave.
+
+   ```python
+   # Interpolación cúbica (splines cúbicos)
+   df['columna'] = df['columna'].interpolate(method='spline', order=3)
+   ```
+
+4. **Interpolación basada en el índice temporal**:
+   Si trabajas con series temporales, puedes interpolar usando los índices temporales. Esto es útil cuando la regularidad temporal es más importante que la relación entre los valores de las columnas.
+
+   ```python
+   # Interpolación basada en el índice temporal
+   df['columna'] = df['columna'].interpolate(method='time')
+   ```
+
+### Ejemplo práctico:
+Imagina un conjunto de datos que registra la temperatura diaria, pero algunos días faltan registros. Usamos interpolación para estimar esos valores faltantes.
+
+```python
+import pandas as pd
+import numpy as np
+
+# Crear un DataFrame con fechas y temperaturas
+data = {'fecha': pd.date_range('2023-01-01', periods=10),
+        'temperatura': [30, np.nan, np.nan, 35, 33, np.nan, 32, 31, np.nan, 30]}
+
+df = pd.DataFrame(data)
+
+# Interpolación lineal
+df['temperatura_interpolada'] = df['temperatura'].interpolate(method='linear')
+
+# Mostrar el resultado
+print(df)
+```
+
+### Ventajas de la interpolación:
+- **Aprovecha el patrón de los datos**: Si los datos siguen una tendencia continua, la interpolación proporciona estimaciones razonables.
+- **Flexibilidad**: Puedes usar diferentes métodos de interpolación (lineal, polinómica, spline) para ajustar el método a la naturaleza de los datos.
+- **Preserva la estructura temporal**: En series temporales, la interpolación basada en el tiempo permite hacer imputaciones manteniendo el orden cronológico de los datos.
+
+### Desventajas de la interpolación:
+- **No es adecuada para todos los tipos de datos**: Si los valores faltantes son el resultado de un proceso no continuo o aleatorio, la interpolación puede introducir sesgos.
+- **Oscilaciones**: Métodos más complejos como los polinomios pueden producir oscilaciones inesperadas, especialmente en los extremos de los datos.
+- **Asume continuidad**: Funciona mejor cuando se puede suponer que los valores entre los puntos siguen un patrón predecible o continuo.
+
+### Consideraciones:
+- Si los valores faltantes son numerosos o consecutivos, la interpolación puede generar estimaciones menos fiables.
+- La interpolación es más adecuada para datos numéricos y en su mayoría aplicable a series temporales, aunque también se puede usar en otras estructuras siempre que los datos tengan una secuencia o patrón claro.
+
+Este método es útil en muchos casos, pero siempre debes evaluar si las suposiciones de continuidad son razonables para tus datos.
+
+### Pandas.DataFrame.interpolate: Donantes vs. Modelos
+
+En la biblioteca Pandas, la función `DataFrame.interpolate` ofrece diversas opciones para realizar interpolación de valores faltantes en un DataFrame. A continuación se clasifican según su enfoque principal:
+
+**Métodos basados en donantes:**
+
+- `method='linear'`: Interpolación lineal simple entre los dos puntos más cercanos.
+- `method='nearest'`: Asigna el valor del punto más cercano al punto con valor faltante.
+- `method='quadratic'`: Interpolación cuadrática utilizando los dos puntos más cercanos y el siguiente punto más cercano en la misma dirección.
+- `method='cubic'`: Interpolación cúbica utilizando los dos puntos más cercanos y los dos siguientes puntos más cercanos en la misma dirección.
+- `method='krogh'`: Interpolación de Akima, que utiliza una función cúbica a trozos con restricciones de monotonía.
+- `method='spline'`: Interpolación cúbica con splines de B-spline.
+
+**Métodos basados en modelos:**
+
+- `method='barycentric'`: Interpolación baricéntrica, que utiliza una ponderación basada en la distancia de los puntos vecinos.
+- `method='polynomial'`: Interpolación polinomial de orden especificado (parámetro 'order').
+- `method='pchip'`: Interpolación cúbica monotónica de Hermite con preservación de la forma local.
+
+**Otros métodos:**
+
+- `method='index'`: Interpolación lineal usando el índice del DataFrame.
+- `method='pad'`: Rellena los valores faltantes con el valor del borde más cercano (opción 'ffill' para relleno hacia adelante, 'bfill' para relleno hacia atrás).
+
+Es importante destacar que algunos métodos pueden combinar elementos de ambos enfoques. Por ejemplo, la interpolación cúbica con splines de B-spline (`method='spline'`) se basa en un modelo matemático, pero también utiliza la información de los puntos vecinos.
+
+La elección del método adecuado dependerá de diversos factores, como:
+
+- Tamaño del conjunto de datos: Los métodos basados en modelos pueden ser más precisos para conjuntos de datos grandes, mientras que los métodos basados en donantes pueden ser más eficientes para conjuntos de datos pequeños.
+- Patrones en los datos: Los métodos basados en modelos pueden ser más adecuados para conjuntos de datos con patrones complejos, mientras que los métodos basados en donantes pueden ser más robustos para conjuntos de datos con ruido.
+- Precisión requerida: Los métodos basados en modelos pueden ofrecer mayor precisión, pero esto puede implicar un mayor costo computacional.
+
+Se recomienda evaluar diferentes métodos y seleccionar el que mejor se adapte a las necesidades específicas de cada caso.
+
+**Lecturas recomendadas**
+
+[pandas.DataFrame.interpolate — pandas 1.5.1 documentation](https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.interpolate.html "pandas.DataFrame.interpolate — pandas 1.5.1 documentation")
+
+## Imputación por KNN
+
+La **imputación por K-Nearest Neighbors (KNN)** es una técnica avanzada utilizada para estimar valores faltantes basándose en la similitud de las observaciones con otras observaciones del conjunto de datos. La idea detrás de este enfoque es que los valores faltantes pueden ser aproximados utilizando los valores de las observaciones más cercanas (vecinas) en el espacio de las características.
+
+### Concepto básico de KNN:
+El algoritmo de KNN calcula la "distancia" entre las observaciones, donde cada observación es un vector de características (variables). En el caso de imputación, se seleccionan las **K observaciones más cercanas** (vecinos) a la observación con el valor faltante y se utiliza alguna función (promedio, moda, etc.) para estimar el valor faltante con base en los valores de esos vecinos.
+
+### Pasos de la imputación por KNN:
+
+1. **Definir la distancia**: Se elige una métrica de distancia, comúnmente la distancia Euclidiana, para determinar qué observaciones están "cerca" entre sí.
+   
+2. **Seleccionar K vecinos**: Se selecciona un número \( K \) de vecinos más cercanos a la observación que tiene el valor faltante.
+
+3. **Imputar el valor faltante**: El valor faltante se estima utilizando los valores de los vecinos seleccionados. Si es una variable numérica, se puede usar la media o mediana de los vecinos. Para una variable categórica, se puede utilizar la moda (el valor más frecuente entre los vecinos).
+
+### Implementación en Python:
+
+En Python, la imputación por KNN puede realizarse utilizando la librería `sklearn` y otras herramientas como `fancyimpute` o `KNNImputer`.
+
+#### Usando `KNNImputer` de `scikit-learn`:
+
+```python
+import numpy as np
+import pandas as pd
+from sklearn.impute import KNNImputer
+
+# Crear un DataFrame con valores faltantes
+data = {'A': [1, 2, np.nan, 4, 5],
+        'B': [5, np.nan, np.nan, 3, 2],
+        'C': [7, 8, 9, 10, 11]}
+
+df = pd.DataFrame(data)
+
+# Crear un objeto KNNImputer con k=2 vecinos
+imputer = KNNImputer(n_neighbors=2)
+
+# Imputar los valores faltantes
+df_imputed = pd.DataFrame(imputer.fit_transform(df), columns=df.columns)
+
+# Mostrar el resultado
+print(df_imputed)
+```
+
+En este ejemplo, el algoritmo KNN selecciona los **2 vecinos más cercanos** para imputar los valores faltantes en las columnas 'A' y 'B'.
+
+### Métricas de distancia comunes:
+- **Distancia Euclidiana**: Mide la distancia entre dos puntos en el espacio de múltiples dimensiones. Es la más común para datos numéricos.
+  
+  \[
+  d(x, y) = \sqrt{\sum_{i=1}^{n} (x_i - y_i)^2}
+  \]
+
+- **Distancia de Manhattan**: Suma de las diferencias absolutas entre los valores correspondientes de dos puntos.
+
+  \[
+  d(x, y) = \sum_{i=1}^{n} |x_i - y_i|
+  \]
+
+- **Distancia de Hamming**: Para variables categóricas, mide la diferencia entre dos vectores considerando cada componente de manera independiente.
+
+### Ventajas de la imputación por KNN:
+
+1. **Aprovecha la información global**: Utiliza toda la información disponible en el conjunto de datos para imputar valores, en lugar de limitarse a una sola columna.
+   
+2. **Flexibilidad**: Funciona tanto para variables numéricas como categóricas (ajustando el método de imputación según el tipo de variable).
+
+3. **No requiere suposiciones fuertes**: A diferencia de la interpolación o métodos paramétricos, no asume una estructura particular de los datos.
+
+### Desventajas de la imputación por KNN:
+
+1. **Costo computacional**: Puede ser costoso en términos de tiempo y recursos computacionales, especialmente en grandes conjuntos de datos, ya que requiere calcular distancias entre todas las observaciones.
+   
+2. **No siempre es adecuado para datos escasos**: Si los valores faltantes son muchos o si los datos son dispersos, KNN puede no ser eficaz ya que los vecinos podrían no estar suficientemente cerca o ser representativos.
+
+3. **Sensibilidad a la elección de \( K \)**: El número de vecinos (\( K \)) puede afectar significativamente los resultados, y encontrar el \( K \) óptimo puede requerir prueba y error.
+
+4. **Escalado de los datos**: Las diferencias en las escalas de las variables pueden afectar los resultados, por lo que es necesario normalizar o estandarizar los datos antes de aplicar KNN.
+
+### Consideraciones adicionales:
+
+- **Estandarización de los datos**: Es importante que los datos estén en la misma escala, ya que las distancias se ven afectadas por la magnitud de las variables.
+  
+  ```python
+  from sklearn.preprocessing import StandardScaler
+
+  scaler = StandardScaler()
+  df_scaled = scaler.fit_transform(df)
+  ```
+
+- **Elección de \( K \)**: \( K \) puede determinarse mediante técnicas de validación cruzada o seleccionando el \( K \) que minimice el error de predicción en un conjunto de validación.
+
+### Pasos para imputación por k-Nearest-Neighbors
+
+Para cada observación con valores faltantes:
+
+1. Encuentra otras K observaciones (donadores, vecinos) que sean más similares a esa observación.
+2. Reemplaza los valores faltantes con los valores agregados de los K vecinos.
+
+### ¿Cómo determinar cuáles son los vecinos más similares?
+
+Cuantificación de distancia: distancia euclidiana útil para variables numéricas.
+
+Distancia Manhattan útil para variables tipo factor.
+
+Distancia de Hamming útil para variables categóricas
+
+distancia de Gower útil para conjuntos de datos con variables mixtas
+
+- **Euclidiana**: Útil para variables numéricas
+- **Manhattan**: Útil paa variables tipo factor
+- **Hamming**: Útil para variables categóricas
+- **Gower**: Útil para conjuntos de datos con variables mixtas
+
+### Conclusión:
+
+La imputación por KNN es un método poderoso para manejar valores faltantes en conjuntos de datos complejos. Al basarse en las observaciones cercanas, permite realizar imputaciones coherentes con los patrones observados en los datos. Sin embargo, es importante considerar su costo computacional y el impacto de la elección de \( K \) para garantizar buenos resultados.
+
+## Imputación por KNN en Python
+
+La **imputación por KNN** en Python se puede realizar de manera efectiva utilizando la clase `KNNImputer` de la librería `scikit-learn`. Esta herramienta es útil para reemplazar los valores faltantes basándose en las observaciones más cercanas en términos de distancia entre puntos.
+
+### Pasos para implementar KNNImputer en Python:
+
+1. **Instalación de las dependencias necesarias** (si aún no las tienes instaladas):
+
+   ```bash
+   pip install scikit-learn pandas
+   ```
+
+2. **Imputación por KNN** con un ejemplo práctico.
+
+#### Ejemplo paso a paso:
+
+```python
+import numpy as np
+import pandas as pd
+from sklearn.impute import KNNImputer
+
+# Crear un DataFrame con valores faltantes
+data = {'A': [1, 2, np.nan, 4, 5],
+        'B': [5, np.nan, np.nan, 3, 2],
+        'C': [7, 8, 9, 10, 11]}
+
+df = pd.DataFrame(data)
+
+# Mostrar el DataFrame original con valores faltantes
+print("DataFrame original:")
+print(df)
+
+# Crear un objeto KNNImputer con K=2 (número de vecinos más cercanos)
+imputer = KNNImputer(n_neighbors=2)
+
+# Imputar los valores faltantes utilizando KNN
+df_imputed = pd.DataFrame(imputer.fit_transform(df), columns=df.columns)
+
+# Mostrar el DataFrame después de la imputación
+print("\nDataFrame imputado por KNN:")
+print(df_imputed)
+```
+
+### Explicación del código:
+
+1. **DataFrame con valores faltantes**: Creamos un `DataFrame` con algunas celdas vacías (representadas por `np.nan`).
+2. **KNNImputer**: Inicializamos el objeto `KNNImputer` con 2 vecinos más cercanos (`n_neighbors=2`). Puedes ajustar este valor dependiendo de cuántos vecinos desees utilizar.
+3. **Imputación**: Aplicamos el método `fit_transform()` para realizar la imputación de los valores faltantes.
+4. **Resultados**: Visualizamos el DataFrame con los valores imputados.
+
+### Salida esperada:
+
+```
+DataFrame original:
+     A    B   C
+0  1.0  5.0   7
+1  2.0  NaN   8
+2  NaN  NaN   9
+3  4.0  3.0  10
+4  5.0  2.0  11
+
+DataFrame imputado por KNN:
+     A    B     C
+0  1.0  5.0   7.0
+1  2.0  4.0   8.0
+2  3.0  4.0   9.0
+3  4.0  3.0  10.0
+4  5.0  2.0  11.0
+```
+
+### Consideraciones adicionales:
+
+- **Escalado de los datos**: Si los datos tienen escalas muy diferentes, es recomendable normalizarlos antes de aplicar KNNImputer para que las variables no dominen en el cálculo de las distancias.
+  
+  ```python
+  from sklearn.preprocessing import StandardScaler
+
+  scaler = StandardScaler()
+  df_scaled = scaler.fit_transform(df)
+
+  # Aplicar KNN después de escalar los datos
+  df_imputed_scaled = pd.DataFrame(imputer.fit_transform(df_scaled), columns=df.columns)
+  ```
+
+- **Elección del número de vecinos (\( K \))**: El número de vecinos a utilizar puede variar según el tipo de datos y la cantidad de valores faltantes. Generalmente, se prueba con distintos valores de \( K \) y se evalúa cuál proporciona mejores resultados para el conjunto de datos.
+
+La imputación por KNN es útil cuando los valores faltantes están relacionados con otras observaciones cercanas en el espacio de características, proporcionando una forma eficiente de imputar datos faltantes sin introducir sesgos arbitrarios.
+
+**Lecturas recomendadas**
+
+[1.6. Nearest Neighbors — scikit-learn 1.1.2 documentation](https://platzi.com/home/clases/4197-datos-faltantes-imputacion/55407-imputacion-por-knn-en-python/#:~:text=1.6.%20Nearest%20Neighbors%20%E2%80%94%20scikit%2Dlearn%201.1.2%20documentation "1.6. Nearest Neighbors — scikit-learn 1.1.2 documentation")
