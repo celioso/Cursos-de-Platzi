@@ -1136,6 +1136,243 @@ Puedes cargar datos guardados previamente en los formatos binario o de texto.
 ### Conclusión
 NumPy proporciona herramientas muy útiles para visualizar datos en consola, almacenarlos de forma eficiente y recuperarlos cuando sea necesario. Estas capacidades permiten manejar grandes conjuntos de datos y trabajar de manera efectiva en proyectos de análisis numérico y científico.
 
+## Caso Práctico de Análisis de Datos
+
+```python
+meses = np.array(['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+                  'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'])
+ventas_A = np.array([150, 200, 250, 300, 220, 210, 180, 190, 230, 240, 280, 300])
+ventas_B = np.array([180, 210, 230, 250, 270, 260, 240, 250, 270, 290, 310, 330])
+ventas_C = np.array([200, 220, 240, 260, 280, 300, 320, 340, 360, 380, 400, 420])
+```
+## Cálculos Matriciales en NumPy
+
+Los cálculos matriciales en NumPy son esenciales para realizar operaciones matemáticas eficientes con matrices y arreglos. Aquí te explico algunos de los conceptos clave y operaciones que puedes realizar:
+
+### 1. **Creación de Matrices**
+   - **Matriz a partir de listas anidadas:**
+     ```python
+     import numpy as np
+     A = np.array([[1, 2], [3, 4]])
+     ```
+   - **Matrices especiales:**
+     ```python
+     Z = np.zeros((2, 2))  # Matriz de ceros
+     O = np.ones((2, 2))   # Matriz de unos
+     I = np.eye(2)         # Matriz identidad
+     ```
+
+### 2. **Operaciones Básicas**
+   - **Suma y resta de matrices:**
+     ```python
+     C = A + B
+     D = A - B
+     ```
+   - **Multiplicación por un escalar:**
+     ```python
+     E = 2 * A
+     ```
+   - **Multiplicación de matrices:**
+     ```python
+     F = np.dot(A, B)  # Producto matricial
+     ```
+
+### 3. **Transposición de una Matriz**
+   ```python
+   A_T = A.T
+   ```
+
+### 4. **Inversa de una Matriz**
+   ```python
+   A_inv = np.linalg.inv(A)
+   ```
+
+### 5. **Determinante de una Matriz**
+   ```python
+   det_A = np.linalg.det(A)
+   ```
+
+### 6. **Solución de Sistemas de Ecuaciones Lineales**
+   - Si tienes un sistema de ecuaciones \( AX = B \):
+     ```python
+     X = np.linalg.solve(A, B)
+     ```
+
+### 7. **Valores y Vectores Propios**
+   ```python
+   eigvals, eigvecs = np.linalg.eig(A)
+   ```
+
+### 8. **Operaciones Elemento a Elemento**
+   - **Multiplicación elemento a elemento:**
+     ```python
+     G = A * B
+     ```
+   - **División elemento a elemento:**
+     ```python
+     H = A / B
+     ```
+
+### 9. **Reducción (Sumas, Máximos, etc.)**
+   - **Suma de todos los elementos:**
+     ```python
+     total_sum = np.sum(A)
+     ```
+   - **Máximo de todos los elementos:**
+     ```python
+     max_value = np.max(A)
+     ```
+
+### 10. **Broadcasting**
+   NumPy permite realizar operaciones entre matrices de diferentes dimensiones de forma automática, ajustando las dimensiones según sea necesario.
+   ```python
+   I = A + 1  # Añade 1 a todos los elementos de A
+   ```
+
+Estos son solo algunos ejemplos de lo que puedes hacer con NumPy para realizar cálculos matriciales. NumPy es extremadamente eficiente y es una herramienta fundamental para cualquier análisis de datos, machine learning o cálculos científicos en Python.
+
+## Ejercicios en NumPy
+
+¡Felicidades por llegar al final del primer módulo!
+Has aprendido a dominar NumPy, una herramienta fundamental para el análisis de datos. Este es un gran paso en tu camino para convertirte en un experto en ciencia de datos. Pero esto es solo el comienzo.
+En los próximos módulos, nos adentraremos en dos poderosas herramientas: Pandas y Matplotlib, que se integran de manera perfecta con NumPy para llevar tu análisis de datos al siguiente nivel.
+
+### Conexión entre NumPy, Pandas y Matplotlib
+
+**1. NumPy como Fundamento**
+
+ - NumPy es la base sobre la que se construyen muchas otras librerías de análisis de datos en Python, incluidas Pandas y Matplotlib.
+ - Con NumPy, has aprendido a manejar arrays multidimensionales y realizar cálculos matemáticos y matriciales eficientes. Estos arrays son fundamentales porque Pandas y Matplotlib los utilizan bajo el capó para realizar muchas de sus operaciones.
+ 
+**2. Pandas para la Manipulación de Datos**
+
+ - Mientras que NumPy se especializa en operaciones numéricas y matriciales, Pandas es la herramienta que utilizarás para la manipulación de datos estructurados, como tablas y series temporales.
+ - Pandas toma los arrays de NumPy y les da estructura en forma de DataFrames y Series, lo que facilita la limpieza, transformación y análisis de datos complejos.
+ - Ejemplo de Conexión: Puedes usar NumPy para realizar cálculos en un conjunto de datos, luego importar esos resultados a un DataFrame de Pandas para un análisis más detallado.
+ 
+**3. Matplotlib para la Visualización de Datos**
+
+ - Matplotlib es la librería de referencia para la visualización de datos en Python. Te permitirá transformar tus datos en gráficos e imágenes que comunican claramente tus hallazgos.
+ - Tanto NumPy como Pandas se integran perfectamente con Matplotlib, permitiéndote crear gráficos desde arrays de NumPy o directamente desde DataFrames de Pandas.
+ - Ejemplo de Conexión: Después de procesar y analizar datos con NumPy y Pandas, puedes usar Matplotlib para crear gráficos que visualicen las tendencias, patrones y anomalías en los datos.
+ 
+**4. El Flujo de Trabajo Completo**
+
+ - Cargar y Manipular Datos: Utilizas Pandas para cargar y estructurar tus datos desde diversas fuentes (como CSVs, Excel, bases de datos).
+ - Análisis Numérico y Cálculos: Usas NumPy para realizar cálculos intensivos, como operaciones matriciales y simulaciones.
+ - Visualización de Resultados: Finalmente, Matplotlib te ayuda a visualizar los resultados de tus análisis, creando gráficos que pueden comunicarse efectivamente con tu audiencia.
+ 
+### Ejercicios Prácticos con NumPy
+
+Vamos a consolidar lo que has aprendido con ejercicios exclusivos de NumPy, diseñados para reforzar tus habilidades y prepararte para las conexiones futuras con Pandas y Matplotlib.
+
+**1. Operaciones Básicas con Arrays**
+
+ - Instrucción: Crea dos arrays de 1D con valores enteros y realiza las operaciones de suma, resta, multiplicación, y división entre ellos.
+
+ - Código:
+ 
+```python
+import numpy as np
+
+array1 = np.array([10, 20, 30, 40])
+array2 = np.array([1, 2, 3, 4])
+
+suma = array1 + array2
+resta = array1 - array2
+multiplicacion = array1 * array2
+division = array1 / array2
+
+print("Suma:", suma)
+print("Resta:", resta)
+print("Multiplicación:", multiplicacion)
+print("División:", division)
+```
+
+**2. Cálculos Estadísticos en Arrays**
+
+ - Instrucción: Dado un array de datos, calcula la media, mediana, varianza, y desviación estándar.
+
+ - Código:
+
+```python
+pythonCopiar código
+import numpy as np
+
+datos = np.array([23, 76, 35, 67, 89, 45, 68, 79, 35])
+
+media = np.mean(datos)
+mediana = np.median(datos)
+varianza = np.var(datos)
+desviacion = np.std(datos)
+
+print("Media:", media)
+print("Mediana:", mediana)
+print("Varianza:", varianza)
+print("Desviación estándar:", desviacion)
+```
+
+**3. Operaciones Matriciales**
+
+ - Instrucción: Crea dos matrices de 2x2 y realiza las operaciones de suma, resta, multiplicación (producto matricial) y cálculo de la inversa de una de ellas.
+
+ - Código:
+
+```python
+import numpy as np
+
+matriz1 = np.array([[1, 2], [3, 4]])
+matriz2 = np.array([[5, 6], [7, 8]])
+
+suma_matrices = matriz1 + matriz2
+resta_matrices = matriz1 - matriz2
+producto_matrices = np.dot(matriz1, matriz2)
+inversa_matriz1 = np.linalg.inv(matriz1)
+
+print("Suma de matrices:\n", suma_matrices)
+print("Resta de matrices:\n", resta_matrices)
+print("Producto de matrices:\n", producto_matrices)
+print("Inversa de la matriz 1:\n", inversa_matriz1)
+```
+
+**4. Resolución de un Sistema de Ecuaciones Lineales**
+
+ - Instrucción: Resuelve el sistema de ecuaciones lineales dado por Ax=b, donde A es una matriz 2x2 y b es un vector de 2 elementos.
+Ax=bAx = b
+
+ - Código:
+
+```python
+import numpy as np
+
+A = np.array([[2, 3], [1, 2]])
+b = np.array([8, 5])
+
+x = np.linalg.solve(A, b)
+print("Solución del sistema de ecuaciones:", x)
+```
+
+**5. Simulación de Datos**
+
+ - **Instrucción**: Genera un array de 1000 números aleatorios que sigan una distribución normal con media 0 y desviación estándar 1. Calcula la media y desviación estándar del array generado.
+
+ - Código:
+
+```python
+import numpy as np
+
+datos_simulados = np.random.normal(0, 1, 1000)
+media_simulada = np.mean(datos_simulados)
+desviacion_simulada = np.std(datos_simulados)
+
+print("Media de los datos simulados:", media_simulada)
+print("Desviación estándar de los datos simulados:", desviacion_simulada)
+```
+
+Con estos ejercicios, has consolidado tus conocimientos en NumPy y estás listo para explorar cómo esta poderosa herramienta se conecta con otras librerías esenciales en el análisis de datos. A medida que avances hacia los módulos de Pandas y Matplotlib, verás cómo NumPy se integra perfectamente para manipular y visualizar datos de manera eficiente.
+
+Recuerda, NumPy es la base sobre la que construirás habilidades más avanzadas en análisis de datos. ¡Continúa explorando y practicando para convertirte en un experto en ciencia de datos!
+
 ## Optimización y escalabilidad en NumPy
 
 Hoy en día, los conjuntos de datos crecen a un ritmo exponencial, y las empresas necesitan procesar grandes volúmenes de datos de manera eficiente. Como analista o científico de datos, es esencial aprender a manejar y optimizar el uso de arrays grandes para garantizar un buen rendimiento.
@@ -1448,6 +1685,28 @@ Pandas proporciona una amplia gama de herramientas para manipular y analizar dat
 ![DALL·E.png](./images/DALL·E.png "DALL·E.png")
 
 Pandas es una biblioteca de Python diseñada específicamente para la manipulación y el análisis de datos. Su popularidad en la comunidad de ciencia de datos se debe a su facilidad de uso, su integración con otras bibliotecas como NumPy y Matplotlib, y la capacidad de manejar grandes volúmenes de datos de manera eficiente. Python, por su parte, es un lenguaje de programación versátil y ampliamente utilizado en diversas áreas de la tecnología, lo que lo convierte en una elección natural para el análisis de datos.
+
+### Procesos de Limpieza de Datos en Pandas
+
+En el mundo del análisis de datos, la calidad de los datos es tan importante como el análisis mismo. Los datos crudos a menudo contienen errores, valores faltantes o inconsistencias que pueden afectar la precisión de los resultados.
+
+Aquí es donde entra en juego Pandas, una biblioteca de Python ampliamente utilizada para la manipulación y análisis de datos. Pandas nos proporciona un conjunto robusto de herramientas para limpiar y preparar datos, asegurando que estén en el mejor estado posible para el análisis, tales como:
+
+- **Lectura de Datos**: Utilizando pd.read_csv() para importar datos desde un archivo CSV.
+- **Conversión de Tipos de Datos**: Convertir columnas, como fechas, a tipos de datos más adecuados.
+- **Eliminación de Filas o Columnas**: Retirar filas o columnas innecesarias.
+- **Imputación de Datos Faltantes**: Rellenar valores faltantes con la media, mediana, o un valor constante.
+- **Eliminación de Duplicados**: Asegurar la integridad de los datos eliminando duplicados.
+- **Filtrado de Datos**: Enfocar el análisis en subconjuntos específicos de datos.
+- **Creación de Nuevas Columnas**: Generar columnas derivadas para facilitar el análisis.
+
+El proceso de limpieza de datos es crucial en el análisis, y Pandas nos ofrece herramientas para facilitar esa tarea. Pandas permite a los analistas transformar datos desordenados en conjuntos de datos limpios y estructurados.
+
+Dominar las técnicas de limpieza de datos en Pandas es esencial para cualquier profesional que busque extraer valor significativo de sus datos.
+
+**Lecturas recomendadas**
+
+[pandas.DataFrame](https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html "pandas.DataFrame")
 
 ### ¿Por qué Pandas y Python?
 
@@ -4044,6 +4303,380 @@ Con estas opciones, puedes crear muchos tipos de gráficos directamente en Panda
 
 [pandas.Series.dt.strftime](https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.dt.strftime.html "pandas.Series.dt.strftime")
 [pandas.to_datetime](https://pandas.pydata.org/docs/reference/api/pandas.to_datetime.html "pandas.to_datetime")
+
+## Introducción a Matplotlib gráfico de líneas y dispersión
+
+Para crear gráficos de líneas y de dispersión utilizando `Matplotlib`, puedes seguir este ejemplo básico. Vamos a usar dos gráficos en uno, un gráfico de líneas y uno de dispersión (scatter) para visualizar mejor cómo se distribuyen los puntos y cómo se comporta una tendencia en los datos.
+
+### Ejemplo básico de gráfico de líneas y de dispersión
+
+```python
+import matplotlib.pyplot as plt
+import numpy as np
+
+# Crear datos de ejemplo
+x = np.linspace(0, 10, 100)
+y = np.sin(x)
+
+# Crear la figura y los ejes
+plt.figure(figsize=(8, 6))
+
+# Graficar la línea
+plt.plot(x, y, label='Seno de x', color='b', linestyle='-', linewidth=2)
+
+# Graficar los puntos de dispersión
+plt.scatter(x, y, label='Puntos', color='r', marker='o')
+
+# Añadir etiquetas y título
+plt.title('Gráfico de Líneas y Dispersión')
+plt.xlabel('Eje X')
+plt.ylabel('Eje Y')
+
+# Añadir leyenda
+plt.legend()
+
+# Mostrar el gráfico
+plt.show()
+```
+
+### Explicación:
+1. **Datos de ejemplo**: Se generan datos de `x` usando `np.linspace` y `y` con la función seno `np.sin(x)`.
+2. **Gráfico de línea**: Se usa `plt.plot()` para crear el gráfico de líneas, con opciones de color (`color='b'`), estilo de línea (`linestyle='-'`), y grosor (`linewidth=2`).
+3. **Gráfico de dispersión**: Se usa `plt.scatter()` para añadir los puntos de dispersión, con color rojo (`color='r'`) y forma de círculo (`marker='o'`).
+4. **Leyenda y etiquetas**: Añadimos título, etiquetas a los ejes, y una leyenda.
+
+Este es un ejemplo básico, pero puedes personalizar aún más con diferentes opciones de color, estilos de marcadores y etiquetas.
+
+**Lecturas recomendadas**
+
+[Installation — Matplotlib 3.9.2 documentation](https://matplotlib.org/stable/install/index.html "Installation — Matplotlib 3.9.2 documentation")
+
+## Personalización de Gráficos en Matplotlib
+
+Vamos a explorar cómo crear gráficos de líneas utilizando la biblioteca `matplotlib` en Python.
+
+El objetivo es visualizar la relación entre las horas estudiadas y los puntajes obtenidos por dos estudiantes en un examen. A lo largo de este ejercicio, aprenderás a configurar el tamaño del gráfico, trazar múltiples series de datos, personalizar las líneas y marcadores, y agregar anotaciones para destacar puntos importantes en la visualización.
+
+También existe personalizaciones que podemos hacer con la escala que se maneja en X y Y o si queremos apuntar a algún punto específico como vemos en el siguiente ejercicio
+
+```python
+import matplotlib.pyplot as plt
+
+plt.figure(figsize=(8,6))
+
+hours = [2,3,4,5,6,7,8]
+exam_scores_student_1 = [55, 60, 65, 70, 75, 80, 85]
+exam_scores_student_2 = [50, 58, 63, 69, 74, 78, 83]
+
+plt.plot(hours, exam_scores_student_1, marker='o', color='green', linestyle='-', linewidth = 2 , label = 'Estudiante 1')
+plt.plot(hours, exam_scores_student_2, marker='s', color='red', linestyle='--',linewidth = 2, label = 'Estudiante 2')
+
+# Añadir anotación en un punto específico
+plt.annotate('Mejora significativa', xy=(5, 70), xytext=(6, 60),
+             arrowprops=dict(facecolor='black', shrink=0.05))
+
+# Escalar los ejes para ajustar mejor los datos
+plt.ylim(50, 90)  # Escala del eje y
+plt.xlim(0, 8)    # Escala del eje x
+
+plt.title('Relación entre horas estudiadas y el puntaje de dos estudiantes')
+plt.xlabel('Horas')
+plt.ylabel('Puntaje')
+#Añadir la leyenda de explicación
+plt.legend()
+
+plt.show()
+```
+
+- **plt.annotate()**: Esta función se usa para añadir una anotación en un punto específico del gráfico. En este caso, estamos señalando una “Mejora significativa” en el puntaje del “Estudiante 1” cuando estudia 5 horas, con una flecha que apunta al punto en el gráfico.
+- **plt.ylim() y plt.xlim()**: Estas funciones permiten ajustar las escalas de los ejes para que los datos se presenten de manera más clara. Aquí, el eje y se limita a un rango de 50 a 90 puntos y el eje x de 2 a 8 horas, para enfocar mejor la visualización en los datos relevantes.
+
+Este ejercicio demuestra cómo `matplotlib` puede ser una herramienta poderosa para visualizar datos de manera efectiva. Al personalizar los gráficos con anotaciones y ajustes de escala, podemos resaltar tendencias y puntos clave en los datos, facilitando así su interpretación.
+
+En **Matplotlib**, la personalización de gráficos es una de sus características más útiles. Puedes ajustar prácticamente todos los aspectos de un gráfico para hacerlo más claro y visualmente atractivo. A continuación se presentan varias formas de personalizar un gráfico:
+
+### 1. **Personalización de Estilos**
+Puedes utilizar estilos predefinidos para cambiar rápidamente la apariencia general del gráfico. Para ver los estilos disponibles:
+
+```python
+import matplotlib.pyplot as plt
+
+print(plt.style.available)
+```
+
+Para aplicar un estilo, puedes usar:
+
+```python
+plt.style.use('ggplot')
+```
+
+### 2. **Títulos y Etiquetas**
+Agregar títulos y etiquetas a los ejes mejora la comprensión del gráfico.
+
+```python
+plt.title('Título del Gráfico')
+plt.xlabel('Etiqueta del Eje X')
+plt.ylabel('Etiqueta del Eje Y')
+```
+
+Puedes personalizar el tamaño y el color de las fuentes:
+
+```python
+plt.title('Título', fontsize=14, color='blue')
+plt.xlabel('Eje X', fontsize=12)
+plt.ylabel('Eje Y', fontsize=12)
+```
+
+### 3. **Tamaños y Límites de los Ejes**
+Controlar el rango de los ejes y ajustar la escala:
+
+```python
+plt.xlim(0, 10)  # Establece límites del eje X
+plt.ylim(0, 100)  # Establece límites del eje Y
+```
+
+### 4. **Colores y Estilos de Líneas**
+Puedes personalizar los colores y estilos de las líneas de tus gráficos.
+
+```python
+plt.plot(x, y, color='green', linestyle='--', linewidth=2)
+```
+
+Algunos estilos de líneas disponibles:
+- `'-'` : línea sólida
+- `'--'` : línea discontinua
+- `':'` : línea punteada
+
+### 5. **Marcadores**
+Los marcadores resaltan puntos específicos en gráficos de dispersión o líneas.
+
+```python
+plt.plot(x, y, marker='o', linestyle='-', color='red')
+```
+
+Marcadores comunes:
+- `'o'`: círculo
+- `'s'`: cuadrado
+- `'*'`: estrella
+
+### 6. **Leyendas**
+Puedes agregar leyendas para describir lo que cada línea o gráfico representa.
+
+```python
+plt.plot(x, y, label='Datos 1')
+plt.plot(x, z, label='Datos 2')
+plt.legend(loc='upper left')
+```
+
+### 7. **Anotaciones**
+Añadir anotaciones a puntos específicos del gráfico para explicar mejor los datos.
+
+```python
+plt.annotate('Punto clave', xy=(x_point, y_point), xytext=(x_text, y_text),
+             arrowprops=dict(facecolor='black', shrink=0.05))
+```
+
+### 8. **Subgráficos**
+Puedes dividir tu área de gráficos en múltiples gráficos más pequeños.
+
+```python
+fig, ax = plt.subplots(2, 2)  # Crea una cuadrícula de 2x2 de gráficos
+ax[0, 0].plot(x, y)
+ax[1, 1].plot(x, z)
+```
+
+### 9. **Grillas**
+Agregar una grilla ayuda a leer los valores en los gráficos.
+
+```python
+plt.grid(True)  # Activa la grilla
+plt.grid(color='gray', linestyle='--', linewidth=0.5)  # Personalización
+```
+
+### 10. **Guardar Gráficos**
+Puedes guardar tu gráfico en un archivo:
+
+```python
+plt.savefig('grafico.png', dpi=300, bbox_inches='tight')  # Alta resolución
+```
+
+Estas son solo algunas de las formas en que puedes personalizar los gráficos en Matplotlib para hacerlos más informativos y estéticamente agradables.
+
+**Lecturas recomendadas**
+
+[Installation — Matplotlib 3.9.2 documentation](https://matplotlib.org/stable/install/index.html "Installation — Matplotlib 3.9.2 documentation")
+
+## Gráficos de Barras y Diagramas de Pastel
+
+En la visualización de datos, los gráficos de pastel son una herramienta eficaz para representar proporciones dentro de un conjunto de datos.
+
+Una característica importante de estos gráficos es la capacidad de personalizar cómo se muestran los porcentajes de cada segmento. A continuación, exploraremos las diferentes formas de formatear los porcentajes en un gráfico de pastel utilizando el parámetro `autopc`t de la función `plt.pie()` en `matplotlib`.
+
+Veremos cómo utilizar cadenas de formato para ajustar la precisión decimal y añadir texto personalizado, así como implementar funciones para un control más detallado sobre la presentación de los datos.
+
+### 1. Cadenas de Formato (autopct):
+
+- `'%1.1f%%'`: Muestra el porcentaje con un decimal y el símbolo %. Ejemplo: 35.7%.
+- `'%1.0f%%'`: Muestra el porcentaje como un número entero sin decimales. Ejemplo: 36%.
+- `'%1.2f%%'`: Muestra el porcentaje con dos decimales. Ejemplo: 35.68%.
+- `'%2.0f%%'`: Similar a `'%1.0f%%'`, pero reserva más espacio (dos dígitos enteros). Ejemplo: 35% se vería como 35%, pero 5% se vería como 5%.
+- `'%1.1f'`: Muestra el porcentaje con un decimal, pero sin el símbolo %. Ejemplo: 35.7.
+- `'%1.1f units'`: Personaliza el texto. En este caso, mostraría el porcentaje seguido de la palabra “units”. Ejemplo: 35.7 units.
+
+### 2. Funciones (`autopct`):
+
+- En lugar de una cadena de formato, puedes pasar una función personalizada a autopct que reciba el valor del porcentaje y devuelva una cadena de texto formateada:
+
+```python
+pythonCopiar código
+def custom_autopct(pct):
+    return f'{pct:.2f}% ({int(round(pct/100.*sum(participacion)))} unidades)'
+
+plt.pie(participacion, labels=productos, autopct=custom_autopct)
+```
+
+- Esta función mostraría tanto el porcentaje con dos decimales como el valor absoluto correspondiente en unidades.
+
+### Ejemplo de Uso:
+
+- **Mostrar porcentajes con un decimal y símbolo** `%: autopct='%1.1f%%'`
+- **Mostrar porcentajes como números entero**s: autopct='%1.0f%%'
+- **Mostrar porcentaje y añadir texto personalizado**: autopct='%1.1f unidades vendidas'
+- **Mostrar porcentajes con formato personalizado mediante una función**: autopct=custom_autopct
+
+Estos valores permiten personalizar cómo se presentan los datos en tu gráfico de pastel, adaptándolo a tus necesidades específicas.
+
+Personalizar la presentación de los porcentajes en un gráfico de pastel no solo mejora la estética del gráfico, sino que también puede hacer que la información sea más comprensible para el público.
+
+Con estas herramientas, puedes crear gráficos que no solo sean informativos, sino también visualmente atractivos.
+
+### Gráficos de Barras y Diagramas de Pastel en Matplotlib
+
+**Matplotlib** es una biblioteca muy flexible que permite crear gráficos de barras y diagramas de pastel con múltiples opciones de personalización.
+
+---
+
+### **Gráfico de Barras**
+El gráfico de barras se utiliza para comparar categorías en términos de una variable cuantitativa.
+
+#### Ejemplo básico de un gráfico de barras:
+
+```python
+import matplotlib.pyplot as plt
+
+# Datos
+categorias = ['A', 'B', 'C', 'D']
+valores = [3, 7, 5, 6]
+
+# Crear gráfico de barras
+plt.bar(categorias, valores)
+
+# Personalización
+plt.title('Gráfico de Barras')
+plt.xlabel('Categorías')
+plt.ylabel('Valores')
+plt.show()
+```
+
+#### Gráfico de barras horizontales:
+
+```python
+plt.barh(categorias, valores)
+plt.title('Gráfico de Barras Horizontal')
+plt.xlabel('Valores')
+plt.ylabel('Categorías')
+plt.show()
+```
+
+#### Gráfico de barras apiladas:
+
+Para crear gráficos de barras apiladas, usamos la misma posición en el eje `x` y acumulamos los valores en el eje `y`.
+
+```python
+# Datos
+categorias = ['A', 'B', 'C', 'D']
+valores1 = [3, 7, 5, 6]
+valores2 = [2, 5, 4, 8]
+
+# Crear barras apiladas
+plt.bar(categorias, valores1, label='Grupo 1')
+plt.bar(categorias, valores2, bottom=valores1, label='Grupo 2')
+
+# Personalización
+plt.title('Gráfico de Barras Apiladas')
+plt.xlabel('Categorías')
+plt.ylabel('Valores')
+plt.legend()
+plt.show()
+```
+
+#### Personalización de colores y anchura de barras:
+
+```python
+plt.bar(categorias, valores, color='skyblue', width=0.6)
+plt.title('Gráfico de Barras Personalizado')
+plt.show()
+```
+
+---
+
+### **Diagrama de Pastel**
+Los diagramas de pastel se utilizan para mostrar proporciones en una distribución de categorías.
+
+#### Ejemplo básico de un diagrama de pastel:
+
+```python
+# Datos
+categorias = ['A', 'B', 'C', 'D']
+valores = [15, 30, 45, 10]
+
+# Crear gráfico de pastel
+plt.pie(valores, labels=categorias)
+
+# Personalización
+plt.title('Diagrama de Pastel')
+plt.show()
+```
+
+#### Añadir porcentaje y destacar una sección:
+
+```python
+# Exploding: resaltar una categoría
+explode = (0.1, 0, 0, 0)  # Resalta el primer segmento (A)
+
+# Crear gráfico de pastel con porcentajes
+plt.pie(valores, labels=categorias, autopct='%1.1f%%', explode=explode, startangle=90)
+
+# Asegurar que el gráfico sea circular
+plt.axis('equal')
+
+plt.title('Diagrama de Pastel con Porcentajes')
+plt.show()
+```
+
+#### Personalización de colores y sombras:
+
+```python
+# Colores personalizados
+colores = ['gold', 'yellowgreen', 'lightcoral', 'lightskyblue']
+
+plt.pie(valores, labels=categorias, colors=colores, autopct='%1.1f%%', shadow=True, startangle=140)
+plt.axis('equal')
+plt.title('Diagrama de Pastel Personalizado')
+plt.show()
+```
+
+---
+
+### Comparación entre Gráficos de Barras y Diagramas de Pastel:
+- **Gráficos de Barras**: Ideales para comparar cantidades entre categorías.
+- **Diagramas de Pastel**: Mejor para mostrar proporciones o partes de un todo.
+
+Ambos tipos de gráficos son fáciles de personalizar en Matplotlib para adaptarse a tus necesidades de visualización.
+
+
+
+
 
 ## Creación de Portafolio de Análisis de Datos
 
