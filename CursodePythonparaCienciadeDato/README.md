@@ -4554,7 +4554,6 @@ Con estas herramientas, puedes crear gráficos que no solo sean informativos, si
 
 **Matplotlib** es una biblioteca muy flexible que permite crear gráficos de barras y diagramas de pastel con múltiples opciones de personalización.
 
----
 
 ### **Gráfico de Barras**
 El gráfico de barras se utiliza para comparar categorías en términos de una variable cuantitativa.
@@ -4618,8 +4617,6 @@ plt.title('Gráfico de Barras Personalizado')
 plt.show()
 ```
 
----
-
 ### **Diagrama de Pastel**
 Los diagramas de pastel se utilizan para mostrar proporciones en una distribución de categorías.
 
@@ -4666,17 +4663,994 @@ plt.title('Diagrama de Pastel Personalizado')
 plt.show()
 ```
 
----
-
 ### Comparación entre Gráficos de Barras y Diagramas de Pastel:
+
 - **Gráficos de Barras**: Ideales para comparar cantidades entre categorías.
 - **Diagramas de Pastel**: Mejor para mostrar proporciones o partes de un todo.
 
 Ambos tipos de gráficos son fáciles de personalizar en Matplotlib para adaptarse a tus necesidades de visualización.
 
+## Gráficos de Histograma y Boxplot para distribuciones
 
+El análisis exploratorio de datos es una etapa crucial en cualquier proyecto de análisis de datos, y los gráficos son herramientas fundamentales para comprender la distribución y características de los datos.
 
+Uno de los gráficos más útiles en esta etapa es el **boxplot** o diagrama de caja. Este gráfico proporciona una representación visual clara de la distribución de un conjunto de datos, destacando la mediana, los cuartiles y los valores atípicos.
 
+A continuación, exploraremos en detalle qué es un boxplot, sus componentes principales y cómo puede ser utilizado para obtener información valiosa sobre la dispersión y asimetría de los datos.
+
+![boxplot](images/boxplot.png "boxplot")
+
+### ¿Qué es un Boxplot?
+
+Un **boxplot**, o diagrama de caja, es una herramienta visual utilizada en el análisis exploratorio de datos para resumir la distribución de un conjunto de datos. Este gráfico representa la mediana, los cuartiles y los posibles valores atípicos, proporcionando una visión rápida de la dispersión y la asimetría de los datos.
+
+### Componentes de un Boxplot:
+
+- **Box (Caja)**: Representa el rango intercuartil (IQR), que incluye el 50% central de los datos. Los bordes de la caja indican el primer cuartil (Q1) y el tercer cuartil (Q3).
+- **Median (Mediana)**: Indica el valor central de los datos, dividiendo el conjunto en dos partes iguales.
+- **Whiskers (Bigotes)**: Extienden desde los cuartiles hasta los valores mínimos y máximos dentro de 1.5 veces el IQR. Ayudan a identificar la extensión de los datos sin incluir los valores atípicos.
+- **Outliers (Valores Atípicos)**: Representan los valores que se encuentran fuera del rango de los bigotes.
+
+El boxplot es especialmente útil para comparar la distribución de los datos entre diferentes grupos o categorías y para identificar rápidamente anomalías o valores extremos en un conjunto de datos.
+
+El boxplot es una herramienta poderosa para el análisis exploratorio de datos, permitiendo a los analistas visualizar rápidamente la distribución de los datos y detectar valores atípicos. Su capacidad para resumir la información clave de un conjunto de datos en un formato visual compacto lo hace ideal para comparar distribuciones entre diferentes grupos o categorías.
+
+Al integrar boxplots en el análisis de datos, se puede obtener una comprensión más profunda de las características subyacentes de los datos, facilitando la toma de decisiones informadas y la identificación de patrones significativos.
+
+Para visualizar distribuciones de datos, los **histogramas** y los **boxplots** son herramientas clave en Python. Aquí te explico cómo crear ambos tipos de gráficos usando la librería **Matplotlib** y **Seaborn**.
+
+### 1. **Histograma**:
+Un histograma es útil para observar la distribución de una variable continua, mostrando la frecuencia de ocurrencias en diferentes intervalos.
+
+#### Ejemplo de código:
+```python
+import matplotlib.pyplot as plt
+import seaborn as sns
+import numpy as np
+
+# Generar datos
+data = np.random.randn(1000)
+
+# Crear histograma
+plt.figure(figsize=(8, 6))
+plt.hist(data, bins=30, color='skyblue', edgecolor='black')
+plt.title('Histograma de la Distribución')
+plt.xlabel('Valor')
+plt.ylabel('Frecuencia')
+plt.show()
+```
+
+### 2. **Boxplot**:
+Un boxplot (o diagrama de caja) permite visualizar la mediana, cuartiles y posibles valores atípicos de una variable.
+
+#### Ejemplo de código:
+```python
+# Crear boxplot con Matplotlib
+plt.figure(figsize=(8, 6))
+plt.boxplot(data, vert=False, patch_artist=True, boxprops=dict(facecolor='skyblue'))
+plt.title('Boxplot de la Distribución')
+plt.xlabel('Valor')
+plt.show()
+
+# Boxplot usando Seaborn
+sns.boxplot(x=data)
+plt.title('Boxplot con Seaborn')
+plt.show()
+```
+
+### Diferencias clave:
+- **Histograma**: Muestra cómo se distribuyen los valores en diferentes intervalos.
+- **Boxplot**: Resalta los cuartiles, la mediana y posibles valores atípicos.
+
+Ambos son útiles dependiendo de lo que desees analizar sobre la distribución de tus datos.
+
+**Lecturas recomendadas**
+
+[Boxplots — Matplotlib 3.9.2 documentation](https://matplotlib.org/stable/gallery/statistics/boxplot_demo.html "Boxplots — Matplotlib 3.9.2 documentation")
+
+## Series de tiempo y manejo de fechas con Matplotlib
+
+Trabajar con **series de tiempo** y **fechas** en Matplotlib implica no solo graficar datos en función del tiempo, sino también manejar correctamente el formato de las fechas y aplicar personalizaciones. A continuación, te muestro cómo hacerlo paso a paso.
+
+### 1. **Creación de una serie de tiempo**:
+Primero, necesitas generar o tener acceso a datos que incluyan una columna de fechas y valores correspondientes.
+
+#### Ejemplo de datos generados con `Pandas`:
+```python
+import pandas as pd
+import numpy as np
+
+# Crear un rango de fechas
+dates = pd.date_range(start="2024-01-01", periods=100, freq="D")
+
+# Crear datos aleatorios
+values = np.random.randn(100).cumsum()
+
+# Crear DataFrame con fechas y valores
+time_series = pd.DataFrame({"Fecha": dates, "Valor": values})
+```
+
+### 2. **Graficar una serie de tiempo con Matplotlib**:
+
+Para graficar los datos de una serie de tiempo, puedes usar `plot_date` o simplemente `plot` si ya tienes los datos correctamente formateados.
+
+#### Ejemplo de gráfico simple de serie de tiempo:
+```python
+import matplotlib.pyplot as plt
+
+# Crear el gráfico
+plt.figure(figsize=(10, 6))
+plt.plot(time_series['Fecha'], time_series['Valor'], color='blue', marker='o', linestyle='-', label='Valores')
+
+# Añadir etiquetas y título
+plt.title("Serie de Tiempo")
+plt.xlabel("Fecha")
+plt.ylabel("Valor")
+plt.grid(True)
+
+# Mostrar leyenda y gráfico
+plt.legend()
+plt.show()
+```
+
+### 3. **Formato de fechas**:
+Para mejorar la legibilidad del eje `x` (fechas), puedes usar el módulo `dates` de Matplotlib para personalizar el formato de las fechas.
+
+#### Ejemplo de formato de fechas:
+```python
+import matplotlib.dates as mdates
+
+# Crear el gráfico
+plt.figure(figsize=(10, 6))
+plt.plot(time_series['Fecha'], time_series['Valor'], color='green')
+
+# Formatear las fechas en el eje x
+plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d'))
+plt.gca().xaxis.set_major_locator(mdates.MonthLocator())
+
+# Rotar las etiquetas de las fechas
+plt.gcf().autofmt_xdate()
+
+# Añadir etiquetas y título
+plt.title("Serie de Tiempo con Formato de Fechas")
+plt.xlabel("Fecha")
+plt.ylabel("Valor")
+plt.grid(True)
+
+plt.show()
+```
+
+### 4. **Manejo de intervalos de fechas**:
+A veces es necesario ajustar el rango de fechas mostrado en el gráfico. Esto se puede hacer utilizando `plt.xlim()` o configurando manualmente el rango de fechas.
+
+#### Ejemplo de ajuste del rango de fechas:
+```python
+# Crear el gráfico
+plt.figure(figsize=(10, 6))
+plt.plot(time_series['Fecha'], time_series['Valor'], color='red')
+
+# Limitar las fechas mostradas
+plt.xlim(pd.Timestamp("2024-01-01"), pd.Timestamp("2024-03-31"))
+
+# Añadir etiquetas y título
+plt.title("Serie de Tiempo con Rango de Fechas Ajustado")
+plt.xlabel("Fecha")
+plt.ylabel("Valor")
+plt.grid(True)
+
+plt.show()
+```
+
+### 5. **Gráfico de barras para series de tiempo**:
+También puedes representar una serie de tiempo con un gráfico de barras para resaltar los valores individuales.
+
+#### Ejemplo de gráfico de barras:
+```python
+plt.figure(figsize=(10, 6))
+plt.bar(time_series['Fecha'], time_series['Valor'], color='purple')
+
+# Formatear las fechas en el eje x
+plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d'))
+plt.gca().xaxis.set_major_locator(mdates.WeekdayLocator())
+
+# Rotar las etiquetas de las fechas
+plt.gcf().autofmt_xdate()
+
+# Añadir etiquetas y título
+plt.title("Serie de Tiempo - Gráfico de Barras")
+plt.xlabel("Fecha")
+plt.ylabel("Valor")
+plt.grid(True)
+
+plt.show()
+```
+
+### Resumen de puntos importantes:
+- **Fechas**: Usa `pd.date_range()` para generar rangos de fechas y manipula columnas de fechas en `Pandas`.
+- **Formateo de Fechas**: Usa `mdates.DateFormatter` para ajustar el formato de fechas en el eje `x`.
+- **Intervalos**: Limita el rango de fechas con `plt.xlim()` o ajustando el índice de las fechas.
+- **Rotación de Fechas**: Usa `plt.gcf().autofmt_xdate()` para rotar etiquetas si hay superposición.
+
+Estas herramientas te permitirán manejar y visualizar series de tiempo de manera efectiva en Matplotlib.
+
+## Subplots y Layouts Avanzados
+
+En Matplotlib, tienes múltiples opciones para especificar colores en tus gráficos. Los colores son una parte esencial para personalizar y mejorar la visualización de tus datos. Puedes definir colores de varias maneras, como utilizando nombres de colores predefinidos, códigos hexadecimales, cadenas de caracteres para colores básicos, y más.
+
+### 1. Nombres de Colores Predefinidos
+
+Matplotlib soporta una amplia gama de nombres de colores que puedes utilizar directamente en tus gráficos. Algunos ejemplos incluyen:
+
+- 'red'
+- 'blue'
+- 'green'
+- 'cyan'
+- 'magenta'
+- 'yellow'
+- 'black'
+- 'white'
+- 'gray'
+
+### 2. Códigos Hexadecimales
+
+Otra forma común de especificar colores es mediante códigos hexadecimales, similares a los que se usan en HTML/CSS. Por ejemplo:
+
+- '#FF5733' (un tono de naranja)
+- '#33FF57' (un tono de verde)
+- '#3357FF' (un tono de azul)
+
+### 3. Cadenas Cortas para Colores Básicos
+
+Matplotlib permite el uso de cadenas de un solo carácter para representar algunos colores básicos:
+
+- 'r' para rojo
+- 'g' para verde
+- 'b' para azul
+- 'c' para cian
+- 'm' para magenta
+- 'y' para amarillo
+- 'k' para negro
+- 'w' para blanco
+
+### 4. Escalas de Grises
+
+Puedes especificar una escala de grises utilizando una cadena que contenga un número entre 0 y 1 (por ejemplo, '0.75' para un gris medio).
+
+### 5. Mapas de Colores (Colormaps)
+
+Matplotlib también soporta “colormaps”, que son colecciones de colores utilizadas para representar datos que varían continuamente, como viridis, plasma, inferno, cividis, etc.
+
+Para ver la lista completa de colores predefinidos, códigos hexadecimales y más opciones, puedes consultar la documentación oficial de Matplotlib:
+
+- Documentación de Colores en Matplotlib
+- Lista de Colores Predefinidos
+- Colormaps en Matplotlib
+
+Matplotlib ofrece una gran flexibilidad para personalizar los colores en tus gráficos, lo que te permite mejorar la claridad y el impacto visual de tus visualizaciones.
+
+Aprovechar estas opciones de color no solo enriquece la presentación de los datos, sino que también facilita la comunicación de información compleja de manera más efectiva.
+
+**Lecturas recomendadas**
+
+[Specifying colors — Matplotlib 3.9.2 documentation](https://matplotlib.org/stable/users/explain/colors/colors.html "Specifying colors — Matplotlib 3.9.2 documentation")
+
+Los **subplots** y **layouts avanzados** en Matplotlib permiten crear gráficos complejos organizados en varias filas y columnas, lo que es especialmente útil cuando necesitas visualizar diferentes variables o aspectos de los datos en un solo lienzo. Aquí te mostraré cómo crear subplots y ajustar su diseño de forma eficiente.
+
+### 1. **Creación de Subplots Básicos**
+El método `plt.subplot()` o `plt.subplots()` es la base para crear múltiples gráficos en una sola figura.
+
+#### Ejemplo básico:
+```python
+import matplotlib.pyplot as plt
+import numpy as np
+
+# Datos de ejemplo
+x = np.linspace(0, 10, 100)
+y1 = np.sin(x)
+y2 = np.cos(x)
+
+# Crear una figura con dos subplots (1 fila, 2 columnas)
+fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 5))
+
+# Gráfico 1: Seno
+ax1.plot(x, y1, 'r')
+ax1.set_title("Seno")
+
+# Gráfico 2: Coseno
+ax2.plot(x, y2, 'b')
+ax2.set_title("Coseno")
+
+plt.show()
+```
+
+### 2. **Personalización de los Subplots**
+
+#### Títulos, etiquetas y leyendas:
+Cada subplot es un eje individual que se puede personalizar de manera independiente.
+```python
+fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 5))
+
+# Gráfico 1: Seno
+ax1.plot(x, y1, 'r')
+ax1.set_title("Seno")
+ax1.set_xlabel("Tiempo")
+ax1.set_ylabel("Amplitud")
+
+# Gráfico 2: Coseno
+ax2.plot(x, y2, 'b')
+ax2.set_title("Coseno")
+ax2.set_xlabel("Tiempo")
+ax2.set_ylabel("Amplitud")
+
+plt.show()
+```
+
+### 3. **Ajuste del Espaciado entre Subplots**
+Cuando los gráficos están muy juntos, puedes ajustar el espaciado entre ellos con `plt.subplots_adjust()`.
+
+#### Ejemplo:
+```python
+fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 5))
+
+# Agregar los gráficos
+ax1.plot(x, y1, 'r')
+ax2.plot(x, y2, 'b')
+
+# Ajustar el espaciado
+plt.subplots_adjust(wspace=0.3)  # Aumentar el espacio horizontal entre subplots
+
+plt.show()
+```
+
+### 4. **Crear Subplots con Diferentes Tamaños (GridSpec)**
+`GridSpec` permite crear layouts complejos donde cada subplot puede ocupar un número variable de filas o columnas.
+
+#### Ejemplo con GridSpec:
+```python
+import matplotlib.gridspec as gridspec
+
+# Crear una figura
+fig = plt.figure(figsize=(10, 7))
+
+# Definir el layout con GridSpec
+gs = gridspec.GridSpec(2, 2, height_ratios=[2, 1], width_ratios=[1, 2])
+
+# Crear los subplots
+ax1 = fig.add_subplot(gs[0, 0])  # Ocupa la primera fila y primera columna
+ax2 = fig.add_subplot(gs[0, 1])  # Ocupa la primera fila y segunda columna
+ax3 = fig.add_subplot(gs[1, :])  # Ocupa toda la segunda fila
+
+# Agregar gráficos
+ax1.plot(x, y1, 'r')
+ax1.set_title("Seno")
+
+ax2.plot(x, y2, 'g')
+ax2.set_title("Coseno")
+
+ax3.plot(x, y1 + y2, 'b')
+ax3.set_title("Suma de Seno y Coseno")
+
+plt.tight_layout()  # Ajusta los márgenes de los subplots
+plt.show()
+```
+
+### 5. **Compartir Ejes entre Subplots**
+A veces, es útil que varios subplots compartan los mismos ejes, especialmente cuando quieres comparar gráficos que tienen la misma escala.
+
+#### Ejemplo con ejes compartidos:
+```python
+fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 5), sharey=True)
+
+# Gráfico 1: Seno
+ax1.plot(x, y1, 'r')
+ax1.set_title("Seno")
+
+# Gráfico 2: Coseno
+ax2.plot(x, y2, 'b')
+ax2.set_title("Coseno")
+
+# Ambos subplots compartirán el mismo eje Y
+plt.show()
+```
+
+### 6. **Layouts Complejos usando `plt.subplot2grid()`**
+Otra manera de manejar subplots complejos es usando `subplot2grid()`, lo que te permite colocar subplots en posiciones específicas dentro de una cuadrícula flexible.
+
+#### Ejemplo:
+```python
+fig = plt.figure(figsize=(10, 7))
+
+# Crear los subplots con posiciones específicas en una cuadrícula 3x3
+ax1 = plt.subplot2grid((3, 3), (0, 0), colspan=2)  # Primer subplot abarca 2 columnas
+ax2 = plt.subplot2grid((3, 3), (0, 2))  # Segundo subplot en la tercera columna
+ax3 = plt.subplot2grid((3, 3), (1, 0), colspan=3)  # Tercer subplot abarca toda la segunda fila
+ax4 = plt.subplot2grid((3, 3), (2, 0), colspan=3)  # Cuarto subplot en la última fila
+
+# Agregar gráficos
+ax1.plot(x, y1, 'r')
+ax1.set_title("Seno")
+
+ax2.plot(x, y2, 'g')
+ax2.set_title("Coseno")
+
+ax3.plot(x, y1 + y2, 'b')
+ax3.set_title("Suma de Seno y Coseno")
+
+ax4.plot(x, y1 - y2, 'purple')
+ax4.set_title("Diferencia entre Seno y Coseno")
+
+plt.tight_layout()
+plt.show()
+```
+
+### 7. **Uso de `plt.tight_layout()` y `plt.constrained_layout()`**
+`tight_layout()` y `constrained_layout()` son útiles para ajustar los márgenes entre subplots automáticamente, asegurándose de que las etiquetas y títulos no se superpongan.
+
+#### Ejemplo:
+```python
+fig, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=(12, 4))
+
+# Agregar gráficos
+ax1.plot(x, y1, 'r')
+ax2.plot(x, y2, 'g')
+ax3.plot(x, y1 + y2, 'b')
+
+# Ajustar automáticamente los márgenes
+plt.tight_layout()  # o plt.constrained_layout()
+plt.show()
+```
+
+### Resumen:
+- **Subplots**: Se usan para organizar gráficos en una sola figura, ideal para comparar datos.
+- **GridSpec** y **subplot2grid**: Permiten mayor control sobre el diseño de los subplots.
+- **Compartir ejes**: Ayuda a mejorar la comparación entre gráficos.
+- **Ajustar layouts**: Usa `tight_layout()` o `constrained_layout()` para evitar solapamientos entre gráficos.
+
+Estos métodos te permitirán realizar visualizaciones más organizadas y profesionales usando subplots y layouts avanzados en Matplotlib.
+
+**Lecturas recomendadas**
+
+[pandas.Series.dt.strftime](https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.dt.strftime.html "pandas.Series.dt.strftime")
+[pandas.to_datetime](https://pandas.pydata.org/docs/reference/api/pandas.to_datetime.html "pandas.to_datetime")
+
+## Caso de Estudio (Parte I). Limpieza de datos
+
+Estas preguntas son clave para entender qué se quiere lograr con el análisis de datos:
+
+### 1. Objetivo del Análisis
+
+- **¿Cuál es el propósito principal del análisis?**
+ - El objetivo principal del análisis es entender los patrones de compra, identificar los productos más vendidos y los clientes más valiosos, y detectar posibles tendencias en las ventas. Esto podría ayudar a optimizar inventarios, mejorar estrategias de marketing, y aumentar la satisfacción del cliente.
+ 
+- **¿Qué preguntas específicas quieres responder?**
+
+ - ¿Cuáles son los productos más vendidos?
+ - ¿Quiénes son los clientes más valiosos?
+ - ¿Hay patrones estacionales o tendencias en las ventas?
+ - ¿Qué factores contribuyen a las compras repetidas?
+
+### 2. Contexto del Negocio**
+
+- **¿Qué tipo de negocio está relacionado con estos datos?**
+
+ - El dataset parece estar relacionado con un comercio minorista en línea que vende una variedad de productos. Esto se deduce de la estructura típica de los datos de ventas en línea, que incluyen códigos de productos, descripciones, precios y transacciones con clientes.
+ 
+- **¿Cuáles son los objetivos generales de la empresa?**
+
+ - Aumentar las ventas, mejorar la retención de clientes, optimizar la gestión de inventarios y mejorar la eficiencia en la operación de la tienda en línea.
+ 
+- **¿Quiénes son los principales interesados (stakeholders)?**
+
+ - Directores de ventas, gerentes de marketing, equipos de operaciones y de gestión de inventario, y analistas financieros que se beneficiarían de una mejor comprensión de los datos de ventas y patrones de clientes.
+ 
+### 3. Alcance del Análisis
+
+- **¿Qué aspectos están dentro y fuera del alcance del análisis?**
+
+ - Dentro del alcance: análisis de ventas, identificación de productos y clientes clave, patrones estacionales, y tendencias de ventas.
+ - Fuera del alcance: análisis detallado de la logística de entrega, estudio de competencia directa, o análisis de satisfacción del cliente basado en feedback no presente en el dataset.
+ 
+- **¿Qué limitaciones deben tenerse en cuenta?**
+ - Limitaciones pueden incluir la calidad de los datos (posibles valores faltantes o erróneos), el periodo temporal cubierto por los datos, y la falta de datos cualitativos sobre la experiencia del cliente.
+ 
+### 4. Resultados Esperados
+
+- **¿Qué tipo de resultados se espera del análisis?**
+
+ - Informes detallados que identifiquen los productos más vendidos y los clientes más valiosos.
+ - Visualizaciones que muestren tendencias y patrones en las ventas.
+ - Posibles modelos predictivos para proyectar ventas futuras o recomendar estrategias de marketing.
+
+- **¿Cómo se utilizarán estos resultados?**
+
+ - Los resultados se utilizarán para tomar decisiones estratégicas sobre inventarios, campañas de marketing, y para mejorar la experiencia del cliente y aumentar las ventas.
+
+La **limpieza de datos** es un paso crucial en el proceso de análisis de datos, ya que garantiza la calidad y precisión de los resultados. Implica identificar, corregir o eliminar datos incorrectos, incompletos, duplicados o irrelevantes. A continuación, se describen las etapas y técnicas más comunes de limpieza de datos, utilizando ejemplos prácticos con **Python** y la biblioteca **Pandas**.
+
+### 1. **Identificación de Datos Faltantes**
+Los valores faltantes son comunes en los conjuntos de datos y pueden afectar los análisis si no se manejan adecuadamente.
+
+#### Identificar valores faltantes:
+```python
+import pandas as pd
+
+# Crear un DataFrame de ejemplo
+data = {'Nombre': ['Ana', 'Luis', 'Carlos', None, 'Julia'],
+        'Edad': [23, None, 45, 34, 28],
+        'Ciudad': ['Madrid', 'Barcelona', None, 'Sevilla', 'Madrid']}
+
+df = pd.DataFrame(data)
+
+# Identificar valores faltantes
+print(df.isnull())  # Muestra los valores faltantes
+print(df.isnull().sum())  # Cuenta los valores faltantes por columna
+```
+
+### 2. **Eliminación de Datos Faltantes**
+En algunos casos, es apropiado eliminar las filas o columnas que contienen valores faltantes, especialmente si la cantidad de datos faltantes es alta y no se justifica la imputación.
+
+#### Eliminar filas o columnas con valores faltantes:
+```python
+# Eliminar filas con valores faltantes
+df_sin_filas_faltantes = df.dropna()
+
+# Eliminar columnas con valores faltantes
+df_sin_columnas_faltantes = df.dropna(axis=1)
+
+print(df_sin_filas_faltantes)
+print(df_sin_columnas_faltantes)
+```
+
+### 3. **Imputación de Valores Faltantes**
+La imputación consiste en reemplazar los valores faltantes por estimaciones basadas en los datos disponibles, como la media, la mediana o el valor más frecuente.
+
+#### Imputar con la media o la moda:
+```python
+# Imputar valores faltantes en la columna 'Edad' con la media
+df['Edad'].fillna(df['Edad'].mean(), inplace=True)
+
+# Imputar valores faltantes en la columna 'Ciudad' con la moda (valor más frecuente)
+df['Ciudad'].fillna(df['Ciudad'].mode()[0], inplace=True)
+
+print(df)
+```
+
+### 4. **Detección y Eliminación de Duplicados**
+Los datos duplicados pueden distorsionar el análisis si no se detectan y eliminan. Pandas facilita la identificación y eliminación de registros duplicados.
+
+#### Identificar y eliminar duplicados:
+```python
+# Crear un DataFrame con duplicados
+data_dup = {'Nombre': ['Ana', 'Luis', 'Carlos', 'Ana', 'Luis'],
+            'Edad': [23, 34, 45, 23, 34],
+            'Ciudad': ['Madrid', 'Barcelona', 'Sevilla', 'Madrid', 'Barcelona']}
+
+df_dup = pd.DataFrame(data_dup)
+
+# Identificar duplicados
+print(df_dup.duplicated())
+
+# Eliminar duplicados
+df_sin_duplicados = df_dup.drop_duplicates()
+print(df_sin_duplicados)
+```
+
+### 5. **Corregir Tipos de Datos**
+Es común que las columnas tengan tipos de datos incorrectos (por ejemplo, números almacenados como cadenas de texto). Convertir los datos al tipo adecuado mejora el rendimiento y la precisión de los análisis.
+
+#### Corregir tipos de datos:
+```python
+# Ver los tipos de datos
+print(df.dtypes)
+
+# Convertir la columna 'Edad' a entero (si no tiene valores faltantes)
+df['Edad'] = df['Edad'].astype(int)
+
+print(df.dtypes)
+```
+
+### 6. **Normalización y Estándarización de Datos**
+Los valores numéricos pueden necesitar ser transformados para garantizar que estén en un rango similar, lo que es crucial para muchos modelos de machine learning.
+
+- **Normalización**: Escalar los datos para que estén entre 0 y 1.
+- **Estandarización**: Centrar los datos alrededor de la media y reducir la desviación estándar a 1.
+
+#### Ejemplo de normalización y estandarización:
+```python
+from sklearn.preprocessing import MinMaxScaler, StandardScaler
+
+# Normalización
+scaler = MinMaxScaler()
+df['Edad_normalizada'] = scaler.fit_transform(df[['Edad']])
+
+# Estandarización
+scaler_std = StandardScaler()
+df['Edad_estandarizada'] = scaler_std.fit_transform(df[['Edad']])
+
+print(df)
+```
+
+### 7. **Tratamiento de Outliers**
+Los outliers son valores que se desvían significativamente de la mayoría de los datos y pueden afectar el análisis. Puedes eliminarlos o transformarlos según el contexto.
+
+#### Detección de outliers con el método del rango intercuartílico (IQR):
+```python
+# Calcular el rango intercuartílico
+Q1 = df['Edad'].quantile(0.25)
+Q3 = df['Edad'].quantile(0.75)
+IQR = Q3 - Q1
+
+# Definir los límites para detectar outliers
+limite_inferior = Q1 - 1.5 * IQR
+limite_superior = Q3 + 1.5 * IQR
+
+# Filtrar los outliers
+outliers = df[(df['Edad'] < limite_inferior) | (df['Edad'] > limite_superior)]
+print(outliers)
+```
+
+### 8. **Transformación de Datos Categóricos**
+En muchos análisis, especialmente en modelos de machine learning, es necesario convertir los datos categóricos a un formato numérico.
+
+#### Codificación One-Hot:
+```python
+# Crear variables dummy (One-Hot Encoding)
+df_categ = pd.get_dummies(df, columns=['Ciudad'], drop_first=True)
+
+print(df_categ)
+```
+
+### 9. **Manejo de Valores Inconsistentes**
+Los datos pueden tener inconsistencias en la forma de entradas con errores tipográficos o diferentes formatos para representar la misma información.
+
+#### Ejemplo:
+```python
+# Corregir valores inconsistentes manualmente
+df['Ciudad'] = df['Ciudad'].replace({'madrid': 'Madrid', 'barcelona': 'Barcelona'})
+
+print(df)
+```
+
+### 10. **Eliminar Datos Irrelevantes**
+No todos los datos disponibles son relevantes para el análisis. Es importante identificar y eliminar las columnas o filas que no aportan información.
+
+#### Ejemplo:
+```python
+# Eliminar una columna innecesaria
+df_limpio = df.drop(columns=['Edad_estandarizada'])
+
+print(df_limpio)
+```
+
+### Conclusión:
+La limpieza de datos es un proceso fundamental que incluye el manejo de valores faltantes, la eliminación de duplicados, la corrección de tipos de datos, la detección de outliers y la normalización. Una limpieza adecuada mejora significativamente la calidad del análisis y los resultados subsecuentes.
+
+## Creación de columnas
+
+La **creación de columnas** es una operación común en el análisis de datos con bibliotecas como **Pandas**. Puedes crear nuevas columnas basadas en cálculos, transformaciones, combinaciones de otras columnas, o asignar valores predeterminados. Aquí te muestro algunas formas comunes de crear columnas en un DataFrame de **Pandas**.
+
+### 1. **Crear una columna asignando un valor fijo**
+
+Puedes crear una nueva columna y asignar un valor constante a todas las filas.
+
+```python
+import pandas as pd
+
+# Crear un DataFrame de ejemplo
+data = {'Nombre': ['Ana', 'Luis', 'Carlos', 'Julia'],
+        'Edad': [23, 34, 45, 28]}
+
+df = pd.DataFrame(data)
+
+# Crear una nueva columna asignando un valor constante
+df['Ciudad'] = 'Desconocido'
+
+print(df)
+```
+
+### 2. **Crear una columna basada en otra columna**
+
+Puedes crear una columna nueva aplicando una operación matemática o lógica sobre otra columna existente.
+
+#### Ejemplo: Calcular una nueva columna a partir de una columna existente
+```python
+# Crear una nueva columna calculando el doble de la edad
+df['Edad_doble'] = df['Edad'] * 2
+
+print(df)
+```
+
+### 3. **Crear una columna basada en condiciones**
+
+Es posible crear columnas que se generen con base en condiciones lógicas aplicadas a otras columnas.
+
+#### Ejemplo: Crear una columna que indique si la persona es mayor de 30 años
+```python
+# Crear una nueva columna con valores basados en una condición
+df['Mayor_de_30'] = df['Edad'] > 30
+
+print(df)
+```
+
+### 4. **Crear una columna utilizando funciones personalizadas**
+
+Si necesitas aplicar una lógica más compleja, puedes usar el método `apply()` para aplicar una función a las filas o columnas.
+
+#### Ejemplo: Crear una columna con una función personalizada
+```python
+# Definir una función que devuelva una clasificación basada en la edad
+def clasificar_edad(edad):
+    if edad < 30:
+        return 'Joven'
+    elif 30 <= edad < 40:
+        return 'Adulto Joven'
+    else:
+        return 'Mayor'
+
+# Aplicar la función a la columna 'Edad'
+df['Clasificación_Edad'] = df['Edad'].apply(clasificar_edad)
+
+print(df)
+```
+
+### 5. **Crear columnas combinando varias columnas**
+
+Puedes crear una columna combinando los valores de dos o más columnas.
+
+#### Ejemplo: Crear una columna combinada de nombre y edad
+```python
+# Crear una nueva columna combinando 'Nombre' y 'Edad'
+df['Descripción'] = df['Nombre'] + ' tiene ' + df['Edad'].astype(str) + ' años.'
+
+print(df)
+```
+
+### 6. **Crear una columna con datos categóricos a partir de una variable numérica**
+
+En algunos casos, puedes transformar una variable numérica en categorías.
+
+#### Ejemplo: Crear categorías de edad
+```python
+# Crear categorías de edad utilizando pd.cut()
+df['Grupo_Edad'] = pd.cut(df['Edad'], bins=[0, 18, 35, 50, 100], labels=['Niño', 'Joven', 'Adulto', 'Mayor'])
+
+print(df)
+```
+
+### 7. **Crear una columna utilizando el método `assign()`**
+
+El método `assign()` de Pandas te permite crear nuevas columnas de una manera funcional y encadenada, lo que puede ser útil cuando realizas múltiples operaciones secuenciales.
+
+#### Ejemplo:
+```python
+# Crear nuevas columnas utilizando assign()
+df = df.assign(Edad_más_5 = df['Edad'] + 5, 
+               Es_adulto = df['Edad'] >= 18)
+
+print(df)
+```
+
+### 8. **Crear columnas a partir de expresiones regulares (Regex)**
+
+Si necesitas extraer información de cadenas de texto, puedes utilizar expresiones regulares para crear nuevas columnas.
+
+#### Ejemplo: Extraer la primera letra del nombre
+```python
+# Crear una nueva columna extrayendo la primera letra de 'Nombre'
+df['Inicial'] = df['Nombre'].str[0]
+
+print(df)
+```
+
+### 9. **Crear columnas a partir de múltiples condiciones con `np.select()`**
+
+Cuando tienes múltiples condiciones para generar una nueva columna, puedes utilizar `np.select()` de NumPy para mayor flexibilidad.
+
+#### Ejemplo:
+```python
+import numpy as np
+
+# Definir condiciones
+condiciones = [
+    (df['Edad'] < 18),
+    (df['Edad'] >= 18) & (df['Edad'] < 35),
+    (df['Edad'] >= 35)
+]
+
+# Definir los resultados correspondientes
+resultados = ['Niño', 'Joven', 'Adulto']
+
+# Crear una nueva columna basada en las condiciones
+df['Categoría_Edad'] = np.select(condiciones, resultados)
+
+print(df)
+```
+
+### Conclusión
+
+Crear columnas en Pandas es un proceso flexible que te permite manipular y transformar tus datos según las necesidades del análisis. Puedes crear columnas a partir de cálculos simples, funciones personalizadas, condiciones lógicas, combinaciones de otras columnas, y más.
+
+## Caso de Estudio (Parte III). Graficación y análisis de resultados
+
+La **graficación** y el **análisis de resultados** son componentes clave en cualquier proceso de análisis de datos. Utilizando bibliotecas como **Matplotlib** o **Seaborn**, puedes visualizar los patrones y tendencias en los datos, lo que facilita la interpretación de los resultados. Aquí te explico algunos tipos de gráficos comunes y cómo analizar los resultados visualmente.
+
+### 1. **Gráficos de líneas (Line Plot)**
+
+El gráfico de líneas es ideal para visualizar la evolución de una variable a lo largo del tiempo o en relación con otra variable.
+
+#### Ejemplo: Graficar una serie temporal de precios
+```python
+import matplotlib.pyplot as plt
+import pandas as pd
+
+# Crear datos de ejemplo
+data = {'Día': [1, 2, 3, 4, 5],
+        'Precio': [100, 102, 101, 105, 107]}
+
+df = pd.DataFrame(data)
+
+# Graficar
+plt.plot(df['Día'], df['Precio'], marker='o')
+plt.title('Evolución del Precio')
+plt.xlabel('Día')
+plt.ylabel('Precio')
+plt.grid(True)
+plt.show()
+```
+
+#### Análisis:
+- **Tendencia**: Puedes observar si los precios están aumentando, disminuyendo o fluctuando.
+- **Patrones**: Si el gráfico muestra fluctuaciones recurrentes, podrías investigar ciclos o estacionalidad.
+
+### 2. **Gráficos de dispersión (Scatter Plot)**
+
+El gráfico de dispersión es útil para analizar la relación entre dos variables continuas.
+
+#### Ejemplo: Relación entre edad y salario
+```python
+# Crear datos de ejemplo
+data = {'Edad': [25, 30, 35, 40, 45],
+        'Salario': [2000, 2500, 3000, 3500, 4000]}
+
+df = pd.DataFrame(data)
+
+# Graficar
+plt.scatter(df['Edad'], df['Salario'])
+plt.title('Relación entre Edad y Salario')
+plt.xlabel('Edad')
+plt.ylabel('Salario')
+plt.show()
+```
+
+#### Análisis:
+- **Correlación**: Si observas que los puntos siguen una tendencia ascendente o descendente, esto sugiere una correlación positiva o negativa entre las variables.
+- **Outliers**: Los puntos alejados del patrón general pueden indicar valores atípicos.
+
+### 3. **Histogramas**
+
+Un histograma muestra la distribución de una variable continua, útil para ver la forma de la distribución (simetría, sesgo, etc.).
+
+#### Ejemplo: Distribución de la edad
+```python
+# Crear datos de ejemplo
+edades = [23, 24, 23, 30, 29, 25, 22, 30, 31, 24, 28]
+
+# Graficar
+plt.hist(edades, bins=5, edgecolor='black')
+plt.title('Distribución de la Edad')
+plt.xlabel('Edad')
+plt.ylabel('Frecuencia')
+plt.show()
+```
+
+#### Análisis:
+- **Sesgo**: Si los datos están sesgados a la derecha o izquierda, puede afectar cómo se interpretan los estadísticos como la media.
+- **Distribución**: Ver si los datos son normales o siguen otra forma de distribución.
+
+### 4. **Boxplots (Diagrama de Caja)**
+
+Los **boxplots** son útiles para visualizar la dispersión de los datos, resúmenes estadísticos, y detectar outliers.
+
+#### Ejemplo: Distribución de salarios
+```python
+# Crear datos de ejemplo
+salarios = [2000, 2200, 2100, 2300, 2800, 3200, 2500, 3000, 2700, 2900]
+
+# Graficar
+plt.boxplot(salarios, vert=False)
+plt.title('Distribución de Salarios')
+plt.xlabel('Salario')
+plt.show()
+```
+
+#### Análisis:
+- **Rango intercuartílico**: El rango intercuartílico (entre el primer y tercer cuartil) muestra la dispersión central de los datos.
+- **Outliers**: Los puntos fuera de los bigotes indican valores atípicos que podrían requerir atención especial.
+
+### 5. **Gráficos de barras**
+
+Los gráficos de barras son útiles para mostrar comparaciones entre diferentes categorías.
+
+#### Ejemplo: Comparación de ventas en varias ciudades
+```python
+# Crear datos de ejemplo
+ciudades = ['Ciudad A', 'Ciudad B', 'Ciudad C']
+ventas = [1000, 1500, 800]
+
+# Graficar
+plt.bar(ciudades, ventas, color=['blue', 'green', 'red'])
+plt.title('Ventas por Ciudad')
+plt.xlabel('Ciudad')
+plt.ylabel('Ventas')
+plt.show()
+```
+
+#### Análisis:
+- **Comparación**: Es fácil ver qué categoría (en este caso, ciudad) tiene el valor más alto o bajo.
+- **Patrones**: Si las barras tienen un patrón claro, podría haber alguna relación subyacente que vale la pena investigar.
+
+### 6. **Gráficos de pastel (Pie Chart)**
+
+Los gráficos de pastel se utilizan para mostrar la proporción de categorías dentro de un total.
+
+#### Ejemplo: Distribución de mercado por producto
+```python
+# Crear datos de ejemplo
+productos = ['Producto A', 'Producto B', 'Producto C']
+participación = [30, 45, 25]
+
+# Graficar
+plt.pie(participación, labels=productos, autopct='%1.1f%%')
+plt.title('Participación de Mercado por Producto')
+plt.show()
+```
+
+#### Análisis:
+- **Proporciones**: Se puede ver fácilmente qué categoría tiene la mayor o menor participación.
+- **Balance**: Si el gráfico está equilibrado o dominado por una categoría, esto podría influir en decisiones de negocio.
+
+### 7. **Subplots**
+
+Puedes utilizar subplots para comparar múltiples gráficos en la misma figura.
+
+#### Ejemplo: Gráfico de líneas y gráfico de barras en la misma figura
+```python
+# Crear datos de ejemplo
+días = [1, 2, 3, 4, 5]
+ventas = [100, 150, 200, 250, 300]
+costos = [90, 120, 180, 220, 260]
+
+# Crear subplots
+fig, ax = plt.subplots(1, 2, figsize=(10, 5))
+
+# Gráfico de líneas
+ax[0].plot(días, ventas, marker='o', label='Ventas')
+ax[0].plot(días, costos, marker='x', label='Costos')
+ax[0].set_title('Ventas y Costos')
+ax[0].set_xlabel('Día')
+ax[0].set_ylabel('Valor')
+ax[0].legend()
+
+# Gráfico de barras
+ax[1].bar(días, ventas, color='green')
+ax[1].set_title('Ventas Diarias')
+ax[1].set_xlabel('Día')
+ax[1].set_ylabel('Ventas')
+
+plt.tight_layout()
+plt.show()
+```
+
+### 8. **Análisis de resultados**
+Una vez que hayas creado los gráficos, el análisis debe enfocarse en:
+- **Identificar patrones**: Como tendencias crecientes, decrecientes o cíclicas.
+- **Comparar variables**: Ver si existen relaciones entre diferentes variables.
+- **Detectar outliers**: Valores extremos que podrían necesitar mayor investigación.
+- **Interpretar la distribución**: Ver la forma de los datos para determinar si están sesgados o siguen una distribución normal.
+  
+### Conclusión
+
+La visualización de datos con gráficos y el análisis de resultados son herramientas poderosas para entender los datos y comunicar hallazgos de manera clara y concisa. Con librerías como **Matplotlib** y **Seaborn**, puedes personalizar y analizar gráficamente cualquier conjunto de datos.
 
 ## Creación de Portafolio de Análisis de Datos
 
