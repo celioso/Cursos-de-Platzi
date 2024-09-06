@@ -1688,5 +1688,3 @@ data = generate_data(prompt, 100)
 df = pd.DataFrame(data, columns=["Descripción"])
 df.to_csv("productos.csv", index=False)
 ```
-
-Si tienes una idea específica de los datos que necesitas generar o alguna pregunta adicional, ¡no dudes en decírmelo!

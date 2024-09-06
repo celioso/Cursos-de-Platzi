@@ -68,6 +68,21 @@
 - [Curso de Manejo de Datos Faltantes: Detección y Exploración](CursodeManejodeDatosFaltantesDeteccionyExploracion)
 - [Curso de Manejo de Datos Faltantes: Imputación](CursodeManejodeDatosFaltantesImputacion)
 
+## Análisis de Datos con Python
+
+- [Curso de Entorno de Trabajo para Ciencia de Datos con Jupyter Notebooks y Anaconda](cursentornotrabajotiencidatosjupyternotebooksanaconda)
+- [Curso de Manipulación y Transformación de Datos con Pandas y NumPy](CursodeManipulacionyTransformaciondeDatosconPandasyNumPy)
+- [Curso de Visualización de Datos con Matplotlib y Seaborn](CursoBasicodeVisualizaciondeDatosconMatplotlibySeaborn)
+- [Curso de Herramientas de Inteligencia Artificial para Equipos de Datos](CursodeHerramientasdeInteligenciaArtificialparaEquiposdeDatos)
+- [Curso de Funciones Matemáticas para Data Science e Inteligencia Artificial](CursodeFuncionesMatemáticasparaDataScienceeInteligenciaArtificial)
+- [Curso de Matemáticas para Data Science: Estadística Descriptiva](CursodeMatemáticasparaDataScienceEstadísticaDescriptiva)
+- [Curso de Matemáticas para Data Science: Probabilidad](CursodeMatemáticasparaDataScienceProbabilidad)
+- [Curso de Análisis Exploratorio de Datos](CursoDeAnálisisExploratorioDeDatos)
+- [Curso de Python: PIP y Entornos Virtuales](CursoDePythonPIPyEntornosVirtuales)
+- [Curso de Configuración Profesional de Entorno de Trabajo para Ciencia de Datos](CursodeConfiguracionProfesionaldeEntornodeTrabajoparaCienciadeDatos)
+- [Curso de Manejo de Datos Faltantes: Detección y Exploración](CursodeManejodeDatosFaltantesDeteccionyExploracion)
+- [Curso de Manejo de Datos Faltantes: Imputación](CursodeManejodeDatosFaltantesImputacion)
+
 ## FRONT-END
 
 - [Curso de Docker](CursoDeDocker)
