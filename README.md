@@ -4,7 +4,7 @@
 
 ## Python
 
-### Python: De Cero a Experto
+## Python: De Cero a Experto
 
 - [Curso de Fundamentos de Python](Curso_de_Fundamentos_de_Python)
 - [Curso de Python: Comprehensions,Funciones y Manejo de Errores](CursodePythonComprehensions,FuncionesyManejodeErrores)
@@ -16,7 +16,7 @@
 - [Curso de Estadística Computacional con Python](CursodeEstadisticaComputacionalConPython)
 - [Curso de Introducción al Pensamiento Probabilístico](IntroduccionaLaProgramacionProbabilistica)
 
-### Desarrollo Backend con Python y Django
+## Desarrollo Backend con Python y Django
 
 - [Curso-de-Introducción-a-la-Terminal-y-Linea-de-Comandos](Curso-de-Introducción-a-la-Terminal-y-Linea-de-Comandos)
 - [Curso Profesional de Git y GitHub](CursoProfesionaldeGityGitHub)
