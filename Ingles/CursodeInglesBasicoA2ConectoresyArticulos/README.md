@@ -505,3 +505,312 @@ Para ofrecer algo con “Would like” se formula una pregunta.
 **Escribe** tres ejemplos para ofrecer y para solicitar algo con “**would like**”. ¡Comparte tu trabajo en la sección de aportes!
 
 Finalmente, revisa una pregunta de otro compañero y **respóndela**.
+
+## Practica el uso de "can", "can't", "could" y "would like"
+
+Fill in the gaps with can, can't, could, or would like
+
+Hey, Bob. What’s up? ______ you come here tomorrow?
+
+______ I ask you a favor?
+
+I ______ a coke, please.
+
+I’m so sorry. I ______ be there now.
+
+Mom, ______ Sam go to the party with me tonight?
+No, he ______. He has an exam tomorrow.
+
+You ______ come with us if you want.
+I ______ that, thank you.
+
+______ I have the pasta, please?
+
+Do you want to travel with me in July?
+I ______ that, but I ______ go in July. My vacations are in December.
+
+## Cómo decir la hora en Inglés
+
+Existen dos maneras para responder una pregunta acerca del tiempo "**What time is it? **":
+
+### Usar números para decir la hora
+
+- Primero la hora y luego los minutos.
+- Para la hora exacta se utiliza la palabra “**o'clock**”.
+- Para los minutos precedidos por un cero (01 al 09) se utiliza la palabra “**O**” (oh) entre la hora y los minutos.
+
+### Ejemplos de cómo decir la hora
+
+Time | Sentence
+---|---
+01:00 | It's one o'clock.
+04:05 | It's four o five.
+06:15 | It's six fifteen.
+02:30 | It's two thirthy.
+11:45 | It's eleven forty-five.
+09:55 | It's nine fifty-five.
+
+### Usar “past” y “to” para hablar sobre la hora
+
+**Desde el primer minuto hasta la mitad de la hora se usará "past" o "after"**. Para formular la oración se pondrán primero los minutos transcurridos y después la hora: **It's + (minutos) + past/after + (hora)**.
+
+- It's five past ten (10:05)
+
+**Desde la mitad de la hora hasta el último minuto se usará "to"**. Para formular la oración se pondrán primeros los minutos que faltan para la siguiente hora y después la siguiente hora: **It's + (minutos que faltan) + to + (siguiente hora)**.
+
+- It's a quarter to ten (9:45)
+
+![time_past_to](time_past_to.png "time_past_to")
+
+Otras consideraciones son:
+
+- Para la **hora exacta** se utiliza la palabra **"o'clock"**.
+- Para **un cuarto de hora** se utiliza la palabra **"a quarter"**.
+- Para **la media hora** se utiliza la palabra **"half"**.
+
+### Ejemplos usando o’clock, past/after y to
+
+Time | Sentence
+---|---
+01:00 | It's one o'clock.
+04:05 | It's five minutes past/after four.
+06:15 | It's a quarter past/after six.
+02:30 | It's half past two.
+11:45 | It's a quarter to twelve.
+09:55 | It's five to ten.
+
+### Ejercicio para decir la hora
+
+**Escribe** la hora exacta en el que estás leyendo esto, de todas las formas posibles. ¡Comparte tu trabajo en la sección de aportes!
+
+## Expresiones de Tiempo en Inglés
+
+Si aún no conoces tu nivel de inglés, ve a nuestro **[Test de Inglés de Platzi](https://platzi.com/evaluation/test-ingles "Test de Inglés de Platzi")** y conócelo en minutos. 🚀
+
+Las expresiones de tiempo son palabras que se usan para **referirse al pasado, presente o futuro**. Algunas de estas son:
+
+- Yesterday
+- Today
+- Tomorrow
+- Now, later
+- Morning, night
+- 10 o’clock
+- 2020
+- Monday, Tuesday, …
+- Last / This / Next + day / week / weekend / month / year / decade
+
+### This + expresión de tiempo
+
+**"This"** es usado para referirse al presente o a un futuro cercano.
+
+- Jhon has to finish his course **this week**.
+- We are going shopping **this weekend**.
+- **This afternoon** they are fixing it.
+- You only have until the end of **this month** to do it.
+
+### Ejercicio utilizando expresiones de tiempo
+
+**Selecciona** cinco expresiones de tiempo y escribe una oración con cada una. ¡Comparte tu trabajo en la sección de aportes!
+
+## Preposiciones "at" y "on" 
+
+Las preposiciones de tiempo "**at**" y "**on**" se usan en contextos distintos.
+
+Cuándo usar la preposición de tiempo at
+"**At**"es una preposición que se usa en los siguientes casos:
+
+- **Hora exacta**
+ - at 1 pm
+ - at noon
+ - at 3:45
+ 
+- **Para festividades**
+ - at Christmas (Época Navideña)
+ - at Easter
+ 
+- **Horas de comer**
+ - at lunch
+ - at dinner
+ - at breakfast
+ 
+- **Tiempos específicos**
+ - at sunrise
+ - at the moment
+ - at bedtime
+
+### Cuándo usar la preposición de tiempo on
+
+"**On**" es una preposición que se usa en los siguientes casos:
+
+- **Fechas**
+ - on April 15th
+ - on December 22nd
+ 
+- **Días**
+ - on Saturday
+ - on Monday
+ 
+- **Partes de un día específico**
+ - on Friday night
+ - on Tuesday morning
+ 
+- **Fechas especiales**
+ - on my birthday
+ - on Christmas day
+ 
+### Ejercicio utilizando at y on
+
+Responde estas preguntas. ¡Comparte tu trabajo en la sección de aportes!
+
+- When is your birthday?
+my birthday is on June 3rd
+- What do you do on the weekends?
+In my weekends, study, sleep, trip in the city at afternoon
+- What is your favorite day of the week, and what do you do on that day?
+My favority day on Sunday, I share with friends and family
+- What time do you have lunch?
+the lunch is at 12:30 
+
+## Practica decir la hora en Inglés
+
+Si aún no conoces tu nivel de inglés, ve a nuestro [Test de Inglés de Platzi](https://platzi.com/evaluation/test-ingles "Test de Inglés de Platzi") y conócelo en minutos. 🚀
+
+Lee los diálogos y escoge la hora según corresponda. Evita mirar las respuestas antes de terminar.
+
+**Andy**: We’re early. Our flight is at 1)____ (**ten to nine**).
+
+**César**: What time is it?
+
+**Elena**: It's 2) ____ (**half after eight**).
+
+**César**: Thanks! When does he arrive?
+
+**Elena**: Later tonight. At 3) ____ (**a quarter past nine**).
+
+**César**: What time can I be there, tomorrow?
+
+**Elena**: Well, I believe you can come around 4) ____ (**seven thirty**).
+
+**Jess**: We are so late! The class started at 5) ____ (**five fourty-five**).
+
+### Responde con el equivalente de la hora
+
+1. **ten to nine**
+a. 10:09
+b. 9:10
+c. 8:50
+d. 9:50
+
+2. **half after eight**
+a. 8:30
+b. 8:15
+c. 8:45
+d. 8:10
+
+3. **a quarter past nine**
+a. 7:45
+b. 9:15
+c. 5:15
+d. 5:45
+
+4. **seven thirty**
+a. 9:45
+b. 7:30
+c. 10:45
+d. 10:15
+
+5. **five forty-five**
+a. A quarter to five
+b. A quarter past five
+c. A quarter to six
+d. A quarter past six
+
+**Respuestas**
+
+1. c
+2. a
+3. b
+4. b
+5. c
+
+### Ejercicio de speaking
+
+Graba un audio con los diálogos. ¡Comparte tu trabajo en la sección de aportes!
+
+## Uso de "how" para averiguar cómo hacer algo el Inglés
+
+La expresión "**How do you…?**" sirve para preguntar acerca de la forma de realizar **una acción en específico**.
+
+### Ejemplos usando how do you
+
+- **How do you** open this?
+- **How do you** go to the mall?
+- **How do you** say that in Spanish?
+- **How do you** spell your name?
+
+### Ejercicio sobre how to do things
+
+**Escribe** tres oraciones preguntando por algo que no sabes cómo hacer. Utiliza la expresión “**How do you… ?**”. ¡Comparte tu trabajo en la sección de aportes!
+
+How do you driver the camper?
+How do you cooking the orange chicken?
+How do you process the buy the house in your country?
+
+## Roleplay: Preguntas y respuestas en un restaurante
+
+Según el contexto del diálogo, contesta con la respuesta que corresponda. Evita mirar las respuestas antes de terminar.
+
+### Diálogo usando can, could y would
+
+**Ele**: Hello! And welcome to Happydonald’s. 1) ____ (**can / would you like**) I show you the menu?
+
+**Cesar**: Thank you, yes. Let me see… Any suggestions?
+
+**Ele**: Well, you 2) ____ (**could / would you like**) order our specialty: the BigHappy with french fries. It’s our number one suggestion.
+
+**Cesar**: That sounds delicious! 3) ____ (**can / would you like**) I also have something to drink?
+
+**Ele**: Of course, sir. 4) ____ (**can / would you like**) a soda?
+
+**Cesar**: YES! Perfect combination!
+
+**Ele**: Are you eating here, or would you like it to go?
+
+**Cesar**: That’s a great question! What time is it? I have to be at the airport 5) ____ (**at / on**) five fifteen.
+
+**Ele**: It’s a quarter past four.
+
+**Cesar**: Oh, no! So, to go, then. I only have one hour.
+
+**Ele**: Sure, no problem. 6) ____ (**can / would like**) I offer you a dessert?
+
+**Cesar**: No, thanks. I 7) ____ (**can / can't**) eat more junk food today. But… can you help me with some information? How can I get to the airport from here?
+
+**Ele**: There is a bus stop across the street. You 8) ____ (**can / can't**) take bus #10 to the airport. 9) ____ (**at / on**) Fridays there is one 10) ____ (**at / on**) half past four.
+
+Respuestas
+
+1. Can
+2. could
+3. Can
+4. Would you like
+5. at
+6. Can
+7. can't
+8. can
+9. on
+10. at
+
+### Ejercicio de speaking
+
+Graba un audio con el diálogo. ¡Comparte tu trabajo en la sección de aportes!
+
+## Practica y confirma lo aprendido
+
+🎉¡Lo has logrado! 🙌 Has **completado todas las clases** del curso inglés básico **A2: Artículos y verbos modales**.
+
+✅ Te dejaré esta [Lista de Temas](https://static.platzi.com/media/public/uploads/checklist_1dc1c3e7-f9f9-48fa-a440-43d5864844ca.pdf "Lista de Temas") para que **revises lo estudiado**. Si aún no queda claro algún tema, vuelve a revisar la clase o deja tu pregunta en la sección de preguntas.
+
+🧾 **Realiza la prueba del curso** para recibir tu certificado y no olvides dejar tus 🌟 y tu comentario.
+
+Y sobre todo, **¡Nunca pares de aprender!** 💚
