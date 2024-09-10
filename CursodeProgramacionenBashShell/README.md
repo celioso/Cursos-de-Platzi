@@ -463,3 +463,150 @@ export COURSE_NAME
 para copiar un archivo `cp <archivo_a_copiar> <nombre_que_la_asigna_a_la_copia>`
 
 para eliminar una linea en vin se presciona `ESC` y luego 2 veses `D`
+
+## Tipos de Operadores
+
+En Bash, hay varios tipos de operadores que se utilizan para realizar diferentes tipos de operaciones. Aquí te presento una lista de los operadores más comunes en Bash:
+
+### 1. **Operadores Aritméticos**
+Estos operadores se utilizan para realizar operaciones matemáticas.
+
+- `+` : Suma
+- `-` : Resta
+- `*` : Multiplicación
+- `/` : División
+- `%` : Módulo (residuo)
+- `**` : Exponenciación (Bash 4.0+)
+
+**Ejemplo:**
+```bash
+a=5
+b=3
+echo $((a + b))  # Salida: 8
+```
+
+### 2. **Operadores de Comparación (Numérica)**
+Se usan para comparar valores numéricos.
+
+- `-eq` : Igual a
+- `-ne` : No igual a
+- `-lt` : Menor que
+- `-le` : Menor o igual a
+- `-gt` : Mayor que
+- `-ge` : Mayor o igual a
+
+**Ejemplo:**
+```bash
+if [ $a -gt $b ]; then
+  echo "$a es mayor que $b"
+fi
+```
+
+### 3. **Operadores de Comparación (Cadenas)**
+Se utilizan para comparar cadenas de texto.
+
+- `=` : Igual a
+- `!=` : No igual a
+- `<` : Menor que (lexicográficamente, en `[[ ]]`)
+- `>` : Mayor que (lexicográficamente, en `[[ ]]`)
+
+**Ejemplo:**
+```bash
+if [ "$string1" = "$string2" ]; then
+  echo "Las cadenas son iguales"
+fi
+```
+
+### 4. **Operadores Lógicos**
+Estos operadores se utilizan para combinar expresiones booleanas.
+
+- `&&` : AND lógico (si la primera condición es verdadera, evalúa la segunda)
+- `||` : OR lógico (si la primera condición es falsa, evalúa la segunda)
+- `!` : NOT lógico (invierte el valor de la condición)
+
+**Ejemplo:**
+```bash
+if [ $a -gt 0 ] && [ $b -lt 10 ]; then
+  echo "Condiciones verdaderas"
+fi
+```
+
+### 5. **Operadores de Redirección**
+Se usan para redirigir la entrada y salida de comandos.
+
+- `>` : Redirige la salida estándar a un archivo (sobrescribe)
+- `>>` : Redirige la salida estándar a un archivo (añade al final)
+- `<` : Redirige la entrada estándar desde un archivo
+- `2>` : Redirige la salida de error a un archivo
+- `&>` : Redirige tanto la salida estándar como la de error a un archivo
+
+**Ejemplo:**
+```bash
+echo "Hola" > archivo.txt
+```
+
+### 6. **Operadores de Expansión de Variables**
+Estos operadores se utilizan para manipular el contenido de las variables.
+
+- `${variable:-default}` : Usa el valor de `variable` si está definida; si no, usa `default`.
+- `${variable:=default}` : Usa el valor de `variable` si está definida; si no, asigna `default`.
+- `${variable:+value}` : Usa `value` si `variable` está definida y no está vacía.
+
+**Ejemplo:**
+```bash
+echo ${var:-"Valor por defecto"}
+```
+
+### 7. **Operadores de Evaluación Condicional**
+Se utilizan en pruebas condicionales.
+
+- `-e` : Verifica si un archivo existe
+- `-d` : Verifica si un archivo es un directorio
+- `-f` : Verifica si un archivo es un archivo regular
+- `-r` : Verifica si un archivo es legible
+- `-w` : Verifica si un archivo es escribible
+- `-x` : Verifica si un archivo es ejecutable
+
+**Ejemplo:**
+```bash
+if [ -f archivo.txt ]; then
+  echo "El archivo existe"
+fi
+```
+**3_tipoOperadores.sh**
+
+```bash
+# ! /bin/bash
+# Programa para revisar los tipos de operadores
+# Autor: Marco Toscano - @martosfre
+
+numA=10
+numB=4
+
+echo "Operadores Aritméticos"
+echo "Números: A=$numA y B=$numB"
+echo "Sumar A + B =" $((numA + numB))
+echo "Restar A - B =" $((numA - numB))
+echo "Multiplicar A * B =" $((numA * numB))
+echo "Dividir A / B =" $((numA / numB))
+echo "Residuo A % B =" $((numA % numB))
+
+
+echo -e "\nOperadores Relaciones"
+echo "Números: A=$numA y B=$numB"
+echo "A > B =" $((numA > numB))
+echo "A < B =" $((numA < numB))
+echo "A >= B =" $((numA >= numB))
+echo "A <= B =" $((numA <= numB))
+echo "A == B =" $((numA == numB))
+echo "A != B =" $((numA != numB))
+
+
+echo -e "\nOperadores Asignación"
+echo "Números: A=$numA y B=$numB"
+echo "Sumar A += B" $((numA += numB))
+echo "Restar A -= B" $((numA -= numB))
+echo "Multiplicación A *= B" $((numA *= numB))
+echo "Dividir A /= B" $((numA /= numB))
+echo "Residuo A %= B" $((numA %= numB))
+```
