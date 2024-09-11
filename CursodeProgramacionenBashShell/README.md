@@ -610,3 +610,474 @@ echo "Multiplicación A *= B" $((numA *= numB))
 echo "Dividir A /= B" $((numA /= numB))
 echo "Residuo A %= B" $((numA %= numB))
 ```
+
+para deshacer se usa `ESC` + `U`
+para copiar una linea s eutiliza `ESC`, dos veces `y`, y luego `p` para que lo copie en la parte inferior
+
+## Script con Argumentos
+
+Hay algunos identificadores para cuando ejecutamos un script con argumentos
+
+Identificador | Descripción
+---|---
+**$0** | Se refiere al nombre del Script
+**$1 al ${10}** | Se refiere al número de argumento. Si es más de uno lo colocamos dentro de llaves.
+**$#** | Es útil para conocer el número de argumentos enviados.
+**$** | Con este podemos conocer todos los argumentos enviados.
+
+```bash
+# ! /bin/bash
+# Programa para ejemplificar el paso de argumentos
+# Autor: Marco Toscano Freire - @martosfre
+
+nombreCurso=$1
+horarioCurso=$2
+
+echo "El nombre del curso es: $nombreCurso dictado en el horario de $horarioCurso"
+echo "El número de parámetros enviados es: $#"
+echo "Los parámetros enviados son: $*"
+```
+
+para ingresar los argumentos son: `Archivo.sh <agumento_1> <argumento_2>` Ejemplo: `./4_argumentos.sh "Programación Bash" "18:00 a 20:00"`
+
+En Bash, un script puede recibir argumentos que se pasan al ejecutar el script desde la línea de comandos. Estos argumentos se pueden utilizar dentro del script para realizar diferentes acciones. Aquí te muestro cómo trabajar con argumentos en un script de Bash.
+
+### Crear un Script con Argumentos
+
+1. **Crear el Script**
+
+   Abre tu editor de texto y crea un archivo llamado `example_script.sh`.
+
+   ```bash
+   nano example_script.sh
+   ```
+
+2. **Escribir el Script**
+
+   Aquí hay un ejemplo simple de un script que utiliza argumentos:
+
+   ```bash
+   #!/bin/bash
+
+   # Verifica si se proporcionaron al menos dos argumentos
+   if [ "$#" -lt 2 ]; then
+     echo "Usage: $0 <name> <age>"
+     exit 1
+   fi
+
+   # Asigna los argumentos a variables
+   NAME=$1
+   AGE=$2
+
+   # Muestra un mensaje usando los argumentos
+   echo "Hello, $NAME! You are $AGE years old."
+   ```
+
+   - `$0` es el nombre del script.
+   - `$1`, `$2`, etc., son los argumentos proporcionados al script.
+
+3. **Hacer el Script Ejecutable**
+
+   Cambia los permisos del archivo para hacerlo ejecutable:
+
+   ```bash
+   chmod +x example_script.sh
+   ```
+
+4. **Ejecutar el Script con Argumentos**
+
+   Ejecuta el script pasando dos argumentos:
+
+   ```bash
+   ./example_script.sh Alice 30
+   ```
+
+   Salida esperada:
+
+   ```
+   Hello, Alice! You are 30 years old.
+   ```
+
+### Manejo de Argumentos
+
+- **Número de Argumentos**: Usa `$#` para obtener el número de argumentos pasados al script.
+
+  ```bash
+  echo "Number of arguments: $#"
+  ```
+
+- **Argumentos Opcionales**: Puedes proporcionar argumentos opcionales y manejar su ausencia en el script.
+
+  ```bash
+  # Verifica si un argumento opcional fue proporcionado
+  if [ -z "$3" ]; then
+    echo "No optional argument provided."
+  else
+    echo "Optional argument: $3"
+  fi
+  ```
+
+- **Argumentos con Nombres**: Puedes usar `getopts` para manejar argumentos con nombres.
+
+  ```bash
+  #!/bin/bash
+
+  while getopts "n:a:" opt; do
+    case ${opt} in
+      n )
+        NAME=$OPTARG
+        ;;
+      a )
+        AGE=$OPTARG
+        ;;
+      \? )
+        echo "Invalid option: -$OPTARG" >&2
+        ;;
+      : )
+        echo "Invalid option: -$OPTARG requires an argument" >&2
+        ;;
+    esac
+  done
+
+  echo "Name: $NAME"
+  echo "Age: $AGE"
+  ```
+
+  Ejecuta el script usando opciones con nombres:
+
+  ```bash
+  ./example_script.sh -n Alice -a 30
+  ```
+
+### Resumen
+
+Los scripts de Bash pueden recibir y manejar argumentos de diversas maneras. Puedes usarlos para pasar datos al script y adaptar su comportamiento según estos datos. Los ejemplos anteriores te proporcionan una base para comenzar a trabajar con argumentos en tus propios scripts.
+
+## Sustitución de Comandos en variables
+
+Para la sustitución de comandos es importante tener en cuenta que el resultado servirá para realizar otras tareas de otras sentencias de nuestro programa.
+
+Las dos maneras de hacerlo:
+
+- Usando el backtick caracter. (`)
+- Usando el signo de dólar con el formato $(comando)
+
+```bash
+# ! /bin/bash
+# Programa para revisar como ejecutar comados dentro de un programa y almacenar en una variable para su posterior utilización 
+# Autor: Marco Toscano Freire - @martosfre
+
+ubicacionActual=`pwd`
+infoKernel=$(uname -a)
+
+echo "La ubicación actual es la siguiente: $ubicacionActual"
+echo "Información del Kernel: $infoKernel"
+```
+ESC  y luego `clr` + `B`y activa visual block y con ship marcamos todo lo que se desea borrar
+
+## Debug en Script
+
+Para realizar debugging en un script tenemos dos opciones en el comando de bash:
+
+- **-v**: Utilizado para ver el resultado detallado de nuestro script, evaluado línea por línea. `bash -v <nombre>.sh`
+- **-x**: Utilizado para desplegar la información de los comandos que son usados, capturando el comando y su salida. `bash -x <nombre>.sh`
+
+El proceso de depuración (debugging) en scripts Bash es crucial para identificar y solucionar errores. Aquí hay varias técnicas y herramientas para depurar tus scripts:
+
+### **1. Usar el Modo de Depuración**
+
+Puedes ejecutar un script en modo de depuración para ver cómo se ejecutan los comandos y cómo cambian las variables.
+
+- **Modo de Depuración Completo**: Usa `bash -x script.sh` para ejecutar el script en modo de depuración, lo que imprimirá cada comando antes de ejecutarlo.
+
+  ```bash
+  bash -x script.sh
+  ```
+
+- **Modo de Depuración Dentro del Script**: Puedes activar el modo de depuración dentro del script añadiendo `set -x` al principio del script. Para desactivar el modo de depuración, usa `set +x`.
+
+  ```bash
+  #!/bin/bash
+  set -x  # Activar depuración
+
+  echo "This is a test"
+  ls -l
+
+  set +x  # Desactivar depuración
+  ```
+
+### **2. Usar `echo` para Imprimir Variables y Mensajes**
+
+Una técnica común es imprimir el valor de las variables y mensajes en diferentes partes del script para entender el flujo y los valores en tiempo de ejecución.
+
+```bash
+#!/bin/bash
+
+var="Hello"
+echo "The value of var is: $var"
+
+# Más lógica
+```
+
+### **3. Verificar Errores de Comandos**
+
+Puedes usar `$?` para verificar el estado de salida del último comando ejecutado. Un estado de salida `0` indica éxito, y cualquier otro valor indica un error.
+
+```bash
+#!/bin/bash
+
+cp /source/file /destination/
+if [ $? -ne 0 ]; then
+  echo "Error: The copy command failed."
+fi
+```
+
+### **4. Usar `trap` para Capturar Errores**
+
+El comando `trap` puede ser usado para ejecutar un comando cuando el script recibe una señal o en caso de errores.
+
+```bash
+#!/bin/bash
+
+trap 'echo "Error occurred at line $LINENO"; exit 1;' ERR
+
+# Código que puede fallar
+cp /source/file /destination/
+```
+
+### **5. Comprobar el Script Paso a Paso**
+
+Puedes ejecutar el script paso a paso utilizando un depurador de scripts, como `bashdb`, que proporciona un entorno interactivo para depurar scripts Bash.
+
+```bash
+bashdb script.sh
+```
+
+### **6. Verificar la Sintaxis del Script**
+
+Usa `bash -n script.sh` para verificar la sintaxis del script sin ejecutarlo. Esto te ayuda a detectar errores de sintaxis.
+
+```bash
+bash -n script.sh
+```
+
+### **7. Revisar el Log de Ejecución**
+
+Si el script está ejecutando comandos que escriben en un archivo de log, revisa esos archivos para encontrar información sobre lo que está ocurriendo.
+
+```bash
+#!/bin/bash
+
+echo "Starting script..." >> /var/log/myscript.log
+```
+
+### **8. Validar Entrada y Salida**
+
+Asegúrate de que las entradas y salidas de los comandos sean las esperadas. Esto incluye verificar si los archivos o directorios existen, si tienes los permisos adecuados, etc.
+
+```bash
+#!/bin/bash
+
+if [ ! -f /path/to/file ]; then
+  echo "File not found!"
+  exit 1
+fi
+```
+
+Estas técnicas te ayudarán a identificar y resolver problemas en tus scripts Bash. La depuración efectiva es clave para crear scripts robustos y confiables.
+
+## Capturar información usuario
+
+Para poder capturar información tenemos dos formas dentro de un programa Bash.
+
+- Utilizando en conjunto con el comando **echo**
+- Utilizando directamente el comando **read**
+
+**6_readEcho.sh**
+
+```bash
+# ! /bin/bash
+# Programa para ejemplificar como capturar la información del usuario utilizando el comando echo, read y $REPLY
+# # Autor: Mario Celis - https://www.linkedin.com/in/mario-alexander-vargas-celis/
+
+option=0
+backupName=""
+
+echo "Programa Utilidades Postgres"
+echo -n "Ingresar una opción:"
+read
+option=$REPLY
+echo -n "Ingresar el nombre del archivo del backup:"
+read
+backupName=$REPLY
+echo "Opción:$option , backupName:$backupName"
+```
+
+**7_read.sh**
+
+```bash
+# ! /bin/bash
+# Programa para ejemplificar como capturar la información del usuario utilizando el comando read
+# # Autor: Mario Celis - https://www.linkedin.com/in/mario-alexander-vargas-celis/
+
+option=0
+backupName=""
+
+echo "Programa Utilidades Postgres"
+read -p "Ingresar una opción:" option
+read -p "Ingresar el nombre del archivo del backup:" backupName
+echo "Opción:$option , backupName:$backupName"
+```
+
+Para capturar información del usuario en un script Bash, puedes utilizar varios métodos que permiten interactuar con el usuario y almacenar sus respuestas en variables. Aquí te muestro algunos ejemplos y técnicas comunes:
+
+### **1. Usar `read` para Capturar Entrada**
+
+El comando `read` permite capturar la entrada del usuario y almacenarla en una variable.
+
+**Ejemplo Básico:**
+```bash
+#!/bin/bash
+
+echo "Enter your name:"
+read name
+echo "Hello, $name!"
+```
+
+### **2. Leer Entrada con Mensaje**
+
+Puedes proporcionar un mensaje que se muestra antes de que el usuario ingrese su información.
+
+**Ejemplo:**
+```bash
+#!/bin/bash
+
+read -p "Enter your age: " age
+echo "You are $age years old."
+```
+
+### **3. Capturar Entrada Silenciosa**
+
+Para capturar información de manera silenciosa (por ejemplo, contraseñas), usa la opción `-s` con `read`.
+
+**Ejemplo:**
+```bash
+#!/bin/bash
+
+read -sp "Enter your password: " password
+echo
+echo "Password received."
+```
+
+### **4. Leer Múltiples Valores en una Línea**
+
+Puedes leer múltiples valores en una sola línea separándolos con espacios.
+
+**Ejemplo:**
+```bash
+#!/bin/bash
+
+read -p "Enter your first name and last name: " first_name last_name
+echo "First Name: $first_name"
+echo "Last Name: $last_name"
+```
+
+### **5. Proporcionar un Valor Predeterminado**
+
+Puedes establecer un valor predeterminado en caso de que el usuario no ingrese nada.
+
+**Ejemplo:**
+```bash
+#!/bin/bash
+
+read -p "Enter your city [default: New York]: " city
+city=${city:-New York}
+echo "City: $city"
+```
+
+### **6. Validar la Entrada del Usuario**
+
+Puedes validar la entrada del usuario para asegurarte de que cumpla con ciertos criterios antes de continuar.
+
+**Ejemplo:**
+```bash
+#!/bin/bash
+
+while true; do
+    read -p "Enter a number between 1 and 10: " number
+    if [[ "$number" =~ ^[0-9]+$ ]] && [ "$number" -ge 1 ] && [ "$number" -le 10 ]; then
+        echo "Valid number: $number"
+        break
+    else
+        echo "Invalid input. Please enter a number between 1 and 10."
+    fi
+done
+```
+
+### **7. Leer desde un Archivo**
+
+Puedes leer información desde un archivo y procesarla línea por línea.
+
+**Ejemplo:**
+```bash
+#!/bin/bash
+
+while IFS= read -r line; do
+    echo "Line from file: $line"
+done < file.txt
+```
+
+### **8. Capturar Entrada de Usuario en un Formulario**
+
+Puedes capturar múltiples entradas de usuario en un formulario simple, almacenarlas en variables, y luego procesarlas.
+
+**Ejemplo:**
+```bash
+#!/bin/bash
+
+echo "Please fill out the following form:"
+read -p "Name: " name
+read -p "Email: " email
+read -p "Phone number: " phone
+
+echo "Thank you for your submission!"
+echo "Name: $name"
+echo "Email: $email"
+echo "Phone number: $phone"
+```
+
+Estas técnicas te permitirán interactuar con el usuario y capturar información de manera efectiva en tus scripts Bash. Puedes combinar estas técnicas según tus necesidades específicas para crear interfaces de usuario simples y funcionales en la línea de comandos.
+
+## Expresiones Regulares
+
+Cuando se solicita ingresar información través de un programa por parte del usuario que está utilizando el programa, independientemente el lenguaje que esté realizado; es importante considerar la validación de la información no solo en su tamaño sino también en los tipos de datos, formatos soportados lo cual nos permite asegurar la calidad de la información que recibimos, almacenamos y procesamos.
+
+Dentro de este contexto en la programación bash para cumplir con este objetivo se utiliza expresiones regulares, las cuales son básicamente cadenas de caracteres que definen un patrón de búsqueda que se valida frente a una información específica para asegurar que cumple la validación definida.
+
+Se necesita conocer ciertos criterios utilizados en las expresiones regulares que son los siguientes:
+
+- ^.- Caracter que representa el inicio de la expresión regular.
+- $.- Caracter que representa el final de la expresión regular.
+- *.- Caracter que representa cero o más ocurrencias de la expresión
+- +.- Caracter que representa una o más ocurrencias de la expresión.
+- {n}.-Representa n veces de una expresión.
+- [ ] .- Representa un conjunto de caracteres, por ejemplo: [a-z] representa las letras del abecedario de la a a la z.
+
+Tomando en cuenta estos criterios se realizará un programa que valida la siguiente información:
+Número de Identificación de un tamaño de 10 números. Ejemplo: 1717836520
+País de Origen denotado por dos letras en un rango específico. Ejemplo: EC, CO, US
+Fecha de Nacimiento en el formato yyyyMMDD. Ejemplo: 20181222
+
+Primero se definirá las expresiones regulares y se solicitará la información del usuario:
+
+![Captura de pantalla 2019-01-16 a la(s) 15.58.48.png](images/primera.png)
+
+Luego se validará cada expresión regular comenzando con la identificación, para lo cual para cada validación se utilizará la sentencia condicional if y para comparar la expresión se debe utilizar el siguiente formato especial `if [[ $variable =~ $expresionRegular ]]` como se muestra a continuación.
+
+![Captura de pantalla 2019-01-16 a la(s) 15.59.26.png](images/validacion_identidad.png)
+
+Se realizará la ejecución de la aplicación con los dos escenarios el correcto y el incorrecto como se muestra a continuación:
+
+![Captura de pantalla 2019-01-16 a la(s) 15.59.55.png](images/validariformacion.png)
+
+Finalmente el código fuente lo pueden encontrar en el repositorio de GitHub en el branch 7.ValidarInformacion
