@@ -1081,3 +1081,126 @@ Se realizará la ejecución de la aplicación con los dos escenarios el correcto
 ![Captura de pantalla 2019-01-16 a la(s) 15.59.55.png](images/validariformacion.png)
 
 Finalmente el código fuente lo pueden encontrar en el repositorio de GitHub en el branch 7.ValidarInformacion
+
+Las **expresiones regulares** (regex o regexp) son secuencias de caracteres que definen un patrón de búsqueda. Se utilizan para encontrar, reemplazar y validar texto en muchos lenguajes de programación y herramientas de procesamiento de texto. Aquí te proporciono una guía sobre las expresiones regulares, incluyendo sus conceptos básicos, metacaracteres, y ejemplos en Bash.
+
+### **Conceptos Básicos**
+
+1. **Literales**: Son caracteres que se buscan tal cual. Por ejemplo, `cat` busca la cadena "cat".
+
+2. **Metacaracteres**: Son caracteres especiales con significados específicos:
+   - `.`: Coincide con cualquier carácter excepto una nueva línea.
+   - `^`: Coincide con el inicio de una línea.
+   - `$`: Coincide con el final de una línea.
+   - `*`: Coincide con cero o más repeticiones del carácter o grupo anterior.
+   - `+`: Coincide con una o más repeticiones del carácter o grupo anterior.
+   - `?`: Coincide con cero o una repetición del carácter o grupo anterior.
+   - `|`: Operador OR. Coincide con el patrón a la izquierda o a la derecha.
+   - `[]`: Define un conjunto de caracteres. Coincide con cualquier carácter en el conjunto.
+   - `()`: Agrupa patrones.
+   - `{}`: Especifica el número exacto de repeticiones de un carácter o grupo.
+
+### **Ejemplos de Expresiones Regulares**
+
+- **Coincidir con una Cadena Exacta:**
+  ```bash
+  grep 'cat' file.txt
+  ```
+  Busca la cadena "cat" en `file.txt`.
+
+- **Coincidir con Cualquier Caracter:**
+  ```bash
+  grep 'c.t' file.txt
+  ```
+  Coincide con "cat", "cot", "c-t", etc., en `file.txt`.
+
+- **Coincidir con una Cadena al Inicio de la Línea:**
+  ```bash
+  grep '^start' file.txt
+  ```
+  Busca líneas que comienzan con "start".
+
+- **Coincidir con una Cadena al Final de la Línea:**
+  ```bash
+  grep 'end$' file.txt
+  ```
+  Busca líneas que terminan con "end".
+
+- **Coincidir con uno o más Caracteres:**
+  ```bash
+  grep 'a+' file.txt
+  ```
+  Coincide con una o más repeticiones de "a".
+
+- **Coincidir con un Conjunto de Caracteres:**
+  ```bash
+  grep '[aeiou]' file.txt
+  ```
+  Busca líneas que contengan cualquier vocal.
+
+- **Coincidir con un Grupo de Caracteres:**
+  ```bash
+  grep 'c[aeiou]t' file.txt
+  ```
+  Coincide con "cat", "cet", "cit", etc.
+
+- **Coincidir con una Cantidad Específica:**
+  ```bash
+  grep 'a{2,4}' file.txt
+  ```
+  Coincide con entre 2 y 4 repeticiones de "a".
+
+### **Uso en Bash**
+
+En Bash, las expresiones regulares se utilizan principalmente con los comandos `grep`, `sed`, y `awk`.
+
+#### **1. Usar `grep`**
+
+`grep` busca patrones en un archivo o entrada estándar.
+
+**Ejemplo: Buscar líneas que contienen un patrón:**
+```bash
+grep 'pattern' file.txt
+```
+
+**Ejemplo: Buscar con expresiones regulares extendidas:**
+```bash
+grep -E 'pattern' file.txt
+```
+
+#### **2. Usar `sed`**
+
+`sed` es una herramienta de edición de texto que usa expresiones regulares para buscar y reemplazar texto.
+
+**Ejemplo: Reemplazar texto:**
+```bash
+sed 's/old/new/g' file.txt
+```
+Reemplaza todas las instancias de "old" con "new".
+
+**Ejemplo: Usar regex en reemplazos:**
+```bash
+sed -E 's/[0-9]{3}-[0-9]{3}-[0-9]{4}/XXX-XXX-XXXX/g' file.txt
+```
+
+#### **3. Usar `awk`**
+
+`awk` es un lenguaje de programación para procesar texto basado en patrones.
+
+**Ejemplo: Imprimir líneas que contienen un patrón:**
+```bash
+awk '/pattern/' file.txt
+```
+
+**Ejemplo: Imprimir campos específicos:**
+```bash
+awk -F':' '{print $1}' file.txt
+```
+
+### **Práctica**
+
+1. **Verifica Patrones**: Usa `grep` para buscar patrones en un archivo de prueba.
+2. **Reemplaza Texto**: Usa `sed` para hacer reemplazos en un archivo.
+3. **Analiza Datos**: Usa `awk` para procesar y analizar archivos de datos.
+
+Las expresiones regulares son muy poderosas y se utilizan ampliamente en el procesamiento de texto. Practicar con ejemplos te ayudará a entender mejor cómo funcionan y cómo puedes aplicarlas a tus necesidades.
