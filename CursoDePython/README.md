@@ -3655,3 +3655,631 @@ Esta estructura es muy útil para manejar datos tabulares de forma eficiente en 
 **Lecturas recomendadas**
 
 [csv — CSV File Reading and Writing — documentación de Python - 3.12.5](https://docs.python.org/es/3/library/csv.html "csv — CSV File Reading and Writing — documentación de Python - 3.12.5")
+
+## Manejo de Archivos JSON
+
+En Python, el manejo de archivos JSON se realiza utilizando el módulo `json`, que proporciona funciones para leer y escribir archivos en formato JSON, una estructura ampliamente utilizada para intercambiar datos en aplicaciones web y APIs.
+
+### 1. **Leer archivos JSON**
+Para leer un archivo JSON en Python, se utiliza la función `json.load()`, que convierte el contenido JSON en una estructura de datos de Python, como diccionarios o listas.
+
+**Ejemplo de lectura de un archivo JSON:**
+```python
+import json
+
+# Leer un archivo JSON
+with open('archivo.json', 'r') as archivo:
+    datos = json.load(archivo)  # Convierte JSON en un diccionario o lista
+    print(datos)
+```
+
+### 2. **Escribir en archivos JSON**
+Para escribir datos en formato JSON, puedes usar `json.dump()`, que convierte los objetos de Python (diccionarios, listas, etc.) en una cadena JSON y los escribe en un archivo.
+
+**Ejemplo de escritura en un archivo JSON:**
+```python
+import json
+
+# Datos a escribir en formato JSON
+datos = {
+    'nombre': 'Juan',
+    'edad': 30,
+    'ciudad': 'Madrid'
+}
+
+# Escribir datos en un archivo JSON
+with open('archivo.json', 'w') as archivo:
+    json.dump(datos, archivo, indent=4)  # `indent=4` añade formato legible
+```
+
+### 3. **Leer y escribir cadenas JSON**
+El módulo `json` también permite trabajar directamente con cadenas JSON, sin necesidad de archivos, utilizando las funciones `json.loads()` para leer y `json.dumps()` para escribir.
+
+**Ejemplo de conversión de cadena JSON a Python:**
+```python
+import json
+
+# Cadena en formato JSON
+cadena_json = '{"nombre": "Ana", "edad": 25, "ciudad": "Barcelona"}'
+
+# Convertir cadena JSON a un diccionario
+datos = json.loads(cadena_json)
+print(datos)
+```
+
+**Ejemplo de conversión de Python a cadena JSON:**
+```python
+import json
+
+# Diccionario en Python
+datos = {
+    'nombre': 'Ana',
+    'edad': 25,
+    'ciudad': 'Barcelona'
+}
+
+# Convertir diccionario a cadena JSON
+cadena_json = json.dumps(datos, indent=4)
+print(cadena_json)
+```
+
+### 4. **Modificar archivos JSON**
+Puedes modificar un archivo JSON leyendo su contenido, realizando cambios en los datos y luego escribiendo nuevamente el archivo.
+
+**Ejemplo de modificación de un archivo JSON:**
+```python
+import json
+
+# Leer archivo JSON
+with open('archivo.json', 'r') as archivo:
+    datos = json.load(archivo)
+
+# Modificar los datos
+datos['edad'] = 31
+
+# Escribir los cambios de vuelta en el archivo
+with open('archivo.json', 'w') as archivo:
+    json.dump(datos, archivo, indent=4)
+```
+
+### 5. **Manejo de Excepciones**
+Es importante manejar posibles excepciones, como errores de formato en el archivo JSON o la falta de permisos de lectura/escritura.
+
+**Ejemplo de manejo de excepciones:**
+```python
+import json
+
+try:
+    with open('archivo.json', 'r') as archivo:
+        datos = json.load(archivo)
+except json.JSONDecodeError:
+    print("Error: El archivo no tiene un formato JSON válido.")
+except FileNotFoundError:
+    print("Error: El archivo no fue encontrado.")
+except IOError:
+    print("Error: No se pudo acceder al archivo.")
+```
+
+### 6. **Formateo de JSON**
+Puedes personalizar la forma en que se escribe el JSON en el archivo utilizando el parámetro `indent`, que agrega sangrías y hace el archivo más legible.
+
+**Ejemplo con formato JSON legible:**
+```python
+import json
+
+# Diccionario de Python
+datos = {'nombre': 'Carlos', 'edad': 27, 'ciudad': 'Lima'}
+
+# Convertir a cadena JSON con formato
+json_formateado = json.dumps(datos, indent=4)
+print(json_formateado)
+```
+
+### Resumen de funciones principales:
+- **Lectura de archivos JSON**: `json.load()`
+- **Escritura en archivos JSON**: `json.dump()`
+- **Convertir cadena JSON a Python**: `json.loads()`
+- **Convertir objeto de Python a cadena JSON**: `json.dumps()`
+
+Estas herramientas son útiles cuando trabajas con datos en formato JSON, que es común en aplicaciones web, APIs y sistemas que requieren intercambio de información estructurada.
+
+## Librería Statistics y Análisis Estadístico
+
+En el análisis de datos, es fundamental comprender y utilizar diversas medidas estadísticas para interpretar correctamente la información. Estas medidas nos permiten resumir y describir las características principales de un conjunto de datos, facilitando la toma de decisiones informadas. Algunas de las medidas estadísticas más comunes y sus fórmulas asociadas son las siguientes:
+
+### 1. Media (Promedio)
+
+La **media aritmética** se calcula sumando todos los valores de un conjunto de datos y dividiendo entre la cantidad de valores.
+
+![media aritmetica](images/media_aritmetica.png "media aritmetica")
+
+Donde:
+
+- nnn es el número total de valores.
+- xix_ixi representa cada valor individual en el conjunto de datos.
+
+### 2. Mediana
+
+La **mediana** es el valor que separa la mitad superior de la mitad inferior de un conjunto de datos ordenado.
+
+- Si n (el número de observaciones) es impar, la mediana es el valor en la posición 2n+1 después de ordenar los datos.
+
+![Mediana](images/Mediana.png "Mediana")
+
+Si n es par, la mediana es el promedio de los dos valores centrales, es decir:
+
+![Mediana ecuación dos](images/images/Mediana2.png "Mediana ecuación dos")
+
+### 3. Moda
+
+La **moda** es el valor que aparece con mayor frecuencia en un conjunto de datos. No hay una fórmula específica para la moda; se determina contando la frecuencia de cada valor y eligiendo el que tiene la frecuencia más alta.
+
+![Moda](images/Moda.png "Moda")
+
+### 4. Desviación Estándar
+
+La **desviación estándar** mide la dispersión de los datos en relación con la media. Se calcula como la raíz cuadrada de la varianza.
+
+![Desviación Estándar](images/DesviacionEstandar.png "Desviación Estándar")
+
+Donde:
+
+- μ\muμ es la media de los datos.
+- xix_ixi representa cada valor individual.
+- nnn es el número total de valores.
+
+5. Varianza
+
+La **varianza** es el promedio de los cuadrados de las diferencias entre cada valor y la media del conjunto de datos.
+
+![Varianza](images/Varianza.png "Varianza")
+
+### 6. Máximo y Mínimo
+
+- **Máximo** (max(x)): Es el valor más alto en un conjunto de datos.
+
+max⁡(x)\max(x)
+
+- **Mínimo **(min(x)): Es el valor más bajo en un conjunto de datos.
+
+min⁡(x)\min(x)
+
+![Máximo y mínimo](images/maxymin.png "Máximo y mínimo")
+
+7. Rango
+
+El **rango** es la diferencia entre el valor máximo y el valor mínimo en un conjunto de datos.
+
+![Rango](images/rango.png "Rango")
+
+Estas fórmulas matemáticas te permiten realizar un análisis estadístico básico de cualquier conjunto de datos, como las ventas mensuales en un negocio, y son fundamentales para extraer conclusiones y tomar decisiones basadas en datos.
+
+Al aplicar estas medidas, podrás extraer conclusiones valiosas y tomar decisiones basadas en datos, lo que es crucial para el éxito en diversos campos, desde la investigación científica hasta la gestión empresarial.
+
+**Lecturas recomendadas**
+
+[statistics — Mathematical statistics functions — documentación de Python - 3.12.5](https://docs.python.org/es/3/library/statistics.html "statistics — Mathematical statistics functions — documentación de Python - 3.12.5")
+
+## Biblioteca estándar en Python
+
+Como programador, una de las mayores satisfacciones es encontrar la solución perfecta al problema que estás tratando de resolver, y hacerlo de manera eficiente.
+¿Te imaginas tener a tu disposición un conjunto de herramientas que te permita escribir menos código pero lograr más? Eso es lo que ofrece la Biblioteca Estándar de Python.
+
+Imagina poder saltar directamente a construir la lógica de tu aplicación sin preocuparte por las tareas rutinarias, porque ya tienes los módulos que necesitas listos para usar.
+Aquí vamos a explorar cómo la Biblioteca Estándar de Python puede transformar tu manera de programar, dándote acceso inmediato a una vasta colección de herramientas que te permiten concentrarte en lo que realmente importa: resolver problemas de manera elegante y eficaz.
+
+### ¿Qué es la Biblioteca Estándar de Python?
+
+La Biblioteca Estándar de Python es como tener un conjunto de herramientas integradas directamente en el lenguaje que te ayudan a realizar una variedad de tareas sin tener que reinventar la rueda. Desde la manipulación de archivos, pasando por cálculos matemáticos complejos, hasta la creación de servidores web, la Biblioteca Estándar tiene módulos que simplifican casi cualquier tarea que te propongas.
+
+### ¿Qué es una Librería y qué es un Módulo?
+
+Antes de sumergirnos en cómo puedes aprovechar la Biblioteca Estándar, aclaremos dos conceptos clave:
+
+- **Librería**: En Python, una librería es un conjunto organizado de módulos que puedes usar para añadir funcionalidades a tu código sin tener que escribirlas tú mismo. Piensa en ello como una colección de herramientas especializadas listas para usar.
+- **Módulo**: Un módulo es un archivo de Python que contiene código que puedes reutilizar en tus proyectos. Un módulo puede incluir funciones, clases, y variables que te ayudan a resolver problemas específicos de manera eficiente.
+
+Estos conceptos son fundamentales porque la Biblioteca Estándar está compuesta por una amplia variedad de módulos, cada uno diseñado para hacer tu vida como programador más fácil.
+
+### La Conexión de la Biblioteca Estándar con tus Proyectos
+
+La belleza de la Biblioteca Estándar radica en cómo cada módulo está diseñado para interactuar con otros, permitiéndote construir aplicaciones completas sin tener que buscar soluciones externas. Al trabajar en un proyecto, puedes confiar en que la Biblioteca Estándar tiene las herramientas necesarias para cubrir la mayoría de tus necesidades.
+
+Por ejemplo, si estás trabajando en una aplicación que necesita interactuar con el sistema de archivos, el módulo os te permite manipular directorios y archivos de manera eficiente. Si tu aplicación necesita realizar operaciones matemáticas complejas, el módulo math ofrece un amplio rango de funciones listas para usar. Cada módulo tiene su propósito, pero todos están diseñados para trabajar juntos y hacer tu código más limpio y eficiente.
+
+### Explorando Áreas Clave de la Biblioteca Estándar
+
+Ahora, veamos algunas de las áreas más importantes que cubre la Biblioteca Estándar:
+
+- **Manejo de Archivos y Sistema**: Módulos como os, shutil, y pathlib te permiten interactuar con el sistema de archivos, lo cual es esencial para casi cualquier proyecto.
+- **Operaciones Matemáticas**: Módulos como math y random te proporcionan funciones matemáticas avanzadas y generación de números aleatorios.
+- **Manejo de Fechas y Tiempos**: datetime y time te permiten trabajar con fechas y horas, lo cual es crucial para la programación de eventos o el registro de actividades.
+- **Manipulación de Datos**: Módulos como json y csv son ideales para leer y escribir datos estructurados, algo común en el manejo de APIs y almacenamiento de información.
+- **Redes y Comunicaciones**: Si estás construyendo aplicaciones que necesitan comunicarse a través de una red, socket y http.server te proporcionan las herramientas necesarias para gestionar conexiones y servidores web.
+
+Estos módulos no solo te ahorran tiempo, sino que también te ayudan a escribir código más limpio y mantenible.
+
+### ¿Qué es pip y Cuándo Deberíamos Considerar Instalar una Librería?
+
+La Biblioteca Estándar es extremadamente poderosa, pero a veces necesitarás algo más específico o avanzado. Aquí es donde entra **pip**, una herramienta que te permite instalar librerías adicionales que no vienen incluidas en Python por defecto.
+
+**¿Cuándo deberías considerar instalar una librería?**
+
+- Cuando necesitas funcionalidades que no están cubiertas por la Biblioteca Estándar.
+- Cuando quieres utilizar herramientas más especializadas para resolver problemas complejos.
+- Cuando necesitas una versión más reciente o específica de un módulo.
+
+Por ejemplo, si estás trabajando en análisis de datos, podrías necesitar `pandas`, una librería poderosa para la manipulación y análisis de datos que no está en la Biblioteca Estándar.
+
+### ¿Cómo Instalar una Librería con pip?
+
+Instalar una librería con `pip` es directo y simple. Abre tu terminal y ejecuta:
+
+`pip install nombre-de-la-libreria`
+
+Por ejemplo, para instalar pandas, simplemente escribirías:
+
+`pip install pandas`
+
+Esto descargará e instalará la librería desde [PyPI](https://pypi.org/ "PyPI"), un repositorio en línea donde se alojan miles de librerías para Python, y estará lista para ser utilizada en tu proyecto.
+
+La Biblioteca Estándar de Python te ofrece un vasto conjunto de herramientas que puedes utilizar inmediatamente, permitiéndote escribir código eficiente y de alta calidad. Sin embargo, el mundo de Python no termina ahí. Te invito a explorar la [documentación oficial de la Biblioteca Estándar](https://docs.python.org/3/library/ "documentación oficial de la Biblioteca Estándar") para profundizar en los módulos disponibles, y no dudes en visitar [PyPI](https://pypi.org/ "PyPI") para descubrir librerías adicionales que pueden potenciar aún más tus proyectos. ¡El poder de Python está a tu disposición, y es hora de que lo aproveches al máximo!
+
+La **biblioteca estándar de Python** es una colección de módulos y paquetes que están incluidos con la instalación de Python, lo que significa que no necesitas instalarlos por separado. Estos módulos proporcionan una amplia gama de funcionalidades que te permiten realizar diversas tareas comunes sin necesidad de depender de bibliotecas externas.
+
+A continuación, te muestro algunas de las categorías más importantes de la biblioteca estándar de Python junto con ejemplos de uso:
+
+### 1. **Manejo de Archivos y Directorios**
+   - **`os`**: Proporciona funciones para interactuar con el sistema operativo, como la manipulación de archivos y directorios.
+   - **`shutil`**: Ofrece operaciones de alto nivel en archivos y colecciones de archivos.
+   - **`pathlib`**: Una forma moderna de manejar rutas de archivos y directorios.
+
+   **Ejemplo:**
+   ```python
+   import os
+   print(os.getcwd())  # Obtener el directorio de trabajo actual
+
+   from pathlib import Path
+   path = Path('mi_archivo.txt')
+   print(path.exists())  # Verificar si el archivo existe
+   ```
+
+### 2. **Manejo de Fechas y Tiempos**
+   - **`datetime`**: Ofrece funciones para manejar fechas, horas y períodos de tiempo.
+   - **`time`**: Proporciona funciones relacionadas con el tiempo del sistema.
+
+   **Ejemplo:**
+   ```python
+   from datetime import datetime
+   ahora = datetime.now()
+   print(ahora.strftime("%Y-%m-%d %H:%M:%S"))  # Formatear la fecha actual
+   ```
+
+### 3. **Manejo de Archivos JSON y CSV**
+   - **`json`**: Manipula archivos JSON.
+   - **`csv`**: Proporciona soporte para archivos CSV.
+
+   **Ejemplo con JSON:**
+   ```python
+   import json
+   datos = {"nombre": "Juan", "edad": 30}
+   with open('datos.json', 'w') as archivo:
+       json.dump(datos, archivo)
+   ```
+
+### 4. **Expresiones Regulares**
+   - **`re`**: Módulo para trabajar con expresiones regulares.
+
+   **Ejemplo:**
+   ```python
+   import re
+   patron = r'\d+'
+   texto = "El número es 12345"
+   coincidencia = re.search(patron, texto)
+   print(coincidencia.group())  # Devuelve "12345"
+   ```
+
+### 5. **Manejo de Excepciones y Errores**
+   - **`warnings`**: Emite advertencias al usuario sin interrumpir el programa.
+   - **`traceback`**: Proporciona una representación del seguimiento de excepciones.
+
+   **Ejemplo:**
+   ```python
+   import warnings
+   warnings.warn("Esto es solo una advertencia.")
+   ```
+
+### 6. **Módulos Matemáticos**
+   - **`math`**: Proporciona funciones matemáticas básicas.
+   - **`random`**: Permite la generación de números aleatorios.
+   - **`statistics`**: Funciones estadísticas como la media, mediana y desviación estándar.
+
+   **Ejemplo con `math`:**
+   ```python
+   import math
+   print(math.sqrt(16))  # Devuelve 4.0
+   ```
+
+### 7. **Manejo de Compresión de Archivos**
+   - **`zipfile`**: Manejo de archivos ZIP.
+   - **`tarfile`**: Manejo de archivos TAR.
+
+   **Ejemplo:**
+   ```python
+   import zipfile
+   with zipfile.ZipFile('archivo.zip', 'r') as zip_ref:
+       zip_ref.extractall('directorio_destino')
+   ```
+
+### 8. **Concurrencia y Paralelismo**
+   - **`threading`**: Soporte para la creación de hilos.
+   - **`multiprocessing`**: Permite la ejecución de múltiples procesos.
+
+   **Ejemplo con `threading`:**
+   ```python
+   import threading
+   def contar():
+       for i in range(5):
+           print(i)
+   hilo = threading.Thread(target=contar)
+   hilo.start()
+   ```
+
+### 9. **Redes y Protocolos de Internet**
+   - **`socket`**: Soporte para la creación de aplicaciones de red.
+   - **`http.server`**: Un servidor HTTP simple.
+
+   **Ejemplo de servidor HTTP básico:**
+   ```python
+   from http.server import SimpleHTTPRequestHandler, HTTPServer
+
+   puerto = 8080
+   servidor = HTTPServer(('localhost', puerto), SimpleHTTPRequestHandler)
+   print(f"Servidor HTTP corriendo en el puerto {puerto}")
+   servidor.serve_forever()
+   ```
+
+### 10. **Manejo de Argumentos en la Línea de Comandos**
+   - **`argparse`**: Módulo para analizar argumentos pasados por la línea de comandos.
+
+   **Ejemplo:**
+   ```python
+   import argparse
+   parser = argparse.ArgumentParser(description='Ejemplo de manejo de argumentos')
+   parser.add_argument('nombre', help='El nombre del usuario')
+   args = parser.parse_args()
+   print(f"Hola, {args.nombre}")
+   ```
+
+### 11. **Serialización y Deserialización de Objetos**
+   - **`pickle`**: Permite serializar objetos Python para almacenarlos y deserializarlos más tarde.
+
+   **Ejemplo:**
+   ```python
+   import pickle
+   datos = {'nombre': 'Ana', 'edad': 25}
+   with open('datos.pickle', 'wb') as archivo:
+       pickle.dump(datos, archivo)
+   ```
+
+### 12. **Soporte para Protocolos de Internet**
+   - **`urllib`**: Para trabajar con URLs y realizar peticiones HTTP.
+   - **`http.client`**: Módulo para gestionar conexiones HTTP.
+
+   **Ejemplo:**
+   ```python
+   import urllib.request
+   respuesta = urllib.request.urlopen('http://www.example.com')
+   print(respuesta.read().decode('utf-8'))
+   ```
+
+### Resumen de la Biblioteca Estándar
+
+La biblioteca estándar de Python es increíblemente versátil y abarca muchas áreas, desde la manipulación de archivos, operaciones matemáticas, hasta la gestión de redes y el uso de concurrencia. Al estar incluida con Python, es recomendable familiarizarse con los módulos más relevantes para tus proyectos.
+
+## Librería Os, Math y Random
+
+Las librerías **`os`**, **`math`** y **`random`** forman parte de la biblioteca estándar de Python y proporcionan funcionalidades esenciales para la interacción con el sistema operativo, operaciones matemáticas avanzadas y la generación de números aleatorios, respectivamente. A continuación te explico cada una con ejemplos.
+
+### 1. **Librería `os`**
+El módulo **`os`** te permite interactuar con el sistema operativo. Proporciona funciones para manejar archivos y directorios, manipular rutas, ejecutar comandos del sistema, entre otras.
+
+#### Funciones comunes de `os`:
+
+- **Obtener el directorio actual de trabajo**:
+  ```python
+  import os
+  print(os.getcwd())  # Devuelve el directorio actual
+  ```
+
+- **Cambiar el directorio de trabajo**:
+  ```python
+  os.chdir('/ruta/nueva')
+  print(os.getcwd())  # Comprueba el nuevo directorio
+  ```
+
+- **Listar archivos en un directorio**:
+  ```python
+  archivos = os.listdir('.')
+  print(archivos)  # Lista todos los archivos en el directorio actual
+  ```
+
+- **Crear un nuevo directorio**:
+  ```python
+  os.mkdir('nuevo_directorio')  # Crea un directorio llamado 'nuevo_directorio'
+  ```
+
+- **Eliminar un archivo o directorio**:
+  ```python
+  os.remove('archivo.txt')  # Elimina un archivo
+  os.rmdir('directorio_vacio')  # Elimina un directorio vacío
+  ```
+
+- **Obtener información del sistema**:
+  ```python
+  print(os.name)  # 'posix', 'nt', etc., dependiendo del sistema operativo
+  ```
+
+- **Ejecutar un comando del sistema**:
+  ```python
+  os.system('ls')  # Ejecuta el comando 'ls' en sistemas tipo UNIX
+  ```
+
+### 2. **Librería `math`**
+El módulo **`math`** proporciona funciones matemáticas básicas y avanzadas que no están disponibles por defecto en Python, como funciones trigonométricas, logaritmos y constantes matemáticas.
+
+#### Funciones comunes de `math`:
+
+- **Raíz cuadrada**:
+  ```python
+  import math
+  print(math.sqrt(16))  # Devuelve 4.0
+  ```
+
+- **Logaritmo natural y logaritmo base 10**:
+  ```python
+  print(math.log(10))       # Logaritmo natural (base e)
+  print(math.log10(1000))   # Logaritmo base 10
+  ```
+
+- **Potencias**:
+  ```python
+  print(math.pow(2, 3))  # 2 elevado a la 3, devuelve 8.0
+  ```
+
+- **Constantes matemáticas**:
+  ```python
+  print(math.pi)    # Valor de pi (3.14159...)
+  print(math.e)     # Valor de e (2.71828...)
+  ```
+
+- **Funciones trigonométricas**:
+  ```python
+  print(math.sin(math.pi / 2))  # Seno de 90 grados, devuelve 1.0
+  print(math.cos(0))            # Coseno de 0, devuelve 1.0
+  ```
+
+- **Valor absoluto**:
+  ```python
+  print(math.fabs(-10))  # Devuelve 10.0
+  ```
+
+- **Redondeo hacia abajo (piso) y hacia arriba (techo)**:
+  ```python
+  print(math.floor(3.7))  # Devuelve 3
+  print(math.ceil(3.3))   # Devuelve 4
+  ```
+
+### 3. **Librería `random`**
+El módulo **`random`** proporciona herramientas para generar números aleatorios y realizar selecciones aleatorias, que son útiles en simulaciones, pruebas, y muchas otras aplicaciones.
+
+#### Funciones comunes de `random`:
+
+- **Generar un número aleatorio entre 0 y 1**:
+  ```python
+  import random
+  print(random.random())  # Devuelve un número decimal aleatorio entre 0 y 1
+  ```
+
+- **Generar un número aleatorio entero dentro de un rango**:
+  ```python
+  print(random.randint(1, 10))  # Devuelve un entero entre 1 y 10 (incluidos)
+  ```
+
+- **Elegir un elemento aleatorio de una lista**:
+  ```python
+  opciones = ['rojo', 'verde', 'azul']
+  print(random.choice(opciones))  # Devuelve un elemento aleatorio de la lista
+  ```
+
+- **Mezclar aleatoriamente una lista**:
+  ```python
+  lista = [1, 2, 3, 4, 5]
+  random.shuffle(lista)  # Mezcla los elementos de la lista
+  print(lista)
+  ```
+
+- **Generar un número flotante aleatorio en un rango específico**:
+  ```python
+  print(random.uniform(1.5, 10.5))  # Devuelve un número decimal aleatorio entre 1.5 y 10.5
+  ```
+
+- **Elegir varios elementos aleatorios de una lista (sin repetición)**:
+  ```python
+  lista = [1, 2, 3, 4, 5]
+  print(random.sample(lista, 2))  # Devuelve 2 elementos aleatorios de la lista
+  ```
+
+### Ejemplos Combinando `os`, `math`, y `random`
+
+Aquí te muestro un ejemplo que utiliza las tres bibliotecas juntas:
+
+```python
+import os
+import math
+import random
+
+# Cambiar el directorio de trabajo
+os.chdir('/tmp')
+
+# Crear un archivo con números aleatorios y escribirlos en el archivo
+with open('numeros_aleatorios.txt', 'w') as archivo:
+    for _ in range(5):
+        numero = random.uniform(0, 100)
+        archivo.write(f"{numero:.2f}\n")  # Escribir un número aleatorio con 2 decimales
+
+# Leer el archivo y calcular la raíz cuadrada de cada número
+with open('numeros_aleatorios.txt', 'r') as archivo:
+    for linea in archivo:
+        numero = float(linea.strip())
+        print(f"Raíz cuadrada de {numero}: {math.sqrt(numero):.2f}")
+```
+
+### Resumen:
+- **`os`**: Proporciona herramientas para interactuar con el sistema operativo.
+- **`math`**: Ofrece funciones matemáticas avanzadas como logaritmos, trigonometría y potencias.
+- **`random`**: Genera números aleatorios y realiza operaciones aleatorias como elegir elementos de una lista.
+
+Estas tres bibliotecas son esenciales para realizar tareas comunes como la manipulación de archivos, operaciones matemáticas y la generación de números aleatorios en Python.
+
+**1. OS (Sistema Operativo):**
+
+- `os.getcwd()` Retorna el directorio de trabajo actual.
+- `os.chdir(path)`: Cambia el directorio de trabajo actual al especificado.
+- `os.listdir(path)`: Lista los archivos y carpetas en el directorio especificado.
+- `os.makedirs(path)`: Crea directorios de manera recursiva.
+- `os.remove(path)`: Elimina el archivo especificado.
+- `os.path.join(*paths)`: Une componentes de una ruta de manera segura según el sistema operativo.
+- `os.path.exists(path)`: Verifica si una ruta existe.
+- `os.rename(src, dst)`: Renombra un archivo o directorio.
+- `os.environ`: Proporciona acceso a las variables de entorno del sistema.
+
+**2. Módulo (Operaciones Matemáticas):**
+
+- `math.sqrt(x)`: Retorna la raíz cuadrada de x.
+- `math.pow(x, y)`: Eleva x a la potencia y (equivalente a `x ** y`).
+- `math.ceil(x)`: Redondea un número hacia arriba (al entero más cercano).
+- `math.floor(x)`: Redondea un número hacia abajo (al entero más cercano).
+- `math.factorial(x)`: Retorna el factorial de x.
+- `math.fabs(x)`: Retorna el valor absoluto de x (como número flotante).
+- `math.log(x[, base])`: Retorna el logaritmo de x con base base (por defecto, base e).
+- `math.sin(x), math.cos(x), math.tan(x):` Retorna el seno, coseno y tangente de x (en radianes).
+- `math.pi`: Retorna el valor de π (pi).
+
+**3. Módulo (Generación Aleatoria):**
+
+- `random.random()`: Retorna un número flotante aleatorio entre 0.0 y 1.0.
+- `random.randint(a, b)`: Retorna un entero aleatorio entre a y b (ambos inclusive).
+- `random.choice(seq)`: Retorna un elemento aleatorio de una secuencia (como una lista).
+- `random.shuffle(seq)`: Baraja una secuencia (lista) en su lugar.
+- `random.sample(population, k)`: Retorna una lista de tamaño k con elementos aleatorios sin repetición de la population.
+- `random.uniform(a, b)`: Retorna un número flotante aleatorio entre a y b.
+- `random.gauss(mu, sigma)`: Retorna un número siguiendo una distribución normal (gaussiana) con media mu y desviación estándar `sigma`.
+
+**Lecturas recomendadas**
+
+[math — Funciones matemáticas — documentación de Python - 3.10.13](https://docs.python.org/es/3.10/library/math.html "math — Funciones matemáticas — documentación de Python - 3.10.13")
+
+[os — Interfaces misceláneas del sistema operativo — documentación de Python - 3.10.13](https://docs.python.org/es/3.10/library/os.html "os — Interfaces misceláneas del sistema operativo — documentación de Python - 3.10.13")
+
+[random — Generate pseudo-random numbers — documentación de Python - 3.12.5](https://docs.python.org/es/3/library/random.html "random — Generate pseudo-random numbers — documentación de Python - 3.12.5")
