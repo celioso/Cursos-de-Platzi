@@ -1204,3 +1204,152 @@ awk -F':' '{print $1}' file.txt
 3. **Analiza Datos**: Usa `awk` para procesar y analizar archivos de datos.
 
 Las expresiones regulares son muy poderosas y se utilizan ampliamente en el procesamiento de texto. Practicar con ejemplos te ayudará a entender mejor cómo funcionan y cómo puedes aplicarlas a tus necesidades.
+
+## Validar información
+
+Para el proceso de validación de información tenemos dos maneras de hacerlo:
+
+Para validar tamaños se utiliza el siguiente comando: `read -n <numero_caracteres>`
+Para validar el tipo de datos se utilizan las `expresiones regulares`
+
+Para validar información en **bash**, se suelen usar condicionales, expresiones regulares, y diversas herramientas de línea de comandos como `grep`, `sed`, `awk`, o las funciones integradas de `bash`. Aquí te doy ejemplos de validaciones comunes en un script de bash.
+
+### 1. **Validar si un archivo existe**
+
+```bash
+#!/bin/bash
+
+if [ -f "archivo.txt" ]; then
+  echo "El archivo existe."
+else
+  echo "El archivo no existe."
+fi
+```
+
+### 2. **Validar si una variable no está vacía**
+
+```bash
+#!/bin/bash
+
+variable="texto"
+
+if [ -n "$variable" ]; then
+  echo "La variable no está vacía."
+else
+  echo "La variable está vacía."
+fi
+```
+
+### 3. **Validar si una variable es un número**
+
+```bash
+#!/bin/bash
+
+numero="12345"
+
+if [[ "$numero" =~ ^[0-9]+$ ]]; then
+  echo "Es un número."
+else
+  echo "No es un número."
+fi
+```
+
+### 4. **Validar un formato de correo electrónico usando expresiones regulares**
+
+```bash
+#!/bin/bash
+
+correo="usuario@dominio.com"
+
+if [[ "$correo" =~ ^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$ ]]; then
+  echo "El correo es válido."
+else
+  echo "El correo no es válido."
+fi
+```
+
+### 5. **Validar un rango de valores numéricos**
+
+```bash
+#!/bin/bash
+
+edad=25
+
+if [ "$edad" -ge 18 ] && [ "$edad" -le 65 ]; then
+  echo "La edad está dentro del rango permitido."
+else
+  echo "La edad está fuera del rango."
+fi
+```
+
+### 6. **Validar si un directorio existe**
+
+```bash
+#!/bin/bash
+
+directorio="/home/usuario"
+
+if [ -d "$directorio" ]; then
+  echo "El directorio existe."
+else
+  echo "El directorio no existe."
+fi
+```
+
+### 7. **Validar un número de teléfono (10 dígitos)**
+
+```bash
+#!/bin/bash
+
+telefono="1234567890"
+
+if [[ "$telefono" =~ ^[0-9]{10}$ ]]; then
+  echo "El número de teléfono es válido."
+else
+  echo "El número de teléfono no es válido."
+fi
+```
+
+### 8. **Validar si un comando existe en el sistema**
+
+```bash
+#!/bin/bash
+
+if command -v git &> /dev/null; then
+  echo "Git está instalado."
+else
+  echo "Git no está instalado."
+fi
+```
+
+### 9. **Validar una IP usando expresiones regulares**
+
+```bash
+#!/bin/bash
+
+ip="192.168.0.1"
+
+if [[ "$ip" =~ ^([0-9]{1,3}\.){3}[0-9]{1,3}$ ]]; then
+  echo "La IP es válida."
+else
+  echo "La IP no es válida."
+fi
+```
+
+### 10. **Validar si una cadena contiene otra cadena**
+
+```bash
+#!/bin/bash
+
+cadena="Este es un ejemplo de texto"
+buscar="ejemplo"
+
+if [[ "$cadena" == *"$buscar"* ]]; then
+  echo "La cadena contiene '$buscar'."
+else
+  echo "La cadena no contiene '$buscar'."
+fi
+```
+
+### Resumen
+Bash ofrece múltiples maneras de validar información utilizando condicionales, expresiones regulares y comandos de Unix. Esto te permite realizar validaciones de todo tipo, desde la existencia de archivos y directorios hasta el formato de cadenas como correos o números de teléfono.
