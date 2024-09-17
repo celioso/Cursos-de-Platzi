@@ -1,4 +1,4 @@
-# Cursos-de-Platzi
+# Cursos de Platzi
 
 😎👽👽👍👍 Todos los curso de Platzi que he realizado 👍👍👽👽🤮😎
 
