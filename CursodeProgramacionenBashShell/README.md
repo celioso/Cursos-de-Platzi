@@ -1765,3 +1765,71 @@ echo ${mi_arreglo_asociativo["clave1"]}  # Imprime "valor1"
 ```
 
 Los **arreglos en Bash** son una herramienta poderosa para manejar múltiples valores y realizar operaciones más eficientes en scripts.
+
+## Sentencia for loop
+
+La sentencia For es esa que se suele utilizar mucho cuando se quiere recorrer o iterar sobre una lista de valores. En Bash también soporta el For loop expression el cual tiene tres bloques, tanto de inicialización, condición e iteración.
+
+El bucle `for` en Bash es una estructura de control que te permite iterar sobre una lista de elementos o realizar acciones un número determinado de veces. Su sintaxis básica es la siguiente:
+
+### Sintaxis básica:
+
+```bash
+for variable in lista_de_elementos; do
+    # Código que se ejecutará para cada elemento
+done
+```
+
+### Ejemplos:
+
+1. **Iterar sobre una lista de valores:**
+
+```bash
+for i in 1 2 3 4 5; do
+    echo "Número: $i"
+done
+```
+
+Este bucle imprimirá los números del 1 al 5.
+
+2. **Iterar sobre archivos en un directorio:**
+
+```bash
+for file in /ruta/al/directorio/*; do
+    echo "Archivo: $file"
+done
+```
+
+Este ejemplo iterará sobre todos los archivos en el directorio especificado.
+
+3. **Usar `seq` para iterar un rango de números:**
+
+```bash
+for i in $(seq 1 10); do
+    echo "Número: $i"
+done
+```
+
+Esto imprimirá los números del 1 al 10 usando el comando `seq`.
+
+4. **Bucle `for` en una sola línea (compacto):**
+
+```bash
+for i in {1..5}; do echo "Número: $i"; done
+```
+
+Esto hace lo mismo que los ejemplos anteriores, pero en una sola línea.
+
+### Usos avanzados:
+
+- **Iterar sobre el resultado de un comando:**
+
+```bash
+for user in $(cat /etc/passwd); do
+    echo "Usuario: $user"
+done
+```
+
+Este ejemplo iterará sobre cada línea del archivo `/etc/passwd`, que contiene información sobre los usuarios del sistema.
+
+El bucle `for` en Bash es muy flexible y se utiliza comúnmente para automatizar tareas repetitivas o para procesar listas de elementos.
