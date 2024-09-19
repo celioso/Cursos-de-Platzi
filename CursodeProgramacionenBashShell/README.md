@@ -1353,3 +1353,415 @@ fi
 
 ### Resumen
 Bash ofrece múltiples maneras de validar información utilizando condicionales, expresiones regulares y comandos de Unix. Esto te permite realizar validaciones de todo tipo, desde la existencia de archivos y directorios hasta el formato de cadenas como correos o números de teléfono.
+
+## Descargar información de Internet
+
+Para descargar información de Internet utilizando Bash, puedes usar herramientas como `wget` o `curl`. A continuación te muestro cómo hacerlo:
+
+### 1. **Usando `wget`**
+`wget` es una herramienta que te permite descargar archivos desde la web.
+
+```bash
+wget URL_del_archivo
+```
+
+Por ejemplo, si quieres descargar una página web o un archivo específico:
+
+```bash
+wget https://www.ejemplo.com/archivo.txt
+```
+
+### 2. **Usando `curl`**
+`curl` también es muy utilizado para realizar solicitudes HTTP y descargar contenido.
+
+```bash
+curl -O URL_del_archivo
+```
+
+Por ejemplo:
+
+```bash
+curl -O https://www.ejemplo.com/archivo.txt
+```
+
+### 3. **Guardando el contenido en un archivo**
+Si deseas guardar el contenido de una página web en un archivo específico con `curl`:
+
+```bash
+curl https://www.ejemplo.com -o salida.html
+```
+
+Ambas herramientas son útiles dependiendo del tipo de solicitud que quieras hacer. ¿Te gustaría algún ejemplo más específico?
+
+## Sentencias If/Else
+
+En **Bash**, las sentencias **`if/else`** se usan para evaluar condiciones y ejecutar diferentes bloques de código dependiendo de si una condición es verdadera o falsa.
+
+### Sintaxis básica:
+```bash
+if [ condición ]; then
+    # Código si la condición es verdadera
+else
+    # Código si la condición es falsa
+fi
+```
+
+### Ejemplo:
+```bash
+#!/bin/bash
+
+read -p "Ingrese su edad: " edad
+
+if [ "$edad" -ge 18 ]; then
+    echo "Eres mayor de edad."
+else
+    echo "Eres menor de edad."
+fi
+```
+
+### Explicación:
+- **`if [ condición ]`**: Evalúa la condición dentro de los corchetes `[ ]`.
+- **`then`**: Si la condición es verdadera, el código que sigue a `then` se ejecuta.
+- **`else`**: Si la condición es falsa, se ejecuta el bloque de código bajo `else`.
+- **`fi`**: Finaliza la estructura `if/else`.
+
+### Ejemplo con múltiples condiciones (`elif`):
+```bash
+#!/bin/bash
+
+read -p "Ingrese su edad: " edad
+
+if [ "$edad" -ge 18 ]; then
+    echo "Eres mayor de edad."
+elif [ "$edad" -ge 13 ]; then
+    echo "Eres adolescente."
+else
+    echo "Eres niño."
+fi
+```
+En este caso, puedes evaluar múltiples condiciones usando `elif`.
+
+### Operadores comunes para condiciones:
+- **`-eq`**: igual
+- **`-ne`**: no igual
+- **`-lt`**: menor que
+- **`-le`**: menor o igual que
+- **`-gt`**: mayor que
+- **`-ge`**: mayor o igual que
+
+También se pueden usar operadores lógicos como `&&` (AND) y `||` (OR) para combinar condiciones:
+```bash
+if [ "$edad" -ge 18 ] && [ "$edad" -lt 65 ]; then
+    echo "Eres un adulto."
+fi
+```
+
+### Uso de expresiones regulares en Bash:
+En Bash también puedes usar expresiones regulares dentro de las sentencias `if` con el operador `=~`.
+
+```bash
+nameRegex='^[A-Z][a-z]{1,15}$'
+
+read -p "Ingrese su nombre: " name
+
+if [[ $name =~ $nameRegex ]]; then
+    echo "El nombre es válido."
+else
+    echo "El nombre no es válido."
+fi
+```
+
+## If Anidados
+
+En **Bash**, puedes utilizar **if anidados** para evaluar múltiples condiciones dentro de una misma estructura. Esto significa que un bloque `if` puede estar contenido dentro de otro bloque `if` para evaluar condiciones más complejas.
+
+### Sintaxis:
+```bash
+if [ condición1 ]; then
+    # Código si la condición1 es verdadera
+    if [ condición2 ]; then
+        # Código si la condición2 es verdadera
+    else
+        # Código si la condición2 es falsa
+    fi
+else
+    # Código si la condición1 es falsa
+fi
+```
+
+### Ejemplo de `if` anidado:
+```bash
+#!/bin/bash
+
+read -p "Ingrese su edad: " edad
+
+if [ "$edad" -ge 18 ]; then
+    echo "Eres mayor de edad."
+    
+    if [ "$edad" -ge 65 ]; then
+        echo "Eres un adulto mayor."
+    else
+        echo "Eres un adulto joven."
+    fi
+
+else
+    echo "Eres menor de edad."
+    
+    if [ "$edad" -le 12 ]; then
+        echo "Eres un niño."
+    else
+        echo "Eres un adolescente."
+    fi
+fi
+```
+
+### Explicación:
+1. Primero se evalúa la condición principal con el `if` externo, si la condición es verdadera, se ejecuta el bloque de código dentro de ese `if`.
+2. Dentro del primer bloque `if`, hay otro `if` que evalúa otra condición. Si esta segunda condición es verdadera, se ejecuta otro bloque de código; si no, se ejecuta el bloque `else`.
+3. El `else` del primer `if` también puede contener un `if` adicional para manejar más condiciones si la primera fue falsa.
+
+Este tipo de estructura es útil cuando necesitas comprobar múltiples criterios o condiciones de forma jerárquica. Sin embargo, es recomendable no abusar de los `if` anidados, ya que pueden hacer que los scripts sean más difíciles de leer.
+
+## Expresiones Condicionales
+
+Las expresiones condicionales ya las hemos visto en clases anteriores, pero en qué corresponde y cómo se forman las veremos en esta clase. Estás son las siguientes
+
+- Utilizada en decisión, iteración.
+- Formada por una o más condiciones
+- Condiciones con tipos de datos diferentes
+- Utiliza los operadores relacionales y condicionales
+
+Las **expresiones condicionales en Bash** permiten evaluar condiciones lógicas dentro de un script para tomar decisiones. Se utilizan principalmente en estructuras como `if`, `while` o `until`. Aquí te explico algunos tipos de expresiones condicionales comunes:
+
+### Operadores condicionales básicos:
+
+1. **Comparaciones numéricas**:
+   - `-eq`: Igual a
+   - `-ne`: No igual a
+   - `-gt`: Mayor que
+   - `-ge`: Mayor o igual que
+   - `-lt`: Menor que
+   - `-le`: Menor o igual que
+
+   Ejemplo:
+   ```bash
+   if [ "$num" -eq 5 ]; then
+       echo "El número es igual a 5."
+   fi
+   ```
+
+2. **Comparaciones de cadenas**:
+   - `==`: Igual a
+   - `!=`: No igual a
+   - `-z`: Verdadero si la cadena es vacía
+   - `-n`: Verdadero si la cadena no es vacía
+
+   Ejemplo:
+   ```bash
+   if [ "$nombre" == "Mario" ]; then
+       echo "Hola, Mario."
+   fi
+   ```
+
+3. **Condiciones sobre archivos**:
+   - `-e`: Existe
+   - `-f`: Es un archivo regular
+   - `-d`: Es un directorio
+   - `-r`: Tiene permisos de lectura
+   - `-w`: Tiene permisos de escritura
+   - `-x`: Tiene permisos de ejecución
+
+   Ejemplo:
+   ```bash
+   if [ -f "/ruta/al/archivo.txt" ]; then
+       echo "El archivo existe."
+   fi
+   ```
+
+### Operadores lógicos:
+
+1. **AND (`&&`)**:
+   Se cumple si ambas condiciones son verdaderas.
+   ```bash
+   if [ "$edad" -ge 18 ] && [ "$edad" -lt 65 ]; then
+       echo "Eres un adulto."
+   fi
+   ```
+
+2. **OR (`||`)**:
+   Se cumple si al menos una de las condiciones es verdadera.
+   ```bash
+   if [ "$edad" -lt 18 ] || [ "$edad" -ge 65 ]; then
+       echo "No estás en la edad adulta media."
+   fi
+   ```
+
+### Expresiones `if` con `else` y `elif`:
+```bash
+if [ condición ]; then
+    # Código si la condición es verdadera
+elif [ otra_condición ]; then
+    # Código si la segunda condición es verdadera
+else
+    # Código si ninguna condición es verdadera
+fi
+```
+
+### Ejemplo completo:
+```bash
+#!/bin/bash
+
+read -p "Ingrese un número: " num
+
+if [ "$num" -gt 10 ]; then
+    echo "El número es mayor que 10."
+elif [ "$num" -eq 10 ]; then
+    echo "El número es igual a 10."
+else
+    echo "El número es menor que 10."
+fi
+```
+
+En este ejemplo, según el valor de la variable `num`, se evaluarán diferentes condiciones y se ejecutará el bloque correspondiente.
+
+## Sentencias Case
+
+En la sentencia Case el objetivo principal es validar una expresión simple, puede ser un número, una cadena o un rango de valores
+
+Las **sentencias `case` en Bash** son útiles cuando tienes múltiples valores posibles para una variable y quieres ejecutar diferentes comandos según el valor. Se utilizan como una alternativa más clara y organizada que múltiples `if-elif-else`.
+
+### Sintaxis de `case` en Bash:
+```bash
+case variable in
+    patrón1)
+        # Comandos si variable coincide con patrón1
+        ;;
+    patrón2)
+        # Comandos si variable coincide con patrón2
+        ;;
+    *)
+        # Comandos si variable no coincide con ningún patrón
+        ;;
+esac
+```
+
+### Características importantes:
+- La sentencia `case` evalúa la variable comparándola con varios patrones.
+- Cada bloque de comandos termina con `;;` para separar las opciones.
+- El patrón `*` actúa como un "else", ejecutándose si ningún otro patrón coincide.
+- Se pueden usar caracteres comodín como `*`, `?`, o listas de opciones `[abc]` en los patrones.
+
+### Ejemplo básico:
+```bash
+#!/bin/bash
+
+read -p "Ingrese una opción (start, stop, restart): " opcion
+
+case $opcion in
+    start)
+        echo "Iniciando el servicio..."
+        ;;
+    stop)
+        echo "Deteniendo el servicio..."
+        ;;
+    restart)
+        echo "Reiniciando el servicio..."
+        ;;
+    *)
+        echo "Opción no válida."
+        ;;
+esac
+```
+
+### Uso de varios patrones:
+Puedes agrupar varios patrones para que ejecuten el mismo bloque de comandos.
+
+```bash
+read -p "Ingrese un día de la semana: " dia
+
+case $dia in
+    lunes|martes|miércoles|jueves|viernes)
+        echo "Es un día laboral."
+        ;;
+    sábado|domingo)
+        echo "Es fin de semana."
+        ;;
+    *)
+        echo "No es un día válido."
+        ;;
+esac
+```
+
+### Ventajas:
+- Más legible cuando tienes muchas comparaciones que hacer.
+- Evita escribir muchas sentencias `if-elif`, lo que mejora la organización del código.
+
+## Arreglos
+
+En **Bash**, los **arreglos (arrays)** permiten almacenar una colección de elementos que pueden ser accedidos individualmente usando índices. En Bash, los índices comienzan en 0.
+
+### Declaración de un arreglo:
+Se puede declarar un arreglo de dos maneras principales:
+
+1. **Forma explícita**:
+```bash
+mi_arreglo=("valor1" "valor2" "valor3")
+```
+
+2. **Asignación de valores individuales**:
+```bash
+mi_arreglo[0]="valor1"
+mi_arreglo[1]="valor2"
+mi_arreglo[2]="valor3"
+```
+
+### Acceso a los elementos de un arreglo:
+Puedes acceder a un elemento específico usando el índice:
+
+```bash
+echo ${mi_arreglo[1]}  # Imprime "valor2"
+```
+
+### Mostrar todos los elementos del arreglo:
+Para imprimir todos los elementos del arreglo, usas `*` o `@`:
+
+```bash
+echo ${mi_arreglo[@]}  # Imprime todos los elementos
+```
+
+### Obtener la longitud de un arreglo:
+Para conocer cuántos elementos tiene el arreglo:
+
+```bash
+echo ${#mi_arreglo[@]}  # Imprime la longitud del arreglo
+```
+
+### Iterar sobre un arreglo:
+Puedes recorrer el arreglo con un bucle `for`:
+
+```bash
+for elemento in "${mi_arreglo[@]}"; do
+  echo $elemento
+done
+```
+
+### Eliminar un elemento del arreglo:
+Para eliminar un elemento específico o todo el arreglo:
+
+```bash
+unset mi_arreglo[1]  # Elimina el segundo elemento
+unset mi_arreglo     # Elimina todo el arreglo
+```
+
+### Arreglos asociativos (a partir de Bash 4):
+Los arreglos asociativos permiten usar claves en lugar de índices numéricos:
+
+```bash
+declare -A mi_arreglo_asociativo
+mi_arreglo_asociativo["clave1"]="valor1"
+mi_arreglo_asociativo["clave2"]="valor2"
+
+echo ${mi_arreglo_asociativo["clave1"]}  # Imprime "valor1"
+```
+
+Los **arreglos en Bash** son una herramienta poderosa para manejar múltiples valores y realizar operaciones más eficientes en scripts.
