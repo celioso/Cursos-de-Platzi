@@ -1833,3 +1833,282 @@ done
 Este ejemplo iterará sobre cada línea del archivo `/etc/passwd`, que contiene información sobre los usuarios del sistema.
 
 El bucle `for` en Bash es muy flexible y se utiliza comúnmente para automatizar tareas repetitivas o para procesar listas de elementos.
+
+## Sentencia while loop
+
+El While itera una lista de valores basada en una condición lógica mientras esta sea verdadera.
+
+La sentencia `while` en Bash ejecuta un bloque de código de manera repetida siempre que una condición sea verdadera. Su sintaxis es la siguiente:
+
+### Sintaxis:
+
+```bash
+while [ condición ]
+do
+    # Bloque de código
+done
+```
+
+### Ejemplo básico:
+
+Este ejemplo imprimirá los números del 1 al 5:
+
+```bash
+#!/bin/bash
+
+contador=1
+
+while [ $contador -le 5 ]
+do
+    echo "Contador: $contador"
+    contador=$((contador + 1))
+done
+```
+
+### Explicación:
+1. La variable `contador` se inicializa en 1.
+2. El ciclo `while` evalúa si `contador` es menor o igual a 5.
+3. Si la condición es verdadera, se ejecuta el bloque de código.
+4. El valor de `contador` se incrementa en cada iteración.
+5. El ciclo se detiene cuando `contador` supera el valor de 5.
+
+Este tipo de ciclo es útil cuando no sabes cuántas veces se repetirá el bloque, pero sí sabes la condición que debe cumplirse para detenerlo.
+
+## Loop Anidados
+
+Los loops anidados en Bash son bucles que se ejecutan dentro de otros bucles. Esto significa que, por cada iteración del bucle externo, el bucle interno se ejecutará completamente.
+
+### Ejemplo de loops anidados en Bash:
+
+```bash
+#!/bin/bash
+
+for i in {1..3}    # Bucle externo
+do
+    echo "Bucle externo, i = $i"
+    for j in {1..2}  # Bucle interno
+    do
+        echo "  Bucle interno, j = $j"
+    done
+done
+```
+
+### Salida esperada:
+```
+Bucle externo, i = 1
+  Bucle interno, j = 1
+  Bucle interno, j = 2
+Bucle externo, i = 2
+  Bucle interno, j = 1
+  Bucle interno, j = 2
+Bucle externo, i = 3
+  Bucle interno, j = 1
+  Bucle interno, j = 2
+```
+
+### Explicación:
+- El bucle externo (`for i in {1..3}`) se ejecuta tres veces.
+- Por cada iteración del bucle externo, el bucle interno (`for j in {1..2}`) se ejecuta completamente, lo que significa que imprimirá los valores de `j` dos veces antes de que el bucle externo pase a la siguiente iteración.
+
+Este concepto es útil cuando se necesita trabajar con estructuras repetitivas o matrices multidimensionales.
+
+## Break y continue
+
+- Break se utiliza para salir de la ejecución de los ciclos for y while.
+- Continue se utiliza para continuar con la siguiente ejecución.
+
+En Bash, las sentencias **`break`** y **`continue`** se utilizan dentro de bucles para controlar el flujo de ejecución:
+
+### **`break`**:
+- **`break`** se utiliza para salir de un bucle antes de que haya terminado todas sus iteraciones.
+- Se puede usar en bucles **`for`**, **`while`** o **`until`**.
+  
+#### Ejemplo:
+```bash
+#!/bin/bash
+for i in {1..5}
+do
+    if [ $i -eq 3 ]; then
+        break  # Sale del bucle cuando i es 3
+    fi
+    echo "Número: $i"
+done
+```
+**Salida:**
+```
+Número: 1
+Número: 2
+```
+Aquí, el bucle se detiene cuando `i` es igual a 3.
+
+### **`continue`**:
+- **`continue`** se usa para omitir el resto del código en la iteración actual y pasar a la siguiente iteración del bucle.
+  
+#### Ejemplo:
+```bash
+#!/bin/bash
+for i in {1..5}
+do
+    if [ $i -eq 3 ]; then
+        continue  # Salta la iteración cuando i es 3
+    fi
+    echo "Número: $i"
+done
+```
+**Salida:**
+```
+Número: 1
+Número: 2
+Número: 4
+Número: 5
+```
+En este caso, el número 3 se salta debido al uso de **`continue`**, pero el bucle sigue con las siguientes iteraciones.
+
+### Resumen:
+- **`break`**: sale completamente del bucle.
+- **`continue`**: salta a la siguiente iteración del bucle.
+
+## Menú de Opciones
+
+```bash
+# ! /bin/bash
+# Programa que permite manejar las utilidades de Postres
+# Autor: Marco Toscano Freire - @martosfre
+
+opcion=0
+
+while :
+do
+    #Limpiar la pantalla
+    clear
+    #Desplegar el menú de opciones
+    echo "_________________________________________"
+    echo "PGUTIL - Programa de Utilidad de Postgres"
+    echo "_________________________________________"
+    echo "                MENÚ PRINCIPAL           "
+    echo "_________________________________________"
+    echo "1. Instalar Postgres"
+    echo "2. Desinstalar Postgres"
+    echo "3. Sacar un respaldo"
+    echo "4. Restar respaldo"
+    echo "5. Salir"
+
+    #Leer los datos del usuario - capturar información
+    read -n1 -p "Ingrese una opción [1-5]:" opcion
+
+    #Validar la opción ingresada
+    case $opcion in
+        1)
+            echo -e "\nInstalar postgres....."
+            sleep 3
+            ;;
+        2) 
+            echo -e "\nDesinstalar postgres...."
+            sleep 3
+            ;;
+        3) 
+            echo -e "\nSacar respaldo..."
+            sleep 3
+            ;;
+        4) 
+            echo -e "\nRestaurar respaldo..."
+            sleep 3
+            ;;
+        5)  
+            echo "Salir del Programa"
+            exit 0
+            ;;
+    esac
+done    
+```
+
+Este script en Bash tiene como propósito manejar las utilidades de Postgres (un sistema de gestión de bases de datos). A continuación te explico cada parte del código:
+
+### Explicación del código:
+
+1. **Shebang y comentario inicial:**
+   ```bash
+   #! /bin/bash
+   # Programa que permite manejar las utilidades de Postgres
+   # Autor: Marco Toscano Freire - @martosfre
+   ```
+   La primera línea `#!/bin/bash` indica que el script se ejecutará usando el intérprete de Bash. Los comentarios sirven para describir el propósito del script y el autor.
+
+2. **Inicialización de la variable `opcion`:**
+   ```bash
+   opcion=0
+   ```
+   Se inicializa la variable `opcion` con el valor `0`. Esta variable se utilizará para capturar la elección del usuario en el menú.
+
+3. **Bucle infinito (`while :`):**
+   ```bash
+   while :
+   do
+   ```
+   Este bucle permite que el menú se muestre de forma continua hasta que el usuario elija la opción de salir. El `while :` es una forma compacta de hacer un bucle infinito.
+
+4. **Limpieza de la pantalla y despliegue del menú:**
+   ```bash
+   clear
+   echo "_________________________________________"
+   echo "PGUTIL - Programa de Utilidad de Postgres"
+   echo "_________________________________________"
+   echo "                MENÚ PRINCIPAL           "
+   echo "_________________________________________"
+   echo "1. Instalar Postgres"
+   echo "2. Desinstalar Postgres"
+   echo "3. Sacar un respaldo"
+   echo "4. Restar respaldo"
+   echo "5. Salir"
+   ```
+   La función `clear` limpia la terminal antes de mostrar el menú, que se construye con varios comandos `echo`. Aquí se ofrecen cinco opciones al usuario: instalar, desinstalar, sacar un respaldo, restaurar un respaldo, o salir.
+
+5. **Captura de la opción del usuario:**
+   ```bash
+   read -n1 -p "Ingrese una opción [1-5]:" opcion
+   ```
+   El comando `read` captura una sola tecla (por eso el `-n1`) y la almacena en la variable `opcion`. El parámetro `-p` permite mostrar un mensaje de solicitud antes de leer la entrada.
+
+6. **Estructura de control `case`:**
+   ```bash
+   case $opcion in
+       1)
+           echo -e "\nInstalar postgres....."
+           sleep 3
+           ;;
+       2) 
+           echo -e "\nDesinstalar postgres...."
+           sleep 3
+           ;;
+       3) 
+           echo -e "\nSacar respaldo..."
+           sleep 3
+           ;;
+       4) 
+           echo -e "\nRestaurar respaldo..."
+           sleep 3
+           ;;
+       5)  
+           echo "Salir del Programa"
+           exit 0
+           ;;
+   esac
+   ```
+   La estructura `case` evalúa el valor de `opcion` y ejecuta la acción correspondiente:
+   - Si el usuario elige `1`, se muestra un mensaje de instalación de Postgres.
+   - Si elige `2`, se muestra un mensaje de desinstalación.
+   - Si elige `3`, se indica que se está sacando un respaldo.
+   - Si elige `4`, se restaura un respaldo.
+   - Si elige `5`, se termina el programa con el comando `exit 0`.
+
+   Después de ejecutar cada acción, el comando `sleep 3` detiene el programa durante 3 segundos, permitiendo al usuario leer el mensaje.
+
+### Consideraciones adicionales:
+- El programa es interactivo y está diseñado para manejar acciones comunes relacionadas con Postgres.
+- La implementación real de las opciones (instalar, desinstalar, etc.) está simulada con mensajes en esta versión del script. Para hacerlo funcional, podrías integrar comandos específicos de instalación o administración de Postgres (por ejemplo, usando `apt-get`, `pg_dump`, etc.).
+
+## Archivos y Directorios
+
+- Para crear directorios utilizamos el comando mkdir seguido del nombre que queremos colocar.
+
+- Para crear archivos utilizamos el comando touch seguido del nombre que queremos colocar.

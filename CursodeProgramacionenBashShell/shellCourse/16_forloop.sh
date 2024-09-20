@@ -1,5 +1,5 @@
 # ! /bin/bash
-# Programa para ejemplificar el uso de los sentencia d eiteración for
+# Programa para ejemplificar el uso de los sentencia de iteración for
 # Autor: Mario Celis - https://www.linkedin.com/in/mario-alexander-vargas-celis/
 
 arregloNumeros=(1 2 3 4 5 6)
