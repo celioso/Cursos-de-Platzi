@@ -418,3 +418,287 @@ El signo de interrogación `?` significa que el elemento anterior es **opcional*
 - **`colou?r`**: Coincide con `color` o `colour` (la `u` es opcional).
 
 Estos delimitadores son muy útiles para crear patrones flexibles cuando se trabaja con expresiones regulares.
+
+![regulares ](images/regExcheatsheet-1.png)
+
+![regulares ](images/regExcheatsheet-2.png)
+
+## Los contadores {1,4}
+
+En **expresiones regulares**, los **contadores** o **cuantificadores** como `{n,m}` permiten especificar exactamente cuántas veces un carácter o patrón debe aparecer en la coincidencia. Este tipo de cuantificador es más preciso que los delimitadores básicos como `*`, `+` y `?`.
+
+### **Formato: `{n,m}`**
+- **`n`**: El número mínimo de repeticiones.
+- **`m`**: El número máximo de repeticiones.
+
+### Variantes de uso de los contadores `{n,m}`:
+1. **`{n,m}`**: El patrón debe aparecer al menos `n` veces y como máximo `m` veces.
+2. **`{n,}`**: El patrón debe aparecer al menos `n` veces, sin límite superior.
+3. **`{n}`**: El patrón debe aparecer exactamente `n` veces.
+
+### Ejemplo 1: **`{1,4}`**
+Este cuantificador significa que el patrón debe aparecer **al menos una vez y como máximo cuatro veces**.
+
+#### Ejemplo:
+- Expresión regular: `a{1,4}`
+  - Coincide con:
+    - `a`, `aa`, `aaa`, `aaaa`
+  - No coincide con:
+    - `""` (cadena vacía), `aaaaa` (más de 4 repeticiones).
+
+### Ejemplo 2: **`{2,}`**
+Este patrón significa que el elemento debe aparecer **al menos 2 veces**, sin un límite superior.
+
+#### Ejemplo:
+- Expresión regular: `b{2,}`
+  - Coincide con:
+    - `bb`, `bbb`, `bbbb`, `bbbbb`, etc.
+  - No coincide con:
+    - `b` (menos de 2 repeticiones).
+
+### Ejemplo 3: **`{3}`**
+Este patrón requiere que el elemento aparezca **exactamente 3 veces**.
+
+#### Ejemplo:
+- Expresión regular: `c{3}`
+  - Coincide con:
+    - `ccc`
+  - No coincide con:
+    - `cc`, `cccc` (ni menos ni más de 3 repeticiones).
+
+### Aplicaciones prácticas:
+- **Validar números de teléfono**:
+  - Expresión regular: `\d{3,4}-\d{7}` podría coincidir con un número de teléfono que tiene un prefijo de 3 o 4 dígitos, seguido de un guion y luego 7 dígitos.
+  
+- **Buscar palabras con una longitud específica**:
+  - Expresión regular: `[a-zA-Z]{4,6}` coincidiría con palabras que tienen entre 4 y 6 letras.
+
+### Ejemplos combinados:
+1. **`[a-z]{2,5}`**: Coincide con entre 2 y 5 letras minúsculas consecutivas.
+   - Coincide con: `ab`, `abcd`, `abcde`
+   - No coincide con: `a` (menos de 2 letras), `abcdef` (más de 5 letras).
+
+2. **`\d{1,3}`**: Coincide con entre 1 y 3 dígitos.
+   - Coincide con: `5`, `12`, `987`
+   - No coincide con: `1234` (más de 3 dígitos).
+
+### Resumen:
+| Cuantificador | Significado                                         | Ejemplo            | Descripción               |
+|---------------|-----------------------------------------------------|--------------------|---------------------------|
+| `{n,m}`       | Al menos `n` veces y como máximo `m` veces           | `a{1,4}`           | Coincide con `a`, `aa`, `aaa`, `aaaa` |
+| `{n,}`        | Al menos `n` veces, sin límite superior              | `b{2,}`            | Coincide con `bb`, `bbb`, `bbbb`... |
+| `{n}`         | Exactamente `n` veces                                | `c{3}`             | Coincide con `ccc`, pero no con `cc` o `cccc` |
+
+Los contadores son esenciales para definir patrones con una precisión específica en las expresiones regulares, adaptándose a las necesidades de validación o búsqueda de datos más exactos.
+
+![Contadores {1,4}](images/clase-8.png)
+
+## El caso de (?) como delimitador
+
+El **`?`** en las expresiones regulares es un **cuantificador** que indica que el elemento anterior es **opcional**, es decir, puede aparecer **cero o una vez**.
+
+### Explicación de **`?` como delimitador**
+Cuando se coloca el signo de interrogación **`?`** después de un carácter, grupo o patrón, le dice a la expresión regular que ese elemento puede aparecer **una vez o ninguna**.
+
+### Ejemplos del uso de **`?`**:
+
+1. **Expresión regular: `colou?r`**
+   - Coincide con:
+     - `color`
+     - `colour`
+   - En este caso, la letra `u` es opcional. Por lo tanto, la expresión coincide con ambas versiones de la palabra: con o sin la `u`.
+
+2. **Expresión regular: `a?b`**
+   - Coincide con:
+     - `b`
+     - `ab`
+   - Aquí, la letra `a` es opcional. La expresión coincidirá tanto si `a` está presente como si no lo está.
+
+3. **Expresión regular: `https?://`**
+   - Coincide con:
+     - `http://`
+     - `https://`
+   - El `?` indica que la `s` es opcional, por lo que coincide con ambas formas de un enlace web, con o sin el prefijo `https`.
+
+### **¿Cómo funciona el delimitador `?`?**
+- **Con caracteres individuales**: 
+   - **`a?`**: Coincide con **`a`** o la cadena vacía.
+   
+- **Con grupos de caracteres (entre paréntesis)**:
+   - **`(abc)?`**: Coincide con **`abc`** o la cadena vacía (es decir, todo el grupo es opcional).
+   
+- **En combinación con otros metacaracteres**: 
+   - En combinación con otros cuantificadores como `*` o `+`, el `?` puede alterar el comportamiento de estos, como en el caso del "modo no codicioso" (lazy mode).
+
+### **Uso avanzado: Modo no codicioso (`?`)**
+Además de su uso como cuantificador, el **`?`** puede usarse para modificar el comportamiento de otros cuantificadores (`*`, `+`, `{n,m}`) para que sean **no codiciosos**. Esto significa que intentarán coincidir con la menor cantidad de caracteres posible.
+
+#### Ejemplo:
+- **Expresión regular codiciosa: `a.*b`**
+  - Coincide con la mayor cantidad de caracteres posible entre `a` y `b`.
+  
+- **Expresión regular no codiciosa: `a.*?b`**
+  - Coincide con la menor cantidad de caracteres entre `a` y `b`.
+
+#### Ejemplo detallado:
+Dado el texto: `"a123b456b"`
+- **Expresión codiciosa (`a.*b`)** coincidirá con: `a123b456b`
+- **Expresión no codiciosa (`a.*?b`)** coincidirá con: `a123b` (la primera coincidencia mínima).
+
+### Resumen:
+- **`?`** como delimitador indica **cero o una vez**.
+- Puede aplicarse a caracteres individuales o grupos de caracteres.
+- También se usa para hacer patrones **no codiciosos** cuando se combina con otros cuantificadores como `*` o `+`.
+
+### Ejemplos comunes:
+1. **`colou?r`**: La `u` es opcional, coincide con `color` o `colour`.
+2. **`https?://`**: La `s` es opcional, coincide con `http://` o `https://`.
+3. **`a?b`**: La `a` es opcional, coincide con `b` o `ab`.
+
+## Not (^), su uso y sus peligros
+
+El símbolo **`^`** en las **expresiones regulares** tiene varios usos, dependiendo del contexto en el que se emplee. Uno de sus principales usos es como **operador de negación** o **"not"** cuando se utiliza dentro de **clases de caracteres** (conjuntos de caracteres definidos entre corchetes `[]`). Este uso puede ser muy útil, pero también puede ser peligroso si no se maneja con cuidado, ya que puede provocar coincidencias inesperadas o no deseadas.
+
+### **Uso de `^` como "not" en clases de caracteres**
+
+Cuando el **`^`** se coloca **al principio** de una **clase de caracteres** (después del corchete de apertura `[`), indica que se debe hacer una negación de los caracteres que aparecen después de él, es decir, busca **cualquier carácter que no esté en la clase de caracteres**.
+
+#### Ejemplo:
+- **Expresión regular**: `[^a-z]`
+  - Coincide con cualquier carácter **que no sea una letra minúscula**.
+  - Coincide con: `1`, `@`, `A`, `#`, etc.
+  - No coincide con: `a`, `b`, `z`, etc.
+
+#### Ejemplo 2:
+- **Expresión regular**: `[^0-9]`
+  - Coincide con cualquier carácter **que no sea un dígito**.
+  - Coincide con: `a`, `B`, `!`, `#`, etc.
+  - No coincide con: `0`, `1`, `9`, etc.
+
+### **Uso de `^` al inicio de la expresión regular**
+Cuando el **`^`** se usa **fuera de una clase de caracteres** (es decir, fuera de los corchetes `[]`), **al inicio de la expresión regular**, tiene un significado completamente diferente. Se usa para indicar que la coincidencia debe ocurrir al **inicio de una línea o cadena**.
+
+#### Ejemplo:
+- **Expresión regular**: `^abc`
+  - Coincide con la cadena `abc` **solo si está al principio** de la línea o cadena.
+  - Coincide con: `abc123`, `abc...`
+  - No coincide con: `123abc`, `aabc`.
+
+### **Peligros del uso de `^` como "not"**
+El uso del **`^`** para negación puede generar problemas si no se entiende bien su contexto o si se utiliza de manera imprecisa. Aquí algunos **peligros comunes**:
+
+1. **Malinterpretación del patrón**:
+   Si el **`^`** no está en la posición correcta dentro de una clase de caracteres, su significado puede cambiar y no realizar la negación esperada. 
+
+   - **Ejemplo incorrecto**: `[a-z^]`  
+     Aquí, el `^` es solo un carácter normal en la clase de caracteres, y la expresión coincidirá con cualquier letra minúscula o con el símbolo `^`, pero **no hará ninguna negación**.
+
+2. **Negación involuntaria de caracteres esperados**:
+   Si se define mal una clase de caracteres o se omiten algunos elementos clave, es posible que la negación coincida con más caracteres de los que se pretendía.
+
+   - **Ejemplo**: `[^a-zA-Z0-9]`
+     Esta expresión coincide con cualquier carácter que **no sea una letra o un número**. Esto incluye espacios, signos de puntuación y caracteres especiales, lo que puede no ser deseado si solo se quiere evitar letras y números.
+
+3. **Coincidencias no deseadas**:
+   - Si se usa **en combinaciones más complejas**, como en contraseñas o validación de datos, el uso incorrecto de `[^...]` puede provocar que se acepten caracteres que deberían haber sido rechazados o viceversa.
+
+4. **Confusión en la lectura**:
+   Cuando se mezclan varios patrones, la colocación del **`^`** puede volverse confusa para otros desarrolladores o incluso para uno mismo al revisar el código. La **legibilidad** es clave, y no siempre es obvio que `[^...]` es una negación, especialmente si la clase de caracteres es larga.
+
+### **Consejos para evitar problemas**:
+1. **Colocación correcta del `^`**: Asegúrate de que el `^` esté justo después del corchete de apertura `[` si lo estás usando para negar una clase de caracteres. Cualquier otro lugar lo interpretará como un carácter literal.
+
+2. **Revisar el conjunto de caracteres negados**: Asegúrate de que la clase de caracteres negados esté claramente definida para evitar negar accidentalmente caracteres que deberían ser válidos.
+
+3. **Combinación con otros patrones**: Usa paréntesis para agrupar expresiones complejas cuando sea necesario. Esto puede ayudarte a asegurarte de que el **`^`** solo aplique a la parte del patrón que realmente deseas negar.
+
+### **Ejemplo peligroso mal usado**:
+- **Expresión regular incorrecta**: `[a-z^0-9]`
+  - Aquí, la `^` no está al principio, por lo que en lugar de negar letras y números, coincidirá con letras minúsculas, números, o el carácter `^`, lo cual probablemente no sea lo que se espera.
+
+### Resumen:
+- **`^` en una clase de caracteres (`[^...]`)**: Niega el conjunto de caracteres dentro de los corchetes. Coincide con cualquier carácter que **no** esté en el conjunto.
+- **`^` al inicio de la expresión regular**: Coincide con el inicio de una línea o cadena.
+- **Peligros**: Colocación incorrecta o ambigua puede provocar coincidencias inesperadas o patrones mal definidos, afectando la precisión de la búsqueda o validación.
+
+Es importante usar el **`^`** con precaución y claridad, tanto para evitar malentendidos como para asegurar que el patrón funcione según lo esperado.
+
+## Principio (^) y final de linea ($)
+
+En las **expresiones regulares**, los símbolos **`^`** y **`$`** son usados como **anclas** para marcar el **principio** y el **final de una línea** o cadena de texto, respectivamente. Estos delimitadores son clave para controlar dónde debe ocurrir la coincidencia dentro del texto.
+
+### **Uso del `^` (principio de línea o cadena)**
+El **`^`** indica que la coincidencia debe comenzar en el **inicio de una línea o cadena**. Solo se produce una coincidencia si el patrón aparece desde el primer carácter.
+
+#### Ejemplo:
+- **Expresión regular**: `^abc`
+  - Coincide con la secuencia `abc` solo si está al **principio de la línea**.
+  - Coincidirá con:
+    - `"abc123"`
+    - `"abc..."`
+  - No coincidirá con:
+    - `"123abc"`
+    - `"xyzabc"`
+
+#### Ejemplo en varias líneas:
+Si se tiene un texto con saltos de línea:
+```
+abc
+123abc
+```
+- La expresión **`^abc`** solo coincide con la primera línea, donde `abc` está al principio.
+
+### **Uso del `$` (final de línea o cadena)**
+El **`$`** indica que la coincidencia debe estar en el **final de una línea o cadena**. Solo se produce una coincidencia si el patrón aparece justo antes del final de la línea.
+
+#### Ejemplo:
+- **Expresión regular**: `xyz$`
+  - Coincide con la secuencia `xyz` solo si está al **final de la línea**.
+  - Coincidirá con:
+    - `"123xyz"`
+    - `"abcxyz"`
+  - No coincidirá con:
+    - `"xyz123"`
+    - `"xyzabc"`
+
+#### Ejemplo en varias líneas:
+Dado el texto:
+```
+xyz
+abcxyz
+xyz123
+```
+- La expresión **`xyz$`** solo coincidirá con la primera y segunda línea, donde `xyz` está al final.
+
+### **Combinación de `^` y `$` (patrón que coincide con toda la línea o cadena)**
+Cuando se usan juntos, **`^`** y **`$`** pueden definir un patrón que **debe coincidir exactamente con toda la línea o cadena**, sin importar lo que haya antes o después.
+
+#### Ejemplo:
+- **Expresión regular**: `^abc$`
+  - Coincide solo si la línea contiene exactamente el texto `abc`.
+  - Coincidirá con:
+    - `"abc"`
+  - No coincidirá con:
+    - `"123abc"`
+    - `"abc123"`
+    - `"abc xyz"`
+
+#### Uso práctico:
+- Para asegurarse de que una cadena cumple exactamente con un formato, se puede usar **`^`** y **`$`** para que todo el texto coincida con el patrón y no solo una parte.
+
+### **Resumen de los usos**:
+1. **`^`**: Coincide con el **principio de la línea o cadena**.
+   - Ejemplo: **`^abc`** solo coincide con `"abc123"` pero no con `"123abc"`.
+2. **`$`**: Coincide con el **final de la línea o cadena**.
+   - Ejemplo: **`xyz$`** solo coincide con `"abcxyz"` pero no con `"xyzabc"`.
+3. **`^patrón$`**: Coincide con una línea o cadena que **exactamente** coincida con el patrón completo.
+   - Ejemplo: **`^abc$`** solo coincide con `"abc"`, sin ningún otro carácter antes o después.
+
+### **Casos de uso**:
+- **Validación de formatos**:
+   - Para asegurarse de que una entrada cumpla con un formato específico, como una dirección de correo electrónico o un número de teléfono.
+   
+- **Coincidencias estrictas**:
+   - Para evitar coincidencias parciales en grandes cadenas de texto donde solo se desea capturar información precisa.
+
+Ambos símbolos son extremadamente útiles para realizar coincidencias precisas y controladas en archivos de texto, entradas de usuario y más.
