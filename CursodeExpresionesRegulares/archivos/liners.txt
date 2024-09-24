@@ -16,6 +16,8 @@ Rodrigo JimÃ©nez GutiÃ©rrez
 56-58-11-12
 302-345-9876
 56.58.11.12.54
+552560e123
++521565811
 56s58d11d12y54
 65 09 87
 678,875,986,12
@@ -24,6 +26,7 @@ dominio.com
 [LOG ENTRY] [ERROR] The system is unstable
 [LOG ENTRY] [WARN] The system may be down
 [LOG ENTRY] [LOG] Everything is OK
+[LOG ENTRY] [LOG] [user:@celismx] Logged in
 [LOG ENTRY] [LOG] [user:@beco] Logged in
 [LOG ENTRY] [LOG] [user:@beco] Clicked here
 [LOG ENTRY] [LOG] [user:@beco] Rated the app

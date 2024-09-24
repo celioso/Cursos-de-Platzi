@@ -702,3 +702,312 @@ Cuando se usan juntos, **`^`** y **`$`** pueden definir un patrón que **debe co
    - Para evitar coincidencias parciales en grandes cadenas de texto donde solo se desea capturar información precisa.
 
 Ambos símbolos son extremadamente útiles para realizar coincidencias precisas y controladas en archivos de texto, entradas de usuario y más.
+
+## Logs
+
+En el contexto de **expresiones regulares (regex)**, los **logs** pueden ser analizados y filtrados eficientemente para extraer patrones específicos, identificar eventos o detectar errores recurrentes en grandes cantidades de datos. Las expresiones regulares permiten buscar, filtrar y extraer partes relevantes de los registros de log, lo que facilita la depuración y el análisis de datos.
+
+### **Aplicaciones de Expresiones Regulares en Logs**
+1. **Buscar patrones específicos**:
+   - Filtrar líneas que contienen errores, advertencias, o eventos importantes.
+   
+2. **Extraer información relevante**:
+   - Obtener fechas, direcciones IP, códigos de estado, usuarios, entre otros.
+
+3. **Agrupación de eventos**:
+   - Clasificar eventos por su severidad o tipo.
+
+### **Ejemplos comunes de uso de Expresiones Regulares en Logs**
+
+#### 1. **Buscar registros de errores (`ERROR`)**
+Puedes utilizar una expresión regular para buscar cualquier línea que contenga la palabra **ERROR** en un archivo de log.
+
+- **Regex**: `.*ERROR.*`
+- Esto buscará cualquier línea que tenga la palabra **ERROR** en cualquier parte de la línea.
+  
+  Ejemplo:
+  ```
+  Sep 22 12:34:56 hostname systemd[1]: ERROR Failed to start Apache2 Web Server.
+  ```
+
+#### 2. **Filtrar por direcciones IP**
+Si quieres extraer direcciones IP de los logs, puedes usar la siguiente expresión regular:
+
+- **Regex**: `\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b`
+- Esto buscará direcciones IP en formato IPv4.
+  
+  Ejemplo:
+  ```
+  192.168.1.1 - - [22/Sep/2024:12:34:56] "GET / HTTP/1.1" 200 2326
+  ```
+
+  La regex coincidirá con **`192.168.1.1`**.
+
+#### 3. **Extraer fechas en formato estándar**
+En muchos logs, las fechas están en el formato `dd/mm/yyyy` o similar. Para extraer fechas en ese formato:
+
+- **Regex**: `\b\d{2}/\d{2}/\d{4}\b`
+- Esto encontrará fechas como `22/09/2024`.
+  
+  Ejemplo:
+  ```
+  192.168.1.1 - - [22/09/2024:12:34:56] "GET / HTTP/1.1" 200 2326
+  ```
+
+  La regex coincidirá con **`22/09/2024`**.
+
+#### 4. **Extraer códigos de estado HTTP**
+En logs de servidores web como **Apache** o **Nginx**, puedes extraer los códigos de estado HTTP (como 200, 404, 500, etc.) con una expresión regular.
+
+- **Regex**: `"\s(\d{3})\s"`
+- Esto buscará números de tres dígitos, que generalmente corresponden a los códigos de estado HTTP.
+  
+  Ejemplo:
+  ```
+  192.168.1.1 - - [22/Sep/2024:12:34:56] "GET / HTTP/1.1" 200 2326
+  ```
+
+  La regex coincidirá con **`200`**, el código de estado.
+
+#### 5. **Filtrar logs por una hora específica**
+Si tienes logs con marcas de tiempo y quieres filtrar eventos ocurridos en una hora específica (por ejemplo, entre 14:00 y 14:59), puedes usar:
+
+- **Regex**: `\b14:\d{2}:\d{2}\b`
+- Esto buscará cualquier marca de tiempo que comience con **14:xx:xx**.
+  
+  Ejemplo:
+  ```
+  Sep 22 14:15:45 hostname sshd[12345]: Accepted password for user
+  ```
+
+  La regex coincidirá con **`14:15:45`**.
+
+### **Combinaciones complejas de Expresiones Regulares en Logs**
+
+#### 1. **Buscar registros con errores y extraer detalles de IP y timestamp**
+Supongamos que queremos buscar líneas que contienen la palabra **ERROR**, extraer la dirección IP, y también la marca de tiempo asociada.
+
+- **Regex**: `(\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b).*ERROR.*(\b\d{2}/\d{2}/\d{4}\b)`
+  
+  Esta expresión regular busca:
+  1. Una dirección IP.
+  2. La palabra **ERROR**.
+  3. Una fecha en formato **dd/mm/yyyy**.
+  
+  Ejemplo:
+  ```
+  192.168.1.1 - - [22/09/2024:12:34:56] "ERROR Failed to connect to database"
+  ```
+
+  Coincidirá con **`192.168.1.1`** y **`22/09/2024`**.
+
+#### 2. **Validar direcciones IPv6**
+Si necesitas trabajar con IPv6, la expresión regular es más compleja:
+
+- **Regex**: `\b(?:[0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}\b`
+  
+  Esto buscará direcciones IP en formato IPv6.
+  
+  Ejemplo:
+  ```
+  fe80::1ff:fe23:4567:890a - - [22/Sep/2024:12:34:56] "GET / HTTP/1.1" 200 2326
+  ```
+
+  Coincidirá con **`fe80::1ff:fe23:4567:890a`**.
+
+### **Delimitadores y operadores útiles en logs con regex**
+
+1. **`.*`**: Coincide con cualquier cantidad de caracteres (incluso ninguno).
+   - Ejemplo: `.*ERROR.*` busca líneas que contengan la palabra ERROR en cualquier parte.
+   
+2. **`|`**: Operador OR.
+   - Ejemplo: `ERROR|WARNING` busca líneas que contengan **ERROR** o **WARNING**.
+   
+3. **`^` y `$`**: Coinciden con el inicio y el final de una línea.
+   - Ejemplo: `^ERROR` coincide con líneas que comienzan con **ERROR**.
+
+4. **`[0-9]`**: Clase de caracteres que coincide con cualquier dígito del 0 al 9.
+   - Ejemplo: `\d{3}` coincide con cualquier secuencia de tres dígitos, útil para códigos de estado HTTP.
+
+### **Beneficios de usar expresiones regulares en logs**
+- **Automatización**: Permiten extraer información relevante automáticamente en sistemas grandes.
+- **Precisión**: Filtran eventos específicos sin tener que revisar manualmente cada línea.
+- **Flexibilidad**: Pueden ajustarse a distintos formatos de logs, ya que son agnósticas al formato del texto.
+
+### **Herramientas que usan regex para análisis de logs**
+1. **grep**:
+   - Comando de Unix/Linux para buscar patrones en archivos.
+   - Ejemplo:
+     ```
+     grep -E "ERROR.*192\.168\.\d{1,3}\.\d{1,3}" /var/log/syslog
+     ```
+
+2. **Logwatch**:
+   - Herramienta para generar informes a partir de registros de log, donde se pueden aplicar filtros con regex.
+
+3. **Splunk y ELK**:
+   - Herramientas de análisis que permiten usar regex para extraer datos de registros en tiempo real.
+
+En resumen, las **expresiones regulares** son una herramienta poderosa para analizar logs y extraer información crítica de manera automatizada y precisa.
+
+## Teléfono
+
+Las **expresiones regulares** son extremadamente útiles para validar, formatear o extraer números de teléfono en diversos formatos. Dependiendo del país o región, los números de teléfono pueden tener distintas longitudes y formatos. A continuación, te explico cómo las expresiones regulares pueden aplicarse a la gestión de números de teléfono.
+
+### **Validación de números de teléfono con expresiones regulares**
+
+#### 1. **Formato internacional (E.164)**
+El formato E.164 es el estándar internacional para números de teléfono y sigue el patrón de un código de país seguido por el número de abonado, sin espacios ni caracteres especiales.
+
+- **Ejemplo de número**: `+12345678901`
+- **Regex**: `^\+?[1-9]\d{1,14}$`
+  - `^`: Comienza la expresión.
+  - `\+?`: Coincide con el símbolo "+" opcional.
+  - `[1-9]`: El primer dígito debe ser un número del 1 al 9.
+  - `\d{1,14}`: Acepta entre 1 y 14 dígitos después del código del país.
+
+#### 2. **Formato estándar con separadores**
+Muchos números de teléfono se escriben con separadores, como espacios, guiones o puntos.
+
+- **Ejemplo de número**: `123-456-7890` o `123.456.7890`
+- **Regex**: `^\(?\d{3}\)?[-. ]?\d{3}[-. ]?\d{4}$`
+  - `\(?\d{3}\)?`: Acepta un código de área opcional entre paréntesis.
+  - `[-. ]?`: Acepta un guion, punto o espacio opcional como separador.
+  - `\d{3}`: Acepta los siguientes tres dígitos.
+  - `\d{4}`: Acepta los últimos cuatro dígitos.
+
+#### 3. **Formato con código de país**
+Si se espera que el número incluya un código de país, se puede agregar el símbolo "+" y permitir espacios o guiones entre los números.
+
+- **Ejemplo de número**: `+1-234-567-8901`
+- **Regex**: `^\+?[0-9]{1,4}?[-. ]?\(?[0-9]{1,4}?\)?[-. ]?[0-9]{1,4}[-. ]?[0-9]{1,9}$`
+  - `\+?[0-9]{1,4}?`: Código de país opcional con hasta 4 dígitos.
+  - `[-. ]?`: Separador opcional (guion, punto o espacio).
+  - `\(?[0-9]{1,4}?\)?`: Código de área opcional, entre paréntesis o sin ellos.
+  - `\d{1,9}`: El número de teléfono en sí, que puede variar en longitud.
+
+#### 4. **Números de teléfono de diferentes países**
+Dependiendo del país, el formato de los números de teléfono puede variar. Aquí algunos ejemplos:
+
+- **Estados Unidos** (10 dígitos, con o sin guiones):
+  - **Regex**: `^\(?\d{3}\)?[-. ]?\d{3}[-. ]?\d{4}$`
+
+- **Reino Unido** (empiezan con 0, 10 o 11 dígitos):
+  - **Regex**: `^(\+44\s?7\d{3}|\(?07\d{3}\)?)\s?\d{3}\s?\d{3}$`
+
+- **México** (código de país y 10 dígitos):
+  - **Regex**: `^\+?52\s?(\d{2,3})?[-. ]?\d{3}[-. ]?\d{4}$`
+
+### **Aplicaciones en sistemas de validación de números de teléfono**
+Las expresiones regulares se usan ampliamente en:
+
+1. **Formularios web**: Para validar que el usuario introduzca un número de teléfono en el formato adecuado.
+2. **Aplicaciones móviles**: Asegurar que los números de contacto se ingresen correctamente antes de almacenar o realizar llamadas.
+3. **Bases de datos**: Verificar o formatear números telefónicos antes de guardarlos.
+4. **Sistemas CRM**: Estandarizar el formato de los números de teléfono.
+
+### **Uso avanzado: Normalización de números de teléfono**
+Cuando los números de teléfono se almacenan en una base de datos, es común normalizarlos en un formato específico para simplificar el procesamiento posterior. Las expresiones regulares pueden ser útiles para:
+
+- **Eliminar caracteres no deseados**: Como espacios, guiones o paréntesis.
+- **Agregar el código de país** si está ausente.
+  
+**Ejemplo de normalización**:
+Transformar números de teléfono con diferentes formatos (por ejemplo, `123-456-7890`, `(123) 456 7890`, `+1 123 456 7890`) en un formato unificado: `+11234567890`.
+
+Para eliminar todos los separadores:
+- **Regex**: `[^0-9+]` 
+- Esto elimina cualquier carácter que no sea un número o el signo `+`.
+
+En resumen, las **expresiones regulares** son esenciales para validar, extraer y normalizar números de teléfono en diversas aplicaciones y sistemas, ayudando a garantizar consistencia y precisión.
+
+## URLs
+
+Las **expresiones regulares** son extremadamente útiles para trabajar con **URLs** (Uniform Resource Locators) en tareas como la validación, extracción o manipulación de enlaces web. A continuación, te explico cómo se aplican las expresiones regulares para manejar URLs.
+
+### **Validación de URLs con expresiones regulares**
+
+Una URL válida generalmente tiene una estructura bien definida que incluye el protocolo (http, https, ftp), el dominio, el puerto opcional y los posibles subdirectorios, parámetros o fragmentos. Aunque las URL pueden ser complejas, una expresión regular puede ayudar a validar las más comunes.
+
+#### 1. **Estructura básica de una URL**
+La estructura típica de una URL es:
+
+```
+protocolo://dominio.extensión/ruta?parámetros#fragmento
+```
+
+- **Protocolo**: `http`, `https`, `ftp`
+- **Dominio**: `www.example.com`
+- **Ruta**: `/folder/page`
+- **Parámetros**: `?key1=value1&key2=value2`
+- **Fragmento**: `#section`
+
+#### 2. **Expresión regular básica para validar URLs**
+Una expresión regular que valide una URL puede ser:
+
+```regex
+^https?:\/\/([a-zA-Z0-9\-]+\.)+[a-zA-Z]{2,}(\/[a-zA-Z0-9#]+\/?)*$
+```
+
+- `^https?`: El protocolo debe comenzar con "http" o "https".
+- `:\/\/`: Doble barra después del protocolo.
+- `([a-zA-Z0-9\-]+\.)+`: Un dominio con caracteres alfanuméricos y guiones, seguido por un punto.
+- `[a-zA-Z]{2,}`: La extensión del dominio, con al menos 2 caracteres (ej. ".com", ".org").
+- `(\/[a-zA-Z0-9#]+\/?)*`: Subdirectorios opcionales, seguidos por "/".
+- `$`: El final de la cadena.
+
+#### 3. **Expresión regular avanzada para URLs**
+Una expresión regular más robusta que incluye subdominios, parámetros y fragmentos:
+
+```regex
+^(https?|ftp):\/\/([a-zA-Z0-9\.-]+)\.([a-zA-Z]{2,6})(\/[a-zA-Z0-9\&%_\./-~-]*)?(\?[a-zA-Z0-9\&%_\./-~-]*)?(#[a-zA-Z0-9\&%_\./-~-]*)?$
+```
+
+- **Protocolo**: `^(https?|ftp)` permite los protocolos `http`, `https` y `ftp`.
+- **Dominio**: `([a-zA-Z0-9\.-]+)` permite dominios con letras, números, puntos y guiones.
+- **Extensión**: `\.([a-zA-Z]{2,6})` permite extensiones de dominio de 2 a 6 caracteres (ej., `.com`, `.museum`).
+- **Ruta opcional**: `(\/[a-zA-Z0-9\&%_\./-~-]*)?` acepta una ruta que puede incluir directorios y archivos.
+- **Parámetros opcionales**: `(\?[a-zA-Z0-9\&%_\./-~-]*)?` acepta parámetros de la forma `?key=value`.
+- **Fragmentos opcionales**: `(\#[a-zA-Z0-9\&%_\./-~-]*)?` permite fragmentos de la forma `#section`.
+
+#### 4. **Expresiones regulares simplificadas por secciones**
+
+- **Protocolo**: `^(https?|ftp)://`
+  - Solo permite `http`, `https` o `ftp`.
+
+- **Dominio**: `([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,6}`
+  - Permite dominios como `www.example.com`, `sub.example.org`.
+
+- **Ruta**: `(\/[a-zA-Z0-9\-._~!$&'()*+,;=:@%]*)*`
+  - Permite rutas que incluyan una combinación de caracteres y símbolos.
+
+- **Parámetros**: `(\?[a-zA-Z0-9\-._~!$&'()*+,;=:@%]*)?`
+  - Incluye parámetros como `?id=123`.
+
+- **Fragmentos**: `(\#[a-zA-Z0-9\-._~!$&'()*+,;=:@%]*)?`
+  - Para fragmentos como `#section`.
+
+### **Aplicaciones comunes en sistemas**
+
+1. **Validación de formularios**: Para asegurarse de que un campo de URL sea válido antes de enviar un formulario web.
+2. **Extracción de enlaces**: En documentos o páginas HTML para extraer todas las URLs mediante scrapers.
+3. **Normalización de URLs**: Asegurarse de que las URLs sigan un formato estándar antes de ser almacenadas en bases de datos o utilizadas en sistemas de análisis.
+4. **Filtrado de contenido**: En sistemas de seguridad para bloquear o permitir ciertas URLs basadas en patrones específicos.
+
+### **Uso avanzado: Captura de componentes específicos**
+
+Las expresiones regulares pueden usarse para **extraer partes específicas de una URL**, como el protocolo, el dominio, la ruta o los parámetros:
+
+- **Capturar protocolo**: `^(https?|ftp)`
+- **Capturar dominio**: `([a-zA-Z0-9-]+\.[a-zA-Z]{2,6})`
+- **Capturar ruta**: `\/[a-zA-Z0-9\-._~!$&'()*+,;=:@%]*`
+- **Capturar parámetros**: `\?[a-zA-Z0-9\-._~!$&'()*+,;=:@%]*`
+
+### **Ejemplos de uso**
+- **Validar URLs en un formulario web** para evitar que los usuarios ingresen enlaces incorrectos.
+- **Extraer todos los enlaces de una página web** con una expresión regular en un script de scraping.
+- **Filtrar URLs maliciosas** o prohibidas en un sistema de seguridad.
+
+En resumen, las expresiones regulares son una herramienta poderosa para manejar URLs en múltiples aplicaciones, facilitando la validación, extracción y procesamiento de enlaces en una amplia gama de contextos.
+
+**Ejemplo**: `https?:\/\/[\w\-\.]*\.\w{2,5}\/?\S*`
