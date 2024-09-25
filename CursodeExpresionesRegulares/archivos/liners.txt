@@ -12,6 +12,11 @@ url: http://itam.mx/test
 http://instagram.com/p/blablablah
 csv1,csv2,csv3,csv4,csv5
 Rodrigo JimÃ©nez GutiÃ©rrez
+Ruben
+Juan Pablo Perez Restrepo
+Marcela
+Belen
+Camila
 5556581111
 56-58-11-12
 302-345-9876
@@ -21,8 +26,21 @@ Rodrigo JimÃ©nez GutiÃ©rrez
 56s58d11d12y54
 65 09 87
 678,875,986,12
+-99.205646,
+19.429707,2275.10
+-99.205581,19.429652,2275.10
+-99.204654,19.428952,2275.58
+
+-99 12' 34.08"W, 19 34' 56.98"N
+-34 54' 32.00"E, -3 21' 67.00"S
+-34 54' 32.00"E, -3 21' 67.00"E
+
+modelo.jugó.separado
+medido.perforadora.dormimos
+
 esto.es.un.mail+gmail@mail.com
-dominio.com
+no_se_deinternet3@hotmail.com
+un_45o@dominio.com
 [LOG ENTRY] [ERROR] The system is unstable
 [LOG ENTRY] [WARN] The system may be down
 [LOG ENTRY] [LOG] Everything is OK
@@ -31,3 +49,5 @@ dominio.com
 [LOG ENTRY] [LOG] [user:@beco] Clicked here
 [LOG ENTRY] [LOG] [user:@beco] Rated the app
 [LOG ENTRY] [LOG] [user:@beco] Logged out
+
+http://b3co.co/?s=fotografia&mode=search&module=blog

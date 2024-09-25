@@ -1011,3 +1011,466 @@ Las expresiones regulares pueden usarse para **extraer partes específicas de un
 En resumen, las expresiones regulares son una herramienta poderosa para manejar URLs en múltiples aplicaciones, facilitando la validación, extracción y procesamiento de enlaces en una amplia gama de contextos.
 
 **Ejemplo**: `https?:\/\/[\w\-\.]*\.\w{2,5}\/?\S*`
+
+## Mails
+
+Quedamos en que ya podemos definir URLs, y dentro de las URLs están los dominios. No es infalible, pero es muy útil para detectar la gran mayoría de errores que cometen los usuarios al escribir sus emails.
+
+Las **expresiones regulares** (regex) son extremadamente útiles para validar, extraer o manipular direcciones de correo electrónico (**mails**). En el caso de los correos electrónicos, el formato es bastante estándar, pero pueden existir variaciones debido a diferentes reglas permitidas por los proveedores de correos. A continuación, te explico cómo usar expresiones regulares para manejar correos electrónicos.
+
+### **Estructura básica de un correo electrónico**
+Una dirección de correo electrónico tiene la siguiente estructura:
+
+```
+usuario@dominio.extension
+```
+
+- **Usuario**: Puede contener letras, números, puntos (`.`), guiones (`-`), guiones bajos (`_`), entre otros caracteres.
+- **Dominio**: Generalmente contiene letras, números y puntos, separados por subdominios opcionales.
+- **Extensión**: Por lo general, es una cadena de 2 a 6 caracteres (por ejemplo, `.com`, `.org`, `.info`).
+
+### **Expresión regular básica para validar un correo electrónico**
+Un ejemplo simple de regex que valida una dirección de correo electrónico:
+
+```regex
+^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$
+```
+
+- `^`: Indica el inicio de la cadena.
+- `[a-zA-Z0-9._%+-]+`: Captura una secuencia de letras, números, puntos (`.`), guiones bajos (`_`), porcentajes (`%`), más (`+`) o guiones (`-`) en la parte del usuario.
+- `@`: El símbolo `@` que separa el nombre de usuario del dominio.
+- `[a-zA-Z0-9.-]+`: Captura el dominio que puede contener letras, números, puntos (`.`) o guiones (`-`).
+- `\.`: Un punto que separa el dominio de la extensión.
+- `[a-zA-Z]{2,6}`: La extensión del dominio, que suele ser de 2 a 6 caracteres (como `.com`, `.edu`, `.gov`).
+- `$`: Indica el final de la cadena.
+
+### **Expresión regular avanzada para correos electrónicos**
+Una expresión regular más completa que maneja casos más complicados podría ser:
+
+```regex
+^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$
+```
+
+Esta versión maneja:
+- Nombres de usuario con una amplia gama de caracteres permitidos.
+- Dominios que pueden tener varios niveles, como `sub.dominio.com`.
+- Extensiones de dominio que pueden tener 2 a 6 caracteres.
+
+### **Explicación detallada del regex**
+1. **Parte del usuario (`usuario`)**:
+   ```regex
+   [a-zA-Z0-9._%+-]+
+   ```
+   - Acepta letras (mayúsculas y minúsculas), números, puntos (`.`), guiones bajos (`_`), porcentajes (`%`), más (`+`) y guiones (`-`).
+   - El signo `+` asegura que haya al menos un carácter.
+
+2. **El símbolo `@`**:
+   - Se captura de forma literal con `@`.
+
+3. **Parte del dominio (`dominio.extension`)**:
+   ```regex
+   [a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}
+   ```
+   - El dominio puede contener letras, números, puntos y guiones. La expresión `\.` captura el punto antes de la extensión.
+   - La extensión debe tener entre 2 y 6 caracteres.
+
+### **Ejemplos de correos electrónicos válidos**
+- `usuario@dominio.com`
+- `user.name@sub.dominio.org`
+- `correo123@ejemplo.co`
+- `nombre-apellido@empresa.edu`
+
+### **Ejemplos de correos electrónicos inválidos**
+- `usuario@dominio` (sin extensión).
+- `usuario@@dominio.com` (dos signos `@`).
+- `usuario@dominio..com` (puntos dobles en el dominio).
+
+### **Aplicaciones comunes de expresiones regulares para correos**
+1. **Validación de formularios**: Se utiliza para asegurarse de que el campo de correo electrónico sea válido antes de enviar un formulario web.
+2. **Filtrado de correos electrónicos**: En sistemas de correo o bases de datos, para extraer o listar direcciones de correo válidas.
+3. **Extracción de correos electrónicos de texto**: Al analizar un archivo de texto o una página web, las expresiones regulares pueden usarse para extraer todas las direcciones de correo electrónico.
+4. **Normalización**: Para limpiar y estandarizar direcciones de correo electrónico antes de almacenarlas o procesarlas.
+
+### **Ejemplo de uso en scripts**
+Para extraer correos electrónicos de un texto en un archivo, podrías usar una expresión regular en un script de Python o Bash. Ejemplo en Python:
+
+```python
+import re
+
+texto = """
+Aquí hay algunos correos: usuario1@example.com, persona.name@domain.org y user@empresa.edu.
+"""
+# Regex para extraer correos electrónicos
+patron = r'[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}'
+correos = re.findall(patron, texto)
+print(correos)
+```
+
+Este script devolvería una lista con todas las direcciones de correo encontradas en el texto.
+
+### **Conclusión**
+Las expresiones regulares son una herramienta poderosa para trabajar con correos electrónicos, permitiendo desde la validación en formularios hasta la extracción en sistemas complejos. La flexibilidad del regex permite manejar la variedad de formatos que pueden tener los correos electrónicos mientras se asegura la exactitud en las aplicaciones donde se implementa.
+
+## localizacione
+
+Las **expresiones regulares** (o regex) son una herramienta poderosa para buscar y manipular texto de manera eficiente, y también pueden ser útiles para identificar **localizaciones** dentro de datos. Las localizaciones pueden incluir **países**, **ciudades**, **direcciones**, y **coordenadas geográficas**, entre otras. Dependiendo del tipo de localización que busques, las expresiones regulares pueden adaptarse a distintos patrones de búsqueda.
+
+### Aplicaciones de las Expresiones Regulares en Localizaciones
+
+1. **Direcciones IP**
+   - Se pueden usar expresiones regulares para identificar y validar direcciones IP en formato IPv4 o IPv6.
+   
+   **Expresión Regular para IPv4:**
+   ```regex
+   \b((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\b
+   ```
+   Esta regex valida direcciones IP como `192.168.0.1`.
+
+2. **Direcciones de Correo Electrónico (Emails)**
+   - Las localizaciones pueden incluir la validación de correos electrónicos, lo que es útil en formularios web o sistemas de registro.
+
+   **Expresión Regular para Correo Electrónico:**
+   ```regex
+   [a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}
+   ```
+
+3. **Coordenadas Geográficas**
+   - Las coordenadas geográficas (latitud y longitud) pueden seguir patrones específicos que también se pueden validar o extraer con expresiones regulares.
+
+   **Expresión Regular para Coordenadas Geográficas (en formato decimal):**
+   ```regex
+   [-+]?([1-8]?\d(\.\d+)?|90(\.0+)?),\s*[-+]?(180(\.0+)?|((1[0-7]\d)|([1-9]?\d))(\.\d+)?)
+   ```
+   Esto valida coordenadas como `40.7128, -74.0060` (Nueva York).
+
+4. **Nombres de Países o Ciudades**
+   - Puedes usar expresiones regulares para localizar y capturar nombres de países o ciudades a partir de listas predefinidas o patrones textuales.
+   
+   **Expresión Regular para Países Comunes (ejemplo simplificado):**
+   ```regex
+   \b(Argentina|Brasil|Chile|Colombia|México|España|Francia)\b
+   ```
+
+5. **Códigos Postales**
+   - Los códigos postales también pueden variar de un país a otro, y las expresiones regulares se pueden utilizar para validar estos formatos.
+
+   **Expresión Regular para Códigos Postales en Estados Unidos:**
+   ```regex
+   \b\d{5}(?:-\d{4})?\b
+   ```
+
+   **Expresión Regular para Códigos Postales en España:**
+   ```regex
+   \b\d{5}\b
+   ```
+
+6. **Direcciones Web (URLs)**
+   - Localizar URLs en texto también es una tarea común que se puede hacer con expresiones regulares.
+   
+   **Expresión Regular para URL:**
+   ```regex
+   https?:\/\/(www\.)?[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}(/[a-zA-Z0-9#?&%=.-]*)?
+   ```
+
+7. **Números de Teléfono**
+   - Dependiendo de la localización, los números de teléfono tienen diferentes formatos. Las expresiones regulares permiten validar números de teléfonos nacionales e internacionales.
+
+   **Expresión Regular para Números de Teléfono Internacionales:**
+   ```regex
+   \+?[1-9]{1,4}[-\s]?\(?\d{1,3}\)?[-\s]?\d{1,4}[-\s]?\d{1,4}[-\s]?\d{1,9}
+   ```
+
+   **Ejemplos válidos:**
+   - `+1-800-555-5555` (EE.UU.)
+   - `+44 20 7946 0958` (Reino Unido)
+
+### Uso de Expresiones Regulares en Localizaciones
+
+Las expresiones regulares son esenciales en aplicaciones que manejan grandes volúmenes de datos, como:
+
+1. **Extracción de Datos Geográficos**
+   - Se utilizan para extraer localizaciones en bases de datos de direcciones o coordenadas geográficas de texto libre.
+
+2. **Validación de Formularios**
+   - Al recolectar datos de localización, como códigos postales, direcciones IP o coordenadas, las expresiones regulares validan automáticamente los datos de entrada.
+
+3. **Sistemas de Geolocalización**
+   - En servicios que detectan o procesan direcciones IP o geográficas, las regex ayudan a estructurar datos desorganizados.
+
+### Conclusión
+
+Las expresiones regulares permiten la **validación**, **búsqueda** y **manipulación** de localizaciones en texto. Pueden reconocer patrones como **direcciones**, **números de teléfono**, **coordenadas geográficas**, **direcciones IP**, y otros elementos geolocalizados con alta precisión, lo que es útil para aplicaciones que manejan información geográfica o direcciones globales.
+
+[what3words | Addressing the world](https://what3words.com/)
+
+## Búsqueda y reemplazo
+
+La **búsqueda y reemplazo** utilizando **expresiones regulares** es una técnica poderosa en los scripts y editores de texto. Permite localizar patrones específicos dentro de un texto y reemplazarlos de manera eficiente. Esta función es ampliamente utilizada en tareas de procesamiento de texto, edición masiva de archivos y manipulación de datos.
+
+### Sintaxis de Búsqueda y Reemplazo en Varios Contextos
+
+#### 1. **Uso en `sed` (Stream Editor)**
+
+`sed` es una herramienta muy utilizada en sistemas Unix/Linux para realizar búsquedas y reemplazos en flujos de texto o archivos.
+
+- **Comando Básico:**
+  ```bash
+  sed 's/patrón_a_buscar/reemplazo/' archivo.txt
+  ```
+
+  **Ejemplo:**
+  Si quieres reemplazar todas las ocurrencias de "foo" por "bar" en un archivo:
+  ```bash
+  sed 's/foo/bar/g' archivo.txt
+  ```
+  - `s`: significa "sustituir" (substitute).
+  - `/g`: indica que se reemplacen todas las ocurrencias en una línea.
+
+- **Usar Expresiones Regulares:**
+  ```bash
+  sed 's/[0-9]\{2\}-[0-9]\{3\}/XXXX-XXX/g' archivo.txt
+  ```
+  Esto reemplaza cualquier coincidencia de un número de 2 dígitos seguido de un guion y un número de 3 dígitos por `XXXX-XXX`.
+
+#### 2. **Uso en `vim` o `vi` (Editor de Texto)**
+
+En los editores como `vim` o `vi`, puedes realizar reemplazos utilizando la siguiente sintaxis:
+
+- **Comando Básico:**
+  ```bash
+  :%s/patrón_a_buscar/reemplazo/g
+  ```
+
+  **Ejemplo:**
+  Reemplazar todas las ocurrencias de "error" por "solución":
+  ```bash
+  :%s/error/solución/g
+  ```
+
+  - `%`: significa que el reemplazo se hace en todo el archivo.
+  - `g`: indica que se aplique en todas las ocurrencias de la línea.
+
+- **Con Expresiones Regulares:**
+  ```bash
+  :%s/\d\{2\}-\d\{3\}/XXXX-XXX/g
+  ```
+
+#### 3. **Uso en Lenguajes de Programación (Ejemplo en Python)**
+
+En lenguajes como Python, la búsqueda y reemplazo con expresiones regulares se realiza usando el módulo `re`.
+
+- **Ejemplo en Python:**
+  ```python
+  import re
+  
+  texto = "El número de teléfono es 123-456-7890"
+  nuevo_texto = re.sub(r'\d{3}-\d{3}-\d{4}', 'XXX-XXX-XXXX', texto)
+  print(nuevo_texto)
+  ```
+
+  - `re.sub()`: se utiliza para buscar un patrón y reemplazarlo por un nuevo texto.
+  - `\d{3}-\d{3}-\d{4}`: patrón que busca números de teléfono en el formato `123-456-7890`.
+  - `XXX-XXX-XXXX`: el reemplazo.
+
+#### 4. **Uso en `awk`**
+
+Aunque `awk` es más utilizado para el procesamiento de texto basado en columnas, también soporta búsqueda y reemplazo.
+
+- **Comando Básico:**
+  ```bash
+  awk '{gsub(/patrón_a_buscar/, "reemplazo")}1' archivo.txt
+  ```
+
+  **Ejemplo:**
+  ```bash
+  awk '{gsub(/foo/, "bar")}1' archivo.txt
+  ```
+
+#### 5. **Uso en Herramientas de Edición de Texto (Ejemplo en Sublime Text, VS Code)**
+
+En editores de texto modernos como Sublime Text o VS Code, puedes realizar búsquedas y reemplazos avanzados usando expresiones regulares.
+
+- **Comando en Sublime Text:**
+  1. Pulsa `Ctrl + H` para abrir la herramienta de búsqueda y reemplazo.
+  2. Marca la opción de "regex" (representada por `.*`).
+  3. Introduce el patrón a buscar y el reemplazo.
+
+  **Ejemplo:**
+  Para reemplazar números de teléfono:
+  - Búsqueda: `(\d{3})-(\d{3})-(\d{4})`
+  - Reemplazo: `($1) $2-$3`
+
+### Caracteres Especiales y Delimitadores en Expresiones Regulares
+
+- `.`: Cualquier carácter excepto salto de línea.
+- `*`: Cero o más ocurrencias del carácter anterior.
+- `+`: Una o más ocurrencias del carácter anterior.
+- `?`: Cero o una ocurrencia del carácter anterior.
+- `\d`: Cualquier dígito (equivalente a `[0-9]`).
+- `\w`: Cualquier carácter de palabra (letras, dígitos o guiones bajos).
+- `\s`: Cualquier espacio en blanco (espacio, tabulación, etc.).
+- `{n,m}`: Aparece al menos `n` veces, pero no más de `m`.
+
+### Aplicaciones Comunes de Búsqueda y Reemplazo con Expresiones Regulares
+
+1. **Reemplazar números de teléfono** en un texto para ocultar la información personal.
+2. **Normalizar fechas** que están en diferentes formatos (por ejemplo, convertir `dd/mm/yyyy` a `yyyy-mm-dd`).
+3. **Eliminar espacios en blanco adicionales** o caracteres innecesarios en el texto.
+4. **Sanitizar direcciones de correo electrónico** para anonimización de datos.
+5. **Reformatear URLs** o texto HTML en archivos para limpieza o actualización masiva de documentos.
+
+### Conclusión
+
+La búsqueda y reemplazo con expresiones regulares es una herramienta clave en la automatización de tareas de procesamiento de texto y datos, lo que permite trabajar con grandes volúmenes de texto de manera eficiente. Ya sea en scripts, editores de texto o lenguajes de programación, las expresiones regulares brindan flexibilidad para buscar patrones y modificarlos según las necesidades del usuario.
+
+**Nota**: $1,$2 borra todo lo que no esta en las clases
+
+se usa `^\d+::([\w\s:,\(\)'\.\-&!\/]+)\s\((\d\d\d\d)\)::.*$` pasar a sql `insert into movies (year, title) values($2, '$1');`, json: `{title:"$1", year:$2}`
+
+## Uso de REGEX para descomponer querys GET
+
+Al hacer consultas a sitios web mediante el método GET se envían todas las variables al servidor a través de la misma URL.
+
+La parte de esta url que viene luego del signo de interrogación ? se le llama query del request que es: `variable1=valor1&variable2=valor2&...` y así tantas veces como se necesite. En esta clase veremos como extraer estas variables usando expresiones regulares.
+
+El uso de **expresiones regulares (REGEX)** para descomponer las **queries GET** de URLs es muy útil para extraer parámetros y valores clave, especialmente en la manipulación de datos web. Una query GET en una URL tiene la forma:
+
+```
+https://example.com/page?param1=value1&param2=value2&param3=value3
+```
+
+Aquí, todo lo que viene después del signo de interrogación (`?`) es la **cadena de consulta** o **query string**, con los parámetros clave y sus valores.
+
+### Pasos para descomponer una query GET
+
+1. **Identificar el patrón básico de la query**:
+   Las queries GET suelen estar formadas por pares de **clave=valor** separados por el carácter `&`.
+
+2. **Uso de REGEX para extraer parámetros y valores**:
+   Un patrón REGEX típico para descomponer una query string es el siguiente:
+
+   ```regex
+   ([\w%]+)=([\w%]+)
+   ```
+
+   Donde:
+   - `[\w%]+` busca una secuencia de caracteres alfanuméricos o el símbolo `%` (para valores codificados en URL).
+   - El símbolo `=` separa el parámetro de su valor.
+   - Este patrón se repite para cada par clave-valor.
+
+### Descomposición en Python usando REGEX
+
+Veamos cómo se puede usar esta expresión regular en Python para descomponer una query string:
+
+#### Ejemplo de Código Python
+
+```python
+import re
+
+# Query string de ejemplo
+query = "param1=value1&param2=value2&param3=value3"
+
+# Expresión regular para extraer pares clave-valor
+pattern = r'([\w%]+)=([\w%]+)'
+
+# Usar findall para encontrar todos los pares clave-valor
+matches = re.findall(pattern, query)
+
+# Mostrar resultados
+for match in matches:
+    print(f"Parámetro: {match[0]}, Valor: {match[1]}")
+```
+
+#### Salida:
+```
+Parámetro: param1, Valor: value1
+Parámetro: param2, Valor: value2
+Parámetro: param3, Valor: value3
+```
+
+### Explicación:
+
+- `re.findall()` busca todas las coincidencias del patrón en la query string y devuelve una lista de tuplas donde cada tupla contiene un par clave-valor.
+- Este enfoque es simple y puede manejar queries con múltiples parámetros.
+
+### Ampliaciones para casos más complejos
+
+1. **Soporte para valores codificados en URL**: Si los valores de la query string están codificados, pueden contener caracteres especiales como `%20` para espacios. En ese caso, deberías incluir `%` y caracteres hexadecimales en tu expresión regular.
+
+   ```regex
+   ([\w%]+)=([\w%]+)
+   ```
+
+   Esto captura valores que están codificados en URL.
+
+2. **Opcionalidad de parámetros vacíos**: A veces, los valores de los parámetros pueden estar vacíos, por ejemplo:
+   
+   ```
+   https://example.com/page?param1=value1&param2=&param3=value3
+   ```
+
+   Para manejar este caso, puedes ajustar la regex para que permita valores vacíos:
+   
+   ```regex
+   ([\w%]+)=([\w%]*)
+   ```
+
+   El asterisco (`*`) en la segunda parte del patrón permite que el valor esté vacío.
+
+### Usar REGEX en otras herramientas
+
+#### 1. **Bash con `grep` o `sed`**
+   En bash, puedes usar `grep` o `sed` para hacer algo similar. Por ejemplo:
+
+   ```bash
+   echo "param1=value1&param2=value2" | grep -oP '(\w+)=(\w+)'
+   ```
+
+#### 2. **Uso en JavaScript**
+
+   En JavaScript, puedes usar la función `match()` o `exec()` para aplicar la expresión regular:
+
+   ```javascript
+   const query = "param1=value1&param2=value2&param3=value3";
+   const regex = /([\w%]+)=([\w%]+)/g;
+   let match;
+   while ((match = regex.exec(query)) !== null) {
+       console.log(`Parámetro: ${match[1]}, Valor: ${match[2]}`);
+   }
+   ```
+
+#### 3. **Herramientas para analizar URLs completas**
+
+   Si quieres trabajar con URLs completas y no solo la query string, puedes usar el siguiente patrón:
+
+   ```regex
+   https?:\/\/[\w.-]+\/[\w.-]*\?([\w%=&]+)
+   ```
+
+   Esto separa la URL principal de la query string.
+
+[\?&](\w+)=([^&\n]+) `- $1 => $2`
+
+### Conclusión
+
+El uso de **expresiones regulares** es una herramienta poderosa para descomponer queries GET y extraer parámetros de una URL. Esta técnica es especialmente útil cuando trabajas con URLs complejas, análisis de logs o procesamiento web.
+
+## Explicación del Proyecto
+
+Vamos a utilizar un archivo de resultados de partidos de fútbol histórico con varios datos. El archivo es un csv de más de 39000 líneas diferentes.
+
+Con cada lenguaje intentaremos hacer una solución un poquito diferente para aprovecharlo y saber cómo utilizar expresiones regulares en cada uno de los lenguajes.
+
+Usaremos las expresiones regulares en:
+
+- Perl
+- PHP
+- Python
+- Javascript
+
+### comando bash
+
+`ls -l results.csv` muestra en kilobytes
+`ls -lh results.csv` muestar en MegaBytes
+`wc -l results.csv ` se utiliza para contar líneas
+`more results.csv` se utiliza para visualizar el contenido de archivos de texto de manera paginada
