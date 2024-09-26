@@ -1474,3 +1474,565 @@ Usaremos las expresiones regulares en:
 `ls -lh results.csv` muestar en MegaBytes
 `wc -l results.csv ` se utiliza para contar líneas
 `more results.csv` se utiliza para visualizar el contenido de archivos de texto de manera paginada
+
+## Perl
+
+**Perl** es un lenguaje de programación de propósito general conocido por su potencia en el procesamiento de texto, su flexibilidad y la capacidad para realizar tareas de administración del sistema, desarrollo web, automatización, manipulación de archivos y más. Perl se popularizó principalmente por su capacidad de manejar expresiones regulares y archivos de texto de manera eficiente, siendo una opción común para scripts y tareas del sistema en los años 90 y 2000.
+
+### Características de Perl:
+1. **Procesamiento de texto**: Perl es extremadamente potente para manipular, analizar y procesar grandes cantidades de texto utilizando expresiones regulares.
+2. **Lenguaje interpretado**: Perl no requiere compilación; los scripts se ejecutan directamente por el intérprete de Perl.
+3. **Flexibilidad**: Puedes escribir código de manera muy concisa o detallada, lo que lo hace adecuado tanto para pequeños scripts como para aplicaciones más grandes.
+4. **Multiplataforma**: Funciona en una variedad de sistemas operativos, como Unix, Linux, Windows, y macOS.
+5. **CPAN (Comprehensive Perl Archive Network)**: Una extensa biblioteca de módulos y paquetes reutilizables para casi cualquier tarea imaginable, facilitando el desarrollo en Perl.
+
+### Sintaxis básica de Perl:
+
+1. **Hola Mundo en Perl**:
+   ```perl
+   #!/usr/bin/perl
+   print "Hola, Mundo!\n";
+   ```
+
+2. **Variables**:
+   - **Escalares**: Almacenan un solo valor (números o cadenas), se identifican con `$`.
+     ```perl
+     $nombre = "Juan";
+     $edad = 30;
+     ```
+   - **Arrays**: Listas de valores, se identifican con `@`.
+     ```perl
+     @frutas = ("manzana", "banana", "naranja");
+     ```
+   - **Hashes**: Pares clave-valor, se identifican con `%`.
+     ```perl
+     %capitales = ("Argentina" => "Buenos Aires", "Colombia" => "Bogotá");
+     ```
+
+3. **Estructuras de control**:
+   - **If-else**:
+     ```perl
+     if ($edad > 18) {
+         print "Es mayor de edad\n";
+     } else {
+         print "Es menor de edad\n";
+     }
+     ```
+
+   - **Bucles**:
+     ```perl
+     # Bucle for
+     for (my $i = 0; $i < 10; $i++) {
+         print "$i\n";
+     }
+
+     # Bucle foreach para arrays
+     foreach my $fruta (@frutas) {
+         print "$fruta\n";
+     }
+     ```
+
+4. **Expresiones regulares**:
+   Perl es famoso por su soporte nativo a expresiones regulares. Por ejemplo, buscar una palabra en una cadena:
+   ```perl
+   if ($cadena =~ /Perl/) {
+       print "La cadena contiene 'Perl'\n";
+   }
+   ```
+
+5. **Lectura y escritura de archivos**:
+   - Para leer un archivo:
+     ```perl
+     open(my $archivo, "<", "datos.txt") or die "No se pudo abrir el archivo: $!";
+     while (my $linea = <$archivo>) {
+         print $linea;
+     }
+     close($archivo);
+     ```
+
+   - Para escribir en un archivo:
+     ```perl
+     open(my $archivo, ">", "salida.txt") or die "No se pudo abrir el archivo: $!";
+     print $archivo "Esta es una línea de texto.\n";
+     close($archivo);
+     ```
+
+### Aplicaciones comunes de Perl:
+
+1. **Administración del sistema**: Tareas de automatización, como el manejo de archivos, logs y scripts para la gestión de servidores.
+2. **Procesamiento de texto**: Transformación y manipulación de grandes cantidades de texto, como extracción de datos y generación de informes.
+3. **Desarrollo web**: Perl se utiliza en el desarrollo web (especialmente en la era del CGI) para generar contenido dinámico.
+4. **Bioinformática**: Debido a sus capacidades de manipulación de texto, Perl ha sido utilizado para procesar secuencias genómicas.
+5. **Testing y Automatización**: Módulos como `Test::Simple` y `Test::More` hacen de Perl una excelente opción para pruebas automatizadas.
+
+Perl es un lenguaje robusto y poderoso, especialmente en tareas de automatización y procesamiento de datos. Aunque ha sido superado en popularidad por lenguajes más recientes como Python y Ruby, sigue siendo una herramienta valiosa en varias industrias y aplicaciones.
+
+Las **expresiones regulares** en Perl son una de las características más poderosas y distintivas del lenguaje. Perl es famoso por su soporte nativo y flexible para la manipulación de texto utilizando **regex** (expresiones regulares), que permiten buscar, extraer, reemplazar y validar patrones dentro de cadenas de texto.
+
+### Sintaxis básica de expresiones regulares en Perl
+
+1. **Operador de coincidencia `=~`**:
+   El operador `=~` se utiliza para aplicar una expresión regular a una cadena.
+   ```perl
+   $cadena = "Hola, Mundo!";
+   if ($cadena =~ /Mundo/) {
+       print "¡Coincidencia encontrada!\n";
+   }
+   ```
+   En este ejemplo, `/Mundo/` es la expresión regular, y busca la palabra "Mundo" dentro de la variable `$cadena`.
+
+2. **Negación de coincidencia `!~`**:
+   El operador `!~` se utiliza cuando se quiere comprobar que una cadena **no** coincide con la expresión regular.
+   ```perl
+   if ($cadena !~ /Adiós/) {
+       print "¡No se encontró la palabra 'Adiós'!\n";
+   }
+   ```
+
+### Caracteres especiales en regex de Perl
+
+- **`.` (punto)**: Coincide con cualquier carácter excepto el salto de línea (`\n`).
+  ```perl
+  if ("abc" =~ /a.c/) { print "Coincide\n"; }
+  # Coincidiría con cualquier cadena que tenga una "a", seguida de cualquier carácter y luego una "c", como "abc" o "a1c".
+  ```
+
+- **`^`**: Indica el **inicio** de una línea.
+  ```perl
+  if ("Hola Mundo" =~ /^Hola/) { print "Coincide\n"; }
+  # Coincide con cadenas que empiezan con "Hola".
+  ```
+
+- **`$`**: Indica el **final** de una línea.
+  ```perl
+  if ("Hola Mundo" =~ /Mundo$/) { print "Coincide\n"; }
+  # Coincide con cadenas que terminan en "Mundo".
+  ```
+
+- **`\d`**: Coincide con cualquier dígito (equivalente a `[0-9]`).
+  ```perl
+  if ("123abc" =~ /\d\d\d/) { print "Coincide\n"; }
+  ```
+
+- **`\w`**: Coincide con cualquier carácter alfanumérico o guion bajo (equivalente a `[A-Za-z0-9_]`).
+  ```perl
+  if ("nombre_usuario" =~ /\w+/) { print "Coincide\n"; }
+  ```
+
+- **`\s`**: Coincide con cualquier carácter de espacio en blanco (espacio, tabulador, salto de línea).
+  ```perl
+  if ("Hola Mundo" =~ /\s/) { print "Coincide\n"; }
+  ```
+
+### Modificadores comunes en Perl
+
+- **`i`**: Hace la búsqueda **insensible a mayúsculas y minúsculas**.
+  ```perl
+  if ("Hola Mundo" =~ /hola/i) { print "Coincide\n"; }
+  ```
+
+- **`g`**: Aplica la expresión regular de forma **global**, es decir, busca todas las coincidencias en lugar de detenerse en la primera.
+  ```perl
+  $texto = "uno dos tres";
+  $texto =~ s/\s/_/g;  # Reemplaza todos los espacios con "_"
+  print $texto;  # uno_dos_tres
+  ```
+
+### Clases de caracteres
+
+- **`[ ]`**: Define un **conjunto de caracteres**. Coincide con cualquier carácter que esté dentro de los corchetes.
+  ```perl
+  if ("hola" =~ /[aeiou]/) { print "Contiene una vocal\n"; }
+  ```
+
+- **`[^ ]`**: El **acento circunflejo** dentro de un conjunto niega el conjunto, es decir, coincide con cualquier carácter que **no** esté en los corchetes.
+  ```perl
+  if ("123" =~ /[^0-9]/) { print "No contiene solo números\n"; }
+  ```
+
+### Repeticiones
+
+- **`*`**: Coincide con **cero o más** repeticiones del patrón anterior.
+  ```perl
+  if ("abc" =~ /a.*/ ) { print "Coincide\n"; }  # Coincide con "a" seguido de cualquier número de caracteres.
+  ```
+
+- **`+`**: Coincide con **uno o más** repeticiones del patrón anterior.
+  ```perl
+  if ("abc" =~ /a.+/) { print "Coincide\n"; }
+  ```
+
+- **`?`**: Coincide con **cero o una** repetición del patrón anterior.
+  ```perl
+  if ("color" =~ /colou?r/) { print "Coincide\n"; }
+  # Coincide tanto con "color" como con "colour".
+  ```
+
+- **`{n,m}`**: Coincide con **entre n y m** repeticiones del patrón anterior.
+  ```perl
+  if ("aaa" =~ /a{2,3}/) { print "Coincide\n"; }
+  # Coincide con "aa" o "aaa".
+  ```
+
+### Grupos y captura
+
+- **Paréntesis `()`**: Se utilizan para agrupar partes de la expresión regular, permitiendo aplicar operadores a todo el grupo o capturar coincidencias para reutilizarlas.
+  ```perl
+  if ("2023-09-21" =~ /(\d{4})-(\d{2})-(\d{2})/) {
+      print "Año: $1, Mes: $2, Día: $3\n";
+  }
+  # Imprime: Año: 2023, Mes: 09, Día: 21
+  ```
+
+### Reemplazo con regex
+
+Para reemplazar un patrón utilizando expresiones regulares, se usa la función `s///`.
+
+```perl
+$cadena = "Hola Mundo";
+$cadena =~ s/Mundo/Perl/;
+print $cadena;  # Hola Perl
+```
+
+Si quieres reemplazar todas las coincidencias, usa el modificador `g` (global):
+```perl
+$cadena = "Mundo Mundo";
+$cadena =~ s/Mundo/Perl/g;
+print $cadena;  # Perl Perl
+```
+
+### Ejemplos de uso de expresiones regulares en Perl
+
+1. **Validar un número de teléfono**:
+   ```perl
+   $telefono = "555-123-4567";
+   if ($telefono =~ /^\d{3}-\d{3}-\d{4}$/) {
+       print "Número de teléfono válido\n";
+   } else {
+       print "Número de teléfono inválido\n";
+   }
+   ```
+
+2. **Validar una dirección de correo electrónico**:
+   ```perl
+   $email = "usuario@ejemplo.com";
+   if ($email =~ /^[\w\.-]+@[a-zA-Z\d-]+\.[a-zA-Z]{2,6}$/) {
+       print "Correo electrónico válido\n";
+   }
+   ```
+
+3. **Extraer URLs de un texto**:
+   ```perl
+   $texto = "Visita http://www.ejemplo.com y https://www.perl.org";
+   while ($texto =~ /(https?:\/\/[^\s]+)/g) {
+       print "URL encontrada: $1\n";
+   }
+   ```
+
+### Conclusión
+
+Las expresiones regulares en Perl son extremadamente poderosas para manipular y analizar texto. Su sintaxis es flexible, y ofrece herramientas avanzadas para búsquedas, reemplazos y validación de patrones. Debido a su soporte nativo, Perl es una excelente opción cuando se requiere trabajar intensivamente con texto y patrones complejos.
+
+[The Perl Programming Language - www.perl.org](https://www.perl.org/)
+
+## PHP
+
+Las **expresiones regulares en PHP** son una poderosa herramienta para buscar, validar y manipular texto mediante patrones. PHP admite dos tipos de sintaxis para las expresiones regulares:
+
+1. **PCRE (Perl Compatible Regular Expressions)**: Usan funciones como `preg_match`, `preg_replace`, etc.
+2. **Posix**: Aunque es más antigua y menos común, generalmente se recomienda usar PCRE por ser más potente.
+
+### Funciones clave para trabajar con expresiones regulares en PHP:
+
+#### 1. **`preg_match`**
+Busca un patrón dentro de una cadena.
+```php
+<?php
+$cadena = "Mi número es 12345";
+$patron = "/\d+/";  // Busca un número en la cadena
+
+if (preg_match($patron, $cadena, $coincidencias)) {
+    echo "Se encontró un número: " . $coincidencias[0];
+} else {
+    echo "No se encontró un número.";
+}
+?>
+```
+
+#### 2. **`preg_match_all`**
+Busca todas las coincidencias de un patrón.
+```php
+<?php
+$cadena = "Mis números son 123 y 456";
+$patron = "/\d+/";  // Busca todos los números en la cadena
+
+preg_match_all($patron, $cadena, $coincidencias);
+
+print_r($coincidencias);  // Mostrará todos los números encontrados
+?>
+```
+
+#### 3. **`preg_replace`**
+Reemplaza partes de una cadena que coinciden con un patrón.
+```php
+<?php
+$cadena = "Tengo 2 perros y 3 gatos";
+$patron = "/\d+/";  // Busca todos los números
+$reemplazo = "#";
+
+$nuevaCadena = preg_replace($patron, $reemplazo, $cadena);
+echo $nuevaCadena;  // Resultado: Tengo # perros y # gatos
+?>
+```
+
+#### 4. **`preg_split`**
+Divide una cadena en un arreglo utilizando una expresión regular como delimitador.
+```php
+<?php
+$cadena = "uno, dos, tres, cuatro";
+$patron = "/,\s+/";  // Divide por comas y espacios
+
+$resultado = preg_split($patron, $cadena);
+print_r($resultado);  // Resultado: Array ( [0] => uno [1] => dos [2] => tres [3] => cuatro )
+?>
+```
+
+### Ejemplos de patrones comunes en PHP:
+
+#### 1. **Validar un correo electrónico:**
+```php
+<?php
+$email = "ejemplo@dominio.com";
+$patron = "/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/";
+
+if (preg_match($patron, $email)) {
+    echo "Correo válido";
+} else {
+    echo "Correo inválido";
+}
+?>
+```
+
+#### 2. **Validar una URL:**
+```php
+<?php
+$url = "https://www.ejemplo.com";
+$patron = "/\bhttps?:\/\/[a-z0-9.-]+\.[a-z]{2,6}\b/";
+
+if (preg_match($patron, $url)) {
+    echo "URL válida";
+} else {
+    echo "URL inválida";
+}
+?>
+```
+
+#### 3. **Validar un número de teléfono:**
+```php
+<?php
+$telefono = "123-456-7890";
+$patron = "/^\d{3}-\d{3}-\d{4}$/";
+
+if (preg_match($patron, $telefono)) {
+    echo "Teléfono válido";
+} else {
+    echo "Teléfono inválido";
+}
+?>
+```
+
+### Delimitadores y modificadores:
+- **Delimitadores**: Las expresiones regulares en PHP se delimitan con caracteres como `/`. Por ejemplo, `/\d+/` busca dígitos.
+- **Modificadores**:
+  - `i`: Ignora mayúsculas/minúsculas.
+  - `m`: Trata la cadena como multilínea.
+  - `s`: Permite que el `.` coincida con saltos de línea.
+
+**ver los visitantes ganadores**
+
+```php
+<?php
+
+$file = fopen("results.csv", "r");
+
+$match = 0;
+$nomatch = 0;
+
+while(!feof($file)) {
+    $line = fgets($file);
+    if (preg_match(
+        '/^2018\-01\-(\d\d),.*$/',
+        $line,
+        $m
+        )
+    ) {
+        print_r($m);
+        $match++;
+
+    }
+    else {
+        $nomatch++;
+    }
+}
+
+fclose($file);
+
+printf("\n\nmatch: %d\nno match: %d\n", $match, $nomatch);
+```
+
+### Conclusión
+Las expresiones regulares en PHP son extremadamente útiles para validaciones y manipulaciones de texto. Utilizando funciones como `preg_match`, `preg_replace`, y `preg_split`, puedes implementar filtros de datos complejos y realizar búsquedas avanzadas en tus aplicaciones.
+
+**Lecturas recomendadas**
+
+[XAMPP Installers and Downloads for Apache Friends](https://www.apachefriends.org/es/index.html)
+
+## Python
+
+Las **expresiones regulares** en Python son una herramienta muy potente para trabajar con patrones en cadenas de texto. Se utilizan para buscar, validar, extraer o manipular partes de texto de una forma eficiente y flexible.
+
+En Python, el módulo **`re`** proporciona todas las funciones necesarias para trabajar con expresiones regulares.
+
+### Funciones principales de `re`
+
+#### 1. **`re.match()`**
+Busca el patrón solo al comienzo de la cadena.
+```python
+import re
+
+patron = r"\d{3}"  # Busca un número de 3 dígitos
+cadena = "123 hola mundo"
+
+if re.match(patron, cadena):
+    print("Coincidencia al inicio de la cadena")
+else:
+    print("No hay coincidencia al inicio")
+```
+
+#### 2. **`re.search()`**
+Busca el patrón en cualquier parte de la cadena.
+```python
+import re
+
+patron = r"\d{3}"  # Busca un número de 3 dígitos
+cadena = "Hola, tengo 123 perros"
+
+resultado = re.search(patron, cadena)
+if resultado:
+    print(f"Se encontró: {resultado.group()}")
+else:
+    print("No se encontró coincidencia")
+```
+
+#### 3. **`re.findall()`**
+Encuentra todas las coincidencias de un patrón en la cadena y las devuelve en una lista.
+```python
+import re
+
+patron = r"\d+"  # Busca todos los números
+cadena = "Tengo 2 perros, 3 gatos y 4 ratones"
+
+resultados = re.findall(patron, cadena)
+print(resultados)  # ['2', '3', '4']
+```
+
+#### 4. **`re.sub()`**
+Reemplaza las coincidencias de un patrón por otro valor.
+```python
+import re
+
+patron = r"\d+"  # Busca todos los números
+cadena = "Tengo 2 perros y 3 gatos"
+
+nueva_cadena = re.sub(patron, "#", cadena)
+print(nueva_cadena)  # Tengo # perros y # gatos
+```
+
+#### 5. **`re.split()`**
+Divide una cadena utilizando un patrón como delimitador.
+```python
+import re
+
+patron = r"\s+"  # Usa los espacios como delimitador
+cadena = "Hola mundo, ¿cómo estás?"
+
+resultado = re.split(patron, cadena)
+print(resultado)  # ['Hola', 'mundo,', '¿cómo', 'estás?']
+```
+
+### Ejemplos de expresiones regulares comunes
+
+#### 1. **Validar un correo electrónico**
+```python
+import re
+
+patron = r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
+correo = "ejemplo@correo.com"
+
+if re.match(patron, correo):
+    print("Correo válido")
+else:
+    print("Correo inválido")
+```
+
+#### 2. **Validar un número de teléfono**
+```python
+import re
+
+patron = r"^\d{3}-\d{3}-\d{4}$"  # Formato: 123-456-7890
+telefono = "123-456-7890"
+
+if re.match(patron, telefono):
+    print("Número válido")
+else:
+    print("Número inválido")
+```
+
+#### 3. **Validar una URL**
+```python
+import re
+
+patron = r"https?://(www\.)?[a-zA-Z0-9-]+(\.[a-zA-Z]{2,6})+"
+url = "https://www.ejemplo.com"
+
+if re.match(patron, url):
+    print("URL válida")
+else:
+    print("URL inválida")
+```
+
+### Caracteres especiales en expresiones regulares
+
+- `.`: Coincide con cualquier carácter excepto saltos de línea.
+- `\d`: Coincide con cualquier dígito.
+- `\D`: Coincide con cualquier carácter que **no** sea un dígito.
+- `\w`: Coincide con cualquier carácter alfanumérico (letras, números y guiones bajos).
+- `\W`: Coincide con cualquier carácter que **no** sea alfanumérico.
+- `\s`: Coincide con cualquier espacio en blanco (espacios, tabulaciones, saltos de línea).
+- `\S`: Coincide con cualquier carácter que **no** sea un espacio en blanco.
+
+### Delimitadores y modificadores
+
+- `^`: Inicio de la cadena.
+- `$`: Fin de la cadena.
+- `*`: Cero o más repeticiones del carácter anterior.
+- `+`: Una o más repeticiones del carácter anterior.
+- `?`: Cero o una repetición del carácter anterior.
+- `{m,n}`: De `m` a `n` repeticiones del carácter anterior.
+
+### Ejemplo avanzado: Extraer parámetros de una URL
+```python
+import re
+
+url = "https://www.ejemplo.com?param1=valor1&param2=valor2&param3=valor3"
+patron = r"(\w+)=([\w\d]+)"
+
+resultados = re.findall(patron, url)
+print(resultados)  # [('param1', 'valor1'), ('param2', 'valor2'), ('param3', 'valor3')]
+```
+
+Con las expresiones regulares, puedes realizar operaciones complejas en cadenas de texto de una manera eficiente y concisa. ¡Son extremadamente útiles en muchos casos!
+
+**Lecturas recomendadas**
+
+[Welcome to Python.org](https://www.python.org/)
