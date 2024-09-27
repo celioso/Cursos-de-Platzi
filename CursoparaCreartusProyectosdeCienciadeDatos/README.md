@@ -98,3 +98,86 @@ Debemos aprender a:
 4. Enriquecer los datos que tenemos
 
 5. Comunicar de manera efectiva nuetsro proyecto
+
+## Cada cuánto hacer un proyecto de datos
+
+¿Cada cuanto debo de hacer un proyecto de ciencia de datos? Tan pronto como sea posible. TIPs: practicar es una buena actividad para continuar
+
+- Es mejor poner las cosas en práctica luego de terminar un curso.
+- Practicar movilizado para sacar las dudas del posible éxito de ideas propias.
+- Retarse a eficientizar tu trabajo cotidiano con la ayuda de lo aprendido en los cursos.
+- Explorar una nueva forma de conocimiento que sea interesante.
+Utilizar la ciencia de datos para mejorar algo que te gusta hacer (hobby).
+- Aplicar lo aprendido ayudando a terceros. (proyectos, organizaciones de la sociedad civil, etc).
+
+La frecuencia con la que deberías hacer un proyecto de datos depende de tus objetivos, nivel de experiencia y disponibilidad de tiempo. Aquí algunas recomendaciones:
+
+1. **Principiantes**: Realiza un proyecto pequeño cada 2-3 semanas. Esto te permitirá aprender nuevos conceptos y reforzar lo aprendido sin saturarte.
+   
+2. **Intermedios**: Intenta hacer un proyecto más complejo cada 1-2 meses. Estos proyectos pueden involucrar técnicas más avanzadas o conjuntos de datos más grandes.
+
+3. **Avanzados**: Si ya tienes experiencia, puedes trabajar en proyectos más extensos a lo largo de varios meses, enfocándote en la optimización y en resolver problemas más desafiantes o especializados.
+
+4. **Profesionales**: Si ya trabajas en ciencia de datos, hacer proyectos paralelos o de investigación cada trimestre puede mantener tus habilidades frescas y permitirte explorar nuevas tecnologías o enfoques.
+
+Es importante que estos proyectos sean diversos y que incluyan tareas de limpieza de datos, visualización, modelado, y análisis de resultados para obtener una visión completa del ciclo de vida de los datos.
+
+## Dónde sacar ideas para proyectos de ciencia de datos
+
+Aquí tienes algunas fuentes y estrategias para obtener ideas para proyectos de ciencia de datos:
+
+### 1. **Plataformas de Competencias y Retos**
+   - **[Kaggle](https://www.kaggle.com/)**: Es una plataforma muy popular que ofrece datasets y competencias en ciencia de datos. Puedes unirte a retos en diferentes áreas (deportes, salud, finanzas) o simplemente explorar los datasets y resolver problemas propios.
+   - **[DrivenData](https://www.drivendata.org/)**: Similar a Kaggle, pero enfocado en proyectos de impacto social, como problemas ambientales, salud pública, etc.
+   - **[Zindi](https://zindi.africa/)**: Competencias de ciencia de datos dirigidas a resolver problemas específicos en África.
+   
+### 2. **Datasets Públicos**
+   - **[UCI Machine Learning Repository](https://archive.ics.uci.edu/ml/index.php)**: Un repositorio con datasets de varias disciplinas.
+   - **[Google Dataset Search](https://datasetsearch.research.google.com/)**: Un motor de búsqueda para encontrar datasets públicos.
+   - **[Data.gov](https://www.data.gov/)**: Datasets públicos del gobierno de EE. UU., cubriendo áreas como educación, economía y salud.
+
+### 3. **Proyectos de Impacto Social**
+   - **Open Data**: Muchas ciudades y países tienen portales de datos abiertos. Puedes usarlos para crear proyectos que resuelvan problemas locales, como el análisis de tránsito, datos de criminalidad o medio ambiente.
+   - **[UNICEF Data](https://data.unicef.org/)**: Ofrece datos sobre educación, salud infantil y otros temas globales que puedes usar para proyectos con un enfoque social.
+
+### 4. **Tu Propio Entorno**
+   - **Proyectos Personales**: Puedes identificar problemas en tu entorno laboral o personal que se puedan resolver con ciencia de datos. Por ejemplo:
+     - Optimizar el rendimiento de un equipo en una organización.
+     - Análisis de tus finanzas personales o de productividad.
+     - Monitoreo de tendencias en redes sociales.
+
+### 5. **Investigación Académica**
+   - **[ArXiv](https://arxiv.org/)**: Puedes leer artículos académicos y explorar investigaciones recientes en campos como inteligencia artificial y ciencia de datos. Esto puede inspirarte a desarrollar tus propios enfoques o replicar experimentos.
+   
+### 6. **Desafíos de la Industria**
+   - **FinTech**: Modelos de riesgo crediticio, fraude en pagos.
+   - **Salud**: Detección de enfermedades con imágenes médicas, análisis de genomas.
+   - **Retail**: Recomendadores de productos, análisis de comportamiento de clientes.
+   - **Medio Ambiente**: Proyectos de predicción climática, análisis de consumo energético.
+
+### 7. **Blogs y Comunidades de Ciencia de Datos**
+   - **[Medium](https://medium.com/tag/data-science)**: En Medium hay muchas publicaciones de ciencia de datos donde se comparten proyectos interesantes.
+   - **[Towards Data Science](https://towardsdatascience.com/)**: Publicaciones sobre proyectos, nuevas herramientas y técnicas en ciencia de datos.
+   - **[Reddit](https://www.reddit.com/r/datascience/)**: En el subreddit de ciencia de datos, muchas personas comparten sus proyectos y experiencias.
+
+### 8. **Proyectos de Código Abierto**
+   - **[GitHub](https://github.com/)**: Puedes contribuir a proyectos de código abierto que impliquen análisis de datos o crear el tuyo y compartirlo con la comunidad.
+
+### 9. **Eventos y Hackathons**
+   - Participa en hackathons online o presenciales que se enfoquen en resolver problemas usando ciencia de datos.
+
+Estas fuentes pueden ofrecerte un excelente punto de partida para idear y desarrollar proyectos de ciencia de datos relevantes y creativos.
+
+**Lecturas recomendadas**
+
+[dataworldqa.wpengine.com | The Cloud-Native Data Catalog](https://data.world/)
+
+[Datos Abiertos de México - datos.gob.mx](https://datos.gob.mx/)
+
+[Datos Abiertos Colombia | Datos Abiertos Colombia](https://datos.gov.co/)
+
+[https://datos.gob.ar](https://datos.gob.ar/)
+
+[Dataset Search](https://datasetsearch.research.google.com/)
+
+[UCI Machine Learning Repository: Data Sets](https://archive.ics.uci.edu/ml/datasets.php)

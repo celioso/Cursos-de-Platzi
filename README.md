@@ -83,6 +83,14 @@
 - [Curso de Manejo de Datos Faltantes: Detección y Exploración](CursodeManejodeDatosFaltantesDeteccionyExploracion)
 - [Curso de Manejo de Datos Faltantes: Imputación](CursodeManejodeDatosFaltantesImputacion)
 
+## Fundamentos de Servidores Linux
+
+- [Curso de Introducción a la Terminal y Línea de Comandos](Curso-de-Introducción-a-la-Terminal-y-Linea-de-Comandos)
+- [Curso de Programación en Bash Shell](CursodeProgramacionenBashShell)
+- [Curso de Expresiones Regulares](CursodeExpresionesRegulares)
+- [Curso de Introducción a la Administración de Servidores Linux](CursodeIntroducciónalaAdministracióndeServidoresLinux)
+- [Curso de Administración de Servidores Linux: Manejo de Recursos](CursodeAdministracióndeServidoresLinuxManejodeRecursos)
+
 ## FRONT-END
 
 - [Curso de Docker](CursoDeDocker)

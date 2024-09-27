@@ -1,4 +1,4 @@
-### # Curso de Programación en Bash Shell - test
+### Curso de Programación en Bash Shell - test
 
 1. **El kernel es la parte fundamental del Sistema Operativo (núcleo) que permite gestionar y administrar los recursos de hardware como son la memoria, el tiempo de procesamiento, el sistema de archivos, las entradas/salidas y es donde se ejecutan las aplicaciones:**
 
