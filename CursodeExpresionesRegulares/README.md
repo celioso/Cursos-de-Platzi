@@ -2036,3 +2036,497 @@ Con las expresiones regulares, puedes realizar operaciones complejas en cadenas 
 **Lecturas recomendadas**
 
 [Welcome to Python.org](https://www.python.org/)
+
+## Java
+
+En Java, las expresiones regulares se utilizan principalmente con las clases **`Pattern`** y **`Matcher`**, que pertenecen al paquete `java.util.regex`. Las expresiones regulares permiten realizar búsquedas y manipulaciones complejas de cadenas de texto, como coincidencias de patrones, reemplazo de texto y validación de formatos.
+
+### Clases clave:
+- **`Pattern`**: Representa un patrón de expresión regular compilado.
+- **`Matcher`**: Se utiliza para realizar las búsquedas y obtener coincidencias del patrón en una cadena de texto.
+
+### Ejemplo básico de uso de expresiones regulares en Java:
+
+```java
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+public class RegexExample {
+    public static void main(String[] args) {
+        // Definir el patrón (expresión regular)
+        String regex = "\\d{3}-\\d{2}-\\d{4}"; // Busca coincidencias en formato "###-##-####" (como un número de seguro social)
+        
+        // Compilar el patrón
+        Pattern pattern = Pattern.compile(regex);
+        
+        // Cadena de ejemplo donde buscar el patrón
+        String text = "Mi número de seguro social es 123-45-6789.";
+        
+        // Crear el Matcher para buscar coincidencias
+        Matcher matcher = pattern.matcher(text);
+        
+        // Comprobar si hay coincidencias
+        if (matcher.find()) {
+            System.out.println("Se encontró una coincidencia: " + matcher.group());
+        } else {
+            System.out.println("No se encontró ninguna coincidencia.");
+        }
+    }
+}
+```
+
+### Explicación del ejemplo:
+1. **`String regex = "\\d{3}-\\d{2}-\\d{4}"`**:
+   - Esta expresión regular busca una secuencia de 3 dígitos, seguida de un guion, 2 dígitos más, otro guion y finalmente 4 dígitos.
+   - El patrón se utiliza para identificar números de formato como un número de seguro social en EE. UU. (###-##-####).
+
+2. **`Pattern.compile(regex)`**: 
+   - Compila la expresión regular para que pueda ser utilizada por un objeto `Matcher`.
+
+3. **`Matcher matcher = pattern.matcher(text)`**:
+   - Crea un `Matcher` que buscará el patrón dentro del texto.
+
+4. **`matcher.find()`**: 
+   - Busca coincidencias del patrón en el texto.
+   
+5. **`matcher.group()`**: 
+   - Devuelve la coincidencia encontrada.
+
+### Métodos comunes en `Pattern` y `Matcher`:
+- **`Pattern.compile(String regex)`**: Compila una expresión regular en un patrón.
+- **`matcher.matches()`**: Devuelve `true` si la cadena completa coincide con la expresión regular.
+- **`matcher.find()`**: Busca la próxima coincidencia de la expresión regular en el texto.
+- **`matcher.group()`**: Devuelve la subsecuencia del texto que coincide con la expresión regular.
+- **`matcher.replaceAll(String replacement)`**: Reemplaza todas las coincidencias de la expresión regular en la cadena original con una nueva cadena.
+
+### Validar una dirección de correo electrónico:
+```java
+import java.util.regex.Pattern;
+
+public class EmailValidator {
+    public static void main(String[] args) {
+        String email = "ejemplo@test.com";
+        String regex = "^[\\w-\\.]+@[\\w-]+\\.[a-z]{2,}$";
+
+        boolean isValid = Pattern.matches(regex, email);
+        if (isValid) {
+            System.out.println(email + " es una dirección de correo válida.");
+        } else {
+            System.out.println(email + " no es válida.");
+        }
+    }
+}
+```
+
+### Aplicaciones de expresiones regulares en Java:
+- **Validación**: Números de teléfono, correos electrónicos, direcciones IP.
+- **Buscar y reemplazar**: Modificar formatos de texto, como fechas o direcciones.
+- **Extracción**: Extraer partes de una cadena que coincidan con un patrón.
+- **Transformaciones**: Convertir texto con formatos específicos a otros formatos.
+
+Java proporciona un potente motor de expresiones regulares que es eficiente y flexible para manejar patrones complejos de texto.
+
+**Nota**: para iniciar el archivo java por teminal se utiliza el siguiente codigo `javac <archivo.java>` o compilarod en java 11 `javac --release 11 regex.java` para compilar y iniciarlo el archivo se usa `java <archivo>`
+
+**Lecturas recomendadas**
+
+[Descarga gratuita de software de Java](https://www.java.com/es/download/)
+
+## Java aplicado
+
+Java es un lenguaje de programación de propósito general utilizado en una variedad de aplicaciones debido a su portabilidad, escalabilidad y robustez. Aquí te muestro algunas de las áreas y aplicaciones más comunes donde Java se utiliza ampliamente:
+
+### 1. **Desarrollo Web**
+Java es una de las tecnologías más populares para el desarrollo de aplicaciones web empresariales y sitios web dinámicos, principalmente utilizando **Java EE** (Enterprise Edition) o **Spring Framework**.
+- **Servlets** y **JSP (JavaServer Pages)** son tecnologías comunes para crear aplicaciones web dinámicas.
+- **Spring Boot** se utiliza para construir aplicaciones web modernas y microservicios.
+  
+**Ejemplo de una simple aplicación web usando Servlets:**
+
+```java
+import java.io.*;
+import javax.servlet.*;
+import javax.servlet.http.*;
+
+public class HelloWorldServlet extends HttpServlet {
+    public void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        response.setContentType("text/html");
+        PrintWriter out = response.getWriter();
+        out.println("<h1>Hello, World</h1>");
+    }
+}
+```
+
+### 2. **Aplicaciones Empresariales**
+Java es un lenguaje muy usado en el desarrollo de **aplicaciones empresariales a gran escala**, como **sistemas de gestión empresarial (ERP)**, **gestión de la cadena de suministro (SCM)**, o **bancos**. Las soluciones como **Spring**, **EJB (Enterprise Java Beans)** y **JPA (Java Persistence API)** son populares.
+
+### 3. **Desarrollo de Aplicaciones Móviles**
+El **desarrollo de aplicaciones móviles Android** está profundamente relacionado con Java. Aunque **Kotlin** ha ganado popularidad, **Java** sigue siendo un lenguaje base para las aplicaciones de Android.
+
+```java
+public class MainActivity extends AppCompatActivity {
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+    }
+}
+```
+
+### 4. **Aplicaciones de Escritorio**
+Java proporciona **Swing** y **JavaFX** para el desarrollo de interfaces gráficas de usuario (GUI), lo que permite crear aplicaciones de escritorio multiplataforma.
+
+**Ejemplo básico de una ventana GUI usando Swing:**
+
+```java
+import javax.swing.*;
+
+public class HelloWorldSwing {
+    public static void main(String[] args) {
+        JFrame frame = new JFrame("Hello World");
+        JLabel label = new JLabel("Hello, World!", JLabel.CENTER);
+        frame.add(label);
+        frame.setSize(300, 100);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setVisible(true);
+    }
+}
+```
+
+### 5. **Sistemas Distribuidos y Microservicios**
+Java es utilizado en aplicaciones que manejan arquitecturas distribuidas, como los **microservicios**. El framework **Spring Boot** junto con **Spring Cloud** es muy popular para desarrollar microservicios. 
+
+### 6. **Aplicaciones Financieras**
+Muchos **sistemas financieros** y aplicaciones bancarias están construidos con Java por su fiabilidad y rendimiento. Herramientas como **Apache Kafka** y **Apache Camel** son utilizadas para manejar grandes volúmenes de transacciones.
+
+### 7. **Big Data**
+Java se usa en herramientas y plataformas **Big Data**, como **Apache Hadoop** y **Apache Spark**, que permiten procesar grandes cantidades de datos distribuidos en clústeres.
+
+### 8. **Juegos**
+Java también se usa para desarrollar **juegos**, aunque no es el lenguaje principal en la industria de los videojuegos. Sin embargo, juegos populares como **Minecraft** fueron creados originalmente en Java.
+
+### 9. **Sistemas Embebidos**
+Java también está presente en dispositivos de **Internet of Things (IoT)** y sistemas embebidos, donde **Java ME (Micro Edition)** es utilizado.
+
+### 10. **Cloud Computing**
+Con la popularidad de las plataformas **cloud**, Java se utiliza en el desarrollo de aplicaciones que se ejecutan en la nube, aprovechando plataformas como **AWS**, **Google Cloud** o **Microsoft Azure**.
+
+---
+
+### Beneficios del uso de Java:
+1. **Multiplataforma**: El lema "write once, run anywhere" se cumple gracias a la **Java Virtual Machine (JVM)**.
+2. **Ecosistema y Comunidad**: Tiene un amplio ecosistema de librerías, frameworks y herramientas, junto con una activa comunidad.
+3. **Seguridad**: Java ofrece características de seguridad integradas, lo que lo hace ideal para aplicaciones bancarias y empresariales.
+4. **Rendimiento**: Aunque no es tan rápido como el código nativo, el rendimiento de Java es generalmente lo suficientemente alto para la mayoría de las aplicaciones empresariales y web.
+
+En resumen, Java es muy versátil y se adapta a casi cualquier tipo de proyecto, desde pequeñas aplicaciones móviles hasta grandes sistemas distribuidos.
+
+**Nota**: para ver cuantos filas tiene el archivo `java regex | wc -l`.
+
+**Lecturas recomendadas**
+
+[Java SE - Downloads | Oracle Technology Network | Oracle](https://www.oracle.com/technetwork/java/javase/downloads/index.html)
+[Configurar la variable de entorno PATH para Java | Tutorial de Java | Abrirllave.com](https://www.abrirllave.com/java/configurar-la-variable-de-entorno-path.php)
+
+## JavaScript
+
+En **JavaScript**, las **expresiones regulares** (o **regex**) son patrones utilizados para hacer coincidir combinaciones de caracteres en cadenas. Estas expresiones son muy útiles para validar, buscar, o reemplazar patrones específicos de texto dentro de una cadena. JavaScript proporciona un soporte robusto para trabajar con expresiones regulares a través de su clase nativa `RegExp` y algunos métodos de las cadenas (`String`).
+
+### Creación de una expresión regular
+
+En JavaScript, las expresiones regulares se pueden crear de dos maneras:
+
+1. **Usando una notación literal**: 
+   ```javascript
+   const regex = /patron/;
+   ```
+
+2. **Usando el constructor `RegExp`**:
+   ```javascript
+   const regex = new RegExp("patron");
+   ```
+
+### Métodos de `RegExp` y `String` asociados a expresiones regulares
+
+1. **`test()`**: Verifica si una cadena coincide con el patrón de la expresión regular y devuelve `true` o `false`.
+   ```javascript
+   const regex = /abc/;
+   const cadena = "abcde";
+   console.log(regex.test(cadena)); // true
+   ```
+
+2. **`match()`**: Devuelve las coincidencias encontradas en una cadena. Si no se encuentran coincidencias, devuelve `null`.
+   ```javascript
+   const cadena = "2023-09-26";
+   const resultado = cadena.match(/\d{4}/); // Busca un grupo de 4 dígitos
+   console.log(resultado); // ["2023"]
+   ```
+
+3. **`replace()`**: Reemplaza coincidencias en una cadena.
+   ```javascript
+   const cadena = "Estoy aprendiendo JavaScript";
+   const resultado = cadena.replace(/JavaScript/, "regex");
+   console.log(resultado); // "Estoy aprendiendo regex"
+   ```
+
+4. **`split()`**: Divide una cadena en un arreglo según el patrón de la expresión regular.
+   ```javascript
+   const cadena = "uno, dos, tres";
+   const partes = cadena.split(/,\s*/); // Divide por comas y espacios
+   console.log(partes); // ["uno", "dos", "tres"]
+   ```
+
+### Caracteres y Metacaracteres Comunes en Expresiones Regulares
+
+- **`.`**: Representa cualquier carácter excepto un salto de línea.
+  ```javascript
+  const regex = /.a./;
+  const cadena = "car";
+  console.log(regex.test(cadena)); // true ("car" coincide)
+  ```
+
+- **`^`**: Indica el **inicio** de una cadena.
+  ```javascript
+  const regex = /^Hola/;
+  const cadena = "Hola mundo";
+  console.log(regex.test(cadena)); // true
+  ```
+
+- **`$`**: Indica el **final** de una cadena.
+  ```javascript
+  const regex = /mundo$/;
+  const cadena = "Hola mundo";
+  console.log(regex.test(cadena)); // true
+  ```
+
+- **`*`**: Coincide con **cero o más** repeticiones del carácter anterior.
+  ```javascript
+  const regex = /ho*/;
+  console.log(regex.test("hoooola")); // true
+  ```
+
+- **`+`**: Coincide con **una o más** repeticiones del carácter anterior.
+  ```javascript
+  const regex = /ho+/;
+  console.log(regex.test("hola")); // true
+  console.log(regex.test("h")); // false
+  ```
+
+- **`?`**: Coincide con **cero o una** ocurrencia del carácter anterior (opcional).
+  ```javascript
+  const regex = /colou?r/;
+  console.log(regex.test("color")); // true
+  console.log(regex.test("colour")); // true
+  ```
+
+- **`{n}`**: Coincide con **exactamente n** ocurrencias del carácter anterior.
+  ```javascript
+  const regex = /\d{4}/;
+  const cadena = "El año es 2024";
+  console.log(regex.test(cadena)); // true (coincide con 2024)
+  ```
+
+### Clases de Caracteres Predefinidas
+
+- **`\d`**: Coincide con cualquier **dígito** (equivalente a `[0-9]`).
+- **`\D`**: Coincide con cualquier carácter que **no sea un dígito**.
+- **`\w`**: Coincide con cualquier carácter alfanumérico (letras y números, incluyendo el guion bajo).
+- **`\W`**: Coincide con cualquier carácter que **no sea alfanumérico**.
+- **`\s`**: Coincide con cualquier **espacio en blanco** (incluye tabulaciones y saltos de línea).
+- **`\S`**: Coincide con cualquier carácter que **no sea un espacio en blanco**.
+
+### Ejemplos de Aplicaciones de Expresiones Regulares en JavaScript
+
+1. **Validar un correo electrónico**:
+   ```javascript
+   const emailRegex = /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/;
+   console.log(emailRegex.test("example@domain.com")); // true
+   ```
+
+2. **Validar un número de teléfono** (formato internacional):
+   ```javascript
+   const phoneRegex = /^\+?\d{1,3}?[-.\s]?\(?\d{1,4}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,9}$/;
+   console.log(phoneRegex.test("+1 (555) 555-5555")); // true
+   ```
+
+3. **Buscar URLs en un texto**:
+   ```javascript
+   const urlRegex = /https?:\/\/(www\.)?[\w-]+\.\w{2,}(\/\S*)?/gi;
+   const texto = "Visita https://example.com o http://another-site.org para más información.";
+   console.log(texto.match(urlRegex)); // ["https://example.com", "http://another-site.org"]
+   ```
+
+4. **Validar una fecha en formato YYYY-MM-DD**:
+   ```javascript
+   const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+   console.log(dateRegex.test("2024-09-26")); // true
+   ```
+
+### Conclusión
+
+Las expresiones regulares en JavaScript son una herramienta muy poderosa para buscar, validar y manipular texto. Al usarlas correctamente, puedes simplificar tareas complejas como la validación de formularios, la extracción de datos de texto, o la transformación de cadenas.
+
+## `grep` y `find` desde consola
+
+Las **expresiones regulares** pueden usarse en la línea de comandos de Unix/Linux para buscar patrones de texto mediante herramientas como **`grep`** y **`find`**. Estas herramientas son muy útiles para procesar y buscar información dentro de archivos o directorios. A continuación te explico cómo utilizar expresiones regulares con ambas.
+
+## Uso de `grep` con expresiones regulares
+
+El comando `grep` busca patrones en archivos o en la salida de otros comandos. Soporta expresiones regulares básicas y extendidas.
+
+### Sintaxis básica
+```bash
+grep [opciones] "expresión_regular" archivo
+```
+
+### Ejemplos con `grep`:
+
+1. **Buscar una palabra en un archivo**:
+   ```bash
+   grep "patrón" archivo.txt
+   ```
+
+2. **Buscar con expresiones regulares básicas**:
+   Supongamos que queremos buscar todas las líneas que comiencen con un número de cuatro dígitos en el archivo `log.txt`:
+   ```bash
+   grep "^[0-9]\{4\}" log.txt
+   ```
+
+3. **Buscar de forma insensible a mayúsculas y minúsculas**:
+   ```bash
+   grep -i "patrón" archivo.txt
+   ```
+
+4. **Buscar con expresiones regulares extendidas**:
+   Usamos `-E` para habilitar expresiones regulares extendidas (equivalente a `egrep`):
+   ```bash
+   grep -E "(error|warning)" archivo.log
+   ```
+
+5. **Buscar recursivamente en todos los archivos de un directorio**:
+   ```bash
+   grep -r "patrón" /ruta/del/directorio
+   ```
+
+6. **Mostrar solo el número de línea donde se encuentra el patrón**:
+   ```bash
+   grep -n "patrón" archivo.txt
+   ```
+
+7. **Buscar líneas que no coinciden con un patrón** (inverso):
+   ```bash
+   grep -v "patrón" archivo.txt
+   ```
+
+### Combinaciones útiles con `grep`:
+
+- **Buscar una palabra exacta**: El uso de la opción `-w` asegura que `grep` busque solo la palabra completa.
+  ```bash
+  grep -w "error" archivo.txt
+  ```
+
+- **Contar las ocurrencias** de un patrón en un archivo con `-c`:
+  ```bash
+  grep -c "patrón" archivo.txt
+  ```
+
+## Uso de `find` con expresiones regulares
+
+El comando `find` se utiliza para buscar archivos y directorios en un sistema de archivos, y también puede usar expresiones regulares para encontrar archivos con nombres que sigan ciertos patrones.
+
+### Sintaxis básica de `find`
+```bash
+find [ruta] [opciones] [expresión]
+```
+
+### Ejemplos con `find`:
+
+1. **Buscar archivos por nombre** (exactamente):
+   ```bash
+   find /ruta -name "archivo.txt"
+   ```
+
+2. **Buscar archivos con expresiones regulares**:
+   Usamos la opción `-regex` para indicar que queremos utilizar una expresión regular.
+   ```bash
+   find /ruta -regex ".*\.txt$"
+   ```
+
+   Este ejemplo busca todos los archivos que terminen en `.txt`.
+
+3. **Buscar archivos que coincidan con un patrón en su nombre**:
+   Para buscar archivos que comiencen con "log" y terminen con números, podemos usar:
+   ```bash
+   find /ruta -regex ".*/log[0-9]+"
+   ```
+
+4. **Buscar archivos por extensión** (p. ej., archivos `.log` o `.txt`):
+   ```bash
+   find /ruta -regex ".*\.\(log\|txt\)$"
+   ```
+
+5. **Buscar archivos modificados en los últimos N días**:
+   ```bash
+   find /ruta -name "*.log" -mtime -7
+   ```
+
+6. **Buscar archivos y directorios vacíos**:
+   ```bash
+   find /ruta -empty
+   ```
+
+7. **Buscar archivos grandes (más de 100 MB)**:
+   ```bash
+   find /ruta -size +100M
+   ```
+
+### Combinación de `find` con `grep`
+
+Podemos combinar `find` y `grep` para buscar dentro de los archivos encontrados. Por ejemplo, para buscar la palabra "error" en todos los archivos `.log` en un directorio:
+```bash
+find /ruta -name "*.log" -exec grep "error" {} +
+```
+
+## Resumen de opciones útiles
+
+### `grep`:
+
+- `-i`: Ignorar mayúsculas/minúsculas.
+- `-r`: Buscar recursivamente.
+- `-n`: Mostrar número de línea.
+- `-v`: Buscar líneas que **no** coinciden.
+- `-E`: Usar expresiones regulares extendidas.
+
+### `find`:
+
+- `-name`: Buscar por nombre de archivo.
+- `-regex`: Usar una expresión regular para el nombre.
+- `-mtime`: Buscar archivos modificados recientemente.
+- `-size`: Buscar por tamaño de archivo.
+- `-exec`: Ejecutar un comando para cada archivo encontrado.
+
+Estas combinaciones te permiten realizar búsquedas potentes y filtrados de texto dentro de archivos y sistemas de archivos de manera eficiente en un entorno de línea de comandos.
+
+En los sistemas operativos basados en UNIX podemos utilizar expresiones regulares a través de la consola mediante los comandos grep y find.
+
+- **grep**: Nos ayuda a buscar dentro de los archivos, textos muy puntuales utilizando una versión muy reducida de expresiones regulares.
+
+- **find**: Se utiliza para encontrar archivos en un determinado directorio a partir de diversas reglas de búsqueda que incluyen expresiones regulares.
+
+**Archivos de la clase**
+
+[cheatsheet-1.jpg](images/cheatsheet-1.jpg)
+
+[cheatsheet-2.jpg](images/cheatsheet-2.jpg)
+
+[cheatsheet-3.jpg](images/cheatsheet-3.jpg)
+
+`cat results.csv | grep ^2012`: muetra todos los datos del 2012.
+`cat results.csv | grep ,3[0-9],`: Muestra los goles de 31 a 39.
+`cat results.csv | grep SE$`: Muestra todos los FALSE.
+`cat results.csv | grep SE`:  trae todos los elementos que contengan SE.
+`cat results.csv | grep [SE]`: trae tolos los que tengan SE.
+` cat results.csv | grep Brazil`: busca todos los partidos de brasil.
+`cat results.csv | grep Brazil | grep Uruguay`: Busca todos los partidos de brasil contra Uruguay.
+`cat results.csv | grep Brazil | grep Uruguay | grep ^1952`: Busca todos los partidos de brasil contra Uruguay en 1952.
