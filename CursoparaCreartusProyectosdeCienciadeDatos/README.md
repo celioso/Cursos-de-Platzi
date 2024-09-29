@@ -237,3 +237,110 @@ Generar y comunicar un proyecto de datos implica varios pasos que abarcan desde 
 - **Resultados**: Presentar un informe con gráficos que muestren las tendencias de ventas y las correlaciones encontradas.
 
 Siguiendo estos pasos, podrás crear y comunicar un proyecto de datos de manera efectiva.
+
+## Ejecutando: obteniendo los datos
+
+**Lecturas recomendadas**
+
+[Datos Argentina](https://datos.gob.ar/)
+
+[Gobierno Municipal de Monterrey](http://portal.monterrey.gob.mx/transparencia/Oficial/Index_Transparencia.asp)
+
+[dataworldqa.wpengine.com | The Cloud-Native Data Catalog](https://data.world/)
+
+[Datos Abiertos de México - datos.gob.mx](https://datos.gob.mx/)
+
+[Datos Abiertos Colombia | Datos Abiertos Colombia](https://datos.gov.co/)
+
+[Dataset Search](https://datasetsearch.research.google.com/)
+
+[UCI Machine Learning Repository: Data Sets](https://archive.ics.uci.edu/ml/datasets.php)
+
+## Explora y encuentra patrones en la información
+
+El EDA es para conocer los datos que tenemos 📊
+Y es que puede pasar que luego de haber recolectado información aún nos haga falta para responder nuestra pregunta. El EDA (Exploratory Data Analysis) entonces nos hace ver lo que tenemos y lo que podemos hacer con los datos.
+
+**¿Y cómo podemos podemos hacer un EDA?**
+
+Ve de lo más pequeño a lo más grande. Y de lo más general a lo más específico.
+
+Un buen inicio es hacer una breve descripción estadística de nuestro dataframe usando df.info(). Luego pasa al análisis univariable, bivariable y multivariable. Además, recuerda que necesitas mucha visualización de datos.
+
+**Análisis univariable**
+
+Aquí buscas entender lo que representa cada variable (columna) por sí sola. Puedes usar distribuciones o histogramas.
+
+**Análisis bivariable**
+
+En este caso, tu objetivo es entender la relación entre dos variables de interés. Puedes usar distribuciones e histogramas, pero ya añades un hue según necesites. Las correlaciones son muy usadas también.
+
+**Análisis multivariable**
+
+Ahora ya necesitas entender la relación entre 3 o más variables.
+
+## Ejecutando: aplicando un modelo no supervisado de machine learning
+
+Si deseas aplicar un modelo no supervisado de *machine learning*, como por ejemplo el algoritmo de *k-means* para agrupamiento (clustering), aquí tienes un ejemplo paso a paso usando `scikit-learn`:
+
+### Paso 1: Preparar los datos
+Asegúrate de que tus datos estén limpios y listos para el modelo. Si estás trabajando con variables categóricas, podrías necesitar convertirlas en variables numéricas (por ejemplo, usando *one-hot encoding*).
+
+```python
+from sklearn.preprocessing import StandardScaler
+from sklearn.cluster import KMeans
+
+# Ejemplo de cómo estandarizar los datos (opcional, pero recomendado para k-means)
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X)  # X es tu conjunto de características
+```
+
+### Paso 2: Aplicar el modelo *k-means*
+
+```python
+# Definir el modelo k-means con 3 clusters (puedes ajustar el número de clusters)
+kmeans = KMeans(n_clusters=3, random_state=42)
+
+# Ajustar el modelo a los datos
+kmeans.fit(X_scaled)
+
+# Obtener las etiquetas de los clusters asignados
+clusters = kmeans.labels_
+
+# Ver los centros de los clusters
+centroids = kmeans.cluster_centers_
+```
+
+### Paso 3: Interpretar los resultados
+
+Después de aplicar el modelo, puedes asignar los clusters a tu conjunto de datos original o visualizar los resultados:
+
+```python
+# Agregar las etiquetas de los clusters al DataFrame original
+df['Cluster'] = clusters
+
+# Visualización de los clusters (si tienes 2 características principales)
+import matplotlib.pyplot as plt
+
+plt.scatter(X_scaled[:, 0], X_scaled[:, 1], c=clusters, cmap='viridis')
+plt.scatter(centroids[:, 0], centroids[:, 1], c='red', marker='x')  # Marcar los centros
+plt.show()
+```
+
+### Paso 4: Evaluación
+
+Una forma de evaluar la calidad del agrupamiento es usando el *silhouette score*, que mide cuán bien separados están los clusters.
+
+```python
+from sklearn.metrics import silhouette_score
+
+silhouette_avg = silhouette_score(X_scaled, clusters)
+print(f"Silhouette Score: {silhouette_avg}")
+```
+
+Si estás usando otro algoritmo no supervisado como PCA o DBSCAN, el proceso será diferente, pero el flujo general sigue siendo:
+
+1. **Preparar los datos**
+2. **Aplicar el modelo**
+3. **Interpretar y visualizar los resultados**
+4. **Evaluar la calidad del modelo (si es aplicable)**
