@@ -30,6 +30,10 @@
 - [Curso de Fundamentos de Bases de Datos](Curso-de-Fundamentos-de-Bases-de-Datos)
 - [Curso Práctico de Python: Creación de un CRUD](CursoPracticodePythonCreaciondeunCRUD)
 - [Curso de Flask](Curso_de_Flask)
+- [Curso de Django](CursodeDjango)
+- [Curso de Django Rest Framework](CursodeDjangoRestFramework)
+
+- [Curso de Unit Testing en Python]()
 
 ## QA y Automatización de Pruebas
 
@@ -67,6 +71,7 @@
 - [Curso de Configuración Profesional de Entorno de Trabajo para Ciencia de Datos](CursodeConfiguracionProfesionaldeEntornodeTrabajoparaCienciadeDatos)
 - [Curso de Manejo de Datos Faltantes: Detección y Exploración](CursodeManejodeDatosFaltantesDeteccionyExploracion)
 - [Curso de Manejo de Datos Faltantes: Imputación](CursodeManejodeDatosFaltantesImputacion)
+- [Curso para Crear tus Proyectos de Ciencia de Datos](CursoparaCreartusProyectosdeCienciadeDatos)
 
 ## Análisis de Datos con Python
 
