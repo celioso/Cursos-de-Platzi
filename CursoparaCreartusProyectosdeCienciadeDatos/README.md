@@ -344,3 +344,61 @@ Si estás usando otro algoritmo no supervisado como PCA o DBSCAN, el proceso ser
 2. **Aplicar el modelo**
 3. **Interpretar y visualizar los resultados**
 4. **Evaluar la calidad del modelo (si es aplicable)**
+
+## Ejecutando: aplicando un modelo no supervisado de anomalías
+
+Para aplicar un modelo no supervisado de detección de anomalías, puedes utilizar varios enfoques, dependiendo del tipo de datos que tengas y de la naturaleza de las anomalías que quieras detectar. Un enfoque común es utilizar el **Isolation Forest**, que es adecuado para detectar anomalías en datos de alta dimensión.
+
+Aquí te dejo un ejemplo básico usando **Isolation Forest** de la biblioteca `scikit-learn`:
+
+### Pasos para aplicar un modelo de detección de anomalías con Isolation Forest:
+
+1. **Instalar la biblioteca scikit-learn** (si aún no lo has hecho):
+
+   ```bash
+   pip install scikit-learn
+   ```
+
+2. **Cargar los datos y preprocesarlos**. Por ejemplo, si ya tienes un DataFrame `compras_df`, selecciona las columnas que deseas analizar.
+
+3. **Entrenar el modelo Isolation Forest**:
+
+   ```python
+   from sklearn.ensemble import IsolationForest
+   from sklearn.model_selection import train_test_split
+   import numpy as np
+
+   # Suponiendo que tus datos estén en compras_df y quieras detectar anomalías en una columna específica:
+   X = compras_df[['IMPORTE']]  # Suponiendo que quieres detectar anomalías en la columna 'IMPORTE'
+
+   # Dividir en conjuntos de entrenamiento y prueba (opcional)
+   X_train, X_test = train_test_split(X, test_size=0.33, random_state=42)
+
+   # Crear el modelo de Isolation Forest
+   iso_forest = IsolationForest(n_estimators=100, contamination=0.1, random_state=42)
+
+   # Ajustar el modelo (entrenarlo)
+   iso_forest.fit(X_train)
+
+   # Predecir anomalías (1 = normal, -1 = anómalo)
+   anomalies = iso_forest.predict(X_test)
+
+   # Agregar una columna para indicar si es anómalo o no
+   X_test['Anomalía'] = anomalies
+   ```
+
+4. **Interpretar los resultados**:
+   - Las predicciones del modelo serán `1` si el registro es considerado normal, y `-1` si es considerado una anomalía.
+   - Puedes explorar los resultados de las anomalías:
+
+   ```python
+   # Mostrar los registros que fueron detectados como anomalías
+   anomalías_detectadas = X_test[X_test['Anomalía'] == -1]
+   print(anomalías_detectadas)
+   ```
+
+### Parámetros importantes:
+- **n_estimators**: El número de árboles en el bosque de aislamiento.
+- **contamination**: La proporción de anomalías que esperas encontrar en tus datos. Si no tienes una idea clara, puedes ajustarlo según la naturaleza de tus datos.
+
+[GitHub - platzi/proyectos-ciencia-datos: Repositorio del proyecto del Curso para Crear tus Proyectos de Ciencia de Datos](https://github.com/platzi/proyectos-ciencia-datos)
