@@ -66,6 +66,34 @@ Las APIs (Application Programming Interfaces) permiten que los computadores se c
 - **DELETE**: Utilizado para eliminar un recurso existente.
 - **PUT y PATCH**: Modifican la información de un recurso, ya sea un solo campo o todo el contenido.
 
+### Concepto de REST
+
+REST, significa "Representational State Transfer". Es un estilo arquitectónico para diseñar servicios web. Se basa en una serie de principios y restricciones que permiten la comunicación entre sistemas a través de la web de manera eficiente y escalable.
+
+### Principios Clave de REST
+
+1. **Recursos**: En REST, todo se trata de recursos, que son entidades que pueden ser representadas en diferentes formatos (como JSON o XML). Cada recurso tiene una URL única que lo identifica.
+
+2. **Métodos HTTP**: REST utiliza los métodos HTTP estándar para realizar operaciones sobre los recursos. Los métodos más comunes son:
+ - **GET**: Para obtener información sobre un recurso.
+ - **POST**: Para crear un nuevo recurso.
+ - **PUT**: Para actualizar un recurso existente.
+ - **DELETE**: Para eliminar un recurso.
+
+3. **Stateless**: Cada solicitud del cliente al servidor debe contener toda la información necesaria para entender y procesar la solicitud. Esto significa que el servidor no almacena el estado del cliente entre las solicitudes, lo que mejora la escalabilidad.
+
+4. **Representaciones**: Los recursos pueden ser representados de diferentes maneras. Por ejemplo, al solicitar un recurso, el servidor puede devolverlo en formato JSON o XML, dependiendo de lo que el cliente solicite.
+
+5. **Navegabilidad**: REST promueve el uso de hipermedios (enlaces) para permitir a los clientes navegar entre los recursos disponibles, lo que facilita la interacción con la API.
+
+**Conclusión**
+
+REST se ha convertido en un estándar popular para construir APIs debido a su simplicidad y flexibilidad. Al seguir estos principios, los desarrolladores pueden crear servicios web que son fáciles de usar y mantener, permitiendo una integración fluida entre diferentes aplicaciones y plataformas.
+
+**Herramientas de validación de JSON**
+
+[https://jsonlint.com/](https://jsonlint.com/)
+
 **Lecturas recomendadas**
 
 [JSON Online Validator and Formatter - JSON Lint](https://jsonlint.com/)
@@ -73,3 +101,101 @@ Las APIs (Application Programming Interfaces) permiten que los computadores se c
 [GitHub - platzi/django-rest-framework](https://github.com/platzi/django-rest-framework)
 
 [HTTP request methods - HTTP | MDN](https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods)
+
+## Instalación de Django y Django REST Framework
+
+Aquí tienes una guía paso a paso para instalar **Django** y **Django REST Framework**:
+
+### 1. Preparar el entorno
+
+Antes de comenzar, asegúrate de tener instalado **Python** y **pip**. Puedes verificarlo ejecutando los siguientes comandos en tu terminal:
+
+```bash
+python --version
+pip --version
+```
+
+Si no tienes Python instalado, descárgalo desde [python.org](https://www.python.org/downloads/) e instálalo.
+
+### 2. Crear un entorno virtual
+
+Es recomendable crear un entorno virtual para tu proyecto. Esto te permite gestionar las dependencias de manera aislada.
+
+```bash
+# Crea un nuevo directorio para tu proyecto y navega hacia él
+mkdir mi_proyecto
+cd mi_proyecto
+
+# Crea un entorno virtual
+python -m venv venv
+
+# Activa el entorno virtual
+# En Windows
+venv\Scripts\activate
+# En macOS/Linux
+source venv/bin/activate
+```
+
+### 3. Instalar Django
+
+Una vez que tengas el entorno virtual activo, puedes instalar Django utilizando pip:
+
+```bash
+pip install django
+```
+
+### 4. Crear un proyecto Django
+
+Después de instalar Django, crea un nuevo proyecto:
+
+```bash
+django-admin startproject mi_proyecto
+cd mi_proyecto
+```
+
+### 5. Instalar Django REST Framework
+
+Ahora, instala Django REST Framework:
+
+```bash
+pip install djangorestframework
+```
+
+### 6. Configurar Django REST Framework
+
+Abre el archivo `settings.py` de tu proyecto (que se encuentra en la carpeta `mi_proyecto/mi_proyecto/`) y añade `rest_framework` a la lista de aplicaciones instaladas:
+
+```python
+# mi_proyecto/settings.py
+
+INSTALLED_APPS = [
+    ...
+    'rest_framework',
+]
+```
+
+### 7. Verificar la instalación
+
+Para asegurarte de que todo está funcionando correctamente, puedes ejecutar el servidor de desarrollo de Django:
+
+```bash
+python manage.py runserver
+```
+
+Abre tu navegador y visita `http://127.0.0.1:8000/`. Deberías ver la página de inicio de Django.
+
+### 8. Crear una aplicación (opcional)
+
+Si deseas crear una aplicación dentro de tu proyecto:
+
+```bash
+python manage.py startapp mi_aplicacion
+```
+
+### Resumen
+
+Ahora tienes un entorno configurado con Django y Django REST Framework. Puedes comenzar a desarrollar tu aplicación y crear APIs según sea necesario.
+
+**Lecturas recomendadas**
+
+[Home - Django REST framework](https://www.django-rest-framework.org/)

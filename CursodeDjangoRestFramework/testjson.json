@@ -1,0 +1,68 @@
+[
+    {
+        "nombre":"Luis",
+        "apellido":"Martinez",
+        "hobbies":["viajas", "programar", "enseñar"],
+        "contacto": {
+            "telefono":"",
+            "email":"hola@lcmartinez.com",
+            "linkedin":"linkedin.com/in/lcmartinez_",
+            "FaceBook":"https://web.facebook.com/p/Luis-Martinez"
+        }
+    },
+    {
+        "nombre":"Camila",
+        "apellido":"Suarez",
+        "hobbies":["viajas", "vailar", "camina"],
+        "contacto": {
+            "telefono":"",
+            "email":"Camila@gmail.com",
+            "linkedin":"linkedin.com/in/Camila-Suarez",
+            "FaceBook":"https://web.facebook.com/p/Camila-Suarez"
+        }
+    },
+    {
+        "nombre":"Clark",
+        "apellido":"Peña",
+        "hobbies":["periodismo", "leer", "fotografia"],
+        "contacto": {
+            "telefono":"",
+            "email":"Clark@hotmail.com",
+            "linkedin":"linkedin.com/in/Clark-Peña",
+            "FaceBook":"https://web.facebook.com/p/Clark-Peña"
+        }
+    },
+    {
+        "nombre":"Juan",
+        "apellido":"Lopez",
+        "hobbies":["pintura", "bicicleta", "montañismo"],
+        "contacto": {
+            "telefono":"",
+            "email":"Juan@outlook.com",
+            "linkedin":"linkedin.com/in/Juan-Lopez",
+            "FaceBook":"https://web.facebook.com/p/Juan-Lopez"
+        }
+    },
+    {
+        "nombre":"Maria",
+        "apellido":"Castro",
+        "hobbies":["patinaje", "danza", "escritura"],
+        "contacto": {
+            "telefono":"",
+            "email":"Maria@yahoo.com",
+            "linkedin":"linkedin.com/in/Maria-Castro",
+            "FaceBook":"https://web.facebook.com/p/Maria-Castro"
+        }
+    },
+    {
+        "nombre":"Laura",
+        "apellido":"Mendoza",
+        "hobbies":["leer", "periodismo", "musica"],
+        "contacto": {
+            "telefono":"",
+            "email":"Laura@lcmartinez.com",
+            "linkedin":"linkedin.com/in/Laura-Mendoza",
+            "FaceBook":"https://web.facebook.com/p/Laura-Mendoza"
+        }
+    }
+]
