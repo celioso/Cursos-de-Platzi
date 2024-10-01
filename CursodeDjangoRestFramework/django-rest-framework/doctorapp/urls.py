@@ -17,8 +17,12 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
-from patients.views import list_patients
+from patients.views import list_patients, PatientCreateView
+
+
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/patients', list_patients)
+    path('api/patients', list_patients),
+    path('api/patients/create', PatientCreateView.as_view(), name='patient-create'),
+    
 ]
