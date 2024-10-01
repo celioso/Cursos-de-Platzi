@@ -149,7 +149,7 @@ pip install django
 Después de instalar Django, crea un nuevo proyecto:
 
 ```bash
-django-admin startproject mi_proyecto
+django-admin startproject mi_proyecto .
 cd mi_proyecto
 ```
 
@@ -199,3 +199,202 @@ Ahora tienes un entorno configurado con Django y Django REST Framework. Puedes c
 **Lecturas recomendadas**
 
 [Home - Django REST framework](https://www.django-rest-framework.org/)
+
+## Integración de Django REST Framework en proyectos Django
+
+Django REST Framework (DRF) es una extensión poderosa de Django que permite construir APIs de manera rápida y eficiente, aprovechando las funcionalidades robustas de Django y añadiendo mejoras específicas para el desarrollo de APIs.
+
+### ¿Cómo reutiliza Django REST las funcionalidades de Django?
+
+Django REST reutiliza varias de las funcionalidades principales de Django, lo que permite un flujo de trabajo más sencillo:
+
+- **ORM de Django**: DRF usa el Object-Relational Mapping (ORM) de Django para manejar modelos y realizar consultas a la base de datos sin escribir SQL.
+- **Sistema de URLs**: Mejora el sistema de URLs de Django con un sistema de routers que crea automáticamente rutas de acceso a los recursos, simplificando la configuración de enrutamiento.
+- **Vistas basadas en clases**: DRF extiende las vistas de Django con un nuevo concepto llamado Viewsets, que agrupa funcionalidades como listar, crear, actualizar y borrar dentro de una sola clase.
+
+### ¿Qué añade Django REST para facilitar la creación de APIs?
+
+Además de aprovechar la estructura de Django, Django REST agrega funcionalidades clave que hacen más fácil el desarrollo de APIs:
+
+- **Serializadores**: Permiten transformar objetos Python a JSON y viceversa, facilitando la creación de APIs basadas en los modelos de Django sin tener que duplicar la información.
+- **Viewsets**: Agrupan varias acciones en una sola clase, simplificando el código y reduciendo redundancias. Además, permiten manejar acciones según el método HTTP utilizado.
+- **Mejoras en seguridad**: Gracias a la integración con Django, se pueden utilizar todas las configuraciones de seguridad como middleware y permisos.
+- **Compatibilidad con Django Admin**: Permite seguir administrando la información de la aplicación a través de la interfaz administrativa de Django.
+
+### ¿Cómo optimiza Django REST el desarrollo de APIs?
+
+DRF optimiza varios aspectos del desarrollo de APIs al ofrecer herramientas que simplifican tareas comunes:
+
+- **Enrutamiento automático de URLs** a través de routers.
+- **Serialización eficiente** de datos basados en modelos Django, evitando la duplicación de lógica.
+- **Manejo de vistas más flexible** con Viewsets que agrupan múltiples funcionalidades.
+- **Continuidad con las funcionalidades de seguridad y administración de Django**, sin necesidad de configuraciones adicionales.
+
+Para crear modelos y serializadores en Django REST Framework (DRF), sigue estos pasos:
+
+### 1. **Instalar Django y Django REST Framework**
+Asegúrate de que tienes tanto Django como Django REST Framework instalados en tu entorno.
+
+```bash
+pip install django djangorestframework
+```
+
+### 2. **Configurar un proyecto Django**
+Crea un nuevo proyecto de Django si aún no lo tienes:
+
+```bash
+django-admin startproject myproject
+cd myproject
+```
+
+Crea una nueva aplicación dentro del proyecto:
+
+```bash
+python manage.py startapp myapp
+```
+
+A continuación, añade `'rest_framework'` y tu aplicación `'myapp'` al archivo `settings.py` en la lista `INSTALLED_APPS`:
+
+```python
+INSTALLED_APPS = [
+    ...
+    'rest_framework',
+    'myapp',
+]
+```
+
+### 3. **Crear un Modelo en Django**
+Los modelos en Django son la representación de la base de datos. Vamos a crear un modelo simple para una clase `Book` en el archivo `models.py` de tu aplicación.
+
+```python
+# myapp/models.py
+from django.db import models
+
+class Book(models.Model):
+    title = models.CharField(max_length=100)
+    author = models.CharField(max_length=100)
+    published_date = models.DateField()
+    isbn = models.CharField(max_length=13)
+    pages = models.IntegerField()
+
+    def __str__(self):
+        return self.title
+```
+
+Luego, aplica las migraciones para que este modelo se cree en la base de datos:
+
+```bash
+python manage.py makemigrations
+python manage.py migrate
+```
+
+### 4. **Crear Serializadores en DRF**
+Los serializadores en DRF permiten convertir los datos complejos como objetos de Django en tipos de datos nativos de Python que pueden ser fácilmente renderizados a JSON, XML o cualquier otro formato.
+
+En el archivo `serializers.py` de tu aplicación, crea un serializador para el modelo `Book`.
+
+```python
+# myapp/serializers.py
+from rest_framework import serializers
+from .models import Book
+
+class BookSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Book
+        fields = '__all__'
+```
+
+Este serializador convierte las instancias del modelo `Book` en JSON y viceversa.
+
+### 5. **Crear Vistas para manejar las solicitudes**
+En el archivo `views.py`, crea vistas basadas en clases o funciones para manejar las solicitudes HTTP.
+
+Por ejemplo, una vista genérica basada en clases para listar y crear libros:
+
+```python
+# myapp/views.py
+from rest_framework import generics
+from .models import Book
+from .serializers import BookSerializer
+
+class BookListCreateView(generics.ListCreateAPIView):
+    queryset = Book.objects.all()
+    serializer_class = BookSerializer
+```
+
+### 6. **Configurar URLs**
+Por último, configura las URLs en `urls.py` para que puedas acceder a la API.
+
+```python
+# myapp/urls.py
+from django.urls import path
+from .views import BookListCreateView
+
+urlpatterns = [
+    path('books/', BookListCreateView.as_view(), name='book-list-create'),
+]
+```
+
+Y enlaza las URLs de tu aplicación en el archivo principal `urls.py` del proyecto:
+
+```python
+# myproject/urls.py
+from django.contrib import admin
+from django.urls import path, include
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('api/', include('myapp.urls')),
+]
+```
+
+### 7. **Probar la API**
+Inicia el servidor de desarrollo de Django:
+
+```bash
+python manage.py runserver
+```
+
+Ahora, puedes acceder a tu API en `http://127.0.0.1:8000/api/books/` para ver los libros o agregar uno nuevo.
+
+### Resumen:
+- **Modelos**: Representan la base de datos.
+- **Serializadores**: Convierten instancias de modelos en datos JSON.
+- **Vistas**: Manejan solicitudes HTTP.
+- **URLs**: Rutas de acceso a las vistas.
+
+Con estos pasos, has creado un modelo, un serializador y una API básica en Django REST Framework.
+
+ para realizar pruebas `python manage.py shell` luego `from patients.serializers import PatientSerializer` luego `PatientSerializer`
+ se crea los dato `data = {"first_name":"Luis", "last_name":"Martinez"}`
+ se usa `serializer=PatientSerializer(data=data)` para ver los datos se utiliza `serializer` para ver si es valida se utiliza `serializer.is_valid()` para ver si la informacion es compatible o no el nuestra True o False, pare ver los errores ``
+
+ ```bash
+ (venv) PS C:\Users\celio\OneDrive\Escritorio\programación\platzi\CursodeDjangoRestFramework\django-rest-framework> python manage.py shell
+Python 3.12.2 (tags/v3.12.2:6abddd9, Feb  6 2024, 21:26:36) [MSC v.1937 64 bit (AMD64)] on win32
+Type "help", "copyright", "credits" or "license" for more information.
+(InteractiveConsole)
+>>> from patients.serializers import PatientSerializer
+>>> PatientSerializer
+<class 'patients.serializers.PatientSerializer'>
+>>> data = {"first_name":"Luis", "last_name":"Martinez"}
+>>> serializer=PatientSerializer(data=data) 
+>>> serializer  
+PatientSerializer(data={'first_name': 'Luis', 'last_name': 'Martinez'}):
+    id = IntegerField(label='ID', read_only=True)
+    first_name = CharField(max_length=100)
+    last_name = CharField(max_length=100)
+    date_of_birth = DateField()
+    contact_number = CharField(max_length=15)
+    email = EmailField(max_length=254)
+    address = CharField(style={'base_template': 'textarea.html'})
+    medical_history = CharField(style={'base_template': 'textarea.html'})
+>>> serializer.is_valid()
+False
+>>> serializer.errors
+{'date_of_birth': [ErrorDetail(string='This field is required.', code='required')], 'contact_number': [ErrorDetail(string='This field is required.', code='required')], 'email': [ErrorDetail(string='This field is required.', code='required')], 'address': [ErrorDetail(string='This field is required.', code='required')], 'medical_history': [ErrorDetail(string='This field is required.', code='required')]}
+ ```
+
+**Lecturas recomendadas** 
+
+[Models | Django documentation | Django](https://docs.djangoproject.com/en/5.1/topics/db/models/)
