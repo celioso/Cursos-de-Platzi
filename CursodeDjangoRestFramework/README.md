@@ -436,3 +436,314 @@ Al acceder a la URL `api-patients`, Django REST Framework nos muestra un listado
 ### ¿Qué reto sigue después de listar pacientes?
 
 El siguiente paso es crear un nuevo endpoint que permita añadir pacientes a través del método POST. El reto será validar que los datos enviados coincidan con las reglas definidas en el modelo, usando nuevamente los serializadores.
+
+## Gestión de Vistas Basadas en Funciones en Django REST Framework
+
+La implementación de endpoints en Django REST Framework nos permite trabajar con recursos como pacientes, tanto para listarlos como para crearlos, mediante los métodos HTTP adecuados. El siguiente paso será extender estas funcionalidades para modificar y eliminar registros.
+
+### ¿Cómo implementar la creación de pacientes con POST en el mismo endpoint?
+
+Para permitir tanto la creación como la lectura de pacientes en un único endpoint, utilizamos los métodos GET y POST. GET se encarga de listar los pacientes, mientras que POST crea uno nuevo. Para lograr esto:
+
+- Se verifica el método de la solicitud (GET o POST) usando `request.method`.
+- Si es GET, se continúa listando los pacientes.
+- Si es POST, se valida la información enviada en el cuerpo de la solicitud a través de un serializador.
+- Si los datos son válidos, se utiliza el método `save()` para guardar el nuevo paciente en la base de datos.
+
+### ¿Cómo se manejan los errores de validación en POST?
+
+En caso de que los datos enviados no sean válidos, Django REST Framework captura los errores y los formatea en una respuesta JSON. Esto se hace con `raise_exception=True` en el serializador, lo que devuelve automáticamente una respuesta con los detalles de los errores sin necesidad de un condicional.
+
+### ¿Cómo retornar una respuesta adecuada al crear un recurso?
+
+Una vez que el paciente es creado correctamente, el servidor responde con un código de estado HTTP 201, indicando que el recurso fue creado. Esto se hace con `Response(status=status.HTTP_201_CREATED)`, asegurando que el cliente reciba la confirmación adecuada.
+
+### ¿Cómo mostrar el detalle de un paciente con GET?
+
+Para obtener el detalle de un paciente específico, se utiliza el método GET en un endpoint que incluye un parámetro de la URL, generalmente el ID del paciente:
+
+- Se filtra el paciente por ID con `get_object_or_404()`.
+- Si el paciente existe, se devuelve su información en formato JSON.
+- Si no existe, se responde con un código de estado 404.
+
+### ¿Cómo manejar la modificación de un paciente con PUT?
+
+El método PUT permite modificar un paciente existente. Utiliza la misma lógica que GET para obtener el paciente, pero en lugar de devolver los datos, actualiza la información recibida:
+
+- Se verifica si el método es PUT.
+- Se validan los datos del paciente con un serializador.
+- Si los datos son válidos, se guarda la actualización y se responde con un código 200 indicando éxito.
+
+## Postman y cURL en Django REST Framework
+
+Para probar de manera eficiente nuestras APIs, es fundamental dominar herramientas especializadas como Postman y Curl. Aunque Django ofrece una interfaz visual para pruebas, el uso de herramientas como estas nos permitirá realizar pruebas más flexibles y personalizadas en diferentes entornos, incluyendo servidores sin interfaz gráfica.
+
+### ¿Cómo se utiliza Postman para probar una API?
+
+Postman es una herramienta poderosa para interactuar con APIs. Permite realizar requests, gestionar colecciones y simular comportamientos de usuarios. Para probar nuestra API:
+
+- Descarga e instala Postman desde su página principal.
+- Accede a la interfaz donde puedes crear nuevos requests.
+- Por ejemplo, para listar pacientes en un servidor local, usa la URL: `http://localhost:8000/api/patients`.
+- Selecciona el método `GET` y presiona `Send`. Verás la lista de pacientes como respuesta.
+- Postman también permite guardar cada request en una colección para su uso posterior, ideal para pruebas repetitivas.
+
+### ¿Cómo se pueden manejar los requests en la línea de comandos con Curl?
+
+Si no necesitas todas las funcionalidades de Postman o estás en un entorno sin ventanas, Curl es la opción adecuada. Curl te permite ejecutar requests directamente desde la consola, útil cuando estás trabajando en servidores.
+
+- Abre una terminal y utiliza un comando Curl para hacer un request, por ejemplo, listar pacientes con:
+
+`curl -X GET http://localhost:8000/api/patients`
+
+- También puedes convertir fácilmente un request de Postman a Curl. En la interfaz de Postman, selecciona el ícono de código, copia el comando Curl generado y ejecútalo en la terminal.
+
+### ¿Cómo crear un paciente nuevo usando Postman?
+
+Para crear un nuevo recurso en nuestra API, como un paciente:
+
+- Selecciona el método `POST` en Postman.
+- Define el cuerpo de la petición en formato JSON, seleccionando `Body > Raw > JSON`. Por ejemplo:
+
+```python
+{
+  "name": "Oscar Barajas",
+  "age": 30,
+  "email": "oscar@example.com"
+}
+```
+
+- Ejecuta el request y asegúrate de que la respuesta indique que el recurso fue creado correctamente.
+- También puedes generar el comando Curl correspondiente desde Postman y ejecutarlo en la consola.
+
+### ¿Cómo combinar Postman y Curl para mejorar las pruebas?
+
+Ambas herramientas se complementan bien. Postman facilita la creación y prueba de requests con una interfaz gráfica amigable, mientras que Curl te permite ejecutar esos mismos requests en entornos más limitados. Postman incluso puede generar el código Curl de un request, lo que es muy útil para integrar estos comandos en scripts automatizados o suites de pruebas.
+
+**Lecturas recomendadas**
+
+[Postman API Platform](https://www.postman.com/ "Postman API Platform")
+
+[curl - Documentation Overview](https://curl.se/docs/ "curl - Documentation Overview")
+
+## Refactorizar las funciones a clases en Django REST Framework
+
+Refactorizar nuestras vistas basadas en funciones a vistas basadas en clases no solo mejora la organización del código, sino que también lo hace más escalable y reutilizable. En esta clase, hemos visto cómo Django REST Framework nos facilita aún más esta tarea al proporcionar vistas genéricas que reducen considerablemente la cantidad de código que tenemos que escribir manualmente.
+
+### ¿Cómo refactorizar una vista basada en funciones a una basada en clases?
+
+- Comenzamos importando APIView desde Django REST Framework.
+- Creamos una nueva clase, heredando de `APIView`, donde definimos los métodos como `get`, `post`, o `delete`.
+- Esto nos permite organizar mejor el código y evitar los condicionales que usamos en las vistas basadas en funciones.
+
+### ¿Cómo conectar la vista basada en clases con una URL?
+
+- Debemos importar la nueva vista en el archivo de URLs y reemplazar la vista basada en función por la basada en clase.
+- Recordemos usar el método `as_view()` al conectarla en el archivo de URLs.
+
+### ¿Qué beneficios ofrecen las vistas genéricas en Django REST?
+Las vistas genéricas permiten simplificar aún más el código, reutilizando funcionalidad ya existente en Django REST:
+
+- Usamos `ListAPIView` para simplificar una vista que solo lista elementos.
+- Usamos `CreateAPIView` para manejar la creación de recursos.
+- Podemos heredar de varias vistas genéricas a la vez para combinar funcionalidades, como listar y crear con pocas líneas de código.
+
+### ¿Cómo funciona el QuerySet y el SerializerClass en las vistas genéricas?
+
+- Definimos un QuerySet para obtener los datos que queremos listar o manipular.
+- Asociamos una clase de serialización con `SerializerClass` para transformar los datos según las necesidades de nuestra API.
+- Esto nos permite eliminar métodos como `get` o `post`, ya que se gestionan automáticamente.
+
+### ¿Cómo evitar duplicar código?
+
+Uno de los principales objetivos al usar clases es evitar la duplicación de código. Con vistas genéricas podemos reutilizar los mismos parámetros y métodos que ya vienen implementados, logrando que el código sea más limpio y fácil de mantener.
+
+Breve resumen de HEAD y OPTIONS:
+
+- **HEAD**: Se utiliza cuando solo necesitas los headers de una solicitud, sin el cuerpo (por ejemplo, para verificar la existencia o propiedades de un recurso).
+- **OPTIONS**: Te dice qué métodos HTTP son soportados por un recurso, útil para seguridad y manejo de políticas entre dominios (CORS).
+
+**Lecturas recomendadas**
+
+[Django REST Framework 3.14 -- Classy DRF](https://www.cdrf.co/ "Django REST Framework 3.14 -- Classy DRF")
+
+## Refactorizando vistas en Django REST Framework con vistas genéricas
+
+Hemos visto cómo utilizar vistas genéricas en Django para crear vistas de detalle, simplificando el código y evitando la duplicación. A través de la clase `RetrieveUpdateDestroyAPIView`, podemos obtener, modificar o eliminar recursos de manera eficiente, reduciendo la cantidad de código a manejar.
+
+### ¿Cómo evitar la duplicación de código con vistas genéricas?
+
+- Django permite usar vistas genéricas como `RetrieveAPIView`, `UpdateAPIView` y `DestroyAPIView`.
+- Sin embargo, es más eficiente usar la clase combinada **RetrieveUpdateDestroyAPIView**, que integra estas tres funcionalidades.
+- Con esta clase podemos obtener, actualizar o eliminar un recurso sin necesidad de importar múltiples vistas.
+
+### ¿Cómo funciona el refactor a las vistas genéricas?
+
+- El código que antes obtenía el objeto y devolvía un error 404 si no se encontraba, ahora es reemplazado por una vista genérica que maneja esa lógica automáticamente.
+- Al definir la vista genérica `RetrieveUpdateDestroyAPIView`, simplemente necesitamos definir las variables correspondientes, como el modelo y los permisos, y se manejan todas las operaciones CRUD (create, read, update, delete).
+- Esto nos permite reducir significativamente el código y mantener la funcionalidad.
+
+### ¿Cómo realizar validaciones con las vistas genéricas?
+
+- Django continúa manejando validaciones, como las que se generan al enviar datos incorrectos, por ejemplo, una fecha inválida.
+- Estas validaciones son útiles en formularios de frontend, ya que permiten mostrar al usuario por qué una solicitud ha fallado.
+
+### ¿Qué sigue después de implementar vistas genéricas?
+
+- El siguiente paso es usar view sets, que nos permitirán agrupar las vistas de una manera más eficiente y evitar la repetición de código.
+- Aunque se ha logrado simplificar el código con las vistas genéricas, los view sets llevarán esta simplificación un paso más allá, agrupando operaciones similares en un solo conjunto.
+
+Ventajas de utilizar vistas genéricas en Django Rest Framework:
+
+1. **Reducción de código repetitivo**: Implementaciones predefinidas para operaciones comunes.
+2. **Mejora de consistencia y mantenibilidad**: Aplicación de patrones uniformes en toda la API.
+3. **Aceleración del desarrollo**: Permite centrarse en la lógica específica de la aplicación.
+4. **Facilidad de integración y extensión**: Composición de comportamientos reutilizables.
+5. **Promoción de buenas prácticas**: Adherencia a los principios de diseño de Django y REST.
+
+**Lecturas recomendadas**
+
+[Viewsets - Django REST framework](https://www.django-rest-framework.org/api-guide/viewsets/)
+
+[Generic views - Django REST framework](https://www.django-rest-framework.org/api-guide/generic-views/)
+
+## Documentación de APIs con Django REST, Swagger y OpenAPI
+
+Cuando creamos una API, el objetivo principal es que otros sistemas o desarrolladores puedan integrarse con nuestro sistema de manera eficiente. Para lograr esto, una documentación clara y actualizada es fundamental. Herramientas como DRF Spectacular y Swagger nos facilitan esta tarea, automatizando la generación de la documentación y permitiendo que esté siempre sincronizada con nuestro código.
+
+### ¿Cómo documentar una API automáticamente?
+
+- Django y Django REST Framework (DRF) nos ofrecen la posibilidad de usar una librería llamada **DRF Spectacular**. Esta herramienta sigue el estándar OpenAPI para generar documentación automática.
+- Este estándar permite que cualquier cambio en las vistas o en los endpoints de la API se refleje inmediatamente en la documentación, sin necesidad de modificarla manualmente.
+
+### ¿Qué es Swagger y cómo usarlo para la documentación de tu API?
+
+- **Swagger** es una interfaz visual que muestra la documentación generada por DRF Spectacular. Permite a los desarrolladores interactuar directamente con la API, probar los endpoints y revisar los parámetros y respuestas posibles.
+- Además, ofrece la opción de descargar un archivo con el esquema OpenAPI que puede ser utilizado por otras herramientas o interfaces.
+
+### ¿Cómo crear la aplicación de documentación en Django?
+
+1. Crea una nueva aplicación llamada `docs` desde la terminal.
+ - Registra esta aplicación en la lista de Installed Apps en el archivo settings.py.
+2. Instala la librería **DRF Spectacular** ejecutando el comando `pip install drf-spectacular`.
+ - Registra también esta librería en las aplicaciones instaladas.
+3. Configura un esquema automático en `settings.py` asegurándote de que no haya duplicados en la configuración.
+
+### ¿Cómo agregar las URLs de Swagger y Redoc?
+
+- Dentro del archivo `urls.py` de la aplicación docs, agrega las URLs correspondientes a Swagger y Redoc.
+- No olvides importar correctamente las rutas con `path` desde `django.urls`.
+- Agrega las URLs de la aplicación `docs` en el archivo principal de URLs del proyecto para que estén accesibles.
+
+### ¿Qué diferencia hay entre Swagger y Redoc?
+
+- **Swagger** ofrece una interfaz donde puedes interactuar con los endpoints y probar las respuestas sin salir del navegador.
+- **Redoc** es otra interfaz que permite navegar entre los endpoints de forma más organizada, con un buscador y una lista de los recursos disponibles. También muestra detalles de las respuestas y errores posibles.
+
+### ¿Cómo mejorar la documentación de cada endpoint?
+
+- Puedes agregar descripciones a cada uno de los endpoints en las clases de tus vistas, utilizando comentarios en Python.
+- Estos comentarios aparecerán automáticamente en la documentación de Swagger o Redoc, facilitando a otros desarrolladores entender el comportamiento de cada recurso.
+
+### ¿Qué ventajas ofrece el estándar OpenAPI?
+
+- OpenAPI permite que cualquier herramienta que siga este estándar, como Swagger o Redoc, pueda interpretar el esquema de la API y generar documentación visual.
+- Es un formato ampliamente utilizado y compatible con distintas interfaces de usuario.
+
+### ¿Cómo actualizar la documentación al modificar el código?
+
+- La principal ventaja de utilizar DRF Spectacular es que al modificar el código, la documentación se actualiza de forma automática. Esto garantiza que siempre esté sincronizada y evita que tengas que editar la documentación manualmente.
+
+**Lecturas recomendadas**
+
+[Home 2024 - OpenAPI Initiative](https://www.openapis.org/ "Home 2024 - OpenAPI Initiative")
+
+## istas Personalizadas y ViewSets en Django REST Framework
+
+Los Viewsets en Django REST Framework nos ayudan a simplificar la creación de vistas al reutilizar una clase que agrupa el código necesario para manejar diferentes operaciones sobre un recurso, como listar, crear, actualizar y eliminar. Al integrarlos con los routers, evitamos la necesidad de definir cada URL manualmente, ya que el router se encarga de generar todas las rutas de manera automática.
+
+### ¿Qué son los Viewsets y cómo funcionan?
+
+- Un Viewset es una clase reutilizable que agrupa todas las operaciones que se suelen realizar con una vista (lista, detalle, creación, actualización, eliminación).
+- Al usar Viewsets, reducimos la cantidad de clases y URLs que necesitamos escribir, ya que todas las operaciones se manejan desde un solo lugar.
+- En lugar de crear múltiples clases, un solo Viewset puede manejar todas las acciones requeridas para un recurso.
+
+### ¿Cómo se crea un Viewset?
+
+- Importamos `ModelViewSet` desde rest_framework.viewsets.
+- Definimos una clase que hereda de `ModelViewSet`, como DoctorViewset.
+- Asignamos un `QuerySet` y un `Serializer` para definir cómo se gestionará la información y cómo será serializada.
+
+```python
+from rest_framework import viewsets
+from .serializers import DoctorSerializer
+from .models import Doctor
+
+class DoctorViewset(viewsets.ModelViewSet):
+    queryset = Doctor.objects.all()
+    serializer_class = DoctorSerializer
+```
+
+### ¿Cómo se registran los Viewsets con los routers?
+
+- Los routers simplifican la creación de URLs, ya que generan las rutas automáticamente al registrar un Viewset.
+- Usamos DefaultRouter de Django REST Framework para registrar el Viewset y generar las rutas correspondientes.
+
+```python
+from rest_framework.routers import DefaultRouter
+from .viewsets import DoctorViewset
+
+router = DefaultRouter()
+router.register(r'doctors', DoctorViewset)
+urlpatterns = router.urls
+```
+
+### ¿Cómo se prueban los Viewsets?
+
+- Una vez registrado el Viewset, podemos verificar las URLs generadas ejecutando el servidor y accediendo a la API.
+- Las operaciones de creación, actualización y eliminación de un recurso se pueden realizar directamente en las URLs generadas automáticamente.
+
+### ¿Qué ventajas ofrecen los Viewsets y los routers?
+
+- Evitamos la repetición de código al gestionar varias operaciones con una sola clase.
+- Los routers generan automáticamente las rutas necesarias para cada recurso, lo que facilita su uso y mantenimiento.
+- Las URLs generadas tienen nombres claros, lo que permite su uso programático dentro del código.
+
+## Manejos de Acciones con ViewSet en Django REST Framework
+
+Al crear APIs en Django REST Framework, no solo trabajamos con URLs para recursos, sino también con acciones que permiten ejecutar operaciones específicas, como el pago de una tarjeta o, en este caso, gestionar las vacaciones de un doctor.
+
+### ¿Cómo agregar un campo para controlar el estado de vacaciones en un modelo?
+
+- En el modelo Doctor, añadimos el campo `is_on_vacation`, que será un campo booleano con valor predeterminado `False`.
+- Creamos las migraciones con `manage.py makemigrations` y luego ejecutamos `migrate` para aplicar los cambios en la base de datos.
+
+### ¿Cómo crear una acción personalizada para activar o desactivar vacaciones?
+
+- En los ViewSets de Django REST Framework, las acciones personalizadas se crean con el decorador `@action`. Importamos el decorador desde `rest_framework.decorators`.
+- Definimos un método llamado toggle_vacation con el decorador y especificamos que solo se permitirá el método `POST`.
+- El decorador también necesita el parámetro `detail=True` para que la acción se aplique a un recurso específico, como un doctor identificado por su ID en la URL.
+
+### ¿Cómo implementar la lógica para alternar el estado de vacaciones?
+
+- Utilizamos el método `get_object()` del ViewSet para obtener el objeto Doctor actual.
+- La lógica alterna entre el valor `True` y `False` para el campo `is_on_vacation`. Si está en True, lo cambia a False y viceversa.
+- Se guarda el objeto `Doctor` y se retorna una respuesta utilizando `Response` para informar el estado actualizado.
+
+### ¿Cómo mejorar la idempotencia y claridad del endpoint?
+
+- En lugar de alternar entre `True` y `False`, creamos dos acciones separadas: una para activar vacaciones (`set_on_vacation`) y otra para desactivarlas (`set_off_vacation`).
+- Esto asegura que cada petición `POST` tenga un comportamiento predecible, lo que mejora la idempotencia del endpoint.
+
+### ¿Cómo ajustar la URL de la acción para mejorar la legibilidad?
+
+- Las URLs generadas a partir del nombre del método pueden tener guiones bajos, lo cual no es ideal para SEO y legibilidad. Usamos el parámetro `url_path` dentro del decorador `@action` para definir URLs con guiones, por ejemplo, `set-on-vacation`.
+
+### ¿Cómo probar las acciones personalizadas?
+
+- Desde la interfaz de Django REST Framework, probamos las acciones enviando peticiones `POST` a las URLs generadas.
+- Verificamos que los doctores puedan ser marcados como en vacaciones o no, y que el campo `is_on_vacation` cambie correctamente en la base de datos.
+
+### ¿Cómo replicar este proceso para otros recursos?
+
+- Siguiendo este patrón, podemos crear acciones para otros recursos. Por ejemplo, un paciente puede necesitar obtener un reporte médico en formato JSON, lo cual sería una acción personalizada en el ViewSet de `Patient`.
