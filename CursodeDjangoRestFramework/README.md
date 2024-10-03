@@ -1031,3 +1031,427 @@ Estos mecanismos te permitirán gestionar errores y validaciones de manera efici
 [Serializing Django objects | Django documentation | Django](https://docs.djangoproject.com/en/stable/topics/serialization/#serializing-data "Serializing Django objects | Django documentation | Django")
 
 [Exceptions - Django REST framework](https://www.django-rest-framework.org/api-guide/exceptions/ "Exceptions - Django REST framework")
+
+## ¿Cómo implementar serializadores anidados en Django Django REST Framework?
+
+Los serializadores anidados permiten incluir datos de otros modelos directamente en un serializador, lo que resulta útil al necesitar información relacionada en un solo response. En esta clase, aplicamos esta técnica para incluir una lista de citas médicas dentro del recurso de pacientes en la aplicación DoctorApp. Esto mejora la eficiencia en el manejo de relaciones entre modelos, y facilita cambios futuros en la estructura de los response de la API.
+
+### ¿Cómo implementar un serializador anidado en Django?
+
+- Crea un nuevo campo dentro del serializador principal.
+- Importa el serializador del modelo que deseas anidar.
+- Define el campo con el serializador importado y marca como `Read Only` si es necesario.
+- Asegúrate de incluir el nuevo campo en la lista de `fields` del serializador para que se refleje en el response.
+
+### ¿Cómo anidar citas dentro del serializador de pacientes?
+
+Para incluir las citas médicas de un paciente, sigue estos pasos:
+
+1. Abre el serializador de pacientes.
+2. Agrega un nuevo campo llamado `appointments` que usará el `AppointmentsSerialize`r.
+3. Importa el serializador de citas médicas desde su respectivo módulo (`Bookings.Serializers`).
+4. Configura el campo con `many=True` y `read_only=True`, ya que es una lista de citas que solo puede ser visualizada.
+5. Verifica que el campo se ha agregado correctamente al incluirlo en la lista de campos del serializador.
+
+### ¿Cómo validar la implementación?
+
+1. Ejecuta el servidor de desarrollo con manage.py runserver.
+2. Accede al recurso Patients en la API y revisa si aparece el campo appointments.
+3. En caso de que falte algún campo, como el ID, asegúrate de incluirlo en el serializador.
+
+### ¿Cómo crear y visualizar citas en la consola?
+Para crear una cita desde la consola de comandos:
+
+1. Abre la consola con manage.py shell.
+2. Importa los modelos relevantes (Paciente, Doctor, Appointment).
+3. Define variables para el paciente y el doctor.
+4. Crea una nueva cita usando el manager de appointments.
+5. Recarga la página para verificar que el array de citas ya contiene información en formato JSON.
+
+### ¿Cómo usar serializadores anidados para otros modelos?
+
+El uso de serializadores anidados no se limita a las citas de los pacientes. Puedes replicar este mismo enfoque para otros recursos. Por ejemplo, podrías crear un serializador para listar las citas asociadas a un doctor, proporcionando una mayor flexibilidad a la API y haciendo que las relaciones entre modelos sean más visibles y accesibles.
+
+```bash
+python manage.py shell
+Python 3.12.2 (tags/v3.12.2:6abddd9, Feb  6 2024, 21:26:36) [MSC v.1937 64 bit (AMD64)] on win32
+Type "help", "copyright", "credits" or "license" for more information.
+(InteractiveConsole)
+>>> from datetime import date, time
+>>> 
+>>> from doctors.models import Doctor 
+>>> from patients.models import Patient
+>>> from bookings.models import Appointment 
+>>>
+>>> Appointment.objects.create(
+...      patient=patient,
+...      doctor=doctor,
+...      appointment_date=date(2024, 10, 12),
+...      appointment_time=time(9, 0),
+...      notes="Ejemplo",
+...      status="HECHA"
+...      )
+<Appointment: Appointment object (1)>
+```
+## ¿Cómo usar SerializerMethodField en Django REST Framework?
+
+A veces necesitamos calcular y mostrar valores derivados en el resultado de un endpoint sin alterar el modelo de datos original. Un ejemplo común es calcular la edad de un paciente a partir de su fecha de nacimiento. Para ello, podemos utilizar el SerializerMethodField en Django REST Framework. Este campo permite realizar cálculos utilizando los datos del modelo, como veremos a continuación.
+
+### ¿Cómo calculamos un valor con `SerializerMethodField`?
+
+Para calcular un valor, primero debemos definir un nuevo campo en nuestro serializador usando `SerializerMethodField`. Este tipo de campo permite definir un método que realizará el cálculo y retornará el valor deseado. Aquí te mostramos cómo hacerlo:
+
+- Importa `SerializerMethodField` desde el módulo `serializers`.
+- Define un nuevo campo en el serializador, por ejemplo, “Age” para calcular la edad.
+- Si no especificas un método con el argumento `method_name`, Django REST Framework generará un nombre por defecto en la forma `get_`.
+
+### ¿Cómo calculamos la edad usando la fecha de nacimiento?
+
+La clave del cálculo es restar la fecha de nacimiento del paciente a la fecha actual. Este proceso genera un objeto `timedelta`, que representa la diferencia en días. Para convertirlo a años, sigue estos pasos:
+
+1. Importa `date` desde el módulo `datetime`, que es suficiente ya que trabajamos con fechas (`no datetime`).
+2. Obtén la fecha actual utilizando `date.today()`.
+3. Calcula la diferencia entre la fecha actual y la fecha de nacimiento.
+4. Divide esta diferencia en días por 365 para obtener la edad aproximada en años.
+5. Retorna el valor numérico o, si es necesario, formatea el resultado como un string.
+
+## Ejemplo de código:
+
+```python
+from rest_framework import serializers
+from datetime import date
+
+class PatientSerializer(serializers.ModelSerializer):
+    age = serializers.SerializerMethodField()
+
+    def get_age(self, obj):
+        today = date.today()
+        age_timedelta = today - obj.date_of_birth
+        age = age_timedelta.days // 365  # Convertimos días a años
+        return age
+
+    class Meta:
+        model = Patient
+        fields = ['name', 'date_of_birth', 'age']
+```
+
+### ¿Qué sucede si obtenemos resultados incorrectos?
+
+Un problema común al calcular la edad es no acceder correctamente al atributo `days` del objeto `timedelta`. Si simplemente restamos las fechas, obtendremos un objeto `timedelta`, que necesitamos dividir por 365 para convertirlo en años.
+
+Otro detalle importante es no incluir texto como “años” en el resultado, ya que es preferible dejar el formato de presentación (e.g., el idioma) en manos del frontend.
+
+### ¿Cómo calculamos la experiencia de un doctor?
+
+Siguiendo el mismo patrón que para calcular la edad, podemos calcular la experiencia de un doctor usando su fecha de inicio de trabajo. Solo es necesario reemplazar la fecha de nacimiento con la fecha de inicio laboral.
+
+### Ejemplo de código para la experiencia:
+
+```python
+class DoctorSerializer(serializers.ModelSerializer):
+    experience = serializers.SerializerMethodField()
+
+    def get_experience(self, obj):
+        today = date.today()
+        experience_timedelta = today - obj.start_date
+        experience = experience_timedelta.days // 365
+        return experience
+
+    class Meta:
+        model = Doctor
+        fields = ['name', 'start_date', 'experience']
+```
+
+### ¿Qué otras aplicaciones tiene el `SerializerMethodField`?
+
+- Calcular otros valores derivados sin alterar el modelo de datos.
+- Agregar lógica personalizada en el serializador sin tocar la base de datos.
+- Permitir mostrar valores preprocesados para el frontend sin requerir cambios en el backend.
+
+**Lecturas recomendadas**
+
+[datetime — Basic date and time types — Python 3.12.6 documentation](https://docs.python.org/3/library/datetime.html "datetime — Basic date and time types — Python 3.12.6 documentation")
+
+## Endpoint Anidado para Appointments Usando @action
+
+El endpoint para agendar una cita es esencial dentro de la lógica de negocio, ya que permite la interacción entre pacientes y doctores de manera eficiente. A través de este endpoint, un paciente puede reservar una cita con un doctor, cumpliendo con las mejores prácticas de REST y utilizando un viewset anidado para aprovechar los recursos previamente creados.
+
+### ¿Cómo se estructura la URL para agendar una cita?
+
+La URL para agendar una cita sigue una estructura anidada basada en el ID del doctor. Utilizamos el recurso existente `/doctors/{id}` para obtener detalles de un doctor, y sobre esta misma estructura se agregan las citas con el endpoint `/appointments`. Según REST, un GET en este endpoint devolverá una lista de citas, mientras que un POST permitirá crear una nueva.
+
+### ¿Cómo se implementa la acción para crear una cita?
+
+Para implementar la acción, es necesario definir un método en el viewset del doctor, que maneje tanto GET como POST. El objetivo principal del POST es recibir los datos de la cita que desea agendar el usuario y crearla utilizando un `Serializer`. Aquí, el ID del doctor se obtiene de la URL, asegurando que no se pueda modificar desde el formulario.
+
+Pasos clave:
+
+- Se importa el AppointmentSerializer desde el módulo bookings.
+- Se recibe la data del request y se agrega el ID del doctor a dicha data.
+- Se valida la información a través del método isValid.
+- Finalmente, se guarda la cita con Serializer.save() y se retorna un estado 201 (creado).
+
+### ¿Cómo se filtran las citas de un doctor?
+
+Para retornar las citas de un doctor con un GET, se filtran las citas por el ID del doctor utilizando el ORM de Django. El método `filter` se encarga de traer todas las citas asociadas al doctor, las cuales se serializan y se devuelven en formato JSON.
+
+### ¿Cómo se valida la información recibida?
+
+La validación se realiza utilizando el `Serializer`, el cual se asegura de que los datos cumplan con las reglas establecidas. En caso de que la información no sea válida, se lanza una excepción mostrando un error claro al usuario.
+
+### ¿Cómo se maneja el estado de las respuestas?
+
+Los estados HTTP se manejan a través del módulo `status` de Django REST. En el caso de crear una cita, se retorna un estado 201 para indicar que la cita fue creada correctamente. Para las demás acciones, el estado por defecto es 200, indicando que la solicitud fue exitosa.
+
+## Pruebas Unitarias para Endpoints Anidados Usando APIClient
+
+
+Las pruebas unitarias son esenciales para garantizar que nuestras APIs funcionen correctamente sin tener que gastar demasiados recursos. Django REST Framework facilita este proceso mediante la clase APIClient, que nos permite simular requests y validar los resultados de forma sencilla y eficiente. A continuación, aprenderemos cómo crear pruebas unitarias en un proyecto de Django utilizando esta herramienta.
+
+### ¿Cómo se configuran las pruebas unitarias en Django REST Framework?
+
+Para comenzar a crear pruebas en Django REST Framework, necesitamos trabajar con el archivo `test.py`, el cual se genera automáticamente al crear un proyecto. En este archivo, definimos nuestras pruebas heredando de la clase `TestCase`, que proporciona todas las funcionalidades necesarias para ejecutar tests en Django.
+
+Dentro de la clase de pruebas, usamos el método `setUp` para preparar datos comunes que reutilizaremos en todas nuestras pruebas, como la creación de un paciente y un doctor. Aquí, empleamos el ORM de Django para manejar los modelos fácilmente.
+
+#### ¿Qué es el cliente API y cómo se usa?
+
+El cliente `APIClient` es esencial para nuestras pruebas ya que simula requests HTTP, permitiéndonos probar las respuestas de nuestra API sin hacer requests reales. Esto nos ahorra tiempo y recursos. Además, se configura automáticamente para trabajar con datos JSON, simplificando las pruebas.
+
+Importamos el cliente usando:
+
+`from rest_framework.test import APIClient`
+
+Esto nos permite realizar operaciones como `GET`, `POST`, `PUT`, y más, directamente desde nuestras pruebas. Por ejemplo, para verificar que una lista de “appointments” devuelve un código 200, simplemente escribimos un test que utiliza el cliente para hacer un request `GET` a la URL de las citas.
+
+Instalar `pip install django-extensions`
+
+muestra todas las urls de la app `python manage.py show_urls`
+
+### ¿Cómo validamos los resultados de las pruebas?
+
+Django REST Framework proporciona el módulo status, que nos permite verificar los códigos de respuesta de manera sencilla. En las pruebas, utilizamos el método self.assertEqual() para comparar el código de estado devuelto por la API con el valor esperado:
+
+```python
+from rest_framework import status
+self.assertEqual(response.status_code, status.HTTP_200_OK)
+```
+
+Esto nos asegura que el código de la API está funcionando correctamente según lo esperado.
+
+### ¿Cómo se manejan las URLs en las pruebas?
+
+Para obtener las URLs dinámicamente en nuestras pruebas, utilizamos el método reverse() de Django, que permite construir URLs basadas en sus nombres. Esto es especialmente útil cuando trabajamos con URLs que requieren parámetros, como IDs.
+
+### ¿Cómo solucionamos errores de permisos en nuestras pruebas?
+
+Es común que algunas vistas en Django REST Framework requieran autenticación o permisos especiales. Si nuestras pruebas fallan debido a permisos, podemos ajustar las configuraciones en el viewset, asegurándonos de que las pruebas se realicen bajo las mismas condiciones que los usuarios reales enfrentarían. Por ejemplo, si solo los doctores pueden ver ciertos datos, debemos asegurarnos de que el usuario en la prueba tenga esos permisos.
+
+### ¿Qué hacer cuando una prueba falla inesperadamente?
+
+Si una prueba falla, es crucial revisar el error devuelto y ajustar el código según sea necesario. A veces, la falla puede deberse a errores en los permisos o configuraciones en los viewsets. Al corregir estos errores y volver a ejecutar la prueba, podemos validar que los ajustes realizados han solucionado el problema.
+
+Para realizar pruebas unitarias de **endpoints anidados** usando `APIClient` en Django REST Framework, puedes simular las solicitudes HTTP a tus endpoints dentro de un contexto de prueba. Aquí te explico cómo hacerlo paso a paso.
+
+### 1. **Escenario: Endpoints Anidados**
+Supongamos que tienes un endpoint de **doctores** y uno de **pacientes** anidado bajo los doctores. Un ejemplo de URLs anidadas podría ser algo como:
+
+- `/api/doctors/` → Lista de doctores.
+- `/api/doctors/{doctor_id}/patients/` → Lista de pacientes para un doctor en particular.
+
+### 2. **Configuración de las Pruebas**
+Primero, asegúrate de tener configurado tu `APIClient` y tus modelos.
+
+#### Modelos
+Si tienes los siguientes modelos:
+
+```python
+# models.py
+from django.db import models
+
+class Doctor(models.Model):
+    name = models.CharField(max_length=100)
+    specialization = models.CharField(max_length=100)
+
+class Patient(models.Model):
+    name = models.CharField(max_length=100)
+    doctor = models.ForeignKey(Doctor, related_name='patients', on_delete=models.CASCADE)
+```
+
+#### Serializers
+Los serializers podrían verse así:
+
+```python
+# serializers.py
+from rest_framework import serializers
+from .models import Doctor, Patient
+
+class PatientSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Patient
+        fields = ['id', 'name']
+
+class DoctorSerializer(serializers.ModelSerializer):
+    patients = PatientSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Doctor
+        fields = ['id', 'name', 'specialization', 'patients']
+```
+
+#### ViewSets
+Las vistas para los endpoints anidados:
+
+```python
+# views.py
+from rest_framework import viewsets
+from .models import Doctor, Patient
+from .serializers import DoctorSerializer, PatientSerializer
+
+class DoctorViewSet(viewsets.ModelViewSet):
+    queryset = Doctor.objects.all()
+    serializer_class = DoctorSerializer
+
+class PatientViewSet(viewsets.ModelViewSet):
+    serializer_class = PatientSerializer
+
+    def get_queryset(self):
+        return Patient.objects.filter(doctor_id=self.kwargs['doctor_pk'])
+```
+
+Y en el archivo de **urls.py**:
+
+```python
+from rest_framework.routers import DefaultRouter
+from .views import DoctorViewSet, PatientViewSet
+
+router = DefaultRouter()
+router.register(r'doctors', DoctorViewSet)
+
+# URL anidadas para pacientes de un doctor específico
+from rest_framework_nested import routers
+doctor_router = routers.NestedSimpleRouter(router, r'doctors', lookup='doctor')
+doctor_router.register(r'patients', PatientViewSet, basename='doctor-patients')
+
+urlpatterns = router.urls + doctor_router.urls
+```
+
+### 3. **Prueba de Endpoints Anidados**
+Para realizar una prueba unitaria sobre los endpoints anidados usando `APIClient`, sigue los pasos siguientes:
+
+#### Crear el archivo de pruebas
+
+```python
+# tests.py
+from rest_framework.test import APITestCase, APIClient
+from django.urls import reverse
+from rest_framework import status
+from .models import Doctor, Patient
+
+class DoctorPatientAPITests(APITestCase):
+    def setUp(self):
+        self.client = APIClient()
+        
+        # Crear un doctor y pacientes
+        self.doctor = Doctor.objects.create(name="Dr. Smith", specialization="Cardiology")
+        self.patient1 = Patient.objects.create(name="John Doe", doctor=self.doctor)
+        self.patient2 = Patient.objects.create(name="Jane Doe", doctor=self.doctor)
+        
+        # URL para obtener la lista de pacientes de un doctor específico
+        self.patients_url = reverse('doctor-patients-list', kwargs={'doctor_pk': self.doctor.id})
+
+    def test_get_patients_for_doctor(self):
+        """Prueba para obtener la lista de pacientes de un doctor específico"""
+        
+        # Simular una solicitud GET al endpoint de pacientes
+        response = self.client.get(self.patients_url)
+        
+        # Comprobar que la respuesta tenga código 200 (éxito)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        
+        # Verificar que los pacientes se devuelvan correctamente en la respuesta
+        self.assertEqual(len(response.data), 2)
+        self.assertEqual(response.data[0]['name'], self.patient1.name)
+        self.assertEqual(response.data[1]['name'], self.patient2.name)
+
+    def test_create_patient_for_doctor(self):
+        """Prueba para crear un paciente bajo un doctor específico"""
+        
+        # Datos para el nuevo paciente
+        data = {
+            'name': 'Tom Doe'
+        }
+        
+        # Simular una solicitud POST al endpoint de pacientes
+        response = self.client.post(self.patients_url, data, format='json')
+        
+        # Comprobar que la respuesta tenga código 201 (creado)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        
+        # Verificar que el paciente fue creado correctamente y asociado al doctor
+        self.assertEqual(Patient.objects.filter(doctor=self.doctor).count(), 3)
+        self.assertEqual(response.data['name'], 'Tom Doe')
+```
+
+### Explicación de la Prueba
+
+1. **`setUp`**: Configuramos el cliente de la API (`APIClient`), creamos un `Doctor` y dos `Patient`. También generamos la URL de los pacientes anidados bajo un doctor específico.
+   
+2. **`test_get_patients_for_doctor`**: 
+   - Enviamos una solicitud GET al endpoint anidado `/doctors/{doctor_id}/patients/`.
+   - Verificamos que la respuesta tenga código de estado `200 OK`.
+   - Comprobamos que se devuelvan los pacientes correctos en la respuesta.
+
+3. **`test_create_patient_for_doctor`**: 
+   - Enviamos una solicitud POST para crear un nuevo paciente bajo el doctor.
+   - Verificamos que el código de estado sea `201 CREATED`.
+   - Comprobamos que el paciente fue correctamente añadido a la base de datos y asociado al doctor.
+
+### 4. **Ejecutar las pruebas**
+Para ejecutar las pruebas, utiliza el siguiente comando en la terminal:
+
+```bash
+python manage.py test
+```
+
+Esto ejecutará las pruebas en tu proyecto y validará que los endpoints anidados funcionen correctamente.
+
+## Throttling en Django REST Framework
+
+Limitar las solicitudes a una API es fundamental para evitar abusos y proteger los recursos del servidor. El throttling es una técnica clave en este proceso, ya que permite controlar la cantidad de solicitudes que diferentes usuarios pueden hacer en un determinado periodo, previniendo ataques como DDoS y optimizando el rendimiento.
+
+### ¿Cómo implementar throttling en Django REST?
+
+Para controlar las solicitudes en Django REST, es importante definir reglas específicas. Estas reglas pueden basarse en el estado del usuario, como si está autenticado o es anónimo, o incluso establecer limitaciones distintas para usuarios VIP.
+
+- Primero, debemos entender que el throttling se configura de manera similar a los permisos y autenticación.
+- Definimos límites como “requests por minuto”, y estos valores pueden ser diferentes para usuarios anónimos o autenticados.
+
+### ¿Cómo definir reglas de throttling en Django REST?
+
+La documentación de Django REST proporciona ejemplos claros para limitar las solicitudes de acuerdo al tipo de usuario:
+
+- Para usuarios anónimos: 100 solicitudes por día.
+- Para usuarios autenticados: 1000 solicitudes por día.
+
+Estas reglas pueden configurarse fácilmente para ser más estrictas, limitando, por ejemplo, a 5 solicitudes por minuto para usuarios anónimos.
+
+### ¿Cómo probar la configuración?
+
+1. **Modificar la configuración**: Añade las reglas de throttling al diccionario de configuración de Django REST. Para limitar a 5 solicitudes por minuto, establece la tasa en 'minute': 5 para usuarios anónimos.
+2. **Ejecutar el servidor**: Después de realizar los cambios, corre el servidor de desarrollo y prueba enviando solicitudes repetidas.
+3. **Verificación en la terminal**: Al alcanzar el límite de solicitudes, Django REST mostrará el error “too many requests” en la terminal, indicando que el sistema de throttling está funcionando correctamente.
+
+### ¿Qué sucede cuando el límite es alcanzado?
+
+Si un usuario anónimo intenta hacer más de 5 solicitudes en un minuto, verá un error que le informará que ha alcanzado el límite de solicitudes permitidas. Después de esperar unos segundos, el sistema volverá a permitir solicitudes. Este proceso asegura que los recursos del servidor no se saturen con solicitudes abusivas o incorrectas.
+
+### Qué es el Throttling
+
+El throttling es una técnica utilizada en aplicaciones web, especialmente en APIs, para **controlar la cantidad de solicitudes** que un cliente puede hacer en un período de tiempo específico. Su objetivo principal es prevenir abusos, proteger recursos y garantizar un rendimiento óptimo.
+
+De manera visual, un throttle consiste en bloquear la invocación de funciones hasta que se **complete un tiempo determinado o una acción en específico**. De esta manera reducimos el número de peticiones a la API. Lo que conlleva reducir costos y prevenir ataques.
+
+![thottling](thottling.png)
+
+Un concepto similar es Debounce. Pero te lo dejo de tarea.
