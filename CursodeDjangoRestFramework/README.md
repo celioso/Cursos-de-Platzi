@@ -658,7 +658,7 @@ Cuando creamos una API, el objetivo principal es que otros sistemas o desarrolla
 
 [Home 2024 - OpenAPI Initiative](https://www.openapis.org/ "Home 2024 - OpenAPI Initiative")
 
-## istas Personalizadas y ViewSets en Django REST Framework
+## Listas Personalizadas y ViewSets en Django REST Framework
 
 Los Viewsets en Django REST Framework nos ayudan a simplificar la creación de vistas al reutilizar una clase que agrupa el código necesario para manejar diferentes operaciones sobre un recurso, como listar, crear, actualizar y eliminar. Al integrarlos con los routers, evitamos la necesidad de definir cada URL manualmente, ya que el router se encarga de generar todas las rutas de manera automática.
 
@@ -747,3 +747,287 @@ Al crear APIs en Django REST Framework, no solo trabajamos con URLs para recurso
 ### ¿Cómo replicar este proceso para otros recursos?
 
 - Siguiendo este patrón, podemos crear acciones para otros recursos. Por ejemplo, un paciente puede necesitar obtener un reporte médico en formato JSON, lo cual sería una acción personalizada en el ViewSet de `Patient`.
+
+## Autenticación y Gestión de Roles en Django REST Framework
+
+
+En muchos sistemas, las APIs dependen de la autenticación y autorización para proteger recursos sensibles. Este artículo explica ambos conceptos a través de ejemplos y luego los implementa utilizando Django REST Framework.
+
+¿Qué es la autenticación y cómo funciona en las APIs?
+La autenticación se refiere a la comprobación de la identidad de un usuario. Imagina que llegas a un hotel, te solicitan tu documento de identificación, y de esta forma, demuestras quién eres. En el mundo digital, es similar: te identificas con un usuario y una contraseña. En Django, esta autenticación genera una cookie que luego es enviada en cada request para identificar y autorizar al usuario.
+
+¿Cómo se implementa la autenticación en Django REST Framework?
+Django REST Framework incluye múltiples sistemas de autenticación por defecto. Los más comunes son:
+
+Session Authentication: Usa cookies y las credenciales del usuario almacenadas en la base de datos de Django.
+Token Authentication: Similar a la llave de un hotel, donde el token identifica al usuario después de autenticarse.
+Para implementar el sistema de autenticación en Django, se configuran las clases de autenticación dentro de settings.py, lo cual permite que solo los usuarios autenticados interactúen con los endpoints.
+
+¿Cómo se configura la autorización en Django REST?
+La autorización determina qué puede hacer un usuario autenticado. En el ejemplo del hotel, tener la llave te permite acceder solo a tu habitación, pero no a otras. En Django, se define qué usuarios tienen permiso para acceder o modificar ciertos recursos.
+
+Para configurar esto:
+
+Se añaden Permission Classes en los viewsets.
+Se utiliza la clase IsAuthenticated para requerir que el usuario esté logueado antes de realizar cualquier acción.
+¿Cómo manejar permisos más avanzados en Django REST Framework?
+En algunos casos, es necesario definir permisos personalizados. Por ejemplo, solo los doctores deberían poder modificar ciertos recursos. Para implementar esto, puedes:
+
+Crear grupos de usuarios, como el grupo “Doctors”.
+Definir clases personalizadas de permisos, como IsDoctor, que verifica si el usuario pertenece al grupo adecuado.
+Este sistema permite implementar roles de usuario más complejos, asegurando que solo aquellos con permisos específicos puedan realizar ciertas acciones.
+
+¿Cómo probar la autenticación y autorización en Django?
+Después de configurar todo, es importante probar que los permisos y la autenticación funcionan como se espera. Esto incluye:
+
+Probar con usuarios que tienen acceso y verificar que pueden realizar las acciones permitidas.
+Probar con usuarios sin permisos y asegurarse de que reciban los errores apropiados (como 401 o 403).
+Con esta configuración, tus APIs estarán protegidas y listas para manejar autenticación y permisos de manera segura y eficiente.
+
+## Autenticación y Gestión de Roles en Django REST Framework
+
+
+En muchos sistemas, las APIs dependen de la autenticación y autorización para proteger recursos sensibles. Este artículo explica ambos conceptos a través de ejemplos y luego los implementa utilizando Django REST Framework.
+
+### ¿Qué es la autenticación y cómo funciona en las APIs?
+
+La autenticación se refiere a la comprobación de la identidad de un usuario. Imagina que llegas a un hotel, te solicitan tu documento de identificación, y de esta forma, demuestras quién eres. En el mundo digital, es similar: te identificas con un usuario y una contraseña. En Django, esta autenticación genera una cookie que luego es enviada en cada request para identificar y autorizar al usuario.
+
+### ¿Cómo se implementa la autenticación en Django REST Framework?
+
+Django REST Framework incluye múltiples sistemas de autenticación por defecto. Los más comunes son:
+
+- **Session Authentication**: Usa cookies y las credenciales del usuario almacenadas en la base de datos de Django.
+- **Token Authentication**: Similar a la llave de un hotel, donde el token identifica al usuario después de autenticarse.
+
+Para implementar el sistema de autenticación en Django, se configuran las clases de autenticación dentro de settings.py, lo cual permite que solo los usuarios autenticados interactúen con los endpoints.
+
+### ¿Cómo se configura la autorización en Django REST?
+
+La autorización determina qué puede hacer un usuario autenticado. En el ejemplo del hotel, tener la llave te permite acceder solo a tu habitación, pero no a otras. En Django, se define qué usuarios tienen permiso para acceder o modificar ciertos recursos.
+
+Para configurar esto:
+
+1. Se añaden **Permission Classes** en los viewsets.
+2. Se utiliza la clase `IsAuthenticated` para requerir que el usuario esté logueado antes de realizar cualquier acción.
+
+### ¿Cómo manejar permisos más avanzados en Django REST Framework? 
+
+En algunos casos, es necesario definir permisos personalizados. Por ejemplo, solo los doctores deberían poder modificar ciertos recursos. Para implementar esto, puedes:
+
+- Crear grupos de usuarios, como el grupo “Doctors”.
+- Definir clases personalizadas de permisos, como `IsDoctor`, que verifica si el usuario pertenece al grupo adecuado.
+
+Este sistema permite implementar roles de usuario más complejos, asegurando que solo aquellos con permisos específicos puedan realizar ciertas acciones.
+
+### ¿Cómo probar la autenticación y autorización en Django?
+
+Después de configurar todo, es importante probar que los permisos y la autenticación funcionan como se espera. Esto incluye:
+
+- Probar con usuarios que tienen acceso y verificar que pueden realizar las acciones permitidas.
+- Probar con usuarios sin permisos y asegurarse de que reciban los errores apropiados (como 401 o 403).
+
+Con esta configuración, tus APIs estarán protegidas y listas para manejar autenticación y permisos de manera segura y eficiente.
+
+Crear un super usuario: `python manage.py createsuperuser`
+
+**Lecturas recomendadas**
+
+[How to use sessions | Django documentation | Django](https://docs.djangoproject.com/en/4.0/topics/http/sessions/ "How to use sessions | Django documentation | Django")
+
+## Manejo de Errores y Validaciones
+
+Validar datos correctamente es clave para asegurar que una aplicación funcione de manera segura y confiable. En este caso, exploramos cómo implementar validaciones personalizadas en serializadores de Django REST Framework para garantizar que los datos cumplan con los requisitos específicos del negocio.
+
+### ¿Cómo implementamos una validación personalizada en Django REST Framework?
+
+Django ya ofrece validaciones básicas, como verificar que un campo sea un email. Sin embargo, para casos específicos, como asegurarse de que un correo pertenezca a un dominio corporativo, necesitamos crear validaciones personalizadas en el serializador. Esto lo logramos usando el método `validate_<nombre_del_campo>`. Por ejemplo, para validar que un correo termine en `@example.com`, implementamos lo siguiente:
+
+- Definimos el método `validate_email` dentro del serializador.
+- Verificamos si el valor del campo contiene el dominio correcto.
+- Si es válido, retornamos el valor; si no, levantamos una excepción con un mensaje de error.
+
+### ¿Cómo manejar errores de validación en casos más complejos?
+
+Para validaciones que dependen de múltiples campos, como validar el número de contacto y el estado de vacaciones de un doctor, usamos el método general validate. Este método permite acceder a todos los campos del serializador en forma de diccionario y aplicar lógica personalizada.
+Por ejemplo:
+
+- Validamos que el número de contacto tenga al menos 10 caracteres.
+- Si el doctor está de vacaciones (`is_on_vacation es True`) y el número no es válido, lanzamos una excepción que indica que debe corregirse el número antes de continuar.
+
+### ¿Qué debemos hacer si hay múltiples validaciones?
+
+En casos donde existen múltiples validaciones, podemos usar un diccionario que devuelva los valores de todos los campos y agregar la lógica en consecuencia. Esto es útil cuando debemos validar múltiples condiciones que se interrelacionan.
+
+### ¿Cómo lanzamos errores personalizados en serializadores?
+
+Django REST Framework nos permite lanzar excepciones personalizadas que se retornan como un error en formato JSON. Usamos `raise serializers.ValidationError` para generar estos errores con mensajes específicos, ayudando a los usuarios a corregir los datos enviados antes de que se procesen.
+
+**Ventajas de manejar errores:**
+
+1. **Mejora la experiencia del usuario**: Proporciona mensajes claros y útiles cuando ocurren errores.
+2. **Aumenta la seguridad**: Previene la exposición de información sensible a través de mensajes de error.
+3. **Facilita la depuración**: Ayuda a los desarrolladores a identificar y solucionar problemas más rápidamente.
+
+**Ventajas de manejar validaciones:**
+
+1. **Garantiza la integridad de los datos**: Asegura que solo datos correctos y esperados sean procesados.
+2. **Previene errores**: Reduce la posibilidad de errores en el sistema al validar la entrada de datos.
+3. **Mejora la seguridad**: Evita la entrada de datos maliciosos que podrían comprometer el sistema.
+
+En Django REST Framework (DRF), el manejo de errores y las validaciones son componentes cruciales para crear APIs robustas. DRF facilita la creación de validaciones personalizadas y el manejo adecuado de errores, ya sea en los serializadores, vistas o directamente en las respuestas de la API.
+
+### Validaciones en Serializers
+
+Los **serializers** son el lugar donde generalmente ocurre la mayoría de las validaciones de datos. DRF proporciona métodos incorporados para validar datos en un `ModelSerializer`.
+
+#### 1. Validaciones de Campos
+DRF realiza validaciones automáticas basadas en los tipos de campo definidos en el modelo, pero también puedes agregar validaciones personalizadas en cada campo.
+
+Ejemplo:
+
+```python
+from rest_framework import serializers
+from .models import Patient
+
+class PatientSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Patient
+        fields = '__all__'
+
+    # Validación personalizada en un campo específico
+    def validate_age(self, value):
+        if value < 0:
+            raise serializers.ValidationError("La edad no puede ser negativa.")
+        return value
+```
+
+#### 2. Validaciones Globales
+Puedes realizar validaciones que afecten a múltiples campos a la vez usando el método `validate` en el serializador.
+
+Ejemplo:
+
+```python
+class PatientSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Patient
+        fields = '__all__'
+
+    # Validación global (en múltiples campos)
+    def validate(self, data):
+        if data['age'] < 18 and not data.get('guardian'):
+            raise serializers.ValidationError("Pacientes menores de edad deben tener un guardián.")
+        return data
+```
+
+### Manejo de Errores en Vistas
+
+En Django REST Framework, puedes manejar errores y excepciones en las vistas, ya sea a través de excepciones incorporadas o personalizadas.
+
+#### 1. Excepciones Incorporadas
+DRF tiene una serie de excepciones predeterminadas que puedes usar, como:
+
+- `ValidationError`: Para errores de validación.
+- `NotFound`: Cuando un recurso no existe.
+- `PermissionDenied`: Cuando el usuario no tiene los permisos necesarios.
+- `NotAuthenticated`: Si se requiere autenticación pero no está presente.
+
+Ejemplo:
+
+```python
+from rest_framework.exceptions import NotFound
+from rest_framework.views import APIView
+from .models import Patient
+from .serializers import PatientSerializer
+
+class PatientDetailView(APIView):
+    def get(self, request, pk):
+        try:
+            patient = Patient.objects.get(pk=pk)
+        except Patient.DoesNotExist:
+            raise NotFound("El paciente con este ID no existe.")
+
+        serializer = PatientSerializer(patient)
+        return Response(serializer.data)
+```
+
+#### 2. Manejo de Excepciones Globales
+
+Si quieres manejar los errores a nivel global, puedes personalizar el comportamiento utilizando un middleware o sobreescribiendo la función de excepción de DRF.
+
+```python
+# En settings.py
+REST_FRAMEWORK = {
+    'EXCEPTION_HANDLER': 'my_project.my_app.utils.custom_exception_handler',
+}
+```
+
+Y luego defines tu función personalizada de manejo de errores:
+
+```python
+from rest_framework.views import exception_handler
+
+def custom_exception_handler(exc, context):
+    response = exception_handler(exc, context)
+
+    if response is not None:
+        response.data['status_code'] = response.status_code
+        response.data['error'] = str(exc)
+
+    return response
+```
+
+### Manejo de Validaciones Personalizadas en Formularios
+
+También puedes agregar validaciones personalizadas usando el atributo `validators` en los serializadores para campos específicos.
+
+```python
+from rest_framework import serializers
+from django.core.validators import RegexValidator
+
+class PatientSerializer(serializers.ModelSerializer):
+    phone_number = serializers.CharField(
+        validators=[RegexValidator(regex='^(\+)?[0-9]{10,15}$', message="Número de teléfono inválido")]
+    )
+    
+    class Meta:
+        model = Patient
+        fields = '__all__'
+```
+
+### Respuestas Personalizadas en Caso de Error
+
+Puedes crear respuestas personalizadas cuando ocurre un error en la validación de los datos en tu API. Por ejemplo, puedes sobrescribir cómo los errores son mostrados en las respuestas.
+
+```python
+from rest_framework.response import Response
+from rest_framework import status
+from rest_framework.views import APIView
+
+class PatientDetailView(APIView):
+    def post(self, request):
+        serializer = PatientSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response({
+            'status': 'error',
+            'message': 'Datos inválidos',
+            'errors': serializer.errors
+        }, status=status.HTTP_400_BAD_REQUEST)
+```
+
+### Resumen
+
+- **Validaciones en Serializers**: Usa `validate_<field>` para validaciones de campo, y el método `validate` para validaciones que involucran múltiples campos.
+- **Manejo de Excepciones**: Puedes usar excepciones predefinidas o personalizadas en tus vistas.
+- **Respuestas de Error Personalizadas**: Puedes sobrescribir el formato de los errores de validación para personalizar las respuestas JSON.
+- **Excepciones Globales**: Puedes definir un manejador de excepciones global para todo el proyecto a través de la configuración de `EXCEPTION_HANDLER`.
+
+Estos mecanismos te permitirán gestionar errores y validaciones de manera eficiente en tu proyecto Django REST Framework.
+
+**Lecturas recomendadas**
+
+[Serializing Django objects | Django documentation | Django](https://docs.djangoproject.com/en/stable/topics/serialization/#serializing-data "Serializing Django objects | Django documentation | Django")
+
+[Exceptions - Django REST framework](https://www.django-rest-framework.org/api-guide/exceptions/ "Exceptions - Django REST framework")
