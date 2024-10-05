@@ -14,7 +14,9 @@ class CalculatorTests(unittest.TestCase):
         assert multiplication(10, 5) == 50
 
     def test_division(self):
-        assert division(10, 5) == 2
+        result = division(10, 2)
+        expected = 5
+        assert result == expected
 
     def test_div_by_zero(self):
         with self.assertRaises(ZeroDivisionError):

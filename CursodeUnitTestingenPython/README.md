@@ -275,3 +275,242 @@ class MyModelTestCase(TestCase):
 Para mejorar la calidad de tu código, puedes integrar tus pruebas con herramientas de CI/CD como **GitHub Actions**, **Travis CI** o **CircleCI**, para que las pruebas se ejecuten automáticamente cada vez que haces cambios en el código.
 
 **Nota**: para ejecutar el test `python -m unittest discover -s tests`
+
+## Cómo Crear Pruebas Unitarias con UnitTest en Python
+
+Las pruebas unitarias en Python son esenciales para asegurar el correcto funcionamiento del código. Utilizando la clase `TestCase` de la biblioteca `UnitTest`, podemos estructurar pruebas de manera eficiente y limpiar recursos una vez que se han ejecutado. Además, permite automatizar la validación de resultados y la captura de errores. Vamos a profundizar en cómo implementar estas pruebas y algunos métodos clave que facilitan este proceso.
+
+### ¿Cómo configurar las pruebas en Python con TestCase?
+
+El método `setUp()` nos permite configurar elementos antes de que cada prueba se ejecute. Imagina que tienes cinco pruebas que requieren la misma preparación: en lugar de repetir la configuración, puedes ejecutarla una sola vez aquí. Esto ahorra tiempo y esfuerzo al evitar la duplicación de código.
+
+Por ejemplo:
+
+- Puedes utilizar `setUp()` para crear una base común de datos, abrir archivos, o preparar datos de entrada.
+- Luego, cada prueba reutiliza esta configuración, asegurando que el entorno siempre esté listo para las pruebas.
+
+### ¿Cómo limpiar después de una prueba?
+
+El método tearDown() sirve para limpiar los recursos utilizados en la prueba. Supongamos que has creado cientos de archivos para una prueba, este método permite eliminarlos automáticamente después de que la prueba finaliza, asegurando que el sistema no quede lleno de datos innecesarios.
+
+Algunos ejemplos de cuándo usarlo:
+
+- Eliminar archivos temporales creados durante las pruebas.
+- Cerrar conexiones a bases de datos o liberar recursos del sistema.
+
+### ¿Cómo ejecutar pruebas y capturar errores?
+
+La clase `TestCase` no solo organiza las pruebas, también proporciona un método automático para ejecutar cada una de ellas. El método runTest() gestiona la ejecución de las pruebas, captura los errores y valida que todo funcione correctamente. Este proceso automatiza la validación de resultados esperados y la identificación de fallos.
+
+Por ejemplo:
+
+- Si tienes una lista de pruebas, este método las ejecutará una por una, asegurando que todas se validen correctamente.
+- Además, capturará las excepciones que se lancen durante la ejecución.
+
+### ¿Cómo validar excepciones en las pruebas unitarias?
+
+Una situación común en las pruebas de una calculadora es manejar la división por cero. La mejor práctica es lanzar una excepción para evitar errores. Python permite validar que la excepción se ha lanzado correctamente en las pruebas.
+
+Pasos clave:
+
+- Crear una prueba donde `b = 0`.
+- Utilizar `assertRaises()` para verificar que se ha lanzado la excepción `ValueError`.
+
+**Lecturas recomendadas**
+
+[unittest — Unit testing framework — Python 3.12.5 documentation](https://docs.python.org/3/library/unittest.html "unittest — Unit testing framework — Python 3.12.5 documentation")
+
+## Cómo usar el método setup en tests de Python
+
+El uso del método setup en los `tests` permite simplificar y evitar la duplicación de código en las pruebas. Al iniciar un test, `setup` se ejecuta automáticamente, preparando el entorno para cada prueba de forma eficiente. En este caso, pasamos de un proyecto de calculadora a uno de una cuenta bancaria, y veremos cómo implementar pruebas unitarias para depósitos, retiros y consultas de saldo utilizando `setup` para optimizar el código.
+
+### ¿Cómo implementar pruebas para depósitos en una cuenta bancaria?
+
+Primero, se crea la clase de test donde se probarán los métodos de una cuenta bancaria. Para hacer un depósito, se debe instanciar una cuenta con un saldo inicial, realizar el depósito y luego validar que el saldo ha cambiado correctamente.
+
+Pasos:
+
+- Crear el archivo `test_bank_account.py`.
+- Instanciar una cuenta con saldo inicial.
+- Probar que el método de depósito ajusta el saldo correctamente.
+
+### ¿Cómo optimizar las pruebas con el método setup?
+
+El método `setup` evita la creación repetitiva de instancias en cada test. Para lograr esto:
+
+- Se crea una instancia de cuenta en `setup`.
+- La cuenta creada se comparte entre todas las pruebas usando `self.`
+
+Esto simplifica las pruebas al evitar duplicar el código de instanciación en cada método de test.
+
+### ¿Cómo ejecutar las pruebas de retiro y consulta de saldo?
+
+Para las pruebas de retiro y consulta de saldo:
+
+- El método `withdraw` debe restar la cantidad del saldo y validar que el resultado sea correcto.
+- El método `get_balance` simplemente valida que el saldo actual coincida con lo esperado.
+
+Estas pruebas se benefician del uso de `setup`, ya que reutilizan la misma instancia de cuenta creada para cada prueba.
+
+### ¿Cómo ejecutar pruebas con salida más detallada?
+
+Al ejecutar las pruebas, es útil utilizar el comando con la opción `-b` para obtener una salida más detallada y visualizar exactamente qué pruebas se están ejecutando y dónde están ubicadas en el código. Esto ayuda a depurar y tener un mejor control sobre el flujo de las pruebas.
+
+### ¿Cómo crear pruebas para una nueva funcionalidad de transferencia?
+
+La tarea final consiste en agregar un método de transferencia a la clase `BankAccount`, el cual debe:
+
+- Permitir transferir saldo entre cuentas.
+- Levantar una excepción si el saldo no es suficiente para realizar la transferencia.
+
+Luego, se deben crear dos pruebas unitarias:
+
+1. Validar que la transferencia se realiza correctamente.
+2. Validar que se lanza una excepción cuando no hay saldo suficiente para completar la transferencia.
+
+para ver las puebas que se estan ejecutando se utiliza el siguiente codigo `python -m unittest discover -v -s tests`
+
+## Uso de tearDown para limpieza de Pruebas Unitarias en Python
+
+El método `teardown `es esencial para asegurar que nuestras pruebas no interfieran entre sí, y se usa para limpiar cualquier recurso temporal al final de cada prueba. En este caso, lo hemos aplicado a nuestra cuenta bancaria, donde se registra un log cada vez que se realiza una acción. Vamos a explorar cómo implementarlo correctamente y agregar funcionalidades de logging a nuestra cuenta de banco.
+
+### ¿Qué es el método teardown y cuándo lo usamos?
+
+El método `teardown` se ejecuta al final de cada prueba, y es utilizado para limpiar recursos como archivos temporales o cerrar conexiones. En este caso, lo usamos para eliminar el archivo de logs que se genera durante nuestras pruebas de la cuenta bancaria. De esta manera, cada prueba se ejecuta en un entorno limpio, sin interferencias de pruebas anteriores.
+
+### ¿Cómo agregamos logging a la cuenta de banco?
+
+Añadimos una funcionalidad de logging en el método `init`, el cual se ejecuta cada vez que se crea una instancia de nuestra clase `BankAccount`. El log incluye eventos como la creación de la cuenta, la consulta de saldo, y cuando se realizan depósitos o retiros. Esto se realiza a través del método `logTransaction`, que escribe el mensaje en un archivo de texto.
+
+- Se define un archivo de log (`logFile`) al crear la cuenta.
+- Cada vez que se realiza una transacción o se consulta el saldo, se agrega una línea al archivo.
+- Para asegurar que el archivo de log se genera correctamente, creamos pruebas automatizadas.
+
+### ¿Cómo validamos la existencia del archivo de log?
+
+En nuestras pruebas, verificamos si el archivo de log se crea exitosamente. Utilizamos la función `os.path.exists` para validar su existencia y asegurarnos de que nuestras pruebas están funcionando correctamente.
+
+### ¿Cómo usamos el teardown para limpiar archivos?
+
+El `teardown` nos permite eliminar el archivo de log después de cada prueba para que no interfiera con otras. Implementamos una función que, si el archivo existe, lo borra utilizando `os.remove`. Esto asegura que las pruebas se ejecutan en un entorno limpio y los logs no se acumulan entre pruebas.
+
+### ¿Cómo probamos que los logs contienen la información correcta?
+
+Además de verificar que el archivo existe, es fundamental asegurarnos de que el contenido del archivo sea correcto. Para ello, creamos un método que cuenta las líneas del archivo (`countLines`). Luego, en nuestras pruebas, validamos que el número de líneas corresponde al número de transacciones realizadas.
+
+- Contamos las líneas después de crear la cuenta (debe haber una línea).
+- Hacemos un depósito y volvemos a contar las líneas (debe haber dos líneas).
+- Si no limpiáramos el archivo con `teardown`, el número de líneas sería incorrecto.
+
+### ¿Cómo crear una nueva funcionalidad de logging para transferencias fallidas?
+
+El siguiente reto es agregar una funcionalidad para registrar un log cuando alguien intente hacer una transferencia sin saldo disponible. El log debe incluir un mensaje indicando la falta de fondos, y también se deben crear pruebas que validen que este log se genera correctamente.
+
+- Se debe registrar el intento fallido en el archivo de log.
+- Crear una prueba para asegurarse de que el mensaje “No tiene saldo disponible” aparece en el log.
+- Utilizar teardown para limpiar el archivo al finalizar cada prueba.
+
+## Cómo validar excepciones y estructuras de datos con Unittest en Python
+
+UnitTest nos proporciona una amplia gama de métodos de aserción que mejoran la forma en que validamos nuestras pruebas. En esta clase, hemos explorado algunos de ellos y cómo utilizarlos en diferentes escenarios.
+
+### ¿Cómo se usa el assertEqual en Unit Test?
+
+El método `assertEqual` compara dos valores para verificar si son iguales. Acepta dos parámetros para comparar y opcionalmente un mensaje personalizado que se mostrará en la terminal si la prueba falla. Este método se integra bien con los editores, permitiendo ejecutar y depurar pruebas de manera eficiente.
+
+- Parámetros: valor esperado, valor obtenido, mensaje de error (opcional)
+- Uso típico: Validar igualdad de números, cadenas, o cualquier otro objeto comparable.
+
+### ¿Qué otros métodos de aserción existen en Unit Test?
+
+Además de `assertEqual`, Unit Test incluye muchos otros métodos de aserción útiles:
+
+- `assertTrue`: Verifica que una expresión sea verdadera. No compara valores, solo evalúa si una condición es cierta.
+- `assertRaises`: Valida que se lance una excepción específica dentro de un bloque de código, utilizando la palabra clave with como contexto.
+- `assertIn` y `assertNotIn`: Comprueban si un elemento está o no está dentro de una secuencia, como una lista o un conjunto.
+
+### ¿Cómo se manejan excepciones en Unit Test?
+
+Con `assertRaises`, se puede verificar que una excepción se lance correctamente. Este método es especialmente útil para manejar errores esperados, como cuando un usuario no tiene suficientes fondos para completar una transferencia.
+
+- Se utiliza con `with` para capturar la excepción dentro de un bloque de código.
+- Ejemplo: Capturar un `ValueError` al pasar un argumento no válido a una función.
+
+### ¿Cómo comparar listas, diccionarios y sets en Unit Test?
+
+Unit Test ofrece métodos para comparar estructuras de datos más complejas:
+
+- `assertDictEqual`: Compara dos diccionarios.
+- `assertSetEqual`: Compara dos sets para validar que contengan los mismos elementos, independientemente del orden.
+- Estos métodos también cuentan con variantes negativas, como `assertNotEqual`, para validar desigualdades.
+
+## Control de pruebas unitarias con unittest.skip en Python
+
+En el desarrollo de software, es común enfrentarse a situaciones donde las pruebas unitarias no pueden ejecutarse por cambios o desarrollos en curso. En estos casos, comentar el código de las pruebas no es la mejor práctica. Afortunadamente, Python y `unittest` ofrecen decoradores que nos permiten omitir pruebas temporalmente, sin comprometer el flujo de trabajo ni la integridad del proyecto. Aquí aprenderemos cómo usar decoradores como `@skip`, `@skipIf` y `@expectedFailure` para manejar estos casos de manera eficiente.
+
+### ¿Cómo utilizar el decorador @skip?
+
+El decorador `@skip` se utiliza cuando sabemos que una prueba no debería ejecutarse temporalmente. Esto es útil si estamos trabajando en un feature que aún no está completo y, por lo tanto, las pruebas no tienen sentido. Al aplicar `@skip`, podemos evitar la ejecución de la prueba y aún así tener visibilidad de que está pendiente de ser corregida.
+
+- Aplicamos el decorador con una razón clara.
+- Cuando ejecutamos las pruebas, en el reporte se indicará que la prueba fue saltada.
+
+**Ejemplo de uso:**
+
+```python
+@unittest.skip("Trabajo en progreso, será habilitada nuevamente.")
+def test_skip_example(self):
+    self.assertEqual("hola", "chau")
+```
+
+### ¿Cuándo aplicar @skipIf?
+
+El decorador `@skipIf` es útil cuando queremos omitir una prueba bajo una condición específica. Esto es común cuando nuestras pruebas dependen del entorno, como servidores diferentes o configuraciones específicas.
+
+- Requiere una condición y una razón para ser aplicado.
+- Se ejecutará solo si la condición es verdadera.
+
+**Ejemplo de uso:**
+
+```python
+server = "server_b"
+@unittest.skipIf(server == "server_a", "Saltada porque no estamos en el servidor correcto.")
+def test_skipif_example(self):
+    self.assertEqual(1000, 100)
+```
+
+### ¿Qué hace el decorador @expectedFailure?
+Este decorador se usa cuando sabemos que una prueba fallará debido a un cambio en la lógica del negocio o un bug conocido, pero queremos mantener la prueba visible en el reporte de pruebas.
+
+- Es útil para reflejar fallos esperados sin interferir con el flujo de integración continua.
+- El reporte mostrará que la prueba falló como se esperaba.
+
+**Ejemplo de uso:**
+
+```python
+@unittest.expectedFailure
+def test_expected_failure_example(self):
+    self.assertEqual(100, 150)
+```
+
+### ¿Cómo aplicar @skipUnless en casos avanzados?
+
+El decorador `@skipUnless` es valioso cuando queremos ejecutar una prueba solo si se cumple una condición. Un ejemplo clásico es validar si un servicio externo, como una API, está disponible antes de ejecutar la prueba.
+
+- Es ideal para escenarios donde dependemos de recursos externos, como API’s de terceros.
+
+**Ejemplo de uso:**
+
+```python
+@unittest.skipUnless(api_available(), "API no disponible.")
+def test_skipunless_example(self):
+    self.assertEqual(get_currency_rate("USD"), 1.0)
+```
+
+### ¿Cuándo utilizar estos decoradores en desarrollo colaborativo?
+
+El uso de decoradores como `@skip`, `@skipIf`, `@expectedFailure` y `@skipUnless` en un equipo de desarrollo asegura que las pruebas no interfieran en el flujo de trabajo, mientras mantienen la visibilidad de las pruebas pendientes. Es esencial en entornos de integración continua (CI), donde se busca que las pruebas no bloqueen el desarrollo, pero sin ignorarlas por completo.
+
+**Lecturas recomendadas**
+
+[unittest — Unit testing framework — Python 3.12.5 documentation](https://docs.python.org/3/library/unittest.html#unittest.skip "unittest — Unit testing framework — Python 3.12.5 documentation")
