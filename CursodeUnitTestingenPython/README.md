@@ -514,3 +514,452 @@ El uso de decoradores como `@skip`, `@skipIf`, `@expectedFailure` y `@skipUnless
 **Lecturas recomendadas**
 
 [unittest — Unit testing framework — Python 3.12.5 documentation](https://docs.python.org/3/library/unittest.html#unittest.skip "unittest — Unit testing framework — Python 3.12.5 documentation")
+
+## Cómo organizar y ejecutar pruebas en Python con UnitTest
+
+Cuando estamos desarrollando en Python, ejecutar todas las pruebas desde la terminal es común en entornos de desarrollo. Sin embargo, en producción o integración continua, este enfoque puede no ser ideal, especialmente cuando solo queremos ejecutar pruebas específicas o tener un mejor control sobre cómo organizamos y ejecutamos estas pruebas. Python y su módulo Unit Test nos ofrecen herramientas como las suites de pruebas para modularizar y seleccionar qué pruebas ejecutar.
+
+### ¿Cómo ejecutar pruebas específicas en Python?
+
+Para ejecutar pruebas específicas, podemos usar el comando `discover` del subcomando Unit Test. Este comando busca automáticamente todas las pruebas dentro de una carpeta y las agrupa en una suite. Sin embargo, este enfoque no es siempre ideal para entornos locales, donde podríamos querer ejecutar solo ciertas pruebas.
+
+### ¿Qué son las suites de pruebas?
+
+Una suite de pruebas es un grupo de pruebas que podemos ejecutar juntas. En proyectos pequeños, generalmente tenemos una sola suite, pero a medida que crece el proyecto, modularizar las pruebas por categorías o características es recomendable. Por ejemplo, podríamos tener una suite para pruebas de calculadora y otra para pruebas de banco.
+
+### ¿Cómo crear y ejecutar una suite de pruebas manualmente?
+
+1. **Crear una suite manualmente:**
+
+
+ - Creamos un archivo nuevo, por ejemplo, `test_suites.py`.
+ - Importamos `UnitTest` y definimos una suite con `suite = unittest.TestSuite()`.
+ - Agregamos pruebas a la suite usando `suite.addTest()`.
+
+2. **Agregar pruebas específicas:**
+
+ - Podemos importar pruebas existentes y añadirlas a la suite. Por ejemplo, si ya tenemos una prueba llamada `test_deposit`, podemos agregarla a la suite con `suite.addTest(bankAccountTests('test_deposit'))`.
+
+3. **Ejecutar las suites con un runner:**
+
+ - Para ejecutar una suite, necesitamos un runner. Python ofrece varios tipos de runners. Un ejemplo sería el TextTestRunner, que se usa comúnmente en la terminal.
+ - El código básico para ejecutar la suite sería:
+ 
+```python
+runner = unittest.TextTestRunner()
+runner.run(suite)
+```
+
+### ¿Cómo configurar Visual Studio Code para ejecutar pruebas?
+
+Visual Studio Code facilita la ejecución de pruebas con su interfaz gráfica. Podemos configurar un runner y seleccionar qué pruebas ejecutar directamente desde el editor.
+
+1. **Configurar las pruebas en Visual Studio Code:**
+
+ - En la configuración, seleccionamos Unit Test como el framework de pruebas y especificamos la carpeta donde se encuentran las pruebas.
+ - Visual Studio Code lista automáticamente las pruebas, permitiéndonos ejecutarlas con un solo clic.
+
+2. **Ejecutar pruebas individuales:**
+
+ - Al hacer clic en una prueba específica, podemos ver su resultado inmediatamente, ya sea que la prueba haya pasado, fallado o se haya omitido.
+ 
+### ¿Cómo solucionar errores comunes al ejecutar pruebas?
+
+Durante la ejecución de las pruebas, es común encontrarse con errores como “módulo no encontrado”. Estos errores se pueden solucionar asegurándonos de que las carpetas contienen archivos `__init__.py` y configurando correctamente el `PYTHONPATH` para que Python encuentre todos los módulos necesarios.
+
+Para que funcione el PYTHONPATH en powershell se usa `$env:PYTHONPATH = "."; python tests/test_suites.py` y se debe usar ``return suite``
+
+```python
+import unittest
+
+from test_bank_account import BankAccountTests
+
+def bank_account_suite():
+    suite = unittest.TestSuite()
+    suite.addTest(BankAccountTests("test_deposit"))
+    suite.addTest(BankAccountTests("test_withdraw"))
+    return suite
+
+if __name__ == "__main__":
+    runner = unittest.TextTestRunner()
+    runner.run(bank_account_suite())
+```
+### ¿Cómo ejecutar pruebas desde la terminal?
+
+Podemos ejecutar una prueba específica directamente desde la terminal usando la siguiente estructura de comando:
+
+`python -m unittest tests.test_calculator.CalculatorTest.test_sum`
+
+Esto ejecuta únicamente la prueba `test_sum` de la clase `CalculatorTest`.
+
+## Mejores prácticas para organizar y nombrar pruebas en Python
+
+Nombrar pruebas correctamente es clave para el éxito en equipo, facilitando la comprensión del código y la colaboración efectiva. Aunque no es obligatorio, tener un formato claro para las pruebas es muy beneficioso.
+
+### ¿Cómo definir el formato de los nombres de las pruebas?
+
+- Todos los tests deben agruparse en clases, cada una relacionada con una clase de tu proyecto. Por ejemplo, si tienes una clase llamada `BankAccount`, la clase de prueba debería llamarse `BankAccountTest`.
+- Cada prueba debe comenzar con `test_`, para que las herramientas de testing la identifiquen fácilmente.
+- El siguiente elemento en el nombre debe ser el método que estás probando. Si es un método `deposit`, el nombre sería `test_deposit_`.
+
+### ¿Cómo estructurar el escenario de la prueba?
+
+- Después del método, añade el escenario. Esto se refiere a los valores o parámetros que usas en la prueba. Por ejemplo, en el caso de un valor positivo en un depósito, el escenario sería `positive_amount`.
+
+### ¿Cómo describir el resultado esperado?
+
+- Para finalizar el nombre, indica el resultado esperado. Si el depósito incrementa el saldo, añade algo como `increase_balance`. Así, un nombre de prueba completo sería: `test_deposit_positive_amount_increase_balance`.
+
+### ¿Por qué es útil este formato?
+
+- Permite a cualquier miembro del equipo entender el propósito de la prueba sin revisar el código completo.
+- Facilita el mantenimiento del código y el soporte, ya que con solo leer el nombre, se entiende el objetivo de la prueba.
+
+### ¿Qué reto se propone para mejorar las pruebas actuales?
+
+- Refactoriza las pruebas que has creado, probando diferentes escenarios y resultados posibles.
+- Imagina nuevas circunstancias para probar el código.
+- Compara tus resultados con el proyecto refactorizado que estará disponible en la sección de recursos, y comparte tus ideas.
+
+Organizar y nombrar pruebas de manera efectiva en Python es fundamental para asegurar que las pruebas sean fáciles de mantener, claras, y cubran adecuadamente el código que estás probando. Aquí te dejo algunas **mejores prácticas** recomendadas para organizar y nombrar pruebas en Python:
+
+### 1. **Organización de las Pruebas**
+
+#### a. **Usar un Directorio Separado para las Pruebas**
+Es una buena práctica colocar todas las pruebas en un directorio llamado `tests/` en la raíz del proyecto. Esto ayuda a mantener las pruebas separadas del código fuente.
+
+```
+my_project/
+├── my_app/
+│   ├── module1.py
+│   └── module2.py
+├── tests/
+│   ├── test_module1.py
+│   └── test_module2.py
+└── ...
+```
+
+#### b. **Mismo Esquema que el Código Fuente**
+La estructura del directorio `tests/` debe reflejar la estructura del código fuente. Por ejemplo, si tienes un archivo `module1.py` en tu código fuente, las pruebas correspondientes deberían estar en `tests/test_module1.py`.
+
+#### c. **Agrupar Pruebas en Clases**
+Utiliza clases para agrupar pruebas relacionadas. Cada clase debería agrupar pruebas de un módulo o una funcionalidad específica. De esta forma, puedes aprovechar métodos como `setUp` y `tearDown` para inicializar o limpiar datos entre las pruebas.
+
+```python
+import unittest
+
+class CalculatorTests(unittest.TestCase):
+    def setUp(self):
+        # Código para preparar el entorno de pruebas
+        pass
+    
+    def tearDown(self):
+        # Código para limpiar después de las pruebas
+        pass
+
+    def test_add(self):
+        # Prueba para la función de suma
+        pass
+    
+    def test_subtract(self):
+        # Prueba para la función de resta
+        pass
+```
+
+#### d. **Un Archivo de Prueba por Módulo**
+Cada módulo o clase del código fuente debería tener su archivo de pruebas correspondiente. Por ejemplo, si tienes un archivo `module1.py`, crea `test_module1.py` con las pruebas para ese archivo.
+
+### 2. **Nombrar las Pruebas**
+
+#### a. **Nombrar Archivos de Pruebas**
+Los archivos de pruebas deben seguir la convención de nombrarlos con el prefijo `test_` para que puedan ser detectados automáticamente por los frameworks de pruebas como `unittest` o `pytest`.
+
+```bash
+test_module1.py
+test_module2.py
+```
+
+#### b. **Nombrar Métodos de Prueba**
+Los métodos de prueba deben comenzar con `test_`, seguido de una descripción clara de lo que están probando. Esto asegura que las pruebas sean descubiertas automáticamente y hace que su propósito sea evidente. Utiliza nombres descriptivos para los métodos, que reflejen claramente el comportamiento que se está probando.
+
+```python
+class CalculatorTests(unittest.TestCase):
+    def test_addition_with_positive_numbers(self):
+        # Prueba suma con números positivos
+        pass
+    
+    def test_division_by_zero_raises_error(self):
+        # Prueba que la división por cero arroje un error
+        pass
+```
+
+#### c. **Descripciones Claras**
+Asegúrate de que los nombres de las pruebas describan el comportamiento esperado, como qué función estás probando y en qué condiciones. Evita nombres genéricos como `test_1`, `test_case` o `test_function`.
+
+### 3. **Separar las Pruebas por Tipos**
+
+#### a. **Pruebas Unitarias**
+Las pruebas unitarias deben centrarse en probar unidades individuales de funcionalidad (funciones o métodos). Deben ser rápidas y no depender de recursos externos (como bases de datos o APIs).
+
+#### b. **Pruebas de Integración**
+En archivos separados o bajo una estructura diferente, incluye pruebas de integración que prueben cómo las diferentes partes del sistema interactúan entre sí.
+
+```bash
+tests/
+├── unit/
+│   ├── test_module1.py
+│   └── test_module2.py
+├── integration/
+│   ├── test_integration_module1_module2.py
+```
+
+### 4. **Utilizar Métodos de Configuración y Limpieza**
+Cuando varias pruebas comparten datos o configuraciones, utiliza métodos como `setUp`, `tearDown`, `setUpClass` y `tearDownClass` de `unittest` o los equivalentes de `pytest` para reducir la repetición de código.
+
+```python
+class DatabaseTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        # Código para configurar recursos una sola vez antes de todas las pruebas
+        pass
+    
+    @classmethod
+    def tearDownClass(cls):
+        # Código para liberar los recursos una vez después de todas las pruebas
+        pass
+
+    def setUp(self):
+        # Código que se ejecuta antes de cada prueba individual
+        pass
+
+    def tearDown(self):
+        # Código que se ejecuta después de cada prueba individual
+        pass
+```
+
+### 5. **Usar Nombres Descriptivos para las Clases de Prueba**
+Al igual que los métodos de prueba, las clases de prueba también deben tener nombres descriptivos. Los nombres deben indicar qué clase o funcionalidad están probando.
+
+```python
+class UserAuthenticationTests(unittest.TestCase):
+    def test_login_with_valid_credentials(self):
+        # Prueba de inicio de sesión con credenciales válidas
+        pass
+```
+
+### 6. **Documentación y Comentarios**
+Incluir comentarios breves o docstrings en las pruebas puede ayudar a aclarar lo que se está probando y por qué. Esto es especialmente útil si la prueba tiene una lógica compleja o si estás probando un caso límite específico.
+
+```python
+class MathOperationsTests(unittest.TestCase):
+    def test_square_root_of_negative_number_raises_error(self):
+        """Debe generar un ValueError cuando se intenta calcular la raíz cuadrada de un número negativo"""
+        with self.assertRaises(ValueError):
+            math.sqrt(-1)
+```
+
+### 7. **Evitar Dependencias entre Pruebas**
+Cada prueba debe ser independiente y no debe depender de los resultados o el estado de otras pruebas. Esto garantiza que puedan ejecutarse de forma aislada, en cualquier orden.
+
+### 8. **Ejecutar Pruebas Automáticamente**
+Utiliza herramientas como `pytest` o `unittest` para ejecutar las pruebas de forma automática y generar informes. Puedes integrarlas en un sistema de integración continua (CI) como Travis CI o GitHub Actions.
+
+### 9. **Uso de Frameworks de Prueba**
+- **`unittest`**: Es el framework de pruebas estándar en Python y tiene una buena integración con la línea de comandos.
+- **`pytest`**: Proporciona una sintaxis más simple y muchas características adicionales, como fixtures y el descubrimiento automático de pruebas.
+
+### Conclusión
+Una buena organización y una convención de nombres adecuada hacen que tus pruebas sean más mantenibles y fáciles de entender. Siguiendo estas prácticas, te asegurarás de que tus pruebas sean eficaces y fáciles de trabajar a largo plazo.
+
+## Mocking de APIs externas en Python con unittest
+
+La simulación de servicios externos es crucial en proyectos de software para garantizar que las pruebas no dependan de APIs externas. Para lograrlo, utilizamos los Mocks, que permiten evitar las llamadas reales a servicios y, en cambio, retornan respuestas controladas en nuestras pruebas. En este caso, aprenderemos a mockear una API de geolocalización y a realizar pruebas efectivas.
+
+### ¿Qué es un Mock y cómo nos ayuda?
+
+Un Mock es una herramienta que nos permite simular comportamientos de funciones o servicios externos. En lugar de ejecutar una llamada real a una API, podemos definir una respuesta predefinida, lo que permite:
+
+- Evitar depender de servicios externos en pruebas.
+- Acelerar la ejecución de las pruebas.
+- Controlar los resultados esperados.
+
+### ¿Cómo integramos una API externa en Python?
+Primero, se configura una función que recibe la IP del cliente y devuelve la ubicación mediante una API de terceros. Para hacer esto:
+
+1. Se instala la librería requests con `pip install requests`.
+2. Se crea un archivo `api_client.py` donde conectamos con la API utilizando requests.get.
+3. Al recibir la respuesta, se convierte el resultado a JSON para obtener la información de país, ciudad y región.
+
+### ¿Cómo probamos sin hacer llamadas reales?
+
+El problema principal de las pruebas de integraciones con APIs es que pueden demorar, ya que las respuestas dependen de factores externos. Para evitar esto, se usan Mocks. A través del decorador `@patch` de `unittest.mock`, podemos interceptar la llamada a la API y retornar datos predefinidos.
+
+Pasos a seguir:
+
+- Decorar la función de prueba con `@patch.`
+- Simular el valor retornado usando mock.return_value para definir qué debe devolver la llamada a la API.
+- Definir tanto el código de estado como el contenido del JSON que esperamos recibir.
+
+### ¿Cómo validar que nuestra simulación funciona correctamente?
+
+Además de simular respuestas, debemos asegurarnos de que las pruebas validen correctamente los llamados. Se puede usar `assertCalledOnceWith` para garantizar que la URL y los parámetros pasados son los correctos.
+
+**Lecturas recomendadas**
+
+[unittest.mock — mock object library — Python 3.12.5 documentation](https://docs.python.org/3/library/unittest.mock.html)
+
+## Uso de Side Effects en Mocking con Python
+
+Mock nos permite simular comportamientos variables, una herramienta útil cuando queremos probar cómo reacciona nuestro código ante diferentes escenarios sin modificar el entorno real. Uno de los usos más poderosos es el “side effect”, que nos ayuda a hacer que un método falle en un caso y funcione en otro. Esto es clave para manejar errores temporales, como en el caso de una API de pagos que rechaza una tarjeta incorrecta, pero acepta una correcta en un segundo intento.
+
+### ¿Cómo se define un “side effect” en Mock?
+
+El “side effect” en Mock nos permite modificar el comportamiento de un método en distintas llamadas. Se define como una lista de comportamientos, donde cada elemento de la lista corresponde al resultado de una llamada específica. Esto permite:
+
+- Simular fallos de manera controlada, como lanzar excepciones específicas en las pruebas.
+- Probar el código bajo diferentes condiciones sin interactuar con los servicios externos.
+
+### ¿Cómo se maneja un error y una respuesta exitosa en pruebas unitarias?
+
+En una prueba unitaria con Mock, podemos definir comportamientos variables. Por ejemplo, para simular una excepción, usamos la estructura side_effect, donde la primera llamada lanza un error y la segunda retorna una respuesta exitosa. Esto permite cubrir ambos casos sin necesidad de realizar un request real.
+
+- Definimos el primer comportamiento con una excepción.
+- Luego, para el segundo comportamiento, usamos Mock para devolver un objeto con los valores que esperamos, simulando una respuesta exitosa.
+
+### ¿Qué métodos auxiliares facilita Mock?
+
+Mock facilita métodos como `raiseException`, que lanza una excepción específica, y `mock`, que permite crear objetos personalizados. Estos objetos pueden tener parámetros configurables como `status_code` y devolver datos específicos al llamar métodos como JSON. Este tipo de pruebas es crucial para validar la resiliencia del software ante errores temporales.
+
+### ¿Cómo integrar validaciones adicionales en las pruebas?
+
+Para reforzar las pruebas, puedes agregar validaciones adicionales, como simular el envío de una IP inválida. En este caso, si la IP es incorrecta, se debe lanzar un error, mientras que si es válida, debe retornar los datos de geolocalización. Esto se implementa agregando más casos en la lista de side effects, cubriendo así todas las situaciones posibles.
+
+## Uso de Patching para Modificar Comportamientos en Python
+
+En esta lección, hemos aprendido a modificar el comportamiento de objetos y funciones dentro de nuestras pruebas en Python, utilizando técnicas como el patch para simular situaciones específicas, como el control del horario de retiro en una cuenta bancaria. Esta habilidad es crucial cuando necesitamos validar restricciones temporales o cualquier otra lógica de negocio que dependa de factores externos, como el tiempo.
+
+### ¿Cómo podemos restringir el horario de retiros en una cuenta bancaria?
+
+Para implementar la restricción de horario, se utilizó la clase `datetime` para obtener la hora actual. Definimos que los retiros solo pueden realizarse durante el horario de oficina: entre las 8 AM y las 5 PM. Cualquier intento fuera de este horario lanzará una excepción personalizada llamada `WithdrawalError`.
+
+- Se implementó la lógica en el método de retiro de la clase `BankAccount`.
+- La restricción se basa en comparar la hora actual obtenida con `datetime.now().hour`.
+- Si la hora es menor que las 8 AM o mayor que las 5 PM, se lanza la excepción.
+
+### ¿Cómo podemos probar la funcionalidad de manera efectiva?
+
+Las pruebas unitarias permiten simular diferentes horas del día para validar que las restricciones funcionen correctamente. Para lograrlo, usamos el decorador `patch` del módulo `unittest.mock`, el cual modifica temporalmente el comportamiento de la función `datetime.now()`.
+
+- Con `patch`, podemos definir un valor de retorno específico para `now()`, como las 7 AM o las 10 AM.
+- De esta forma, se puede validar que la excepción se lance correctamente si el retiro ocurre fuera del horario permitido.
+- En caso de que el retiro sea dentro del horario, la prueba verificará que el saldo de la cuenta se actualice correctamente.
+
+### ¿Cómo corregimos errores en la lógica de negocio?
+
+Durante la implementación, encontramos un error en la condición lógica del horario. Inicialmente, se utilizó un operador `and` incorrecto para verificar si la hora estaba dentro del rango permitido. Este error se corrigió cambiando la condición a un `or`, asegurando que la lógica prohibiera retiros antes de las 8 AM y después de las 5 PM.
+
+## Cómo parametrizar pruebas en Python con SubTest
+
+El uso de SubTest en UnitTest te permite optimizar tus pruebas evitando la duplicación de código. Imagina que necesitas probar un método con varios valores diferentes. Sin SubTest, tendrías que crear varias pruebas casi idénticas, lo que resulta ineficiente. SubTest permite parametrizar pruebas, lo que significa que puedes ejecutar la misma prueba con diferentes valores sin repetir el código.
+
+### ¿Cómo evitar la duplicación de pruebas con SubTest?
+
+Al utilizar SubTest, puedes definir todos los valores que deseas probar en una lista o diccionario. Luego, iteras sobre estos valores mediante un bucle `for,` ejecutando la misma prueba con cada conjunto de parámetros. Así, si es necesario modificar la prueba, solo tienes que hacer cambios en un único lugar.
+
+### ¿Cómo implementar SubTest en un caso práctico?
+
+Para ilustrarlo, se puede crear una prueba llamada `test_deposit_various_values`. En lugar de duplicar la prueba con diferentes valores de depósito, utilizas un diccionario que contiene los valores a probar y el resultado esperado. Después, recorres estos valores con SubTest usando la estructura `with self.subTest(case=case)` y ejecutas la prueba para cada valor del diccionario. Esto asegura que cada prueba sea independiente y evita sumar valores a la cuenta de manera incorrecta.
+
+### ¿Cómo gestionar errores con SubTest?
+
+SubTest también es útil para identificar errores específicos. Si una prueba falla con un conjunto particular de parámetros, SubTest te permite ver fácilmente qué valores causaron el fallo. Esto facilita mucho la corrección de errores, ya que puedes aislar rápidamente los casos problemáticos y corregirlos de manera eficiente.
+
+En Python, el uso de `subTest` dentro del módulo `unittest` permite parametrizar pruebas, facilitando la ejecución de múltiples casos de prueba dentro de una sola función de prueba. Esto es útil cuando quieres probar una función con diferentes entradas y verificar sus resultados sin necesidad de crear múltiples métodos de prueba. Aquí tienes una guía sobre cómo usar `subTest` para parametrizar pruebas.
+
+### 1. Importar el Módulo Necesario
+
+Primero, asegúrate de importar `unittest`.
+
+```python
+import unittest
+```
+
+### 2. Definir tu Clase de Pruebas
+
+Crea una clase de prueba que herede de `unittest.TestCase`.
+
+```python
+class TestMiFuncion(unittest.TestCase):
+    def mi_funcion(self, x):
+        # Esta es la función que estás probando
+        return x * 2
+```
+
+### 3. Usar `subTest` para Parametrizar las Pruebas
+
+Dentro de tu método de prueba, utiliza un bucle para iterar sobre los casos de prueba. Usa `subTest` para encapsular cada caso.
+
+```python
+class TestMiFuncion(unittest.TestCase):
+    def mi_funcion(self, x):
+        return x * 2
+
+    def test_multiplicacion(self):
+        casos_de_prueba = [
+            (1, 2),
+            (2, 4),
+            (3, 6),
+            (4, 8),
+            (5, 10)
+        ]
+        
+        for entrada, resultado_esperado in casos_de_prueba:
+            with self.subTest(entrada=entrada):
+                resultado = self.mi_funcion(entrada)
+                self.assertEqual(resultado, resultado_esperado)
+```
+
+### 4. Ejecutar las Pruebas
+
+Finalmente, ejecuta las pruebas utilizando la línea de comando.
+
+```bash
+python -m unittest nombre_del_archivo.py
+```
+
+### Ejemplo Completo
+
+Aquí tienes un ejemplo completo que incluye todas las partes mencionadas:
+
+```python
+import unittest
+
+class TestMiFuncion(unittest.TestCase):
+    def mi_funcion(self, x):
+        return x * 2
+
+    def test_multiplicacion(self):
+        casos_de_prueba = [
+            (1, 2),
+            (2, 4),
+            (3, 6),
+            (4, 8),
+            (5, 10)
+        ]
+        
+        for entrada, resultado_esperado in casos_de_prueba:
+            with self.subTest(entrada=entrada):
+                resultado = self.mi_funcion(entrada)
+                self.assertEqual(resultado, resultado_esperado)
+
+if __name__ == '__main__':
+    unittest.main()
+```
+
+### Ventajas de Usar `subTest`
+
+- **Claridad**: Cada caso de prueba se ejecuta de manera aislada, lo que facilita identificar cuál falló.
+- **Mantenimiento**: Evita la duplicación de código, lo que hace que sea más fácil mantener y actualizar las pruebas.
+- **Resultados Detallados**: `subTest` proporciona un informe claro sobre qué subprueba falló, lo que facilita la depuración.
+
+Usar `subTest` es una excelente manera de mantener tus pruebas organizadas y eficientes, especialmente cuando trabajas con múltiples casos de entrada y salida.
