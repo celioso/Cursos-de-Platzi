@@ -963,3 +963,47 @@ if __name__ == '__main__':
 - **Resultados Detallados**: `subTest` proporciona un informe claro sobre qué subprueba falló, lo que facilita la depuración.
 
 Usar `subTest` es una excelente manera de mantener tus pruebas organizadas y eficientes, especialmente cuando trabajas con múltiples casos de entrada y salida.
+
+## Documentación de pruebas unitarias con Doctest en Python
+
+El uso de Doctest es una herramienta poderosa que te permite escribir pruebas directamente en la documentación del código, lo que facilita que otros desarrolladores comprendan y verifiquen los resultados esperados. Además de los Unit Tests tradicionales, Doctest permite que tus comentarios sean interactivos, ofreciendo ejemplos funcionales que se ejecutan dentro del código de Python. Veamos cómo puedes utilizarlo de manera eficiente.
+
+### ¿Qué es Doctest y cómo se usa?
+
+Doctest es una librería que está incluida en Python y que permite crear pruebas en los comentarios del código. Esto lo hace práctico ya que puedes escribir pruebas de manera muy similar a una sesión interactiva de Python. Solo debes añadir los ejemplos dentro de los comentarios y ejecutarlos con el comando python -m doctest.
+
+### ¿Cómo se estructuran las pruebas en Doctest?
+
+Para escribir una prueba, simplemente crea un comentario que simule una sesión interactiva. Estas sesiones se caracterizan por comenzar con `>>>`. Por ejemplo, si tienes una función de suma en tu clase Calculator, podrías escribir lo siguiente:
+
+```bash
+>>> sum(5, 7)
+12
+```
+
+Esto se ejecutará como si estuvieras en el shell de Python, y esperará que la salida sea `12`. Si el resultado no coincide con lo esperado, Doctest te notificará el error.
+
+### ¿Qué hacer si hay un error en la prueba?
+
+Si Doctest encuentra un error, revisa el mensaje de error y ajusta el código o la prueba según sea necesario. Por ejemplo, si ejecutas una prueba y esperabas `12` pero el resultado fue `11`, Doctest te informará de la discrepancia. Solucionas el error, corriges el comentario, y ejecutas nuevamente.
+
+### ¿Cómo manejar excepciones en Doctest?
+
+Doctest también te permite probar excepciones. Si tienes una función que lanza un `ValueError` al intentar dividir por cero, puedes capturar este comportamiento en el comentario:
+
+```bash
+>>> divide(10, 0)
+Traceback (most recent call last):
+  ...
+ValueError: División por 0 no permitida
+```
+
+Este tipo de pruebas asegura que las excepciones se manejen correctamente y ayuda a otros desarrolladores a entender los casos de error.
+
+### ¿Por qué es importante documentar con Doctest?
+
+La documentación clara es clave en cualquier proyecto de software, y Doctest facilita agregar ejemplos en el código que no solo explican cómo usar las funciones, sino que además se prueban automáticamente. Esto garantiza que la documentación esté siempre alineada con el comportamiento real del código.
+
+### ¿Qué reto implica utilizar Doctest?
+
+El reto de este enfoque es agregar suficiente documentación con ejemplos ejecutables que cubran todos los casos, incluyendo los casos de borde, como divisiones por cero o parámetros inválidos. Este proceso no solo mejora la calidad del código, sino también la de la documentación, haciéndola más útil para todo el equipo.
