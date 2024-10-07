@@ -980,6 +980,7 @@ Para escribir una prueba, simplemente crea un comentario que simule una sesión 
 >>> sum(5, 7)
 12
 ```
+Inicior prueba `python -m doctest src/calculator.py`
 
 Esto se ejecutará como si estuvieras en el shell de Python, y esperará que la salida sea `12`. Si el resultado no coincide con lo esperado, Doctest te notificará el error.
 
@@ -1007,3 +1008,163 @@ La documentación clara es clave en cualquier proyecto de software, y Doctest fa
 ### ¿Qué reto implica utilizar Doctest?
 
 El reto de este enfoque es agregar suficiente documentación con ejemplos ejecutables que cubran todos los casos, incluyendo los casos de borde, como divisiones por cero o parámetros inválidos. Este proceso no solo mejora la calidad del código, sino también la de la documentación, haciéndola más útil para todo el equipo.
+
+## Cómo generar datos de prueba dinámicos con Faker en Python
+
+Generar datos de prueba puede ser una tarea tediosa, pero con la librería Faker, este proceso se simplifica enormemente. Faker nos permite crear datos aleatorios como nombres, correos electrónicos y otros atributos de manera eficiente para validar la compatibilidad de nuestro código con diversas entradas. A continuación, exploramos cómo aprovechar Faker en pruebas automatizadas y cómo integrar la librería en nuestro proyecto.
+
+### ¿Cómo instalar Faker y qué ventajas ofrece?
+
+Para empezar a utilizar Faker, simplemente debemos instalarla a través de la terminal con el comando:
+
+`pip install faker`
+
+Una vez instalada, podemos importarla en nuestro proyecto e instanciar un generador de datos aleatorios. Faker nos ofrece una gran variedad de métodos predefinidos para generar nombres, correos, cuentas bancarias, entre otros. La ventaja clave es que nos permite automatizar la generación de múltiples entradas en cada ejecución de nuestras pruebas.
+
+### ¿Cómo integramos Faker en nuestro proyecto?
+
+Una vez que hemos instalado Faker, es esencial agregar la librería a nuestro archivo `requirements.txt`. Esto asegura que todas las dependencias se mantengan actualizadas y permite su instalación en futuros entornos. También es importante definir una versión fija para evitar problemas con actualizaciones inesperadas que puedan romper nuestro código.
+
+### ¿Cómo crear una clase User con Faker?
+
+Al integrar Faker, podemos crear pruebas más realistas. Por ejemplo, al generar datos para un usuario con múltiples cuentas bancarias, podemos usar Faker para generar atributos como el nombre, correo electrónico y balances de cuentas de forma dinámica. A continuación, se muestra un ejemplo de cómo podemos definir una clase `User` y generar múltiples cuentas con balances aleatorios:
+
+- Se crea una clase `User` que requiere un nombre, correo electrónico y una lista de cuentas bancarias.
+- Faker se utiliza para generar estos valores automáticamente en cada prueba.
+- Se pueden generar múltiples cuentas para un mismo usuario, iterando sobre un ciclo for para generar diferentes balances y archivos de log.
+
+### ¿Cómo se estructuran las pruebas con Faker?
+
+En nuestras pruebas unitarias, podemos instanciar Faker en el método `setUp` para reutilizarla en todas las pruebas. Esto nos permite generar nombres y correos electrónicos dinámicos en cada ejecución. A continuación, se presentan los pasos clave para estructurar las pruebas:
+
+1. Instanciamos Faker en el método `setUp`.
+2. Definimos pruebas para la creación de usuarios con múltiples cuentas.
+3. Utilizamos Faker para generar atributos aleatorios como balances y nombres de archivo.
+4. Validamos que los valores generados sean correctos utilizando `assertEqual` para verificar la integridad de los datos.
+
+### ¿Qué otras configuraciones y opciones ofrece Faker?
+
+Faker ofrece una amplia gama de configuraciones. Por ejemplo, podemos definir el idioma de los datos generados. Esto es útil si necesitamos que nuestros datos de prueba estén en español o en otro idioma. También es posible generar datos más complejos como nombres de archivos, países o incluso valores numéricos aleatorios con rangos definidos.
+
+### ¿Cómo limpiar el entorno de pruebas?
+
+Al generar archivos temporales durante las pruebas, es importante asegurarse de limpiar el entorno una vez que finalicen. Esto se puede hacer implementando un método `tearDown` que borre los archivos generados durante la ejecución de las pruebas, garantizando que el entorno de pruebas se mantenga limpio.
+
+Para generar datos de prueba dinámicos en Python, puedes utilizar la librería `Faker`, que te permite generar datos falsos como nombres, direcciones, correos electrónicos, fechas, números, etc. Esta librería es muy útil para probar aplicaciones, especialmente cuando necesitas una gran cantidad de datos realistas pero generados aleatoriamente.
+
+### Instalación de Faker
+
+Primero, instala la librería usando `pip`:
+
+```bash
+pip install Faker
+```
+
+### Uso Básico de Faker
+
+El uso básico de `Faker` involucra crear una instancia de la clase `Faker` y luego llamar a los métodos correspondientes para generar los datos. Aquí te doy un ejemplo de cómo hacerlo:
+
+```python
+from faker import Faker
+
+fake = Faker()
+
+# Generar datos falsos
+print(fake.name())           # Nombre completo
+print(fake.address())        # Dirección
+print(fake.email())          # Correo electrónico
+print(fake.phone_number())   # Número de teléfono
+print(fake.job())            # Profesión
+print(fake.date_of_birth())  # Fecha de nacimiento
+```
+
+### Generar Datos en Pruebas Unitarias
+
+En el contexto de pruebas unitarias, puedes utilizar `Faker` para generar datos dinámicos que ayuden a probar la robustez de tu aplicación. Aquí te muestro un ejemplo de cómo usar `Faker` en una prueba unitaria para un modelo de usuario.
+
+#### Ejemplo de Prueba Unitaria
+
+Supongamos que estás probando un sistema de creación de usuarios y quieres generar datos dinámicos para tus pruebas:
+
+```python
+import unittest
+from faker import Faker
+from src.models import User
+
+class UserTests(unittest.TestCase):
+    
+    def setUp(self):
+        self.fake = Faker()
+
+    def test_create_user(self):
+        # Generar datos de usuario usando Faker
+        name = self.fake.name()
+        email = self.fake.email()
+        password = self.fake.password()
+
+        # Crear instancia de usuario
+        user = User(name=name, email=email, password=password)
+
+        # Realizar aserciones para validar el comportamiento
+        self.assertEqual(user.name, name)
+        self.assertEqual(user.email, email)
+        self.assertTrue(len(user.password) >= 6)
+
+if __name__ == '__main__':
+    unittest.main()
+```
+
+### Configurar Faker para un Idioma Específico
+
+Por defecto, `Faker` genera datos en inglés, pero puedes configurarlo para que genere datos en otros idiomas. Por ejemplo, si deseas generar datos en español:
+
+```python
+fake = Faker('es_ES')
+
+print(fake.name())  # Nombre en español
+```
+
+### Generar Listas de Datos Dinámicos
+
+Si necesitas generar múltiples instancias de datos falsos, puedes hacerlo en un bucle:
+
+```python
+users = []
+for _ in range(10):
+    user = {
+        'name': fake.name(),
+        'email': fake.email(),
+        'address': fake.address(),
+    }
+    users.append(user)
+
+# Imprimir la lista de usuarios falsos
+for user in users:
+    print(user)
+```
+
+### Integración con Modelos de Django
+
+Si estás utilizando Django, puedes usar `Faker` para generar datos dinámicos y poblar tu base de datos en pruebas, por ejemplo:
+
+```python
+from faker import Faker
+from myapp.models import User
+
+fake = Faker()
+
+for _ in range(10):
+    User.objects.create(
+        name=fake.name(),
+        email=fake.email(),
+        address=fake.address()
+    )
+```
+
+### Conclusión
+
+`Faker` es una herramienta muy útil para generar datos de prueba realistas, y puede ser integrada fácilmente en cualquier proyecto de Python. Es especialmente útil en el desarrollo de pruebas unitarias, donde puedes simular varios casos sin necesidad de depender de datos estáticos.
+
+**Lectuta recomendada**
+
+[faker readthedocs](https://faker.readthedocs.io/en/master/)
