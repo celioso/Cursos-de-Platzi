@@ -1168,3 +1168,223 @@ for _ in range(10):
 **Lectuta recomendada**
 
 [faker readthedocs](https://faker.readthedocs.io/en/master/)
+
+## ¿Cómo asegurar la cobertura de pruebas con Coverage en Python
+
+En los proyectos grandes de software, resulta difícil identificar qué partes del código están correctamente probadas y cuáles no lo están. Por ello, es esencial usar herramientas como Coverage, que nos permite analizar qué porciones de nuestro código han sido ejecutadas durante las pruebas y cuáles no. Esto facilita la detección de áreas que necesitan cobertura adicional.
+
+### ¿Qué es Coverage y cómo funciona?
+
+Coverage es una herramienta que se ejecuta junto a las pruebas y captura un reporte sobre qué partes del código han sido probadas. Una vez finalizado el proceso, genera un informe detallado que indica qué porcentaje del código está cubierto. De esta manera, puedes identificar qué secciones de código necesitan nuevas pruebas.
+
+### ¿Cómo instalar y utilizar Coverage?
+
+Para instalar Coverage en un proyecto Python, sigue los siguientes pasos:
+
+- Abre la terminal e instala la herramienta con `pip install coverage`y powershell `pip freeze | Select-String coverage`.
+- Después, usa `pip freeze | grep coverage` para agregar la librería a tu archivo de requirements.
+- Una vez instalada, ejecuta el comando `coverage run -m unittest discover -s tests`, que corre las pruebas en la carpeta `tests`.
+
+### ¿Cómo generar el reporte de cobertura?
+
+Para generar el informe de cobertura de código:
+
+1. Usa el comando coverage report para obtener un resumen de las pruebas.
+2. Si quieres un reporte visual más detallado, ejecuta `coverage html`. Esto creará una carpeta con archivos HTML que podrás abrir en el navegador.
+
+### ¿Cómo mejorar el reporte excluyendo archivos de prueba?
+
+Para evitar que los archivos de prueba aparezcan en el reporte, agrega el parámetro `--source=src` al comando `coverage run`. Esto asegura que solo se evalúe el código fuente de la aplicación y no las pruebas en sí mismas.
+`coverage run --source src -m unittest`
+
+### ¿Cómo detectar y corregir código sin pruebas?
+
+Coverage permite identificar líneas específicas que no han sido probadas. Usando el reporte HTML, puedes hacer clic en los archivos para ver las líneas de código no ejecutadas. Un ejemplo sería la detección de un método que no maneja una división por cero. Al agregar un test para esta excepción, puedes aumentar la cobertura total del proyecto.
+
+### ¿Cómo validar un porcentaje mínimo de cobertura?
+
+En proyectos con equipos grandes, es recomendable establecer un porcentaje mínimo de cobertura, como un 80%, para garantizar la calidad del código. Esto se puede configurar en la documentación de Coverage.
+
+**Lecturas recomendadas**
+
+[Coverage.py — Coverage.py 7.6.1 documentation](https://coverage.readthedocs.io/en/7.6.1/ "Coverage.py — Coverage.py 7.6.1 documentation")
+
+## Automatización de Pruebas Unitarias en Python con GitHub Actions
+
+Integrar una suite de pruebas en un sistema de Continuous Integration (CI) es clave para automatizar el proceso de verificación de cambios en el código. En este caso, usaremos GitHub Actions para correr nuestras pruebas de manera automática cada vez que haya un cambio en el repositorio, asegurándonos de que el código esté siempre funcionando correctamente.
+
+### ¿Cómo configurar tu primera GitHub Action?
+
+Primero, accede a la pestaña de “Actions” dentro de tu repositorio en GitHub. Ahí encontrarás un Marketplace con varias opciones. Busca “Python” y selecciona la Action “Python Application”. Esta configuración correrá pruebas automáticamente cada vez que haya un push o un pull request hacia la rama “Main”.
+
+### ¿Qué pasos incluye el workflow de pruebas?
+
+- **Clonación del repositorio**: El workflow comienza clonando tu código, similar a un `git clone`.
+- **Configuración de Python**: Utiliza la versión 3.10 de Python, asegurando compatibilidad con el código del proyecto.
+- **Instalación de dependencias**: Ejecuta las instalaciones de las librerías listadas en el archivo `requirements.txt`, por ejemplo, Faker y Coverage.
+- **Modificación del comando de pruebas**: En lugar de utilizar un test genérico, el comando se cambia a `python -m unittest discover test`, adaptado a las pruebas unitarias del proyecto.
+
+### ¿Cómo verificar si el workflow fue exitoso?
+
+Una vez configurado el archivo y hecho el commit, puedes ver el progreso de la ejecución en la pestaña de “Actions”. Si todo salió bien, aparecerá un checkmark verde indicando que las pruebas pasaron exitosamente.
+
+### ¿Cómo mejorar la cobertura de pruebas en tu pipeline?
+
+El reto adicional consiste en ejecutar las pruebas con diferentes versiones de Python utilizando Matrix en GitHub Actions. Esto te permitirá probar tu código en varios entornos, asegurando mayor robustez y evitando problemas de compatibilidad.
+
+**Lecturas recomendadas**
+
+[GitHub Actions documentation - GitHub Docs](https://docs.github.com/en/actions "GitHub Actions documentation - GitHub Docs")
+
+[Running variations of jobs in a workflow - GitHub Docs](https://docs.github.com/en/actions/writing-workflows/choosing-what-your-workflow-does/running-variations-of-jobs-in-a-workflow "Running variations of jobs in a workflow - GitHub Docs")
+
+[Curso de GitHub Actions - Platzi](https://platzi.com/cursos/github-actions/ "Curso de GitHub Actions - Platzi")
+
+## Pruebas Unitarias con PyTest en Python
+
+Python ofrece una gran variedad de herramientas, y una de las más útiles para pruebas automatizadas es PyTest. PyTest mejora considerablemente la experiencia del desarrollador al permitir escribir y ejecutar pruebas de manera más eficiente. En esta guía veremos cómo instalar PyTest, crear pruebas parametrizadas y ejecutar un ejemplo básico.
+
+### ¿Cómo instalar y configurar PyTest?
+
+- Abre la terminal y ejecuta el siguiente comando para instalar PyTest:
+`pip install pytest`
+
+- Recuerda agregarlo a tu archivo `requirements.txt` con:
+
+`pip freeze | grep pytest > requirements.txt`
+
+### ¿Cómo crear una prueba con PyTest?
+
+1. En la carpeta de pruebas, crea un archivo llamado `test_pytest.py`.
+
+2. Importa PyTest en tu archivo:
+`import pytest`
+
+3. Crea una función de prueba simple como esta:
+```python
+def test_suma():
+    a = 4
+    b = 4
+    assert a + b == 8
+```
+
+4. Ejecuta la prueba con el siguiente comando:
+
+`pytest test_pytest.py`
+
+PyTest no requiere la creación de clases para agrupar pruebas, lo cual simplifica el código. En este caso, las pruebas se agrupan por archivo.
+
+### ¿Cómo parametrizar una prueba en PyTest?
+
+1. Utiliza decoradores de PyTest para parametrizar la prueba:
+
+```python
+@pytest.mark.parametrize("amount, expected", [
+    (100, 5000),
+    (200, 5500),
+    (300, 6000)
+])
+def test_balance(amount, expected):
+    assert calcular_balance(amount) == expected
+```
+
+2. En este ejemplo, la función de prueba recibe varios casos con valores diferentes de `amount` y `expected`.
+
+3. Ejecuta las pruebas:
+`pytest -v`
+
+### ¿Qué ventajas ofrece PyTest al ejecutar pruebas?
+
+- PyTest ofrece mensajes de error detallados y fáciles de leer, resaltados con colores.
+- Los errores incluyen los valores específicos que causaron la falla.
+- Con la opción `-v`, PyTest detalla qué pruebas se ejecutaron y sus resultados.
+
+### ¿Qué ocurre si una prueba falla?
+
+Si una prueba falla, PyTest te indicará exactamente qué valores no coincidieron. Por ejemplo, si uno de los valores esperados es incorrecto:
+
+```python
+def test_balance():
+    assert calcular_balance(100) == 5400  # Este valor está incorrecto
+```
+
+Al ejecutar nuevamente la prueba, PyTest te mostrará la diferencia entre el valor esperado y el real.
+
+### Reto
+
+Refactoriza todas las pruebas de tu proyecto para que utilicen PyTest, aplicando lo que hemos visto sobre parametrización y el uso de asserts más sencillos.
+
+**Lecturas recomendadas**
+
+[pytest documentation](https://docs.pytest.org/en/latest/ "pytest documentation")
+
+## Cómo crear pruebas unitarias con inteligencia artificial en Python4
+
+Las herramientas de inteligencia artificial han revolucionado la forma en que desarrollamos software, simplificando tareas como la creación de pruebas unitarias. Estas herramientas permiten generar pruebas más rápido y con mayor precisión, ahorrando tiempo y reduciendo errores. A continuación, exploramos algunas herramientas clave que todo desarrollador debería conocer.
+
+### ¿Qué es GitHub Copilot y cómo puede ayudarte a escribir pruebas?
+
+GitHub Copilot es una extensión que puedes instalar en tu editor de código. Con ella, puedes chatear, darle contexto sobre tu código y pedirle que genere pruebas unitarias. Esta herramienta se integra directamente en el flujo de trabajo del desarrollador, lo que facilita la creación de pruebas con pocos comandos. Al escribir un prompt claro, como “create a test that doesn’t allow the deposit to be negative”, Copilot genera automáticamente el código de la prueba, optimizando el proceso de TDD (desarrollo guiado por pruebas).
+
+### Beneficios de usar GitHub Copilot:
+
+- Ahorra tiempo generando pruebas automáticamente.
+- Mejora la precisión al sugerir código basado en grandes bases de datos de proyectos.
+- Facilita la integración en editores populares como Visual Studio Code.
+
+### ¿Qué ofrece Supermaven y cómo se compara con otras herramientas?
+
+Supermaven es una herramienta similar que permite integrar la API de ChatGPT directamente en tu editor de código. Con esta integración, puedes utilizar las capacidades de ChatGPT para generar y modificar pruebas en tiempo real. Lo interesante de Supermaven es que utiliza la misma suscripción de ChatGPT, lo que lo convierte en una opción versátil y eficiente para desarrolladores que ya usan esta IA.
+
+### Características destacadas de Supermaven:
+
+- Compatibilidad con múltiples editores de código.
+- Capacidad para modificar pruebas según el contexto que le proporciones.
+- Soporte para autocompletar código y optimizar la generación de pruebas unitarias.
+
+### ¿Cómo usar ChatGPT para generar y modificar pruebas?
+
+ChatGPT es otra herramienta clave para generar pruebas. Al darle contexto sobre el código, como la clase `BankAccount`, puedes solicitar que modifique o cree pruebas unitarias parametrizadas, lo que simplifica aún más el proceso de validación. Esta interacción con la IA facilita la generación de pruebas más completas, incluyendo distintos casos de prueba como depósitos positivos y negativos.
+
+### Proceso de uso de ChatGPT para pruebas:
+
+1. Proporciona el contexto del código.
+2. Pide que modifique o cree una prueba específica.
+3. Analiza y ejecuta el código generado para verificar su funcionalidad.
+
+### ¿Cuáles son las precauciones al usar herramientas de inteligencia artificial para pruebas?
+
+Es crucial recordar que, aunque estas herramientas son extremadamente útiles, no debes copiar y pegar código sin antes revisarlo. La IA utiliza grandes bases de datos de código, algunos de los cuales pueden contener errores o prácticas no recomendadas. Es importante que valides siempre el código generado antes de implementarlo en producción.
+
+### Consejos para un uso adecuado:
+
+- Revisa cuidadosamente cada sugerencia antes de integrarla a tu código.
+- Asegúrate de que las pruebas cubran todos los casos posibles.
+- Ajusta el código generado según las mejores prácticas de tu equipo o proyecto.
+
+### ¿Qué otras buenas prácticas debes seguir al escribir pruebas unitarias?
+Además de usar herramientas de IA, existen otras buenas prácticas que debes tener en cuenta al desarrollar pruebas unitarias:
+
+- Agrupa las pruebas por funcionalidad o clase.
+- Utiliza herramientas como coverage para verificar qué partes del código no han sido probadas.
+- Borra los comentarios generados automáticamente para mantener el código limpio.
+
+### Lista de recursos útiles:
+
+- [Documentación de GitHub Copilot](https://docs.github.com/copilot "Documentación de GitHub Copilot")
+- [Supermaven API para ChatGPT](https://supermaven.com/ "Supermaven API para ChatGPT")
+- [Tutorial sobre TDD (Desarrollo Guiado por Pruebas)](https://tdd.com/ "Tutorial sobre TDD (Desarrollo Guiado por Pruebas)")
+
+### Posibles nombres SEO para la clase:
+
+1. “Cómo crear pruebas unitarias con inteligencia artificial”
+2. “Automatiza tus pruebas unitarias con GitHub Copilot y ChatGPT”
+3. “Herramientas para generar pruebas unitarias rápidas y efectivas”
+
+**Lecturas recomendadas**
+
+[Supermaven: Free AI Code Completion](https://supermaven.com/ "Supermaven: Free AI Code Completion")
+
+[documentación GitHub Copilot - Documentación de GitHub](https://docs.github.com/es/copilot "documentación GitHub Copilot - Documentación de GitHub")
+
+[https://chatgpt.com/](https://chatgpt.com/ "https://chatgpt.com/")
