@@ -911,3 +911,5 @@ En este ejemplo, se utiliza **categorical_crossentropy** como la función de pé
 - La elección de la función de pérdida depende del tipo de tarea: clasificación o regresión.
   
 Al reducir el valor de la función de pérdida, el modelo se entrena mejor y puede hacer predicciones más precisas.
+
+## Descenso del gradiente
