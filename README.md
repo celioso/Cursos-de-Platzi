@@ -33,6 +33,7 @@
 - [Curso de Django](CursodeDjango)
 - [Curso de Django Rest Framework](CursodeDjangoRestFramework)
 - [Curso de Unit Testing en Python](CursodeUnitTestingenPython)
+- [Curso de Fundamentos de Redes Neuronales con Python y Keras](CursodeFundamentosdeRedesNeuronalesconPythonyKeras)
 
 ## QA y Automatización de Pruebas
 
