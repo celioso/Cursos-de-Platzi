@@ -913,3 +913,571 @@ En este ejemplo, se utiliza **categorical_crossentropy** como la función de pé
 Al reducir el valor de la función de pérdida, el modelo se entrena mejor y puede hacer predicciones más precisas.
 
 ## Descenso del gradiente
+
+El **descenso de gradiente** es uno de los algoritmos clave utilizados para optimizar redes neuronales y otros modelos de aprendizaje automático. Es un método iterativo que ajusta los pesos del modelo para minimizar una función de pérdida (o costo). En el caso de redes neuronales, la función de pérdida mide qué tan lejos están las predicciones del modelo respecto a los valores reales.
+
+### ¿Cómo funciona el descenso de gradiente?
+
+1. **Inicialización de los pesos**: El modelo comienza con pesos iniciales (generalmente aleatorios).
+2. **Cálculo del gradiente**: Se calcula el gradiente de la función de pérdida con respecto a los pesos. Este gradiente indica la dirección de la mayor pendiente (ascenso) de la función de pérdida.
+3. **Actualización de los pesos**: Los pesos se actualizan en la dirección opuesta al gradiente para reducir la pérdida. Esta actualización se realiza según la siguiente fórmula:
+
+   \[
+   w_{\text{nuevo}} = w_{\text{viejo}} - \eta \cdot \nabla L(w)
+   \]
+
+   Donde:
+   - \(w_{\text{nuevo}}\) son los nuevos pesos después de la actualización.
+   - \(w_{\text{viejo}}\) son los pesos actuales.
+   - \(\eta\) es la tasa de aprendizaje (*learning rate*), un parámetro que controla el tamaño del paso que damos.
+   - \(\nabla L(w)\) es el gradiente de la función de pérdida con respecto a los pesos.
+
+4. **Iteración**: El proceso se repite hasta que la función de pérdida converja a un valor mínimo o hasta alcanzar un número máximo de iteraciones.
+
+### Tipos de Descenso de Gradiente
+
+- **Descenso de Gradiente Estocástico (SGD)**: Actualiza los pesos para cada muestra del conjunto de datos. Es más rápido pero más ruidoso, ya que puede saltar alrededor del mínimo.
+- **Descenso de Gradiente por Mini-Lotes**: Divide el conjunto de datos en pequeños lotes y actualiza los pesos después de procesar cada lote. Es un compromiso entre el descenso de gradiente estocástico y el descenso de gradiente batch.
+- **Descenso de Gradiente Batch**: Calcula el gradiente usando todo el conjunto de datos. Es más estable, pero puede ser lento para conjuntos de datos grandes.
+
+### Implementación en Python y Keras
+
+Keras, que está integrado con TensorFlow, simplifica la implementación del descenso de gradiente. Aquí te mostraré cómo funciona el descenso de gradiente en el contexto de una red neuronal en Keras.
+
+#### Paso 1: Instalación de las librerías necesarias
+
+Si no tienes Keras instalado, puedes instalarlo con:
+
+```bash
+pip install tensorflow
+```
+
+#### Paso 2: Construir una red neuronal simple
+
+Vamos a crear un modelo básico con Keras para clasificar imágenes del conjunto de datos MNIST.
+
+```python
+import tensorflow as tf
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense, Flatten
+from tensorflow.keras.datasets import mnist
+from tensorflow.keras.utils import to_categorical
+
+# Cargar el dataset MNIST
+(x_train, y_train), (x_test, y_test) = mnist.load_data()
+
+# Preprocesamiento de los datos
+x_train = x_train.reshape((60000, 28 * 28)).astype('float32') / 255
+x_test = x_test.reshape((10000, 28 * 28)).astype('float32') / 255
+
+y_train = to_categorical(y_train)
+y_test = to_categorical(y_test)
+
+# Definir el modelo
+model = Sequential([
+    Flatten(input_shape=(28*28,)),  # Aplana las imágenes de 28x28 píxeles
+    Dense(128, activation='relu'),  # Capa oculta con 128 neuronas
+    Dense(10, activation='softmax') # Capa de salida con 10 clases
+])
+
+# Compilar el modelo
+model.compile(optimizer='sgd',  # Descenso de gradiente estocástico
+              loss='categorical_crossentropy',
+              metrics=['accuracy'])
+
+# Entrenar el modelo
+model.fit(x_train, y_train, epochs=10, batch_size=32)
+
+# Evaluar el modelo
+test_loss, test_acc = model.evaluate(x_test, y_test)
+print(f'Precisión en el conjunto de prueba: {test_acc:.4f}')
+```
+
+### Explicación del Código
+
+1. **Carga y preprocesamiento del conjunto de datos**:
+   - Cargamos el conjunto de datos MNIST, que contiene imágenes de dígitos escritos a mano (28x28 píxeles).
+   - Reescalamos los valores de los píxeles a un rango entre 0 y 1 (dividiendo por 255).
+   - Convertimos las etiquetas en una representación categórica (one-hot encoding) usando `to_categorical()`.
+
+2. **Definición del modelo**:
+   - Utilizamos un modelo secuencial (`Sequential`), que es el tipo más sencillo de modelo en Keras.
+   - La primera capa aplana la imagen de 28x28 píxeles en un vector de 784 elementos.
+   - La segunda capa es una capa densa (fully connected) con 128 neuronas y activación ReLU.
+   - La última capa tiene 10 neuronas (una por cada dígito, 0-9) con activación softmax para realizar la clasificación.
+
+3. **Compilación del modelo**:
+   - Utilizamos el optimizador **SGD** (descenso de gradiente estocástico) con la función de pérdida **categorical_crossentropy**.
+   - Elegimos la métrica de precisión (*accuracy*) para monitorear el rendimiento del modelo durante el entrenamiento.
+
+4. **Entrenamiento del modelo**:
+   - El modelo se entrena durante 10 épocas con un tamaño de lote de 32. Keras ajustará los pesos de la red utilizando descenso de gradiente estocástico en cada lote.
+
+5. **Evaluación del modelo**:
+   - Después del entrenamiento, el modelo se evalúa en el conjunto de datos de prueba, y se imprime la precisión final.
+
+### Otros Optimizadores Basados en Descenso de Gradiente
+
+Keras proporciona varios otros optimizadores que también están basados en el descenso de gradiente, pero con mejoras o ajustes:
+
+- **Adam**: Combina las ventajas de AdaGrad y RMSProp, ajustando dinámicamente la tasa de aprendizaje de cada parámetro. Muy utilizado en la práctica.
+  
+  ```python
+  model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
+  ```
+
+- **RMSProp**: Utiliza la media cuadrada del gradiente para ajustar la tasa de aprendizaje de forma adaptativa.
+
+  ```python
+  model.compile(optimizer='rmsprop', loss='categorical_crossentropy', metrics=['accuracy'])
+  ```
+
+### Resumen
+
+- El **descenso de gradiente** es una técnica iterativa que ajusta los pesos de la red neuronal para minimizar la función de pérdida.
+- **SGD**, **Adam**, y **RMSProp** son variantes del descenso de gradiente utilizadas para optimizar redes neuronales.
+- Keras simplifica el uso del descenso de gradiente al permitir que especifiques el optimizador al compilar el modelo.
+
+**Lecturas recomendadas**
+
+[An Interactive Tutorial on Numerical Optimization](http://www.benfrederickson.com/numerical-optimization/)
+[Derivative Function](https://www.desmos.com/calculator/l0puzw0zvm)
+[Curso Básico de Cálculo Diferencial para Data Science e Inteligencia Artificial - Platzi](https://platzi.com/cursos/calculo-diferencial-ds/)
+
+## Backpropagation
+
+**Backpropagation** (retropropagación) es un algoritmo clave en el entrenamiento de redes neuronales que permite ajustar los pesos de la red de manera eficiente para minimizar la función de pérdida. Es una extensión del algoritmo de **descenso de gradiente**, y su principal función es propagar el error desde la capa de salida hacia las capas internas (ocultas) para ajustar sus pesos mediante el gradiente descendente.
+
+### ¿Cómo funciona Backpropagation?
+
+1. **Propagación hacia adelante (Forward Pass)**: 
+   - Los datos de entrada se pasan a través de la red, capa por capa, multiplicándose por los pesos de cada capa y aplicando funciones de activación. Al final, se obtiene una predicción.
+   
+2. **Cálculo del error (Loss)**:
+   - La salida obtenida en el paso anterior se compara con la etiqueta verdadera o valor esperado usando una función de pérdida (por ejemplo, el **error cuadrático medio** para regresión o **entropía cruzada** para clasificación). Esto nos da el error o "pérdida" del modelo.
+
+3. **Propagación hacia atrás (Backward Pass)**:
+   - Se calcula el **gradiente** de la función de pérdida con respecto a cada peso en la red, comenzando desde la capa de salida hacia las capas anteriores, mediante la aplicación de la **regla de la cadena** (derivadas parciales sucesivas). Este paso ajusta los pesos para que, en la siguiente iteración, la función de pérdida se reduzca.
+   
+4. **Actualización de los pesos**:
+   - Una vez que se calculan los gradientes, los pesos de cada capa se actualizan usando el algoritmo de descenso de gradiente. Este ajuste se realiza en la dirección opuesta al gradiente para minimizar la pérdida.
+   
+   La actualización de los pesos se hace con la fórmula:
+
+   \[
+   w_{\text{nuevo}} = w_{\text{viejo}} - \eta \cdot \frac{\partial L}{\partial w}
+   \]
+
+   Donde:
+   - \( \eta \) es la **tasa de aprendizaje**, que determina qué tan grande es el paso que se da en cada actualización.
+   - \( \frac{\partial L}{\partial w} \) es el gradiente de la función de pérdida con respecto a los pesos.
+
+### Ejemplo: Proceso Detallado de Backpropagation
+
+Imagina que tienes una red neuronal simple con:
+- Una capa de entrada
+- Una capa oculta
+- Una capa de salida
+
+Para entrenar la red, el proceso de backpropagation sigue estos pasos:
+
+#### 1. Propagación hacia adelante:
+
+- Los datos de entrada \(x_1, x_2, ..., x_n\) se multiplican por los pesos iniciales en la primera capa, pasan a través de la función de activación y se envían a la siguiente capa.
+  
+- En la capa de salida, los valores de salida son generados después de aplicar los pesos finales y la función de activación de la capa de salida (por ejemplo, softmax en clasificación).
+
+#### 2. Cálculo del error:
+
+- Comparamos la salida predicha con la etiqueta verdadera usando una función de pérdida como la **entropía cruzada** en problemas de clasificación.
+
+#### 3. Propagación hacia atrás:
+
+- Se comienza calculando el gradiente del error con respecto a los pesos de la última capa (derivada parcial de la función de pérdida con respecto a los pesos).
+  
+- Luego, se usa la **regla de la cadena** para calcular el gradiente de las capas ocultas, propagando los gradientes hacia atrás a través de la red hasta llegar a la primera capa.
+
+#### 4. Actualización de los pesos:
+
+- Una vez calculados los gradientes, se ajustan los pesos de la red en la dirección que minimiza el error. Se repite este proceso para cada lote de entrenamiento.
+
+### Implementación en Python y Keras
+
+Keras, que usa TensorFlow en el backend, implementa backpropagation automáticamente cuando entrenas un modelo. Vamos a ver cómo funciona en un ejemplo práctico.
+
+```python
+import tensorflow as tf
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense, Flatten
+from tensorflow.keras.datasets import mnist
+from tensorflow.keras.utils import to_categorical
+
+# Cargar el dataset MNIST
+(x_train, y_train), (x_test, y_test) = mnist.load_data()
+
+# Preprocesamiento de los datos
+x_train = x_train.reshape((60000, 28 * 28)).astype('float32') / 255
+x_test = x_test.reshape((10000, 28 * 28)).astype('float32') / 255
+
+y_train = to_categorical(y_train)
+y_test = to_categorical(y_test)
+
+# Definir el modelo
+model = Sequential([
+    Flatten(input_shape=(28*28,)),  # Aplana las imágenes de 28x28 píxeles
+    Dense(128, activation='relu'),  # Capa oculta con 128 neuronas
+    Dense(10, activation='softmax') # Capa de salida con 10 clases
+])
+
+# Compilar el modelo
+model.compile(optimizer='adam',  # Descenso del gradiente con Adam (usa backpropagation)
+              loss='categorical_crossentropy',
+              metrics=['accuracy'])
+
+# Entrenar el modelo (el backpropagation se ejecuta aquí automáticamente)
+model.fit(x_train, y_train, epochs=10, batch_size=32)
+
+# Evaluar el modelo
+test_loss, test_acc = model.evaluate(x_test, y_test)
+print(f'Precisión en el conjunto de prueba: {test_acc:.4f}')
+```
+
+### Explicación del Código:
+
+1. **Forward Pass**: En el paso de `model.fit()`, los datos de entrada pasan a través de las capas del modelo, y se genera una predicción para cada muestra.
+  
+2. **Cálculo del Error**: La función de pérdida `categorical_crossentropy` compara las predicciones con las etiquetas verdaderas y calcula el error.
+
+3. **Backpropagation**: Internamente, TensorFlow y Keras calculan los gradientes de la función de pérdida con respecto a los pesos usando la retropropagación.
+
+4. **Actualización de los Pesos**: El optimizador Adam (o cualquier otro optimizador que elijas) ajusta los pesos usando los gradientes calculados durante la retropropagación.
+
+### Optimización y Variantes de Backpropagation
+
+Existen muchas variantes del algoritmo de descenso de gradiente que mejoran la eficiencia del backpropagation, entre ellas:
+
+- **Adam**: Ajusta la tasa de aprendizaje de manera adaptativa para cada parámetro, acelerando la convergencia.
+- **RMSProp**: Ajusta la tasa de aprendizaje utilizando un promedio exponencial de los gradientes pasados.
+- **Momentum**: Acelera el descenso de gradiente al considerar las actualizaciones anteriores y mantener la inercia.
+
+### Resumen
+
+- **Backpropagation** es un algoritmo que ajusta los pesos de una red neuronal mediante el cálculo de los gradientes de la función de pérdida con respecto a los pesos.
+- **Propagación hacia adelante**: Se obtienen predicciones utilizando los pesos actuales.
+- **Propagación hacia atrás**: Se calcula el error y se propaga a través de la red para actualizar los pesos.
+- **Keras** implementa backpropagation automáticamente en el proceso de entrenamiento, y el optimizador ajusta los pesos del modelo para minimizar la pérdida.
+
+Este proceso se repite en múltiples épocas hasta que la red neuronal converge en un conjunto de pesos que minimizan la función de pérdida y mejoran la precisión del modelo.
+
+## Playground - Tensorflow
+
+El **TensorFlow Playground** es una herramienta interactiva y visual que permite explorar y experimentar con redes neuronales de una manera sencilla, sin necesidad de escribir código. Está diseñado para ayudar a entender conceptos como capas ocultas, funciones de activación, el papel del descenso de gradiente, el sobreajuste (overfitting), y otros aspectos importantes de las redes neuronales.
+
+Puedes acceder al **TensorFlow Playground** en el siguiente enlace: [https://playground.tensorflow.org](https://playground.tensorflow.org)
+
+### Características Clave de TensorFlow Playground:
+
+1. **Entradas**: Permite seleccionar diferentes características de entrada para entrenar la red neuronal (por ejemplo, \( x_1, x_2 \)).
+  
+2. **Capas Ocultas**: Puedes añadir o eliminar capas ocultas y ajustar el número de neuronas en cada capa. Esto te permite experimentar con redes más profundas o superficiales.
+
+3. **Funciones de Activación**: Puedes seleccionar entre funciones de activación como **ReLU**, **sigmoide**, **tangente hiperbólica** (*tanh*), y otras. Estas funciones controlan cómo las neuronas de una capa transfieren información a la siguiente.
+
+4. **Optimización**: Permite elegir el optimizador (por ejemplo, **SGD**), la tasa de aprendizaje, y observar cómo el algoritmo de descenso de gradiente ajusta los pesos de la red para minimizar la función de pérdida.
+
+5. **Regularización**: Puedes aplicar técnicas de regularización como **L2** para combatir el sobreajuste (*overfitting*) y mejorar la capacidad de generalización del modelo.
+
+6. **Datos**: Elige entre diferentes conjuntos de datos visualmente representados (por ejemplo, espiral, círculos), y observa cómo la red neuronal intenta separar o clasificar los datos.
+
+### ¿Cómo usar TensorFlow Playground?
+
+1. **Selecciona el conjunto de datos**: En la parte superior izquierda, puedes elegir diferentes tipos de conjuntos de datos sintéticos, como espirales, círculos concéntricos o puntos distribuidos aleatoriamente.
+
+2. **Configura la red neuronal**:
+   - Añade o elimina capas y neuronas ocultas.
+   - Selecciona una función de activación.
+   - Establece la tasa de aprendizaje y el optimizador.
+
+3. **Entrena el modelo**: Haz clic en "Run" para entrenar la red. Puedes observar cómo las predicciones (líneas o áreas de decisión) cambian en tiempo real a medida que el algoritmo ajusta los pesos para reducir el error.
+
+4. **Experimenta**:
+   - Cambia la configuración de la red y observa cómo esto afecta la capacidad del modelo para clasificar correctamente el conjunto de datos.
+   - Ajusta la tasa de aprendizaje para ver cómo afecta la convergencia del modelo.
+   - Prueba con diferentes funciones de activación o regularización para ver cómo mejora o empeora el rendimiento.
+
+### Ejemplo Visual:
+
+Imagina que seleccionas un conjunto de datos en espiral (difícil de clasificar linealmente) y añades dos capas ocultas, cada una con 4 neuronas. Luego, eliges la función de activación **ReLU** y estableces la tasa de aprendizaje en 0.03. Al presionar "Run", verás cómo la red ajusta sus líneas de decisión, tratando de separar las dos clases de puntos de la espiral.
+
+### Ideal Para:
+- **Aprender los fundamentos de las redes neuronales** sin necesidad de escribir código.
+- **Visualizar conceptos complejos** como el sobreajuste, la regularización, y la relación entre el número de neuronas y la capacidad de la red.
+- **Experimentar de forma interactiva** y ver los efectos inmediatos de los cambios en los parámetros del modelo.
+
+En resumen, TensorFlow Playground es una excelente herramienta educativa para aprender cómo funcionan las redes neuronales de una forma interactiva y visual.
+
+**Lecturas recomendadas**
+[A Neural Network Playground](https://playground.tensorflow.org/)
+
+## Dimensiones, tensores y reshape
+
+En el contexto de **redes neuronales** y **aprendizaje profundo (deep learning)**, los conceptos de **dimensiones**, **tensores** y **reshape** son fundamentales, ya que describen cómo se organizan y manipulan los datos.
+
+### 1. **Tensores**
+
+Un **tensor** es una estructura de datos multidimensional que generaliza los conceptos de escalares, vectores y matrices. En **deep learning**, los tensores son la base sobre la cual se alimentan los datos a los modelos. TensorFlow, PyTorch y otros marcos de aprendizaje profundo se basan en la manipulación de tensores.
+
+#### Tipos de tensores según sus dimensiones:
+- **Escalar (0D tensor)**: Un número simple, como \( 5 \) o \( 3.14 \). No tiene dimensiones.
+  - Ejemplo: `x = 5`
+  
+- **Vector (1D tensor)**: Una secuencia de números. Tiene una sola dimensión.
+  - Ejemplo: `x = [1, 2, 3]`
+  
+- **Matriz (2D tensor)**: Una tabla de números con filas y columnas (similar a una hoja de cálculo).
+  - Ejemplo: 
+    \[
+    \text{matriz} = \begin{bmatrix} 1 & 2 & 3 \\ 4 & 5 & 6 \end{bmatrix}
+    \]
+  
+- **Tensor 3D**: Es una pila de matrices, o múltiples tablas de valores. Puede representar, por ejemplo, una colección de imágenes en color (cada imagen se representa con 3 matrices: rojo, verde, azul).
+  - Ejemplo: Un tensor 3D puede tener dimensiones de forma (64, 28, 28), lo que significa 64 imágenes de tamaño 28x28 píxeles.
+  
+- **Tensor 4D y más**: Se utilizan en casos más complejos, como imágenes a color en lotes (batch), donde cada imagen tiene 3 canales (RGB) y además está en un lote de imágenes.
+  - Ejemplo: Un tensor 4D con forma (128, 3, 64, 64) representa 128 imágenes en un lote, cada una con 3 canales de color y con dimensiones de 64x64 píxeles.
+
+### 2. **Dimensiones de un Tensor**
+
+La **dimensión** de un tensor indica cuántos "ejes" o "direcciones" tiene. Por ejemplo:
+- Un tensor 0D (escalar) no tiene ejes.
+- Un tensor 1D (vector) tiene un solo eje (por ejemplo, la longitud del vector).
+- Un tensor 2D (matriz) tiene dos ejes: filas y columnas.
+- Un tensor 3D añade un tercer eje (profundidad, o número de matrices apiladas).
+
+#### Ejemplos en código con `numpy`:
+```python
+import numpy as np
+
+# Escalar (0D)
+scalar = np.array(5)  # Dimensión = 0
+print(scalar.ndim)  # Output: 0
+
+# Vector (1D)
+vector = np.array([1, 2, 3, 4])  # Dimensión = 1
+print(vector.ndim)  # Output: 1
+
+# Matriz (2D)
+matrix = np.array([[1, 2], [3, 4], [5, 6]])  # Dimensión = 2
+print(matrix.ndim)  # Output: 2
+
+# Tensor 3D
+tensor_3d = np.random.rand(64, 28, 28)  # 64 imágenes de 28x28 píxeles
+print(tensor_3d.ndim)  # Output: 3
+```
+
+### 3. **Reshape**
+
+El método **`reshape`** se utiliza para cambiar la forma o estructura de un tensor sin modificar los datos que contiene. Esto es extremadamente útil cuando se trabaja con redes neuronales, ya que la entrada debe tener una forma específica para ser procesada correctamente por las capas del modelo.
+
+#### Ejemplo: 
+
+Supongamos que tienes imágenes en un conjunto de datos, donde cada imagen es de 28x28 píxeles en escala de grises (un tensor 2D por cada imagen). Para alimentar esas imágenes a una red neuronal, es necesario convertirlas en un tensor 1D (un vector) de longitud 784 (28x28). Esto se hace con `reshape`.
+
+```python
+import numpy as np
+
+# Imagen de 28x28 píxeles (tensor 2D)
+image = np.random.rand(28, 28)
+
+# Reshape: convertir la imagen en un vector de 784 elementos
+image_vector = image.reshape(28*28)  # O equivalente: image.reshape(-1)
+print(image_vector.shape)  # Output: (784,)
+```
+
+### Reshape en Redes Neuronales
+
+En **TensorFlow/Keras**, al trabajar con imágenes, es común tener tensores de entrada con forma `(batch_size, height, width, channels)`. A veces, necesitamos "aplanar" (flatten) estas imágenes para que se ajusten a una capa densa o completamente conectada.
+
+Ejemplo con Keras:
+```python
+from tensorflow.keras.layers import Dense, Flatten
+from tensorflow.keras.models import Sequential
+
+# Modelo secuencial con una capa de aplanamiento
+model = Sequential([
+    Flatten(input_shape=(28, 28)),  # Convierte el tensor 2D (28x28) en un vector 1D (784)
+    Dense(128, activation='relu'),
+    Dense(10, activation='softmax')  # Salida para 10 clases
+])
+
+model.summary()
+```
+
+### Ejemplo Práctico: MNIST con Reshape
+
+El dataset **MNIST** es un conjunto de imágenes de dígitos escritos a mano. Cada imagen tiene una resolución de 28x28 píxeles, lo que la convierte en un tensor 2D. Sin embargo, para las redes neuronales, generalmente se convierte en un tensor 1D (de 784 valores) antes de pasar a una capa completamente conectada.
+
+```python
+from tensorflow.keras.datasets import mnist
+
+# Cargar el conjunto de datos MNIST
+(x_train, y_train), (x_test, y_test) = mnist.load_data()
+
+# Reshape de las imágenes: de 28x28 a 784
+x_train = x_train.reshape((60000, 28 * 28)).astype('float32') / 255
+x_test = x_test.reshape((10000, 28 * 28)).astype('float32') / 255
+
+# Ver las dimensiones
+print(x_train.shape)  # Output: (60000, 784)
+print(x_test.shape)   # Output: (10000, 784)
+```
+
+### Resumen
+
+- **Tensores**: Son estructuras de datos que generalizan los conceptos de escalares, vectores y matrices.
+- **Dimensiones**: Se refiere al número de "ejes" en un tensor (0D para escalares, 1D para vectores, 2D para matrices, etc.).
+- **Reshape**: Cambia la forma de un tensor sin alterar los datos subyacentes, lo que es crucial para manipular correctamente los datos en redes neuronales.
+
+Con estos conceptos, puedes manipular y transformar los datos para ajustarlos a las necesidades de los modelos de aprendizaje profundo.
+
+## Creando nuestra red neuronal usando numpy y matemáticas
+
+Crear una red neuronal desde cero usando solo **NumPy** y matemáticas es una excelente manera de entender cómo funcionan los elementos esenciales de una red neuronal, como las funciones de activación, las capas, la retropropagación y el descenso de gradiente. Vamos a construir una red neuronal simple para la tarea de clasificación binaria usando estas herramientas básicas.
+
+### Componentes Clave:
+1. **Capas de la red neuronal**: 
+   - Una red neuronal simple tiene una capa de entrada, una o más capas ocultas, y una capa de salida.
+2. **Funciones de activación**:
+   - Utilizamos funciones como **sigmoide** o **ReLU** para introducir no linealidades en la red.
+3. **Pérdida (Loss)**:
+   - Usamos una función de pérdida para medir el error. Aquí usaremos la **entropía cruzada binaria**.
+4. **Descenso de Gradiente**:
+   - Utilizamos el descenso de gradiente para ajustar los pesos minimizando la función de pérdida.
+
+### Pasos para Construir la Red Neuronal
+
+1. **Inicialización de pesos y sesgos**.
+2. **Definición de la función de activación**.
+3. **Propagación hacia adelante** (Forward Propagation).
+4. **Función de pérdida**.
+5. **Propagación hacia atrás** (Backpropagation) para actualizar los pesos.
+6. **Entrenamiento del modelo** con múltiples iteraciones (epochs).
+
+### Implementación Paso a Paso
+
+#### 1. Inicialización de Pesos y Sesgos
+
+Cada neurona tiene asociados pesos que se inicializan de forma aleatoria y un sesgo (bias).
+
+#### 2. Funciones de Activación
+
+- **Sigmoide**: Comúnmente usada para la clasificación binaria.
+  \[
+  \sigma(z) = \frac{1}{1 + e^{-z}}
+  \]
+  
+- **ReLU**: Común en capas ocultas.
+  \[
+  \text{ReLU}(z) = \max(0, z)
+  \]
+
+#### 3. Propagación hacia Adelante
+
+Esto consiste en calcular la salida de cada capa de la red, desde la entrada hasta la salida final.
+
+#### 4. Función de Pérdida
+
+Usamos la **entropía cruzada binaria** para calcular la pérdida. Para un problema de clasificación binaria, la función de pérdida es:
+\[
+L(y, \hat{y}) = - \left( y \cdot \log(\hat{y}) + (1 - y) \cdot \log(1 - \hat{y}) \right)
+\]
+
+#### 5. Propagación hacia Atrás (Backpropagation)
+
+Aquí calculamos el gradiente de la función de pérdida con respecto a los pesos y actualizamos los pesos utilizando el descenso de gradiente.
+
+### Código: Red Neuronal Simple Usando NumPy
+
+```python
+import numpy as np
+
+# 1. Función de activación sigmoide y su derivada
+def sigmoid(x):
+    return 1 / (1 + np.exp(-x))
+
+def sigmoid_derivative(x):
+    return x * (1 - x)
+
+# 2. Inicialización de datos de entrenamiento (XOR dataset)
+X = np.array([[0, 0], [0, 1], [1, 0], [1, 1]])
+y = np.array([[0], [1], [1], [0]])  # Salida esperada
+
+# 3. Inicialización de pesos y sesgos (aleatorios)
+np.random.seed(1)
+input_size = 2
+hidden_size = 4
+output_size = 1
+
+# Pesos aleatorios para las capas
+weights_input_hidden = np.random.rand(input_size, hidden_size)
+weights_hidden_output = np.random.rand(hidden_size, output_size)
+
+# Sesgos aleatorios para las capas
+bias_hidden = np.random.rand(1, hidden_size)
+bias_output = np.random.rand(1, output_size)
+
+# 4. Propagación hacia adelante y hacia atrás
+learning_rate = 0.5
+epochs = 10000
+
+for epoch in range(epochs):
+    # Propagación hacia adelante (forward pass)
+    hidden_input = np.dot(X, weights_input_hidden) + bias_hidden  # Suma ponderada
+    hidden_output = sigmoid(hidden_input)  # Activación sigmoide
+
+    output_input = np.dot(hidden_output, weights_hidden_output) + bias_output  # Suma ponderada
+    predicted_output = sigmoid(output_input)  # Activación sigmoide
+
+    # Calcular el error
+    error = y - predicted_output
+
+    # Propagación hacia atrás (backpropagation)
+    d_predicted_output = error * sigmoid_derivative(predicted_output)
+    d_hidden_output = d_predicted_output.dot(weights_hidden_output.T) * sigmoid_derivative(hidden_output)
+
+    # Actualización de los pesos y sesgos
+    weights_hidden_output += hidden_output.T.dot(d_predicted_output) * learning_rate
+    bias_output += np.sum(d_predicted_output, axis=0, keepdims=True) * learning_rate
+    weights_input_hidden += X.T.dot(d_hidden_output) * learning_rate
+    bias_hidden += np.sum(d_hidden_output, axis=0, keepdims=True) * learning_rate
+
+    # Mostrar el progreso cada 1000 epochs
+    if epoch % 1000 == 0:
+        print(f"Epoch {epoch}, Error: {np.mean(np.abs(error))}")
+
+# 5. Salida final después de entrenar
+print("Salida final:")
+print(predicted_output)
+```
+
+### Explicación:
+
+1. **Datos de entrenamiento**: Usamos el conjunto de datos XOR como ejemplo, donde las entradas son pares de valores binarios y la salida es 1 si uno de los valores es 1, pero no ambos.
+
+2. **Pesos y sesgos**: Los inicializamos de manera aleatoria. Los pesos conectan la capa de entrada con la capa oculta, y la capa oculta con la de salida.
+
+3. **Forward propagation**:
+   - Calculamos la suma ponderada de las entradas, aplicamos la función de activación y propagamos el valor hacia adelante.
+
+4. **Backpropagation**:
+   - Calculamos el error y usamos las derivadas de las funciones de activación para propagar el error hacia atrás y ajustar los pesos.
+
+5. **Actualización de pesos**: Usamos el **descenso de gradiente** para actualizar los pesos en cada iteración.
+
+### Resultado:
+
+Después de entrenar la red durante 10,000 epochs, la red aprenderá a clasificar correctamente los datos del problema XOR, y podrás observar que las predicciones se acercan a los valores esperados \([0], [1], [1], [0]\).
+
+### Conclusión:
+
+Este código ilustra cómo puedes implementar una red neuronal desde cero usando **NumPy** y las operaciones matemáticas básicas involucradas en el entrenamiento de una red. Es una forma de entender el funcionamiento interno de los modelos de aprendizaje profundo sin depender de bibliotecas de alto nivel como TensorFlow o PyTorch.
