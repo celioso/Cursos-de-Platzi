@@ -1481,3 +1481,197 @@ Después de entrenar la red durante 10,000 epochs, la red aprenderá a clasifica
 ### Conclusión:
 
 Este código ilustra cómo puedes implementar una red neuronal desde cero usando **NumPy** y las operaciones matemáticas básicas involucradas en el entrenamiento de una red. Es una forma de entender el funcionamiento interno de los modelos de aprendizaje profundo sin depender de bibliotecas de alto nivel como TensorFlow o PyTorch.
+
+## Aplicando backpropagation y descenso del gradiente
+
+El **backpropagation** (retropropagación) y el **descenso del gradiente** son dos de los conceptos fundamentales en el entrenamiento de redes neuronales. Juntos, permiten ajustar los pesos de la red para minimizar la función de pérdida y mejorar el rendimiento del modelo.
+
+### Flujo de Entrenamiento con Backpropagation y Descenso del Gradiente
+
+1. **Propagación hacia adelante (Forward Propagation)**:
+   - Los datos de entrada pasan a través de la red y producen una predicción. Esto implica multiplicar los datos de entrada por los pesos, sumar sesgos y aplicar funciones de activación.
+
+2. **Cálculo del error**:
+   - Se compara la predicción con la salida real utilizando una **función de pérdida** (por ejemplo, el error cuadrático medio o la entropía cruzada).
+
+3. **Backpropagation (retropropagación del error)**:
+   - El error calculado en la salida se propaga hacia atrás a través de la red, capa por capa. Durante este proceso, se calculan los gradientes (derivadas parciales) de la función de pérdida con respecto a cada peso.
+
+4. **Actualización de los pesos usando el descenso de gradiente**:
+   - Los pesos de la red se actualizan en la dirección negativa del gradiente, lo que reduce el error. La fórmula del descenso de gradiente básico para actualizar los pesos es:
+     \[
+     w := w - \eta \cdot \frac{\partial L}{\partial w}
+     \]
+     donde \( \eta \) es la tasa de aprendizaje, \( L \) es la función de pérdida, y \( w \) es el peso.
+
+### Ejemplo paso a paso con código
+
+Vamos a crear una red neuronal desde cero usando **NumPy**, que implementa el backpropagation y el descenso de gradiente.
+
+#### Implementación de Backpropagation y Descenso de Gradiente
+
+```python
+import numpy as np
+
+# 1. Función de activación Sigmoide y su derivada
+def sigmoid(x):
+    return 1 / (1 + np.exp(-x))
+
+def sigmoid_derivative(x):
+    return x * (1 - x)
+
+# 2. Inicialización de datos (usamos XOR como ejemplo)
+X = np.array([[0, 0], [0, 1], [1, 0], [1, 1]])
+y = np.array([[0], [1], [1], [0]])  # Salida esperada
+
+# 3. Inicialización de pesos y sesgos aleatorios
+np.random.seed(1)
+input_size = 2
+hidden_size = 4
+output_size = 1
+
+weights_input_hidden = np.random.rand(input_size, hidden_size)
+weights_hidden_output = np.random.rand(hidden_size, output_size)
+bias_hidden = np.random.rand(1, hidden_size)
+bias_output = np.random.rand(1, output_size)
+
+# 4. Hiperparámetros
+learning_rate = 0.1
+epochs = 10000
+
+# 5. Entrenamiento con propagación hacia adelante y backpropagation
+for epoch in range(epochs):
+    # Propagación hacia adelante (forward pass)
+    hidden_input = np.dot(X, weights_input_hidden) + bias_hidden  # Suma ponderada
+    hidden_output = sigmoid(hidden_input)  # Activación sigmoide en la capa oculta
+
+    output_input = np.dot(hidden_output, weights_hidden_output) + bias_output  # Suma ponderada en la capa de salida
+    predicted_output = sigmoid(output_input)  # Activación sigmoide en la salida
+
+    # Calcular el error en la capa de salida
+    error = y - predicted_output
+
+    # Propagación hacia atrás (backpropagation)
+    d_predicted_output = error * sigmoid_derivative(predicted_output)  # Derivada del error con respecto a la salida
+    d_hidden_output = d_predicted_output.dot(weights_hidden_output.T) * sigmoid_derivative(hidden_output)  # Derivada con respecto a la capa oculta
+
+    # Actualización de los pesos y sesgos
+    weights_hidden_output += hidden_output.T.dot(d_predicted_output) * learning_rate
+    bias_output += np.sum(d_predicted_output, axis=0, keepdims=True) * learning_rate
+    weights_input_hidden += X.T.dot(d_hidden_output) * learning_rate
+    bias_hidden += np.sum(d_hidden_output, axis=0, keepdims=True) * learning_rate
+
+    # Mostrar el error cada 1000 epochs
+    if epoch % 1000 == 0:
+        print(f"Epoch {epoch}, Error: {np.mean(np.abs(error))}")
+
+# 6. Salida final después del entrenamiento
+print("Salida final:")
+print(predicted_output)
+```
+
+### Explicación de cada parte:
+
+1. **Función de activación Sigmoide**:
+   - La sigmoide es una función común para problemas de clasificación binaria. Su derivada es necesaria para el cálculo de los gradientes en el backpropagation.
+
+2. **Datos de entrada y salida (XOR)**:
+   - Usamos el conjunto de datos XOR, un problema clásico de clasificación binaria no lineal.
+
+3. **Inicialización de pesos y sesgos**:
+   - Los pesos entre la capa de entrada y la capa oculta, y entre la capa oculta y la capa de salida, se inicializan de forma aleatoria.
+   - Los sesgos también se inicializan de forma aleatoria.
+
+4. **Propagación hacia adelante**:
+   - En cada iteración del bucle, las entradas pasan por la red, activando las neuronas en la capa oculta y en la capa de salida.
+
+5. **Cálculo del error**:
+   - La diferencia entre la salida esperada y la salida predicha se utiliza para calcular el error.
+
+6. **Backpropagation**:
+   - Usamos la derivada de la función de activación para calcular el gradiente del error con respecto a los pesos.
+   - Luego, estos gradientes se utilizan para ajustar los pesos y minimizar el error.
+
+7. **Actualización de los pesos y sesgos**:
+   - Los pesos se actualizan utilizando el descenso de gradiente, ajustándose en la dirección opuesta al gradiente del error.
+
+### Resultado
+
+Después de 10,000 iteraciones de entrenamiento, la red debería poder clasificar correctamente los datos XOR:
+
+```
+Salida final:
+[[0.01]
+ [0.98]
+ [0.98]
+ [0.02]]
+```
+
+Esto muestra que la red ha aprendido a resolver el problema XOR, donde los pares \([0, 1]\) y \([1, 0]\) producen un 1, y los pares \([0, 0]\) y \([1, 1]\) producen un 0, dentro de un margen razonable.
+
+### Resumen:
+
+- **Backpropagation**: Es el algoritmo que se usa para calcular los gradientes del error con respecto a cada peso en la red.
+- **Descenso del Gradiente**: Es el algoritmo de optimización que ajusta los pesos en la dirección opuesta al gradiente, minimizando así la función de pérdida.
+- Este ejemplo demuestra cómo una red neuronal simple puede entrenarse desde cero usando solo matemáticas básicas y NumPy.
+
+## Data: train, validation, test
+
+En el contexto de la construcción y entrenamiento de modelos de aprendizaje automático (machine learning), los conjuntos de **datos de entrenamiento**, **validación** y **prueba** juegan un papel fundamental en la evaluación y optimización del modelo. Cada uno de estos conjuntos de datos tiene un propósito específico:
+
+### 1. **Conjunto de entrenamiento (Train Set)**:
+   - **Propósito**: Este es el conjunto de datos principal que el modelo utiliza para aprender. Durante el proceso de entrenamiento, el modelo ajusta sus parámetros internos (pesos, en el caso de redes neuronales) basándose en los datos del conjunto de entrenamiento.
+   - **Descripción**: Se alimentan los datos de entrada junto con sus correspondientes etiquetas o valores esperados (dependiendo si es clasificación o regresión), y el modelo aprende a encontrar patrones para predecir esos resultados.
+   - **Uso**: El modelo realiza múltiples pasadas sobre este conjunto (epochs) y ajusta los pesos usando métodos como **descenso de gradiente** o **backpropagation**.
+   - **Problemas si se usa mal**: Si solo se evalúa el modelo en los datos de entrenamiento, es muy probable que se ajuste demasiado a estos datos (overfitting), lo que significa que el modelo tendrá un desempeño excelente en estos datos, pero fallará al generalizar a datos que no ha visto antes.
+
+### 2. **Conjunto de validación (Validation Set)**:
+   - **Propósito**: El conjunto de validación se utiliza para ajustar los **hiperparámetros** del modelo, que son parámetros externos al proceso de entrenamiento que no se aprenden directamente (como la tasa de aprendizaje, el número de capas, el número de neuronas, etc.).
+   - **Descripción**: Este conjunto no se utiliza para entrenar el modelo, sino para verificar el rendimiento del modelo en cada paso del entrenamiento (normalmente después de cada época). Esto ayuda a decidir cuándo detener el entrenamiento y ajustar los hiperparámetros.
+   - **Uso**: El modelo se entrena en los datos de entrenamiento y, después de cada epoch, se evalúa en los datos de validación. Si el error en el conjunto de validación empieza a aumentar mientras que el error en los datos de entrenamiento sigue disminuyendo, se puede concluir que el modelo está sobreajustando (overfitting).
+   - **Problemas si se usa mal**: Si se ajustan demasiados hiperparámetros usando este conjunto, se podría sobreajustar el modelo a los datos de validación, lo que lleva a un modelo que funciona bien en la validación, pero no en los datos que nunca ha visto (conjunto de prueba).
+
+### 3. **Conjunto de prueba (Test Set)**:
+   - **Propósito**: El conjunto de prueba es utilizado **exclusivamente al final** del entrenamiento del modelo para evaluar su capacidad de generalización. Es decir, se utiliza para ver cómo de bien se desempeña el modelo con datos que nunca ha visto antes.
+   - **Descripción**: Este conjunto se mantiene aislado durante todo el proceso de entrenamiento y ajuste de hiperparámetros, y se utiliza solo para evaluar el rendimiento final del modelo. Proporciona una métrica objetiva de cómo el modelo generaliza a nuevos datos.
+   - **Uso**: Una vez que se ha entrenado y ajustado el modelo usando el conjunto de entrenamiento y el conjunto de validación, el conjunto de prueba se usa para hacer la evaluación final.
+   - **Problemas si se usa mal**: Si el conjunto de prueba se usa durante el entrenamiento o la validación, se pierde la capacidad de obtener una medida real de la capacidad del modelo para generalizar.
+
+### Resumen del Flujo:
+
+1. **Entrenamiento**:
+   - El modelo aprende a ajustar sus parámetros usando el **conjunto de entrenamiento**.
+   
+2. **Validación**:
+   - El modelo se evalúa periódicamente en el **conjunto de validación** para ajustar los hiperparámetros y evitar el overfitting.
+
+3. **Prueba**:
+   - Después de que el modelo ha sido entrenado y ajustado, se evalúa por última vez en el **conjunto de prueba** para medir su rendimiento real en datos no vistos.
+
+### Ejemplo en Python:
+
+Imagina que tienes un conjunto de datos que debes dividir en los tres subconjuntos. En Python, usando `scikit-learn`, podrías hacer algo como esto:
+
+```python
+from sklearn.model_selection import train_test_split
+
+# Supongamos que X son tus características (features) y y son las etiquetas (labels)
+X_train, X_temp, y_train, y_temp = train_test_split(X, y, test_size=0.4, random_state=42)  # 60% entrenamiento
+X_val, X_test, y_val, y_test = train_test_split(X_temp, y_temp, test_size=0.5, random_state=42)  # 20% validación, 20% prueba
+
+# Ahora tienes 60% de datos para entrenamiento, 20% para validación y 20% para prueba
+```
+
+### Visualización:
+
+- **Entrenamiento**: 60% de los datos para ajustar los pesos del modelo.
+- **Validación**: 20% de los datos para ajustar los hiperparámetros y evitar el overfitting.
+- **Prueba**: 20% de los datos que no han sido usados en todo el proceso para evaluar la capacidad de generalización del modelo.
+
+### Conclusión:
+
+- El **conjunto de entrenamiento** es donde el modelo aprende.
+- El **conjunto de validación** te ayuda a ajustar y evaluar el modelo durante el entrenamiento.
+- El **conjunto de prueba** proporciona una evaluación final y objetiva del rendimiento del modelo en datos nuevos.
+
+Este proceso asegura que tu modelo no solo sea bueno en los datos que ha visto, sino que también pueda **generalizar bien** a datos nuevos.
