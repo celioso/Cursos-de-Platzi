@@ -1678,3 +1678,246 @@ Este proceso asegura que tu modelo no solo sea bueno en los datos que ha visto, 
 
 ## Entrenamiento del modelo de clasificación binaria
 
+El entrenamiento de un modelo de clasificación binaria implica varios pasos, desde la preparación de los datos hasta la evaluación del modelo. A continuación te explico cómo hacerlo utilizando **Keras** y **TensorFlow** con un ejemplo práctico.
+
+### Flujo de Entrenamiento:
+
+1. **Preparar los datos**.
+2. **Construir el modelo**.
+3. **Compilar el modelo**.
+4. **Entrenar el modelo**.
+5. **Evaluar el modelo**.
+
+### Ejemplo en Keras para una Clasificación Binaria
+
+Vamos a entrenar un modelo simple de clasificación binaria usando Keras. En este ejemplo, utilizamos el famoso conjunto de datos **Pima Indians Diabetes**, donde el objetivo es predecir si un paciente tiene o no diabetes (clasificación binaria: 0 o 1).
+
+#### 1. Preparar los datos
+
+Primero, debes cargar y preparar los datos.
+
+```python
+import numpy as np
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+
+# Cargar el conjunto de datos
+url = "https://raw.githubusercontent.com/jbrownlee/Datasets/master/pima-indians-diabetes.data.csv"
+column_names = ['Pregnancies', 'Glucose', 'BloodPressure', 'SkinThickness', 'Insulin', 'BMI', 'DiabetesPedigreeFunction', 'Age', 'Outcome']
+data = pd.read_csv(url, names=column_names)
+
+# Dividir las características y las etiquetas
+X = data.drop('Outcome', axis=1)  # Características (inputs)
+y = data['Outcome']  # Etiquetas (0 o 1)
+
+# Dividir los datos en conjuntos de entrenamiento y prueba
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Normalizar los datos (es una buena práctica para redes neuronales)
+scaler = StandardScaler()
+X_train = scaler.fit_transform(X_train)
+X_test = scaler.transform(X_test)
+```
+
+#### 2. Construir el modelo
+
+Una vez que los datos están listos, construimos la red neuronal. Usaremos una arquitectura simple con capas densas (fully connected).
+
+```python
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense
+
+# Crear el modelo secuencial
+model = Sequential()
+
+# Añadir capas de entrada, ocultas y de salida
+model.add(Dense(16, input_dim=X_train.shape[1], activation='relu'))  # Capa oculta con 16 neuronas
+model.add(Dense(8, activation='relu'))  # Otra capa oculta con 8 neuronas
+model.add(Dense(1, activation='sigmoid'))  # Capa de salida con activación sigmoide (para clasificación binaria)
+```
+
+#### 3. Compilar el modelo
+
+Ahora, compila el modelo especificando el **optimizador**, la **función de pérdida** y las **métricas** de evaluación.
+
+```python
+model.compile(optimizer='adam',  # Usamos Adam como optimizador
+              loss='binary_crossentropy',  # Función de pérdida para clasificación binaria
+              metrics=['accuracy'])  # Métrica de evaluación
+```
+
+#### 4. Entrenar el modelo
+
+Entrenamos el modelo utilizando el conjunto de datos de entrenamiento.
+
+```python
+# Entrenar el modelo
+history = model.fit(X_train, y_train, epochs=50, batch_size=32, validation_split=0.2)
+```
+
+- `epochs`: Es el número de veces que el modelo verá los datos completos de entrenamiento.
+- `batch_size`: Cantidad de muestras que el modelo procesará antes de actualizar los pesos.
+- `validation_split`: Porcentaje de datos de entrenamiento que se usarán para validar el modelo en cada epoch.
+
+#### 5. Evaluar el modelo
+
+Una vez que el modelo está entrenado, lo evaluamos en el conjunto de prueba.
+
+```python
+# Evaluar el modelo en los datos de prueba
+test_loss, test_accuracy = model.evaluate(X_test, y_test)
+
+print(f"Precisión en el conjunto de prueba: {test_accuracy:.4f}")
+```
+
+#### 6. Visualizar el rendimiento (opcional)
+
+Podemos visualizar el rendimiento del modelo durante el entrenamiento para ver cómo evolucionaron la **precisión** y la **función de pérdida**.
+
+```python
+import matplotlib.pyplot as plt
+
+# Pérdida durante el entrenamiento
+plt.plot(history.history['loss'], label='Pérdida de entrenamiento')
+plt.plot(history.history['val_loss'], label='Pérdida de validación')
+plt.title('Pérdida durante el entrenamiento')
+plt.xlabel('Épocas')
+plt.ylabel('Pérdida')
+plt.legend()
+plt.show()
+
+# Precisión durante el entrenamiento
+plt.plot(history.history['accuracy'], label='Precisión de entrenamiento')
+plt.plot(history.history['val_accuracy'], label='Precisión de validación')
+plt.title('Precisión durante el entrenamiento')
+plt.xlabel('Épocas')
+plt.ylabel('Precisión')
+plt.legend()
+plt.show()
+```
+
+### Explicación de cada parte:
+
+1. **Preparación de los datos**:
+   - Dividimos los datos en entrenamiento y prueba.
+   - Normalizamos las características para que los valores estén escalados, lo cual es importante para el entrenamiento eficiente de redes neuronales.
+
+2. **Construcción del modelo**:
+   - Definimos una red neuronal con dos capas ocultas con la función de activación **ReLU** y una capa de salida con **sigmoide**, que es común en problemas de clasificación binaria.
+
+3. **Compilación**:
+   - Utilizamos el optimizador **Adam**, que es robusto y eficiente.
+   - La función de pérdida **binary_crossentropy** es adecuada para clasificación binaria.
+
+4. **Entrenamiento**:
+   - El modelo se entrena durante 50 épocas. Usamos un 20% de los datos de entrenamiento para validación, lo que nos permite monitorizar el rendimiento del modelo durante el entrenamiento.
+
+5. **Evaluación**:
+   - Evaluamos el modelo en el conjunto de prueba para obtener una medida de su precisión final.
+
+### Conclusión:
+
+Este flujo muestra el proceso completo para entrenar un modelo de clasificación binaria utilizando Keras. A medida que entrenamos el modelo, ajustamos sus pesos para minimizar la función de pérdida y maximizar la precisión, asegurándonos de que el modelo generalice bien en los datos de prueba.
+
+## Regularización - Dropout
+
+La **regularización** es una técnica utilizada para evitar el **overfitting** (sobreajuste) en los modelos de aprendizaje automático, especialmente en redes neuronales. El **overfitting** ocurre cuando un modelo se ajusta demasiado a los datos de entrenamiento y pierde la capacidad de generalizar correctamente a datos nuevos. Una de las técnicas más comunes de regularización es el **Dropout**, que se utiliza en las redes neuronales para mejorar la capacidad de generalización del modelo.
+
+### ¿Qué es **Dropout**?
+
+**Dropout** es una técnica de regularización que se aplica durante el entrenamiento de una red neuronal. Consiste en "desactivar" aleatoriamente un porcentaje de las neuronas en cada capa durante cada iteración de entrenamiento. De esta manera, el modelo no depende demasiado de neuronas específicas, forzando a la red a aprender representaciones más robustas de los datos.
+
+- **Cómo funciona**: En cada paso de entrenamiento, las neuronas que se "eliminan" temporalmente no contribuyen ni a la propagación hacia adelante (forward pass) ni al retropropagación del gradiente (backpropagation). Durante la evaluación (validación o prueba), todas las neuronas se utilizan normalmente.
+- **Objetivo**: Reducir la dependencia de características específicas en los datos de entrenamiento, promoviendo que las redes neuronales aprendan de manera más generalizada.
+
+### Ejemplo de uso de Dropout en Keras
+
+A continuación se muestra cómo implementar **Dropout** en una red neuronal usando **Keras**:
+
+#### Paso 1: Importar las bibliotecas necesarias
+
+```python
+import numpy as np
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense, Dropout
+```
+
+#### Paso 2: Construir la red neuronal con Dropout
+
+Agregamos la capa `Dropout` después de cada capa densa. El parámetro `rate` (que varía entre 0 y 1) indica la fracción de neuronas que se eliminarán en cada iteración. Por ejemplo, un `rate` de 0.5 significa que el 50% de las neuronas se desactivarán en cada iteración.
+
+```python
+# Crear el modelo secuencial
+model = Sequential()
+
+# Capa de entrada con 16 neuronas y Dropout del 20%
+model.add(Dense(16, input_dim=8, activation='relu'))
+model.add(Dropout(0.2))  # Dropout del 20%
+
+# Capa oculta con 8 neuronas y Dropout del 30%
+model.add(Dense(8, activation='relu'))
+model.add(Dropout(0.3))  # Dropout del 30%
+
+# Capa de salida con activación sigmoide (para clasificación binaria)
+model.add(Dense(1, activation='sigmoid'))
+
+# Compilar el modelo
+model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
+```
+
+En este ejemplo:
+- La primera capa oculta tiene 16 neuronas, y después aplicamos `Dropout` con un ratio de 0.2, lo que significa que el 20% de las neuronas se desactivarán aleatoriamente durante el entrenamiento.
+- La segunda capa oculta tiene 8 neuronas, y luego aplicamos `Dropout` con un ratio de 0.3, desactivando el 30% de las neuronas.
+
+#### Paso 3: Entrenar el modelo
+
+```python
+# Entrenar el modelo con Dropout
+history = model.fit(X_train, y_train, epochs=50, batch_size=32, validation_split=0.2)
+```
+
+El modelo ahora usará `Dropout` durante el entrenamiento, pero desactivará esta función durante la evaluación.
+
+### ¿Por qué Dropout ayuda a prevenir el **overfitting**?
+
+1. **Promueve la independencia de las neuronas**: Dado que ciertas neuronas se "desactivan" en cada paso, otras neuronas tienen que aprender a compensar. Esto significa que ninguna neurona individual se convierte en esencial, lo que ayuda al modelo a aprender representaciones más robustas.
+  
+2. **Reducción de la complejidad del modelo**: Al desactivar neuronas aleatoriamente, estamos reduciendo de manera efectiva el tamaño de la red neuronal durante el entrenamiento. Esto actúa como un tipo de regularización, ya que limita la capacidad del modelo para sobreajustarse a los datos de entrenamiento.
+
+### Visualización del impacto del Dropout
+
+Es común visualizar cómo afecta el **Dropout** a la pérdida y precisión del modelo durante el entrenamiento. Por ejemplo, si observas que la precisión en los datos de entrenamiento es mucho mayor que en los datos de validación, podría ser una señal de que el modelo está sobreajustando, y el Dropout puede ayudar a mitigarlo.
+
+```python
+import matplotlib.pyplot as plt
+
+# Pérdida durante el entrenamiento
+plt.plot(history.history['loss'], label='Pérdida de entrenamiento')
+plt.plot(history.history['val_loss'], label='Pérdida de validación')
+plt.title('Pérdida durante el entrenamiento con Dropout')
+plt.xlabel('Épocas')
+plt.ylabel('Pérdida')
+plt.legend()
+plt.show()
+
+# Precisión durante el entrenamiento
+plt.plot(history.history['accuracy'], label='Precisión de entrenamiento')
+plt.plot(history.history['val_accuracy'], label='Precisión de validación')
+plt.title('Precisión durante el entrenamiento con Dropout')
+plt.xlabel('Épocas')
+plt.ylabel('Precisión')
+plt.legend()
+plt.show()
+```
+
+### Cuándo utilizar Dropout
+
+- **Modelos grandes**: El Dropout es particularmente útil en redes neuronales grandes, donde la cantidad de parámetros es muy alta y el riesgo de sobreajuste es mayor.
+- **Durante el entrenamiento**: El Dropout se utiliza únicamente durante el entrenamiento, no en la fase de evaluación.
+- **En combinación con otras técnicas de regularización**: Puede combinarse con otros métodos como la **regularización L2** o la **normalización por lotes (Batch Normalization)** para mejorar aún más el rendimiento.
+
+### Conclusión
+
+El **Dropout** es una técnica efectiva y simple para evitar el sobreajuste en redes neuronales. Al eliminar aleatoriamente neuronas durante el entrenamiento, fuerza al modelo a aprender representaciones más robustas y generalizables. Esto resulta en un mejor rendimiento cuando el modelo se enfrenta a datos nuevos.
+
