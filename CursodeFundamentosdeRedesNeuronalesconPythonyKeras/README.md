@@ -1675,3 +1675,6 @@ X_val, X_test, y_val, y_test = train_test_split(X_temp, y_temp, test_size=0.5, r
 - El **conjunto de prueba** proporciona una evaluación final y objetiva del rendimiento del modelo en datos nuevos.
 
 Este proceso asegura que tu modelo no solo sea bueno en los datos que ha visto, sino que también pueda **generalizar bien** a datos nuevos.
+
+## Entrenamiento del modelo de clasificación binaria
+
