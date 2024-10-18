@@ -2103,3 +2103,122 @@ plt.show()
 ### Conclusión
 
 En este ejemplo, hemos aplicado varias técnicas para reducir el overfitting en un modelo de clasificación binaria, como **Dropout**, **Early Stopping** y la visualización del rendimiento durante el entrenamiento. Estas técnicas permiten que el modelo generalice mejor en los datos de prueba, evitando que se ajuste demasiado a los detalles de los datos de entrenamiento.
+
+## Resolviendo un problema de regresión
+
+La **regresión** es una técnica de aprendizaje supervisado que se utiliza para predecir un valor continuo en lugar de una categoría (como en la clasificación). Un ejemplo clásico de regresión sería predecir el precio de una casa en función de características como su tamaño, número de habitaciones, ubicación, etc.
+
+En términos más simples, en los problemas de regresión, buscamos encontrar una relación entre las características de entrada (también llamadas variables independientes o *features*) y la salida continua (también llamada variable dependiente o *target*).
+
+### Ejemplo práctico: Predicción del precio de una casa usando regresión
+
+Vamos a resolver un problema de regresión utilizando la biblioteca **Scikit-learn** y el algoritmo de regresión lineal. Utilizaremos un conjunto de datos que contiene varias características de casas (por ejemplo, tamaño, número de habitaciones) y sus respectivos precios.
+
+#### Paso 1: Importar bibliotecas necesarias
+
+```python
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error
+```
+
+#### Paso 2: Crear o cargar un conjunto de datos
+
+En este caso, vamos a crear un pequeño conjunto de datos simulado con el tamaño de la casa (en metros cuadrados) como la característica independiente y el precio como la variable dependiente. Sin embargo, en un entorno real, podrías cargar un conjunto de datos usando bibliotecas como **pandas** o datasets de **Scikit-learn**.
+
+```python
+# Datos simulados: Tamaño de la casa (m2) y precio (en miles de dólares)
+X = np.array([[50], [60], [70], [80], [90], [100], [110], [120], [130], [140]])  # Tamaño
+y = np.array([150, 180, 210, 240, 270, 300, 330, 360, 390, 420])  # Precio
+
+# Dividir los datos en conjunto de entrenamiento y prueba
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+```
+
+En este caso, hemos generado una relación lineal simple donde el precio aumenta a medida que aumenta el tamaño de la casa.
+
+#### Paso 3: Crear el modelo de regresión lineal
+
+Vamos a utilizar el modelo de regresión lineal de **Scikit-learn** para predecir el precio de las casas basado en el tamaño.
+
+```python
+# Crear el modelo de regresión lineal
+model = LinearRegression()
+
+# Entrenar el modelo con los datos de entrenamiento
+model.fit(X_train, y_train)
+```
+
+#### Paso 4: Realizar predicciones
+
+Una vez que el modelo ha sido entrenado, podemos utilizarlo para realizar predicciones en los datos de prueba.
+
+```python
+# Predecir los precios de las casas en los datos de prueba
+y_pred = model.predict(X_test)
+```
+
+#### Paso 5: Evaluar el modelo
+
+Evaluamos el rendimiento del modelo utilizando la **pérdida cuadrática media (Mean Squared Error, MSE)**, que mide la diferencia promedio entre los valores predichos y los valores reales.
+
+```python
+# Evaluar el modelo con el error cuadrático medio
+mse = mean_squared_error(y_test, y_pred)
+print(f"Error cuadrático medio (MSE): {mse}")
+```
+
+#### Paso 6: Visualizar los resultados
+
+Para entender mejor cómo se ajusta el modelo, podemos visualizar los datos originales y la línea de regresión que el modelo ha aprendido.
+
+```python
+# Graficar los puntos de datos originales
+plt.scatter(X, y, color='blue', label='Datos reales')
+
+# Graficar la línea de regresión
+plt.plot(X, model.predict(X), color='red', label='Línea de regresión')
+
+# Etiquetas y título
+plt.xlabel('Tamaño de la casa (m2)')
+plt.ylabel('Precio (en miles de dólares)')
+plt.title('Regresión lineal: Precio de la casa vs. Tamaño')
+plt.legend()
+plt.show()
+```
+
+### ¿Cómo funciona la regresión?
+
+La regresión lineal simple intenta encontrar la **línea recta** que mejor se ajuste a los datos. Esto se hace minimizando la suma de los errores cuadrados (residuos), que es la diferencia entre los valores reales y los valores predichos.
+
+En este caso, el modelo ajustará una línea con la forma:
+
+\[
+y = w_0 + w_1 \cdot x
+\]
+
+Donde:
+- \( y \) es el valor predicho (precio).
+- \( w_0 \) es la intersección con el eje Y (el precio cuando el tamaño de la casa es 0).
+- \( w_1 \) es la pendiente de la línea (cuánto aumenta el precio por cada metro cuadrado adicional).
+- \( x \) es el tamaño de la casa (característica independiente).
+
+### Más allá de la regresión lineal
+
+Si los datos no siguen una relación lineal, existen otros modelos de regresión que podemos utilizar:
+
+1. **Regresión polinómica**: Para ajustar relaciones no lineales.
+2. **Regresión de bosques aleatorios (Random Forest)**: Un modelo basado en árboles de decisión que suele funcionar bien con datos más complejos.
+3. **Regresión de redes neuronales**: Para problemas de alta dimensionalidad o relaciones no lineales complejas.
+
+### Conclusión
+
+En este ejemplo, hemos aplicado un modelo de regresión lineal simple para predecir el precio de una casa basado en su tamaño. La regresión lineal es solo una de muchas técnicas disponibles para resolver problemas de predicción continua. A medida que los datos se vuelven más complejos, se pueden utilizar modelos más avanzados como la regresión polinómica o las redes neuronales.
+
+**Lecturas recomendadas**
+
+[Boston Housing price regression dataset](https://keras.io/api/datasets/boston_housing/)
+
+[https://colab.research.google.com/drive/1OMbUGBeJkbC2_JLlpxSCs1Rh3m_XbkPw?usp=sharing](https://colab.research.google.com/drive/1OMbUGBeJkbC2_JLlpxSCs1Rh3m_XbkPw?usp=sharing)
