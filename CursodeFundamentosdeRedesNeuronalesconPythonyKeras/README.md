@@ -2222,3 +2222,95 @@ En este ejemplo, hemos aplicado un modelo de regresión lineal simple para prede
 [Boston Housing price regression dataset](https://keras.io/api/datasets/boston_housing/)
 
 [https://colab.research.google.com/drive/1OMbUGBeJkbC2_JLlpxSCs1Rh3m_XbkPw?usp=sharing](https://colab.research.google.com/drive/1OMbUGBeJkbC2_JLlpxSCs1Rh3m_XbkPw?usp=sharing)
+
+## ¿Qué sigue por aprender de redes neuronales?
+
+Después de haber cubierto los conceptos fundamentales de redes neuronales, como la construcción de modelos, la optimización, el descenso del gradiente, el backpropagation y técnicas de regularización, hay varios temas más avanzados que puedes explorar para profundizar en el campo de redes neuronales y deep learning. Aquí te dejo una guía de los siguientes pasos:
+
+### 1. **Redes Neuronales Convolucionales (CNN)**
+   - **Descripción**: Las CNN son redes especializadas para el procesamiento de datos con estructuras de grilla como imágenes.
+   - **Temas**:
+     - Convoluciones y pooling
+     - Arquitecturas populares: LeNet, AlexNet, VGG, ResNet, Inception
+     - Transfer learning (reutilización de modelos preentrenados)
+     - Aplicaciones: clasificación de imágenes, detección de objetos, segmentación.
+
+### 2. **Redes Neuronales Recurrentes (RNN) y LSTM**
+   - **Descripción**: Las RNN son útiles para datos secuenciales, como series de tiempo o texto, mientras que las LSTM y GRU son versiones avanzadas que resuelven problemas de largo plazo en secuencias.
+   - **Temas**:
+     - Células recurrentes, Backpropagation Through Time (BPTT)
+     - LSTM (Long Short-Term Memory) y GRU (Gated Recurrent Units)
+     - Aplicaciones: generación de texto, análisis de series de tiempo, modelado de lenguaje natural (NLP).
+
+### 3. **Optimización y Técnicas de Entrenamiento Avanzadas**
+   - **Descripción**: Técnicas que mejoran el rendimiento del entrenamiento de redes neuronales.
+   - **Temas**:
+     - Algoritmos de optimización avanzados: Adam, Adagrad, RMSprop
+     - Normalización por lotes (Batch Normalization), Dropout, Early Stopping
+     - Programación de tasas de aprendizaje (Learning Rate Schedulers)
+     - Técnicas de inicialización de pesos.
+
+### 4. **Aprendizaje por Refuerzo (Reinforcement Learning)**
+   - **Descripción**: Enfoque donde un agente aprende a tomar decisiones a través de la interacción con un entorno.
+   - **Temas**:
+     - Diferencias entre aprendizaje supervisado y no supervisado
+     - Algoritmos Q-learning, Deep Q Networks (DQN)
+     - Aprendizaje profundo de políticas (Deep Policy Gradient Methods).
+
+### 5. **Redes Generativas (GANs y VAEs)**
+   - **Descripción**: Modelos que generan datos nuevos y realistas, útiles para tareas como la generación de imágenes.
+   - **Temas**:
+     - Generative Adversarial Networks (GANs) y su entrenamiento adversarial
+     - Variational Autoencoders (VAE)
+     - Aplicaciones en la síntesis de imágenes, música, y más.
+
+### 6. **Atención y Transformers**
+   - **Descripción**: Arquitecturas avanzadas para modelar secuencias con dependencias largas. Utilizadas principalmente en NLP.
+   - **Temas**:
+     - Mecanismo de atención
+     - Arquitectura Transformer (BERT, GPT)
+     - Aplicaciones: traducción automática, procesamiento del lenguaje natural.
+
+### 7. **Aprendizaje Federado y Distribuido**
+   - **Descripción**: Técnicas para entrenar modelos en entornos donde los datos están distribuidos entre múltiples dispositivos o servidores.
+   - **Temas**:
+     - Redes neuronales distribuidas
+     - Aprendizaje federado para la privacidad de los datos
+     - Frameworks para aprendizaje distribuido como TensorFlow y PyTorch.
+
+### 8. **Explicabilidad en Modelos de Aprendizaje Profundo**
+   - **Descripción**: Métodos para entender y explicar las decisiones de redes neuronales complejas.
+   - **Temas**:
+     - Técnicas como LIME, SHAP, Grad-CAM
+     - Interpretación de redes neuronales
+     - Aplicaciones en áreas críticas como la medicina y las finanzas.
+
+### 9. **Implementaciones en Hardware Avanzado (GPU/TPU)**
+   - **Descripción**: Uso de hardware especializado para acelerar el entrenamiento de redes neuronales.
+   - **Temas**:
+     - Cómo usar GPUs y TPUs para entrenamiento de redes neuronales
+     - Optimización del uso de memoria y paralelismo
+     - Arquitecturas de hardware para deep learning.
+
+### 10. **Aplicaciones y Proyectos del Mundo Real**
+   - **Descripción**: Aplicar lo aprendido en proyectos reales es fundamental para dominar el campo.
+   - **Proyectos**:
+     - Detección de fraudes, reconocimiento de voz, traducción automática, juegos de inteligencia artificial, análisis predictivo.
+     - Participar en competiciones de plataformas como Kaggle.
+
+
+### Recomendaciones adicionales:
+
+- **Lecturas**:
+  - "Deep Learning" de Ian Goodfellow y Yoshua Bengio.
+  - "Hands-On Machine Learning with Scikit-Learn, Keras, and TensorFlow" de Aurélien Géron.
+
+- **Frameworks**:
+  - **TensorFlow** y **Keras** para redes neuronales profundas.
+  - **PyTorch** para mayor flexibilidad y control en redes neuronales.
+
+**Lecturas recomendadas**
+
+[Curso de NPL con Python y NLTK - Platzi](https://platzi.com/cursos/python-lenguaje-natural/)
+
+[Curso de Redes Neuronales con TensorFlow - Platzi](https://platzi.com/cursos/redes-neuronales-tensorflow/)
