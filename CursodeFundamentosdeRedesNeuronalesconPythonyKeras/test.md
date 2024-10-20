@@ -33,11 +33,13 @@
 **R//=** Porque cada neurona devuelve una función lineal al igual que la suma de funciones lineales da como resultado otra función lineal, de ser así se obtiene el mismo resultado y es necesario deformar la función lineal.
 
 9. **¿A qué función pertenece esta representación?**
+
 ![RELU](images/RELU.png)
     
 **R//=** ReLU
 
 10. **¿A qué función pertenece esta representación?**
+
 ![Tanh](images/TANH.png)
  
 **R//=** Tanh

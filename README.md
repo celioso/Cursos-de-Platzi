@@ -35,6 +35,15 @@
 - [Curso de Unit Testing en Python](CursodeUnitTestingenPython)
 - [Curso de Fundamentos de Redes Neuronales con Python y Keras](CursodeFundamentosdeRedesNeuronalesconPythonyKeras)
 
+## Deep Learning: Computer Vision
+
+- [Curso de Fundamentos de Redes Neuronales con Python y Keras](CursodeFundamentosdeRedesNeuronalesconPythonyKeras)
+- [Curso de Redes Neuronales con PyTorch](CursodeRedesNeuronalesconPyTorch)
+- [Curso de Redes Neuronales Convolucionales con Python y Keras]()
+- [Curso Profesional de Redes Neuronales con TensorFlow]()
+- [Curso de Detección y Segmentación de Objetos con TensorFlow]()
+- [Curso Profesional de Computer Vision con TensorFlow]()
+
 ## QA y Automatización de Pruebas
 
 - [Curso de Introducción a Selenium con Python](CursoDeIntroduccionaSeleniumConPython)
