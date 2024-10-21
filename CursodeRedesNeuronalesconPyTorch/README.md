@@ -1006,3 +1006,324 @@ for epoch in range(10):
 [torchtext.datasets — Torchtext 0.15.0 documentation](https://pytorch.org/text/stable/datasets.html#dbpedia)
 
 [torchtext.datasets — Torchtext 0.15.0 documentation](https://pytorch.org/text/stable/datasets.html)
+
+## Procesamiento de datos: tokenización y creación de vocabulario
+
+El procesamiento de datos, especialmente en tareas de procesamiento de lenguaje natural (NLP), implica pasos como la tokenización y la creación de vocabularios. Aquí te explico ambos conceptos y cómo se implementan, particularmente en el contexto de PyTorch.
+
+### 1. Tokenización
+
+La **tokenización** es el proceso de dividir un texto en unidades más pequeñas llamadas "tokens". Estos pueden ser palabras, subpalabras o caracteres. La tokenización permite que los modelos entiendan el texto en un formato que pueden procesar.
+
+Existen diferentes enfoques de tokenización:
+
+- **Tokenización por palabras**: Divide el texto en palabras.
+- **Tokenización por subpalabras**: Utiliza algoritmos como Byte Pair Encoding (BPE) para dividir palabras en subunidades, lo que es útil para manejar palabras desconocidas y reducir el vocabulario.
+- **Tokenización por caracteres**: Cada carácter se convierte en un token, lo que puede ser útil para ciertos tipos de modelos.
+
+### Ejemplo de Tokenización en PyTorch
+
+Aquí hay un ejemplo básico de cómo realizar la tokenización utilizando `torchtext`:
+
+```python
+import torch
+from torchtext.data.utils import get_tokenizer
+
+# Texto de ejemplo
+text = "Hola, esto es un ejemplo de tokenización."
+
+# Crear un tokenizador
+tokenizer = get_tokenizer("basic_english")
+
+# Tokenizar el texto
+tokens = tokenizer(text)
+print(tokens)
+```
+
+### 2. Creación de Vocabulario
+
+La **creación de vocabulario** implica construir un conjunto de todos los tokens únicos que aparecen en tu conjunto de datos. Esto es fundamental porque el modelo necesita mapear cada token a un número entero (índice) que puede utilizar durante el entrenamiento.
+
+Los vocabularios pueden ser simples o pueden incluir mapeos adicionales, como las frecuencias de palabras.
+
+### Ejemplo de Creación de Vocabulario en PyTorch
+
+A continuación, se muestra un ejemplo de cómo crear un vocabulario a partir de los tokens:
+
+```python
+from collections import Counter
+from torchtext.vocab import Vocab
+
+# Contar la frecuencia de los tokens
+counter = Counter(tokens)
+
+# Crear el vocabulario
+vocab = Vocab(counter)
+
+# Ver el vocabulario
+print(vocab.stoi)  # Muestra el índice de cada token
+print(vocab.itos)  # Muestra el token correspondiente a cada índice
+```
+
+### Integración en el Entrenamiento del Modelo
+
+Una vez que tienes los tokens y el vocabulario, puedes convertir tus textos en secuencias de índices y alimentar estos índices a tu modelo de PyTorch para el entrenamiento.
+
+### Ejemplo Completo
+
+Aquí hay un flujo de trabajo más completo que incluye la tokenización y la creación de vocabulario:
+
+```python
+import torch
+from torchtext.data.utils import get_tokenizer
+from collections import Counter
+from torchtext.vocab import Vocab
+
+# Texto de ejemplo
+corpus = [
+    "Hola, esto es un ejemplo de tokenización.",
+    "Este es otro ejemplo para crear vocabulario."
+]
+
+# Crear un tokenizador
+tokenizer = get_tokenizer("basic_english")
+
+# Tokenizar y contar la frecuencia de tokens
+tokens = []
+for line in corpus:
+    tokens.extend(tokenizer(line))
+
+# Crear el vocabulario
+counter = Counter(tokens)
+vocab = Vocab(counter)
+
+# Convertir texto a índices
+text_indices = [[vocab[token] for token in tokenizer(line)] for line in corpus]
+
+# Mostrar los resultados
+print("Vocabulario:", vocab.stoi)
+print("Índices del texto:", text_indices)
+```
+
+### Conclusión
+
+La tokenización y la creación de vocabulario son pasos críticos en el procesamiento de datos para modelos de NLP. Usar bibliotecas como `torchtext` simplifica mucho estos procesos, permitiendo concentrarse en el diseño y entrenamiento de modelos en lugar de preocuparse por el preprocesamiento de datos.
+
+## Procesamiento de datos: preparación del DataLoader()
+
+Para preparar un `DataLoader` en PyTorch, primero necesitas un conjunto de datos adecuado y luego crear un `DataLoader` que pueda iterar sobre ese conjunto de datos en mini-batches. El `DataLoader` es una herramienta muy útil que permite manejar la carga de datos, la aleatorización y el agrupamiento de muestras.
+
+Aquí te muestro cómo puedes hacerlo utilizando un conjunto de datos de texto, como el de AG News, y cómo crear un `DataLoader`:
+
+### Paso 1: Importar las librerías necesarias
+```python
+import torch
+from torchtext.datasets import AG_NEWS
+from torchtext.data.utils import get_tokenizer
+from torch.utils.data import DataLoader
+from torchtext.vocab import build_vocab_from_iterator
+```
+
+### Paso 2: Cargar el conjunto de datos
+```python
+# Cargar el conjunto de datos AG News
+train_iter = AG_NEWS(split='train')
+```
+
+### Paso 3: Crear un tokenizador y construir el vocabulario
+```python
+# Crear un tokenizador
+tokenizador = get_tokenizer('basic_english')
+
+# Función para generar tokens
+def yield_tokens(data_iter):
+    for _, texto in data_iter:
+        yield tokenizador(texto)
+
+# Construir el vocabulario
+vocab = build_vocab_from_iterator(yield_tokens(train_iter), specials=["<unk>"])
+vocab.set_default_index(vocab["<unk>"])
+```
+
+### Paso 4: Preparar los datos para el DataLoader
+Para usar el `DataLoader`, necesitas definir cómo quieres convertir cada texto en una secuencia de índices basada en el vocabulario. Esto puede implicar la conversión de textos en tensores.
+
+```python
+# Cargar de nuevo el conjunto de datos para que esté fresco
+train_iter = AG_NEWS(split='train')
+
+# Función para convertir texto en índices de vocabulario
+def process_text(text):
+    return torch.tensor([vocab[token] for token in tokenizador(text)], dtype=torch.int64)
+
+# Crear una lista de tuplas (texto procesado, etiqueta)
+data = [(process_text(text), label) for label, text in train_iter]
+```
+
+### Paso 5: Crear el DataLoader
+```python
+# Crear un DataLoader
+batch_size = 16  # Puedes ajustar el tamaño del batch
+data_loader = DataLoader(data, batch_size=batch_size, shuffle=True)
+
+# Ejemplo de iterar sobre el DataLoader
+for batch in data_loader:
+    texts, labels = batch
+    print("Batch de textos:", texts)
+    print("Batch de etiquetas:", labels)
+    break  # Solo mostramos el primer batch
+```
+
+### Resumen
+1. **Cargar el conjunto de datos:** Puedes utilizar cualquier conjunto de datos de texto compatible.
+2. **Tokenizar y construir vocabulario:** Convierte los textos en índices que el modelo puede entender.
+3. **Preparar los datos:** Asegúrate de que cada texto está representado como un tensor.
+4. **Crear el DataLoader:** Esto facilita el procesamiento por lotes y la aleatorización.
+
+Esto te permitirá gestionar fácilmente tus datos durante el entrenamiento del modelo en PyTorch.
+
+**Lecturas recomendadas**
+
+[torch.utils.data — PyTorch 2.0 documentation](https://pytorch.org/docs/stable/data.html)
+
+[torch.cumsum — PyTorch 2.0 documentation](https://pytorch.org/docs/stable/generated/torch.cumsum.html)
+
+## Creación de modelo de clasificación de texto con PyTorch
+
+Para crear un modelo de clasificación de texto utilizando PyTorch, puedes seguir un enfoque basado en redes neuronales. Aquí te mostraré cómo construir un modelo simple de clasificación de texto utilizando una red neuronal totalmente conectada (fully connected neural network) con `torch.nn`. Este ejemplo utilizará el conjunto de datos AG News, pero puedes adaptarlo a cualquier conjunto de datos que estés utilizando.
+
+### Paso 1: Importar las librerías necesarias
+```python
+import torch
+import torch.nn as nn
+import torch.optim as optim
+from torchtext.datasets import AG_NEWS
+from torchtext.data.utils import get_tokenizer
+from torchtext.vocab import build_vocab_from_iterator
+from torch.utils.data import DataLoader
+```
+
+### Paso 2: Cargar y preparar el conjunto de datos
+```python
+# Cargar el conjunto de datos AG News
+train_iter = AG_NEWS(split='train')
+
+# Crear un tokenizador
+tokenizador = get_tokenizer('basic_english')
+
+# Función para generar tokens
+def yield_tokens(data_iter):
+    for _, texto in data_iter:
+        yield tokenizador(texto)
+
+# Construir el vocabulario
+vocab = build_vocab_from_iterator(yield_tokens(train_iter), specials=["<unk>"])
+vocab.set_default_index(vocab["<unk>"])
+
+# Función para convertir texto en índices de vocabulario
+def process_text(text):
+    return torch.tensor([vocab[token] for token in tokenizador(text)], dtype=torch.int64)
+
+# Cargar de nuevo el conjunto de datos
+train_iter = AG_NEWS(split='train')
+
+# Crear una lista de tuplas (texto procesado, etiqueta)
+data = [(process_text(text), label) for label, text in train_iter]
+
+# Crear un DataLoader
+batch_size = 16  # Puedes ajustar el tamaño del batch
+data_loader = DataLoader(data, batch_size=batch_size, shuffle=True)
+```
+
+### Paso 3: Definir el modelo
+Aquí definimos un modelo simple de red neuronal:
+```python
+class TextClassifier(nn.Module):
+    def __init__(self, vocab_size, embed_dim, num_classes):
+        super(TextClassifier, self).__init__()
+        self.embedding = nn.Embedding(vocab_size, embed_dim)
+        self.fc1 = nn.Linear(embed_dim, 128)
+        self.fc2 = nn.Linear(128, num_classes)
+        self.relu = nn.ReLU()
+        self.softmax = nn.LogSoftmax(dim=1)
+
+    def forward(self, x):
+        # x: tensor de índices
+        x = self.embedding(x)  # Obtiene las representaciones de las palabras
+        x = x.mean(dim=1)  # Promedia los embeddings (puedes usar otras técnicas de agregación)
+        x = self.fc1(x)
+        x = self.relu(x)
+        x = self.fc2(x)
+        return self.softmax(x)
+```
+
+### Paso 4: Inicializar el modelo, la función de pérdida y el optimizador
+```python
+# Parámetros
+vocab_size = len(vocab)
+embed_dim = 64  # Dimensión de los embeddings
+num_classes = 4  # Número de clases en AG News
+
+# Inicializar el modelo
+model = TextClassifier(vocab_size, embed_dim, num_classes)
+
+# Definir la función de pérdida y el optimizador
+criterion = nn.NLLLoss()  # Pérdida negativa logarítmica
+optimizer = optim.Adam(model.parameters(), lr=0.001)
+```
+
+### Paso 5: Entrenamiento del modelo
+```python
+# Definir el número de épocas
+num_epochs = 5
+
+for epoch in range(num_epochs):
+    total_loss = 0
+    for texts, labels in data_loader:
+        # Zero gradients
+        optimizer.zero_grad()
+
+        # Forward pass
+        outputs = model(texts)
+
+        # Compute loss
+        loss = criterion(outputs, labels)
+
+        # Backward pass and optimization
+        loss.backward()
+        optimizer.step()
+
+        total_loss += loss.item()
+
+    print(f"Epoch [{epoch + 1}/{num_epochs}], Loss: {total_loss / len(data_loader):.4f}")
+```
+
+### Paso 6: Evaluación del modelo
+Para evaluar el modelo, puedes usar un conjunto de validación o prueba. A continuación se muestra un ejemplo básico:
+```python
+def evaluate_model(model, data_loader):
+    model.eval()  # Cambiar a modo evaluación
+    correct = 0
+    total = 0
+
+    with torch.no_grad():
+        for texts, labels in data_loader:
+            outputs = model(texts)
+            _, predicted = torch.max(outputs.data, 1)
+            total += labels.size(0)
+            correct += (predicted == labels).sum().item()
+
+    print(f'Accuracy: {100 * correct / total:.2f}%')
+
+# Puedes evaluar usando el mismo DataLoader de entrenamiento o uno diferente
+evaluate_model(model, data_loader)
+```
+
+### Resumen
+1. **Importar librerías y cargar el conjunto de datos.**
+2. **Definir el modelo de clasificación.**
+3. **Inicializar el modelo, la función de pérdida y el optimizador.**
+4. **Entrenar el modelo.**
+5. **Evaluar el modelo.**
+
+Esto te dará una buena base para crear un modelo de clasificación de texto en PyTorch.
