@@ -39,7 +39,7 @@
 
 - [Curso de Fundamentos de Redes Neuronales con Python y Keras](CursodeFundamentosdeRedesNeuronalesconPythonyKeras)
 - [Curso de Redes Neuronales con PyTorch](CursodeRedesNeuronalesconPyTorch)
-- [Curso de Redes Neuronales Convolucionales con Python y Keras]()
+- [Curso de Redes Neuronales Convolucionales con Python y Keras](CursodeRedesNeuronalesConvolucionalesconPythonyKeras)
 - [Curso Profesional de Redes Neuronales con TensorFlow]()
 - [Curso de Detección y Segmentación de Objetos con TensorFlow]()
 - [Curso Profesional de Computer Vision con TensorFlow]()
