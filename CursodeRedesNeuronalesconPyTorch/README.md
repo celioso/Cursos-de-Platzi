@@ -1327,3 +1327,855 @@ evaluate_model(model, data_loader)
 5. **Evaluar el modelo.**
 
 Esto te dará una buena base para crear un modelo de clasificación de texto en PyTorch.
+
+## Función para entrenamiento
+
+Aquí tienes una función de ejemplo para entrenar un modelo de clasificación de texto usando PyTorch. Esta función realiza el ciclo típico de entrenamiento para varias épocas y calcula la pérdida y precisión:
+
+### Función de Entrenamiento
+
+```python
+import torch
+import torch.nn as nn
+import torch.optim as optim
+
+def train_model(model, train_loader, valid_loader, optimizer, criterion, num_epochs, device):
+    model.to(device)
+    
+    # Bucle de entrenamiento
+    for epoch in range(num_epochs):
+        model.train()  # Poner el modelo en modo de entrenamiento
+        running_loss = 0.0
+        correct_predictions = 0
+        total_samples = 0
+
+        for inputs, labels in train_loader:
+            inputs, labels = inputs.to(device), labels.to(device)
+
+            # Reiniciar gradientes
+            optimizer.zero_grad()
+
+            # Forward pass
+            outputs = model(inputs)
+            loss = criterion(outputs, labels)
+            
+            # Backward pass y optimización
+            loss.backward()
+            optimizer.step()
+
+            # Acumular la pérdida y calcular predicciones correctas
+            running_loss += loss.item() * inputs.size(0)
+            _, predicted = torch.max(outputs, 1)
+            correct_predictions += (predicted == labels).sum().item()
+            total_samples += labels.size(0)
+        
+        epoch_loss = running_loss / total_samples
+        epoch_acc = correct_predictions / total_samples
+
+        print(f"Epoch {epoch+1}/{num_epochs} - Loss: {epoch_loss:.4f}, Accuracy: {epoch_acc:.4f}")
+
+        # Validación al final de cada época
+        model.eval()  # Poner el modelo en modo de evaluación
+        val_loss = 0.0
+        val_correct_predictions = 0
+        val_total_samples = 0
+
+        with torch.no_grad():
+            for val_inputs, val_labels in valid_loader:
+                val_inputs, val_labels = val_inputs.to(device), val_labels.to(device)
+
+                val_outputs = model(val_inputs)
+                loss = criterion(val_outputs, val_labels)
+                val_loss += loss.item() * val_inputs.size(0)
+
+                _, val_predicted = torch.max(val_outputs, 1)
+                val_correct_predictions += (val_predicted == val_labels).sum().item()
+                val_total_samples += val_labels.size(0)
+
+        val_loss /= val_total_samples
+        val_acc = val_correct_predictions / val_total_samples
+
+        print(f"Validation Loss: {val_loss:.4f}, Validation Accuracy: {val_acc:.4f}")
+```
+
+### Descripción de los componentes:
+1. **`model.train()`**: Pone el modelo en modo de entrenamiento.
+2. **`optimizer.zero_grad()`**: Reinicia los gradientes en cada paso.
+3. **`criterion`**: Función de pérdida (por ejemplo, `nn.CrossEntropyLoss`).
+4. **`loss.backward()`**: Realiza la retropropagación para actualizar los pesos.
+5. **`model.eval()`**: Pone el modelo en modo de evaluación para la validación.
+
+### Ejemplo de uso:
+```python
+# Inicializar el modelo, optimizador, y función de pérdida
+model = MyTextClassifierModel()  # Reemplaza con tu modelo
+optimizer = optim.Adam(model.parameters(), lr=0.001)
+criterion = nn.CrossEntropyLoss()
+
+# Llamar a la función de entrenamiento
+train_model(model, train_loader, valid_loader, optimizer, criterion, num_epochs=10, device="cuda")
+```
+
+Esta función recorre el conjunto de datos de entrenamiento y validación durante varias épocas, mostrando la pérdida y la precisión en cada una de ellas. ¡Es un buen punto de partida para entrenar un modelo de clasificación de texto!
+
+## Función para evaluación
+
+Aquí tienes una función de evaluación para un modelo de clasificación de texto en PyTorch. Esta función evalúa el modelo en un conjunto de datos de prueba, calcula la pérdida y precisión, y puede ser usada al final del entrenamiento o para evaluar el rendimiento del modelo en un conjunto de validación o prueba.
+
+### Función de Evaluación
+
+```python
+import torch
+
+def evaluate_model(model, data_loader, criterion, device):
+    model.eval()  # Poner el modelo en modo evaluación
+    running_loss = 0.0
+    correct_predictions = 0
+    total_samples = 0
+
+    with torch.no_grad():  # Desactiva el cálculo de gradientes
+        for inputs, labels in data_loader:
+            inputs, labels = inputs.to(device), labels.to(device)
+
+            # Forward pass
+            outputs = model(inputs)
+            loss = criterion(outputs, labels)
+            
+            # Acumular la pérdida y calcular predicciones correctas
+            running_loss += loss.item() * inputs.size(0)
+            _, predicted = torch.max(outputs, 1)
+            correct_predictions += (predicted == labels).sum().item()
+            total_samples += labels.size(0)
+
+    avg_loss = running_loss / total_samples
+    accuracy = correct_predictions / total_samples
+
+    print(f"Evaluation Loss: {avg_loss:.4f}, Accuracy: {accuracy:.4f}")
+    
+    return avg_loss, accuracy
+```
+
+### Descripción de los componentes:
+1. **`model.eval()`**: Pone el modelo en modo de evaluación, lo que desactiva comportamientos como el dropout.
+2. **`torch.no_grad()`**: Desactiva el cálculo de gradientes, lo que reduce el consumo de memoria y acelera la evaluación.
+3. **`outputs`**: Salida del modelo después de pasar los datos de entrada (inputs).
+4. **`loss`**: Calcula la pérdida utilizando la función de pérdida (`criterion`), como `nn.CrossEntropyLoss`.
+5. **`torch.max(outputs, 1)`**: Obtiene las predicciones del modelo seleccionando la clase con la mayor probabilidad.
+6. **`correct_predictions`**: Suma cuántas predicciones son correctas comparadas con las etiquetas verdaderas.
+
+### Ejemplo de uso:
+```python
+# Inicializar el modelo y la función de pérdida
+model = MyTextClassifierModel()  # Reemplaza con tu modelo
+criterion = nn.CrossEntropyLoss()
+
+# Llamar a la función de evaluación
+evaluate_model(model, test_loader, criterion, device="cuda")
+```
+
+Esta función es útil para evaluar el rendimiento del modelo después de su entrenamiento, y proporciona la pérdida promedio y la precisión en el conjunto de evaluación. Puedes utilizarla tanto para validación durante el entrenamiento como para probar el modelo final.
+
+## Split de datos, pérdida y optimización
+
+Aquí tienes una explicación detallada sobre cómo realizar el **split de datos**, configurar la **función de pérdida**, y definir un **optimizador** en PyTorch para el entrenamiento de un modelo de clasificación de texto.
+
+### 1. **Split de datos**
+
+El **split de datos** es importante para separar el conjunto de datos en entrenamiento y validación (o prueba). Esto permite entrenar el modelo en una porción de los datos y evaluar su rendimiento en otra.
+
+Puedes usar `torch.utils.data.random_split` para dividir tus datos.
+
+#### Ejemplo:
+```python
+from torch.utils.data import random_split
+
+# Supongamos que tienes un dataset llamado `dataset`
+train_size = int(0.8 * len(dataset))  # 80% para entrenamiento
+val_size = len(dataset) - train_size   # 20% para validación
+
+# Dividir el dataset
+train_dataset, val_dataset = random_split(dataset, [train_size, val_size])
+```
+
+### 2. **DataLoader**
+
+El `DataLoader` se usa para cargar los datos en mini-lotes durante el entrenamiento y la evaluación.
+
+#### Ejemplo:
+```python
+from torch.utils.data import DataLoader
+
+# Crear DataLoaders para entrenamiento y validación
+train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True)
+val_loader = DataLoader(val_dataset, batch_size=32, shuffle=False)
+```
+
+### 3. **Función de Pérdida (Loss Function)**
+
+La función de pérdida mide cuán bien o mal está haciendo el modelo en las predicciones. Para clasificación de texto, una de las funciones de pérdida más comunes es `CrossEntropyLoss`, que se usa para tareas de clasificación multiclase.
+
+#### Ejemplo:
+```python
+import torch.nn as nn
+
+# Definir la función de pérdida
+criterion = nn.CrossEntropyLoss()
+```
+
+### 4. **Optimizador**
+
+El optimizador ajusta los pesos del modelo en función del gradiente de la función de pérdida. Uno de los optimizadores más utilizados es `Adam`, que es una versión mejorada del descenso de gradiente estocástico.
+
+#### Ejemplo:
+```python
+import torch.optim as optim
+
+# Inicializar el optimizador
+optimizer = optim.Adam(model.parameters(), lr=0.001)
+```
+
+### 5. **Entrenamiento del Modelo**
+
+Ahora que tenemos los datos, la pérdida y el optimizador configurados, podemos entrenar el modelo. El siguiente bloque de código muestra cómo entrenar un modelo durante varios **epochs**.
+
+#### Ejemplo:
+```python
+def train_model(model, train_loader, val_loader, criterion, optimizer, num_epochs, device):
+    model = model.to(device)
+
+    for epoch in range(num_epochs):
+        model.train()  # Poner el modelo en modo de entrenamiento
+        running_loss = 0.0
+        correct_predictions = 0
+        total_samples = 0
+
+        for inputs, labels in train_loader:
+            inputs, labels = inputs.to(device), labels.to(device)
+
+            # Forward pass
+            outputs = model(inputs)
+            loss = criterion(outputs, labels)
+
+            # Backward pass y optimización
+            optimizer.zero_grad()
+            loss.backward()
+            optimizer.step()
+
+            running_loss += loss.item() * inputs.size(0)
+            _, predicted = torch.max(outputs, 1)
+            correct_predictions += (predicted == labels).sum().item()
+            total_samples += labels.size(0)
+
+        avg_train_loss = running_loss / total_samples
+        train_accuracy = correct_predictions / total_samples
+
+        print(f"Epoch {epoch+1}/{num_epochs}, Loss: {avg_train_loss:.4f}, Accuracy: {train_accuracy:.4f}")
+
+        # Validación después de cada epoch
+        validate_model(model, val_loader, criterion, device)
+
+def validate_model(model, val_loader, criterion, device):
+    model.eval()  # Poner el modelo en modo evaluación
+    running_loss = 0.0
+    correct_predictions = 0
+    total_samples = 0
+
+    with torch.no_grad():  # No calcular gradientes en validación
+        for inputs, labels in val_loader:
+            inputs, labels = inputs.to(device), labels.to(device)
+
+            outputs = model(inputs)
+            loss = criterion(outputs, labels)
+
+            running_loss += loss.item() * inputs.size(0)
+            _, predicted = torch.max(outputs, 1)
+            correct_predictions += (predicted == labels).sum().item()
+            total_samples += labels.size(0)
+
+    avg_val_loss = running_loss / total_samples
+    val_accuracy = correct_predictions / total_samples
+
+    print(f"Validation Loss: {avg_val_loss:.4f}, Validation Accuracy: {val_accuracy:.4f}")
+```
+
+### 6. **Resumen**
+
+1. **Split de datos**: Usa `random_split` para dividir tus datos en entrenamiento y validación.
+2. **Función de pérdida**: Usa `CrossEntropyLoss` para tareas de clasificación.
+3. **Optimizador**: Usa `Adam` para actualizar los parámetros del modelo.
+4. **Entrenamiento**: Implementa un ciclo de entrenamiento con el optimizador y la función de pérdida.
+5. **Validación**: Evalúa el rendimiento del modelo en el conjunto de validación después de cada epoch.
+
+Este flujo cubre los aspectos básicos de la preparación y entrenamiento de un modelo de clasificación de texto en PyTorch.
+
+## Entrenamiento y evaluación de modelo de clasificación de texto
+
+Aquí tienes un ejemplo completo de cómo puedes realizar el **entrenamiento** y la **evaluación** de un modelo de clasificación de texto utilizando PyTorch y TorchText, asumiendo que ya tienes los datos preparados y tokenizados.
+
+### Paso 1: Preparación de los datos
+Para este ejemplo, asumiremos que ya has cargado el dataset (como **DBpedia**) y creado tu vocabulario. También vamos a usar un DataLoader para manejar los datos en mini-lotes.
+
+### Paso 2: Definir el modelo
+El modelo que vamos a usar es una simple red neuronal con una capa de embeddings, una capa recurrente (GRU), y una capa completamente conectada para la clasificación.
+
+```python
+import torch
+import torch.nn as nn
+import torch.optim as optim
+
+class TextClassificationModel(nn.Module):
+    def __init__(self, vocab_size, embed_dim, num_class):
+        super(TextClassificationModel, self).__init__()
+        self.embedding = nn.EmbeddingBag(vocab_size, embed_dim, sparse=True)
+        self.fc = nn.Linear(embed_dim, num_class)
+        self.init_weights()
+
+    def init_weights(self):
+        initrange = 0.5
+        self.embedding.weight.data.uniform_(-initrange, initrange)
+        self.fc.weight.data.uniform_(-initrange, initrange)
+        self.fc.bias.data.zero_()
+
+    def forward(self, text, offsets):
+        embedded = self.embedding(text, offsets)
+        return self.fc(embedded)
+```
+
+### Paso 3: Entrenamiento del modelo
+
+#### Función de entrenamiento
+
+```python
+def train(dataloader, model, criterion, optimizer):
+    model.train()
+    total_acc, total_count = 0, 0
+    log_interval = 500
+    for idx, (label, text, offsets) in enumerate(dataloader):
+        optimizer.zero_grad()
+        predicted_label = model(text, offsets)
+        loss = criterion(predicted_label, label)
+        loss.backward()
+        torch.nn.utils.clip_grad_norm_(model.parameters(), 0.1)  # Evitar gradientes explosivos
+        optimizer.step()
+
+        total_acc += (predicted_label.argmax(1) == label).sum().item()
+        total_count += label.size(0)
+
+        if idx % log_interval == 0 and idx > 0:
+            print(f'Batch {idx}: Accuracy: {total_acc/total_count:.4f}')
+            total_acc, total_count = 0, 0
+```
+
+### Paso 4: Evaluación del modelo
+
+#### Función de evaluación
+Para evaluar el modelo, no aplicamos gradientes, y calculamos la precisión en el conjunto de prueba.
+
+```python
+def evaluate(dataloader, model, criterion):
+    model.eval()
+    total_acc, total_count = 0, 0
+    with torch.no_grad():
+        for label, text, offsets in dataloader:
+            predicted_label = model(text, offsets)
+            loss = criterion(predicted_label, label)
+            total_acc += (predicted_label.argmax(1) == label).sum().item()
+            total_count += label.size(0)
+    return total_acc/total_count
+```
+
+### Paso 5: Entrenar y evaluar
+
+```python
+VOCAB_SIZE = len(vocab)  # Tamaño del vocabulario
+EMBED_DIM = 64  # Dimensión de los embeddings
+NUM_CLASS = len(set([label for (label, text) in train_iter]))  # Número de clases
+
+model = TextClassificationModel(VOCAB_SIZE, EMBED_DIM, NUM_CLASS).to(device)
+optimizer = optim.SGD(model.parameters(), lr=0.001)
+criterion = nn.CrossEntropyLoss()
+
+# Entrenamiento
+for epoch in range(10):
+    train(train_dataloader, model, criterion, optimizer)
+    acc = evaluate(test_dataloader, model, criterion)
+    print(f'Epoch {epoch+1}: Test Accuracy: {acc:.4f}')
+```
+
+### Paso 6: Preparar los datos para DataLoader
+
+Antes de entrenar el modelo, es necesario definir un `DataLoader` que maneje cómo se cargarán los datos en mini-lotes. Aquí te dejo un ejemplo de cómo preparar los datos:
+
+```python
+from torch.utils.data import DataLoader
+from torchtext.datasets import DBpedia
+from torchtext.data.utils import get_tokenizer
+
+tokenizer = get_tokenizer('basic_english')
+
+def yield_tokens(data_iter):
+    for _, text in data_iter:
+        yield tokenizer(text)
+
+vocab = build_vocab_from_iterator(yield_tokens(train_iter), specials=["<unk>"])
+vocab.set_default_index(vocab["<unk>"])
+
+def collate_batch(batch):
+    label_list, text_list, offsets = [], [], [0]
+    for (_label, _text) in batch:
+        label_list.append(int(_label) - 1)
+        processed_text = torch.tensor(vocab(tokenizer(_text)), dtype=torch.int64)
+        text_list.append(processed_text)
+        offsets.append(processed_text.size(0))
+    label_list = torch.tensor(label_list, dtype=torch.int64)
+    text_list = torch.cat(text_list)
+    offsets = torch.tensor(offsets[:-1]).cumsum(dim=0)
+    return label_list, text_list, offsets
+
+train_iter = DBpedia(split='train')
+test_iter = DBpedia(split='test')
+
+train_dataloader = DataLoader(train_iter, batch_size=8, shuffle=True, collate_fn=collate_batch)
+test_dataloader = DataLoader(test_iter, batch_size=8, shuffle=True, collate_fn=collate_batch)
+```
+
+### Conclusión
+
+Este es un flujo básico de cómo entrenar y evaluar un modelo de clasificación de texto con PyTorch. El modelo usa embeddings simples y una capa de clasificación, pero puedes mejorarlo añadiendo capas más complejas como LSTM o CNN. También puedes probar diferentes optimizadores, tasas de aprendizaje y técnicas de regularización para obtener mejores resultados.
+
+## Inferencia utilizando torch.compile(): el presente con PyTorch 2.X
+
+En PyTorch 2.X, se introduce `torch.compile()`, que optimiza el modelo utilizando compiladores JIT (just-in-time) como parte de su proceso de inferencia y entrenamiento. Esto permite una ejecución más rápida al aplicar optimizaciones como fusión de operadores, eliminación de código redundante, y otras mejoras a nivel de rendimiento. La idea es que puedas aprovechar este tipo de optimización con solo una línea adicional en tu código.
+
+Aquí te muestro cómo puedes usar `torch.compile()` en la **inferencia** de un modelo de clasificación de texto con PyTorch 2.X.
+
+### Paso 1: Configuración del modelo
+
+Supongamos que ya tienes un modelo entrenado de clasificación de texto como en el ejemplo anterior:
+
+```python
+# Modelo de clasificación de texto
+class TextClassificationModel(nn.Module):
+    def __init__(self, vocab_size, embed_dim, num_class):
+        super(TextClassificationModel, self).__init__()
+        self.embedding = nn.EmbeddingBag(vocab_size, embed_dim, sparse=True)
+        self.fc = nn.Linear(embed_dim, num_class)
+        self.init_weights()
+
+    def init_weights(self):
+        initrange = 0.5
+        self.embedding.weight.data.uniform_(-initrange, initrange)
+        self.fc.weight.data.uniform_(-initrange, initrange)
+        self.fc.bias.data.zero_()
+
+    def forward(self, text, offsets):
+        embedded = self.embedding(text, offsets)
+        return self.fc(embedded)
+
+# Definimos el vocabulario y las dimensiones del modelo
+VOCAB_SIZE = len(vocab)
+EMBED_DIM = 64
+NUM_CLASS = len(set([label for (label, text) in train_iter]))
+
+model = TextClassificationModel(VOCAB_SIZE, EMBED_DIM, NUM_CLASS)
+```
+
+### Paso 2: Optimización del modelo para inferencia con `torch.compile()`
+
+Con PyTorch 2.X, puedes mejorar la inferencia compilando el modelo de manera directa con `torch.compile()`:
+
+```python
+import torch
+
+# Compilación del modelo para optimización
+compiled_model = torch.compile(model)
+
+# Asumiendo que tienes un tensor de entrada para la inferencia
+# Ejemplo: texto de entrada tokenizado y convertidos a tensores
+def predict(text, offsets):
+    # Colocamos el modelo en modo evaluación
+    compiled_model.eval()
+    
+    with torch.no_grad():  # Desactivamos la actualización de gradientes
+        output = compiled_model(text, offsets)
+        return output.argmax(1).item()
+
+# Simulación de un tensor de texto de prueba
+example_text = torch.tensor([1, 2, 3, 4, 5], dtype=torch.int64)  # Un ejemplo tokenizado
+example_offsets = torch.tensor([0], dtype=torch.int64)
+
+# Inferencia optimizada
+prediccion = predict(example_text, example_offsets)
+print(f"Predicción: {prediccion}")
+```
+
+### Paso 3: Entrenamiento también con `torch.compile()`
+
+Si también quisieras optimizar el **entrenamiento** del modelo, puedes envolver el modelo con `torch.compile()` de la misma forma:
+
+```python
+# Compilamos el modelo para optimizar el entrenamiento
+compiled_model = torch.compile(model)
+
+# Entrenamiento con el modelo compilado
+for epoch in range(epochs):
+    train(train_dataloader, compiled_model, criterion, optimizer)
+    acc = evaluate(test_dataloader, compiled_model, criterion)
+    print(f'Epoch {epoch+1}: Test Accuracy: {acc:.4f}')
+```
+
+### Paso 4: Consideraciones
+
+- `torch.compile()` es especialmente útil para modelos complejos o para ejecutar el modelo en hardware acelerado como GPUs.
+- No afecta la precisión del modelo, pero puede mejorar la velocidad de ejecución.
+- El compilador JIT subyacente puede aplicar optimizaciones en tiempo de ejecución, lo que hace que la primera ejecución sea más lenta, pero las posteriores sean más rápidas.
+
+### Conclusión
+
+Con PyTorch 2.X y `torch.compile()`, puedes fácilmente optimizar tu modelo tanto para **inferencia** como para **entrenamiento** con cambios mínimos en el código. Esta nueva característica facilita la integración de optimizaciones a nivel de compilador sin necesidad de reescribir todo el modelo o flujo de datos.
+
+L**ecturas recomendadas**
+
+[R Package Documentation](https://rdrr.io/)
+
+[torch.compile — PyTorch 2.0 documentation](https://pytorch.org/docs/stable/generated/torch.compile.html)
+
+[torch.compile Tutorial — PyTorch Tutorials 2.0.0+cu117 documentation](https://pytorch.org/tutorials/intermediate/torch_compile_tutorial.html)
+
+## Almacenamiento del modelo con torch.save() y state_dict()
+
+El almacenamiento de modelos en PyTorch se puede realizar de manera eficiente utilizando `torch.save()` y `state_dict()`, que te permite guardar los pesos del modelo (o incluso el modelo completo) para su reutilización posterior, ya sea para continuar el entrenamiento o para realizar inferencias.
+
+A continuación te explico cómo guardar y cargar un modelo en PyTorch usando estas técnicas:
+
+### Paso 1: Guardar el modelo con `torch.save()` y `state_dict()`
+
+Primero, necesitas obtener el `state_dict` del modelo, que es un diccionario que contiene los parámetros del modelo (pesos y biases) optimizados durante el entrenamiento. Luego, se puede guardar este diccionario usando `torch.save()`.
+
+```python
+import torch
+
+# Supongamos que tenemos un modelo ya entrenado
+# Por ejemplo, el modelo de clasificación de texto
+model = TextClassificationModel(VOCAB_SIZE, EMBED_DIM, NUM_CLASS)
+
+# Guardar solo los parámetros del modelo (state_dict)
+torch.save(model.state_dict(), 'modelo_clasificacion_texto.pth')
+
+print("Modelo guardado exitosamente.")
+```
+
+### Paso 2: Cargar el modelo con `load_state_dict()`
+
+Para cargar el modelo, primero necesitas definir la arquitectura del modelo de la misma forma en que fue definida inicialmente. Luego, cargas los parámetros guardados en el `state_dict` con el método `load_state_dict()`.
+
+```python
+# Definición del modelo (misma arquitectura que antes)
+model_cargado = TextClassificationModel(VOCAB_SIZE, EMBED_DIM, NUM_CLASS)
+
+# Cargar el state_dict en el nuevo modelo
+model_cargado.load_state_dict(torch.load('modelo_clasificacion_texto.pth'))
+
+# Poner el modelo en modo de evaluación
+model_cargado.eval()
+
+print("Modelo cargado y listo para inferencia.")
+```
+
+### Paso 3: Guardar el modelo completo (opcional)
+
+Si prefieres guardar el modelo completo (arquitectura + parámetros), también puedes hacerlo. Sin embargo, esta opción es menos flexible, ya que depende de que las versiones de PyTorch sean compatibles al cargar el modelo.
+
+```python
+# Guardar el modelo completo
+torch.save(model, 'modelo_completo.pth')
+
+# Cargar el modelo completo
+model_completo_cargado = torch.load('modelo_completo.pth')
+
+print("Modelo completo cargado exitosamente.")
+```
+
+### Diferencias entre guardar solo el `state_dict()` y el modelo completo:
+
+- **Guardar `state_dict()`**:
+  - Solo guarda los parámetros del modelo.
+  - Es más flexible, ya que puedes cambiar el código o la estructura del modelo, mientras el `state_dict()` sea compatible con la nueva definición del modelo.
+  - Recomendado para la mayoría de los casos.
+  
+- **Guardar el modelo completo**:
+  - Guarda tanto los parámetros como la arquitectura del modelo.
+  - Menos flexible, ya que depende de que la versión de PyTorch y el entorno sean los mismos.
+  - Útil si quieres simplemente cargar y ejecutar el modelo sin redefinir la arquitectura.
+
+### Paso 4: Ejemplo de inferencia con el modelo cargado
+
+Después de cargar el modelo, puedes usarlo para realizar inferencias de la misma forma que lo hacías antes:
+
+```python
+# Inferencia con el modelo cargado
+def predict(text, offsets):
+    model_cargado.eval()  # Asegúrate de ponerlo en modo evaluación
+    with torch.no_grad():  # No se requiere cálculo de gradientes para inferencia
+        output = model_cargado(text, offsets)
+        return output.argmax(1).item()
+
+# Simulación de inferencia con un ejemplo tokenizado
+example_text = torch.tensor([1, 2, 3, 4, 5], dtype=torch.int64)
+example_offsets = torch.tensor([0], dtype=torch.int64)
+
+# Realizar inferencia
+prediccion = predict(example_text, example_offsets)
+print(f"Predicción: {prediccion}")
+```
+
+### Conclusión
+
+- **`torch.save()`** te permite guardar el estado de los parámetros (`state_dict()`) o el modelo completo para su reutilización.
+- **`load_state_dict()`** se utiliza para cargar los parámetros guardados en un modelo previamente definido.
+- Es recomendable guardar el `state_dict()` para mayor flexibilidad, y solo en casos específicos guardar el modelo completo.
+
+Estos métodos son fundamentales para el despliegue de modelos en producción y para la continuación de entrenamientos a partir de puntos de control (`checkpoints`).
+
+## Sube tu modelo de PyTorch a Hugging Face
+
+Subir un modelo de PyTorch a Hugging Face es una excelente manera de compartirlo y hacer que esté disponible para su uso e inferencia. Hugging Face facilita el proceso con sus herramientas como el `transformers` library y `huggingface_hub`. Aquí te dejo los pasos para subir tu modelo de PyTorch a Hugging Face:
+
+### Paso 1: Instalación de `huggingface_hub`
+
+Si aún no tienes la librería `huggingface_hub` instalada, puedes hacerlo con:
+
+```bash
+pip install huggingface_hub
+```
+
+### Paso 2: Autenticación en Hugging Face
+
+Primero, necesitarás un **token de autenticación** de Hugging Face. Para obtenerlo, sigue estos pasos:
+
+1. Dirígete a [Hugging Face](https://huggingface.co/) e inicia sesión o crea una cuenta.
+2. Ve a tu perfil y selecciona **"Settings"**.
+3. En el menú lateral, selecciona **"Access Tokens"**.
+4. Genera un nuevo token con el nombre que desees y copia el token.
+
+Una vez que tengas tu token, ejecuta el siguiente comando en tu entorno Python para autenticarte:
+
+```python
+from huggingface_hub import notebook_login
+
+notebook_login()  # Esto abrirá un enlace para iniciar sesión y pegar tu token.
+```
+
+Sigue las instrucciones para autenticarte con el token.
+
+### Paso 3: Preparación de tu modelo
+
+Primero, asegúrate de tener tu modelo en un formato guardado. Usualmente, si ya has entrenado el modelo, lo tendrás en un archivo `.pth` o `.pt`.
+
+Si aún no lo has guardado, usa `torch.save()` para guardar los pesos del modelo:
+
+```python
+import torch
+
+# Supongamos que tienes un modelo entrenado
+model = TextClassificationModel(VOCAB_SIZE, EMBED_DIM, NUM_CLASS)
+
+# Guardar los parámetros del modelo
+torch.save(model.state_dict(), "mi_modelo.pth")
+```
+
+### Paso 4: Subir el modelo a Hugging Face
+
+Para subir el modelo a Hugging Face, puedes usar la función `HfApi` de `huggingface_hub`.
+
+1. **Sube tu `state_dict()` o tu modelo completo:**
+
+Aquí puedes subir tu archivo de modelo a un nuevo repositorio en Hugging Face:
+
+```python
+from huggingface_hub import HfApi, HfFolder
+
+# Inicializa la API
+api = HfApi()
+
+# Nombre del repositorio en Hugging Face
+repo_name = "mi_modelo_pytorch"
+
+# Crea el repositorio
+api.create_repo(repo_name)
+
+# Subir el archivo del modelo a Hugging Face
+api.upload_file(
+    path_or_fileobj="mi_modelo.pth",
+    path_in_repo="mi_modelo.pth",  # Nombre del archivo en el repositorio
+    repo_id=f"{HfFolder().get_user()}/{repo_name}",
+    repo_type="model",
+)
+```
+
+Este código crea un repositorio y sube el archivo del modelo al repositorio creado en Hugging Face.
+
+2. **Opcional: Subir también el archivo del modelo completo**:
+
+Si quieres subir el modelo completo en lugar de solo el `state_dict()`, usa:
+
+```python
+# Guardar el modelo completo
+torch.save(model, "mi_modelo_completo.pth")
+
+# Subir el archivo del modelo completo
+api.upload_file(
+    path_or_fileobj="mi_modelo_completo.pth",
+    path_in_repo="mi_modelo_completo.pth",
+    repo_id=f"{HfFolder().get_user()}/{repo_name}",
+    repo_type="model",
+)
+```
+
+### Paso 5: Publicación y documentación
+
+Una vez subido el modelo, puedes agregar más detalles al repositorio desde la página web de Hugging Face, como añadir una descripción o ajustar la visibilidad a pública o privada. Si quieres que sea público:
+
+```python
+api.update_repo_visibility(repo_id=f"{HfFolder().get_user()}/{repo_name}", private=False)
+```
+
+### Paso 6: Cargar el modelo desde Hugging Face
+
+Si quieres cargar el modelo que subiste para hacer inferencias en otro lugar, puedes hacerlo con:
+
+```python
+from huggingface_hub import hf_hub_download
+import torch
+
+# Descarga el archivo desde el repositorio
+model_path = hf_hub_download(repo_id="username/mi_modelo_pytorch", filename="mi_modelo.pth")
+
+# Carga el modelo en PyTorch
+model_cargado = TextClassificationModel(VOCAB_SIZE, EMBED_DIM, NUM_CLASS)
+model_cargado.load_state_dict(torch.load(model_path))
+
+# Poner en modo de evaluación
+model_cargado.eval()
+```
+
+### Conclusión
+
+Subir un modelo de PyTorch a Hugging Face te permite compartir tu modelo fácilmente y acceder a él desde cualquier lugar. Hugging Face ofrece una plataforma colaborativa con herramientas para despliegue, gestión y versionado de modelos.
+
+## Carga de modelo de PyTorch con torch.load()
+
+La función `torch.load()` se utiliza en PyTorch para cargar un modelo previamente guardado. Esta función puede cargar tanto el estado de los parámetros del modelo (usando `state_dict()`) como el modelo completo, dependiendo de cómo se haya guardado el archivo.
+
+Aquí te explico las dos formas más comunes de cargar un modelo en PyTorch:
+
+### 1. Cargar solo el `state_dict()`
+
+Cuando guardas solo los pesos y parámetros del modelo (usando `torch.save(model.state_dict())`), puedes cargarlo y reinstanciar el modelo de la siguiente manera:
+
+#### Guardar el `state_dict()` del modelo
+Supongamos que tienes un modelo llamado `TextClassificationModel`:
+
+```python
+import torch
+
+# Definir el modelo (debe coincidir con la arquitectura original)
+model = TextClassificationModel(VOCAB_SIZE, EMBED_DIM, NUM_CLASS)
+
+# Guardar solo los pesos (state_dict)
+torch.save(model.state_dict(), "mi_modelo.pth")
+```
+
+#### Cargar el `state_dict()`
+Para cargar los pesos guardados y asignarlos a una nueva instancia del modelo:
+
+```python
+import torch
+
+# Reinstanciar el modelo (debe tener la misma arquitectura)
+model_cargado = TextClassificationModel(VOCAB_SIZE, EMBED_DIM, NUM_CLASS)
+
+# Cargar el state_dict en el modelo
+model_cargado.load_state_dict(torch.load("mi_modelo.pth"))
+
+# Poner el modelo en modo de evaluación (opcional pero recomendado para inferencias)
+model_cargado.eval()
+```
+
+Es importante que la estructura del modelo que definas al cargar el `state_dict()` sea idéntica a la del modelo que usaste al guardar los pesos.
+
+### 2. Cargar el modelo completo
+
+También puedes guardar el modelo completo, incluyendo tanto la arquitectura como los pesos. Para hacerlo, necesitas guardar la instancia completa del modelo:
+
+#### Guardar el modelo completo
+```python
+import torch
+
+# Guardar el modelo completo
+torch.save(model, "mi_modelo_completo.pth")
+```
+
+#### Cargar el modelo completo
+Para cargar el modelo completo en otro script o entorno:
+
+```python
+import torch
+
+# Cargar el modelo completo (incluyendo la arquitectura y los pesos)
+model_cargado = torch.load("mi_modelo_completo.pth")
+
+# Poner en modo de evaluación
+model_cargado.eval()
+```
+
+### Diferencias entre ambos métodos
+
+- **Cargar el `state_dict()`**: Este método es más flexible y es el más recomendado en la mayoría de los casos, ya que te permite cargar solo los pesos en un modelo predefinido. Esto puede ser útil si cambias algunos aspectos de tu código o realizas ajustes en la arquitectura.
+- **Cargar el modelo completo**: Este método guarda tanto la arquitectura del modelo como los pesos. Es útil si necesitas cargar todo sin tener que definir la arquitectura del modelo nuevamente, pero es menos flexible si tu código cambia.
+
+### Consideraciones al usar `torch.load()`
+
+- **Dispositivos**: Si los modelos fueron entrenados en GPU y deseas cargarlos en CPU, o viceversa, asegúrate de especificar el dispositivo al cargar:
+  
+  - Para cargar en CPU:
+    ```python
+    model = torch.load("mi_modelo_completo.pth", map_location=torch.device('cpu'))
+    ```
+  
+  - Para cargar en GPU (si tienes disponible):
+    ```python
+    model = torch.load("mi_modelo_completo.pth", map_location=torch.device('cuda'))
+    ```
+
+### Ejemplo completo de carga de un modelo con `torch.load()`
+
+```python
+import torch
+
+# Definir el modelo (en caso de usar state_dict)
+model_cargado = TextClassificationModel(VOCAB_SIZE, EMBED_DIM, NUM_CLASS)
+
+# Cargar los pesos guardados
+model_cargado.load_state_dict(torch.load("mi_modelo.pth", map_location=torch.device('cpu')))
+
+# Poner el modelo en modo de evaluación para inferencias
+model_cargado.eval()
+
+# Realizar una inferencia (ejemplo con datos de entrada)
+texto = ["Ejemplo de texto para clasificar"]
+tokens = tokenizador(texto[0])  # Suponiendo que tienes un tokenizador
+ids = torch.tensor([vocab[token] for token in tokens])  # Convertir a IDs
+
+# Hacer la predicción
+output = model_cargado(ids.unsqueeze(0))  # Añadir dimensión de batch
+prediccion = output.argmax(1).item()  # Obtener la clase predicha
+
+print("Clase predicha:", prediccion)
+```
+
+Con estos pasos, puedes cargar un modelo previamente entrenado y usarlo para realizar inferencias o continuar con el entrenamiento.
+
+**Lecturas recomendadas**  
+
+[torch.load — PyTorch 2.0 documentation](https://pytorch.org/docs/stable/generated/torch.load.html)
