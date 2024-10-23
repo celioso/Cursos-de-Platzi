@@ -27,6 +27,7 @@ node_modules/
 /blob-report/
 /playwright/.cache/
 CursoDeDocker/imagenes/
+cats_and_dogs/
 # CursoDeECMAScriptHistoriaYVersionesDeJavaScript/js/
 
 # Created by https://www.toptal.com/developers/gitignore/api/django
