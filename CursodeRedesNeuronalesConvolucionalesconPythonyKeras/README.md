@@ -1482,3 +1482,381 @@ Este modelo es simple y puede mejorar con ajustes más avanzados, como añadir m
 [cifar - clasification | Kaggle](https://www.kaggle.com/alarcon7a/cifar-clasification)
 
 [CNN Explainer](https://poloclub.github.io/cnn-explainer/)
+
+## Data augmentation
+
+**Data augmentation** (aumento de datos) es una técnica comúnmente utilizada en el entrenamiento de redes neuronales para aumentar el tamaño del conjunto de datos de entrenamiento. Se basa en aplicar transformaciones aleatorias a las imágenes de entrenamiento, como rotaciones, cambios de escala, traslaciones, flips, entre otros, para generar nuevas muestras sin necesidad de recolectar más datos. Esto ayuda a reducir el sobreajuste (`overfitting`), mejorando la capacidad de generalización del modelo.
+
+### ¿Por qué es importante?
+En tareas como la clasificación de imágenes, a menudo no se dispone de suficientes datos de entrenamiento, lo que puede llevar a que un modelo aprenda patrones específicos del conjunto de datos en lugar de generalizar bien a nuevas imágenes. Al aumentar artificialmente el tamaño del conjunto de datos con `data augmentation`, se fuerza al modelo a aprender características más robustas.
+
+### Ejemplo de transformaciones comunes en `data augmentation`:
+
+- **Rotación**: Girar la imagen dentro de un rango de grados.
+- **Escalado**: Aumentar o reducir el tamaño de la imagen.
+- **Traslación**: Desplazar la imagen a lo largo del eje X o Y.
+- **Flip**: Voltear la imagen horizontal o verticalmente.
+- **Zoom**: Acercar o alejar ciertas áreas de la imagen.
+
+### Ejemplo usando TensorFlow/Keras
+
+En TensorFlow y Keras, se puede implementar `data augmentation` de manera muy sencilla usando las capas predefinidas de `keras.layers`. Aquí te dejo un ejemplo práctico:
+
+```python
+import tensorflow as tf
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
+import matplotlib.pyplot as plt
+from tensorflow.keras.datasets import cifar10
+
+# Cargar el conjunto de datos CIFAR-10
+(x_train, y_train), (x_test, y_test) = cifar10.load_data()
+
+# Normalizar las imágenes
+x_train = x_train.astype('float32') / 255.0
+x_test = x_test.astype('float32') / 255.0
+
+# Crear el generador de datos con aumentación
+datagen = ImageDataGenerator(
+    rotation_range=30,     # Rotar hasta 30 grados
+    width_shift_range=0.2, # Desplazar horizontalmente hasta un 20%
+    height_shift_range=0.2, # Desplazar verticalmente hasta un 20%
+    zoom_range=0.2,        # Aplicar zoom de hasta un 20%
+    horizontal_flip=True,  # Voltear horizontalmente
+    fill_mode='nearest'    # Rellenar los bordes de la imagen al aplicar transformaciones
+)
+
+# Tomar una muestra de imágenes para demostrar la augmentación
+sample_images = x_train[:5]
+
+# Generar y mostrar las imágenes aumentadas
+fig, ax = plt.subplots(1, 5, figsize=(15, 15))
+
+for i in range(5):
+    augmented_image = datagen.random_transform(sample_images[i])
+    ax[i].imshow(augmented_image)
+    ax[i].axis('off')
+
+plt.show()
+```
+
+### Explicación del código:
+1. **Cargar los datos**: En este caso, se usa el conjunto de datos CIFAR-10, que contiene imágenes de 32x32 píxeles en 10 categorías.
+2. **Normalización**: Las imágenes se escalan a un rango [0, 1] para que el entrenamiento sea más eficiente.
+3. **ImageDataGenerator**: Define las transformaciones para el aumento de datos, como rotación, desplazamiento, zoom y flip horizontal.
+4. **Visualización**: Se aplican las transformaciones aleatorias a algunas imágenes y se muestran para ver el efecto de `data augmentation`.
+
+### Ejemplo de entrenamiento con Data Augmentation:
+
+```python
+# Definir el generador de datos de entrenamiento con augmentación
+train_datagen = ImageDataGenerator(
+    rotation_range=30,
+    width_shift_range=0.2,
+    height_shift_range=0.2,
+    zoom_range=0.2,
+    horizontal_flip=True,
+    fill_mode='nearest'
+)
+
+# Crear el flujo de datos de entrenamiento
+train_generator = train_datagen.flow(x_train, y_train, batch_size=32)
+
+# Definir un modelo simple
+model = tf.keras.models.Sequential([
+    tf.keras.layers.Conv2D(32, (3, 3), activation='relu', input_shape=(32, 32, 3)),
+    tf.keras.layers.MaxPooling2D(pool_size=(2, 2)),
+    tf.keras.layers.Flatten(),
+    tf.keras.layers.Dense(128, activation='relu'),
+    tf.keras.layers.Dense(10, activation='softmax')
+])
+
+model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['accuracy'])
+
+# Entrenar el modelo usando el generador de datos con augmentación
+history = model.fit(train_generator, epochs=10, validation_data=(x_test, y_test))
+```
+
+### Ventajas del Data Augmentation:
+- **Mejora la generalización**: Al presentar variaciones de las imágenes originales, el modelo aprende a identificar características más robustas.
+- **Aumenta el tamaño del conjunto de datos**: Sin necesidad de recopilar más datos reales.
+- **Reduce el sobreajuste**: El modelo evita memorizar los datos exactos de entrenamiento.
+
+### Conclusión
+El `data augmentation` es una herramienta poderosa para mejorar el rendimiento y la capacidad de generalización de los modelos, especialmente cuando se cuenta con conjuntos de datos pequeños o medianos.
+
+**Lecturas recomendadas**
+
+[tf.keras.preprocessing.image.ImageDataGenerator](https://www.tensorflow.org/api_docs/python/tf/keras/preprocessing/image/ImageDataGenerator)
+
+## Aplicando data augmentation
+
+Para aplicar `data augmentation` en tus modelos de clasificación de imágenes, puedes utilizar bibliotecas como TensorFlow y Keras, que proporcionan herramientas fáciles de usar para generar imágenes aumentadas durante el entrenamiento del modelo.
+
+### Pasos para aplicar `data augmentation` en un flujo de trabajo de clasificación de imágenes:
+
+1. **Cargar y preprocesar los datos**: Primero, necesitas un conjunto de datos de imágenes. En este ejemplo usaremos CIFAR-10 como conjunto de datos.
+2. **Definir el generador de imágenes con augmentación**: El generador de datos será el que aplique las transformaciones aleatorias a las imágenes.
+3. **Entrenar el modelo con datos aumentados**: Usar el generador para alimentar el modelo durante el entrenamiento.
+
+### Ejemplo práctico en Keras con `ImageDataGenerator`
+
+```python
+import tensorflow as tf
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
+from tensorflow.keras.datasets import cifar10
+import matplotlib.pyplot as plt
+
+# Cargar el conjunto de datos CIFAR-10
+(x_train, y_train), (x_test, y_test) = cifar10.load_data()
+
+# Normalizar los datos a un rango entre 0 y 1
+x_train = x_train.astype('float32') / 255.0
+x_test = x_test.astype('float32') / 255.0
+
+# Definir el generador de imágenes con augmentación
+datagen = ImageDataGenerator(
+    rotation_range=20,       # Rotación de hasta 20 grados
+    width_shift_range=0.2,   # Desplazamiento horizontal del 20%
+    height_shift_range=0.2,  # Desplazamiento vertical del 20%
+    horizontal_flip=True,    # Voltear la imagen horizontalmente
+    zoom_range=0.2           # Aplicar zoom hasta un 20%
+)
+
+# Previsualización de augmentación en algunas imágenes
+sample_images = x_train[:5]
+fig, axes = plt.subplots(1, 5, figsize=(15, 15))
+
+for i, img in enumerate(sample_images):
+    augmented_image = datagen.random_transform(img)
+    axes[i].imshow(augmented_image)
+    axes[i].axis('off')
+
+plt.show()
+
+# Crear un modelo simple
+model = tf.keras.models.Sequential([
+    tf.keras.layers.Conv2D(32, (3, 3), activation='relu', input_shape=(32, 32, 3)),
+    tf.keras.layers.MaxPooling2D((2, 2)),
+    tf.keras.layers.Conv2D(64, (3, 3), activation='relu'),
+    tf.keras.layers.MaxPooling2D((2, 2)),
+    tf.keras.layers.Flatten(),
+    tf.keras.layers.Dense(64, activation='relu'),
+    tf.keras.layers.Dense(10, activation='softmax')
+])
+
+# Compilar el modelo
+model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['accuracy'])
+
+# Entrenar el modelo usando el generador de datos con augmentación
+history = model.fit(datagen.flow(x_train, y_train, batch_size=32),
+                    epochs=10, validation_data=(x_test, y_test))
+
+# Evaluar el modelo
+test_loss, test_acc = model.evaluate(x_test, y_test)
+print(f'Test accuracy: {test_acc:.4f}')
+```
+
+### Explicación del código:
+
+1. **Cargar y normalizar los datos**: 
+   - Cargamos el conjunto de datos CIFAR-10 y normalizamos los valores de los píxeles a un rango de 0 a 1.
+
+2. **`ImageDataGenerator`**: 
+   - Definimos el generador de imágenes, especificando las transformaciones que queremos aplicar. En este caso, incluimos rotación, traslación horizontal/vertical, zoom y flip horizontal.
+
+3. **Visualización de augmentación**: 
+   - Se muestra cómo algunas imágenes del conjunto de datos original son transformadas aleatoriamente con `data augmentation` para darle más diversidad al conjunto de datos de entrenamiento.
+
+4. **Modelo de red neuronal**: 
+   - Creamos un modelo simple de CNN (red neuronal convolucional) con dos capas convolucionales seguidas de capas de pooling y una capa densa para la clasificación.
+
+5. **Entrenamiento con augmentación**: 
+   - Durante el entrenamiento, las imágenes de entrenamiento se pasan por el generador de datos, el cual aplica `data augmentation` en tiempo real.
+
+6. **Evaluación**: 
+   - Finalmente, se evalúa el modelo en el conjunto de pruebas (sin `data augmentation`).
+
+### ¿Por qué usar `data augmentation`?
+- **Evita el sobreajuste**: El modelo no memoriza los datos de entrenamiento, ya que cada imagen se transforma de manera aleatoria en cada época.
+- **Mejora la generalización**: Al exponer al modelo a múltiples variaciones de las imágenes, se entrena para detectar características importantes de las imágenes y no solo sus características específicas.
+
+### ¿Qué transformaciones aplicar?
+Las transformaciones dependen del tipo de datos con los que estés trabajando. Si tienes imágenes de objetos que pueden estar en diferentes orientaciones, como en CIFAR-10, las transformaciones como rotación, flips y desplazamientos son útiles. Si trabajas con imágenes donde el contexto espacial es importante, como en medicina, deberías ser más cuidadoso con qué transformaciones aplicas.
+
+Este flujo de trabajo es aplicable para muchos otros problemas de visión por computadora y mejora el rendimiento del modelo con conjuntos de datos limitados.
+
+**Lecturas recomendadas**
+
+[Image data preprocessing](https://keras.io/api/preprocessing/image/)
+
+[tf.keras.preprocessing.image.ImageDataGenerator](https://www.tensorflow.org/api_docs/python/tf/keras/preprocessing/image/ImageDataGenerator)
+
+[Data augmentation con Keras | Kaggle](https://www.kaggle.com/alarcon7a/data-augmentation-con-keras)
+
+## Callbacks: early stopping y checkpoints
+
+Los **callbacks** en Keras son funciones especiales que se ejecutan durante el entrenamiento de un modelo. Dos de los callbacks más populares son **Early Stopping** y **Model Checkpoint**. Estos ayudan a mejorar el rendimiento del modelo y a prevenir el sobreajuste. A continuación, te explico cada uno con ejemplos.
+
+### 1. **Early Stopping**
+El **Early Stopping** se usa para detener el entrenamiento cuando el modelo deja de mejorar. Esto previene el sobreentrenamiento y el ajuste excesivo (overfitting) a los datos de entrenamiento.
+
+#### ¿Cómo funciona?
+Monitorea una métrica, como la **pérdida en el conjunto de validación**. Si esa métrica no mejora después de un número determinado de épocas, el entrenamiento se detiene automáticamente.
+
+#### Ejemplo de Early Stopping
+
+```python
+from tensorflow.keras.callbacks import EarlyStopping
+
+# Definir el callback
+early_stopping = EarlyStopping(monitor='val_loss', patience=3, restore_best_weights=True)
+
+# Entrenamiento del modelo con Early Stopping
+history = model.fit(x_train, y_train, 
+                    validation_data=(x_valid, y_valid), 
+                    epochs=50, 
+                    callbacks=[early_stopping])
+```
+
+**Explicación:**
+- `monitor='val_loss'`: Monitorea la pérdida en los datos de validación.
+- `patience=3`: Si la métrica monitoreada no mejora en 3 épocas consecutivas, el entrenamiento se detiene.
+- `restore_best_weights=True`: Al finalizar el entrenamiento, el modelo restaurará los pesos de la época en la que tuvo el mejor rendimiento.
+
+### 2. **Model Checkpoint**
+El **Model Checkpoint** se usa para guardar el modelo durante el entrenamiento. Puedes configurar el callback para que guarde el modelo cuando una métrica específica (por ejemplo, `val_loss`) mejore.
+
+#### ¿Cómo funciona?
+Se guardan los pesos del modelo a medida que el entrenamiento progresa, y se pueden guardar los pesos del mejor modelo o de todos los modelos entrenados.
+
+#### Ejemplo de Model Checkpoint
+
+```python
+from tensorflow.keras.callbacks import ModelCheckpoint
+
+# Definir el callback para guardar los mejores pesos
+checkpoint = ModelCheckpoint('best_model.h5', monitor='val_loss', save_best_only=True, verbose=1)
+
+# Entrenamiento del modelo con Model Checkpoint
+history = model.fit(x_train, y_train, 
+                    validation_data=(x_valid, y_valid), 
+                    epochs=50, 
+                    callbacks=[checkpoint])
+```
+
+**Explicación:**
+- `'best_model.h5'`: Archivo donde se guardarán los pesos del mejor modelo.
+- `monitor='val_loss'`: Monitorea la pérdida en los datos de validación.
+- `save_best_only=True`: Solo se guardará el modelo cuando haya una mejora en la métrica monitoreada.
+- `verbose=1`: Muestra mensajes detallados sobre cuándo se guarda el modelo.
+
+
+### Combinando **Early Stopping** y **Model Checkpoint**
+
+También puedes usar ambos callbacks juntos para que el modelo se detenga automáticamente y se guarden los mejores pesos.
+
+```python
+# Definir ambos callbacks
+early_stopping = EarlyStopping(monitor='val_loss', patience=3, restore_best_weights=True)
+checkpoint = ModelCheckpoint('best_model.h5', monitor='val_loss', save_best_only=True, verbose=1)
+
+# Entrenamiento del modelo con ambos callbacks
+history = model.fit(x_train, y_train, 
+                    validation_data=(x_valid, y_valid), 
+                    epochs=50, 
+                    callbacks=[early_stopping, checkpoint])
+```
+
+Esto garantizará que el modelo se detenga cuando deje de mejorar y que se guarde el mejor modelo encontrado durante el entrenamiento.
+
+### Resumen:
+- **Early Stopping**: Detiene el entrenamiento cuando el modelo deja de mejorar, evitando el sobreajuste.
+- **Model Checkpoint**: Guarda el modelo cuando mejora durante el entrenamiento, permitiendo usar los mejores pesos encontrados.
+
+Ambos son herramientas importantes para entrenar redes neuronales de manera eficiente y evitar el sobreajuste.
+
+**Lecturas recomendadas**
+
+[Callbacks API](https://keras.io/api/callbacks/)
+
+[Mi primera red neuronal convolucional | Kaggle](https://www.kaggle.com/alarcon7a/mi-primera-red-neuronal-convolucional)
+
+## Batch normalization
+
+**Batch Normalization** es una técnica utilizada en redes neuronales profundas para acelerar el entrenamiento y mejorar la estabilidad del modelo. Esta técnica normaliza la salida de una capa antes de pasarla a la siguiente capa. Esto reduce el problema conocido como **internal covariate shift**, que se refiere a los cambios en la distribución de las activaciones de la red durante el entrenamiento, lo que puede hacer que el entrenamiento sea más lento y menos estable.
+
+### ¿Cómo funciona Batch Normalization?
+1. **Normalización**: En cada mini-batch, se normalizan las activaciones de una capa, es decir, se convierten a una media de 0 y una varianza de 1. Esto se hace para cada característica del batch.
+2. **Escalado y desplazamiento**: Después de la normalización, se aplican dos parámetros aprendibles: un factor de escalado (`gamma`) y un desplazamiento (`beta`). Esto permite que la red ajuste la salida de la normalización y no se limite a una distribución estricta con media 0 y varianza 1.
+
+### Fórmulas
+Para cada activación \( x \) en el mini-batch:
+- \( \mu_B = \frac{1}{m} \sum_{i=1}^{m} x_i \) (media del batch)
+- \( \sigma_B^2 = \frac{1}{m} \sum_{i=1}^{m} (x_i - \mu_B)^2 \) (varianza del batch)
+  
+La normalización se hace así:
+- \( \hat{x_i} = \frac{x_i - \mu_B}{\sqrt{\sigma_B^2 + \epsilon}} \)
+
+Luego, se aplica escalado y desplazamiento:
+- \( y_i = \gamma \hat{x_i} + \beta \)
+
+Donde \( \epsilon \) es un pequeño valor para evitar la división por cero, y \( \gamma \) y \( \beta \) son parámetros aprendibles.
+
+### Ventajas de Batch Normalization
+1. **Acelera el entrenamiento**: Reduce la necesidad de tasas de aprendizaje extremadamente pequeñas, lo que permite que el modelo converja más rápido.
+2. **Reduce la sensibilidad a la inicialización de pesos**.
+3. **Actúa como una forma de regularización**, ya que introduce algo de ruido en el proceso de entrenamiento, similar al dropout.
+4. **Mejora la estabilidad del modelo**: Ayuda a evitar la saturación en las funciones de activación no lineales, como la sigmoide o la tangente hiperbólica.
+
+### Ejemplo en Keras
+
+Implementar Batch Normalization en una red convolucional utilizando Keras es muy sencillo. Solo se necesita añadir una capa `BatchNormalization` después de una capa de activación o convolución.
+
+```python
+import tensorflow as tf
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Conv2D, MaxPooling2D, Flatten, Dense, BatchNormalization, Dropout
+
+# Crear el modelo secuencial
+model = Sequential()
+
+# Primera capa convolucional
+model.add(Conv2D(32, (3, 3), activation='relu', input_shape=(28, 28, 1)))
+model.add(BatchNormalization())  # Aplicar Batch Normalization
+model.add(MaxPooling2D(pool_size=(2, 2)))
+
+# Segunda capa convolucional
+model.add(Conv2D(64, (3, 3), activation='relu'))
+model.add(BatchNormalization())  # Aplicar Batch Normalization
+model.add(MaxPooling2D(pool_size=(2, 2)))
+
+# Aplanar y crear la capa completamente conectada
+model.add(Flatten())
+model.add(Dense(128, activation='relu'))
+model.add(BatchNormalization())  # Aplicar Batch Normalization
+model.add(Dropout(0.5))
+
+# Capa de salida
+model.add(Dense(10, activation='softmax'))
+
+# Compilar el modelo
+model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
+
+# Resumen del modelo
+model.summary()
+```
+
+### Explicación del ejemplo:
+1. **Capa Convolucional**: Primero tenemos una capa convolucional con 32 filtros de tamaño (3, 3) y activación ReLU.
+2. **Batch Normalization**: Después de cada capa convolucional y densa, añadimos una capa `BatchNormalization`. Esta normaliza las activaciones en mini-batches, mejorando la estabilidad y el rendimiento.
+3. **MaxPooling y Dropout**: MaxPooling reduce las dimensiones espaciales y el Dropout se usa como regularización adicional.
+4. **Capa de salida**: Es una capa completamente conectada con 10 neuronas (correspondientes a 10 clases en una clasificación).
+
+El modelo se entrena como cualquier otro modelo en Keras, pero con Batch Normalization, el entrenamiento será más rápido y probablemente más estable.
+
+### Conclusión
+Batch Normalization es una técnica fundamental en el diseño de redes neuronales modernas, que mejora tanto la eficiencia como la robustez del entrenamiento de modelos de aprendizaje profundo.
+
+**Lecturas recomendadas**
+
+[BatchNormalization layer](https://keras.io/api/layers/normalization_layers/batch_normalization/)
