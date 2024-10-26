@@ -4740,3 +4740,371 @@ Si hay algún error de tipo, `mypy` lo señalará, ayudándote a corregirlo ante
 ### Conclusión
 
 `mypy` es una herramienta poderosa para mejorar la calidad del código en proyectos de Python, proporcionando verificación de tipos estáticos y ayudando a los desarrolladores a escribir un código más seguro y mantenible.
+
+## Validación de tipos en métodos
+
+La validación de tipos en métodos en Python es una práctica que se utiliza para asegurar que los argumentos de las funciones o métodos tienen los tipos esperados. Esto puede ayudar a prevenir errores en tiempo de ejecución y facilitar la comprensión del código. A continuación, se presentan varias maneras de implementar la validación de tipos en métodos:
+
+### 1. Anotaciones de Tipo
+
+Desde Python 3.5, se pueden utilizar anotaciones de tipo para indicar qué tipos de datos se esperan como argumentos y qué tipo se devolverá. Sin embargo, estas anotaciones son solo sugerencias y no imponen la validación de tipos en tiempo de ejecución. Aún así, se pueden usar herramientas como `mypy` para comprobar las anotaciones de tipo.
+
+```python
+def add(a: int, b: int) -> int:
+    return a + b
+
+print(add(5, 10))  # Salida: 15
+```
+
+### 2. Validación Manual de Tipos
+
+Si deseas realizar la validación de tipos en tiempo de ejecución, puedes hacerlo utilizando `isinstance` dentro del método.
+
+```python
+def add(a: int, b: int) -> int:
+    if not isinstance(a, int) or not isinstance(b, int):
+        raise TypeError("Los argumentos deben ser enteros.")
+    return a + b
+
+try:
+    print(add(5, 10))  # Salida: 15
+    print(add(5, '10'))  # Esto generará un TypeError
+except TypeError as e:
+    print(e)  # Salida: Los argumentos deben ser enteros.
+```
+
+### 3. Uso de Decoradores
+
+También puedes crear un decorador para manejar la validación de tipos en múltiples funciones o métodos, lo que hace que tu código sea más limpio y reutilizable.
+
+```python
+def type_check(*arg_types):
+    def decorator(func):
+        def wrapper(*args):
+            for a, t in zip(args, arg_types):
+                if not isinstance(a, t):
+                    raise TypeError(f"Argumento {a} no es de tipo {t.__name__}.")
+            return func(*args)
+        return wrapper
+    return decorator
+
+@type_check(int, int)
+def add(a, b):
+    return a + b
+
+try:
+    print(add(5, 10))  # Salida: 15
+    print(add(5, '10'))  # Esto generará un TypeError
+except TypeError as e:
+    print(e)  # Salida: Argumento 10 no es de tipo int.
+```
+
+### 4. Librerías de Validación
+
+Existen librerías externas como `pydantic` y `attrs` que pueden ayudarte a manejar la validación de tipos y la creación de clases de forma más robusta y concisa.
+
+#### Ejemplo con Pydantic
+
+```python
+from pydantic import BaseModel
+
+class Item(BaseModel):
+    name: str
+    price: float
+
+item = Item(name="Libro", price=12.99)
+print(item)
+```
+
+### Conclusión
+
+La validación de tipos es una práctica importante en Python para asegurar la calidad y la robustez del código. Puedes optar por usar anotaciones de tipo junto con herramientas de análisis estático, o bien implementar validaciones manuales o usar decoradores para garantizar que los métodos reciban los tipos de datos esperados.
+
+## Librería Collections y Enumeraciones
+
+La librería `collections` de Python proporciona varios tipos de datos adicionales que pueden ser muy útiles para manipular estructuras de datos de manera más eficiente y con mayor flexibilidad. `Enum` es otra característica de Python, proporcionada por el módulo `enum`, que permite definir conjuntos de valores constantes, conocidos como enumeraciones, con nombres significativos.
+
+### 1. `collections`: Tipos de Datos Especializados
+
+Aquí tienes algunos de los tipos de datos más importantes en `collections`:
+
+#### `Counter`
+`Counter` es un diccionario especializado para contar elementos hashables, como caracteres en una cadena o elementos en una lista.
+
+```python
+from collections import Counter
+
+texto = "banana"
+contador = Counter(texto)
+print(contador)  # Salida: Counter({'a': 3, 'n': 2, 'b': 1})
+```
+
+#### `deque`
+`deque` (double-ended queue) es una estructura de datos que permite agregar y eliminar elementos desde ambos extremos de la cola de manera eficiente.
+
+```python
+from collections import deque
+
+d = deque([1, 2, 3])
+d.append(4)       # Agrega al final
+d.appendleft(0)   # Agrega al principio
+print(d)          # Salida: deque([0, 1, 2, 3, 4])
+```
+
+#### `defaultdict`
+`defaultdict` es como un diccionario regular, pero permite especificar un valor por defecto para claves no existentes.
+
+```python
+from collections import defaultdict
+
+def_dict = defaultdict(int)
+def_dict['a'] += 1
+print(def_dict)  # Salida: defaultdict(<class 'int'>, {'a': 1})
+```
+
+#### `namedtuple`
+`namedtuple` permite definir tuplas con nombres para cada elemento, lo que las hace más legibles y permite acceder a los valores por nombre.
+
+```python
+from collections import namedtuple
+
+Punto = namedtuple('Punto', ['x', 'y'])
+p = Punto(3, 5)
+print(p.x, p.y)  # Salida: 3 5
+```
+
+#### `OrderedDict`
+`OrderedDict` es como un diccionario regular, pero mantiene el orden de los elementos según el orden de inserción.
+
+```python
+from collections import OrderedDict
+
+orden_dict = OrderedDict()
+orden_dict['a'] = 1
+orden_dict['b'] = 2
+orden_dict['c'] = 3
+print(orden_dict)  # Salida: OrderedDict([('a', 1), ('b', 2), ('c', 3)])
+```
+
+### 2. `Enum`: Enumeraciones
+
+Las enumeraciones son colecciones de constantes con nombres simbólicos que mejoran la legibilidad del código y evitan errores en valores repetidos o difíciles de entender.
+
+Para crear una enumeración en Python, puedes usar la clase `Enum` del módulo `enum`:
+
+```python
+from enum import Enum
+
+class DiaSemana(Enum):
+    LUNES = 1
+    MARTES = 2
+    MIERCOLES = 3
+    JUEVES = 4
+    VIERNES = 5
+
+print(DiaSemana.LUNES)         # Salida: DiaSemana.LUNES
+print(DiaSemana.LUNES.name)    # Salida: LUNES
+print(DiaSemana.LUNES.value)   # Salida: 1
+```
+
+#### Enumeraciones avanzadas: `IntEnum` y `auto()`
+- **IntEnum**: Permite que las enumeraciones se comporten como enteros.
+- **auto()**: Asigna automáticamente valores secuenciales.
+
+```python
+from enum import IntEnum, auto
+
+class Nivel(IntEnum):
+    BAJO = auto()
+    MEDIO = auto()
+    ALTO = auto()
+
+print(Nivel.BAJO)      # Salida: Nivel.BAJO
+print(Nivel.BAJO.value)  # Salida: 1
+```
+
+### Conclusión
+
+- `collections` ofrece estructuras de datos eficientes para tareas comunes de manipulación de datos.
+- `Enum` ayuda a definir constantes simbólicas, mejorando la legibilidad y evitando errores de valores ambiguos.
+
+Ambas herramientas amplían las funcionalidades de Python de una manera eficaz y elegante.
+
+**Archivos de la clase**
+
+[1-fundamentos-avanzados-20241024t123600z-001.zip](https://static.platzi.com/media/public/uploads/1-fundamentos-avanzados-20241024t123600z-001_b1d58ae2-f393-443f-9aae-d4b533d48698.zip)
+
+**Lecturas recomendadas**
+
+[GitHub - platzi/python-avanzado at collections](https://github.com/platzi/python-avanzado/tree/collections)
+
+## Decoradores en Python
+
+Los decoradores en Python son funciones que modifican el comportamiento de otras funciones o métodos. Son una herramienta muy útil para añadir funcionalidades o preprocesamientos sin tener que cambiar el código original de la función decorada.
+
+### ¿Qué es un Decorador?
+
+Un decorador es una función que toma otra función como argumento y le añade funcionalidades adicionales. Devuelve una nueva función modificada o envuelta con el comportamiento adicional.
+
+La sintaxis básica de un decorador utiliza el símbolo `@` seguido del nombre del decorador antes de la definición de la función que se quiere decorar:
+
+```python
+@mi_decorador
+def funcion():
+    pass
+```
+
+### Ejemplo Básico de Decorador
+
+Aquí tienes un ejemplo de un decorador que muestra un mensaje antes y después de ejecutar la función:
+
+```python
+def mi_decorador(funcion):
+    def wrapper():
+        print("Antes de la función")
+        funcion()
+        print("Después de la función")
+    return wrapper
+
+@mi_decorador
+def saludo():
+    print("Hola")
+
+saludo()
+```
+
+**Salida:**
+```plaintext
+Antes de la función
+Hola
+Después de la función
+```
+
+### Decoradores con Argumentos en las Funciones
+
+Si la función original toma argumentos, el decorador debe adaptarse para recibirlos y pasarlos correctamente:
+
+```python
+def decorador_con_argumentos(funcion):
+    def wrapper(*args, **kwargs):
+        print("Llamando a la función con argumentos:", args, kwargs)
+        resultado = funcion(*args, **kwargs)
+        print("Resultado:", resultado)
+        return resultado
+    return wrapper
+
+@decorador_con_argumentos
+def suma(a, b):
+    return a + b
+
+suma(3, 5)
+```
+
+**Salida:**
+```plaintext
+Llamando a la función con argumentos: (3, 5) {}
+Resultado: 8
+```
+
+### Decoradores Anidados
+
+Se pueden aplicar varios decoradores a una misma función. En este caso, los decoradores se aplican en orden desde el más cercano a la función hacia el exterior:
+
+```python
+def decorador1(funcion):
+    def wrapper():
+        print("Decorador 1")
+        funcion()
+    return wrapper
+
+def decorador2(funcion):
+    def wrapper():
+        print("Decorador 2")
+        funcion()
+    return wrapper
+
+@decorador1
+@decorador2
+def mi_funcion():
+    print("Función original")
+
+mi_funcion()
+```
+
+**Salida:**
+```plaintext
+Decorador 1
+Decorador 2
+Función original
+```
+
+### Decoradores de Clase
+
+Los decoradores no solo se limitan a funciones; también pueden aplicarse a clases para modificar su comportamiento. Aquí tienes un ejemplo de decorador que modifica el método `__init__` de una clase:
+
+```python
+def decorador_clase(cls):
+    class NuevaClase(cls):
+        def __init__(self, *args, **kwargs):
+            print("Iniciando con decorador de clase")
+            super().__init__(*args, **kwargs)
+    return NuevaClase
+
+@decorador_clase
+class Persona:
+    def __init__(self, nombre):
+        self.nombre = nombre
+
+p = Persona("Carlos")
+```
+
+**Salida:**
+```plaintext
+Iniciando con decorador de clase
+```
+
+### Decoradores Integrados en Python
+
+Python ofrece algunos decoradores integrados, como:
+
+- `@staticmethod`: Define métodos estáticos que no requieren una instancia de la clase.
+- `@classmethod`: Define métodos de clase que reciben la clase como primer argumento en lugar de la instancia.
+- `@property`: Define métodos como propiedades, permitiendo acceso a métodos como si fueran atributos.
+
+### Decoradores con Argumentos Propios
+
+A veces, es útil que un decorador acepte argumentos. En estos casos, el decorador se define dentro de otra función, lo cual permite que la función exterior reciba argumentos:
+
+```python
+def decorador_con_parametros(mensaje):
+    def decorador(funcion):
+        def wrapper(*args, **kwargs):
+            print(mensaje)
+            return funcion(*args, **kwargs)
+        return wrapper
+    return decorador
+
+@decorador_con_parametros("Ejecutando función")
+def resta(a, b):
+    return a - b
+
+resta(10, 3)
+```
+
+**Salida:**
+```plaintext
+Ejecutando función
+```
+
+### Conclusión
+
+Los decoradores son una herramienta poderosa en Python que permite modificar funciones y métodos sin cambiar su implementación interna, siendo útiles para casos como:
+
+- Validación de datos
+- Manejo de excepciones
+- Medición de tiempo de ejecución
+- Creación de APIs
+
+**Lecturas recomendadas**
+
+[GitHub - platzi/python-avanzado at decoradores](https://github.com/platzi/python-avanzado/tree/decoradores)
