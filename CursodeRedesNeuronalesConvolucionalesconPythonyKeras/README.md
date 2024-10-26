@@ -2206,3 +2206,121 @@ hist = model.fit(train_generator,
 [Dogs vs. Cats | Kaggle](https://www.kaggle.com/c/dogs-vs-cats)
 
 [Perros vs. gatos | Kaggle](https://www.kaggle.com/alarcon7a/perros-vs-gatos)
+
+## Entrenamiento del modelo de clasificación de perros y gatos
+
+Para entrenar un modelo de clasificación de perros y gatos con una red convolucional en Keras, puedes seguir estos pasos usando imágenes de entrenamiento y validación, además de técnicas de **Data Augmentation** para mejorar el rendimiento del modelo:
+
+### Paso 1: Preparar el Dataset
+Para este ejemplo, se asume que tienes las imágenes de perros y gatos en carpetas separadas para el conjunto de entrenamiento y validación:
+
+```
+data/
+├── train/
+│   ├── dogs/  # imágenes de perros
+│   └── cats/  # imágenes de gatos
+└── validation/
+    ├── dogs/
+    └── cats/
+```
+
+### Paso 2: Crear el Modelo
+
+```python
+import tensorflow as tf
+from tensorflow.keras import layers, models
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
+
+# Crear la red convolucional
+model = models.Sequential([
+    layers.Conv2D(32, (3, 3), activation='relu', input_shape=(150, 150, 3)),
+    layers.MaxPooling2D((2, 2)),
+    layers.Conv2D(64, (3, 3), activation='relu'),
+    layers.MaxPooling2D((2, 2)),
+    layers.Conv2D(128, (3, 3), activation='relu'),
+    layers.MaxPooling2D((2, 2)),
+    layers.Conv2D(128, (3, 3), activation='relu'),
+    layers.MaxPooling2D((2, 2)),
+    layers.Flatten(),
+    layers.Dropout(0.5),
+    layers.Dense(512, activation='relu'),
+    layers.Dense(1, activation='sigmoid')
+])
+
+model.compile(loss='binary_crossentropy',
+              optimizer='adam',
+              metrics=['accuracy'])
+
+model.summary()
+```
+
+### Paso 3: Generar los Datos con Aumento de Datos
+
+```python
+train_datagen = ImageDataGenerator(
+    rescale=1./255,
+    rotation_range=20,
+    width_shift_range=0.2,
+    height_shift_range=0.2,
+    shear_range=0.2,
+    zoom_range=0.2,
+    horizontal_flip=True
+)
+
+validation_datagen = ImageDataGenerator(rescale=1./255)
+
+train_generator = train_datagen.flow_from_directory(
+    'data/train',
+    target_size=(150, 150),
+    batch_size=32,
+    class_mode='binary'
+)
+
+validation_generator = validation_datagen.flow_from_directory(
+    'data/validation',
+    target_size=(150, 150),
+    batch_size=32,
+    class_mode='binary'
+)
+```
+
+### Paso 4: Entrenar el Modelo con Callbacks
+
+```python
+checkpoint = tf.keras.callbacks.ModelCheckpoint(
+    filepath='best_model.keras',
+    monitor='val_accuracy',
+    save_best_only=True,
+    verbose=1
+)
+
+early_stopping = tf.keras.callbacks.EarlyStopping(
+    monitor='val_loss',
+    patience=5,
+    verbose=1,
+    restore_best_weights=True
+)
+
+history = model.fit(
+    train_generator,
+    steps_per_epoch=train_generator.samples // 32,
+    epochs=30,
+    validation_data=validation_generator,
+    validation_steps=validation_generator.samples // 32,
+    callbacks=[checkpoint, early_stopping]
+)
+```
+
+### Paso 5: Evaluar el Modelo
+Una vez entrenado, puedes evaluar el modelo en el conjunto de validación:
+
+```python
+loss, accuracy = model.evaluate(validation_generator)
+print(f'Accuracy: {accuracy*100:.2f}%')
+```
+
+Este modelo utiliza varias capas convolucionales y una capa de `Dropout` para evitar el sobreajuste, junto con técnicas de **Data Augmentation** para mejorar su capacidad de generalización. Los `callbacks` de **checkpoint** y **early stopping** guardan el mejor modelo y detienen el entrenamiento si el rendimiento no mejora.
+
+**Lecturas recomendadas**
+
+[Perros vs. gatos | Kaggle](https://www.kaggle.com/alarcon7a/perros-vs-gatos)
