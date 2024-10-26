@@ -4283,3 +4283,460 @@ Estas tres bibliotecas son esenciales para realizar tareas comunes como la manip
 [os — Interfaces misceláneas del sistema operativo — documentación de Python - 3.10.13](https://docs.python.org/es/3.10/library/os.html "os — Interfaces misceláneas del sistema operativo — documentación de Python - 3.10.13")
 
 [random — Generate pseudo-random numbers — documentación de Python - 3.12.5](https://docs.python.org/es/3/library/random.html "random — Generate pseudo-random numbers — documentación de Python - 3.12.5")
+
+## Recapitulación de lo aprendido hasta ahora
+
+### Recapitulación de lo aprendido hasta ahora
+
+![Python Advanced Concepts Illustration](images/Python_Advanced_Concepts_Illustration.png)
+
+Hasta este punto, has recorrido los fundamentos de Python: su sintaxis, las estructuras de control, las funciones y el manejo básico de la biblioteca estándar. Estos conceptos son esenciales para cualquier programador y te han preparado para el siguiente paso en tu camino.
+
+### Motivación: La importancia de avanzar
+
+Ahora, es momento de dar un paso más y enfrentar desafíos más complejos. Aprender a escribir código Pythonico y profesional no solo te permitirá resolver problemas de una manera más eficiente y limpia, sino que te abrirá la puerta a proyectos más ambiciosos y demandantes.
+
+En esta nueva etapa, es crucial contar con conocimientos sólidos sobre:
+
+- **Programación orientada a objetos (POO)**: cómo estructurar mejor tu código, creando clases y objetos que sean reutilizables y fáciles de entender.
+- **Manejo avanzado de excepciones**: cómo gestionar errores de forma elegante y robusta.
+- **Decoradores y generadores**: formas avanzadas de controlar el flujo de tu código y maximizar la eficiencia.
+- **Módulos y paquetes**: cómo organizar y estructurar grandes proyectos de forma profesional.
+- **Escritura de código eficiente y legible**: técnicas para escribir código que no solo funcione, sino que sea mantenible y optimizado.
+
+### El Proyecto: El no negociable
+
+La mejor manera de consolidar estos nuevos conocimientos es aplicarlos en un proyecto práctico. Esta sección final te guiará en el desarrollo de un proyecto completo, donde aplicarás lo aprendido en esta sección avanzada.
+
+El proyecto será la herramienta clave que te permitirá interiorizar estos conceptos. A través de él, aprenderás no solo a resolver problemas complejos, sino a **pensar como un desarrollador profesional**. Recuerda: la teoría es importante, pero solo se convierte en aprendizaje real cuando la pones en práctica. Este proyecto es el “no negociable”: es lo que te hará aprender o aprender.
+
+### ¿Qué podrás hacer con estos nuevos conocimientos?
+
+Al completar este módulo y el proyecto, serás capaz de:
+
+- Escribir código Python eficiente, limpio y estructurado.
+- Resolver problemas complejos con un enfoque orientado a objetos.
+- Utilizar módulos y paquetes para crear proyectos escalables.
+- Manejar excepciones y errores de forma profesional, asegurando que tu código sea robusto.
+- Trabajar en proyectos reales aplicando las mejores prácticas de la industria.
+
+### Conclusión: El camino hacia la maestría
+
+Este es un paso crucial en tu carrera como desarrollador. Con este nuevo nivel de comprensión, estarás preparado para abordar cualquier desafío que Python te presente y crear proyectos que impacten en el mundo real. ¡Es momento de avanzar, aprender y construir!
+
+## Escribir código Pythonico y profesional
+
+Escribir código Pythonico y profesional implica seguir ciertas convenciones y mejores prácticas que mejoran la legibilidad, mantenibilidad y eficiencia del código. Aquí hay algunas pautas y ejemplos:
+
+### 1. **Nombres Significativos**
+Usa nombres claros y descriptivos para variables, funciones y clases.
+
+```python
+def calculate_area(radius):
+    """Calcula el área de un círculo dado su radio."""
+    import math
+    return math.pi * radius ** 2
+```
+
+### 2. **Funciones y Métodos Breves**
+Las funciones deben realizar una única tarea y ser lo más cortas posible.
+
+```python
+def is_even(number):
+    """Devuelve True si el número es par, de lo contrario False."""
+    return number % 2 == 0
+```
+
+### 3. **Uso de Docstrings**
+Documenta tus funciones y clases usando docstrings para describir su propósito y uso.
+
+```python
+class Circle:
+    """Clase que representa un círculo."""
+
+    def __init__(self, radius):
+        """Inicializa el círculo con un radio."""
+        self.radius = radius
+
+    def area(self):
+        """Calcula el área del círculo."""
+        import math
+        return math.pi * (self.radius ** 2)
+```
+
+### 4. **Listas por Comprensión**
+Usa listas por comprensión para crear listas de manera más clara y eficiente.
+
+```python
+squares = [x**2 for x in range(10)]
+```
+
+### 5. **Manejo de Errores**
+Usa excepciones para manejar errores de forma limpia.
+
+```python
+def divide(a, b):
+    """Divide dos números, manejando división por cero."""
+    try:
+        return a / b
+    except ZeroDivisionError:
+        return "No se puede dividir entre cero."
+```
+
+### 6. **Uso de `with` para Recursos**
+Utiliza el manejo de contexto `with` para asegurarte de que los recursos se liberan adecuadamente.
+
+```python
+with open('archivo.txt', 'r') as file:
+    contenido = file.read()
+```
+
+### 7. **Organización del Código**
+Organiza tu código en módulos y paquetes. Mantén una estructura lógica y usa un archivo `__init__.py` si es necesario.
+
+### 8. **Formato de Código**
+Usa herramientas como `black` o `flake8` para formatear tu código y mantener la consistencia.
+
+### Ejemplo Completo
+
+Aquí tienes un ejemplo completo que sigue las buenas prácticas:
+
+```python
+import math
+
+class Circle:
+    """Clase que representa un círculo."""
+
+    def __init__(self, radius):
+        """Inicializa el círculo con un radio."""
+        self.radius = radius
+
+    def area(self):
+        """Calcula el área del círculo."""
+        return math.pi * (self.radius ** 2)
+
+def main():
+    """Función principal del script."""
+    radius = float(input("Introduce el radio del círculo: "))
+    circle = Circle(radius)
+    print(f"El área del círculo es: {circle.area():.2f}")
+
+if __name__ == "__main__":
+    main()
+```
+
+Este ejemplo muestra cómo estructurar el código de manera clara, usar docstrings, y manejar la entrada del usuario de forma segura y eficiente.
+
+**Lecturas recomendadas**
+
+[GitHub - platzi/python-avanzado at pythonicCode](https://github.com/platzi/python-avanzado/tree/pythonicCode)
+
+## Comentarios y Docstrings en Python
+
+Los comentarios y docstrings son herramientas importantes en Python para mejorar la legibilidad y el mantenimiento del código. Aquí te explico cómo usarlos de manera efectiva.
+
+### Comentarios
+
+Los comentarios se utilizan para explicar el código, hacer aclaraciones sobre ciertas decisiones de diseño o proporcionar contexto sobre la lógica. Deben ser claros y concisos. En Python, los comentarios comienzan con el símbolo `#`.
+
+#### Ejemplo de Comentarios
+
+```python
+# Este es un comentario de una sola línea
+
+def calcular_area_circulo(radio):
+    """Calcula el área de un círculo dado su radio."""
+    # Usamos la constante pi de la librería math
+    import math
+    return math.pi * (radio ** 2)  # Devuelve el área
+```
+
+### Docstrings
+
+Los docstrings son cadenas de documentación que se colocan al principio de funciones, métodos y clases para describir su propósito y cómo se deben usar. Se encierran entre triples comillas `"""` y pueden ocupar varias líneas. Esto permite que sean accesibles a través de la función `help()` en Python.
+
+#### Ejemplo de Docstrings
+
+```python
+def calcular_area_circulo(radio):
+    """
+    Calcula el área de un círculo dado su radio.
+
+    Parámetros:
+    radio (float): El radio del círculo.
+
+    Retorna:
+    float: El área del círculo.
+    """
+    import math
+    return math.pi * (radio ** 2)
+```
+
+### Mejores Prácticas para Comentarios y Docstrings
+
+1. **Sé claro y conciso**: Los comentarios y docstrings deben ser fácilmente comprensibles y directos. Evita la jerga innecesaria.
+
+2. **Usa el estilo de documentación estándar**: Para docstrings, se recomienda seguir convenciones como [PEP 257](https://www.python.org/dev/peps/pep-0257/) o [Google Style Guide](https://google.github.io/styleguide/pyguide.html#383-docstrings).
+
+3. **Actualiza los comentarios y docstrings**: Si realizas cambios en el código, asegúrate de actualizar los comentarios y docstrings para reflejar esos cambios.
+
+4. **Evita comentarios redundantes**: No escribas comentarios que repitan lo que el código ya dice. Por ejemplo, no es necesario comentar que una línea de código suma dos números si la línea ya es explícita.
+
+### Ejemplo Completo con Comentarios y Docstrings
+
+Aquí tienes un ejemplo más completo que incorpora tanto comentarios como docstrings:
+
+```python
+import math
+
+class Circulo:
+    """
+    Clase que representa un círculo.
+
+    Atributos:
+    radio (float): El radio del círculo.
+    """
+
+    def __init__(self, radio):
+        """
+        Inicializa un círculo con el radio dado.
+
+        Parámetros:
+        radio (float): El radio del círculo.
+        """
+        self.radio = radio
+
+    def area(self):
+        """
+        Calcula el área del círculo.
+
+        Retorna:
+        float: El área del círculo.
+        """
+        return math.pi * (self.radio ** 2)  # Área = π * r²
+
+    def __str__(self):
+        """Devuelve una representación en cadena del círculo."""
+        return f"Círculo de radio {self.radio}"
+
+# Ejemplo de uso
+if __name__ == "__main__":
+    circulo = Circulo(5)  # Crear un círculo con un radio de 5
+    print(circulo)  # Imprime la representación del círculo
+    print(f"Área: {circulo.area():.2f}")  # Imprime el área del círculo
+```
+
+En este ejemplo, se utilizan comentarios para aclarar partes del código y se proporcionan docstrings que describen la funcionalidad de la clase y sus métodos. Esto ayuda a otros desarrolladores (y a ti mismo en el futuro) a comprender rápidamente el propósito y el funcionamiento del código.
+
+**Lecturas recomendadas**
+
+[Google Colab](https://colab.research.google.com/drive/1CKFfLQPzvzFEYHS8NigzJm4vUHWOJgfu?usp=sharing)
+
+[GitHub - platzi/python-avanzado at Docstrings](https://github.com/platzi/python-avanzado/tree/Docstrings)
+
+## Scope y closures: variables locales y globales
+
+En Python, **scope** (alcance) se refiere a la visibilidad y duración de una variable en diferentes partes del código, mientras que **closures** (cierres) son funciones que recuerdan el entorno en el que fueron creadas, incluso después de que el entorno haya terminado de ejecutarse. Vamos a desglosar ambos conceptos, comenzando por las variables locales y globales.
+
+### 1. Variables Locales y Globales
+
+#### Variables Locales
+Las variables locales son aquellas definidas dentro de una función. Solo son accesibles dentro de esa función y se destruyen una vez que la función termina de ejecutarse.
+
+```python
+def funcion_local():
+    variable_local = 10  # Variable local
+    print("Dentro de la función:", variable_local)
+
+funcion_local()
+# print(variable_local)  # Esto generará un error porque variable_local no está definida aquí
+```
+
+#### Variables Globales
+Las variables globales son aquellas definidas fuera de cualquier función. Son accesibles desde cualquier parte del código, incluyendo dentro de funciones. Sin embargo, para modificar una variable global dentro de una función, se debe usar la palabra clave `global`.
+
+```python
+variable_global = 20  # Variable global
+
+def funcion_global():
+    global variable_global  # Indica que se va a usar la variable global
+    variable_global += 5  # Modifica la variable global
+    print("Dentro de la función:", variable_global)
+
+funcion_global()
+print("Fuera de la función:", variable_global)
+```
+
+### 2. Closures
+
+Los closures son funciones anidadas que recuerdan el entorno en el que fueron creadas, incluso si su función contenedora ha terminado de ejecutarse. Esto es útil para crear funciones que mantienen el estado entre llamadas.
+
+#### Ejemplo de Closure
+
+```python
+def crear_multiplicador(factor):
+    def multiplicar(numero):
+        return numero * factor  # factor es una variable no local
+    return multiplicar
+
+multiplicador_por_2 = crear_multiplicador(2)
+print(multiplicador_por_2(5))  # Salida: 10
+
+multiplicador_por_3 = crear_multiplicador(3)
+print(multiplicador_por_3(5))  # Salida: 15
+```
+
+En este ejemplo:
+- `crear_multiplicador` es una función que devuelve otra función (`multiplicar`).
+- `multiplicar` recuerda el valor de `factor` incluso después de que `crear_multiplicador` ha terminado de ejecutarse.
+- Cada vez que se llama a `multiplicador_por_2` o `multiplicador_por_3`, se utiliza el valor de `factor` que se pasó cuando se creó el closure.
+
+### Resumen de Alcance y Closures
+
+- **Alcance**: Define donde una variable puede ser accedida (local, global, etc.).
+  - Las **variables locales** solo se pueden usar dentro de la función donde fueron declaradas.
+  - Las **variables globales** se pueden usar en cualquier parte del código.
+  
+- **Closures**: Permiten que una función "recuerde" el entorno en el que fue creada, manteniendo el acceso a variables no locales (que no están definidas dentro de ella) a través de su estado interno.
+
+Estos conceptos son fundamentales para entender cómo funcionan las funciones en Python y cómo se puede gestionar el estado y la visibilidad de las variables en el código.
+
+## Anotaciones de tipo
+
+Las **anotaciones de tipo** en Python son una forma de especificar el tipo de variables, parámetros de funciones y valores de retorno. Aunque no afectan el funcionamiento del programa, facilitan la lectura del código y ayudan a herramientas de análisis estático a detectar errores. A continuación, te presento una explicación detallada y ejemplos sobre cómo usarlas.
+
+### Sintaxis de Anotaciones de Tipo
+
+1. **Parámetros de Funciones y Tipo de Retorno**
+
+   Puedes usar las anotaciones de tipo en la definición de funciones para indicar qué tipo de datos se espera como argumento y qué tipo se devolverá:
+
+   ```python
+   def sumar(a: int, b: int) -> int:
+       return a + b
+   ```
+
+   En este ejemplo, se espera que `a` y `b` sean enteros (`int`), y la función devolverá un entero.
+
+2. **Variables**
+
+   Aunque no es común, también puedes anotar el tipo de las variables:
+
+   ```python
+   nombre: str = "Juan"
+   edad: int = 30
+   ```
+
+3. **Listas y Otras Colecciones**
+
+   Puedes especificar el tipo de elementos en listas, tuplas y diccionarios utilizando el módulo `typing`:
+
+   ```python
+   from typing import List, Tuple, Dict
+
+   def procesar_datos(nombres: List[str], edades: List[int]) -> Dict[str, int]:
+       return dict(zip(nombres, edades))
+   ```
+
+   En este caso, `nombres` es una lista de cadenas (`List[str]`) y `edades` es una lista de enteros (`List[int]`). La función devuelve un diccionario que asocia cada nombre con una edad.
+
+4. **Funciones Lambda**
+
+   También puedes usar anotaciones de tipo con funciones lambda:
+
+   ```python
+   sumar: Callable[[int, int], int] = lambda x, y: x + y
+   ```
+
+   Aquí, `sumar` es una función lambda que toma dos enteros y devuelve un entero.
+
+5. **Anotaciones en Clases**
+
+   Las anotaciones de tipo también se pueden utilizar en las clases para definir atributos:
+
+   ```python
+   class Persona:
+       def __init__(self, nombre: str, edad: int):
+           self.nombre: str = nombre
+           self.edad: int = edad
+   ```
+
+### Ejemplo Completo
+
+Aquí tienes un ejemplo más completo que utiliza anotaciones de tipo en funciones y clases:
+
+```python
+from typing import List, Dict
+
+class Estudiante:
+    def __init__(self, nombre: str, calificaciones: List[float]):
+        self.nombre: str = nombre
+        self.calificaciones: List[float] = calificaciones
+
+    def promedio(self) -> float:
+        return sum(self.calificaciones) / len(self.calificaciones)
+
+def registrar_estudiantes(estudiantes: List[Estudiante]) -> Dict[str, float]:
+    return {estudiante.nombre: estudiante.promedio() for estudiante in estudiantes}
+
+# Uso
+est1 = Estudiante("Ana", [90, 80, 85])
+est2 = Estudiante("Luis", [75, 80, 70])
+resultado = registrar_estudiantes([est1, est2])
+print(resultado)
+```
+
+### Ventajas de las Anotaciones de Tipo
+
+- **Mejora la Legibilidad:** Facilita la comprensión del código, ya que queda claro qué tipos de datos se utilizan.
+- **Detección Temprana de Errores:** Ayuda a herramientas de análisis estático (como `mypy`) a identificar posibles errores antes de la ejecución.
+- **Mejor Integración en Editores:** Los editores pueden proporcionar autocompletado y sugerencias más precisas cuando tienen información sobre los tipos de datos.
+
+### Conclusión
+
+Las anotaciones de tipo en Python son una herramienta poderosa para mejorar la calidad del código y facilitar la colaboración en proyectos. Aunque no son obligatorias, su uso es altamente recomendable en proyectos grandes o en entornos donde se requiere mantener un código limpio y fácil de entender.
+
+`mypy` es una herramienta de análisis estático para Python que se utiliza para verificar tipos de datos en tu código. Aquí tienes un desglose de sus principales funciones y beneficios:
+
+### ¿Para qué sirve `mypy`?
+
+1. **Verificación de Tipos Estáticos:**
+   - `mypy` permite especificar anotaciones de tipo en tus funciones y variables, ayudando a identificar errores de tipo antes de que se ejecute el código. Esto es especialmente útil en un lenguaje como Python, que es dinámico y permite la escritura de código sin tipos explícitos.
+
+2. **Detección de Errores:**
+   - Ayuda a encontrar errores comunes relacionados con los tipos, como intentar sumar un número y una cadena, lo que puede causar errores en tiempo de ejecución.
+
+3. **Mejoras en la Documentación:**
+   - Las anotaciones de tipo actúan como documentación adicional. Facilitan la comprensión del código, ya que otros desarrolladores (o tú mismo en el futuro) pueden ver qué tipos de datos se esperan en cada función.
+
+4. **Compatibilidad con Códigos Grandes:**
+   - A medida que los proyectos crecen, puede volverse difícil rastrear los tipos de datos. `mypy` facilita el mantenimiento de códigos grandes al proporcionar un sistema de tipos que ayuda a garantizar la coherencia.
+
+5. **Integración con Herramientas de Desarrollo:**
+   - Puede integrarse con varios editores y entornos de desarrollo para proporcionar retroalimentación en tiempo real sobre los tipos mientras escribes código.
+
+6. **Fomento de Buenas Prácticas:**
+   - El uso de `mypy` fomenta la escritura de código más robusto y menos propenso a errores, promoviendo buenas prácticas de programación.
+
+### Ejemplo de Uso
+
+Aquí hay un ejemplo básico de cómo usar `mypy`:
+
+1. **Escribir un archivo Python con anotaciones de tipo:**
+   ```python
+   def add(x: int, y: int) -> int:
+       return x + y
+
+   print(add(5, 3))
+   ```
+
+2. **Ejecutar `mypy` en el archivo:**
+   ```bash
+   mypy my_file.py
+   ```
+
+Si hay algún error de tipo, `mypy` lo señalará, ayudándote a corregirlo antes de que se ejecute el programa.
+
+### Conclusión
+
+`mypy` es una herramienta poderosa para mejorar la calidad del código en proyectos de Python, proporcionando verificación de tipos estáticos y ayudando a los desarrolladores a escribir un código más seguro y mantenible.
