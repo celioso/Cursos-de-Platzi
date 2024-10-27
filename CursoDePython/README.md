@@ -5108,3 +5108,693 @@ Los decoradores son una herramienta poderosa en Python que permite modificar fun
 **Lecturas recomendadas**
 
 [GitHub - platzi/python-avanzado at decoradores](https://github.com/platzi/python-avanzado/tree/decoradores)
+
+## Decoradores anidados y con parámetros
+
+Los decoradores anidados y con parámetros en Python permiten aplicar múltiples transformaciones a funciones o métodos de una forma flexible y reutilizable. Aquí te explico cómo funcionan ambos conceptos y te muestro ejemplos.
+
+### 1. Decoradores Anidados
+
+Los decoradores anidados son simplemente varios decoradores aplicados a una misma función, uno tras otro. Se aplican en el orden en que aparecen, de afuera hacia adentro. Esto significa que el decorador más cercano a la función será ejecutado primero.
+
+**Ejemplo de decoradores anidados:**
+
+```python
+def decorador1(funcion):
+    def wrapper(*args, **kwargs):
+        print("Ejecutando decorador1")
+        return funcion(*args, **kwargs)
+    return wrapper
+
+def decorador2(funcion):
+    def wrapper(*args, **kwargs):
+        print("Ejecutando decorador2")
+        return funcion(*args, **kwargs)
+    return wrapper
+
+@decorador1
+@decorador2
+def saludo(nombre):
+    print(f"Hola, {nombre}")
+
+saludo("Carlos")
+```
+
+**Salida:**
+```plaintext
+Ejecutando decorador1
+Ejecutando decorador2
+Hola, Carlos
+```
+
+En este caso:
+- `decorador2` se aplica primero, luego `decorador1`.
+- `saludo` pasa por ambos decoradores antes de ejecutar su lógica.
+
+### 2. Decoradores con Parámetros
+
+Los decoradores con parámetros permiten personalizar el comportamiento del decorador. Para crear un decorador con parámetros, se define una función que recibe estos parámetros y que, a su vez, devuelve el decorador propiamente dicho.
+
+**Ejemplo de decorador con parámetros:**
+
+```python
+def repetir(n):
+    def decorador(funcion):
+        def wrapper(*args, **kwargs):
+            for _ in range(n):
+                funcion(*args, **kwargs)
+        return wrapper
+    return decorador
+
+@repetir(3)
+def saludo(nombre):
+    print(f"Hola, {nombre}")
+
+saludo("Carlos")
+```
+
+**Salida:**
+```plaintext
+Hola, Carlos
+Hola, Carlos
+Hola, Carlos
+```
+
+Aquí:
+- `repetir(3)` llama al decorador `repetir` con `n=3`.
+- El decorador envuelve a `saludo`, que se ejecutará 3 veces.
+
+### 3. Decoradores Anidados con Parámetros
+
+Podemos combinar ambas ideas aplicando varios decoradores con parámetros. Esto permite una gran flexibilidad y personalización en el comportamiento de las funciones decoradas.
+
+**Ejemplo de decoradores anidados con parámetros:**
+
+```python
+def prefijo(texto):
+    def decorador(funcion):
+        def wrapper(*args, **kwargs):
+            print(texto, end=" ")
+            return funcion(*args, **kwargs)
+        return wrapper
+    return decorador
+
+def repetir(n):
+    def decorador(funcion):
+        def wrapper(*args, **kwargs):
+            for _ in range(n):
+                funcion(*args, **kwargs)
+        return wrapper
+    return decorador
+
+@prefijo("Atención:")
+@repetir(2)
+def saludo(nombre):
+    print(f"Hola, {nombre}")
+
+saludo("Carlos")
+```
+
+**Salida:**
+```plaintext
+Atención: Hola, Carlos
+Atención: Hola, Carlos
+```
+
+En este ejemplo:
+- `@repetir(2)` envuelve la función `saludo` para ejecutarse 2 veces.
+- `@prefijo("Atención:")` envuelve `saludo` añadiendo el prefijo "Atención:" antes de cada saludo.
+
+### Detalles Técnicos
+
+Cuando usas decoradores anidados con parámetros, el orden de ejecución sigue siendo de afuera hacia adentro. Esto permite aplicar las personalizaciones de los decoradores en el orden deseado, haciendo que cada paso dependa del resultado del anterior.
+
+Esta técnica es especialmente útil cuando necesitas funcionalidades como:
+
+- **Autorización y autenticación:** Un decorador puede verificar permisos antes de que otro ejecute la lógica principal.
+- **Registro y monitoreo:** Puedes aplicar un decorador que registre la ejecución de una función antes de realizar otras acciones.
+- **Manipulación de datos:** Un decorador puede transformar datos de entrada o salida antes de que otro decorador aplique sus cambios. 
+
+## Uso de Decoradores en clases y métodos
+
+En Python, los decoradores no solo se usan en funciones, también se pueden aplicar a clases y métodos para extender o modificar su comportamiento. Los decoradores en clases y métodos son especialmente útiles para aspectos transversales como la validación de permisos, el registro de accesos, el manejo de excepciones y la administración de cachés.
+
+Aquí tienes una guía rápida sobre cómo funcionan y un ejemplo detallado:
+
+### Decoradores en Métodos de Clase
+
+Los decoradores pueden aplicarse a métodos específicos de una clase, y se comportan según el tipo de método:
+
+- **Métodos de instancia** (los métodos normales que acceden a `self`).
+- **Métodos de clase** (aquellos que usan `@classmethod` y acceden a `cls`).
+- **Métodos estáticos** (usando `@staticmethod`, no acceden ni a `self` ni a `cls`).
+
+Los decoradores en métodos de clase pueden hacer cosas como:
+
+1. Controlar permisos antes de ejecutar el método.
+2. Hacer un registro (logging) cada vez que se llama al método.
+3. Manejar errores de forma consistente.
+
+### Decoradores en Clases
+
+Un decorador en una clase modifica el comportamiento de la clase en su conjunto, normalmente para extenderla o agregarle nuevas funcionalidades.
+
+### Ejemplo de Uso
+
+Imaginemos una clase `CuentaBancaria` donde queremos aplicar un decorador para registrar cada vez que se realiza una operación, y otro decorador para comprobar permisos de acceso a ciertas operaciones.
+
+```python
+from functools import wraps
+import datetime
+
+# Decorador para verificar permisos
+def verificar_permisos(permiso_necesario):
+    def decorador_metodo(func):
+        @wraps(func)
+        def envoltura(self, *args, **kwargs):
+            if permiso_necesario not in self.permisos:
+                raise PermissionError(f"No tienes permisos para realizar esta operación: {permiso_necesario}")
+            return func(self, *args, **kwargs)
+        return envoltura
+    return decorador_metodo
+
+# Decorador para registrar en log
+def registrar_operacion(func):
+    @wraps(func)
+    def envoltura(self, *args, **kwargs):
+        resultado = func(self, *args, **kwargs)
+        operacion = f"{func.__name__} ejecutado el {datetime.datetime.now()}"
+        self.historial.append(operacion)
+        print(f"Registro: {operacion}")
+        return resultado
+    return envoltura
+
+# Clase CuentaBancaria usando decoradores en sus métodos
+class CuentaBancaria:
+    def __init__(self, balance=0):
+        self.balance = balance
+        self.historial = []
+        self.permisos = ['ver_balance', 'retirar']  # permisos actuales del usuario
+
+    @registrar_operacion
+    @verificar_permisos('ver_balance')
+    def ver_balance(self):
+        print(f"Balance actual: ${self.balance}")
+        return self.balance
+
+    @registrar_operacion
+    @verificar_permisos('retirar')
+    def retirar(self, cantidad):
+        if cantidad > self.balance:
+            raise ValueError("Fondos insuficientes")
+        self.balance -= cantidad
+        print(f"Retiro exitoso: ${cantidad}. Nuevo balance: ${self.balance}")
+        return self.balance
+
+# Uso de la clase con decoradores
+cuenta = CuentaBancaria(1000)
+
+# Operaciones
+cuenta.ver_balance()
+cuenta.retirar(200)
+
+# Intento de retiro sin permisos
+try:
+    cuenta.permisos.remove('retirar')
+    cuenta.retirar(100)
+except PermissionError as e:
+    print(e)
+```
+
+### Explicación
+
+1. **`@verificar_permisos`**: Este decorador toma un parámetro, `permiso_necesario`, y se asegura de que el usuario tenga el permiso adecuado antes de ejecutar el método.
+2. **`@registrar_operacion`**: Este decorador registra cada operación realizada, almacenándola en el atributo `historial`.
+
+Este patrón es muy poderoso para clases que requieren varias verificaciones y registros en sus métodos, proporcionando una estructura de código limpia y modular.
+
+## Métodos mágicos
+
+Los **métodos mágicos** en Python (también llamados "métodos especiales" o "dunder methods" por la doble subrayado que los rodea) son funciones predefinidas en las clases que permiten personalizar el comportamiento de los objetos en varias situaciones, como en operaciones matemáticas, conversiones de tipos, comparaciones y manejo de contenedores. 
+
+Estos métodos comienzan y terminan con doble subrayado (`__`), por ejemplo, `__init__` o `__str__`. Al definir estos métodos, se le puede indicar a Python cómo debe comportarse un objeto en distintos contextos.
+
+### 1. Métodos de Inicialización y Representación
+
+- **`__init__(self, ...)`**: Inicializador de una clase (similar a un constructor). Se ejecuta al crear una instancia.
+- **`__str__(self)`**: Define el comportamiento del objeto cuando se convierte a una cadena con `str()`, como al usar `print()`.
+- **`__repr__(self)`**: Representación oficial del objeto, útil para depuración. A menudo se usa en lugar de `__str__` para generar un mensaje detallado y debe proporcionar una salida que permita recrear el objeto cuando se usa `eval()`.
+
+   ```python
+   class Persona:
+       def __init__(self, nombre, edad):
+           self.nombre = nombre
+           self.edad = edad
+
+       def __str__(self):
+           return f"Persona({self.nombre}, {self.edad})"
+       
+       def __repr__(self):
+           return f"Persona(nombre={self.nombre!r}, edad={self.edad})"
+
+   persona = Persona("Ana", 30)
+   print(persona)         # Salida personalizada
+   repr(persona)          # Representación oficial para depuración
+   ```
+
+### 2. Métodos de Operadores Aritméticos
+
+Permiten personalizar el comportamiento de operadores (`+`, `-`, `*`, `/`, etc.).
+
+- **`__add__(self, other)`**: Define el comportamiento de la adición (`self + other`).
+- **`__sub__(self, other)`**: Define la resta (`self - other`).
+- **`__mul__(self, other)`**: Define la multiplicación (`self * other`).
+- **`__truediv__(self, other)`**: Define la división (`self / other`).
+
+   ```python
+   class Vector:
+       def __init__(self, x, y):
+           self.x = x
+           self.y = y
+
+       def __add__(self, other):
+           return Vector(self.x + other.x, self.y + other.y)
+
+       def __str__(self):
+           return f"Vector({self.x}, {self.y})"
+
+   v1 = Vector(2, 3)
+   v2 = Vector(1, 5)
+   print(v1 + v2)  # Salida: Vector(3, 8)
+   ```
+
+### 3. Métodos de Comparación
+
+Permiten especificar el comportamiento para comparaciones (`==`, `<`, `>`, etc.).
+
+- **`__eq__(self, other)`**: Define la comparación de igualdad (`self == other`).
+- **`__lt__(self, other)`**: Define la comparación de "menor que" (`self < other`).
+- **`__le__(self, other)`**: Define la comparación de "menor o igual" (`self <= other`).
+
+   ```python
+   class Persona:
+       def __init__(self, nombre, edad):
+           self.nombre = nombre
+           self.edad = edad
+
+       def __eq__(self, other):
+           return self.edad == other.edad
+
+       def __lt__(self, other):
+           return self.edad < other.edad
+
+   persona1 = Persona("Juan", 25)
+   persona2 = Persona("Ana", 30)
+   print(persona1 == persona2)  # Salida: False
+   print(persona1 < persona2)   # Salida: True
+   ```
+
+### 4. Métodos de Acceso a Elementos
+
+Permiten definir el comportamiento de acceso, modificación y eliminación de elementos en objetos como si fueran contenedores.
+
+- **`__getitem__(self, key)`**: Define el comportamiento al acceder a un elemento (`self[key]`).
+- **`__setitem__(self, key, value)`**: Define el comportamiento al asignar un valor (`self[key] = value`).
+- **`__delitem__(self, key)`**: Define el comportamiento al eliminar un elemento (`del self[key]`).
+
+   ```python
+   class Contenedor:
+       def __init__(self):
+           self.datos = {}
+
+       def __getitem__(self, key):
+           return self.datos.get(key, None)
+
+       def __setitem__(self, key, value):
+           self.datos[key] = value
+
+       def __delitem__(self, key):
+           del self.datos[key]
+
+   cont = Contenedor()
+   cont["a"] = 10
+   print(cont["a"])  # Salida: 10
+   del cont["a"]
+   ```
+
+### 5. Métodos de Contexto (con `with`)
+
+Permiten definir el comportamiento al usar un objeto con el bloque `with`, como al manejar archivos.
+
+- **`__enter__(self)`**: Inicializa o prepara el objeto para el contexto.
+- **`__exit__(self, exc_type, exc_val, exc_tb)`**: Define el comportamiento al salir del contexto, manejando cualquier excepción.
+
+   ```python
+   class Archivo:
+       def __init__(self, nombre):
+           self.nombre = nombre
+           self.archivo = None
+
+       def __enter__(self):
+           self.archivo = open(self.nombre, "w")
+           return self.archivo
+
+       def __exit__(self, exc_type, exc_val, exc_tb):
+           if self.archivo:
+               self.archivo.close()
+
+   with Archivo("ejemplo.txt") as f:
+       f.write("Texto de ejemplo")
+   ```
+
+### Resumen
+
+Los métodos mágicos permiten una gran personalización y facilitan la creación de clases que se comportan de forma coherente con los operadores y funciones de Python. Al definir estos métodos, puedes hacer que las clases respondan a operaciones y funciones nativas de Python, logrando una sintaxis más intuitiva y adaptada a tus necesidades.
+
+**Archivos de la clase**
+
+[metodos-y-estructuras.zip](https://static.platzi.com/media/public/uploads/metodos-y-estructuras_24a6f051-c67c-4120-80d2-4b58b1ab01d8.zip)
+
+**Lecturas recomendadas**
+
+[GitHub - platzi/python-avanzado at staticClassMethod](https://github.com/platzi/python-avanzado/tree/staticClassMethod)
+
+## Sobrecarga de operadores
+
+![A visual representation of Operator Overloading in Python.jpg](images/A_visual_representation_of_Operator_Overloading_in_Python.jpg)
+
+Imagina que puedes hacer que tus clases personalizadas en Python se comporten como números, listas o cadenas de texto, permitiendo sumar objetos, compararlos y mucho más. ¿Qué pasaría si pudieras redefinir cómo tus clases responden a operaciones comunes como +, -, ==, o incluso <? Esa es la magia de la **sobrecarga de operadores**.
+
+En esta clase, aprenderás a darle superpoderes a tus objetos para que puedan interactuar de manera intuitiva con los operadores estándar de Python. Ya no se trata solo de crear clases; ahora, tus clases podrán comportarse como cualquier otro tipo de dato nativo de Python, lo que hará tu código más limpio, legible y poderoso.
+
+¿Quieres que tus objetos se sumen como fracciones o se comparen como personas? La sobrecarga de operadores te permitirá hacerlo. Al final de esta lección, estarás creando clases que pueden sumar, restar, comparar y mucho más, llevando tu programación en Python a otro nivel. ¡Vamos a descubrir cómo hacerlo.
+
+### 1. ¿Qué es la Sobrecarga de Operadores?
+
+Por defecto, los operadores en Python como + o == solo funcionan con tipos de datos predefinidos (números, cadenas, listas, etc.). Sin embargo, con la sobrecarga de operadores, podemos modificar cómo estos operadores funcionan con nuestras clases personalizadas.
+
+**Ejemplo básico de sobrecarga de +:**
+
+Imagina que tienes una clase Vector, y quieres sumar dos vectores usando el operador +. Para esto, usaremos el método mágico __add__.
+
+```python
+class Vector:
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+
+    def __add__(self, other):
+        return Vector(self.x + other.x, self.y + other.y)
+
+    def __repr__(self):
+        return f"Vector({self.x}, {self.y})"
+
+v1 = Vector(2, 3)
+v2 = Vector(4, 1)
+
+v3 = v1 + v2  # Sobrecarga de `+`
+print(v3)  # Output: Vector(6, 4)
+```
+
+Aquí, __add__ define que la suma de dos objetos Vector es un nuevo Vector con la suma de sus componentes.
+
+### 2. Sobrecarga de Comparación (==, <, >)
+
+La sobrecarga no se limita a operadores aritméticos, también podemos redefinir operadores de comparación como ==, <, > para que comparen objetos en función de los atributos que queramos.
+
+**Ejemplo de sobrecarga de == para comparar objetos:**
+
+```python
+class Persona:
+    def __init__(self, nombre, edad):
+        self.nombre = nombre
+        self.edad = edad
+
+    def __eq__(self, otra_persona):
+        return self.nombre == otra_persona.nombre and self.edad == otra_persona.edad
+
+p1 = Persona("Ana", 30)
+p2 = Persona("Ana", 30)
+
+print(p1 == p2)  # Output: True (Ambas personas tienen el mismo nombre y edad)
+```
+
+En este caso, __eq__ permite que el operador == compare dos personas por sus atributos nombre y edad.
+
+### 3. Ejemplo de Sobrecarga de Otros Operadores
+
+Aparte de + y ==, otros operadores pueden ser sobrecargados, como el operador de resta -, multiplicación *, y operadores de comparación como <, >. Veamos un ejemplo de sobrecarga del operador de comparación <.
+
+**Ejemplo con el operador < (menor que):**
+
+```python
+class Persona:
+    def __init__(self, nombre, edad):
+        self.nombre = nombre
+        self.edad = edad
+
+    def __lt__(self, otra_persona):
+        return self.edad < otra_persona.edad
+
+p1 = Persona("Ana", 25)
+p2 = Persona("Luis", 30)
+
+print(p1 < p2)  # Output: True (Ana es menor que Luis)
+
+```
+Aquí, __lt__ permite comparar las edades de dos personas con el operador <.
+
+### 4. Buenas Prácticas al Sobrecargar Operadores
+
+1. **Usa la sobrecarga cuando tenga sentido**: No abuses de la sobrecarga de operadores. Solo la utilices cuando sea intuitivo y claro que un operador debe funcionar con tus clases.
+
+2. **Mantén la consistencia**: Si sobrecargas un operador como +, asegúrate de que el comportamiento sea consistente con lo que los usuarios esperan (por ejemplo, que la suma de dos vectores realmente sume sus componentes).
+
+3. **Documenta el comportamiento**: Aunque la sobrecarga de operadores puede hacer que tu código sea más limpio, es importante que documentes claramente cómo se comportan los operadores sobrecargados, especialmente si tienen un comportamiento no convencional.
+
+### 5. Ejercicio Práctico: Sobrecargar el Operador + en una Clase de Fracciones
+
+**Objetivo**: Implementa una clase Fraccion que permita sumar fracciones usando el operador +.
+
+**Requerimientos:**
+
+1. La clase debe tener numerador y denominador.
+2. El operador + debe sumar dos fracciones y devolver el resultado simplificado.
+
+```python
+from math import gcd
+
+class Fraccion:
+    def __init__(self, numerador, denominador):
+        self.numerador = numerador
+        self.denominador = denominador
+
+    def __add__(self, otra_fraccion):
+        nuevo_num = self.numerador * otra_fraccion.denominador + otra_fraccion.numerador * self.denominador
+        nuevo_den = self.denominador * otra_fraccion.denominador
+        comun_divisor = gcd(nuevo_num, nuevo_den)
+        return Fraccion(nuevo_num // comun_divisor, nuevo_den // comun_divisor)
+
+    def __repr__(self):
+        return f"{self.numerador}/{self.denominador}"
+
+f1 = Fraccion(1, 4)
+f2 = Fraccion(1, 2)
+
+f3 = f1 + f2  # Suma de fracciones
+print(f3)  # Output: 3/4
+```
+
+Este ejemplo muestra cómo redefinir el operador + para sumar fracciones de manera intuitiva.
+
+¡Felicidades por completar esta clase sobre Sobrecarga de Operadores en Python! Ahora has aprendido cómo personalizar el comportamiento de los operadores en tus clases, lo que te permite crear código más intuitivo, limpio y poderoso.
+
+Al comprender cómo los operadores pueden ser sobrecargados, has desbloqueado una nueva capa de flexibilidad en tus proyectos. Ya no tienes que conformarte con el comportamiento predeterminado de Python: ahora puedes hacer que tus clases se comporten como cualquier otro tipo de dato nativo.
+
+Ahora es el momento de aplicar lo que has aprendido. ¡Ve y experimenta con tus propias clases y operadores!
+
+La **sobrecarga de operadores** en Python permite redefinir el comportamiento de los operadores estándar (como `+`, `-`, `*`, `==`, etc.) para que puedan ser usados con objetos de una clase personalizada. A través de los **métodos especiales** (también conocidos como "métodos mágicos" o "dunder methods"), Python permite implementar esta funcionalidad en clases, facilitando la creación de clases con operaciones específicas.
+
+### Ejemplo básico de sobrecarga de operadores
+
+Supongamos que queremos una clase `Vector` que represente un vector en un plano 2D. Podríamos querer sumar dos instancias de `Vector` con el operador `+`, pero por defecto Python no sabe cómo hacer esta operación entre objetos de esta clase. Implementaríamos el método especial `__add__` para que la suma funcione:
+
+```python
+class Vector:
+    def __init__(self, x: int, y: int):
+        self.x = x
+        self.y = y
+
+    def __add__(self, other):
+        if isinstance(other, Vector):
+            return Vector(self.x + other.x, self.y + other.y)
+        raise TypeError("El operando debe ser de tipo Vector")
+
+    def __str__(self):
+        return f"Vector({self.x}, {self.y})"
+
+v1 = Vector(2, 3)
+v2 = Vector(5, 7)
+v3 = v1 + v2  # Esto llama a v1.__add__(v2)
+print(v3)     # Salida: Vector(7, 10)
+```
+
+Aquí el método `__add__` permite usar `+` para sumar dos vectores, devolviendo un nuevo objeto `Vector`.
+
+### Métodos especiales para sobrecargar operadores
+
+Existen varios métodos especiales en Python para sobrecargar distintos operadores. Aquí tienes una lista de algunos operadores y los métodos correspondientes:
+
+1. **Operadores Aritméticos**:
+   - `+` : `__add__(self, other)`
+   - `-` : `__sub__(self, other)`
+   - `*` : `__mul__(self, other)`
+   - `/` : `__truediv__(self, other)`
+   - `//` : `__floordiv__(self, other)`
+   - `%` : `__mod__(self, other)`
+   - `**` : `__pow__(self, other)`
+
+2. **Operadores de Comparación**:
+   - `==` : `__eq__(self, other)`
+   - `!=` : `__ne__(self, other)`
+   - `<` : `__lt__(self, other)`
+   - `<=` : `__le__(self, other)`
+   - `>` : `__gt__(self, other)`
+   - `>=` : `__ge__(self, other)`
+
+3. **Operadores de Asignación Aritmética**:
+   - `+=` : `__iadd__(self, other)`
+   - `-=` : `__isub__(self, other)`
+   - `*=` : `__imul__(self, other)`
+   - `/=` : `__itruediv__(self, other)`
+
+4. **Conversión de Tipos**:
+   - `__int__(self)` para `int()`
+   - `__float__(self)` para `float()`
+   - `__str__(self)` para `str()`
+
+### Ejemplo completo con varios operadores
+
+Aquí tienes un ejemplo con una clase `Complejo` que representa números complejos, sobrecargando operadores aritméticos y de comparación:
+
+```python
+class Complejo:
+    def __init__(self, real: float, imag: float):
+        self.real = real
+        self.imag = imag
+
+    def __add__(self, other):
+        if isinstance(other, Complejo):
+            return Complejo(self.real + other.real, self.imag + other.imag)
+        raise TypeError("El operando debe ser de tipo Complejo")
+
+    def __sub__(self, other):
+        if isinstance(other, Complejo):
+            return Complejo(self.real - other.real, self.imag - other.imag)
+        raise TypeError("El operando debe ser de tipo Complejo")
+
+    def __mul__(self, other):
+        if isinstance(other, Complejo):
+            real = self.real * other.real - self.imag * other.imag
+            imag = self.real * other.imag + self.imag * other.real
+            return Complejo(real, imag)
+        raise TypeError("El operando debe ser de tipo Complejo")
+
+    def __eq__(self, other):
+        return self.real == other.real and self.imag == other.imag
+
+    def __str__(self):
+        return f"({self.real} + {self.imag}i)"
+
+c1 = Complejo(2, 3)
+c2 = Complejo(1, -1)
+
+print(c1 + c2)  # Salida: (3 + 2i)
+print(c1 - c2)  # Salida: (1 + 4i)
+print(c1 * c2)  # Salida: (5 + 1i)
+print(c1 == c2) # Salida: False
+```
+
+### Consideraciones al Sobrecargar Operadores
+
+1. **Compatibilidad**: Al implementar métodos de sobrecarga, asegúrate de manejar correctamente errores de tipo, como en `isinstance()` para verificar tipos de entrada.
+2. **Inmutabilidad vs. Mutabilidad**: Decide si los métodos devuelven nuevos objetos o modifican el objeto en sí, ya que puede afectar el uso de instancias en el programa.
+3. **Legibilidad**: Usa sobrecarga solo cuando el significado del operador sea intuitivo para la clase; sobrecargar sin una lógica clara puede causar confusión en el código.
+
+Sobrecargar operadores permite hacer que los objetos sean más expresivos y fáciles de manipular, lo cual resulta útil en programas complejos donde el uso de operadores personalizados aumenta la legibilidad y reduce errores.
+
+## Implementación de `if __name__ == "__main__":`
+
+El bloque `if __name__ == "__main__":` en Python se usa para que una sección específica de código solo se ejecute cuando el archivo es ejecutado directamente, y no cuando es importado como módulo en otro archivo. Este es un patrón común en Python, especialmente para escribir scripts y bibliotecas que puedan ser reutilizados y probados.
+
+### ¿Cómo funciona `if __name__ == "__main__":`?
+
+Cuando se ejecuta un archivo Python, el intérprete asigna el valor especial `"__main__"` a la variable `__name__` si el archivo se ejecuta directamente. Sin embargo, si el archivo es importado como un módulo en otro archivo, `__name__` toma el valor del nombre del archivo, sin ejecutar el bloque que depende de `"__main__"`.
+
+### Estructura del Bloque `if __name__ == "__main__":`
+
+```python
+# archivo.py
+
+def funcion_principal():
+    print("Esta es la función principal del módulo.")
+
+# Ejecutar solo si es el archivo principal
+if __name__ == "__main__":
+    print("El archivo se ejecuta directamente.")
+    funcion_principal()
+```
+
+### Ejemplo de uso práctico
+
+Supongamos que tienes un archivo, `calculadora.py`, que define algunas funciones matemáticas:
+
+```python
+# calculadora.py
+
+def sumar(a, b):
+    return a + b
+
+def restar(a, b):
+    return a - b
+
+def multiplicar(a, b):
+    return a * b
+
+def dividir(a, b):
+    return a / b
+
+if __name__ == "__main__":
+    print("Ejecutando pruebas...")
+    print(sumar(5, 3))         # Salida: 8
+    print(restar(5, 3))        # Salida: 2
+    print(multiplicar(5, 3))   # Salida: 15
+    print(dividir(5, 3))       # Salida: 1.666...
+```
+
+### Ejecución del Bloque
+
+1. **Ejecución directa**: Si corres `calculadora.py` directamente (`python calculadora.py`), se imprimirá el mensaje `"Ejecutando pruebas..."` y el resultado de cada función.
+2. **Importación como módulo**: Si importas `calculadora.py` en otro archivo, digamos `main.py`:
+
+   ```python
+   # main.py
+   import calculadora
+
+   resultado = calculadora.sumar(10, 5)
+   print(resultado)  # Salida: 15
+   ```
+
+   En este caso, `calculadora.py` **no** ejecutará el bloque dentro de `if __name__ == "__main__":`, evitando la impresión del mensaje de prueba y otros cálculos no deseados.
+
+### Ventajas de `if __name__ == "__main__":`
+
+1. **Evita ejecución no deseada**: Permite ejecutar código solo cuando se ejecuta el archivo principal y evita la ejecución de pruebas o funciones adicionales cuando el archivo es importado.
+2. **Modularidad**: Facilita el uso de módulos en diferentes proyectos sin cambios adicionales.
+3. **Pruebas rápidas**: Permite agregar pruebas simples o mensajes para verificar el comportamiento del código en desarrollo, manteniéndolo separado de la funcionalidad principal.
+
+En general, `if __name__ == "__main__":` ayuda a mantener el código organizado y reutilizable, al tiempo que permite pruebas internas sin interferir cuando el código se importa en otros archivos.
+
+**Lecturas recomendadas**
+
+[GitHub - platzi/python-avanzado at ifNameMain](https://github.com/platzi/python-avanzado/tree/ifNameMain)
