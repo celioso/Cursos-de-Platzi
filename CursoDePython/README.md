@@ -5798,3 +5798,396 @@ En general, `if __name__ == "__main__":` ayuda a mantener el código organizado 
 **Lecturas recomendadas**
 
 [GitHub - platzi/python-avanzado at ifNameMain](https://github.com/platzi/python-avanzado/tree/ifNameMain)
+
+## Metaprogramación en Python
+
+La metaprogramación en Python es una técnica que permite a los programas manipular o generar código durante su ejecución. Esto se puede lograr a través de varias funcionalidades del lenguaje, como las clases, los decoradores, las funciones de alto orden y los metaclases. Aquí tienes un resumen de las principales técnicas de metaprogramación en Python:
+
+### 1. **Decoradores**
+
+Los decoradores son una forma de modificar el comportamiento de una función o método. Puedes crear decoradores para agregar funcionalidades adicionales sin modificar el código original.
+
+```python
+def mi_decorador(func):
+    def envoltura():
+        print("Algo se está haciendo antes de llamar a la función.")
+        func()
+        print("Algo se está haciendo después de llamar a la función.")
+    return envoltura
+
+@mi_decorador
+def saludar():
+    print("¡Hola!")
+
+saludar()
+```
+
+### 2. **Funciones de alto orden**
+
+Las funciones de alto orden son aquellas que pueden recibir otras funciones como argumentos o devolverlas como resultados. Esto permite crear comportamientos dinámicos.
+
+```python
+def aplicar_funcion(func, valor):
+    return func(valor)
+
+def elevar_al_cuadrado(x):
+    return x ** 2
+
+resultado = aplicar_funcion(elevar_al_cuadrado, 5)
+print(resultado)  # Salida: 25
+```
+
+### 3. **Clases y la creación dinámica de clases**
+
+Puedes crear clases dinámicamente utilizando el método `type()`, lo que permite definir clases en tiempo de ejecución.
+
+```python
+def crear_clase(nombre):
+    return type(nombre, (object,), {})
+
+MiClase = crear_clase("ClaseDinamica")
+objeto = MiClase()
+print(type(objeto))  # Salida: <class '__main__.ClaseDinamica'>
+```
+
+### 4. **Metaclases**
+
+Las metaclases son clases de clases, lo que significa que definen cómo se crean las clases. Puedes crear una metaclase para modificar la creación de clases.
+
+```python
+class MiMeta(type):
+    def __new__(cls, nombre, bases, dct):
+        dct['nuevo_atributo'] = 'Soy un nuevo atributo'
+        return super().__new__(cls, nombre, bases, dct)
+
+class MiClase(metaclass=MiMeta):
+    pass
+
+objeto = MiClase()
+print(objeto.nuevo_atributo)  # Salida: Soy un nuevo atributo
+```
+
+### 5. **Reflexión y introspección**
+
+Python permite inspeccionar objetos en tiempo de ejecución, lo que puede ser útil para metaprogramación. Puedes utilizar funciones como `getattr()`, `setattr()`, `hasattr()` y `dir()`.
+
+```python
+class Persona:
+    def __init__(self, nombre):
+        self.nombre = nombre
+
+persona = Persona("Juan")
+print(getattr(persona, 'nombre'))  # Salida: Juan
+setattr(persona, 'edad', 30)
+print(persona.edad)  # Salida: 30
+```
+
+### Ventajas y desventajas
+
+**Ventajas:**
+- Permite crear código más flexible y reutilizable.
+- Facilita la creación de bibliotecas y frameworks.
+- Puede simplificar el código al evitar duplicaciones.
+
+**Desventajas:**
+- Puede hacer que el código sea más difícil de entender.
+- El uso excesivo puede llevar a un rendimiento reducido.
+- Puede complicar la depuración debido a su naturaleza dinámica.
+
+La metaprogramación es una poderosa herramienta en Python, pero debe usarse con cuidado para mantener la claridad y la mantenibilidad del código.
+
+**Lecturas recomendadas**
+
+[GitHub - platzi/python-avanzado at metaprogramacion](https://github.com/platzi/python-avanzado/tree/metaprogramacion)
+
+## Uso de *args y **kwargs
+
+Los parámetros `*args` y `**kwargs` en Python son utilizados para pasar un número variable de argumentos a una función. Esto es útil cuando no se conoce de antemano cuántos argumentos se van a pasar a la función. Vamos a desglosar cada uno de ellos:
+
+### `*args`
+
+- **Significado**: `*args` permite pasar un número variable de argumentos posicionales a una función. Cuando se utiliza, Python agrupa todos los argumentos adicionales que se pasan a la función en una tupla.
+- **Uso**: Se usa cuando no se sabe cuántos argumentos se van a pasar a la función.
+
+#### Ejemplo de `*args`
+
+```python
+def sumar(*args):
+    total = 0
+    for numero in args:
+        total += numero
+    return total
+
+resultado = sumar(1, 2, 3, 4, 5)
+print(resultado)  # Salida: 15
+```
+
+En este ejemplo, la función `sumar` puede aceptar cualquier cantidad de argumentos, y todos ellos se suman.
+
+### `**kwargs`
+
+- **Significado**: `**kwargs` permite pasar un número variable de argumentos nombrados (keyword arguments) a una función. Python agrupa todos los argumentos adicionales en un diccionario.
+- **Uso**: Se utiliza cuando se quieren pasar un número variable de argumentos con nombre.
+
+#### Ejemplo de `**kwargs`
+
+```python
+def imprimir_info(**kwargs):
+    for clave, valor in kwargs.items():
+        print(f"{clave}: {valor}")
+
+imprimir_info(nombre="Juan", edad=30, ciudad="Bogotá")
+```
+
+Salida:
+```
+nombre: Juan
+edad: 30
+ciudad: Bogotá
+```
+
+En este caso, la función `imprimir_info` recibe argumentos nombrados que se almacenan en un diccionario `kwargs`. Luego, se itera sobre ese diccionario para imprimir cada clave y su correspondiente valor.
+
+### Uso combinado de `*args` y `**kwargs`
+
+Puedes usar `*args` y `**kwargs` en la misma función. Sin embargo, siempre debes poner `*args` antes de `**kwargs`.
+
+#### Ejemplo combinado
+
+```python
+def mostrar_datos(*args, **kwargs):
+    print("Argumentos posicionales:", args)
+    print("Argumentos con nombre:", kwargs)
+
+mostrar_datos(1, 2, 3, nombre="Juan", edad=30)
+```
+
+Salida:
+```
+Argumentos posicionales: (1, 2, 3)
+Argumentos con nombre: {'nombre': 'Juan', 'edad': 30}
+```
+
+### Resumen
+
+- **`*args`**: Para argumentos posicionales variables, se agrupan en una tupla.
+- **`**kwargs`**: Para argumentos nombrados variables, se agrupan en un diccionario.
+
+Ambos son herramientas poderosas que permiten a las funciones ser más flexibles y adaptables a diferentes situaciones.
+
+**Lecturas recomendadas**
+
+[GitHub - platzi/python-avanzado at Args](https://github.com/platzi/python-avanzado/tree/Args)
+
+## Métodos privados y protegidos
+
+En Python, los métodos privados y protegidos son convenciones utilizadas para controlar el acceso a los atributos y métodos de una clase. Aunque Python no implementa un verdadero encapsulamiento como otros lenguajes (por ejemplo, Java o C++), proporciona ciertas convenciones que ayudan a gestionar la accesibilidad. Aquí tienes un desglose de ambos conceptos:
+
+### Métodos Privados
+
+- **Definición**: Los métodos privados son aquellos que no deben ser accesibles desde fuera de la clase. Se utilizan para encapsular la lógica que no debería ser expuesta.
+- **Convención**: Se definen precediendo el nombre del método con dos guiones bajos (`__`). Esto provoca que el método sea "name-mangled", es decir, el nombre del método se transforma internamente para incluir el nombre de la clase.
+
+#### Ejemplo de Métodos Privados
+
+```python
+class MiClase:
+    def __init__(self):
+        self.__atributo_privado = "Soy privado"
+
+    def __metodo_privado(self):
+        return "Este es un método privado"
+
+    def metodo_publico(self):
+        return self.__metodo_privado()
+
+objeto = MiClase()
+print(objeto.metodo_publico())  # Salida: Este es un método privado
+
+# Intentar acceder al método privado directamente resultará en un error
+# print(objeto.__metodo_privado())  # Esto generará un AttributeError
+```
+
+### Métodos Protegidos
+
+- **Definición**: Los métodos protegidos son aquellos que están destinados a ser utilizados solo dentro de la clase y sus subclases. Se pueden acceder desde fuera de la clase, pero se considera una mala práctica hacerlo.
+- **Convención**: Se definen precediendo el nombre del método con un solo guion bajo (`_`).
+
+#### Ejemplo de Métodos Protegidos
+
+```python
+class MiClase:
+    def __init__(self):
+        self._atributo_protegido = "Soy protegido"
+
+    def _metodo_protegido(self):
+        return "Este es un método protegido"
+
+class SubClase(MiClase):
+    def mostrar(self):
+        return self._metodo_protegido()
+
+objeto = SubClase()
+print(objeto.mostrar())  # Salida: Este es un método protegido
+
+# Acceder directamente al método protegido es posible, pero no recomendado
+print(objeto._metodo_protegido())  # Salida: Este es un método protegido
+```
+
+### Resumen
+
+- **Métodos Privados**:
+  - Se definen con `__` (doble guion bajo).
+  - No son accesibles desde fuera de la clase.
+  - Se utilizan para ocultar la implementación.
+
+- **Métodos Protegidos**:
+  - Se definen con `_` (un solo guion bajo).
+  - Se pueden acceder desde fuera de la clase, pero se desaconseja.
+  - Se utilizan para indicar que un método no está destinado a ser usado públicamente.
+
+Estas convenciones son importantes para mantener un diseño claro y seguro en tus clases, permitiendo que los desarrolladores comprendan mejor las intenciones detrás del acceso a ciertos métodos y atributos.
+
+**Lecturas recomendadas**
+
+[GitHub - platzi/python-avanzado at privateProtectedMethods](https://github.com/platzi/python-avanzado/tree/privateProtectedMethods)
+
+## Gestión avanzada de propiedades
+
+La gestión avanzada de propiedades en Python se refiere a la manipulación de atributos de clase utilizando propiedades (`property`), así como técnicas más avanzadas como la creación de propiedades dinámicas, la validación de datos y la gestión de la encapsulación. Aquí te presento un resumen de cómo se puede hacer esto:
+
+### 1. Uso de `property`
+
+La función `property` permite definir métodos que se pueden utilizar como atributos. Esto es útil para encapsular el acceso a los atributos, permitiendo validaciones o transformaciones al obtener o establecer el valor.
+
+#### Ejemplo básico de `property`
+
+```python
+class Persona:
+    def __init__(self, nombre):
+        self._nombre = nombre  # Atributo protegido
+
+    @property
+    def nombre(self):
+        return self._nombre
+
+    @nombre.setter
+    def nombre(self, nuevo_nombre):
+        if not isinstance(nuevo_nombre, str):
+            raise ValueError("El nombre debe ser una cadena.")
+        self._nombre = nuevo_nombre
+
+persona = Persona("Juan")
+print(persona.nombre)  # Salida: Juan
+
+persona.nombre = "Carlos"  # Cambiar el nombre
+print(persona.nombre)  # Salida: Carlos
+
+# persona.nombre = 123  # Esto generaría un ValueError
+```
+
+### 2. Propiedades dinámicas
+
+Puedes crear propiedades que calculen su valor en función de otros atributos de la clase.
+
+#### Ejemplo de propiedades dinámicas
+
+```python
+class Rectangulo:
+    def __init__(self, ancho, alto):
+        self.ancho = ancho
+        self.alto = alto
+
+    @property
+    def area(self):
+        return self.ancho * self.alto
+
+rectangulo = Rectangulo(5, 10)
+print(rectangulo.area)  # Salida: 50
+```
+
+### 3. Validación de propiedades
+
+Las propiedades pueden ser utilizadas para validar datos antes de asignar un valor.
+
+#### Ejemplo de validación
+
+```python
+class CuentaBancaria:
+    def __init__(self, saldo_inicial):
+        self._saldo = saldo_inicial
+
+    @property
+    def saldo(self):
+        return self._saldo
+
+    @saldo.setter
+    def saldo(self, nuevo_saldo):
+        if nuevo_saldo < 0:
+            raise ValueError("El saldo no puede ser negativo.")
+        self._saldo = nuevo_saldo
+
+cuenta = CuentaBancaria(1000)
+print(cuenta.saldo)  # Salida: 1000
+
+cuenta.saldo = 500  # Cambiar el saldo
+print(cuenta.saldo)  # Salida: 500
+
+# cuenta.saldo = -100  # Esto generaría un ValueError
+```
+
+### 4. Propiedades computadas
+
+Las propiedades también pueden ser utilizadas para computar valores basados en otros atributos. Esto es útil para mantener el código limpio y evitar duplicaciones.
+
+#### Ejemplo de propiedades computadas
+
+```python
+class Circulo:
+    def __init__(self, radio):
+        self.radio = radio
+
+    @property
+    def area(self):
+        import math
+        return math.pi * (self.radio ** 2)
+
+circulo = Circulo(5)
+print(circulo.area)  # Salida: 78.53981633974483
+```
+
+### 5. Uso de `@classmethod` y `@staticmethod` con propiedades
+
+Puedes utilizar `@classmethod` y `@staticmethod` para crear propiedades de clase y métodos estáticos, respectivamente.
+
+#### Ejemplo de métodos de clase
+
+```python
+class Persona:
+    cantidad_personas = 0
+
+    def __init__(self, nombre):
+        self.nombre = nombre
+        Persona.cantidad_personas += 1
+
+    @classmethod
+    def total_personas(cls):
+        return cls.cantidad_personas
+
+persona1 = Persona("Juan")
+persona2 = Persona("Maria")
+print(Persona.total_personas())  # Salida: 2
+```
+
+### Resumen
+
+- **Propiedades**: Permiten encapsular el acceso a los atributos de una clase, añadiendo validación y lógica adicional.
+- **Propiedades dinámicas**: Se pueden crear basadas en otros atributos, lo que permite una computación perezosa.
+- **Validación**: Permite validar datos antes de asignarlos a un atributo.
+- **Propiedades computadas**: Facilitan el cálculo de valores basados en otros atributos.
+
+La gestión avanzada de propiedades es esencial para diseñar clases robustas y mantener un buen encapsulamiento y validación.
+
+**Lecturas recomendadas**
+
+[GitHub - platzi/python-avanzado at property](https://github.com/platzi/python-avanzado/tree/property)
