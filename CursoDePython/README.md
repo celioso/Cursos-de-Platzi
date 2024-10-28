@@ -6191,3 +6191,203 @@ La gestión avanzada de propiedades es esencial para diseñar clases robustas y 
 **Lecturas recomendadas**
 
 [GitHub - platzi/python-avanzado at property](https://github.com/platzi/python-avanzado/tree/property)
+
+## Métodos estáticos y de clase avanzados
+
+En Python, los métodos estáticos y de clase (`@staticmethod` y `@classmethod`) son herramientas poderosas para gestionar el comportamiento de las clases sin tener que instanciar objetos. Aunque ambos tipos de métodos no actúan sobre una instancia, difieren en su uso y propósito:
+
+### 1. Métodos Estáticos (`@staticmethod`)
+
+Un método estático es una función que pertenece a una clase, pero no puede acceder ni modificar el estado de la clase o de sus instancias (no recibe el argumento `self` ni `cls`). Los métodos estáticos se utilizan cuando la funcionalidad de la función es relevante para la clase, pero no necesita interactuar con los atributos o métodos de clase o de instancia.
+
+#### Uso de `@staticmethod` avanzado
+
+En casos avanzados, los métodos estáticos pueden ser útiles para:
+- Realizar cálculos complejos independientes de la clase.
+- Encapsular funciones auxiliares que operan sobre datos externos.
+- Realizar validaciones de datos que pueden usarse en múltiples métodos de la clase.
+
+```python
+class Calculadora:
+    @staticmethod
+    def sumar(a, b):
+        return a + b
+
+    @staticmethod
+    def es_numero_par(x):
+        return x % 2 == 0
+
+# Uso sin instanciar la clase
+print(Calculadora.sumar(10, 5))  # Salida: 15
+print(Calculadora.es_numero_par(10))  # Salida: True
+```
+
+En este ejemplo, `sumar` y `es_numero_par` no dependen de ningún estado de clase, lo que las convierte en buenos candidatos para ser métodos estáticos.
+
+### 2. Métodos de Clase (`@classmethod`)
+
+Un método de clase recibe el primer argumento `cls`, que representa la propia clase y permite manipular los atributos de la clase o crear nuevas instancias. Los métodos de clase son útiles para trabajar con datos a nivel de clase y pueden ser usados para construir métodos de fábrica, modificar atributos de clase o realizar operaciones que afectan a todas las instancias de la clase.
+
+#### Uso de `@classmethod` avanzado
+
+Los métodos de clase son especialmente útiles en situaciones donde necesitas:
+- Crear instancias de la clase desde datos o configuraciones específicas.
+- Implementar métodos de fábrica que devuelvan instancias preconfiguradas.
+- Acceder y modificar datos a nivel de clase, como contadores de instancias.
+
+##### Ejemplo 1: Método de Fábrica
+
+```python
+class Persona:
+    def __init__(self, nombre, edad):
+        self.nombre = nombre
+        self.edad = edad
+
+    @classmethod
+    def desde_cadena(cls, cadena):
+        nombre, edad = cadena.split(',')
+        return cls(nombre, int(edad))
+
+# Crear una instancia utilizando un método de clase
+persona = Persona.desde_cadena("Juan,30")
+print(persona.nombre)  # Salida: Juan
+print(persona.edad)    # Salida: 30
+```
+
+Aquí, el método `desde_cadena` actúa como un método de fábrica, creando instancias a partir de una cadena de texto específica.
+
+##### Ejemplo 2: Contador de Instancias
+
+```python
+class Vehiculo:
+    contador_instancias = 0
+
+    def __init__(self, tipo):
+        self.tipo = tipo
+        Vehiculo.incrementar_contador()
+
+    @classmethod
+    def incrementar_contador(cls):
+        cls.contador_instancias += 1
+
+    @classmethod
+    def obtener_total_vehiculos(cls):
+        return cls.contador_instancias
+
+# Crear varias instancias
+coche = Vehiculo("Coche")
+moto = Vehiculo("Moto")
+
+# Ver el total de instancias
+print(Vehiculo.obtener_total_vehiculos())  # Salida: 2
+```
+
+### Comparación y Cuándo Usar Cada Uno
+
+| Método         | Usar cuando...                                                                                     |
+|----------------|----------------------------------------------------------------------------------------------------|
+| `@staticmethod`| No necesitas acceder ni modificar la clase ni sus instancias, pero la funcionalidad es relevante.  |
+| `@classmethod` | Necesitas manipular el estado de la clase o crear instancias configuradas de forma específica.     |
+
+### Resumen
+
+- **Métodos Estáticos** (`@staticmethod`): Independientes del estado de la clase o instancias. Útiles para validaciones, cálculos y funciones auxiliares.
+- **Métodos de Clase** (`@classmethod`): Tienen acceso a la clase y son útiles para modificar el estado de la clase o implementar métodos de fábrica.
+
+Ambos métodos son útiles para escribir código reutilizable y pueden mejorar la organización y la legibilidad de las clases.
+
+**Lecturas recomendadas**
+
+[GitHub - platzi/python-avanzado at staticClassMethodAvanzado](https://github.com/platzi/python-avanzado/tree/staticClassMethodAvanzado)
+
+## Introducción a la concurrencia y paralelismo
+
+La concurrencia y el paralelismo son conceptos clave en la programación de alto rendimiento y el diseño de aplicaciones modernas, especialmente en entornos donde se necesita manejar múltiples tareas al mismo tiempo para optimizar el uso de recursos. Aunque ambos términos están relacionados, representan enfoques diferentes para ejecutar varias tareas simultáneamente. Vamos a desglosar los conceptos básicos y las diferencias.
+
+### Concurrencia
+
+La **concurrencia** se refiere a la capacidad de un sistema para gestionar múltiples tareas al mismo tiempo, sin necesariamente ejecutarlas simultáneamente. En un entorno concurrente, las tareas pueden progresar en paralelo, aunque no estén ejecutándose al mismo tiempo, ya que el sistema cambia rápidamente entre tareas.
+
+#### Ejemplo de concurrencia
+
+Imagina que estás en una cocina preparando varias recetas: cortas los ingredientes de una receta, luego los de otra, y vas alternando. No completas una receta antes de comenzar con otra, sino que cambias entre ellas para hacer progresos en todas.
+
+- **Multithreading**: Un enfoque común de concurrencia en el que múltiples "hilos" de ejecución se utilizan para dividir las tareas. En Python, se pueden utilizar con la biblioteca `threading` para tareas I/O intensivas (como la lectura y escritura en archivos o las solicitudes de red), debido a las limitaciones del Global Interpreter Lock (GIL).
+
+```python
+import threading
+
+def tarea(nombre):
+    print(f"Iniciando tarea: {nombre}")
+
+hilo1 = threading.Thread(target=tarea, args=("Tarea 1",))
+hilo2 = threading.Thread(target=tarea, args=("Tarea 2",))
+
+hilo1.start()
+hilo2.start()
+hilo1.join()
+hilo2.join()
+```
+
+### Paralelismo
+
+El **paralelismo** es la capacidad de ejecutar múltiples tareas al mismo tiempo, aprovechando varios núcleos de CPU. En un entorno verdaderamente paralelo, varias tareas se ejecutan simultáneamente en diferentes núcleos, lo que es ideal para tareas que requieren un uso intensivo de CPU.
+
+#### Ejemplo de paralelismo
+
+Siguiendo el ejemplo de la cocina, en un entorno paralelo, tienes varios chefs en la cocina, y cada uno trabaja en una receta diferente simultáneamente.
+
+- **Multiprocessing**: En Python, la biblioteca `multiprocessing` permite crear varios procesos independientes que pueden ejecutarse en paralelo, sin las limitaciones del GIL. Esto es útil para tareas que necesitan cálculos intensivos, como el procesamiento de grandes volúmenes de datos.
+
+```python
+from multiprocessing import Process
+
+def tarea(nombre):
+    print(f"Iniciando tarea: {nombre}")
+
+proceso1 = Process(target=tarea, args=("Tarea 1",))
+proceso2 = Process(target=tarea, args=("Tarea 2",))
+
+proceso1.start()
+proceso2.start()
+proceso1.join()
+proceso2.join()
+```
+
+### Diferencias clave entre concurrencia y paralelismo
+
+| Característica   | Concurrencia                                                     | Paralelismo                                           |
+|------------------|-------------------------------------------------------------------|-------------------------------------------------------|
+| **Definición**   | Habilidad de manejar múltiples tareas al mismo tiempo.            | Ejecución simultánea de tareas en diferentes núcleos. |
+| **Ejemplo**      | `threading` (conmutación rápida entre tareas).                    | `multiprocessing` (tareas ejecutadas en paralelo).    |
+| **Aplicaciones** | Ideal para tareas I/O intensivas.                                 | Ideal para tareas CPU intensivas.                     |
+
+### Concurrencia y paralelismo en Python: retos y limitaciones
+
+Python maneja la concurrencia con hilos (`threading`) y el paralelismo con procesos (`multiprocessing`). Sin embargo, el **GIL** limita la ejecución de hilos en Python, lo que hace que el uso de `multiprocessing` sea preferible para tareas intensivas en CPU, mientras que `threading` es útil para tareas de I/O.
+
+### Alternativas: `asyncio` para concurrencia asíncrona
+
+Para manejar concurrencia de manera más eficiente, Python también ofrece `asyncio`, que permite trabajar con tareas asíncronas sin crear múltiples hilos o procesos. Es especialmente útil en aplicaciones de red y permite manejar tareas I/O en paralelo de manera eficiente.
+
+```python
+import asyncio
+
+async def tarea(nombre):
+    print(f"Iniciando tarea: {nombre}")
+    await asyncio.sleep(1)
+    print(f"Terminando tarea: {nombre}")
+
+async def main():
+    await asyncio.gather(tarea("Tarea 1"), tarea("Tarea 2"))
+
+asyncio.run(main())
+```
+
+### Resumen
+
+- **Concurrencia**: Capacidad de manejar múltiples tareas a la vez, alternando entre ellas. Ideal para tareas de I/O intensivas.
+- **Paralelismo**: Ejecución simultánea de tareas en múltiples núcleos. Ideal para tareas CPU intensivas.
+- **`asyncio`**: Permite manejar tareas asíncronas y concurrentes de manera eficiente sin usar múltiples hilos o procesos.
+
+Cada enfoque tiene sus fortalezas y limitaciones, y la elección depende de la naturaleza de las tareas.
