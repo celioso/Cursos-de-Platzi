@@ -6391,3 +6391,1078 @@ asyncio.run(main())
 - **`asyncio`**: Permite manejar tareas asíncronas y concurrentes de manera eficiente sin usar múltiples hilos o procesos.
 
 Cada enfoque tiene sus fortalezas y limitaciones, y la elección depende de la naturaleza de las tareas.
+
+**Lecturas recomendadas**
+
+[GitHub - platzi/python-avanzado at concurrenciaParalelismo](https://github.com/platzi/python-avanzado/tree/concurrenciaParalelismo)
+
+## Threading y multiprocessing en Python
+
+## Uso de `threading` y `multiprocessing` en Python
+
+![A_rectangular_image_representing_threads_and_multi-processing_in_Python.jpg](images/A_rectangular_image_representing_threads_and_multi-processing_in_Python.jpg)
+
+Imagina que estás trabajando en una aplicación que necesita procesar múltiples tareas al mismo tiempo: desde manejar solicitudes web hasta realizar cálculos complejos de manera simultánea. A medida que las aplicaciones se vuelven más exigentes, las soluciones básicas de concurrencia ya no son suficientes. Aquí es donde entran las herramientas avanzadas de Python como **threading** y **multiprocessing**, que te permiten sacar el máximo provecho de tu CPU y gestionar tareas de manera eficiente y sin errores.
+
+En esta clase, aprenderás a manejar escenarios más complicados, como evitar que los hilos interfieran entre sí, compartir datos de manera segura entre procesos y prevenir bloqueos que puedan detener tu aplicación. Prepárate para llevar la programación concurrente y paralela a un nivel más profesional y resolver problemas que los desarrolladores enfrentan en proyectos del mundo real.
+
+### 1. Sincronización de Hilos en Python
+
+Cuando varios hilos intentan acceder a un mismo recurso al mismo tiempo, pueden ocurrir problemas de coherencia. Para evitar esto, se utilizan mecanismos de sincronización, como Lock y RLock, que garantizan que solo un hilo acceda a un recurso crítico a la vez.
+
+### Ejemplo: Uso de Lock para Evitar Condiciones de Carrera
+
+```python
+import threading
+
+# Variable compartida
+saldo = 0
+lock = threading.Lock()  # Crear un Lock
+
+def depositar(dinero):
+    global saldo
+    for _ in range(100000):
+        with lock:  # Bloquear el acceso para evitar condiciones de carrera
+            saldo += dinero
+
+hilos = []
+for _ in range(2):
+    hilo = threading.Thread(target=depositar, args=(1,))
+    hilos.append(hilo)
+    hilo.start()
+
+for hilo in hilos:
+    hilo.join()
+
+print(f"Saldo final: {saldo}")  # Esperamos ver 200000 como saldo
+```
+
+**Explicación:**
+
+- El uso de Lock asegura que solo un hilo modifique la variable saldo en un momento dado, evitando que el resultado final sea incorrecto.
+
+### 2. Compartir Datos entre Procesos con multiprocessing
+
+A diferencia de los hilos, los procesos no comparten memoria de forma predeterminada. Para que dos procesos puedan compartir datos, Python proporciona herramientas como **multiprocessing.Queue** y **multiprocessing.Value**.
+
+**Ejemplo: Compartir Datos con Queue en multiprocessing**
+
+```python
+import multiprocessing
+
+def calcular_cuadrado(numeros, cola):
+    for n in numeros:
+        cola.put(n * n)
+
+if __name__ == "__main__":
+    numeros = [1, 2, 3, 4, 5]
+    cola = multiprocessing.Queue()
+
+    proceso = multiprocessing.Process(target=calcular_cuadrado, args=(numeros, cola))
+    proceso.start()
+    proceso.join()
+
+    # Extraer resultados de la cola
+    while not cola.empty():
+        print(cola.get())
+```
+
+**Explicación:**
+
+- Usamos Queue para que el proceso secundario pueda pasar datos de vuelta al proceso principal.
+
+### 3. Problemas de Sincronización y Cómo Evitarlos
+
+A medida que manejas tareas más complejas, es posible que te encuentres con problemas como deadlocks y race conditions. Entender estos problemas es crucial para escribir código concurrente robusto.
+
+**Evitar Deadlocks con RLock**
+
+Un deadlock ocurre cuando dos o más hilos se bloquean mutuamente al esperar por un recurso que está siendo utilizado por otro hilo. Para evitar esto, podemos usar RLock en lugar de Lock.
+
+**Ejemplo: Uso de RLock para Evitar Deadlocks**
+
+```python
+import threading
+
+class CuentaBancaria:
+    def __init__(self, saldo):
+        self.saldo = saldo
+        self.lock = threading.RLock()
+
+    def transferir(self, otra_cuenta, cantidad):
+        with self.lock:
+            self.saldo -= cantidad
+            otra_cuenta.depositar(cantidad)
+
+    def depositar(self, cantidad):
+        with self.lock:
+            self.saldo += cantidad
+
+cuenta1 = CuentaBancaria(500)
+cuenta2 = CuentaBancaria(300)
+
+hilo1 = threading.Thread(target=cuenta1.transferir, args=(cuenta2, 200))
+hilo2 = threading.Thread(target=cuenta2.transferir, args=(cuenta1, 100))
+
+hilo1.start()
+hilo2.start()
+
+hilo1.join()
+hilo2.join()
+
+print(f"Saldo cuenta1: {cuenta1.saldo}")
+print(f"Saldo cuenta2: {cuenta2.saldo}")
+```
+
+**Explicación:**
+
+- Usamos RLock para evitar que múltiples operaciones simultáneas en una cuenta causen bloqueos.
+
+### 4. Coordinación de Tareas con multiprocessing.Manager
+
+Cuando los procesos deben compartir estructuras de datos complejas (como listas o diccionarios), podemos usar un Manager para crear un espacio de memoria compartido entre procesos.
+
+**Ejemplo: Uso de Manager para Compartir Listas entre Procesos**
+
+```python
+import multiprocessing
+
+def agregar_valores(lista_compartida):
+    for i in range(5):
+        lista_compartida.append(i)
+
+if __name__ == "__main__":
+    with multiprocessing.Manager() as manager:
+        lista_compartida = manager.list()
+
+        proceso1 = multiprocessing.Process(target=agregar_valores, args=(lista_compartida,))
+        proceso2 = multiprocessing.Process(target=agregar_valores, args=(lista_compartida,))
+
+        proceso1.start()
+        proceso2.start()
+
+        proceso1.join()
+        proceso2.join()
+
+        print(f"Lista compartida: {lista_compartida}")
+```
+
+**Explicación:**
+
+- multiprocessing.Manager nos permite crear una lista compartida entre varios procesos, facilitando la comunicación entre ellos.
+
+¡Lo lograste! Ahora tienes en tus manos poderosas técnicas para manejar múltiples tareas de forma eficiente. Aprendiste a sincronizar hilos para evitar errores, a compartir datos de manera segura entre procesos y a evitar bloqueos que podrían detener tus aplicaciones. Todo esto te prepara para enfrentar los desafíos del desarrollo de software moderno, donde la concurrencia y el paralelismo son esenciales para crear aplicaciones rápidas, eficientes y escalables.
+
+Con estas herramientas avanzadas, tu código no solo será más rápido, sino también más robusto y confiable. Este es el tipo de conocimiento que te permite destacar en proyectos grandes y complejos. ¡Estás listo para aplicar todo lo que has aprendido y optimizar tus próximas creaciones en Python!
+
+En Python, las bibliotecas `threading` y `multiprocessing` permiten ejecutar múltiples tareas en paralelo, pero tienen diferencias importantes. **`threading`** se usa principalmente para tareas de entrada/salida (I/O), como redes o acceso a archivos, debido a la limitación del **Global Interpreter Lock (GIL)**. **`multiprocessing`**, por otro lado, permite ejecutar código en múltiples procesos y es más adecuado para tareas que consumen mucha CPU, ya que evita el GIL.
+
+A continuación, detallo cada biblioteca y su uso.
+
+### 1. `threading`: Concurrencia a través de hilos
+
+La biblioteca `threading` permite la creación y manejo de hilos en Python. Los hilos comparten el mismo espacio de memoria y recursos, lo que facilita la comunicación entre ellos, pero limita su uso en tareas intensivas en CPU debido al GIL.
+
+#### Uso básico de `threading`
+
+```python
+import threading
+
+def tarea(nombre):
+    print(f"Iniciando {nombre}")
+    # Simulación de trabajo
+    for i in range(3):
+        print(f"{nombre} ejecutando {i}")
+    print(f"Terminando {nombre}")
+
+# Crear hilos
+hilo1 = threading.Thread(target=tarea, args=("Hilo 1",))
+hilo2 = threading.Thread(target=tarea, args=("Hilo 2",))
+
+# Iniciar hilos
+hilo1.start()
+hilo2.start()
+
+# Esperar a que terminen
+hilo1.join()
+hilo2.join()
+```
+
+#### Ventajas y Limitaciones de `threading`
+
+- **Ventajas**: Ideal para tareas de entrada/salida que pueden esperar (ej., operaciones de red, archivos).
+- **Limitaciones**: Debido al GIL, solo un hilo puede ejecutar bytecode de Python a la vez, lo que limita la utilidad de `threading` para operaciones que consumen mucha CPU.
+
+### 2. `multiprocessing`: Paralelismo con múltiples procesos
+
+La biblioteca `multiprocessing` permite la ejecución de tareas en múltiples procesos, cada uno con su propio intérprete de Python, evitando el GIL. Esto es útil para tareas que requieren cálculos intensivos, como el procesamiento de datos.
+
+#### Uso básico de `multiprocessing`
+
+```python
+from multiprocessing import Process
+
+def tarea(nombre):
+    print(f"Iniciando {nombre}")
+    # Simulación de trabajo
+    for i in range(3):
+        print(f"{nombre} ejecutando {i}")
+    print(f"Terminando {nombre}")
+
+# Crear procesos
+proceso1 = Process(target=tarea, args=("Proceso 1",))
+proceso2 = Process(target=tarea, args=("Proceso 2",))
+
+# Iniciar procesos
+proceso1.start()
+proceso2.start()
+
+# Esperar a que terminen
+proceso1.join()
+proceso2.join()
+```
+
+#### Ventajas y Limitaciones de `multiprocessing`
+
+- **Ventajas**: Permite un verdadero paralelismo, útil para tareas CPU intensivas. Cada proceso tiene su propio espacio de memoria y no está afectado por el GIL.
+- **Limitaciones**: Cada proceso consume más memoria y tiene más sobrecarga en la comunicación entre procesos que los hilos.
+
+### Comunicación entre Hilos y Procesos
+
+#### `threading`: Comunicación a través de variables compartidas
+
+En `threading`, los hilos pueden compartir variables y recursos de la misma clase, ya que todos operan en el mismo espacio de memoria. Es importante utilizar **bloqueos (locks)** para evitar problemas de sincronización.
+
+```python
+import threading
+
+contador = 0
+bloqueo = threading.Lock()
+
+def incrementar():
+    global contador
+    for _ in range(1000):
+        with bloqueo:  # Bloqueo para evitar condiciones de carrera
+            contador += 1
+
+# Crear hilos
+hilos = [threading.Thread(target=incrementar) for _ in range(5)]
+
+# Iniciar hilos
+for hilo in hilos:
+    hilo.start()
+
+# Esperar a que terminen
+for hilo in hilos:
+    hilo.join()
+
+print(f"Contador final: {contador}")
+```
+
+#### `multiprocessing`: Comunicación a través de colas y pipes
+
+Dado que los procesos no comparten memoria, `multiprocessing` proporciona colas (`Queue`) y pipes (`Pipe`) para la comunicación.
+
+```python
+from multiprocessing import Process, Queue
+
+def productor(q):
+    for i in range(5):
+        q.put(i)  # Añadir elementos a la cola
+        print(f"Producto {i} añadido a la cola")
+
+def consumidor(q):
+    while not q.empty():
+        item = q.get()  # Obtener elementos de la cola
+        print(f"Producto {item} consumido")
+
+cola = Queue()
+
+# Crear procesos
+p1 = Process(target=productor, args=(cola,))
+p2 = Process(target=consumidor, args=(cola,))
+
+# Iniciar procesos
+p1.start()
+p2.start()
+
+# Esperar a que terminen
+p1.join()
+p2.join()
+```
+
+### Cuándo usar `threading` vs `multiprocessing`
+
+| **Situación**                               | **Biblioteca recomendada** |
+|---------------------------------------------|----------------------------|
+| Tareas I/O intensivas (red, lectura/escritura)| `threading`                |
+| Tareas CPU intensivas (procesamiento de datos)| `multiprocessing`          |
+| Necesidad de comunicación sencilla entre tareas | `threading` con variables compartidas y locks |
+| Necesidad de aislamiento de datos              | `multiprocessing` con `Queue` o `Pipe`         |
+
+### Resumen
+
+- **`threading`** es ideal para tareas concurrentes y basadas en I/O donde el GIL no es un problema.
+- **`multiprocessing`** permite el verdadero paralelismo y es mejor para tareas intensivas en CPU.
+- La **comunicación** entre hilos se hace mediante variables compartidas y bloqueos, mientras que en `multiprocessing` se utilizan `Queue` y `Pipe` para compartir datos entre procesos.
+
+Ambas bibliotecas son útiles para optimizar el rendimiento en Python, pero elegir la correcta depende del tipo de tarea y del diseño de la aplicación.
+
+## Asincronismo con asyncio
+
+El asincronismo en Python permite ejecutar tareas concurrentes sin bloquear el flujo de ejecución del programa. La biblioteca **`asyncio`** de Python facilita la creación y gestión de tareas asíncronas, lo que es ideal para aplicaciones que necesitan manejar múltiples operaciones de entrada y salida (I/O) de manera eficiente, como las solicitudes de red, el acceso a bases de datos y la lectura de archivos.
+
+### Fundamentos del Asincronismo con `asyncio`
+
+- **Asincronismo**: Consiste en realizar tareas de manera concurrente, de modo que una tarea pueda comenzar mientras otra está en pausa, sin detener el flujo general del programa.
+- **`async` y `await`**: Estas palabras clave son esenciales en `asyncio`. `async` se usa para definir una función asíncrona (`async def`), mientras que `await` se usa dentro de estas funciones para pausar su ejecución hasta que se complete una operación asíncrona.
+- **Corutinas**: Las funciones asíncronas en Python son "corutinas", que pueden ser pausadas y reanudadas. Esto permite que otras corutinas se ejecuten mientras una está esperando, optimizando el rendimiento.
+
+### Ejemplo Básico con `asyncio`
+
+Supongamos que tenemos una tarea simple que se ejecuta durante algunos segundos, como simulación de una tarea de red o una solicitud a una API.
+
+```python
+import asyncio
+
+async def tarea(nombre, duracion):
+    print(f"Iniciando {nombre}")
+    await asyncio.sleep(duracion)  # Simula una tarea que toma tiempo
+    print(f"Terminando {nombre} después de {duracion} segundos")
+
+# Ejecutar varias tareas
+async def main():
+    await asyncio.gather(
+        tarea("Tarea 1", 2),
+        tarea("Tarea 2", 3),
+        tarea("Tarea 3", 1)
+    )
+
+# Ejecutar la función principal
+asyncio.run(main())
+```
+
+### Explicación
+
+- `async def tarea(nombre, duracion)`: Define una función asíncrona que simula el trabajo con `asyncio.sleep(duracion)`.
+- `await asyncio.gather(...)`: Ejecuta varias tareas de forma concurrente. `gather` acepta múltiples corutinas y las ejecuta al mismo tiempo, permitiendo que las tareas esperen sin bloquear el flujo general del programa.
+
+### Uso de `asyncio.gather` y `asyncio.sleep`
+
+- **`asyncio.gather`**: Permite agrupar varias corutinas para ejecutarlas al mismo tiempo. Esto es útil cuando tienes varias tareas independientes que deseas que se completen en paralelo.
+- **`asyncio.sleep`**: Simula una operación de espera asíncrona, como el tiempo que toma una solicitud a una API o la lectura de un archivo.
+
+### Ejemplo Realista: Descarga Simultánea de Páginas Web
+
+Imaginemos un programa que descarga contenido de varias URLs. Podemos simular el proceso de espera de las respuestas de una API con `asyncio.sleep`.
+
+```python
+import asyncio
+
+async def descargar_pagina(url):
+    print(f"Descargando {url}")
+    await asyncio.sleep(2)  # Simula la espera de respuesta de la red
+    print(f"Descarga completa: {url}")
+    return f"Contenido de {url}"
+
+async def main():
+    urls = ["https://ejemplo.com/1", "https://ejemplo.com/2", "https://ejemplo.com/3"]
+    
+    # Ejecutar todas las descargas en paralelo
+    resultados = await asyncio.gather(*(descargar_pagina(url) for url in urls))
+    
+    print("Resultados de las descargas:")
+    for resultado in resultados:
+        print(resultado)
+
+asyncio.run(main())
+```
+
+### Explicación
+
+- **Lista de URLs**: Simulamos una lista de URLs que queremos "descargar".
+- **`await asyncio.gather(...)`**: Llama a `descargar_pagina` para cada URL en paralelo, esperando los resultados de todas las descargas antes de continuar.
+
+### Ejecución Secuencial vs. Asíncrona
+
+Si las descargas se ejecutaran de forma secuencial, cada una tendría que esperar a que la anterior termine. Con `asyncio.gather`, se ejecutan en paralelo, y el tiempo total es aproximadamente el de la tarea más larga.
+
+### Buenas Prácticas en `asyncio`
+
+1. **Usa `await` correctamente**: Solo se puede utilizar `await` dentro de funciones definidas con `async def`. Usar `await` permite pausar la corutina y ceder el control para que otras corutinas avancen.
+2. **`asyncio.run(main())`**: Es la forma recomendada para ejecutar el bucle de eventos asíncrono en el programa principal.
+3. **Evita el bloqueo**: Las funciones sin `await`, como operaciones de CPU o funciones de espera síncronas, bloquearán el flujo de ejecución asíncrono.
+
+### Ventajas del Asincronismo con `asyncio`
+
+- **Rendimiento**: Permite manejar miles de operaciones I/O sin necesidad de crear múltiples hilos o procesos.
+- **Escalabilidad**: Ideal para aplicaciones que necesitan manejar muchas conexiones simultáneamente, como servidores web.
+- **Eficiencia**: Reduce el consumo de memoria y CPU al evitar el uso de múltiples procesos o hilos.
+
+### Resumen
+
+- **Asincronismo** con `asyncio` permite que las tareas de entrada y salida se ejecuten sin bloquear el flujo.
+- **Corutinas** (`async def`) y **await** son esenciales para ejecutar código de forma asíncrona.
+- **`asyncio.gather`** ejecuta varias tareas en paralelo.
+- `asyncio` es ideal para tareas de I/O intensivas y es la solución recomendada para aplicaciones que necesitan alto rendimiento en operaciones concurrentes de red o archivo. 
+
+Este enfoque permite crear aplicaciones eficientes y escalables en entornos de alto rendimiento.
+
+**Lecturas recomendadas**
+
+[GitHub - platzi/python-avanzado at asincronismo](https://github.com/platzi/python-avanzado/tree/asincronismo)
+
+## Creación de módulos en Python
+
+Crear módulos en Python es una manera de organizar y reutilizar el código, facilitando la mantenibilidad y claridad del proyecto. Un **módulo** es un archivo `.py` que contiene funciones, clases o variables que se pueden importar en otros archivos o módulos de un proyecto.
+
+### 1. Creación de un Módulo Básico
+
+Imaginemos que queremos crear un módulo llamado `matematica.py` que contenga funciones matemáticas personalizadas.
+
+**Paso 1:** Crear el archivo del módulo.
+
+En el mismo directorio del proyecto, crea un archivo llamado `matematica.py` y añade funciones en él. Por ejemplo:
+
+```python
+# matematica.py
+
+def sumar(a, b):
+    return a + b
+
+def restar(a, b):
+    return a - b
+
+def multiplicar(a, b):
+    return a * b
+
+def dividir(a, b):
+    if b == 0:
+        raise ValueError("No se puede dividir por cero.")
+    return a / b
+```
+
+**Paso 2:** Importar el módulo en otro archivo.
+
+En un archivo diferente, como `main.py`, importa el módulo y utiliza sus funciones:
+
+```python
+# main.py
+
+import matematica
+
+resultado_suma = matematica.sumar(10, 5)
+resultado_resta = matematica.restar(10, 5)
+
+print("Suma:", resultado_suma)
+print("Resta:", resultado_resta)
+```
+
+### 2. Importación Específica y Alias
+
+Puedes importar funciones específicas o dar alias a las funciones o módulos para hacer el código más legible.
+
+```python
+# Importación específica
+from matematica import sumar, dividir
+
+print(sumar(3, 2))
+print(dividir(10, 2))
+
+# Alias para un módulo o función
+import matematica as mat
+
+print(mat.multiplicar(3, 2))
+```
+
+### 3. Uso de `__name__ == "__main__"`
+
+El bloque `if __name__ == "__main__":` permite ejecutar pruebas o código dentro del propio módulo sin que se ejecute cuando el módulo es importado en otro archivo.
+
+En `matematica.py`:
+
+```python
+# matematica.py
+
+def sumar(a, b):
+    return a + b
+
+# Código de prueba
+if __name__ == "__main__":
+    print(sumar(5, 7))  # Esto solo se ejecutará si ejecutas matematica.py directamente
+```
+
+### 4. Creación de Paquetes
+
+Un **paquete** es una colección de módulos organizados en una estructura de carpetas. Para crear un paquete, crea una carpeta con un archivo `__init__.py` y coloca módulos en ella. Esto permite importar submódulos.
+
+Estructura de ejemplo de un paquete llamado `mi_paquete`:
+
+```
+mi_paquete/
+    __init__.py
+    matematica.py
+    geometria.py
+```
+
+En `matematica.py` puedes colocar las funciones matemáticas, y en `geometria.py` funciones relacionadas con la geometría.
+
+**Uso del paquete en un archivo principal:**
+
+```python
+# Importa el paquete y sus módulos
+from mi_paquete import matematica, geometria
+
+print(matematica.sumar(3, 2))
+print(geometria.area_cuadrado(4))
+```
+
+### 5. Ejemplo Completo con el Paquete
+
+#### Estructura de Archivos
+
+```
+mi_paquete/
+    __init__.py
+    matematica.py
+    geometria.py
+main.py
+```
+
+#### Contenido de `__init__.py`
+
+```python
+# mi_paquete/__init__.py
+
+from .matematica import sumar, restar
+from .geometria import area_cuadrado
+```
+
+#### Contenido de `geometria.py`
+
+```python
+# mi_paquete/geometria.py
+
+def area_cuadrado(lado):
+    return lado * lado
+```
+
+#### `main.py`
+
+```python
+# main.py
+
+from mi_paquete import sumar, area_cuadrado
+
+print("Suma:", sumar(3, 5))
+print("Área del cuadrado:", area_cuadrado(4))
+```
+
+### Resumen
+
+1. **Módulo**: Archivo `.py` con funciones, clases o variables reutilizables.
+2. **Paquete**: Carpeta con un archivo `__init__.py` que organiza múltiples módulos.
+3. **Importación específica y alias**: Personaliza la importación de módulos o funciones.
+4. **Pruebas con `__name__ == "__main__"`**: Permite probar el código en el módulo mismo sin que se ejecute al importarse.
+
+Estos conceptos son fundamentales para crear código bien organizado y fácil de mantener en Python.
+
+**Lecturas recomendadas**
+
+[GitHub - platzi/python-avanzado at modulos](https://github.com/platzi/python-avanzado/tree/modulos)
+
+## Gestión de paquetes
+
+La **gestión de paquetes** en Python permite organizar, reutilizar y distribuir módulos o grupos de módulos de manera eficiente. Los **paquetes** son carpetas con módulos (archivos `.py`) y un archivo especial `__init__.py`, que convierte la carpeta en un paquete reconocible por Python. Esta organización es clave para proyectos de gran tamaño, donde diferentes funcionalidades se agrupan en paquetes separados, manteniendo el código limpio y modular.
+
+### ¿Qué es un Paquete?
+
+Un paquete en Python es una colección de módulos organizados en una estructura de carpetas, donde cada módulo puede contener funciones, clases y variables relacionadas. Esta estructura modular facilita:
+
+1. **Organización del código** en componentes lógicos.
+2. **Reutilización y distribución** del código en otros proyectos.
+3. **Escalabilidad** en proyectos complejos, separando funcionalidades en varios paquetes.
+
+### Estructura Básica de un Paquete
+
+Un paquete debe incluir un archivo `__init__.py` en su carpeta principal para que Python reconozca la carpeta como un paquete importable. Aunque `__init__.py` puede estar vacío, generalmente se utiliza para importar submódulos o funciones comunes.
+
+Ejemplo de una estructura de paquete:
+
+```
+mi_proyecto/
+│
+├── mi_paquete/
+│   ├── __init__.py
+│   ├── operaciones_matematicas.py
+│   └── operaciones_texto.py
+└── main.py
+```
+
+### Ejemplo de Paquete
+
+#### Paso 1: Crear los Módulos en el Paquete
+
+Dentro de `mi_paquete`, crea dos archivos:
+
+- **`operaciones_matematicas.py`**: Contiene funciones matemáticas.
+- **`operaciones_texto.py`**: Contiene funciones para manipular texto.
+
+**Contenido de `operaciones_matematicas.py`:**
+
+```python
+# mi_paquete/operaciones_matematicas.py
+
+def sumar(a, b):
+    return a + b
+
+def restar(a, b):
+    return a - b
+```
+
+**Contenido de `operaciones_texto.py`:**
+
+```python
+# mi_paquete/operaciones_texto.py
+
+def contar_palabras(texto):
+    return len(texto.split())
+
+def a_mayusculas(texto):
+    return texto.upper()
+```
+
+#### Paso 2: Configurar `__init__.py`
+
+El archivo `__init__.py` dentro de `mi_paquete` puede usarse para controlar qué funciones o módulos se exponen al importar el paquete. 
+
+**Contenido de `__init__.py`:**
+
+```python
+# mi_paquete/__init__.py
+
+from .operaciones_matematicas import sumar, restar
+from .operaciones_texto import contar_palabras, a_mayusculas
+```
+
+### Paso 3: Usar el Paquete en `main.py`
+
+Crea el archivo `main.py` fuera de la carpeta del paquete. Aquí puedes importar y usar las funciones definidas en `mi_paquete`.
+
+**Contenido de `main.py`:**
+
+```python
+# main.py
+
+from mi_paquete import sumar, restar, contar_palabras, a_mayusculas
+
+print("Suma:", sumar(5, 3))
+print("Resta:", restar(10, 4))
+print("Número de palabras:", contar_palabras("Este es un ejemplo"))
+print("Texto en mayúsculas:", a_mayusculas("texto en minúsculas"))
+```
+
+### Ejecución del Ejemplo
+
+Para ejecutar el ejemplo:
+
+1. Asegúrate de estar en el directorio donde se encuentra `main.py`.
+2. Ejecuta `main.py` con:
+
+   ```bash
+   python main.py
+   ```
+
+La salida debería ser algo similar a:
+
+```
+Suma: 8
+Resta: 6
+Número de palabras: 4
+Texto en mayúsculas: TEXTO EN MINÚSCULAS
+```
+
+### Gestión de Paquetes con `pip`
+
+Si deseas compartir o distribuir el paquete, puedes crear un archivo `setup.py`, que facilita la instalación del paquete mediante `pip`. Esto es útil para distribuir el paquete a otros usuarios o para subirlo a PyPI (Python Package Index).
+
+**Ejemplo de `setup.py`:**
+
+```python
+# setup.py
+
+from setuptools import setup, find_packages
+
+setup(
+    name='mi_paquete',
+    version='0.1',
+    packages=find_packages(),
+    description='Un paquete de ejemplo para operaciones matemáticas y de texto',
+    author='Tu Nombre',
+    author_email='tu_email@example.com',
+)
+```
+
+Para instalar el paquete en tu entorno local:
+
+```bash
+pip install .
+```
+
+### Resumen
+
+1. **Estructura de Paquete**: Organiza el proyecto en carpetas y módulos con un archivo `__init__.py`.
+2. **Modularidad y Reutilización**: Puedes reutilizar módulos y funciones en otros proyectos.
+3. **Distribución**: Usa `setup.py` para facilitar la instalación y compartir el paquete.
+
+Crear paquetes en Python es fundamental para desarrollar aplicaciones escalables, modulares y reutilizables, permitiendo que el código sea mantenible y fácil de distribuir.
+
+**Lecturas recomendadas**
+
+[GitHub - platzi/python-avanzado at paquetes](https://github.com/platzi/python-avanzado/tree/paquetes)
+
+## Publicación de paquetes en PyPI
+
+Publicar un paquete en el **Python Package Index (PyPI)** permite que otros usuarios puedan instalarlo y utilizarlo fácilmente a través de `pip`. Aquí tienes una guía paso a paso para hacerlo.
+
+### Paso 1: Preparar el Entorno y el Código
+
+1. **Organiza tu proyecto**: Asegúrate de que tu paquete tiene la estructura correcta y un archivo `__init__.py` en cada carpeta de paquetes o subpaquetes.
+   
+2. **Crea `setup.py`**: Este archivo contiene la configuración para construir e instalar el paquete.
+
+3. **Crea `README.md`** (opcional pero recomendado): Este archivo sirve como descripción detallada del paquete y se muestra en la página de PyPI.
+
+### Paso 2: Crear el Archivo `setup.py`
+
+En la raíz de tu proyecto, crea `setup.py` con la configuración básica del paquete.
+
+Ejemplo de `setup.py`:
+
+```python
+from setuptools import setup, find_packages
+
+setup(
+    name='mi_paquete',  # Nombre único en PyPI
+    version='0.1.0',    # Versión inicial
+    packages=find_packages(),  # Encuentra automáticamente submódulos y subpaquetes
+    description='Un paquete de ejemplo para operaciones matemáticas y de texto',
+    long_description=open('README.md').read(),
+    long_description_content_type='text/markdown',
+    author='Tu Nombre',
+    author_email='tu_email@example.com',
+    url='https://github.com/tu_usuario/mi_paquete',  # URL del repositorio
+    classifiers=[
+        'Programming Language :: Python :: 3',
+        'License :: OSI Approved :: MIT License',
+        'Operating System :: OS Independent',
+    ],
+    python_requires='>=3.6',
+)
+```
+
+### Paso 3: Crear el Archivo `pyproject.toml` (opcional)
+
+Para definir cómo construir el paquete, usa un archivo `pyproject.toml`, aunque no siempre es necesario. Este archivo define las dependencias de construcción, si tu proyecto tiene configuraciones específicas.
+
+Ejemplo de `pyproject.toml`:
+
+```toml
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+```
+
+### Paso 4: Crear un Entorno Virtual y Empaquetar el Proyecto
+
+1. **Instala `setuptools` y `wheel`** en tu entorno virtual:
+
+   ```bash
+   pip install setuptools wheel
+   ```
+
+2. **Empaqueta el proyecto**: Esto creará los archivos necesarios en la carpeta `dist/`.
+
+   ```bash
+   python setup.py sdist bdist_wheel
+   ```
+
+   Esto generará un archivo `.tar.gz` y un archivo `.whl` dentro de la carpeta `dist/`, que son los archivos de distribución del paquete.
+
+### Paso 5: Crear una Cuenta en PyPI
+
+1. **Regístrate en PyPI**: Si aún no tienes cuenta, ve a [https://pypi.org/account/register/](https://pypi.org/account/register/) y crea una.
+
+2. **Configura la autenticación**: Una vez registrado, guarda tu nombre de usuario y contraseña, o crea un **token de API** para autenticación.
+
+### Paso 6: Subir el Paquete a PyPI
+
+1. **Instala `twine`**: Es la herramienta para subir paquetes a PyPI.
+
+   ```bash
+   pip install twine
+   ```
+
+2. **Sube el paquete a PyPI**:
+
+   ```bash
+   twine upload dist/*
+   ```
+
+3. **Iniciar sesión**: Twine te pedirá tus credenciales de PyPI, o puedes usar un token de API.
+
+### Paso 7: Verificar la Publicación
+
+1. Visita tu página de PyPI en [https://pypi.org/project/mi_paquete](https://pypi.org/project/mi_paquete) (reemplaza `mi_paquete` con el nombre de tu paquete).
+2. Comprueba que la descripción, las dependencias y los archivos se hayan subido correctamente.
+
+### Paso 8: Instalar el Paquete desde PyPI
+
+Para probar el paquete recién publicado, instálalo con `pip`:
+
+```bash
+pip install mi_paquete
+```
+
+### Ejemplo Completo de la Estructura Final
+
+Estructura típica de un proyecto que se subirá a PyPI:
+
+```
+mi_paquete/
+│
+├── mi_paquete/              # Paquete principal
+│   ├── __init__.py
+│   ├── operaciones_matematicas.py
+│   └── operaciones_texto.py
+│
+├── README.md                # Descripción del proyecto (Markdown)
+├── setup.py                 # Configuración de empaquetado
+└── pyproject.toml           # (opcional) Configuración de compilación
+```
+
+### Consejos para Publicaciones en PyPI
+
+1. **Incrementa la versión**: Cada vez que subas una actualización, incrementa la versión en `setup.py`.
+2. **Buena documentación**: Un `README.md` claro y detallado ayudará a los usuarios a entender cómo usar el paquete.
+3. **Pruebas**: Asegúrate de probar el paquete localmente antes de publicarlo.
+
+Este flujo garantiza que el paquete esté listo y sea accesible desde PyPI, permitiendo que otros usuarios puedan instalarlo y utilizarlo de manera sencilla.
+
+**Lecturas recomendadas**
+
+[PyPI · The Python Package Index](https://pypi.org/)
+
+## Implementación de un Sistema Completo
+
+En esta última clase del curso, vamos a aplicar todos los conceptos aprendidos en las clases anteriores para desarrollar un sistema completo utilizando Python avanzado. El proyecto consistirá en la implementación de un **sistema de gestión de reservas para un hotel**. Este sistema gestionará:
+
+1. **Reservas**: Creación y cancelación de reservas de habitaciones.
+2. **Clientes**: Almacenamiento y gestión de la información de los clientes.
+3. **Habitaciones**: Verificación de la disponibilidad de las habitaciones.
+4. **Pagos**: Procesamiento de pagos de las reservas de forma asincrónica.
+
+### Objetivos:
+
+1. Integrar los módulos y paquetes del sistema para que cada funcionalidad esté organizada de manera eficiente.
+2. Aplicar la programación asincrónica (asyncio) para manejar pagos concurrentes sin bloquear el sistema.
+3. Utilizar las mejores prácticas Pythonicas, como las recomendaciones de PEP 8, manejo de tipos y validaciones.
+4. Construir un sistema modular y reutilizable mediante la creación de un paquete Python.
+
+### Requisitos:
+
+1. Organizar el código en diferentes módulos y paquetes que gestionen las diferentes partes del sistema.
+2. Aplicar programación concurrente y asincrónica para procesar múltiples reservas de manera eficiente.
+3. Implementar validaciones básicas para asegurar que las reservas y los pagos sean gestionados correctamente.
+4. El sistema debe ser capaz de agregar clientes, verificar la disponibilidad de habitaciones, gestionar reservas y procesar pagos de manera eficaz.
+
+Este proyecto te ayudará a consolidar los conocimientos adquiridos durante el curso y será un ejemplo de cómo utilizar técnicas avanzadas en un entorno real para construir una aplicación completa y robusta en Python.
+
+1. Estructura del Proyecto
+
+Vamos a dividir nuestro sistema en diferentes módulos y paquetes para organizar el código de manera eficiente:
+
+**Paquetes del proyecto:**
+
+```python
+hotel_management/
+    __init__.py
+    reservations.py
+    customers.py
+    rooms.py
+    payments.py
+```
+
+1. `reservations.py`: Maneja la creación y cancelación de reservas.
+2. `customers.py`: Gestiona la información de los clientes.
+3. `rooms.py`: Gestiona la disponibilidad y características de las habitaciones.
+4. `payments.py`: Procesa los pagos de las reservas.
+
+### 2. Implementación de Módulos
+
+**2.1. Módulo `reservations.py`**
+
+Este módulo gestionará la lógica relacionada con la creación y cancelación de reservas.
+
+```python
+from collections import defaultdict
+from datetime import datetime
+
+class Reservation:
+    def __init__(self, reservation_id, customer_name, room_number, check_in, check_out):
+        self.reservation_id = reservation_id
+        self.customer_name = customer_name
+        self.room_number = room_number
+        self.check_in = check_in
+        self.check_out = check_out
+
+class ReservationSystem:
+    def __init__(self):
+        # Utilizamos defaultdict para gestionar las reservas
+        self.reservations = defaultdict(list)
+
+    def add_reservation(self, reservation):
+        """Agrega una nueva reserva al sistema."""
+        self.reservations[reservation.room_number].append(reservation)
+        print(f"Reserva creada para {reservation.customer_name} en la habitación {reservation.room_number}")
+
+    def cancel_reservation(self, reservation_id):
+        """Cancela una reserva existente por ID."""
+        for room, reservations in self.reservations.items():
+            for r in reservations:
+                if r.reservation_id == reservation_id:
+                    reservations.remove(r)
+                    print(f"Reserva {reservation_id} cancelada")
+                    return
+        print("Reserva no encontrada")
+```
+
+**2.2. Módulo `customers.py`**
+
+Este módulo gestionará la información de los clientes.
+
+```python
+class Customer:
+    def __init__(self, customer_id, name, email):
+        self.customer_id = customer_id
+        self.name = name
+        self.email = email
+
+class CustomerManagement:
+    def __init__(self):
+        self.customers = {}
+
+    def add_customer(self, customer):
+        """Agrega un nuevo cliente al sistema."""
+        self.customers[customer.customer_id] = customer
+        print(f"Cliente {customer.name} agregado.")
+
+    def get_customer(self, customer_id):
+        """Obtiene la información de un cliente por ID."""
+        return self.customers.get(customer_id, "Cliente no encontrado.")
+```
+
+**2.3. Módulo `rooms.py`**
+
+Este módulo gestionará las habitaciones disponibles en el hotel.
+
+```python
+class Room:
+    def __init__(self, room_number, room_type, price):
+        self.room_number = room_number
+        self.room_type = room_type
+        self.price = price
+        self.available = True
+
+class RoomManagement:
+    def __init__(self):
+        self.rooms = {}
+
+    def add_room(self, room):
+        """Agrega una nueva habitación al sistema."""
+        self.rooms[room.room_number] = room
+        print(f"Habitación {room.room_number} agregada.")
+
+    def check_availability(self, room_number):
+        """Verifica si una habitación está disponible."""
+        room = self.rooms.get(room_number)
+        if room and room.available:
+            print(f"Habitación {room_number} está disponible.")
+            return True
+        print(f"Habitación {room_number} no está disponible.")
+        return False
+```
+
+2.4. Módulo payments.py
+Este módulo procesará los pagos utilizando asincronismo con asyncio.
+
+import asyncio
+import random
+
+async def process_payment(customer_name, amount):
+    """Simula el procesamiento de un pago."""
+    print(f"Procesando pago de {customer_name} por ${amount}...")
+    await asyncio.sleep(random.randint(1, 3))  # Simula una operación de pago
+    print(f"Pago de ${amount} completado para {customer_name}")
+    return True
+
+### 3. Implementación del Sistema Completo
+
+En el archivo `main.py`, vamos a integrar los módulos y utilizar programación concurrente y asincrónica para procesar varias reservas y pagos al mismo tiempo.
+
+```python
+import asyncio
+from hotel_management.reservations import Reservation, ReservationSystem
+from hotel_management.customers import Customer, CustomerManagement
+from hotel_management.rooms import Room, RoomManagement
+from hotel_management.payments import process_payment
+from hotel_management.datetime import datetime
+
+async def main():
+    # Inicializar sistemas
+    reservation_system = ReservationSystem()
+    customer_mgmt = CustomerManagement()
+    room_mgmt = RoomManagement()
+
+    # Crear habitaciones
+    room_mgmt.add_room(Room(101, "Single", 100))
+    room_mgmt.add_room(Room(102, "Double", 150))
+
+    # Agregar clientes
+    customer1 = Customer(1, "Alice", "alice@example.com")
+    customer_mgmt.add_customer(customer1)
+
+    customer2 = Customer(2, "Bob", "bob@example.com")
+    customer_mgmt.add_customer(customer2)
+
+    # Verificar disponibilidad de habitaciones
+    if room_mgmt.check_availability(101):
+        reservation = Reservation(1, "Alice", 101, datetime.now(), datetime.now())
+        reservation_system.add_reservation(reservation)
+
+        # Procesar pago asincrónicamente
+        await process_payment("Alice", 100)
+
+    if room_mgmt.check_availability(102):
+        reservation = Reservation(2, "Bob", 102, datetime.now(), datetime.now())
+        reservation_system.add_reservation(reservation)
+
+        # Procesar pago asincrónicamente
+        await process_payment("Bob", 150)
+
+if __name__ == "__main__":
+    asyncio.run(main())
+```
+
+### 4. Explicación del Proyecto
+
+En este proyecto, aplicamos los conceptos de las clases anteriores:
+
+- **Módulos y paquetes**: Creamos un sistema modular donde cada parte (reservas, clientes, habitaciones, pagos) está bien organizada en su propio módulo.
+- **Validaciones**: A través de la lógica implementada en la gestión de habitaciones y reservas.
+- **Asincronismo (asyncio)**: Usamos asyncio para procesar pagos de manera concurrente sin bloquear el sistema.
+- **Decoradores y métodos estáticos**: Aunque no se usan directamente aquí, podrían aplicarse para funcionalidades específicas como verificaciones adicionales o cálculo de descuentos.
+
+### 5. Conclusión
+
+Este proyecto final integra las diferentes áreas cubiertas en el curso, demostrando cómo las técnicas avanzadas de Python pueden combinarse para construir un sistema robusto y eficiente.
