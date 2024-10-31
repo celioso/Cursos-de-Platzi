@@ -844,3 +844,590 @@ Con esto hemos cargado un dataset funcional para ser procesado y digerido por tu
 [Datasets](https://keras.io/api/datasets/)
 
 [https://storage.googleapis.com/platzi-tf2/cifar100_labels.json](https://storage.googleapis.com/platzi-tf2/cifar100_labels.json)
+
+## Datasets generators
+
+Cuando trabajes con datasets encontrarás bases de datos ya generadas y listas para consumo, pero eventualmente te toparás con la necesidad de crear tus propios datos, por lo que deberás encontrar una manera de cargarlos.
+
+En el momento que cargas datos a memoria, lo haces directamente a la memoria RAM del sistema, por lo que si cargas un dataset pesado de golpe, es probable que termines colapsando tu entorno de trabajo por saturación de recursos.
+
+Para evitar este problema, se crean los generadores, una estructura de datos que generará datos solo si es recorrida, optimizando memoria.
+
+### Descargando el dataset de lenguaje de señas
+
+Descargaremos el repositorio desde GCP.
+
+```bash
+!wget --no-check-certificate https://storage.googleapis.com/platzi-tf2/sign-language-img.zip \ 
+-O /tmp/sign-language-img.zip
+```
+
+Descomprimiremos el archivo, para esto usaremos los módulos de os y zipfile.
+
+```python
+import os import zipfile
+
+local_zip = "/tmp/sign-language-img.zip" 
+zip_ref = zipfile.ZipFile(local_zip, "r") 
+zip_ref.extractall("/tmp/sign-language-img") 
+zip_ref.close()
+```
+
+La estructura del dataset constará en 2 directorios principales: Test y Train, donde para cada clase (letra en señas) tendremos un directorio con sus respectivos ejemplos.
+
+```bash
+sign-language-image/
+├── Test/ │ └── A-Z/ │ └── examples.jpg └── Train/ └── A-Z/
+└── examples.jpg
+```
+
+### Cargando el dataset con Keras dataset generator
+
+Para llevar a cabo el proceso de carga, haremos uso de varias librerías como TensorFlow, matplotlib y numpy.
+
+```python
+import numpy as np 
+%matplotlib inline 
+import matplotlib.pyplot as plt 
+import matplotlib.image as mpimg 
+import string 
+import tensorflow as tf 
+from tensorflow.keras.preprocessing.image 
+import ImageDataGenerator
+```
+
+Cargaremos las rutas donde se encuentran nuestros dataset.
+
+```python
+train_dir = "/tmp/sign-language-img/Train" 
+test_dir = "/tmp/sign-language-img/Test"
+```
+
+Generaremos los data generators, para esta ocasión reescalaremos los datos al rango de 0 a 1 para mejorar la convergencia del modelo, además, dividiremos el 20% de los datos de prueba a validación para monitorear el rendimiento del modelo en vivo.
+
+```python
+train_datagen = ImageDataGenerator(rescale = 1/255) 
+test_datagen = ImageDataGenerator(rescale = 1/255, validation_split = 0.2)
+```
+
+Para cargar las imágenes, haremos uso del método flow_from_directory del generador, determinaremos el directorio fuente, el tamaño que tendrán las imágenes (el generador las redimensionará de ser necesario), los lotes de procesamiento, el tipo de clases, el tipo de escala de colores y el subset al que pertenecen.
+
+```python
+train_generator = train_datagen.flow_from_directory( train_dir, target_size = (28,28), batch_size = 128, class_mode = "categorical", color_mode = "grayscale", subset = "training" )
+```
+
+Para los subsets de validación y prueba será el mismo proceso, donde cambiarán los nombres de las variables y las fuentes.
+
+```python
+validation_generator = test_datagen.flow_from_directory( test_dir, target_size = (28,28), batch_size = 128, class_mode = "categorical", color_mode = "grayscale", subset = "validation" )
+
+test_generator = train_datagen.flow_from_directory( test_dir, target_size = (28,28), batch_size = 128, class_mode = "categorical", color_mode = "grayscale", ) 
+```
+
+Para generar las clases haremos una pequeña list comprehension recorriendo los caracteres ASCII omitiendo las letras J y Z.
+
+```python
+classes = [char for char in string.ascii_uppercase if char != "J" if char != "Z"]
+```
+
+Para graficar imágenes crearemos la función plotImages que recibirá un array de imágenes y las mostrará en pantalla en grupos de 5.
+
+```python
+def plotImages(images_arr): 
+	fig, axes = plt.subplots(1, 5, figsize = (10, 10)) 
+	axes = axes.flatten() for img, ax in zip(images_arr, axes): 
+		ax.imshow(img[:,:,0]) 
+		ax.axis("off") 
+		plt.tight_layout() 
+		plt.show()
+```
+
+Para hacer uso de esta función generaremos un conjunto de imágenes, esto nos retornará un array de imágenes que daremos como parámetro.
+
+```python
+sample_training_images, _ = next(train_generator) 
+plotImages(sample_training_images[:5])
+```
+
+Con esto hemos cargado imágenes en memoria sin necesidad de saturar la memoria del sistema, cada vez que requieras iterar sobre tu dataset el generador solo generará las imágenes necesarias.
+
+**Archivos de la clase**
+
+[mainproject.ipynb](https://static.platzi.com/media/files/mainproject_f04be8ec-0020-4418-9bf2-3ded24a833b0.ipynb)
+
+**Lecturas recomendadas**
+
+[Google Colab - Main Project](https://platzi.com/clases/2397-python-profesional/39533-generadores/)
+
+[Generadores y Yield en Python](https://platzi.com/clases/2397-python-profesional/39533-generadores/)
+
+[https://storage.googleapis.com/platzi-tf2/sign-language-img.zip](https://storage.googleapis.com/platzi-tf2/sign-language-img.zip)
+
+## Aprende a buscar bases de datos para deep learning
+
+Cuando te encuentres desarrollando tus proyectos de deep learning es de vital importancia conocer la naturaleza de los datos que vas a consumir durante el entrenamiento, donde en ocasiones podrías optar por crear tus propios datasets.
+
+Sin embargo, es de vital importancia reconocer los repositorios que la web nos puede ofrecer ya que puede darse el caso en el que otros desarrolladores han invertido tiempo en crear un dataset robusto y profesional que podrás aprovechar.
+
+## Repositorios populares de datasets
+
+Existen varios repositorios de datos a través de la web, donde la primer aproximación puede ser la de los datos públicos, puedes acceder a diferentes páginas gubernamentales que ofrecen estos datos de manera abierta [como los del gobierno colombiano](https://datos.gov.co/ "como los del gobierno colombiano").
+
+[Kaggle](https://www.kaggle.com/ "Kaggle") es la comunidad más grande de machine learning del mundo, uno de sus apartados principales son datasets generados por la comunidad, donde puedes hacer búsquedas específicas y encontrar bases de datos de alto valor.
+
+[Google](https://datasetsearch.research.google.com/ "Google") ofrece su propio motor de búsqueda de datasets que combina repositorios de diferentes fuentes y los ofrece al público.
+
+[Data World](https://data.world/ "Data World") es un repositorio de datasets de pago donde podrás encontrar bases de datos de alta calidad por un precio. No es descabellado pensar en pagar por un dataset, porque al hacerlo estarás ahorrándote el tiempo de etiquetar manualmente cada ejemplo.
+
+[La comunidad de Github](https://github.com/awesomedata/awesome-public-datasets "La comunidad de Github") ha hecho su propia recolección de datasets de diferentes categorías, sientete libre de explorar la plataforma para hallar bases de datos de alto interés.
+
+Con eso ya conoces diferentes fuentes de datasets para tus proyectos, no dudes en indagar sobre casos que te llamen la tención para entender su estructura y propósito.
+
+**Lecturas recomendadas**
+
+[Datos Abiertos Colombia | Datos Abiertos Colombia](https://datos.gov.co/)
+
+[Kaggle: Your Machine Learning and Data Science Community](https://www.kaggle.com/)
+
+[Dataset Search](https://datasetsearch.research.google.com/)
+
+[data.world | The Cloud-Native Data Catalog](https://data.world/)
+
+[Data.gov](https://www.data.gov/)
+
+[GitHub - awesomedata/awesome-public-datasets: A topic-centric list of HQ open datasets.](https://github.com/awesomedata/awesome-public-datasets)
+
+## Cómo distribuir los datos
+
+Los datos de nuestro dataset son finitos y debemos distribuirlos para que el entrenamiento se haga con la máxima cantidad de ejemplos posibles a la vez que podamos verificar la veracidad del modelo con datos reales no vistos anteriormente, para esto creamos los subsets de entrenamiento, validación y pruebas.
+
+### ¿Por qué distribuir datos?
+
+Para entender esta necesidad, pasemos a una analogía con helados: de niño estás aprendiendo sobre los diferentes tipos de helados, tu padre tiene 100 helados, de los cuales usará 70 para enseñarte y 30 para ponerte a prueba; cada día te mostrará un helado diferente y te dirá su sabor hasta que se terminen y luego te preguntará por aquellos que no has visto.
+
+Lo anterior hace alusión a los datos de entrenamiento y prueba, donde los primeros se usarán para entrenar el modelo (tendrán acceso a las etiquetas de salida) mientras que los segundos serán para predecir, el problema con esto es que solo estaremos comprendiendo la eficacia del modelo una vez finalizado el entrenamiento.
+
+Para solucionar este problema y tener feedback en vivo del desempeño del modelo creamos el subset de validación, que hará el papel de pruebas durante cada época del entrenamiento, permitiendo monitorear el rendimiento de la red a través de las iteraciones.
+
+### Determinando los porcentajes de cada subset
+
+La distribución de los datos a los diferentes subsets se puede determinar de diferentes maneras, donde la configuración promedio será de 70% para entrenamiento y 30% para pruebas (la mitad de este conjunto podrían destinarse a validación). Andrew NG (de las figuras más importantes del Deep Learning moderno) propone una estructura de 60% de entrenamiento, 20% de validación y 20% pruebas.
+
+En caso de poseer pocos datos es recomendable aplicar la técnica de cross validation, que nos permitirá iterar el subset de validación entre los datos de entrenamiento, mientras que si tienes muchos datos puedes maximizar la cantidad de datos a entrenamiento en una estructura 90%/5%/5%.
+
+![Tipos de distribución de datos según la necesidad](images/tipos-distribucion-datos.png)
+
+### Errores comunes al distribuir datos
+
+Cuando distribuyas datos es posible encontrarte con errores altamente mortales en tiempo de ejecución porque no son de lógica ni compilación sino de estructuración, no serán detectados por la máquina y pueden ser muy costosos de detectar y solucionar.
+
+Un error común es el de combinar erróneamente los datos de entrenamiento con los de testeo, lo que resultará en un rendimiento artificialmente alto para la red. Otro error común es el de clases desbalanceadas, es decir, la cantidad de ejemplos de diferentes clases es diferentes (supongamos 95 ejemplos de la clase A con 5 ejemplos de la clase B), incluso si todos los ejemplos los clasificamos como A, tendremos una precisión artificial de 95%. Si tienes muy pocos datos el modelo no podrá entrenarse dado que no tendrá ejemplos suficientes para abstraer los patrones a enseñar.
+
+![Errores comunes a la hora de distribuir datos](images/errores-comunes-datos.png)
+
+Con esto tienes las intuiciones necesarias para distribuir tus datasets, los valores exactos los podrás decidir basándote en las recomendaciones e intuiciones personales, pero ya puedes partir con total seguridad desde los hombros de los gigantes del machine learning.
+
+La distribución de los datos, especialmente en el contexto de machine learning, suele implicar dividir el conjunto de datos en subconjuntos específicos para entrenamiento, validación y prueba, con el objetivo de optimizar el rendimiento del modelo y reducir el riesgo de sobreajuste. Veamos algunas formas y estrategias para hacer esto:
+
+### 1. División Básica: Entrenamiento, Validación y Prueba
+
+Una división común es separar los datos en tres conjuntos principales:
+
+- **Entrenamiento (Training)**: Utilizado para ajustar los pesos del modelo. Generalmente, representa entre el 60% y el 80% de los datos.
+- **Validación (Validation)**: Utilizado para afinar los hiperparámetros y evaluar el modelo de manera objetiva durante el entrenamiento. Suele representar entre el 10% y el 20%.
+- **Prueba (Testing)**: Empleado para evaluar el rendimiento final del modelo después del entrenamiento. Representa entre el 10% y el 20%.
+
+#### Ejemplo en Python con `train_test_split`
+
+```python
+from sklearn.model_selection import train_test_split
+
+# Supongamos que `X` contiene los datos de entrada y `y` las etiquetas
+X_train, X_temp, y_train, y_temp = train_test_split(X, y, test_size=0.3, random_state=42)
+X_val, X_test, y_val, y_test = train_test_split(X_temp, y_temp, test_size=0.5, random_state=42)
+
+# Ahora tenemos: 70% en `X_train`, 15% en `X_val`, y 15% en `X_test`
+```
+
+### 2. K-Fold Cross-Validation
+
+La **validación cruzada** es una técnica que consiste en dividir los datos en varios subconjuntos o "folds". Se entrena el modelo en todos menos uno de los subconjuntos y se valida en el subconjunto restante. Esto se repite `k` veces, y el rendimiento se promedia al final.
+
+```python
+from sklearn.model_selection import KFold
+
+kf = KFold(n_splits=5)  # 5 folds
+
+for train_index, val_index in kf.split(X):
+    X_train, X_val = X[train_index], X[val_index]
+    y_train, y_val = y[train_index], y[val_index]
+    # Entrenar y validar el modelo aquí
+```
+
+### 3. Stratified Split (División Estratificada)
+
+Cuando tienes una distribución desbalanceada en las clases, es útil realizar una **división estratificada** para asegurar que cada subconjunto tenga una proporción similar de clases. Esto es especialmente útil en clasificación.
+
+```python
+from sklearn.model_selection import StratifiedKFold
+
+skf = StratifiedKFold(n_splits=5)
+
+for train_index, val_index in skf.split(X, y):
+    X_train, X_val = X[train_index], X[val_index]
+    y_train, y_val = y[train_index], y[val_index]
+```
+
+### 4. Data Augmentation para Conjuntos de Entrenamiento Limitados
+
+Si tienes un conjunto de datos pequeño, puedes **aumentar los datos** para enriquecer el conjunto de entrenamiento y mejorar el rendimiento del modelo.
+
+### Estrategias Generales:
+
+- **Mantener un conjunto de prueba completamente aislado** para evitar el "overfitting al conjunto de prueba".
+- **Ajustar los hiperparámetros en el conjunto de validación** y nunca en el conjunto de prueba.
+- **Usar validación cruzada** en casos de conjuntos de datos limitados para obtener una estimación robusta del rendimiento del modelo.
+
+Estas técnicas ayudan a construir modelos robustos y a tener una evaluación precisa del rendimiento del modelo en datos no vistos.
+
+## Crear la red neural, definir capas, compilar, entrenar, evaluar y predicciones
+
+Ya tenemos todas las configuraciones previas para programar nuestra red, lo siguiente será definir una arquitectura, compilar el modelo y revisar el rendimiento de la red.
+
+### Creando el modelo de red neuronal
+
+Definiremos un modelo con la clase Sequential de Keras, esta nos permitirá apilar varias capas una encima de otra para lograr el efecto de aprendizaje profundo.
+
+La primer capa será de entrada, donde recibiremos una imagen de 28x28 pixeles en un solo canal, una vez recibida será aplanada para ser procesada como un array unidimensional.
+
+Las siguientes 2 capas serán capas profundas con 256 y 128 neuronas respectivamente, y tendrán como función de activación la ReLU.
+
+La capa de salida será una capa de 24 neuronas (una por cada posible clase) de activación Softmax que nos retornará un array con las probabilidades de cada letra.
+
+```python
+model_base = tf.keras.models.Sequential( [tf.keras.layers.Flatten(input_shape = (28, 28, 1)),
+										tf.keras.layers.Dense(256, activation = "relu"), 
+										tf.keras.layers.Dense(128, activation = "relu"),
+										tf.keras.layers.Dense(len(classes), 
+										activation = "softmax")] )
+```
+
+Si llamamos el método summary obtendremos un resumen de la arquitectura de la red.
+
+```python
+model_base.summary()
+Model: "sequential"
+
+Layer (type) Output Shape Param
+
+flatten_2 (Flatten) (None, 784) 0
+
+dense_5 (Dense) (None, 256) 200960
+
+dense_6 (Dense) (None, 128) 32896
+
+dense_7 (Dense) (None, 24) 3096
+
+================================================================= Total params: 236,952 Trainable params: 236,952 Non-trainable params: 0
+```
+
+
+### Compilación y entrenamiento del modelo
+
+Compilaremos el modelo definiendo un optimizador, para este caso determinamos adam, un algoritmo que permite actualizar automáticamente el learning rate según el desempeño de la red. Como función de pérdida aplicaremos categorical cross entropy y la métrica de éxito será la precisión.
+
+Entrenaremos el modelo con el image generator de entrenamiento, durante 20 épocas y con los datos de validación.
+
+```python
+model_base.compile(optimizer = "adam", 
+	loss = "categorical_crossentropy",
+	metrics = ["accuracy"])
+
+history = model_base.fit( train_generator, 
+	epochs = 20, 
+	validation_data = validation_generator )
+```
+
+En la época final tendremos una precisión casi total durante el entrenamiento pero un rendimiento diferente sobre los datos de validación.
+
+`Epoch 20/20 215/215 [==============================] - 6s 27ms/step - loss: 0.0101 - accuracy: 0.9999 - val_loss: 1.3020 - val_accuracy: 0.7572`
+
+Si evaluamos el modelo, nos encontraremos con una precisión del 76%, donde entrenamiento era casi absoluta.
+
+`results = model_base.evaluate(test_generator) 57/57 [==============================] - 2s 36ms/step - loss: 1.2101 - accuracy: 0.7616`
+
+### Análisis del desempeño de la red
+
+Para entender más gráficamente lo que sucedió, crearemos la función de visualización de resultados, que comparará el rendimiento del entrenamiento sobre el rendimiento de validación tanto términos de accuracy como de loss.
+
+```python
+def visualizacion_resultados(history): 
+	epochs = [i for i in range(20)] 
+	fig, ax = plt.subplots(1, 2) 
+	train_acc = history.history["accuracy"] 
+	train_loss = history.history["loss"] 
+	val_acc = history.history["val_accuracy"] 
+	val_loss = history.history["val_loss"] 
+	fig.set_size_inches(16, 9)
+
+ax[0].plot(epochs, train_acc, "go-", label = "Train accuracy") 
+ax[0].plot(epochs, val_acc, "ro-", label = "Validation accuracy") 
+ax[0].set_title("Train and Val accuracy") 
+ax[0].legend() 
+ax[0].set_xlabel("Epochs") 
+ax[0].set_ylabel("Accuracy")
+
+ax[1].plot(epochs, train_loss, "go-", label = "Train Loss") 
+ax[1].plot(epochs, val_loss, "ro-", label = "Validation Loss") 
+ax[1].set_title("Train and Val loss") 
+ax[1].legend() 
+ax[1].set_xlabel("Epochs") 
+ax[1].set_ylabel("Loss")
+
+plt.show() 
+```
+
+Si corremos la función obtendremos información valiosísima con respecto al comportamiento del modelo.
+
+`python visualizacion_resultados(history)`
+
+![Rendimiento de la primer red](images/resultados-primera-red.png)
+
+Puedes notar una diferencia abrupta tanto en el accuracy como en el loss, en la etapa de entrenamiento la red aprendió óptimamente y redujo la pérdida de manera constante, mientras que en validación sufrió de un rápido estancamiento, esto puede ser señal de overfitting, donde la red calcó los ejemplos y no los patrones.
+
+**Archivos de la clase**
+
+[mainproject.ipynb](https://static.platzi.com/media/public/uploads/mainproject_740db664-3fa3-4fd2-a213-b79a8441ee1e.ipynb)
+
+**Lecturas recomendadas**
+
+[Google Colab](https://colab.research.google.com/drive/13o0Jf_ZFbLs1WSJTsDQzztOfTOqiaZxs?usp=sharing)
+
+Aquí tienes una guía paso a paso sobre cómo crear una red neuronal con TensorFlow y Keras para realizar clasificación de imágenes. Estos pasos incluyen definir las capas, compilar el modelo, entrenarlo, evaluarlo y hacer predicciones.
+
+### 1. Importar las Bibliotecas Necesarias
+
+Primero, importamos TensorFlow y Keras, y configuramos el entorno.
+
+```python
+import tensorflow as tf
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense, Flatten, Conv2D, MaxPooling2D
+from tensorflow.keras.datasets import mnist  # Dataset de ejemplo
+from tensorflow.keras.utils import to_categorical
+```
+
+### 2. Preparar los Datos
+
+Usaremos el dataset MNIST de dígitos escritos a mano como ejemplo. Esto incluye cargar y preprocesar los datos.
+
+```python
+# Cargar los datos
+(X_train, y_train), (X_test, y_test) = mnist.load_data()
+
+# Normalizar los datos de imágenes (escalado entre 0 y 1)
+X_train, X_test = X_train / 255.0, X_test / 255.0
+
+# Redimensionar los datos para añadir una dimensión de canal
+X_train = X_train.reshape(X_train.shape[0], 28, 28, 1)
+X_test = X_test.reshape(X_test.shape[0], 28, 28, 1)
+
+# Convertir las etiquetas en una codificación categórica
+y_train = to_categorical(y_train, 10)
+y_test = to_categorical(y_test, 10)
+```
+
+### 3. Crear la Red Neuronal y Definir las Capas
+
+Creamos un modelo secuencial con capas de convolución, max pooling y capas densas.
+
+```python
+model = Sequential([
+    Conv2D(32, (3, 3), activation='relu', input_shape=(28, 28, 1)),
+    MaxPooling2D((2, 2)),
+    Conv2D(64, (3, 3), activation='relu'),
+    MaxPooling2D((2, 2)),
+    Flatten(),
+    Dense(128, activation='relu'),
+    Dense(10, activation='softmax')
+])
+```
+
+### 4. Compilar el Modelo
+
+Configura el optimizador, la función de pérdida y la métrica de precisión.
+
+```python
+model.compile(optimizer='adam',
+              loss='categorical_crossentropy',
+              metrics=['accuracy'])
+```
+
+### 5. Entrenar el Modelo
+
+Ahora entrenamos el modelo usando el conjunto de datos de entrenamiento y validación.
+
+```python
+history = model.fit(X_train, y_train, epochs=10, batch_size=32, validation_split=0.2)
+```
+
+### 6. Evaluar el Modelo
+
+Evaluamos el modelo en el conjunto de prueba.
+
+```python
+test_loss, test_accuracy = model.evaluate(X_test, y_test)
+print(f'Precisión en el conjunto de prueba: {test_accuracy:.4f}')
+```
+
+### 7. Hacer Predicciones
+
+Finalmente, hacemos predicciones sobre nuevas muestras.
+
+```python
+predictions = model.predict(X_test)
+# Convertir a etiquetas predichas
+predicted_classes = predictions.argmax(axis=1)
+
+# Ejemplo de predicción en una sola imagen
+import numpy as np
+image_index = 0  # Cambia el índice para ver otra imagen
+plt.imshow(X_test[image_index].reshape(28, 28), cmap='gray')
+plt.title(f'Predicción: {predicted_classes[image_index]}')
+plt.show()
+```
+
+### 8. Visualizar el Rendimiento (Opcional)
+
+Puedes visualizar la precisión y pérdida del modelo en cada época.
+
+```python
+import matplotlib.pyplot as plt
+
+# Precisión
+plt.plot(history.history['accuracy'], label='Entrenamiento')
+plt.plot(history.history['val_accuracy'], label='Validación')
+plt.title('Precisión del modelo')
+plt.xlabel('Épocas')
+plt.ylabel('Precisión')
+plt.legend()
+plt.show()
+
+# Pérdida
+plt.plot(history.history['loss'], label='Entrenamiento')
+plt.plot(history.history['val_loss'], label='Validación')
+plt.title('Pérdida del modelo')
+plt.xlabel('Épocas')
+plt.ylabel('Pérdida')
+plt.legend()
+plt.show()
+```
+
+Estos pasos cubren todo el flujo de trabajo básico para crear, entrenar, evaluar y hacer predicciones con una red neuronal en TensorFlow y Keras.
+
+## Métodos de regularización: overfitting y underfitting
+
+Durante todo el módulo anterior interiorizamos en la carga de los datos, su exploración y limpieza y culminamos en la creación de un modelo mínimamente funcional. Durante esta y las siguientes sesiones interiorizaremos en el concepto de optimización del modelo para incrementar exponencialmente el rendimiento.
+
+Durante esta sección comprenderemos qué es el overfitting y el underfitting, las mejores prácticas para ajustar los hiperparámetros de la red, métricas de monitoreo (como callbacks u early stopping) y a manejar el autotunner que Keras que actualizará los valores de diferentes parámetros según una serie de reglas establecidas.
+
+![Temario general optimización de redes](images/temario-optimizadores.jpg)
+
+### ¿Qué son los regularizadores?
+
+La principal fuente de optimización de un modelo de deep learning se da mediante los regularizadores, técnicas que se usan para mejorar matemáticamente la convergencia de los datos y evitar atascamientos como el overfitting y el underfitting. Hablaremos de los 2 regularizadores más importantes: Dropout y Regularizadores L1 y L2.
+
+### Dropout
+
+El primer método es el dropout, una técnica que apaga un porcentaje aleatorio de neuronas por cada iteración obligando a aquellas activas a comprender un patrón general en vez de memorizar la estructura de los datos.
+
+![Técnica de Dropout](images/descripcion-dropout.png)
+
+### Regularizadores L1 y L2
+
+Los regularizadores son modificadores a las matrices de pesos que permiten ajustar sus valores y penalizan aquellos datos matemáticamente extremos, existen 2 tipos de regularizadores (L1 y L2) y una tercera variante que los combina ambos.
+
+El regularizador Lasso L1 se usa cuando sospechas que pueden haber datos de entrada irrelevantes en tu red, su uso reducirá la cantidad de features innecesarias haciendo tu modelo más puro.
+
+El regularizador Ridge L2 se usa cuando los datos de entrada se encuentran altamente correlacionados entre ellos, lo que aumentará la desviación. Su uso reducirá uniformemente la magnitud de los features armonizando el crecimiento de la red.
+
+La combinación de los 2 regularizadores desemboca en ElasticNet, que será de alta utilidad en el manejo de modelos complejos con altas cantidades de features.
+
+![Tipos de regularizadores L1 L2 ElasticNet](images/tipos-regularizadores.png)
+
+Con la teoría comprendida, vamos a mejorar nuestro modelo con regularizadores.
+
+### Regularizadores en código
+
+Los regularizadores L1 y L2 se encuentran en el módulo regularizers de Keras, no olvides importarlo.
+
+`from tensorflow.keras import regularizers`
+
+Definiremos una nueva arquitectura basada en la anterior, para esta ocasión haremos una serie de sutiles cambios que impactarán en el resultado de la red.
+
+En las capas ocultas añadiremos el parámetro kernel regularizer que será un regularizador L2 con valor de 1x10^-5, adicionalmente, después de capa oculta añadiremos el dropout como si fuera otra capa más con un valor de 0.2 refiriéndose a una desactivación del 20% de las neuronas por iteración.
+
+```python
+model_optimizer = tf.keras.models.Sequential( [tf.keras.layers.Flatten(input_shape = (28, 28, 1)),
+											   tf.keras.layers.Dense(256, kernel_regularizer = regularizers.l2(1e-5), activation = "relu"), 
+											   tf.keras.layers.Dropout(0.2), tf.keras.layers.Dense(128, kernel_regularizer = regularizers.l2(1e-5), activation = "relu"), 
+											   tf.keras.layers.Dropout(0.2), tf.keras.layers.Dense(len(classes), activation = "softmax")] )
+
+model_optimizer.summary()
+```
+
+El resumen del modelo nos mostrará el dropout como si fuera otra capa oculta.
+
+```python
+Model: "sequential_1"
+
+Layer (type) Output Shape Param
+flatten_2 (Flatten) (None, 784) 
+0
+
+dense_4 (Dense) (None, 256) 
+200960
+
+dropout (Dropout) (None, 256) 
+0
+
+dense_5 (Dense) (None, 128) 
+32896
+
+dropout_1 (Dropout) (None, 128) 
+0
+
+dense_6 (Dense) (None, 24) 
+3096
+
+================================================================= Total params: 236,952 Trainable params: 236,952 Non-trainable params: 
+			0
+```
+
+Compilaremos y entrenaremos el modelo bajo las mismas directas del modelo pasado para contrastar el rendimiento.
+
+```python
+model_optimizer.compile(optimizer = "adam", 
+						loss = "categorical_crossentropy", 
+						metrics = ["accuracy"])
+
+history_optimizer = model_optimizer.fit( train_generator, epochs = 20, validation_data = validation_generator ) 
+```
+
+Podemos notar en la etapa final que si bien la precisión de entrenamiento bajó un poco, la precisión de validación ha aumentado.
+
+`Epoch 20/20 215/215 [==============================] - 11s 49ms/step - loss: 0.2245 - accuracy: 0.9251 - val_loss: 0.8691 - val_accuracy: 0.7937`
+
+Graficaremos los resultados para entender el nuevo desempeño de la red.
+
+![Resultados red regularizada](resultados-red-regularizada.png)
+
+Podemos notar como las gráficas de train y validation ahora tienden a ser más uniformes, esto denota una importante reducción en el overfitting y un incremento en el rendimiento final de la red.
+
+**Archivos de la clase**
+
+[mainproject.ipynb](https://static.platzi.com/media/public/uploads/mainproject_d58a838d-a94d-4e11-b200-dacb59117853.ipynb)
+
+**Lecturas recomendadas**
+
+[Google Colab](https://colab.research.google.com/drive/13o0Jf_ZFbLs1WSJTsDQzztOfTOqiaZxs?usp=sharing)
