@@ -1431,3 +1431,562 @@ Podemos notar como las gráficas de train y validation ahora tienden a ser más 
 **Lecturas recomendadas**
 
 [Google Colab](https://colab.research.google.com/drive/13o0Jf_ZFbLs1WSJTsDQzztOfTOqiaZxs?usp=sharing)
+
+## Recomendaciones prácticas para ajustar un modelo
+
+Si bien la configuración de cada proyecto de Machine Learning pueden ser radicalmente diferente y personalizada, hay generalidades que se pueden aplicar para impulsar la calidad de nuestros modelos. A continuación vamos a hablar de algunas de ellas en las diferentes etapas del desarrollo de algoritmos de IA.
+
+### Durante el preprocesamiento de los datos
+
+En esta etapa temprana es de vital importancia entender la naturaleza de los datos y sus propósitos. Algunas de las recomendaciones son:
+
+- Buscar datos null o archivos corruptos: estos datos aportarán basura al modelo y reducirán el rendimiento final si no son excluidos del dataset prematuramente.
+- Balancear tu base de datos: intenta que la cantidad de ejemplos para cada etiqueta sea proporcional porque un desbalanceo terminará en un algoritmo que no clasificará correctamente pero dará (falsamente) buenas métricas.
+- Aplicar normalización: normalizar los datos hará que sean más livianos de procesar y que se estandaricen frente al resto de features.
+- Visualizar y entender los datos: la lógica de negocio lo es todo, si logramos entender la naturaleza y el propósito de nuestros datos podremos dar una dirección diferente a nuestros proyectos, nuestro valor como IA devs radicará en esto.
+
+### Ajuste de hiperparámetros
+
+Estas configuraciones se hacen durante la creación de la arquitectura y la compilación de nuestro modelo y son más específicas con respecto a valores numéricos. Algunas recomendaciones son:
+
+- Crear convoluciones de tamaño 3x3, de esta manera no perderemos información durante las operaciones.
+- Definir la capa de Max Pooling en 2x2 para reducir la complejidad del modelo y no perder abruptamente muchas features por cada convolución.
+- Aplanar las imágenes al final del proceso de convolución (capa flatten), esto combinará todos los features obtenidos de las convoluciones en un solo array lineal.
+- Inicializar nuestros modelos con arquitecturas pequeñas de pocas neuronas, generalmente empezar desde 32 o 64 neuronas y crecer la cantidad por cada capa según las potencias de 2 (65/128/256/512).
+- Inicializar el learning rate en 0.001 (sin embargo tunners como adam nos permiten iterar su valor según el rendimiento de la red), los regularizadores L1 y L2 en 1x10^-5 y el dropout en 0.2 (20%).
+
+### Regularizadores
+
+Los regularizadores son un tipo de hiperparámetros que tienen sus propias intuiciones, algunas recomendaciones son:
+
+- Determinar qué tipo de regularizador (L1, L2 o L1+L2) usar según la naturaleza de tus datos. Si crees que pueden haber features inútiles en tu red, entonces aplica L1, si crees que tienes features con alta correlación entre si, aplica L2, y si tienes un dataset con alta cantidad de datos y ambas situaciones aplican, usa L1+L2 (también conocido como ElasticNet).
+- Si tu red no está rindiendo a nivel suficiente intenta con agregar más datos adquiriéndolos de su fuente original, si no es posible, puedes generar nuevos datos con data augmentation.
+- El dropout obligará a tu modelo a generalizar patrones en vez de memorizar ejemplos, siempre es buena idea agregarlo (especialmente si notas overfitting).
+- Puedes controlar el rendimiento de tu red con callbacks, específicamente los de Early Stopping (que detendrán el proceso de entrenamiento si no se detecta una mejoría con respecto a una métrica) y Model Checkpoint, que guardarán una instancia de tu modelo en su mejor época en caso de que hayas sobre entrenado tu red.
+
+### Funciones de activación
+
+Las funciones de activación transforman los resultados lineales de nuestra red, su elección impactará directamente en el rendimiento de las predicciones y del entrenamiento, algunas recomendaciones son:
+
+- Si debes clasificar entre más de 2 clases, entonces deberías usar la función Softmax.
+- Si la clasificación es binaria, entonces la función sigmoidal funcionará (esta retorna valores entre 0 y 1 interpretables como probabilidades).
+- Si vas a realizar una regresión en vez de una clasificación lo mejor será usar una función lineal (o en ocasiones no aplicar la función de activación en la capa final).
+- Si tienes más de 0 clases siempre será óptimo usar la ReLU durante el uso de capas ocultas.
+
+### Durante la configuración de la red
+
+Mientras configuras tu red puedes encontrar algunas mejoras que aplicar a tu modelo, algunas son:
+
+- Siempre aplica capas de convolución y max pooling de ser posible. Estas se apilan como si fueran capas ocultas y son especialmente útiles en el procesamiento de imágenes.
+- Varía y busca el learning rate óptimo para tu proyecto, es posible que en ocasiones apliques valores muy altos y tu modelo nunca alcance el mínimo global (porque salta mucho entre pasos) o que apliques valores muy bajos y te tome demasiadas iteraciones sacar conclusiones.
+- Siempre almacena tu registro de entrenamientos. Es posible que durante alguna iteración de tu proyecto encuentres una configuración que te dio un excelente desempeño, pero al no guardar los datos la perdiste y debiste volver a empezar.
+
+Con todo lo anterior, vamos a implementar mejoras a nuestro modelo que se reflejarán en la reducción del overfitting.
+
+### Ajustando el modelo
+
+Para esta ocasión agregaremos una capa de convolución al modelo, sus especificaciones serán 75 filtros de tamaño 3x3 y con función de activación ReLU, además, por ser la nueva primer capa, recibirá las dimensiones de los datos de entrada.
+
+Para reducir un poco la complejidad del modelo, hemos usado una capa de MaxPooling de 2x2 que abstraerá el pixel más relevante por cada 4 pixeles, mitigando el tamaño de salidas que generarán las convoluciones.
+
+Finalmente aplanaremos las imágenes para procesarlas como lo estábamos haciendo en el modelo original.
+
+```python
+model_convolutional = tf.keras.models.Sequential([ tf.keras.layers.Conv2D(75, (3,3), activation = "relu", input_shape = (28, 28, 1)), 
+												  tf.keras.layers.MaxPool2D((2,2)), 
+												  tf.keras.layers.Flatten(), tf.keras.layers.Dense(256, kernel_regularizer = regularizers.l2(1e-5), activation = "relu"),
+												  tf.keras.layers.Dropout(0.2), tf.keras.layers.Dense(128, kernel_regularizer = regularizers.l2(1e-5), activation = "relu"), 
+												  tf.keras.layers.Dropout(0.2), tf.keras.layers.Dense(len(classes), activation = "softmax") ])
+
+model_convolutional.summary()
+```
+
+El resumen del código nos mostrará estas nuevas adiciones e incrementará la cantidad de parámetros entrenables.
+
+```python
+Model: "sequential_4"
+
+Layer (type) Output Shape Param
+conv2d (Conv2D) (None, 26, 26, 75) 750
+
+max_pooling2d (MaxPooling2D (None, 13, 13, 75) 0
+)
+
+flatten_5 (Flatten) (None, 12675) 0
+
+dense_13 (Dense) (None, 256) 3245056
+
+dropout_4 (Dropout) (None, 256) 0
+
+dense_14 (Dense) (None, 128) 32896
+
+dropout_5 (Dropout) (None, 128) 0
+
+dense_15 (Dense) (None, 24) 3096
+
+================================================================= Total params: 3,281,798 Trainable params: 3,281,798 Non-trainable params: 0
+```
+
+Compilaremos y entrenaremos el modelo bajo las mismas directrices del resto de ocasiones.
+
+```python
+model_convolutional.compile(optimizer = "adam", 
+							loss = "categorical_crossentropy", 
+							metrics = ["accuracy"])
+
+history_convolutional = model_convolutional.fit( train_generator, epochs = 20, validation_data = validation_generator )
+
+Epoch 20/20 215/215 [==============================] - 46s 214ms/step - loss: 0.0312 - accuracy: 0.9972 - val_loss: 0.9134 - val_accuracy: 0.8575
+```
+
+Podemos notar una importante reducción en el overfitting (aunque aún está vigente) junto a una mejora general del rendimiento de la red tanto en entrenamiento como en validación.
+
+![Rendimiento red optimizada](images/resultados-red-optimizada.png)
+
+### Recomendaciones finales
+
+Es importante recalcar que una red más compleja (con más neuronas y más capas) no siempre dará un mejor resultado, todo lo contrario, el objetivo de modelar una red será el de generarla lo más sencilla posible, esto mejorará el tiempo de entrenamiento y evitará el overfitting.
+
+Otra recomendación es que el uso de redes neuronales no siempre es la mejor solución, existe un gran abanico de algoritmos de machine learning más sencillos a nivel matemático que pueden serte de mayor utilidad dado que las redes neuronales requieren de altas cantidades de datos como materia prima y potenciales recursos de cómputo para ser entrenadas.
+
+Finalmente, debes tener en cuenta la técnica de transfer learning que nos permite utilizar modelos ya entrenados para solucionar nuestros propios problemas, con un par de épocas extras podremos moldearlos a nuestros datos específicos y obtendremos resultados óptimos con poco gasto de recursos.
+
+Ajustar un modelo de machine learning implica optimizar su rendimiento para mejorar su capacidad de generalización en nuevos datos. Aquí hay algunas recomendaciones prácticas para hacerlo:
+
+### 1. **Preprocesamiento de Datos**
+   - **Limpieza de Datos:** Asegúrate de que los datos estén limpios, sin valores nulos o inconsistentes.
+   - **Normalización/Estandarización:** Escala los datos para que tengan un rango similar, lo que puede mejorar la convergencia del modelo.
+   - **Codificación de Variables Categóricas:** Utiliza técnicas como one-hot encoding o label encoding para manejar variables categóricas.
+
+### 2. **División de Datos**
+   - **Conjunto de Entrenamiento y Validación:** Divide tus datos en conjuntos de entrenamiento, validación y prueba para evaluar el rendimiento del modelo de manera adecuada.
+
+### 3. **Selección de Características**
+   - **Eliminación de Características Irrelevantes:** Utiliza técnicas de selección de características para identificar y eliminar variables que no aportan información relevante.
+   - **Ingeniería de Características:** Crea nuevas características que puedan ayudar al modelo a capturar mejor la relación entre los datos.
+
+### 4. **Ajuste de Hiperparámetros**
+   - **Grid Search/Random Search:** Utiliza métodos de búsqueda para encontrar la mejor combinación de hiperparámetros.
+   - **Cross-Validation:** Implementa validación cruzada para asegurar que el ajuste no esté sobreajustado a un conjunto específico de datos.
+
+### 5. **Regularización**
+   - **L1/L2 Regularization:** Aplica regularización para evitar el sobreajuste, penalizando la complejidad del modelo.
+   - **Dropout (en redes neuronales):** Introduce dropout para evitar el sobreajuste durante el entrenamiento de modelos de deep learning.
+
+### 6. **Monitoreo del Rendimiento**
+   - **Métricas de Evaluación:** Utiliza métricas adecuadas (precisión, recall, F1-score, AUC-ROC) según el tipo de problema (clasificación o regresión).
+   - **Curvas de Aprendizaje:** Monitorea las curvas de entrenamiento y validación para detectar problemas de sobreajuste o subajuste.
+
+### 7. **Ensamblado de Modelos**
+   - **Bagging y Boosting:** Considera usar métodos de ensamblado como Random Forests, AdaBoost o Gradient Boosting para mejorar el rendimiento.
+   - **Stacking:** Combina diferentes modelos para aprovechar sus fortalezas.
+
+### 8. **Optimización y Reentrenamiento**
+   - **Iteración:** Realiza ajustes iterativos basados en el rendimiento y la retroalimentación obtenida de los resultados.
+   - **Reentrenamiento:** Considera reentrenar el modelo con nuevos datos a medida que estén disponibles.
+
+Implementando estas recomendaciones, podrás mejorar la capacidad de tu modelo para generalizar en datos no vistos y obtener resultados más precisos.
+
+
+**Archivos de la clase**
+
+[mainproject.ipynb](https://static.platzi.com/media/public/uploads/mainproject_bcba1204-4944-44b5-9045-7c0dd2d635fa.ipynb)
+
+**Lecturas recomendadas**
+
+[Google Colab](https://colab.research.google.com/drive/13o0Jf_ZFbLs1WSJTsDQzztOfTOqiaZxs?usp=sharing)
+
+## Métricas para medir la eficiencia de un modelo: callback
+
+Cuando entrenamos nuestros modelos requerimos de monitorear su desempeño durante el entrenamiento, esto nos dará tiempo de reacción para entender por qué rinden como rinden. En esta ocasión manejaremos callbacks personalizados para monitorear el desempeño de nuestra red en términos de precisión y pérdida.
+
+### Aplicando callbacks a nuestro modelo
+
+Para esta ocasión crearemos un modelo llamado model_callbacks, virtualmente será idéntico al último modelo trabajado, pero cambiaremos levemente el comportamiento del entrenamiento cuando sea llamado.
+
+```python
+model_callback = tf.keras.models.Sequential([ tf.keras.layers.Conv2D(75, (3,3), activation = "relu", input_shape = (28, 28, 1)), 
+											 tf.keras.layers.MaxPool2D((2,2)), 
+											 tf.keras.layers.Flatten(), 
+											 tf.keras.layers.Dense(256, kernel_regularizer = regularizers.l2(1e-5), activation = "relu"), 
+											 tf.keras.layers.Dropout(0.2), 
+											 tf.keras.layers.Dense(128, kernel_regularizer = regularizers.l2(1e-5), activation = "relu"), 
+											 tf.keras.layers.Dropout(0.2), 
+											 tf.keras.layers.Dense(len(classes), activation = "softmax") ])
+
+model_callback.summary()
+
+model_callback.compile(optimizer = "adam", loss = "categorical_crossentropy", metrics = ["accuracy"]) 
+```
+
+Crearemos nuestro propio callback desde la clase Callback que nos ofrece Keras.
+
+Podemos activar un callback en cualquier momento del ciclo de vida del modelo, para esta ocasión podemos elegir si activarlo al inicio de cada época, durante el entrenamiento o al final, para esta ocasión elegiremos el último caso.
+
+Crearemos nuestra clase TrainingCallback que heredará de Callback, definiremos la función on_epoch_end que se activará cada que termine una época y recibirá como parámetros el objeto mismo, la época y los logs (que contendrán las métricas de la red).
+
+Obtenemos la precisión de los logs y la comparamos, para esta ocasión determinaremos que el modelo se detenga si es mayor a 95% o 0.95, si es así, entonces daremos un pequeño mensaje pantalla y setearemos la variable self.model.stop_training en verdadero para detenerlo prematuramente.
+
+```python
+from tensorflow.keras.callbacks 
+import Callback
+
+class TrainingCallback(Callback): 
+	def on_epoch_end(self, epoch, logs = {}): 
+		if logs.get("accuracy") > 0.95: 
+			print("Lo logramos, nuestro modelo llego a 95%, detenemos nuestro modelo")
+			self.model.stop_training = True
+```
+
+Para hacer efectivo este callback, creamos una instancia y lo inyectamos al momento de entrenar el modelo en el parámetro de callbacks, puedes notar que recibe una lista, por lo que puedes agregar cuantos quieras.
+
+```python
+callback = TrainingCallback()
+
+history_callback = model_callback.fit( train_generator, 
+									  epochs = 20, callbacks = [callback], 
+									  validation_data = validation_generator )
+```
+
+El entrenamiento empezará, y al cumplirse la condición el entrenamiento se detendrá prematuramente.
+
+```python
+Epoch 3/20 215/215 [==============================] - ETA: 0s - loss: 0.1442 - accuracy: 0.9673
+			Lo logramos, nuestro modelo llego a 95%, detenemos nuestro modelo 215/215 [==============================] - 46s 213ms/step - loss: 0.1442 - accuracy: 0.9673 - val_loss: 0.5947 - val_accuracy: 0.8428
+```
+
+### Personalizando callbacks
+
+Puedes personalizar tus propios callbacks que podrás usar en diferentes etapas (entrenamiento, testing y predicción), para este ejemplo mostraremos en pantalla un mensaje según el inicio de cada etapa del entrenamiento.
+
+```python
+from tensorflow.keras.callbacks import Callback
+
+class TrainingCallback(Callback): 
+	def on_train_begin(self, logs=None): 
+		print('Starting training....')
+
+	def on_epoch_begin(self, epoch, logs=None): 
+		print('Starting epoch {}'.format(epoch))
+
+	def on_train_batch_begin(self, batch, logs=None): 
+		print('Training: Starting batch {}'.format(batch))
+
+	def on_train_batch_end(self, batch, logs=None): 
+		print('Training: Finished batch {}'.format(batch))
+
+	def on_epoch_end(self, epoch, logs=None): 
+		print('Finished epoch {}'.format(epoch))
+
+	def on_train_end(self, logs=None): 
+		print('Finished training!')
+```
+
+En la sección de recursos puedes encontrar ejemplos para los casos de test y predicción, además de documentación al respecto.
+
+**Archivos de la clase**
+
+[ejemplos-callbacks.ipynb](https://static.platzi.com/media/public/uploads/ejemplos_callbacks_e3ffaa1b-26c7-4ccb-b533-8d2abc771734.ipynb)
+
+[mainproject.ipynb](https://static.platzi.com/media/public/uploads/mainproject_0360eb83-1fb1-4c9c-85a0-e13a39be8928.ipynb)
+
+**Lecturas recomendadas**
+
+[Google Colab](https://colab.research.google.com/drive/13o0Jf_ZFbLs1WSJTsDQzztOfTOqiaZxs?usp=sharing)
+
+[Google Colab](https://colab.research.google.com/drive/1mS0VMMd0IGUvotzR2nFJy5sHzUNr0LBQ?usp=sharing)
+
+## Monitoreo del entrenamiento en tiempo real: early stopping y patience
+
+Ya sabes como implementar tus propios callbacks personalizados, ahora indagaremos en los callbacks inteligentes que TensorFlow ha creado para nosotros, uno de ellos es early stopping, una técnica que detendrá el entrenamiento si no mejora después de algunas iteraciones.
+
+### Early stopping y patience en el código
+
+Antes de implementar esta funcionalidad, vamos a generalizar la creación del modelo mediante una función, de esta manera no tendremos que hardcodear cada modelo nuevo.
+
+```python
+def get_model(): 
+	model = tf.keras.models.Sequential([ tf.keras.layers.Conv2D(75, (3,3), activation = "relu", input_shape = (28, 28, 1)), 
+	tf.keras.layers.MaxPool2D((2,2)), 
+	tf.keras.layers.Flatten(), 
+	tf.keras.layers.Dense(256, kernel_regularizer = regularizers.l2(1e-5), activation = "relu"), 
+	tf.keras.layers.Dropout(0.2), 
+	tf.keras.layers.Dense(128, kernel_regularizer = regularizers.l2(1e-5), activation = "relu"), 		
+	tf.keras.layers.Dropout(0.2), 
+	tf.keras.layers.Dense(len(classes), activation = "softmax") ]) 
+	return model
+```
+
+Definiremos una instancia de modelo, la resumiremos y compilaremos.
+
+```python
+model_early = get_model() 
+model_early.summary()
+
+model_callback.compile(optimizer = "adam", 
+					   loss = "categorical_crossentropy", 
+					   metrics = ["accuracy"])
+```
+
+Crearemos nuestro callback de early stopping, para esto usaremos la respectiva clase de Keras que recibirá 3 parámetros: El monitor (que será la variable que vamos a monitorear o vigilar, en este caso será la pérdida).
+
+La paciencia (que será la tolerancia que tendrá el modelo antes de que pare, si en 3 épocas la pérdida no baja entonces se terminará el entrenamiento) y el modo (que determinará si buscamos la reducción o el aumento de la métrica, en este caso lo dejamos en detección automática).
+
+```python
+callback_early = tf.keras.callbacks.EarlyStopping(monitor = "loss", 
+												  patience = 3, 
+												  mode = "auto")
+```
+
+Lo inyectamos al entrenamiento en la sección de callbacks y esperamos el entrenamiento.
+
+```python
+history_early = model_early.fit( train_generator, 
+								epochs = 20, 
+								callbacks = [callback_early], 
+								validation_data = validation_generator )
+```
+
+Si la condición se cumple y rompe la paciencia definida, entonces el modelo dejará de entrenar prematuramente, esto será extremadamente útil para detectar que la red no está aprendiendo más y que es contraproducente continuar con el entrenamiento, con esto ahorraremos tiempo y valiosos recursos que podremos invertir en iterar sobre nuestro modelo.
+
+**Archivos de la clase**
+
+[mainproject.ipynb](https://static.platzi.com/media/public/uploads/mainproject_2d77457c-ff71-460b-9eef-f593fc0b9b0c.ipynb)
+
+Lecturas recomendadas
+
+[Google Colab](https://colab.research.google.com/drive/13o0Jf_ZFbLs1WSJTsDQzztOfTOqiaZxs?usp=sharing)
+
+## KerasTuner: construyendo el modelo
+
+El autotuner de Keras nos permitirá automatizar el proceso de configuración de nuestra red neuronal.
+
+Cuando deseemos iterar sobre múltiples configuraciones para nuestro modelo (probar diferentes capas, neuronas, épocas, learning rate y demás) no tendremos que hacerlo manualmente modelo a modelo, esta herramienta nos permitirá cargar y ejecutar diferentes fórmulas para comparar sus rendimientos.
+
+![Modificadores del KerasTuner](images/posibildades-tuner-keras.png)
+
+### Implementando el autotuner
+
+El autotuner de Keras no viene cargado por defecto en Google Colab, por lo que debemos instalarlo por terminal de comandos.
+
+`!pip install -q -U keras-tuner`
+
+Para usarlo lo importaremos como kerastuner.
+
+`import kerastuner as kt from tensorflow import keras`
+
+Para esta ocasión crearemos un nuevo constructor de modelos, este recibirá como parámetros un objeto tuner que determinará las variaciones de diferentes hiperparámetros.
+
+Definiremos una arquitectura general, donde agregaremos una capa de convolución, Max Pooling y aplanamiento de manera fija, luego determinaremos la primer variable del constructor: La cantidad de neuronas en la siguiente capa oculta, se inicializará en 32 e incrementará hasta 512 dando saltos de 32 en 32.
+
+La cantidad de neuronas de la siguiente capa será el objeto iterador. El resto de la red se mantendrá estable.
+
+Finalmente definiremos variaciones en el learning rate, donde empezaremos el modelo con 3 posibles learning rate: 0.01, 0.001 y 0.0001.
+
+Al momento de compilar el modelo definiremos Adam como optimizador, sin embargo, llamaremos directamente a la clase y le entregaremos el objeto iterador. El resto de parámetros seguirán iguales.
+
+```python
+def constructor_modelos(hp): 
+	model = tf.keras.models.Sequential() 
+	model.add(tf.keras.layers.Conv2D(75, (3,3), activation = "relu", input_shape = (28,28,1)))
+	model.add(tf.keras.layers.MaxPooling2D((2,2))) 
+	model.add(tf.keras.layers.Flatten())
+
+	hp_units = hp.Int("units", min_value = 32, max_value = 512, step = 32)
+	model.add(tf.keras.layers.Dense(units = hp_units, activation = "relu", kernel_regularizer = regularizers.l2(1e-5))) 
+	model.add(tf.keras.layers.Dropout(0.2)) 
+	model.add(tf.keras.layers.Dense(128, activation = "relu", kernel_regularizer = regularizers.l2(1e-5))) 
+	model.add(tf.keras.layers.Dropout(0.2)) 
+	model.add(tf.keras.layers.Dense(len(classes), activation = "softmax"))
+
+hp_learning_rate = hp.Choice("learning_rate", values = [1e-2, 1e-3, 1e-4])
+
+model.compile(optimizer = keras.optimizers.Adam(learning_rate=hp_learning_rate), 
+			  loss = "categorical_crossentropy", 
+			  metrics = ["accuracy"])
+
+return model
+```
+
+Esta función será la materia prima del tuner, el cual hará pruebas con todas las combinatorias para encontrar el modelo más optimo.
+
+**Archivos de la clase**
+
+[mainproject.ipynb](https://static.platzi.com/media/public/uploads/mainproject_79a97590-2744-44c1-9555-7db52c17b277.ipynb)
+
+**Lecturas recomendadas**
+
+[Google Colab](https://colab.research.google.com/drive/13o0Jf_ZFbLs1WSJTsDQzztOfTOqiaZxs?usp=sharing)
+
+## KerasTuner: buscando la mejor configuración para tu modelo
+
+Con el generador de modelos definido podremos crear el tuner que iterará a través de la configuración expuesta.
+
+Crearemos una instancia Hyperband (que será el objeto que iterará en las configuraciones), su primer parámetro será la función generador, luego la métrica objetivo (en este caso será val_accuracy para medir la precisión real del modelo), se configurará un máximo de 20 épocas, un factor de 3, un directorio de carga y un nombre de proyecto.
+
+```python
+tuner = kt.Hyperband( constructor_modelos, 
+					 objective = "val_accuracy", 
+					 max_epochs = 20, 
+					 factor = 3, 
+					 directory = "models/", 
+					 project_name = "platzi-tunner" )
+```
+
+Con en tuner generado, podremos empezar nuestra búsqueda, entregaremos al método el dataset, las épocas máximas y los datos de validación, empezamos el entrenamiento y esperamos a que se complete. Guardaremos el mejor desempeño en la variable best_hps
+
+```python
+tuner.search(train_generator, epochs = 20, 
+			 validation_data = validation_generator) 
+best_hps = tuner.get_best_hyperparameters(num_trials = 1)[0]
+```
+
+Al completar la búsqueda obtendremos información de los resultados, el tiempo de ejecución variará pero en GPU ronda entre 30 y 40 minutos y en CPU más de 2 horas.
+
+```python
+Trial 30 Complete [00h 02m 39s] val_accuracy: 0.8392982482910156
+
+Best val_accuracy So Far: 0.8863157629966736 Total elapsed time: 00h 31m 03s
+```
+
+Para obtener las mejores configuraciones haremos uso del método get. La mejor cantidad de neuronas fue 512 y el mejor learning rate fue de 0.001.
+
+```python
+print(best_hps.get("units")) 512
+
+print(best_hps.get("learning_rate"))#0.001
+```
+
+### Creando un modelo a partir de la mejor configuración
+
+Con los mejores hiperparámetros encontrados podremos construir un modelo optimizado, esto lo haremos con el método hypermodel.build de tuner que recibirá la configuración como argumento.
+
+Ahora tenemos un modelo listo para ser entrenado, agregaremos el callback de early stopping para evitar sobre entrenamientos innecesarios.
+
+```python
+hypermodel = tuner.hypermodel.build(best_hps)
+
+history_hypermodel = hypermodel.fit( train_generator, 
+									epochs = 20, 
+									callbacks = [callback_early], 
+									validation_data = validation_generator )
+```
+
+Al final obtendremos la mejor versión posible de nuestro modelo con respecto a la alta cantidad de configuraciones alternas que validamos automáticamente.
+
+**Archivos de la clase**
+
+[mainproject.ipynb](https://static.platzi.com/media/public/uploads/mainproject_302ade5f-291b-44b6-aa24-8ae1f97e6d0d.ipynb)
+
+**Lecturas recomendadas**
+
+[Google Colab](https://colab.research.google.com/drive/13o0Jf_ZFbLs1WSJTsDQzztOfTOqiaZxs?usp=sharing)
+
+[Login • Instagram](https://www.instagram.com/switch.ai/)
+
+## Almacenamiento y carga de modelos: pesos y arquitectura
+
+Aunque logres entrenar la mejor arquitectura de todas y encontrar los mejores parámetros posibles, si cierras tu notebook, pierdes todo el progreso. Es de vitar importancia conocer cómo cargar y descargar nuestros modelos.
+
+Los modelos tienen 3 componentes principales: La arquitectura (que define la cantidad de capas, neuronas y entradas de la red), los pesos (que son los valores que se entrenan a la red) y las etiquetas (estas se usan especialmente en transfer learning para dar contexto al modelo).
+
+![Componentes relevantes de un modelo a la hora de importarlo y exportarlo](images/componentes-modelo.jpg)
+
+Indaguemos en el código sobre cómo cargar y descargar modelos.
+
+### Cargando y descargando arquitecturas sin pesos
+
+Puedes usar la arquitectura de un modelo para basarte a la hora de entrenar otros modelos, esto no traerá los pesos, por lo que no será útil para realizar predicciones.
+
+Con el método get_config de tus modelos puedes adquirir un JSON completo con la información de la arquitectura de tu red.
+
+`config_dict = hypermodel.get_config()`
+
+Para cargar un modelo con base en esta configuración basará con usar el método from_config de los modelos secuenciales de Keras enviando como parámetro el JSON de configuración.
+
+`model_same_config = tf.keras.Sequential.from_config(config_dict)`
+
+Si resumimos el nuevo modelo nos encontraremos con las mismas dimensiones que el original.
+
+`model_same_config.summary()`
+
+### Descargando arquitecturas con pesos
+
+Para guardar arquitecturas con pesos es necesario usar el callback de ModelCheckpoint que nos permitirá guardar en disco el modelo con sus pesos.
+
+`from tensorflow.keras.callbacks import ModelCheckpoint`
+
+Crearemos un modelo vacío que guardaremos después.
+
+```python
+model_weight = get_model() 
+model_weight.compile(optimizer = "adam", 
+					 loss = "categorical_crossentropy", 
+					 metrics = ["accuracy"])
+```
+
+Crearemos la configuración para nuestro callback. Definimos el path donde se guardará el modelo, cada cuando se guardará, si solo guardará los pesos y el output de texto a recibir.
+
+```python
+checkpoint_path = "model_checkpoints/checkpoint"
+
+checkpoint_weight = ModelCheckpoint( 
+	filepath = checkpoint_path, 
+	frecuency = "epoch", 
+	save_weight_only = True, 
+	verbose = 1 )
+```
+
+Entrenaremos el modelo sin olvidar agregar el callback.
+
+```python
+history_weight = model_weight.fit( 
+	train_generator, 
+	epochs = 20, 
+	callbacks = [checkpoint_weight], 
+	validation_data = validation_generator )
+```
+
+Con esto hemos guardado un historial entero de nuestro modelo, puedes revisarlo en el directorio model_checkpoints/checkpoint.
+
+Si deseas guardar manualmente los pesos de tu red lo puedes haces con el método save indicando el directorio de salida. Esta manera únicamente guardará la última iteración, por lo que si por alguna razón la red sufrió un daño en esta etapa, no podrás revertirlo (a comparación del callback que guarda el historial entero).
+
+`model_weight.save("model_manual/my_model")`
+
+### Cargando arquitectura con pesos
+
+Crearemos un nuevo modelo hueco con la misma estructura que el original.
+
+```python
+model_weights2 = get_model() 
+model_weights2.compile(
+	optimizer = "adam", 
+	loss = "categorical_crossentropy", 
+	metrics = ["accuracy"])
+```
+
+Para cargar el modelo desde disco nos basta con usar el método load_weights indicando la locación a cargar.
+
+`model_weights2.load_weights(checkpoint_path)`
+
+Si evaluamos el desempeño del modelo original y el cargado nos daremos cuenta que son literalmente el mismo, reafirmando que el proceso de carga fue correcto.
+
+```python
+model_weights2.evaluate(test_generator) 57/57 [==============================] - 3s 41ms/step - loss: 0.9109 - accuracy: 0.8494 [0.9108972549438477, 0.8494144082069397]
+
+model_weight.evaluate(test_generator) 57/57 [==============================] - 2s 31ms/step - loss: 0.9109 - accuracy: 0.8494 [0.9108973145484924, 0.8494144082069397]
+```
+
+Ya conoces cómo cargar y descargar arquitecturas huecas o con pesos (en historial o de una sola época), ahora indagaremos sobre las mejores decisiones a la hora de cargar modelos.
+
+**Archivos de la clase**
+
+[mainproject.ipynb](https://static.platzi.com/media/public/uploads/mainproject_d7d9aab3-9e0d-4343-bafa-5e48cc5711c0.ipynb)
+
+**Lecturas recomendadas**
+
+[Google Colab](https://colab.research.google.com/drive/13o0Jf_ZFbLs1WSJTsDQzztOfTOqiaZxs?usp=sharing)
+
+[Keras FAQ](https://keras.io/getting-started/faq/#how-can-i-save-a-keras-model)
+
+[Save and load Keras models  |  TensorFlow Core](https://www.tensorflow.org/guide/keras/save_and_serialize#architecture-only_saving)
