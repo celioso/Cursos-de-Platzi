@@ -1990,3 +1990,465 @@ Ya conoces cómo cargar y descargar arquitecturas huecas o con pesos (en histori
 [Keras FAQ](https://keras.io/getting-started/faq/#how-can-i-save-a-keras-model)
 
 [Save and load Keras models  |  TensorFlow Core](https://www.tensorflow.org/guide/keras/save_and_serialize#architecture-only_saving)
+
+## Criterios para almacenar los modelos
+
+En la práctica la carga de modelos no sucede de manera atómica (no se carga solo los pesos o solo la arquitectura), lo hacemos todo a la vez, tampoco almacenamos todos los modelos, únicamente guardamos en disco los mejores desempeños. Vamos al código para entender cómo lograrlo.
+
+### Mejorando el guardado de pesos
+
+Definiremos un path para guardar nuestro nuevo modelo. En el ModelCheckpoint haremos una serie de modificaciones que cambiarán el cómo se guardará el modelo. El primero de ellos será la opción de save_weight_only, esta irá a falso, también agregaremos val_accuracy como monitor de desempeño y solo guardaremos la mejor versión del modelo.
+
+```python
+checkpoint_path = "model_checkpoints_complete"
+
+checkpoint_weight = ModelCheckpoint( filepath = checkpoint_path, 
+	frecuency = "epoch", 
+	save_weight_only = False, 
+	monitor = "val_accuracy", 
+	save_best_only = True, 
+	verbose = 1 )
+```
+
+Crearemos un modelo nuevo para comprender cómo se guardan los datos.
+
+```python
+model_complete = get_model() model_complete.compile(optimizer = "adam", 
+													loss = "categorical_crossentropy", 
+													metrics = ["accuracy"])
+
+history_complete = model_complete.fit( train_generator, 
+									  epochs = 20, 
+									  callbacks = [checkpoint_weight], 
+									  validation_data = validation_generator )
+```
+
+Si durante el entrenamiento la red mejora en su val_accuracy, entonces se guardará en disco, si por el contrario no detecta una mejora, entonces ignorará esa iteración.
+
+```python
+Epoch 1: val_accuracy improved from -inf to 0.77614, 
+	saving model to model_checkpoints_complete 
+	Epoch 8: val_accuracy did not improve from 0.86175
+```
+
+Al final obtendremos de output un directorio con varios archivos, asegúrate de guardarlos todos de manera local, dado que si falta alguno la carga del modelo fallará.
+
+Si deseas guardar la configuración entera manualmente, puedes hacer uso del método save de los modelos.
+
+`model_complete.save("saved_model_complete/mymodel")`
+
+### Cargando modelos completos
+
+Para cargar un modelo completo desde disco sin necesidad de crear una arquitectura vacía podemos usar la función load_model del módulo models de Keras indicando la ubicación del directorio.
+
+`model_complete3 = tf.keras.models.load_model("saved_model_complete/mymodel")`
+
+Si comparamos el rendimiento de test entre ambos modelos encontraremos que son exactamente el mismo, reflejando que la carga ha funcionado.
+
+```python
+model_complete3.evaluate(test_generator) 57/57 [==============================] - 2s 41ms/step - loss: 0.6733 - accuracy: 0.8826 [0.6733485460281372, 0.8825989961624146]
+
+model_complete.evaluate(test_generator) 57/57 [==============================] - 2s 41ms/step - loss: 0.6733 - accuracy: 0.8826 [0.673348605632782, 0.8825989961624146]
+```
+
+### Carga y descarga desde archivos h5
+
+Podemos guardar configuraciones enteras desde un archivo h5 que sintetizará toda la estructura de directorios vista anteriormente, para poder usarla debemos instalar pyyaml y h5py.
+
+`!pip install pyyaml h5py`
+
+Para guardar archivos como h5 bastará con modificar la extensión al final de la dirección a guardar. Para cargarlo bastará con indicar el archivo con extensión.
+
+```python
+model_complete3.save("my_model.h5") 
+model_complete4 = tf.keras.models.load_model("my_model.h5")
+
+```
+
+Con esto ya tienes un amplio abanico para guardar y cargar modelos, desde la sola arquitectura hasta un historial completo o seleccionado de generaciones de entrenamiento.
+
+**Archivos de la clase**
+
+[mainproject.ipynb](https://static.platzi.com/media/public/uploads/mainproject_5769b980-c725-4213-bce1-7e790fa51090.ipynb)
+
+Lecturas recomendadas
+
+[Google Colab](https://colab.research.google.com/drive/13o0Jf_ZFbLs1WSJTsDQzztOfTOqiaZxs?usp=sharing)
+
+## Introducción al aprendizaje por transferencia
+
+El transfer learning es una técnica valiosísima que nos permite aprovechar modelos ya entrenados por otros devs para usarlos en nuestros datasets.
+
+A través de este módulo comprenderemos qué es el aprendizaje por transferencia, cómo cargar sistemas pre-entrenados, cómo consumirlos desde fuentes de terceros y cómo aplicarlos a nuestros proyectos.
+
+![Temario general Transfer Learning](images/temario-transfer-learning.png)
+
+### ¿Cómo funciona el aprendizaje por transferencia?
+
+Para entender cómo funciona el transfer learning vamos a hacer una analogía: cuando eras niño aprendiste a manejar bicicleta, durante ese aprendizaje entendiste los conceptos de equilibrio, fuerza, velocidad y demás. En el futuro, cuando aprendas a manejar moto, podrás trasladar gran parte de los conceptos que ya aprendiste para obtener ventaja en este nuevo aprendizaje.
+
+A nivel de máquina el transfer learning se hace a través de las features o características del modelo que entrenaste originalmente. Supón que tienes un detector de manzanas y ahora quieres detectar otras frutas (naranjas, piñas, etc).
+
+No será necesario volver a entrenar un modelo desde el inicio dado que ya posees una configuración que detecta formas y colores, bastaría con hacer algunas iteraciones sobre este modelo principal con los nuevos datos y obtendrás un modelo igual de funcional.
+
+En la red puedes encontrar decenas de configuraciones que han sido entrenadas por meses de la mano de grandes protagonistas de la investigación del deep learning.
+
+El proceso de configuración será el de eliminar la capa final de la red que vamos a aprovechar (la capa de predicciones original) y la sustituiremos por nuestra propia configuración de salida.
+
+![Arquitectura general CNN](images/arquitectura-cnn.png)
+
+### Usando una red ya entrenada
+
+Antes de usar un modelo pre-entrenado es fundamental entender su arquitectura.
+
+La arquitectua MobileNet V2 fue diseñada para detección de objetos en dispositivos embebidos y móviles, su entrada es una imágen de 300x300 pixeles y a través de una serie de capas convolucionales con max pooling se adquieren todas las features a clasificar con un sistema de redes neuronales. Si quisieramos usarla, bastaría con eliminar la última capa y personalizarla a nuestra necesidad.
+
+![Arquitectura MobileNetV2](images/arquitectura-mobilenetv2.png)
+
+Para esta ocasión cargaremos el modelo Inception versión 3 (otra arquitectura altamente conocida de redes convolucionales). Importaremos nuestras dependencias de Keras y cargaremos la configuración desde la locación donde estén guardadas en disco, crearemos un modelo secuencial y lo inyectaremos desde la primer capa (nota que no se incluye la capa de salida).
+
+Se añade nuestra nueva capa de salida y se configura al modelo como no entrenable.
+
+```python
+from tensorflow.keras.layers 
+import Dense from tensorflow.keras.Model 
+import Sequential from tensorflow.keras.applications.inception_v3 
+import InceptionV3
+```
+
+
+### URL incepction model
+
+```python
+weights_file = "/tmp/inception_v3_weights_tf_dim_ordering_tf_kernels_notop.h5"
+
+new_model = Sequential() 
+new_model.add(InceptionV3(include_top = False, weights = weights_file))
+new_model.add(Dense(num_classes, activation = "softmax")) 
+new_model.layers[0].trainable = False 
+```
+
+Con esto podemos aprovechar cientos de modelos ya entrenados por otros IA devs.
+
+**Lecturas recomendadas**
+
+[GPT-3: La nueva Inteligencia Artificial de OpenAI | Platzi LIVE - YouTube](https://www.youtube.com/watch?v=VJ2mIFLxVTk)
+
+## Cuándo utilizar aprendizaje por transferencia
+
+Utilizar configuraciones creadas por otros devs será de mucha utilidad y te ahorrará tiempo, pero su uso no siempre será mandatorio, exploraremos algunas razones de cuándo y por qué utilizarlas.
+
+### ¿Cuándo utilizar modelo pre-entrenados?
+
+Podemos usar modelos pre-entrenados cuando tratemos problemas de procesamiento de lenguaje natural y visión computarizada, pasa ambos casos se suelen implementar arquitecturas robustas con altísimas cantidades de iteraciones, por lo que siempre será ideal dedicar tiempo a investigar qué configuraciones se han implementado similares a tu caso de uso.
+
+![Mejores casos de uso de modelos pre-entrenados](images/usos-modelos-preentrenados.png)
+
+### ¿Por qué usar aprendizaje por transferencia?
+
+El aprendizaje por transferencia será especialmente útil cuando tengas muy pocos datos, dado que no tendrás que enseñar al modelo desde 0 las abstracciones, también te permitirá generar iteraciones muy rápidas (en caso de que debas generar un prototipo en poco tiempo o quieras tantear la calidad de tus datos).
+
+Estos modelos ya han generalizado las features, por lo que se podrán adaptar a tus necesidades en pocas iteraciones.
+
+![¿Por qué usar Transfer Learning?](por-que-usar-transfer-learning.png)
+
+Si deseas enriquecerte con la documentación de algunas implementaciones, puedes leer los paper de [YOLO V3](https://pjreddie.com/media/files/papers/YOLOv3.pdf "YOLO V3") y [AlexNet](https://cvml.ista.ac.at/courses/DLWT_W17/material/AlexNet.pdf "AlexNet"), algunas de las configuraciones más usadas en redes convolucionales.
+
+### ¿Cómo saber cuál modelo seleccionar?
+
+Las 2 métricas a seguir a la hora de seleccionar un modelo serán las de precisión y complejidad, donde según tu contexto deberás elegir cuál es más relevante.
+
+Si tu modelo requiere de reacción rápida entonces podrás sacrificar un poco de precisión por velocidad (este es el ejemplo de detección de objetos en vivo, como cámaras de seguridad o vehículos autónomos).
+
+Si la precisión lo es todo (como en la clasificación de células cancerígenas) puedes darte el lujo de correr un modelo por bastante tiempo con el fin de obtener resultados precisos.
+
+Puedes guiarte en la noción de precisión vs cantidad de operaciones para elegir tu modelo, como siempre, tu determinarás las prioridades de tu modelo.
+
+![¿Cómo elegir un modelo pre-entrenado?](como-elegir-modelo-preentrenado.png)
+
+### Reto de selección de modelos
+
+Para esta ocasión te enfrentarás a 2 situaciones de clasificación de imágenes y tu tarea será elegir cuál modelo pre-entrenado usarás. La primer situación será la de detectar pájaros en vuelo mediante la cámara de un dron y la segunda será la detección del cáncer en diferentes órganos del cuerpo.
+
+**Lecturas recomendadas**
+
+[https://arxiv.org/pdf/1803.01164.pdf](https://arxiv.org/pdf/1803.01164.pdf "https://arxiv.org/pdf/1803.01164.pdf")
+
+[https://pjreddie.com/media/files/papers/YOLOv3.pdf](https://pjreddie.com/media/files/papers/YOLOv3.pdf "https://pjreddie.com/media/files/papers/YOLOv3.pdf")
+
+[https://cvml.ist.ac.at/courses/DLWT_W17/material/AlexNet.pdf](https://cvml.ist.ac.at/courses/DLWT_W17/material/AlexNet.pdf "https://cvml.ist.ac.at/courses/DLWT_W17/material/AlexNet.pdf")
+
+## API funcional de Keras
+
+Hasta ahora solo hemos usado explícitamente modelos secuenciales (donde las capas conectan directa y linealmente), para esta ocasión estamos manejando un modelo funcional, por lo que la conexión de capas debe ser explícita.
+
+### Conectando las nuevas capas
+
+Anteriormente cortamos la configuración de InceptionV3 en el mixed7 para considerarlo nuestra última capa no entrenable.
+
+```python
+last_layers = pre_trained_model.get_layer("mixed7") 
+last_output = last_layers.output
+```
+
+Ahora la conectaremos con nuestras capas personalizadas. Recuerda que como manejamos un modelo funcional, debemos expresar explícitamente desde cuál capa viene conectada, esto lo haremos con la notación de paréntesis al final de la definición de cada objeto.
+
+Aplanaremos todos los datos desde una capa flatten, agregaremos una capa densa de 128 neuronas con activación relu y un dropout de 20%, finalmente definiremos la nueva salida con 24 neuronas de activación softmax (la configuración original trae 1000 posibles outputs pero podemos personalizarla a voluntad).
+
+Con todas las capas conectadas, definiremos el modelo final con la clase Model de Keras, esta recibirá el inicio y el final del modelo.
+
+```python
+x = tf.keras.layers.Flatten()(last_output) 
+x = tf.keras.layers.Dense(128, activation = "relu")(x) 
+x = tf.keras.layers.Dropout(0.2)(x) 
+x = tf.keras.layers.Dense(len(classes), activation = "softmax")(x)
+
+model_keras = tf.keras.Model(pre_trained_model.input, x)
+
+model_keras.compile(optimizer = "adam", 
+					loss = "categorical_crossentropy", 
+					metrics = ["accuracy"]) 
+
+model_keras.summary()
+```
+
+Al compilar y resumir el modelo podemos notar que todas las capas después de mixed7 no existen, además de que la cantidad de parámetros bajó de casi 22 millones a casi 14, además solo 5 son entrenables (lo que reducirá la complejidad del modelo).
+
+`Total params: 13,795,384 Trainable params: 4,820,120 Non-trainable params: 8,975,264`
+
+### Entrenando el nuevo modelo
+
+Entrenaremos el nuevo modelo con los nuevos generadores durante 5 épocas. Notarás que el entrenamiento durará mucho más tiempo pero no tendremos que crear las abstracciones del modelo desde 0.
+
+```python
+history_keras = model_keras.fit( train_generator_resize, 
+								epochs = 5, 
+								validation_data = validation_generator_resize )
+```
+
+Podemos notar que incluso después de la primer iteración el accuracy y val_accuracy mantuvieron un tiempo de entrenamiento excelente, donde en la épica final tuvimos una aproximación total en entrenamiento, una pérdida mínima y una precisión en validación del 98.95%.
+
+```python
+Epoch 1/5 215/215 [==============================] - 37s 118ms/step - loss: 0.1648 - accuracy: 0.9545 - val_loss: 0.0509 - val_accuracy: 0.9832
+
+Epoch 5/5 215/215 [==============================] - 24s 111ms/step - loss: 9.9922e-04 - accuracy: 0.9999 - val_loss: 0.0385 - val_accuracy: 0.9895
+```
+
+Para corroborar los resultados de validación evaluaremos el modelo en el subset de pruebas.
+
+```python
+model_keras.evaluate(test_generator_resize)
+
+57/57 [==============================] - 7s 119ms/step - loss: 0.0463 - accuracy: 0.9865 [0.04633770138025284, 0.9864751696586609]
+```
+
+Obtuvimos una precisión de más del 98% en 8597 imágenes, un rendimiento más que aceptable para nuestro modelo.
+
+**Archivos de la clase**
+
+[mainproject.ipynb](https://static.platzi.com/media/public/uploads/mainproject_a4cb7d6d-c0b3-458b-938d-72289a4cd530.ipynb "mainproject.ipynb")
+
+**Lecturas recomendadas**
+
+[Google Colab](https://colab.research.google.com/drive/13o0Jf_ZFbLs1WSJTsDQzztOfTOqiaZxs?usp=sharing "Google Colab")
+
+[Keras Applications](https://keras.io/api/applications/ "Keras Applications")
+
+## Uso sistemas pre-entrenados de TensorFlow Hub
+
+Para esta ocasión importaremos modelos desde TensorFlow Hub, una plataforma dedicada a la divulgación de configuraciones por parte de la comunidad.
+
+### Tensorflow Hub con Keras
+
+Para usar el hub, debemos importarlo.
+
+`import tensorflow_hub as hub`
+
+Antes de todo, debemos detectar qué configuración usaremos, para esta ocasión usaremos la arquitectura [MobileNetV1](https://platzi.com/home/clases/2565-redes-neuronales-tensorflow/42860-uso-sistemas-pre-entrenados-de-tensorflow-hub/[https://tfhub.dev/google/imagenet/mobilenet_v1_050_160/classification/4](https://tfhub.dev/google/imagenet/mobilenet_v1_050_160/classification/4) "MobileNetV1").
+
+Este modelo es secuencial, por lo que stackearemos sus capas en un modelo de este tipo.
+
+Para los modelos del hub, basta con agregar una capa de entrada, añadir la capa de KerasLayer con la URL del sitio (no olvides configurarlo como no entrenable) y a partir de este punto podrás inyectar tu propia arquitectura.
+
+```python
+module_url = "https://tfhub.dev/google/imagenet/mobilenet_v1_050_160/classification/4"
+
+model_hub = tf.keras.Sequential([ 
+		tf.keras.layers.InputLayer(input_shape = (150, 150, 3)), 
+		hub.KerasLayer(module_url, trainable = False), 
+								tf.keras.layers.Flatten(), tf.keras.layers.Dense(128, activation = "relu"), 
+								tf.keras.layers.Dropout(rate = 0.2), 
+								tf.keras.layers.Dense(len(classes), activation = "softmax") ])
+```
+
+Antes de compilar la red debemos hacer build al modelo, siendo explícitos en las dimensiones de su tensor, en este caso MobileNet soporta frames de video, por lo que para usarlo como detector de imágenes bastará con anular esta dimensión.
+
+```python
+model_hub.build((None, 150, 150, 3)) 
+model_hub.summary()
+```
+
+Podemos notar en la arquitectura que se añade toda la capa cargada y posteriormente nuestra arquitectura.
+
+### Layer (type) Output Shape Param #
+
+```python
+Model: "sequential"
+keras_layer_2 (KerasLayer) (None, 1001) 1343049
+
+flatten_2 (Flatten) (None, 1001) 0
+
+dense (Dense) (None, 128) 128256
+
+dropout (Dropout) (None, 128) 0
+
+dense_1 (Dense) (None, 24) 3096
+
+================================================================= Total params: 1,474,401 Trainable params: 131,352 Non-trainable params: 1,343,049
+```
+
+El proceso de compilación y entrenamiento será el tradicional.
+
+```python
+model_hub.compile(optimizer = "adam", 
+				  loss = "categorical_crossentropy", 
+				  metrics = ["accuracy"])
+
+history_hub = model_hub.fit( train_generator_resize, epochs = 5, 
+							validation_data = validation_generator_resize )
+```
+
+Podemos notar que el rendimiento es menor al de Inception, pero en contraparte su tiempo de procesamiento es menor.
+
+`57/57 [==============================] - 5s 91ms/step - loss: 0.4389 - accuracy: 0.8461`
+
+Este tipo de modelos son útiles a la hora de procesar imágenes en vivo (como en cámaras de drones). Pero traen en consecuencias una pérdida de precisión, dependerá de tu proyecto aceptar estas alternativas o sacrificar tiempo de cómputo por mejores resultados.
+
+**Archivos de la clase**
+
+mainproject.ipynb
+
+**Lecturas recomendadas**
+
+[Google Colab](https://colab.research.google.com/drive/13o0Jf_ZFbLs1WSJTsDQzztOfTOqiaZxs?usp=sharing "Google Colab")
+
+[TensorFlow Hub](https://www.tensorflow.org/hub?hl=es-419 "TensorFlow Hub")
+
+[TensorFlow Hub](https://tfhub.dev/ "TensorFlow Hub")
+
+[TensorFlow Hub](https://tfhub.dev/google/imagenet/mobilenet_v1_050_160/classification/4 "TensorFlow Hub")
+
+## Introducción a variables relevantes del TensorBoard
+
+A través de los módulos hemos explorado gran parte del ciclo de vida de los algoritmos de deep learning, desde la carga y limpieza de datos hasta la creación y optimización de los mismos, culminando con la implementación de modelos pre-entrenados desde Keras Applications y TensorHub.
+
+Ahora indagaremos sobre TensorBoard, una herramienta que nos permitirá publicar los resultados de nuestros modelos a la comunidad.
+
+A través de las siguientes sesiones, comprenderemos qué es Tensorboard, sus variables relevantes, cómo analizar y publicar nuestros resultados, además de algunas nociones para escalar nuestros modelos a producción.
+
+![Temario general TensorBoard](images/temario-tensorboard.png)
+
+## Introducción a TensorBoard
+
+TensorBoard es una herramienta de TensorFlow creada para la visualización de resultados, nos permite ver de manera gráfica la composición, estructura, variables relevantes y demás insights de nuestro modelo y nos ofrece la oportunidad de debuggearlo para obtener las mejores configuraciones posibles.
+
+Importaremos el callback de TensorBoard y el módulo nativo de time de Python.
+
+`from tensorflow.python.keras.callbacks import TensorBoard from time import time`
+
+Generaremos un modelo con nuestra función generadora genérica y lo compilaremos con la configuración usual.
+
+```python
+model_tensorboard = get_model() 
+model_tensorboard.compile(optimizer = "adam", 
+						  loss = "categorical_crossentropy", 
+						  metrics = ["accuracy"])
+```
+
+Antes de entrenar el modelo crearemos el callback de TensorBoard al que le especificaremos la ruta donde deberá guardar los registros.
+
+`callback_tensorboard = TensorBoard(log_dir = f"logs/{time()}")`
+
+Entrenaremos el modelo agregando el TensorBoard como callback.
+
+```python
+history_tensorboard = model_tensorboard.fit(train_generator, 
+											epochs = 20, 
+											callbacks = [callback_tensorboard], 
+											validation_data = validation_generator ) 
+```
+Con esto tenemos todos los ingredientes necesarios para explorar nuestros resultados.
+
+**Archivos de la clase**
+
+[mainproject.ipynb](https://static.platzi.com/media/public/uploads/mainproject_287313f4-4817-4683-a8e5-04ae0a574b5a.ipynb "mainproject.ipynb")
+
+**Lecturas recomendadas**
+
+[Google Colab](https://colab.research.google.com/drive/13o0Jf_ZFbLs1WSJTsDQzztOfTOqiaZxs?usp=sharing "Google Colab")
+
+[TensorBoard.dev - Upload and Share ML Experiments for Free](https://tensorboard.dev/ "TensorBoard.dev - Upload and Share ML Experiments for Free")
+
+## Análisis y publicación de resultados del entrenamiento
+
+Nuestra configuración de TensorBoard está lista, ahora solo debemos usarla con las herramientas de TensorFlow.
+
+### Usando TensorBoard
+
+Usaremos los comandos mágicos de IPython para cargar TensorBoard. Una vez cargado, le indicaremos el directorio del que debe extraer los resultados para analizarlos.
+
+```python
+%load_ext tensorboard
+
+%tensorboard --logdir logs
+```
+
+Después de un tiempo se mostrará un board con toda la información del modelo, que además nos permitirá explorar su configuración, arquitectura y resultados.
+
+Si quieres desplegar tus resultados a la web, tensorboard te ofrece el comando upload, donde le dará la dirección de los logs, el nombre del proyecto y la descripción. Después de una breve configuración y autentificación obtendrás un link al que cualquier persona podrá acceder para analizar los resultados de tu proyecto.
+
+`!tensorboard dev upload --logdir ./logs --name "Proyecto prueba" --description "Test development results" --one_shot`
+
+Obtendrás una URL de acceso público para compartirla con otros devs.
+
+![Vista general TensorBoard](images/resultados-tensorboard.png)
+
+Con esto puedes crear un portafolio de proyectos para mostrar a tus comunidades.
+
+**Archivos de la clase**
+
+[mainproject.ipynb](https://static.platzi.com/media/public/uploads/mainproject_2b8288d8-6ead-4cbc-8885-c5c4026c444a.ipynb)
+
+**Lecturas recomendadas**
+
+[Google Colab](https://colab.research.google.com/drive/13o0Jf_ZFbLs1WSJTsDQzztOfTOqiaZxs?usp=sharing)
+
+[Google Colab](https://colab.research.google.com/drive/10TQClWantn0elEU_SHc8IuTyheRIgGVD?usp=sharing)
+
+[Google Colab](https://colab.research.google.com/drive/1ogv1lNKvltcbVe9XyPK_cb9VO4fp0E8Y?usp=sharing)
+
+[Google Colab](https://colab.research.google.com/drive/1Ksv1KdAkx4DK4Ao090vF3ihw-q5Klg7z?usp=sharing)
+
+## Introducción al despliegue de modelos en producción
+
+La generación de código para Machine Learning es una parte vasta y en la que se puede profundizar increíblemente, sin embargo, en el gran esquema de las cosas implica una pequeña parte del ciclo de vida entero de un proyecto.
+
+En las siguientes entregas de esta saga se interiorizará sobre el resto de etapas, donde aprenderás a profesionalizarlas.
+
+![Ciclo de vida general de un proyecto de Machine Learning](images/esquema-global-proyecto-ia.png)
+
+Ya tienes tus códigos, tus configuraciones y pesos, pero, ¿Cómo los haces accesibles al usuario final?
+
+### Ejemplos de producción
+
+Puedes desplegar tus modelos en diferentes dispositivos según tu necesidad.
+
+Si tu proyecto va a ser de consumo masificado, entonces la opción natural será desplegarlo en la nube, donde Google Cloud, Azure, AWS u Oracle Cloud podrán ayudarte. Esta ventaja es especialmente útil si debes escalar tu modelo a mayores capacidades sin necesidad de adquirir un equipo propio.
+
+Si necesitas hacer inferencias en vivo entonces podrías optar por equipo IoT, donde dispositivos como la Raspberry Pi o el Jatson Nanon te ofrecerán una capacidad de cómputo decente para tareas en tiempo real.
+
+Si tienes los recursos necesarios o el proyecto no es tan robusto, puedes correr tus modelos de manera local, donde tus equipos se encargarán de las inferencias.
+
+Un caso final (y una extensión a los últimos 2 casos) sería el de usar un USB Accelerator, hardware con alta capacidad de cómputo que procesa las inferencias con alta facilidad.
+
+Puedes concentrar los recursos de predicción sobre este hardware y dejar descansar al resto del equipo.
