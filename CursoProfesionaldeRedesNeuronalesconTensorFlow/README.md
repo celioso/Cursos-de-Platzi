@@ -1985,9 +1985,9 @@ Ya conoces cómo cargar y descargar arquitecturas huecas o con pesos (en histori
 
 **Lecturas recomendadas**
 
-[Google Colab](https://colab.research.google.com/drive/13o0Jf_ZFbLs1WSJTsDQzztOfTOqiaZxs?usp=sharing)
+[Google Colab](https://colab.research.google.com/drive/13o0Jf_ZFbLs1WSJTsDQzztOfTOqiaZxs?usp=sharing).
 
-[Keras FAQ](https://keras.io/getting-started/faq/#how-can-i-save-a-keras-model)
+[Keras FAQ](https://keras.io/getting-started/faq/#how-can-i-save-a-keras-model).
 
 [Save and load Keras models  |  TensorFlow Core](https://www.tensorflow.org/guide/keras/save_and_serialize#architecture-only_saving)
 
