@@ -29,7 +29,8 @@ node_modules/
 /playwright/.cache/
 CursoDeDocker/imagenes/
 cats_and_dogs/
-platzi\CursodeRedesNeuronalesConvolucionalesconPythonyKeras\course_file\cats_and_dogs
+platzi/CursodeRedesNeuronalesConvolucionalesconPythonyKeras/course_file/cats_and_dogs
+notebook/models/
 # CursoDeECMAScriptHistoriaYVersionesDeJavaScript/js/
 
 # Created by https://www.toptal.com/developers/gitignore/api/django
