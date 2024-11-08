@@ -1538,3 +1538,389 @@ python3 models/research/object_detection/exporter_main_v2.py \
 **Lecturas recomendadas**
 
 [object-detection-II.ipynb - Google Drive](https://drive.google.com/file/d/1JGhTnZEYZoXKjkXfYTX7x2dh8EEQAgP4/view?usp=sharing)
+
+## Fine-tuning en detección de objetos: data augmentation
+
+Para realizar *fine-tuning* en un modelo de detección de objetos, es útil aplicar *data augmentation* para mejorar la robustez del modelo y evitar el sobreajuste, especialmente si cuentas con un conjunto de datos relativamente pequeño. Las técnicas de *data augmentation* transforman las imágenes para simular diferentes condiciones de variabilidad, ayudando al modelo a generalizar mejor. Aquí tienes una guía para realizar *data augmentation* en imágenes para la detección de objetos:
+
+### 1. **Técnicas de *Data Augmentation***
+Algunas técnicas comunes de *data augmentation* en detección de objetos son:
+   - **Rotación**: Gira la imagen y ajusta las coordenadas de las cajas delimitadoras (*bounding boxes*).
+   - **Traslación**: Desplaza la imagen en el eje `x` o `y`, modificando también las cajas.
+   - **Escalado (Zoom)**: Aplica un zoom a la imagen, ampliando o reduciendo las cajas según corresponda.
+   - **Corte (*Crop*)**: Recorta partes de la imagen manteniendo el objeto de interés.
+   - **Espejado (*Flip*) Horizontal/Vertical**: Refleja la imagen y ajusta las coordenadas de las cajas.
+
+Para realizar *data augmentation* en un proyecto de detección de objetos, puedes usar librerías como **TensorFlow** o **Albumentations**, que tienen funciones específicas para la manipulación de imágenes con *bounding boxes*.
+
+### 2. **Ejemplo en TensorFlow**
+Usando TensorFlow, puedes realizar *data augmentation* en imágenes junto con sus respectivas cajas delimitadoras.
+
+```python
+import tensorflow as tf
+import numpy as np
+
+# Supón que tienes una imagen de entrada y sus bounding boxes
+def augment_image(image, boxes):
+    # Convertir las bounding boxes a [ymin, xmin, ymax, xmax] (formato de TensorFlow)
+    boxes = tf.convert_to_tensor(boxes, dtype=tf.float32)
+    boxes = tf.expand_dims(boxes, axis=0)
+
+    # Aplicar traslación y rotación a la imagen y ajustar las bounding boxes
+    image, boxes = tf.image.random_flip_left_right(image, boxes)
+    image, boxes = tf.image.random_contrast(image, 0.8, 1.2), boxes
+    image, boxes = tf.image.random_brightness(image, max_delta=0.1), boxes
+
+    # Aplanar las bounding boxes
+    boxes = tf.squeeze(boxes, axis=0)
+    
+    return image, boxes.numpy()
+
+# Ejemplo de uso
+image = tf.random.normal([256, 256, 3])  # Imagen de ejemplo
+boxes = [[0.1, 0.2, 0.5, 0.7]]           # Ejemplo de bounding box
+augmented_image, augmented_boxes = augment_image(image, boxes)
+```
+
+### 3. **Ejemplo en Albumentations**
+**Albumentations** es una librería eficiente para la manipulación de imágenes en detección de objetos y visión por computadora. Aquí un ejemplo:
+
+```python
+import albumentations as A
+from albumentations.pytorch import ToTensorV2
+
+# Transformación de data augmentation
+transform = A.Compose([
+    A.HorizontalFlip(p=0.5),
+    A.RandomBrightnessContrast(p=0.2),
+    A.RandomRotate90(p=0.5),
+    A.Resize(256, 256),
+], bbox_params=A.BboxParams(format='pascal_voc', label_fields=['class_labels']))
+
+# Ejemplo de aplicación
+image = np.random.randint(0, 255, (256, 256, 3), dtype=np.uint8)
+bboxes = [[10, 15, 100, 150]]  # Bounding box en formato Pascal VOC
+class_labels = [1]  # Etiquetas de clase
+
+# Aplicar la transformación
+transformed = transform(image=image, bboxes=bboxes, class_labels=class_labels)
+augmented_image = transformed['image']
+augmented_bboxes = transformed['bboxes']
+```
+
+### 4. **Incorporación al Pipeline de Entrenamiento**
+Si estás haciendo *fine-tuning*, integra este tipo de *data augmentation* dentro del pipeline de entrada de datos para que el modelo reciba datos aumentados en cada época. En TensorFlow, por ejemplo, puedes hacerlo con `tf.data.Dataset.map()` para aplicar las transformaciones a cada imagen antes de entrenar.
+
+### 5. **Consejos Generales**
+   - Aplica aumentos de datos según el contexto: Si los objetos no suelen verse rotados en 90 grados, evita esa transformación.
+   - Revisa visualmente las transformaciones para asegurarte de que las *bounding boxes* están correctamente alineadas con los objetos tras la transformación.
+
+Estas técnicas de *data augmentation* ayudarán a mejorar el rendimiento del modelo y su capacidad para generalizar en datos nuevos.
+
+## Fine-tuning en detección de objetos: entrenamiento
+
+Para hacer *fine-tuning* de un modelo de detección de objetos, es esencial configurar correctamente el proceso de entrenamiento, ajustando los pesos del modelo pre-entrenado con tu conjunto de datos. Este proceso permite adaptar un modelo existente a nuevos objetos o mejorar su precisión en un conjunto de datos específico. Aquí te explico cómo realizarlo:
+
+### 1. **Preparación del Entorno y el Modelo**
+   - Asegúrate de tener la librería de **TensorFlow Object Detection API** instalada y configurada.
+   - Descarga el modelo pre-entrenado en detección de objetos que deseas afinar (*fine-tune*), por ejemplo, un modelo de la familia **SSD** o **Faster R-CNN**, con su respectivo archivo de configuración (`pipeline.config`).
+   - Coloca el archivo de configuración en una carpeta junto con tu conjunto de datos y los pesos del modelo pre-entrenado.
+
+### 2. **Modificar el Archivo de Configuración (`pipeline.config`)**
+   - **Ruta del modelo y el dataset**: Abre `pipeline.config` y edita las siguientes secciones para adaptarlas a tu conjunto de datos:
+     - `fine_tune_checkpoint`: especifica la ruta de los pesos pre-entrenados del modelo.
+     - `num_classes`: indica el número de clases en tu conjunto de datos.
+     - `batch_size`: ajusta el tamaño del lote según la capacidad de tu GPU (usualmente 4, 8 o 16).
+     - `train_input_reader` y `eval_input_reader`: configura las rutas de tus archivos `TFRecord` generados a partir de tu conjunto de datos, así como la ruta del `label_map.pbtxt` (el archivo de mapa de etiquetas).
+
+   ```protobuf
+   fine_tune_checkpoint: "ruta_al_modelo/model.ckpt"
+   num_classes: NUM_CLASES  # Cambia esto a la cantidad de clases que tienes
+   batch_size: 4
+   train_input_reader: {
+       tf_record_input_reader {
+           input_path: "ruta_al_conjunto_de_datos/train.record"
+       }
+       label_map_path: "ruta_al_conjunto_de_datos/label_map.pbtxt"
+   }
+   eval_input_reader: {
+       tf_record_input_reader {
+           input_path: "ruta_al_conjunto_de_datos/val.record"
+       }
+       label_map_path: "ruta_al_conjunto_de_datos/label_map.pbtxt"
+       shuffle: false
+       num_epochs: 1
+   }
+   ```
+
+### 3. **Preparar el Script de Entrenamiento**
+   Si estás usando **TensorFlow 2.x**, puedes emplear el siguiente comando en la terminal para iniciar el entrenamiento:
+
+   ```bash
+   python models/research/object_detection/model_main_tf2.py \
+       --pipeline_config_path="ruta_al_pipeline.config" \
+       --model_dir="ruta_de_salida_del_modelo" \
+       --checkpoint_every_n=1000 \
+       --alsologtostderr
+   ```
+
+   Este script:
+   - Lee el archivo `pipeline.config`.
+   - Guarda los puntos de control en la carpeta de salida.
+   - Imprime los resultados en el terminal para monitorear el progreso.
+
+### 4. **Opciones de Ajuste de Hiperparámetros**
+   - **Learning Rate**: Modifica la tasa de aprendizaje en el archivo `pipeline.config` para evitar que el modelo ajuste demasiado rápido o lento. Una tasa de aprendizaje baja (p. ej., 0.001) suele ser efectiva para *fine-tuning*.
+   - **Número de Épocas y Pasos**: Define el número de épocas o pasos de entrenamiento según la cantidad de datos y el tamaño del modelo.
+
+### 5. **Monitoreo del Entrenamiento**
+   Utiliza TensorBoard para monitorear el entrenamiento en tiempo real y verificar métricas como la pérdida (*loss*), la precisión y el tiempo por época.
+
+   ```bash
+   tensorboard --logdir="ruta_de_salida_del_modelo"
+   ```
+
+### 6. **Evaluación del Modelo**
+   Una vez terminado el entrenamiento, puedes evaluar el modelo en el conjunto de validación o prueba para verificar su rendimiento:
+
+   ```bash
+   python models/research/object_detection/model_main_tf2.py \
+       --pipeline_config_path="ruta_al_pipeline.config" \
+       --model_dir="ruta_de_salida_del_modelo" \
+       --checkpoint_dir="ruta_de_salida_del_modelo" \
+       --alsologtostderr
+   ```
+
+### 7. **Exportación del Modelo**
+   Tras evaluar el modelo y confirmar que tiene un buen rendimiento, exporta el modelo entrenado para su uso en aplicaciones de detección.
+
+   ```bash
+   python models/research/object_detection/exporter_main_v2.py \
+       --input_type image_tensor \
+       --pipeline_config_path="ruta_al_pipeline.config" \
+       --trained_checkpoint_dir="ruta_de_salida_del_modelo" \
+       --output_directory "ruta_de_salida_modelo_exportado"
+   ```
+
+### 8. **Prueba del Modelo Exportado**
+   Con el modelo exportado, carga los pesos para probar la detección en imágenes nuevas. Puedes emplear TensorFlow para cargar el modelo guardado y realizar predicciones.
+
+### Consejos Adicionales
+   - Asegúrate de revisar los resultados de cada etapa de la detección (es decir, *bounding boxes*, puntuaciones de confianza y clases) y ajustar el modelo según sea necesario.
+   - Si el modelo muestra un rendimiento inconsistente, intenta ajustar el *learning rate*, incrementar los pasos de entrenamiento o revisar la calidad de los datos.
+
+Con este procedimiento, tendrás un modelo de detección de objetos ajustado específicamente para tu conjunto de datos, listo para implementarse en una aplicación real.
+
+## Fine-tuning en detección de objetos: visualización de objetos
+
+Para visualizar las predicciones del modelo durante o después del *fine-tuning*, puedes utilizar un conjunto de datos de prueba y las herramientas de visualización de TensorFlow o `matplotlib`. Esto te permitirá ver cómo el modelo identifica y etiqueta los objetos en las imágenes. Aquí te explico cómo realizar este proceso:
+
+### 1. **Cargar el Modelo Exportado**
+   Primero, carga el modelo que has entrenado y exportado. Asegúrate de tener la ruta correcta al modelo exportado y carga el `SavedModel` con TensorFlow.
+
+   ```python
+   import tensorflow as tf
+
+   # Cargar el modelo exportado
+   modelo_exportado_path = "ruta_a_modelo_exportado/saved_model"
+   detect_fn = tf.saved_model.load(modelo_exportado_path)
+   ```
+
+### 2. **Preprocesar la Imagen**
+   Para visualizar la detección, selecciona una imagen de prueba y prepárala para su procesamiento. Normalmente, el modelo espera tensores en formato de `float32`.
+
+   ```python
+   import numpy as np
+   import cv2
+
+   # Cargar una imagen de prueba
+   image_path = "ruta_a_tu_imagen_de_prueba.jpg"
+   image_np = cv2.imread(image_path)
+   image_np = cv2.cvtColor(image_np, cv2.COLOR_BGR2RGB)  # Convertir BGR a RGB si usas OpenCV
+
+   # Convertir la imagen a un tensor
+   input_tensor = tf.convert_to_tensor(np.expand_dims(image_np, 0), dtype=tf.float32)
+   ```
+
+### 3. **Hacer la Predicción**
+   Utiliza el modelo para hacer predicciones sobre la imagen. Esto producirá información sobre las *bounding boxes*, las clases y las puntuaciones de confianza.
+
+   ```python
+   detections = detect_fn(input_tensor)
+
+   # Extraer información de las detecciones
+   num_detections = int(detections.pop('num_detections'))
+   detections = {key: value[0, :num_detections].numpy() for key, value in detections.items()}
+   detections['num_detections'] = num_detections
+
+   # Convertir las clases a enteros
+   detections['detection_classes'] = detections['detection_classes'].astype(np.int64)
+   ```
+
+### 4. **Visualizar las Detecciones en la Imagen**
+   Utiliza las utilidades de `matplotlib` y TensorFlow Object Detection para dibujar las *bounding boxes* y las etiquetas de los objetos en la imagen.
+
+   ```python
+   import matplotlib.pyplot as plt
+   from object_detection.utils import visualization_utils as viz_utils
+
+   # Visualizar detecciones en la imagen
+   label_map_path = "ruta_a_label_map/label_map.pbtxt"
+   category_index = label_map_util.create_category_index_from_labelmap(label_map_path, use_display_name=True)
+
+   image_np_with_detections = image_np.copy()
+
+   viz_utils.visualize_boxes_and_labels_on_image_array(
+       image_np_with_detections,
+       detections['detection_boxes'],
+       detections['detection_classes'],
+       detections['detection_scores'],
+       category_index,
+       use_normalized_coordinates=True,
+       max_boxes_to_draw=10,
+       min_score_thresh=0.5,  # Cambia este umbral según necesites
+       agnostic_mode=False
+   )
+
+   plt.figure(figsize=(12, 8))
+   plt.imshow(image_np_with_detections)
+   plt.axis('off')
+   plt.show()
+   ```
+
+   - En el código, `visualize_boxes_and_labels_on_image_array` dibuja las *bounding boxes* en la imagen, con las etiquetas de clases y puntuaciones de confianza.
+   - Puedes ajustar `min_score_thresh` para definir el umbral de puntuación mínima y visualizar solo las detecciones con una cierta probabilidad.
+
+### 5. **Parámetros y Ajustes Adicionales**
+   - **Umbral de Puntuación** (`min_score_thresh`): Puedes experimentar con este valor para ajustar el nivel de confianza mínimo necesario para que un objeto se visualice. 
+   - **Cantidad de Detecciones** (`max_boxes_to_draw`): Controla cuántas detecciones se muestran, útil si la imagen tiene muchos objetos.
+   - **Colores y Estilos**: Personaliza los colores o estilos de las *bounding boxes* en `visualization_utils` para destacar mejor los objetos.
+
+### Ejemplo Completo
+
+Combina estos pasos en una función que toma la ruta de la imagen y la ruta del modelo y luego muestra la imagen con las detecciones:
+
+```python
+def mostrar_detecciones(modelo_exportado_path, image_path, label_map_path):
+    # Cargar el modelo
+    detect_fn = tf.saved_model.load(modelo_exportado_path)
+    
+    # Cargar imagen
+    image_np = cv2.imread(image_path)
+    image_np = cv2.cvtColor(image_np, cv2.COLOR_BGR2RGB)
+
+    # Procesar imagen
+    input_tensor = tf.convert_to_tensor(np.expand_dims(image_np, 0), dtype=tf.float32)
+    detections = detect_fn(input_tensor)
+    
+    # Procesar detecciones
+    num_detections = int(detections.pop('num_detections'))
+    detections = {key: value[0, :num_detections].numpy() for key, value in detections.items()}
+    detections['num_detections'] = num_detections
+    detections['detection_classes'] = detections['detection_classes'].astype(np.int64)
+
+    # Visualización
+    category_index = label_map_util.create_category_index_from_labelmap(label_map_path, use_display_name=True)
+    viz_utils.visualize_boxes_and_labels_on_image_array(
+        image_np,
+        detections['detection_boxes'],
+        detections['detection_classes'],
+        detections['detection_scores'],
+        category_index,
+        use_normalized_coordinates=True,
+        max_boxes_to_draw=10,
+        min_score_thresh=0.5,
+        agnostic_mode=False
+    )
+
+    # Mostrar la imagen con detecciones
+    plt.figure(figsize=(12, 8))
+    plt.imshow(image_np)
+    plt.axis('off')
+    plt.show()
+```
+
+Con esta función, puedes pasar cualquier imagen y modelo para ver las detecciones y evaluar visualmente cómo está funcionando el modelo después del *fine-tuning*.
+
+**Lecturas recomendadas**
+
+[object-detection-II.ipynb - Google Drive](https://drive.google.com/file/d/1JGhTnZEYZoXKjkXfYTX7x2dh8EEQAgP4/view?usp=sharing)
+
+## Introduciendo la segmentación de objetos
+
+La **segmentación de objetos** es una técnica avanzada en visión por computadora que identifica y clasifica cada píxel de una imagen en una categoría específica de objeto. A diferencia de la detección de objetos, que solo delimita los objetos con un cuadro (bounding box), la segmentación asigna una **máscara precisa** para cada objeto, cubriendo su forma exacta. Existen principalmente dos tipos de segmentación de objetos:
+
+1. **Segmentación semántica**: Clasifica todos los píxeles de una imagen en categorías, pero no diferencia entre diferentes instancias del mismo objeto (por ejemplo, no distingue entre dos autos diferentes, solo clasifica todos los píxeles de "auto" como tales).
+
+2. **Segmentación de instancias**: No solo clasifica cada píxel, sino que también identifica diferentes instancias del mismo objeto. Esto permite, por ejemplo, identificar cada persona en una multitud individualmente.
+
+### Aplicaciones
+La segmentación de objetos es clave en áreas como:
+- **Automóviles autónomos**: Ayuda a identificar peatones, señales, otros vehículos, y obstáculos en la carretera.
+- **Medicina**: En el análisis de imágenes médicas, permite la detección y delimitación precisa de tumores y órganos.
+- **Agricultura**: En drones o imágenes satelitales, permite identificar tipos de cultivos y evaluar áreas afectadas por plagas.
+
+### Técnicas comunes
+Para realizar segmentación de objetos, se usan métodos basados en **redes neuronales convolucionales (CNN)**, como **Mask R-CNN** y otros modelos avanzados que permiten la segmentación a nivel de píxel. Estos modelos suelen ser pre-entrenados en datasets como COCO, que contiene etiquetas detalladas para cada píxel en imágenes de diversas categorías.
+
+La segmentación de objetos es una técnica de visión por computadora que va un paso más allá de la detección de objetos, ya que no solo identifica y delimita un objeto en una imagen, sino que además crea una máscara precisa alrededor de sus bordes, pixel a pixel. Este proceso permite analizar de manera más detallada la estructura y forma de los objetos en una imagen.
+
+### Tipos de Segmentación de Objetos
+
+1. **Segmentación Semántica**: Etiqueta cada píxel de una imagen según la clase a la que pertenece, pero no diferencia entre instancias del mismo objeto. Por ejemplo, en una imagen con tres autos, todos los píxeles de los autos se marcarán de un solo color, sin distinguir entre ellos.
+
+2. **Segmentación de Instancias**: Etiqueta cada píxel perteneciente a objetos específicos y, además, diferencia entre cada instancia. En el ejemplo de los tres autos, cada uno se marcará de manera individual.
+
+3. **Segmentación Panóptica**: Una combinación de segmentación semántica y de instancias, aplicando etiquetas tanto para objetos individuales como para clases generales de fondo, lo que permite distinguir claramente cada instancia y fondo de una imagen.
+
+### Flujo de Trabajo en Segmentación de Objetos
+
+1. **Preprocesamiento de Datos**: Se prepara y etiqueta el dataset, asegurando que cada píxel está marcado correctamente según su clase.
+
+2. **Entrenamiento del Modelo**: Los modelos de segmentación como Mask R-CNN, DeepLab o U-Net se entrenan con imágenes y sus máscaras correspondientes. Para tareas específicas, los modelos pueden necesitar un fine-tuning con datasets personalizados.
+
+3. **Postprocesamiento**: Ajusta las predicciones del modelo, como aplicar filtros para suavizar las máscaras o eliminar predicciones erróneas.
+
+4. **Evaluación del Modelo**: Utiliza métricas como el IoU o el F1-score para medir la precisión de la segmentación.
+
+Esta técnica tiene aplicaciones en áreas como la conducción autónoma, la medicina, y el análisis de imágenes satelitales, donde se requiere precisión en la identificación y delimitación de objetos complejos.
+
+**Lecturas recomendadas** 
+
+[Coeficiente de Sorensen-Dice - Wikipedia, la enciclopedia libre](https://es.wikipedia.org/wiki/Coeficiente_de_Sorensen-Dice)
+
+## Tipos de segmentación y sus arquitecturas relevantes
+
+Los tipos principales de segmentación en visión por computadora incluyen **segmentación semántica**, **segmentación de instancias** y **segmentación panóptica**, cada una con arquitecturas específicas que abordan sus desafíos únicos:
+
+### 1. **Segmentación Semántica**
+   - **Descripción**: Asigna una clase a cada píxel de una imagen, pero no distingue entre diferentes instancias de la misma clase. Por ejemplo, en una imagen con varias personas, todos los píxeles de personas se etiquetan como "persona" sin separar cada individuo.
+   - **Arquitecturas Principales**:
+     - **Fully Convolutional Networks (FCN)**: Rediseña redes convolucionales tradicionales reemplazando capas de clasificación con capas de convolución para lograr salidas de la misma resolución que la imagen de entrada.
+     - **U-Net**: Popular en el campo médico, esta arquitectura utiliza un encoder-decoder con conexiones de "skip" que ayudan a preservar los detalles espaciales.
+     - **DeepLab (V1, V2, V3, V3+)**: Introduce el uso de convoluciones con tasa de dilatación para capturar información a diferentes escalas y mejorar la segmentación en bordes precisos.
+     - **SegNet**: Utiliza un encoder-decoder con una técnica de "unpooling" (reutilización de índices de pooling) que mejora la precisión espacial sin aumentar mucho la complejidad del modelo.
+
+### 2. **Segmentación de Instancias**
+   - **Descripción**: No solo clasifica cada píxel, sino que también diferencia entre múltiples instancias del mismo objeto. Por ejemplo, en una imagen con tres autos, cada auto se segmentará individualmente.
+   - **Arquitecturas Principales**:
+     - **Mask R-CNN**: Una extensión del Faster R-CNN, que añade una rama adicional para predecir una máscara binaria para cada instancia detectada, logrando así tanto detección como segmentación.
+     - **PANet (Path Aggregation Network)**: Mejora la segmentación de instancias al agregar características a múltiples escalas y ajustar la arquitectura de Mask R-CNN para mejorar la precisión.
+     - **YOLACT (You Only Look At Coefficients)**: Diseñado para velocidad, este modelo realiza segmentación de instancias en una etapa utilizando máscaras de "protótipos" y es más rápido que otras alternativas como Mask R-CNN.
+
+### 3. **Segmentación Panóptica**
+   - **Descripción**: Combina segmentación semántica e instancias, produciendo una salida que incluye etiquetas para los objetos detectados (segmentación de instancias) y para el fondo (segmentación semántica).
+   - **Arquitecturas Principales**:
+     - **Panoptic FPN (Feature Pyramid Networks)**: Integra predicciones semánticas e instancias mediante una red de pirámides de características para manejar diferentes escalas de objetos en la misma imagen.
+     - **Panoptic DeepLab**: Una adaptación de DeepLab para segmentación panóptica, usando una combinación de redes para semántica y detección de instancias, lo que permite una mejor integración de ambas tareas.
+     - **UPSNet (Unified Panoptic Segmentation Network)**: Diseñado para unificar la segmentación de instancias y semántica en una sola arquitectura con una pérdida de optimización panóptica, proporcionando resultados de alta calidad en ambas tareas simultáneamente.
+
+Cada uno de estos tipos de segmentación y sus arquitecturas específicas son aplicables en diversas áreas, como la conducción autónoma, donde es esencial identificar tanto los objetos en el camino como el contexto general, o en la medicina, donde la segmentación detallada y precisa ayuda en el diagnóstico.
+
+**Lecturas recomendadas**
+
+[Imagen de tipos de segmentación](https://miro.medium.com/max/1400/0*iCT3Wl9pYkRGv_Yj.jpg)
+
+[U-Net: Convolutional Networks for Biomedical Image Segmentation](https://arxiv.org/abs/1505.04597)
+
+[Mask R-CNN](https://arxiv.org/abs/1703.06870)
