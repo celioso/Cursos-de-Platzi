@@ -42,7 +42,7 @@
 - [Curso de Redes Neuronales Convolucionales con Python y Keras](CursodeRedesNeuronalesConvolucionalesconPythonyKeras)
 - [Curso Profesional de Redes Neuronales con TensorFlow](CursoProfesionaldeRedesNeuronalesconTensorFlow)
 - [Curso de Detección y Segmentación de Objetos con TensorFlow](CursodeDeteccionySegmentaciondeObjetosconTensorFlow)
-- [Curso Profesional de Computer Vision con TensorFlow]()
+- [Curso Profesional de Computer Vision con TensorFlow](CursoProfesionaldeComputerVisionconTensorFlow)
 
 ## QA y Automatización de Pruebas
 
