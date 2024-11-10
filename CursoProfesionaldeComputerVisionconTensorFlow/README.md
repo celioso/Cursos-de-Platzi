@@ -366,3 +366,374 @@ Definir los tiempos en tu proyecto de forma detallada te ayudará a cumplir con 
 **Lecturas recomendadas**
 
 [Curso de Scrum - Platzi](https://platzi.com/cursos/scrum/)
+
+## Cómo costear tu proyecto
+
+Costear un proyecto es crucial para asegurarse de que cuente con los recursos necesarios y para que sea financieramente viable. La estimación de costos permite también evitar sobrecostos y justificar la inversión. Aquí te explico algunos pasos para definir un presupuesto detallado de tu proyecto:
+
+### 1. **Identificar los componentes del proyecto y sus actividades**
+   - Desglosa el proyecto en fases y actividades específicas para detallar cada elemento de costo. Esto puede incluir mano de obra, materiales, equipo, tecnología, servicios externos, capacitación y gastos operativos.
+   - Cuanto más detallada sea esta lista, más precisa será tu estimación de costos, ya que podrás identificar todas las áreas que requieren recursos.
+
+### 2. **Determinar el tipo de costos**
+   - **Costos directos**: Son los gastos directamente relacionados con el proyecto, como salarios, materiales y herramientas.
+   - **Costos indirectos**: Son gastos necesarios pero no exclusivamente asignables al proyecto, como el alquiler del espacio de trabajo o servicios administrativos.
+   - **Costos fijos y variables**: Clasifica los costos en fijos (que no cambian con el tiempo o la cantidad de producción) y variables (que pueden aumentar o disminuir según el avance del proyecto).
+
+### 3. **Estimar los costos de cada actividad**
+   - **Costos de mano de obra**: Calcula el costo del personal involucrado, teniendo en cuenta las horas estimadas de trabajo, los salarios, impuestos y beneficios.
+   - **Materiales y suministros**: Estima el costo de todos los materiales que serán necesarios para completar el proyecto. Consulta con proveedores para obtener precios actualizados.
+   - **Equipo y tecnología**: Incluye costos de compra, alquiler o mantenimiento de equipo especializado o software.
+   - **Costos de servicios externos**: Si necesitas contratar a consultores, servicios de transporte o servicios de producción, inclúyelos en el presupuesto.
+
+### 4. **Definir un margen para imprevistos**
+   - Asegúrate de incluir un porcentaje del presupuesto para imprevistos o variaciones en los precios. Este margen de contingencia generalmente se sitúa entre el 5% y el 15% del costo total, dependiendo del grado de incertidumbre en el proyecto.
+   - Este fondo ayudará a cubrir cualquier gasto no planificado sin afectar el presupuesto principal del proyecto.
+
+### 5. **Usar técnicas de estimación de costos**
+   - **Estimación análoga**: Basada en proyectos anteriores similares, ajustando los costos según las diferencias.
+   - **Estimación paramétrica**: Utiliza métricas o variables conocidas (por ejemplo, el costo por hora de trabajo) para calcular los costos.
+   - **Estimación ascendente**: Calcula el costo de cada actividad individual y luego los suma para obtener el costo total. Es más precisa, pero también más laboriosa.
+
+### 6. **Organizar los costos en un cronograma de pagos**
+   - Define cuándo se incurrirá en cada gasto a lo largo del proyecto. Esto te permite administrar el flujo de efectivo y asegurarte de que tengas los fondos disponibles en cada fase.
+   - Crear un **flujo de caja** o **cronograma de desembolsos** te ayuda a planificar los pagos y prever los ingresos si el proyecto genera flujo de efectivo durante su ejecución.
+
+### 7. **Revisar y ajustar el presupuesto**
+   - Una vez que tengas una primera versión, revísala con las partes interesadas (stakeholders) y ajusta los costos según sea necesario. Asegúrate de que el presupuesto sea realista y que se ajuste a los objetivos del proyecto y a los recursos disponibles.
+   - Considera hacer un análisis de **costos-beneficios** para determinar si los beneficios esperados justifican los costos estimados.
+
+### 8. **Utilizar herramientas de gestión de costos**
+   - Existen herramientas que pueden facilitar el proceso de presupuesto, como Excel, Google Sheets, o software especializado como Microsoft Project, SAP, o Wrike.
+   - Estas herramientas permiten hacer seguimiento de costos en tiempo real y te facilitan la comparación de los gastos proyectados con los gastos reales para tomar decisiones informadas durante el proyecto.
+
+### 9. **Implementar controles de costos**
+   - Monitorea constantemente el presupuesto y registra todos los gastos en relación con el presupuesto estimado. Si algún área del proyecto está superando el presupuesto, considera hacer ajustes en otras áreas o en el cronograma.
+   - Los informes de costos periódicos ayudan a detectar y solucionar problemas antes de que se conviertan en sobrecostos significativos.
+
+### 10. **Presentar y justificar el presupuesto a los stakeholders**
+   - Prepara un documento claro y detallado que justifique cada uno de los costos y que explique el método utilizado para la estimación. Esto es importante para obtener la aprobación del presupuesto y para que los stakeholders comprendan en qué se invertirán los recursos.
+   - Incluye un resumen del ROI (retorno de inversión) o del valor que se espera obtener con el proyecto, si es aplicable.
+
+Un buen presupuesto es clave para llevar el proyecto a cabo sin sorpresas financieras, y al mismo tiempo ayuda a lograr la aprobación de los stakeholders.
+
+## Cómo identificar los roles necesarios en el proyecto
+
+Identificar los roles necesarios en un proyecto es fundamental para asegurar que cada tarea tenga responsables asignados, y que el equipo cuente con las habilidades necesarias para alcanzar los objetivos. Aquí tienes una guía para definir los roles de manera efectiva:
+
+### 1. **Definir el alcance y los objetivos del proyecto**
+   - Antes de asignar roles, es fundamental tener claro el alcance y los objetivos del proyecto. Esto te permitirá comprender las actividades y habilidades que serán necesarias.
+   - Desglosa los objetivos en tareas concretas para identificar las funciones clave que apoyarán cada fase del proyecto.
+
+### 2. **Identificar las habilidades necesarias**
+   - Analiza las tareas que conforman el proyecto y lista las habilidades o conocimientos específicos que se necesitan en cada fase. Por ejemplo, si el proyecto incluye una parte técnica, quizás necesites desarrolladores, diseñadores, y expertos en datos.
+   - Asegúrate de considerar tanto habilidades técnicas (como programación, diseño gráfico, análisis de datos) como habilidades de gestión (como liderazgo, comunicación, y gestión de riesgos).
+
+### 3. **Asignar roles principales del proyecto**
+   - Algunos roles son esenciales en casi cualquier tipo de proyecto. Estos son algunos de los roles principales que suelen ser necesarios:
+     - **Líder o gerente de proyecto**: Responsable de coordinar el equipo, establecer el cronograma, y asegurar que el proyecto avance según lo planificado.
+     - **Sponsor del proyecto**: Usualmente un directivo o representante de la empresa, que actúa como enlace entre el proyecto y la organización y facilita recursos y apoyo.
+     - **Analista de negocio**: Asegura que los requisitos del proyecto sean claros y traducidos a términos técnicos y funcionales, alineando el proyecto con las necesidades del cliente.
+     - **Equipo técnico o de desarrollo**: Realiza el trabajo técnico específico, como la programación, diseño, pruebas y desarrollo del producto o servicio final.
+     - **Responsable de calidad**: Monitorea y garantiza que el proyecto cumpla con los estándares de calidad definidos.
+     - **Gestor de riesgos**: Identifica, evalúa y monitorea los riesgos para mitigar cualquier posible problema que surja durante el proyecto.
+
+### 4. **Definir roles adicionales en función de la complejidad del proyecto**
+   - En proyectos complejos, es posible que necesites roles adicionales o roles especializados, como un **diseñador UX/UI**, **especialista en marketing**, o **experto en seguridad**.
+   - Considera también roles específicos para la implementación, pruebas y soporte post-proyecto. Si el proyecto es de desarrollo de software, por ejemplo, puedes necesitar ingenieros de pruebas (QA), arquitectos de software o soporte técnico.
+
+### 5. **Establecer las responsabilidades de cada rol**
+   - Una vez definidos los roles, documenta las responsabilidades de cada uno. Asegúrate de que todos entiendan sus tareas y límites de responsabilidad, para evitar confusiones y asegurar que el equipo trabaje de manera cohesionada.
+   - Usa herramientas como el **matriz RACI** (Responsable, Aprobador, Consultado, Informado) para clarificar quién es el encargado de cada tarea y cómo interactúan los distintos roles.
+
+### 6. **Ajustar los roles a las personas disponibles**
+   - Evalúa las habilidades y fortalezas de los miembros del equipo para asignar los roles de la mejor manera posible. Si el proyecto tiene restricciones de personal, algunos miembros pueden asumir múltiples roles.
+   - Considera la posibilidad de capacitar al equipo si necesitas habilidades específicas que no están disponibles en el momento.
+
+### 7. **Definir roles de comunicación y seguimiento**
+   - Además de los roles funcionales, es útil asignar responsables de comunicación y seguimiento, sobre todo en proyectos donde se colabora con stakeholders externos.
+   - Un **gestor de comunicación** puede coordinar la relación con stakeholders, gestionar el flujo de información y asegurarse de que todos estén informados sobre el avance del proyecto.
+
+### 8. **Incorporar un proceso de revisión y ajuste**
+   - Durante la ejecución del proyecto, puede ser necesario revisar y ajustar los roles en función de los cambios en las necesidades del proyecto o del equipo.
+   - Organiza reuniones de revisión periódicas para asegurar que cada rol sigue alineado con las necesidades del proyecto y que el equipo cuenta con el apoyo adecuado.
+
+### 9. **Usar herramientas de planificación para asignar y coordinar roles**
+   - Herramientas de gestión como Trello, Asana, o Microsoft Project pueden ayudarte a organizar roles, tareas y tiempos. Esto permite a todos los miembros del equipo conocer sus responsabilidades y colaborar de manera eficiente.
+   - Configura el tablero del proyecto de forma que todos los integrantes tengan visibilidad sobre quién está a cargo de cada tarea, lo cual facilita el trabajo en equipo y la supervisión.
+
+### 10. **Comunicar y documentar los roles claramente**
+   - Una vez definidos, documenta y comunica los roles y responsabilidades a todo el equipo. Esto ayuda a evitar malentendidos y asegura que cada persona esté alineada con su contribución al proyecto.
+   - Mantén esta documentación actualizada y accesible para todos los miembros del equipo.
+
+Definir los roles de tu proyecto de manera estructurada te permitirá crear un equipo bien coordinado y facilitará el éxito del proyecto.
+
+## Producto mínimo viable en computer vision
+
+Un Producto Mínimo Viable (MVP) en un proyecto de visión computarizada es una versión simplificada y funcional del sistema que incluye solo las características esenciales para satisfacer las necesidades iniciales de los usuarios. El MVP permite lanzar el proyecto rápidamente, validar la tecnología y obtener retroalimentación temprana, con el objetivo de evolucionar el producto basado en resultados reales.
+
+### Pasos para desarrollar un MVP en visión computarizada
+
+1. **Definir el problema y el objetivo del proyecto**
+   - Establece con claridad qué problema resolverá tu MVP y qué resultados esperas obtener. Por ejemplo, si el proyecto es para detectar objetos en imágenes de seguridad, el MVP puede enfocarse en detectar solo ciertos tipos de objetos (como personas o vehículos) sin incluir una gran variedad de clases de objetos.
+
+2. **Seleccionar las funcionalidades básicas**
+   - Un MVP en visión computarizada suele incluir únicamente las funcionalidades necesarias para que el sistema cumpla su propósito. Por ejemplo:
+     - **Clasificación de imágenes**: Clasificar imágenes en un conjunto limitado de categorías.
+     - **Detección de objetos**: Identificar la presencia y ubicación de objetos específicos en una imagen o video.
+     - **Reconocimiento de texto (OCR)**: Extraer texto de imágenes si el proyecto lo requiere.
+     - **Segmentación de imágenes**: Identificar y separar regiones de interés en una imagen, si es un aspecto clave.
+   - Excluye funciones avanzadas (como detección multi-objeto compleja o segmentación detallada) para mantener el MVP simple y funcional.
+
+3. **Elegir el modelo y la tecnología de visión computarizada**
+   - Selecciona un modelo preentrenado de redes neuronales (como ResNet, YOLO, o MobileNet) que se adapte bien a las necesidades del proyecto. Utilizar un modelo preentrenado es común en los MVP, ya que reduce los tiempos y costos de entrenamiento.
+   - Decide si tu MVP funcionará en dispositivos locales, en la nube o en dispositivos móviles. Esto depende de dónde necesiten acceso los usuarios y de los recursos de cómputo disponibles.
+
+4. **Definir el conjunto de datos inicial**
+   - Selecciona un conjunto de datos representativo y de tamaño manejable para entrenar y probar el MVP. Si no tienes datos propios, puedes empezar con conjuntos de datos públicos relevantes (como COCO o ImageNet).
+   - Para proyectos de detección de objetos, marca los objetos necesarios en un conjunto de imágenes reducido para obtener anotaciones de entrenamiento. Esto permite que el sistema pueda ser entrenado y probado sin requerir un gran volumen de datos.
+
+5. **Entrenar y ajustar el modelo**
+   - Entrena el modelo en el conjunto de datos elegido y ajusta los hiperparámetros para optimizar su desempeño. Mantén el modelo simple para el MVP; no es necesario lograr una precisión perfecta en esta etapa.
+   - Realiza pruebas para asegurar que el modelo cumpla con los requisitos básicos y que sus predicciones sean razonables. Toma nota de los errores comunes para considerar ajustes en futuras versiones.
+
+6. **Implementar una interfaz básica**
+   - El MVP debe incluir una interfaz simple para que los usuarios puedan interactuar con el sistema. Esto podría ser una interfaz gráfica (GUI), una API o una aplicación móvil básica, dependiendo del caso de uso.
+   - Asegúrate de que la interfaz permita al usuario cargar imágenes o videos y visualizar los resultados (como la clasificación o la detección de objetos). Un diseño simple y funcional es suficiente en esta etapa.
+
+7. **Evaluar el rendimiento y recolectar retroalimentación**
+   - Una vez que el MVP está funcionando, realiza pruebas en condiciones reales y recopila retroalimentación de los usuarios para identificar puntos de mejora.
+   - Evalúa tanto el rendimiento del modelo (precisión, velocidad de inferencia, robustez) como la experiencia de usuario en la interfaz.
+
+8. **Establecer métricas de éxito**
+   - Define métricas que te ayuden a evaluar si el MVP cumple con los requisitos mínimos, como la precisión del modelo, la tasa de detección correcta, el tiempo de procesamiento, o la facilidad de uso.
+   - Usa estas métricas para guiar las mejoras del sistema y determinar si el MVP es lo suficientemente bueno como para avanzar a una fase de desarrollo más avanzada.
+
+### Ejemplos de MVP en visión computarizada
+
+1. **MVP de detección de objetos para vigilancia de seguridad**
+   - El MVP puede enfocarse en detectar solo personas en imágenes de cámaras de seguridad y alertar cuando una persona ingresa a un área restringida.
+
+2. **MVP para reconocimiento de productos en retail**
+   - Un MVP para una aplicación de retail podría detectar solo las categorías de productos más vendidas (como bebidas y snacks), permitiendo probar la funcionalidad en el entorno del cliente.
+
+3. **MVP de OCR para digitalización de documentos**
+   - En un proyecto de digitalización de documentos, el MVP puede enfocarse en extraer solo texto en inglés o en realizar reconocimiento en un conjunto limitado de plantillas de documentos.
+
+4. **MVP de clasificación de imágenes para diagnóstico médico**
+   - Un MVP en el área médica podría clasificar imágenes en categorías básicas (por ejemplo, imágenes que requieren revisión médica versus imágenes normales), facilitando un primer filtro sin una precisión diagnóstica avanzada.
+
+### Ventajas de desarrollar un MVP en visión computarizada
+
+- **Reducción de tiempo y costo**: Al enfocarse en características esenciales, el desarrollo es más rápido y con menos recursos.
+- **Validación temprana del concepto**: Permite comprobar si el proyecto es viable antes de hacer una inversión más grande.
+- **Retroalimentación para mejoras**: Probar el MVP con usuarios reales ayuda a entender las mejoras necesarias y evitar características que no agregan valor.
+- **Iteración sobre el producto**: Un MVP permite actualizar el producto en fases, incorporando cambios de acuerdo con los comentarios de los usuarios y mejoras tecnológicas.
+
+El MVP en visión computarizada es un primer paso esencial para desarrollar un producto completo, permitiendo probar la funcionalidad y optimizar el sistema para que responda a las necesidades reales de los usuarios.
+
+## Obtención de datos para tu proyecto
+
+La obtención de datos es uno de los pasos fundamentales en cualquier proyecto de visión computarizada, ya que el rendimiento del modelo depende en gran medida de la calidad y cantidad de los datos disponibles. Aquí tienes una guía para obtener datos de manera efectiva:
+
+### 1. **Definir los requisitos del proyecto**
+   - Establece qué tipo de datos necesitas: imágenes, videos o secuencias de imágenes, y qué categorías o etiquetas serán relevantes. Por ejemplo, si tu proyecto es de detección de objetos en imágenes de tráfico, necesitarás imágenes de vehículos, peatones y señales de tráfico.
+   - Define el formato y la resolución de los datos, así como el número aproximado de ejemplos que necesitarás para el entrenamiento, validación y pruebas del modelo.
+
+### 2. **Usar conjuntos de datos públicos**
+   - Existen numerosos conjuntos de datos públicos específicos para visión computarizada que pueden ser un excelente punto de partida, como:
+     - **COCO (Common Objects in Context)**: Un conjunto de datos grande con imágenes etiquetadas para detección de objetos, segmentación y keypoints.
+     - **ImageNet**: Muy popular en clasificación de imágenes, contiene millones de imágenes etiquetadas en miles de categorías.
+     - **Open Images Dataset**: Un conjunto de datos extenso con anotaciones para detección de objetos, segmentación y más, mantenido por Google.
+     - **KITTI**: Ideal para proyectos de visión computarizada en automóviles autónomos, incluye imágenes de cámaras montadas en vehículos y etiquetas para objetos de tráfico.
+   - Investiga la licencia de cada conjunto de datos para asegurarte de que puedes usarlo para fines comerciales si es necesario.
+
+### 3. **Capturar tus propios datos**
+   - Si los conjuntos de datos públicos no cumplen con los requisitos de tu proyecto, considera recolectar tus propios datos. Por ejemplo, puedes usar cámaras para capturar imágenes o videos en un entorno específico (como un almacén o en calles de una ciudad).
+   - Asegúrate de capturar los datos en diferentes condiciones (luz, clima, ángulos) para que el modelo sea más robusto.
+   - **Consideraciones legales**: Al recolectar datos en espacios públicos o que involucren a personas, asegúrate de respetar las normativas de privacidad y obtener los permisos necesarios.
+
+### 4. **Anotación de datos**
+   - Para muchos proyectos de visión computarizada, es necesario etiquetar los datos manualmente. Puedes usar herramientas de anotación para realizar etiquetado, delimitación (bounding boxes) o segmentación de objetos en las imágenes.
+   - Herramientas populares para anotación incluyen:
+     - **LabelImg**: Para etiquetado de bounding boxes.
+     - **CVAT (Computer Vision Annotation Tool)**: Permite anotación de bounding boxes, segmentación y seguimiento de objetos.
+     - **Labelbox** y **SuperAnnotate**: Plataformas colaborativas para proyectos grandes de anotación.
+   - Si el volumen de datos es muy alto, considera usar servicios de etiquetado como Amazon SageMaker Ground Truth, o contratar a anotadores externos.
+
+### 5. **Generar datos sintéticos**
+   - La creación de datos sintéticos es una estrategia útil cuando los datos reales son difíciles de obtener o costosos de anotar. Esto implica el uso de simulaciones o herramientas de generación de imágenes para crear imágenes de entrenamiento.
+   - Algunas técnicas para crear datos sintéticos incluyen:
+     - **Uso de simuladores**: Herramientas como Unity o Blender pueden generar escenas tridimensionales que luego se convierten en imágenes.
+     - **Augmentación de datos**: Permite ampliar el conjunto de datos aplicando transformaciones como rotación, cambio de escala, recortes y ajuste de brillo en imágenes existentes.
+   - Los datos sintéticos son especialmente útiles en áreas como la conducción autónoma, donde es difícil captar todos los posibles escenarios de conducción en la vida real.
+
+### 6. **Raspado de imágenes desde la web**
+   - Puedes obtener imágenes específicas desde sitios web utilizando técnicas de raspado (web scraping). Por ejemplo, Google Images y Bing permiten buscar imágenes bajo ciertos términos. Sin embargo, ten en cuenta las políticas de derechos de autor y atribución.
+   - Herramientas como **Selenium**, **BeautifulSoup**, o librerías como **Scrapy** en Python pueden ayudarte a automatizar la descarga de imágenes. Asegúrate de filtrar las imágenes según el formato y tamaño que necesitas.
+
+### 7. **Uso de APIs y servicios de terceros**
+   - Algunas plataformas ofrecen APIs para acceder a conjuntos de datos de imágenes, como Flickr, Unsplash, o las APIs de Google Images y Bing. A través de estas APIs puedes descargar imágenes bajo licencias específicas para usarlas en tu proyecto.
+   - Las APIs te permiten automatizar la búsqueda y descarga de imágenes relevantes, lo cual facilita la recopilación de grandes cantidades de datos en categorías específicas.
+
+### 8. **Realizar un preprocesamiento de los datos**
+   - Una vez que tienes los datos, es probable que necesites procesarlos antes de usarlos en el modelo. Las tareas de preprocesamiento incluyen:
+     - **Redimensionamiento**: Cambiar la resolución de las imágenes para que todas tengan el mismo tamaño.
+     - **Conversión de formato**: Asegurarte de que todas las imágenes están en un formato compatible con el modelo, como JPEG o PNG.
+     - **Normalización y escala de colores**: Ajustar el valor de los píxeles para mejorar el rendimiento del modelo.
+   - También puedes realizar la **división de los datos en subconjuntos** de entrenamiento, validación y prueba.
+
+### 9. **Evaluar y balancear el conjunto de datos**
+   - Asegúrate de que tu conjunto de datos esté equilibrado, es decir, que las categorías estén bien representadas. Si tienes un desequilibrio (por ejemplo, muchas más imágenes de un tipo que de otro), el modelo podría sesgarse hacia las clases con más ejemplos.
+   - Si tu conjunto de datos está desequilibrado, puedes recopilar más ejemplos de las clases minoritarias o aplicar técnicas de **re-muestreo** (subsampling o oversampling).
+
+### 10. **Automatizar el flujo de datos**
+   - Para proyectos de visión computarizada que requieren un flujo constante de datos (por ejemplo, imágenes de cámaras en tiempo real), considera usar servicios de almacenamiento en la nube como AWS S3 o Google Cloud Storage.
+   - La automatización del flujo de datos permite que los nuevos datos se integren fácilmente y facilita el entrenamiento continuo o la mejora del modelo con datos actualizados.
+
+### Ejemplo práctico: Flujo de obtención de datos para un proyecto de detección de objetos
+
+Si estás desarrollando un modelo de visión computarizada para detectar vehículos en cámaras de tráfico:
+
+1. **Define el alcance**: Necesitas detectar autos, camiones y motocicletas en distintas condiciones de tráfico.
+2. **Conjunto de datos público**: Utiliza COCO o Open Images Dataset para comenzar, ya que contienen etiquetas de vehículos.
+3. **Captura tus propios datos**: Si es necesario, instala cámaras en ubicaciones específicas y captura videos en diferentes momentos del día.
+4. **Anotación**: Usa herramientas como LabelImg para etiquetar manualmente los vehículos en las imágenes.
+5. **Datos sintéticos**: Genera imágenes de vehículos en un simulador 3D bajo diferentes ángulos y condiciones.
+6. **Preprocesamiento**: Redimensiona las imágenes y normaliza los colores.
+7. **Balanceo**: Revisa que cada categoría de vehículo esté bien representada.
+8. **Automatización del flujo**: Configura una base de datos en la nube donde las imágenes se actualicen automáticamente desde las cámaras.
+
+Este enfoque te permitirá obtener y procesar los datos necesarios para tu proyecto de visión computarizada de forma efectiva y escalable.
+
+**Lecturas recomendadas**
+
+[dataset_original.zip - Google Drive](https://drive.google.com/file/d/1-3S6oTEzCFvELf7LpfdLLINhR0zy4z3E/view?usp=sharing)
+
+## Limpieza de la base de datos
+
+La limpieza de una base de datos es una etapa crucial en el procesamiento de datos, especialmente en proyectos de visión computarizada, machine learning y otros análisis que requieren datos de alta calidad. Aquí tienes una guía paso a paso para realizar la limpieza de una base de datos.
+
+### 1. **Identificar y eliminar duplicados**
+   - Los duplicados pueden sesgar el modelo si están presentes en el conjunto de entrenamiento, y su detección es esencial.
+   - **Método**: Utiliza funciones para identificar duplicados, como `drop_duplicates()` en pandas, o elimina imágenes duplicadas mediante hash de archivos (por ejemplo, usando la función `hashlib` en Python para verificar similitudes).
+
+### 2. **Gestionar datos faltantes**
+   - Los datos incompletos (valores nulos o imágenes con contenido dañado) pueden dificultar el entrenamiento del modelo o distorsionar el análisis.
+   - **Soluciones**:
+     - **Eliminar filas/columnas**: Si los datos faltantes son pocos, puedes eliminarlos.
+     - **Imputación**: Completa valores faltantes usando media, mediana o modelos predictivos.
+     - **Relleno**: Si el proyecto es de imágenes, asegúrate de que cada archivo de imagen esté accesible y en el formato adecuado.
+
+### 3. **Estandarizar formatos de datos**
+   - Asegúrate de que los valores en las columnas sigan el mismo formato (fechas, nombres, categorías).
+   - **Ejemplo**: Convertir todas las fechas a un mismo formato (`YYYY-MM-DD`) y normalizar categorías (p. ej., “auto” y “coche” como “auto”).
+
+### 4. **Corrección de valores atípicos (outliers)**
+   - Los valores atípicos o extremos pueden afectar el rendimiento del modelo.
+   - **Método**: Usa estadísticas descriptivas o visualizaciones (como gráficos de caja) para identificar valores atípicos y decidir si deben eliminarse o tratarse.
+   
+### 5. **Ajuste de datos inconsistentes o erróneos**
+   - Asegúrate de que todos los datos sean coherentes (por ejemplo, que las etiquetas y categorías de las imágenes en un proyecto de clasificación de objetos sean precisas).
+   - **Ejemplo**: En una base de datos de imágenes, verifica que cada imagen etiquetada como "perro" contenga efectivamente un perro.
+
+### 6. **Normalización y escalado de datos**
+   - La normalización y escalado son especialmente importantes en el preprocesamiento para modelos de machine learning.
+   - **Métodos comunes**:
+     - **Escalado Min-Max**: Escala los datos para que estén dentro de un rango (por ejemplo, [0, 1]).
+     - **Normalización Z-score**: Ajusta los datos a una distribución con media 0 y desviación estándar 1.
+
+### 7. **Estandarizar la estructura de archivos (si trabajas con datos de imágenes)**
+   - Organiza los archivos en carpetas o rutas claras, etiquetadas por categorías o clases (como en el caso de proyectos de clasificación de imágenes).
+   - **Ejemplo**: Crea carpetas como `data/cats/` y `data/dogs/` para clasificar imágenes de gatos y perros, respectivamente.
+
+### 8. **Documentar cambios**
+   - Lleva un registro de los cambios realizados durante la limpieza de datos, especialmente si estás trabajando en equipo.
+   - **Método**: Usa herramientas de versionado o archivos de registro (log files) donde anotes los procesos y cambios aplicados a la base de datos.
+
+### Ejemplo de limpieza de base de datos en Python con pandas
+
+Para un conjunto de datos en formato tabular, podrías realizar limpieza básica con pandas:
+
+```python
+import pandas as pd
+
+# Cargar la base de datos
+df = pd.read_csv('mi_base_de_datos.csv')
+
+# Eliminar duplicados
+df = df.drop_duplicates()
+
+# Eliminar filas con valores nulos en una columna específica
+df = df.dropna(subset=['columna_relevante'])
+
+# Rellenar valores nulos en una columna con la mediana
+df['otra_columna'] = df['otra_columna'].fillna(df['otra_columna'].median())
+
+# Estandarizar el formato de fechas
+df['fecha'] = pd.to_datetime(df['fecha'], errors='coerce')
+
+# Identificar y eliminar valores atípicos (outliers)
+q_low = df["valor"].quantile(0.01)
+q_hi  = df["valor"].quantile(0.99)
+df_filtered = df[(df["valor"] > q_low) & (df["valor"] < q_hi)]
+
+# Guardar la base de datos limpia
+df_filtered.to_csv('mi_base_de_datos_limpia.csv', index=False)
+```
+
+### Herramientas adicionales
+Para proyectos más grandes, puedes considerar herramientas especializadas como:
+   - **OpenRefine**: Para limpieza avanzada y transformaciones en datos tabulares.
+   - **Dask** o **Apache Spark**: Para limpiar grandes volúmenes de datos.
+   - **Fastdup**: Para detectar y eliminar imágenes duplicadas en bases de datos visuales.
+
+La limpieza de la base de datos es esencial para garantizar que tu modelo o análisis tenga un buen desempeño y esté libre de sesgos o errores involuntarios causados por datos de baja calidad.
+
+## Distribución de datos en entrenamiento y testeo
+
+Distribuir los datos de manera adecuada entre los conjuntos de entrenamiento, validación y testeo es esencial para desarrollar modelos de machine learning robustos y confiables. A continuación te explico en qué consiste cada uno de estos conjuntos y cómo distribuir los datos.
+
+### 1. **División básica de los datos**
+   - **Entrenamiento (Training Set)**: Conjunto que el modelo usa para aprender. Suele representar el mayor porcentaje de los datos, entre el 60% y el 80%, para asegurar que el modelo tenga suficiente información para generalizar patrones.
+   - **Validación (Validation Set)**: Conjunto para ajustar los hiperparámetros del modelo y evaluar su rendimiento de forma preliminar, sin sesgarse hacia los datos de entrenamiento. Generalmente representa entre el 10% y el 20% de los datos.
+   - **Testeo (Test Set)**: Conjunto final que se utiliza únicamente para medir el rendimiento real del modelo después de haber sido entrenado y ajustado. Representa entre el 10% y el 20% de los datos.
+
+### 2. **Proporciones comunes de división**
+   - Para proyectos pequeños o medianos, las proporciones más comunes suelen ser:
+     - **80% Entrenamiento - 10% Validación - 10% Testeo**
+     - **70% Entrenamiento - 15% Validación - 15% Testeo**
+   - Para proyectos con grandes cantidades de datos, podrías usar:
+     - **90% Entrenamiento - 5% Validación - 5% Testeo**
+
+### 3. **Técnicas de división de datos**
+   - **División aleatoria (Random Split)**: Ideal para conjuntos de datos balanceados y grandes, donde la variabilidad se mantiene en cada conjunto. En Python, puedes utilizar `train_test_split` de `scikit-learn`:
+     ```python
+     from sklearn.model_selection import train_test_split
+     X_train, X_temp, y_train, y_temp = train_test_split(X, y, test_size=0.3, random_state=42)
+     X_val, X_test, y_val, y_test = train_test_split(X_temp, y_temp, test_size=0.5, random_state=42)
+     ```
+
+   - **K-Fold Cross-Validation**: Técnica que divide el conjunto de entrenamiento en `K` subconjuntos. Se entrena el modelo `K` veces, cada vez usando un subconjunto diferente como validación y el resto para entrenamiento.
+   
+   - **Estratificación (Stratified Split)**: Útil cuando los datos tienen clases desbalanceadas, asegurando que cada conjunto (entrenamiento, validación, testeo) tenga la misma proporción de clases.
+
+### 4. **Consideraciones adicionales**
+   - **Datos de series temporales**: Si tienes datos secuenciales (por ejemplo, series temporales), lo ideal es dividirlos de forma cronológica, utilizando los primeros datos para entrenamiento y los últimos para validación y prueba.
+   - **Datos de visión computarizada**: Para conjuntos de imágenes, asegúrate de que las categorías y variaciones (como iluminación, ángulos, etc.) estén representadas en todos los conjuntos.
+   
+### 5. **Ejemplo de división en un proyecto de visión computarizada**
+   En un proyecto de detección de objetos, podrías distribuir así los datos:
+   - **80% Entrenamiento**: Imágenes con distintas clases de objetos bajo diferentes condiciones.
+   - **10% Validación**: Imágenes representativas de todas las clases para ajustar el modelo.
+   - **10% Testeo**: Imágenes que no se han usado para validar ni entrenar, evaluando el rendimiento final del modelo.
+
+Definir bien esta distribución ayuda a tener un modelo bien ajustado y a evitar sobreajustes o subajustes.
+
+**Lecturas recomendadas**
+
+[dataset_filtrado.zip - Google Drive](https://drive.google.com/file/d/1Iz2akED0AUeZw2EDQaL3nAK_6cwN0_Rw/view?usp=sharing)
+
+[dataset_final.zip - Google Drive](https://drive.google.com/file/d/1XaslR14ygnvVT6-q4c9Ee-otm90U_eB9/view?usp=sharing)
+
+[[Clase] distribucion-dataset.ipynb - Google Drive](https://drive.google.com/file/d/1hKLd6Wy0x1nrXt5YfgeIl1TsmIKWCBXm/view?usp=sharing)
