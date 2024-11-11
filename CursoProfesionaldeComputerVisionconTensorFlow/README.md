@@ -737,3 +737,725 @@ Definir bien esta distribución ayuda a tener un modelo bien ajustado y a evitar
 [dataset_final.zip - Google Drive](https://drive.google.com/file/d/1XaslR14ygnvVT6-q4c9Ee-otm90U_eB9/view?usp=sharing)
 
 [[Clase] distribucion-dataset.ipynb - Google Drive](https://drive.google.com/file/d/1hKLd6Wy0x1nrXt5YfgeIl1TsmIKWCBXm/view?usp=sharing)
+
+## Etiquetado de los datos de test
+
+El etiquetado de los datos de test es esencial para evaluar correctamente el rendimiento de un modelo de machine learning, ya que permite comparar las predicciones del modelo con las etiquetas reales. Aquí tienes algunas recomendaciones para etiquetar tus datos de test:
+
+### 1. **Crear un sistema de etiquetado consistente**
+   - Si trabajas con datos de imágenes, asegúrate de usar un sistema de nombres o etiquetas consistente. Por ejemplo, puedes almacenar las etiquetas en un archivo CSV o en un formato JSON, con una estructura como:
+     - `imagen_001.jpg, etiqueta`
+     - `imagen_002.jpg, etiqueta`
+
+   Ejemplo en CSV:
+   ```csv
+   filename, label
+   imagen_001.jpg, perro
+   imagen_002.jpg, gato
+   ```
+
+   Ejemplo en JSON:
+   ```json
+   {
+     "imagen_001.jpg": "perro",
+     "imagen_002.jpg": "gato"
+   }
+   ```
+
+### 2. **Herramientas para etiquetar datos visuales**
+   - Existen herramientas que facilitan el etiquetado, especialmente en proyectos de visión computarizada:
+     - **LabelImg**: Herramienta gratuita para etiquetar imágenes con cuadros delimitadores (bounding boxes), útil para tareas de detección de objetos.
+     - **Labelbox**, **SuperAnnotate** y **VGG Image Annotator (VIA)**: Son herramientas versátiles que permiten trabajar con diferentes tipos de etiquetas, incluyendo segmentación y clasificación.
+
+### 3. **Automatizar el etiquetado cuando sea posible**
+   - Para grandes cantidades de datos, el etiquetado manual puede ser ineficiente. Una estrategia común es usar un modelo preentrenado para etiquetar automáticamente los datos y luego realizar una revisión manual.
+   - Puedes usar modelos de visión computarizada preentrenados en bibliotecas como **TensorFlow**, **PyTorch** o **Hugging Face**, y después hacer un ajuste fino.
+
+### 4. **Validación de etiquetas**
+   - Asegúrate de que el conjunto de test esté etiquetado con precisión para evitar un sesgo en la evaluación del modelo. Esto puede requerir una revisión manual o una validación cruzada de las etiquetas.
+
+### 5. **Ejemplo de lectura de etiquetas en Python**
+   Si ya tienes un archivo `CSV` con las etiquetas, aquí tienes un código para cargarlo usando `pandas`:
+
+   ```python
+   import pandas as pd
+
+   # Leer archivo CSV con etiquetas
+   etiquetas = pd.read_csv('test_labels.csv')
+   
+   # Acceder a una etiqueta específica
+   etiqueta_imagen = etiquetas.loc[etiquetas['filename'] == 'imagen_001.jpg', 'label'].values[0]
+   print(f"La etiqueta de imagen_001.jpg es: {etiqueta_imagen}")
+   ```
+
+### 6. **Estructura de carpetas para etiquetas de test**
+   - Si tu sistema de archivos permite organizar imágenes de test por categoría, podrías crear subcarpetas dentro de la carpeta de test para cada etiqueta. Por ejemplo:
+     ```
+     test/
+     ├── perro/
+     │   ├── imagen_001.jpg
+     │   ├── imagen_003.jpg
+     └── gato/
+         ├── imagen_002.jpg
+         ├── imagen_004.jpg
+     ```
+
+Organizar y etiquetar correctamente el conjunto de test es fundamental para realizar evaluaciones precisas y garantizar que el modelo se comporte bien en datos no vistos.
+
+**Lecturas recomendadas**
+
+[GitHub - tzutalin/labelImg: 🖍️ LabelImg is a graphical image annotation tool and label object bounding boxes in images](https://github.com/tzutalin/labelImg)
+
+[Supervisely - Web platform for computer vision. Annotation, training and deploy](https://supervise.ly/)
+
+[LinkedAI - Image Labeling Platform - Annotation Service](https://linkedai.co/)
+
+[LinkedAI - Free labelling platform - YouTube](https://www.youtube.com/watch?v=y8i4zH68zNY)
+
+[test.json - Google Drive](https://drive.google.com/file/d/1VKOewMnwf5m3MQXb3MZgBmlYxoF12kX0/view?usp=sharing)
+
+**Herramientas de etiquetado**
+
+[supervise](https://supervise.ly/)
+
+[Labelstud](https://labelstud.io/)
+
+[roboflow](https://roboflow.com/)
+
+## Etiquetado de los datos de train
+
+El etiquetado de los datos de entrenamiento es fundamental, ya que estos datos guiarán al modelo en el aprendizaje de patrones relevantes para la tarea. Aquí te doy algunas recomendaciones y opciones para etiquetar tus datos de entrenamiento.
+
+### 1. **Estructura de carpetas para datos etiquetados**
+   - En problemas de clasificación, una manera común de organizar los datos es mediante carpetas para cada clase. Esto facilita el etiquetado, ya que el nombre de la carpeta se convierte en la etiqueta de las imágenes que contiene.
+   
+   Ejemplo de estructura de carpetas:
+   ```
+   train/
+   ├── perro/
+   │   ├── imagen_001.jpg
+   │   ├── imagen_002.jpg
+   └── gato/
+       ├── imagen_003.jpg
+       ├── imagen_004.jpg
+   ```
+
+### 2. **Archivo de etiquetas**
+   - Si prefieres un archivo centralizado para almacenar las etiquetas, puedes crear un archivo CSV o JSON con el nombre del archivo y su etiqueta correspondiente.
+   
+   Ejemplo de archivo CSV (`train_labels.csv`):
+   ```csv
+   filename, label
+   imagen_001.jpg, perro
+   imagen_002.jpg, perro
+   imagen_003.jpg, gato
+   imagen_004.jpg, gato
+   ```
+   
+   Ejemplo de archivo JSON:
+   ```json
+   {
+     "imagen_001.jpg": "perro",
+     "imagen_002.jpg": "perro",
+     "imagen_003.jpg": "gato",
+     "imagen_004.jpg": "gato"
+   }
+   ```
+
+### 3. **Herramientas para el etiquetado de datos visuales**
+   - Para tareas como clasificación, segmentación o detección de objetos en imágenes, puedes usar herramientas de etiquetado visual. Algunas de las más populares son:
+     - **LabelImg**: Para etiquetar imágenes con cuadros delimitadores (bounding boxes).
+     - **VGG Image Annotator (VIA)**: Para etiquetar con bounding boxes, puntos, polígonos y segmentaciones.
+     - **Labelbox** y **SuperAnnotate**: Herramientas más avanzadas que permiten una variedad de tipos de etiquetas y son útiles para proyectos de mayor escala.
+
+### 4. **Automatización del etiquetado**
+   - En proyectos con grandes volúmenes de datos, puedes usar modelos preentrenados para etiquetar automáticamente una primera versión de los datos de entrenamiento. Posteriormente, puedes revisar manualmente y corregir las etiquetas.
+   - **Ejemplo de flujo de trabajo**:
+     - Usa un modelo preentrenado (como los de la biblioteca **Hugging Face** o **TensorFlow**) para generar etiquetas iniciales.
+     - Realiza una revisión manual para ajustar o corregir las etiquetas según sea necesario.
+
+### 5. **Validación de etiquetas**
+   - Es esencial verificar la precisión de las etiquetas, ya que errores de etiquetado pueden afectar negativamente el rendimiento del modelo.
+   - **Consejo**: Haz una validación cruzada, donde una persona o un equipo revise las etiquetas para detectar errores o inconsistencias.
+
+### 6. **Código de ejemplo para leer etiquetas en Python**
+   Si tienes un archivo CSV con las etiquetas, puedes cargarlo usando `pandas` y asignar las etiquetas a cada imagen.
+
+   ```python
+   import pandas as pd
+
+   # Leer archivo CSV con etiquetas
+   etiquetas = pd.read_csv('train_labels.csv')
+   
+   # Acceder a la etiqueta de una imagen específica
+   etiqueta_imagen = etiquetas.loc[etiquetas['filename'] == 'imagen_001.jpg', 'label'].values[0]
+   print(f"La etiqueta de imagen_001.jpg es: {etiqueta_imagen}")
+   ```
+
+### 7. **Ajuste fino de las etiquetas en proyectos de visión computarizada**
+   - Para tareas como detección o segmentación, donde necesitas etiquetar con más precisión, considera realizar múltiples revisiones y usar herramientas específicas de anotación para definir regiones o contornos exactos en cada imagen.
+
+### Resumen
+Organizar y verificar correctamente las etiquetas en el conjunto de entrenamiento permite que el modelo aprenda con precisión, mejorando su capacidad de generalización y su rendimiento en datos reales.
+
+**Lecturas recomendadas**
+
+[LinkedAI - Image Labeling Platform - Annotation Service](https://linkedai.co/)
+
+[train.json - Google Drive](https://drive.google.com/file/d/1INYLnSv4Hd271Szobf-NVHE4mbcufSJY/view?usp=sharing)
+
+## Transforma tu base de datos a TFRecord
+
+El formato **TFRecord** es un formato binario desarrollado por TensorFlow que permite almacenar grandes cantidades de datos de manera eficiente, especialmente útil para conjuntos de datos que contienen imágenes y etiquetas, o cualquier dato que desees procesar con TensorFlow. A continuación, te explico cómo transformar tu base de datos a TFRecord.
+
+### Pasos para convertir una base de datos a TFRecord
+
+Supongamos que tienes imágenes y sus etiquetas en un archivo CSV. Para este ejemplo, imaginemos que el archivo `train_labels.csv` tiene el siguiente formato:
+
+```csv
+filename,label
+imagen_001.jpg,0
+imagen_002.jpg,1
+...
+```
+
+1. **Importar bibliotecas necesarias**:
+
+   ```python
+   import os
+   import tensorflow as tf
+   import pandas as pd
+   from PIL import Image
+   ```
+
+2. **Definir funciones para la conversión a TFRecord**:
+
+   La clave está en convertir los datos a un formato compatible con **tf.train.Example** y luego escribirlos en un archivo `.tfrecord`.
+
+   ```python
+   # Función para convertir los tipos de datos
+   def _bytes_feature(value):
+       return tf.train.Feature(bytes_list=tf.train.BytesList(value=[value]))
+
+   def _int64_feature(value):
+       return tf.train.Feature(int64_list=tf.train.Int64List(value=[value]))
+
+   # Función para crear un tf.train.Example
+   def create_example(image_path, label):
+       # Leer y convertir la imagen a bytes
+       with open(image_path, 'rb') as img_file:
+           image_data = img_file.read()
+
+       # Crear un diccionario de características
+       feature = {
+           'image': _bytes_feature(image_data),
+           'label': _int64_feature(label)
+       }
+
+       # Convertir el diccionario en un tf.train.Example
+       example = tf.train.Example(features=tf.train.Features(feature=feature))
+       return example
+   ```
+
+3. **Cargar etiquetas y escribir el archivo TFRecord**:
+
+   Lee el archivo CSV y escribe los datos en formato TFRecord.
+
+   ```python
+   # Rutas y archivos
+   csv_file = 'train_labels.csv'
+   image_folder = 'path/to/images'
+   output_tfrecord = 'train_data.tfrecord'
+
+   # Leer el archivo CSV
+   df = pd.read_csv(csv_file)
+
+   # Crear el archivo TFRecord
+   with tf.io.TFRecordWriter(output_tfrecord) as writer:
+       for _, row in df.iterrows():
+           image_path = os.path.join(image_folder, row['filename'])
+           label = int(row['label'])
+
+           # Crear tf.train.Example para cada imagen y etiqueta
+           example = create_example(image_path, label)
+           
+           # Escribir en el archivo TFRecord
+           writer.write(example.SerializeToString())
+   ```
+
+4. **Leer y verificar el archivo TFRecord**:
+
+   Una vez que tienes el archivo TFRecord, verifica que los datos se han guardado correctamente.
+
+   ```python
+   # Función para leer el TFRecord
+   def parse_tfrecord_fn(example):
+       feature_description = {
+           'image': tf.io.FixedLenFeature([], tf.string),
+           'label': tf.io.FixedLenFeature([], tf.int64),
+       }
+       example = tf.io.parse_single_example(example, feature_description)
+       example['image'] = tf.io.decode_jpeg(example['image'])  # Decodifica imagenes JPEG
+       return example['image'], example['label']
+
+   # Cargar el dataset desde el archivo TFRecord
+   raw_dataset = tf.data.TFRecordDataset(output_tfrecord)
+   parsed_dataset = raw_dataset.map(parse_tfrecord_fn)
+
+   # Imprimir algunos ejemplos
+   for image, label in parsed_dataset.take(5):
+       print("Etiqueta:", label.numpy())
+       print("Imagen:", image.numpy().shape)  # Mostrar la forma de la imagen
+   ```
+
+### Explicación de los pasos
+
+- **Conversión de tipos de datos**: `_bytes_feature` y `_int64_feature` son funciones que convierten los datos a los tipos aceptados por `tf.train.Example`.
+- **Creación de `tf.train.Example`**: Esto encapsula los datos de cada ejemplo (imagen + etiqueta) en un formato que puede escribirse en TFRecord.
+- **Escritura en TFRecord**: Utilizamos `TFRecordWriter` para escribir cada `Example` en el archivo TFRecord.
+- **Lectura de TFRecord**: Utilizamos `tf.data.TFRecordDataset` para leer el archivo y `parse_tfrecord_fn` para decodificar los datos almacenados.
+
+Este formato es eficiente para proyectos de machine learning, especialmente cuando se trabaja con grandes volúmenes de datos, ya que **TFRecord** permite una lectura rápida en paralelo y una integración perfecta con el flujo de trabajo de TensorFlow.
+
+**Lecturas recomendadas**
+
+[train.json - Google Drive](https://drive.google.com/file/d/1INYLnSv4Hd271Szobf-NVHE4mbcufSJY/view?usp=sharing)
+
+[test.json - Google Drive](https://drive.google.com/file/d/1xKAaLSbuIeuZDtCwea-5PI3pjCLp8lKf/view?usp=sharing)
+
+[train_labels.csv - Google Drive](https://drive.google.com/file/d/1exMiJ3VWWInJe6YhqsL1OyyZHl9x44r-/view?usp=sharing)
+
+[test_labels.csv - Google Drive](https://drive.google.com/file/d/1gMdHYa4wuTYG0PyIGJ4aAfVqt1JOC8uc/view?usp=sharing)
+
+[[Clase] json-tfrecord.ipynb - Google Drive](https://drive.google.com/file/d/1b7aX0Gu-kh86QBX-FZV6gJfS0HCewVmI/view?usp=sharing)
+
+## Transformar CSV a TFRecord
+
+```python
+import os
+%cd /content
+!git clone --quiet https://github.com/tensorflow/models.git
+%cd /content/models/
+!git checkout 58d19c67e1d30d905dd5c6e5092348658fed80af
+!apt-get update && apt-get install -y -qq protobuf-compiler python-pil python-lxml python-tk
+!pip install -q Cython contextlib2 pillow lxml matplotlib
+!pip install -q pycocotools
+%cd /content/models/research
+!protoc object_detection/protos/*.proto --python_out=.
+os.environ['PYTHONPATH'] += ':/content/models/research/:/content/models/research/slim/'
+!python object_detection/builders/model_builder_test.py
+```
+
+Para transformar un archivo CSV a TFRecord, aquí tienes una guía detallada paso a paso. Supongamos que tu archivo `dataset.csv` tiene las siguientes columnas:
+
+```csv
+filename, label
+imagen_001.jpg, 0
+imagen_002.jpg, 1
+```
+
+### Pasos para convertir el CSV a TFRecord
+
+1. **Importar las bibliotecas necesarias**
+
+   ```python
+   import os
+   import tensorflow as tf
+   import pandas as pd
+   ```
+
+2. **Definir las funciones de ayuda para la conversión a TFRecord**
+
+   Cada característica en los datos debe transformarse al formato adecuado (`bytes`, `int64` o `float`), y se utiliza un `tf.train.Example` para almacenar la información en el formato TFRecord.
+
+   ```python
+   def _bytes_feature(value):
+       """Retorna un Feature en formato bytes."""
+       return tf.train.Feature(bytes_list=tf.train.BytesList(value=[value]))
+
+   def _int64_feature(value):
+       """Retorna un Feature en formato int64."""
+       return tf.train.Feature(int64_list=tf.train.Int64List(value=[value]))
+
+   def create_example(row):
+       """Crea un tf.train.Example para cada fila en el CSV."""
+       # Lee la imagen en bytes
+       with open(row['filename'], 'rb') as img_file:
+           image_data = img_file.read()
+
+       # Crear un diccionario de características
+       feature = {
+           'image': _bytes_feature(image_data),
+           'label': _int64_feature(int(row['label']))
+       }
+
+       # Retorna el ejemplo serializado
+       return tf.train.Example(features=tf.train.Features(feature=feature))
+   ```
+
+3. **Cargar el archivo CSV y escribir los datos en el archivo TFRecord**
+
+   Lee el archivo CSV con `pandas`, luego convierte cada fila en un `tf.train.Example` y escribe los ejemplos en un archivo TFRecord.
+
+   ```python
+   # Definir ruta del archivo CSV y carpeta de imágenes
+   csv_file = 'dataset.csv'
+   output_tfrecord = 'dataset.tfrecord'
+
+   # Leer el archivo CSV
+   df = pd.read_csv(csv_file)
+
+   # Crear el archivo TFRecord y escribir los ejemplos
+   with tf.io.TFRecordWriter(output_tfrecord) as writer:
+       for _, row in df.iterrows():
+           example = create_example(row)
+           writer.write(example.SerializeToString())
+
+   print("Archivo TFRecord creado correctamente.")
+   ```
+
+4. **Leer y verificar el archivo TFRecord**
+
+   Ahora puedes cargar el archivo TFRecord para verificar que los datos se almacenaron correctamente.
+
+   ```python
+   # Definir función para leer el archivo TFRecord
+   def parse_tfrecord_fn(example_proto):
+       # Descripción de características para decodificar
+       feature_description = {
+           'image': tf.io.FixedLenFeature([], tf.string),
+           'label': tf.io.FixedLenFeature([], tf.int64),
+       }
+       return tf.io.parse_single_example(example_proto, feature_description)
+
+   # Cargar el archivo TFRecord
+   raw_dataset = tf.data.TFRecordDataset(output_tfrecord)
+   parsed_dataset = raw_dataset.map(parse_tfrecord_fn)
+
+   # Mostrar algunos ejemplos
+   for parsed_record in parsed_dataset.take(5):
+       image_raw = parsed_record['image'].numpy()
+       label = parsed_record['label'].numpy()
+       print("Etiqueta:", label)
+       print("Imagen (bytes):", len(image_raw), "bytes")  # Verifica el tamaño en bytes
+   ```
+
+### Explicación de los pasos
+
+- **Conversión de tipos de datos**: Las funciones `_bytes_feature` y `_int64_feature` convierten los valores de las características al tipo que espera `tf.train.Example`.
+- **Creación de `tf.train.Example`**: Se crea un ejemplo con las características necesarias, en este caso la imagen en bytes y la etiqueta.
+- **Escritura en TFRecord**: `TFRecordWriter` escribe cada ejemplo en el archivo `dataset.tfrecord`.
+- **Lectura de TFRecord**: Con `tf.data.TFRecordDataset`, puedes leer y decodificar cada ejemplo, lo que permite verificar que los datos están almacenados correctamente.
+
+Este proceso optimiza el almacenamiento y facilita la carga rápida en TensorFlow para entrenamiento y evaluación en grandes conjuntos de datos.
+
+**Lecturas recomendadas**
+
+[Training Custom Object Detector — TensorFlow Object Detection API tutorial documentation](https://tensorflow-object-detection-api-tutorial.readthedocs.io/en/tensorflow-1.14/training.html)
+
+[Comandos CSV a TFRecord.txt - Google Drive](https://drive.google.com/file/d/1Z_nSM7E6fEBmYgyHb9pxBgHDtOXcc1w5/view?usp=sharing)
+
+[test.record - Google Drive](https://drive.google.com/file/d/1KKW3PTpsLmlqGBJFJHxgtJr7uab8cFIz/view?usp=sharing)
+
+[train.record - Google Drive](https://drive.google.com/file/d/1z2K1UqHCI9IL0cvvWfTzo_Scei5a2nAp/view?usp=sharing)
+
+[[Clase] json-tfrecord.ipynb - Google Drive](https://drive.google.com/file/d/1b7aX0Gu-kh86QBX-FZV6gJfS0HCewVmI/view?usp=sharing)
+
+##Librerías a importar durante fase de entrenamiento
+
+Hola, en esta clase conocerás las librerías a importar en tu notebook para la fase de entrenamiento.
+
+Durante la clase siguiente tendrás que crear una nueva notebook e instalar diferentes librerías. En la clase verás que se instalas las siguientes.
+
+![librerias old ](images/librerias_old.png)
+
+⚠ Por temas de versiones de TensorFlow es importante que** NO instales las librerías como aparece en la clase siguiente**. Ya que con la nueva versión de TensorFlow 2.8 en adelante es posible que tu proyecto no funcione de la manera esperada.
+
+Dentro de la notebook instala las librerías de la siguiente manera:
+
+```python
+import os
+import pandas as pd
+import json
+import pickle
+import zipfile
+import shutil
+```
+
+### Instalamos los paquetes necesarios para que funcione desde la Colab
+
+```python
+!pip install avro-python3
+!pip install 
+!pip install tf_slim==1.1.0
+!pip install tf-models-official==2.7.0
+!pip install lvis
+!pip install tensorflow_io==0.23.1
+!pip install keras==2.7.0
+!pip install opencv-python-headless==4.5.2.52
+```
+Después de ello sigue desarrollando tu notebook como aparece en las clases del curso.
+
+Te veo en la siguiente clase para iniciar con ello.
+
+## Fase de entrenamiento del modelo
+
+Instalar la librería de object Detection en Google Colab:
+
+```python
+import os
+%cd /content
+!git clone --quiet https://github.com/tensorflow/models.git
+%cd /content/models/
+#!git checkout 58d19c67e1d30d905dd5c6e5092348658fed80af
+!apt-get update && apt-get install -y -qq protobuf-compiler python-pil python-lxml python-tk
+!pip install -q Cython contextlib2 pillow lxml matplotlib
+!pip install -q pycocotools
+%cd /content/models/research
+!protoc object_detection/protos/*.proto --python_out=.
+os.environ['PYTHONPATH'] += ':/content/models/research/:/content/models/research/slim/'
+!python object_detection/builders/model_builder_test.py
+```
+
+Descargar los modelos pre-entrenados en este caso SSD + MobileNetV2
+
+```python
+!wget --no-check-certificate http://download.tensorflow.org/models/object_detection/tf2/20200711/ssd_mobilenet_v2_fpnlite_320x320_coco17_tpu-8.tar.gz \
+-O /content/ssd_mobilenet_v2_fpnlite_320x320_coco17_tpu-8.tar.gz
+```
+
+La fase de entrenamiento del modelo es el proceso en el cual el modelo de machine learning aprende a reconocer patrones en los datos para realizar predicciones o clasificaciones. En TensorFlow, el proceso generalmente incluye la carga de datos, la definición del modelo, la configuración de parámetros de entrenamiento, y el ajuste del modelo con los datos de entrenamiento. Aquí te explico cada paso.
+
+### 1. **Preparación de los datos**
+
+   Supongamos que ya tienes un conjunto de datos en formato **TFRecord**. Carguemos y preparemos los datos para el entrenamiento.
+
+   ```python
+   import tensorflow as tf
+
+   # Función para leer y parsear el archivo TFRecord
+   def parse_tfrecord_fn(example):
+       feature_description = {
+           'image': tf.io.FixedLenFeature([], tf.string),
+           'label': tf.io.FixedLenFeature([], tf.int64),
+       }
+       parsed_example = tf.io.parse_single_example(example, feature_description)
+       image = tf.io.decode_jpeg(parsed_example['image'], channels=3)  # Decodificar JPEG
+       image = tf.image.resize(image, [128, 128])  # Redimensionar
+       image = tf.cast(image, tf.float32) / 255.0  # Normalizar
+       label = parsed_example['label']
+       return image, label
+
+   # Cargar el dataset desde el archivo TFRecord
+   train_dataset = tf.data.TFRecordDataset('train_data.tfrecord')
+   train_dataset = train_dataset.map(parse_tfrecord_fn)
+   train_dataset = train_dataset.shuffle(buffer_size=1000).batch(32).prefetch(tf.data.AUTOTUNE)
+   ```
+
+### 2. **Definir el modelo**
+
+   Puedes definir un modelo usando la API `tf.keras.Sequential` o la API funcional de Keras. Aquí tienes un ejemplo de modelo simple de clasificación para imágenes.
+
+   ```python
+   from tensorflow.keras import layers, models
+
+   model = models.Sequential([
+       layers.Conv2D(32, (3, 3), activation='relu', input_shape=(128, 128, 3)),
+       layers.MaxPooling2D((2, 2)),
+       layers.Conv2D(64, (3, 3), activation='relu'),
+       layers.MaxPooling2D((2, 2)),
+       layers.Conv2D(64, (3, 3), activation='relu'),
+       layers.Flatten(),
+       layers.Dense(64, activation='relu'),
+       layers.Dense(10, activation='softmax')  # Asumiendo 10 clases
+   ])
+   ```
+
+### 3. **Compilar el modelo**
+
+   La compilación del modelo define el optimizador, la función de pérdida, y las métricas a utilizar durante el entrenamiento.
+
+   ```python
+   model.compile(optimizer='adam',
+                 loss='sparse_categorical_crossentropy',
+                 metrics=['accuracy'])
+   ```
+
+### 4. **Entrenar el modelo**
+
+   Ahora puedes entrenar el modelo usando el método `fit` de Keras, indicando los datos de entrenamiento y el número de épocas.
+
+   ```python
+   # Entrenar el modelo
+   history = model.fit(train_dataset, epochs=10)
+   ```
+
+   Aquí `history` guardará un registro de la pérdida y la precisión en cada época, que puede ayudarte a analizar el rendimiento del modelo.
+
+### 5. **Evaluación del modelo**
+
+   Después del entrenamiento, evalúa el rendimiento del modelo en el conjunto de datos de prueba.
+
+   ```python
+   # Cargar datos de prueba (TFRecord)
+   test_dataset = tf.data.TFRecordDataset('test_data.tfrecord')
+   test_dataset = test_dataset.map(parse_tfrecord_fn).batch(32)
+
+   # Evaluar el modelo
+   test_loss, test_accuracy = model.evaluate(test_dataset)
+   print(f"Precisión en datos de prueba: {test_accuracy:.2f}")
+   ```
+
+### 6. **Ajustes adicionales y visualización del entrenamiento**
+
+   Puedes visualizar el progreso del entrenamiento usando la información de `history`. Esto es útil para identificar problemas como el sobreajuste.
+
+   ```python
+   import matplotlib.pyplot as plt
+
+   # Graficar pérdida y precisión
+   plt.plot(history.history['accuracy'], label='Precisión de entrenamiento')
+   plt.plot(history.history['loss'], label='Pérdida de entrenamiento')
+   plt.xlabel('Épocas')
+   plt.ylabel('Precisión / Pérdida')
+   plt.legend()
+   plt.show()
+   ```
+
+### Resumen
+
+1. **Preparación de datos**: Se preprocesan y cargan los datos desde TFRecord.
+2. **Definición del modelo**: Se configura una red neuronal que ajusta los datos de entrada.
+3. **Compilación**: Se eligen el optimizador, la función de pérdida, y las métricas.
+4. **Entrenamiento**: Se entrena el modelo con los datos de entrenamiento.
+5. **Evaluación**: Se mide el rendimiento en los datos de prueba.
+
+Esta estructura es común en proyectos de machine learning, especialmente en visión computarizada, y te permite ajustar el modelo gradualmente hasta obtener el rendimiento deseado.
+
+**Lecturas recomendadas**
+
+[models/tf2_detection_zoo.md at master · tensorflow/models · GitHub](https://github.com/tensorflow/models/blob/master/research/object_detection/g3doc/tf2_detection_zoo.md)
+
+[Comandos instalación Object Detection y descarga modelos pre-entrenados.txt - Google Drive](https://drive.google.com/file/d/1e-1MkvyAmKyAdzcDa_C4JeSMvY6e9hJo/view?usp=sharing)
+
+[[Clase] entrenamiento-modelos.ipynb - Google Drive](https://drive.google.com/file/d/1XEt9xiJdX8w2O4Yp38vtQcLobQZR_mKK/view?usp=sharing)
+
+## Balanceo de imágenes y data augmentation
+
+El balanceo de clases y la **data augmentation** son pasos importantes en el procesamiento de datos para modelos de visión computarizada, especialmente cuando trabajamos con conjuntos de datos desequilibrados o insuficientes. Aquí te explico ambos conceptos y cómo implementarlos en TensorFlow.
+
+### 1. **Balanceo de Imágenes**
+
+El balanceo de clases es esencial cuando las clases en un conjunto de datos están desproporcionadas, es decir, cuando algunas clases tienen muchas más imágenes que otras. Esto puede llevar a que el modelo esté sesgado hacia las clases mayoritarias.
+
+#### Métodos comunes para el balanceo:
+
+- **Oversampling**: Se replican las imágenes de las clases minoritarias hasta equilibrar la proporción.
+- **Undersampling**: Se reduce el número de imágenes de las clases mayoritarias.
+- **Data Augmentation**: Generación de nuevas imágenes mediante transformaciones.
+
+En TensorFlow, puedes combinar `tf.data.Dataset` con técnicas de data augmentation para balancear el conjunto de datos.
+
+### 2. **Data Augmentation**
+
+La **data augmentation** aumenta la diversidad de datos mediante transformaciones aleatorias, ayudando a mejorar la generalización del modelo. Algunas transformaciones comunes incluyen:
+
+- Rotación
+- Volteo horizontal o vertical
+- Zoom y recorte
+- Ajuste de brillo y contraste
+- Desplazamientos horizontales o verticales
+
+### Implementación de Balanceo y Data Augmentation en TensorFlow
+
+#### Paso 1: Definir las transformaciones de data augmentation
+
+Usaremos las capas de `tf.keras.layers` para definir transformaciones de data augmentation que se aplicarán a cada imagen durante el entrenamiento.
+
+```python
+from tensorflow.keras import layers
+
+data_augmentation = tf.keras.Sequential([
+    layers.RandomFlip("horizontal_and_vertical"),  # Volteo horizontal y vertical
+    layers.RandomRotation(0.2),                    # Rotación
+    layers.RandomZoom(0.1),                        # Zoom
+    layers.RandomContrast(0.2),                    # Contraste
+])
+```
+
+#### Paso 2: Aplicar data augmentation y balanceo al conjunto de datos
+
+Suponiendo que tienes tu conjunto de datos cargado en formato TFRecord, puedes aplicar `data_augmentation` y balancear las clases mediante oversampling.
+
+```python
+import tensorflow as tf
+
+# Función de preprocesamiento y augmentación
+def preprocess_and_augment(image, label):
+    image = tf.image.resize(image, [128, 128])   # Ajuste de tamaño
+    image = tf.cast(image, tf.float32) / 255.0   # Normalización
+    image = data_augmentation(image)             # Aplicación de augmentación
+    return image, label
+
+# Cargar el conjunto de datos
+train_dataset = tf.data.TFRecordDataset('train_data.tfrecord')
+train_dataset = train_dataset.map(parse_tfrecord_fn)
+
+# Balanceo mediante oversampling
+def balance_dataset(dataset, minority_class_size, batch_size=32):
+    minority_class = dataset.filter(lambda image, label: label == 1)
+    majority_class = dataset.filter(lambda image, label: label == 0)
+
+    # Oversampling de la clase minoritaria
+    minority_class = minority_class.repeat(int(minority_class_size / len(minority_class)))
+
+    # Mezclar y combinar ambas clases
+    balanced_dataset = majority_class.concatenate(minority_class)
+    balanced_dataset = balanced_dataset.shuffle(buffer_size=1000).batch(batch_size).prefetch(tf.data.AUTOTUNE)
+    
+    return balanced_dataset
+
+# Aplicar preprocess y augmentación
+train_dataset = train_dataset.map(preprocess_and_augment)
+train_dataset = balance_dataset(train_dataset, minority_class_size=1000)
+```
+
+#### Paso 3: Entrenamiento con dataset balanceado y aumentado
+
+Usa el conjunto de datos balanceado y aumentado en el modelo para el entrenamiento.
+
+```python
+# Definición del modelo (Ejemplo)
+model = tf.keras.Sequential([
+    layers.Conv2D(32, (3, 3), activation='relu', input_shape=(128, 128, 3)),
+    layers.MaxPooling2D((2, 2)),
+    layers.Conv2D(64, (3, 3), activation='relu'),
+    layers.MaxPooling2D((2, 2)),
+    layers.Conv2D(64, (3, 3), activation='relu'),
+    layers.Flatten(),
+    layers.Dense(64, activation='relu'),
+    layers.Dense(10, activation='softmax')  # Asumiendo 10 clases
+])
+
+# Compilación y entrenamiento
+model.compile(optimizer='adam',
+              loss='sparse_categorical_crossentropy',
+              metrics=['accuracy'])
+
+model.fit(train_dataset, epochs=10)
+```
+
+### Explicación del código
+
+1. **Definición de data augmentation**: Creamos una secuencia de capas de augmentación con `tf.keras.layers`.
+2. **Balanceo del dataset**: Usamos oversampling de la clase minoritaria repitiéndola hasta equilibrar las clases.
+3. **Preprocesamiento y augmentación**: Ajustamos el tamaño, normalizamos, y aplicamos augmentación a cada imagen del conjunto.
+4. **Entrenamiento**: Entrenamos el modelo con el dataset balanceado y aumentado.
+
+Esta combinación de data augmentation y balanceo mejora la capacidad del modelo para generalizar y reducir el sesgo hacia clases más representadas.
+
+**Lecturas recomendadas**
+
+[[Clase] entrenamiento-modelos.ipynb - Google Drive](https://drive.google.com/file/d/1XEt9xiJdX8w2O4Yp38vtQcLobQZR_mKK/view?usp=sharing)
+
+[models/tf2_detection_zoo.md at master · tensorflow/models · GitHub](https://github.com/tensorflow/models/blob/master/research/object_detection/g3doc/tf2_detection_zoo.md)

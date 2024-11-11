@@ -1,0 +1,21 @@
+Instalar la librería de Object Detection en Google Colab:
+```
+import os
+%cd /content
+!git clone --quiet https://github.com/tensorflow/models.git
+%cd /content/models/
+#!git checkout 58d19c67e1d30d905dd5c6e5092348658fed80af
+!apt-get update && apt-get install -y -qq protobuf-compiler python-pil python-lxml python-tk
+!pip install -q Cython contextlib2 pillow lxml matplotlib
+!pip install -q pycocotools
+%cd /content/models/research
+!protoc object_detection/protos/*.proto --python_out=.
+os.environ['PYTHONPATH'] += ':/content/models/research/:/content/models/research/slim/'
+!python object_detection/builders/model_builder_test.py
+```
+
+Descargar los modelos pre-entrenados en este caso SSD + MobileNetV2
+```
+!wget --no-check-certificate http://download.tensorflow.org/models/object_detection/tf2/20200711/ssd_mobilenet_v2_fpnlite_320x320_coco17_tpu-8.tar.gz \
+-O /content/ssd_mobilenet_v2_fpnlite_320x320_coco17_tpu-8.tar.gz
+```
