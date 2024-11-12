@@ -1459,3 +1459,1002 @@ Esta combinación de data augmentation y balanceo mejora la capacidad del modelo
 [[Clase] entrenamiento-modelos.ipynb - Google Drive](https://drive.google.com/file/d/1XEt9xiJdX8w2O4Yp38vtQcLobQZR_mKK/view?usp=sharing)
 
 [models/tf2_detection_zoo.md at master · tensorflow/models · GitHub](https://github.com/tensorflow/models/blob/master/research/object_detection/g3doc/tf2_detection_zoo.md)
+
+## Entrena, evalua y optimiza con TensorBoard
+
+Entrenar, evaluar y optimizar un modelo de deep learning con TensorBoard permite monitorear el progreso, identificar problemas y ajustar el modelo para mejorar su rendimiento. Aquí tienes una guía paso a paso para integrar TensorBoard en tu flujo de trabajo con TensorFlow.
+
+### 1. **Configuración de TensorBoard**
+
+Primero, asegúrate de que tienes TensorBoard instalado. En un entorno Jupyter Notebook o Google Colab, puedes iniciar TensorBoard directamente en una celda de código.
+
+```bash
+pip install tensorboard
+```
+
+### 2. **Configurar los callbacks de TensorBoard**
+
+Para capturar datos durante el entrenamiento, utiliza un **callback de TensorBoard** que registrará métricas como la precisión y la pérdida del modelo a medida que entrena.
+
+```python
+import tensorflow as tf
+from tensorflow.keras import layers, models
+from datetime import datetime
+
+# Crear un directorio de logs único usando la fecha y hora actual
+log_dir = "logs/fit/" + datetime.now().strftime("%Y%m%d-%H%M%S")
+tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir=log_dir, histogram_freq=1)
+```
+
+### 3. **Definir el modelo**
+
+A continuación, define y compila tu modelo. Asegúrate de configurar métricas que te permitan analizar el rendimiento en TensorBoard.
+
+```python
+model = models.Sequential([
+    layers.Conv2D(32, (3, 3), activation='relu', input_shape=(128, 128, 3)),
+    layers.MaxPooling2D((2, 2)),
+    layers.Conv2D(64, (3, 3), activation='relu'),
+    layers.MaxPooling2D((2, 2)),
+    layers.Conv2D(64, (3, 3), activation='relu'),
+    layers.Flatten(),
+    layers.Dense(64, activation='relu'),
+    layers.Dense(10, activation='softmax')  # Asumiendo 10 clases
+])
+
+model.compile(optimizer='adam',
+              loss='sparse_categorical_crossentropy',
+              metrics=['accuracy'])
+```
+
+### 4. **Entrenar el modelo con el callback de TensorBoard**
+
+Incluye `tensorboard_callback` en la lista de callbacks al llamar al método `fit` para que registre los datos de entrenamiento en cada época.
+
+```python
+history = model.fit(train_dataset,  # tu conjunto de datos de entrenamiento
+                    epochs=10,
+                    validation_data=test_dataset,  # conjunto de datos de prueba
+                    callbacks=[tensorboard_callback])
+```
+
+### 5. **Iniciar TensorBoard**
+
+Si estás trabajando en Jupyter Notebook o Google Colab, puedes lanzar TensorBoard dentro del notebook.
+
+```python
+%load_ext tensorboard
+%tensorboard --logdir logs/fit
+```
+
+Para otros entornos, abre una terminal y ejecuta:
+
+```bash
+tensorboard --logdir=logs/fit
+```
+
+### 6. **Evaluar el modelo**
+
+Después del entrenamiento, evalúa el rendimiento del modelo en el conjunto de datos de prueba.
+
+```python
+test_loss, test_accuracy = model.evaluate(test_dataset)
+print(f"Precisión en datos de prueba: {test_accuracy:.2f}")
+```
+
+### 7. **Optimización del modelo**
+
+Para optimizar el modelo, observa las métricas de pérdida y precisión en TensorBoard, además de las siguientes estrategias:
+
+1. **Ajuste de hiperparámetros**: Cambia el optimizador, tasa de aprendizaje, tamaño de lote o número de épocas y observa los efectos en el rendimiento.
+2. **Regularización**: Implementa capas de `Dropout` o usa una función de regularización en las capas `Dense` para evitar el sobreajuste.
+3. **Data augmentation**: Aumentar la variedad del conjunto de datos de entrenamiento ayuda a mejorar la generalización.
+
+### 8. **Monitoreo en TensorBoard**
+
+Dentro de TensorBoard, puedes monitorear:
+
+- **Gráficas de entrenamiento y validación**: Muestra las curvas de precisión y pérdida en cada época.
+- **Histogramas**: Visualiza cómo cambian los pesos del modelo en cada capa durante el entrenamiento.
+- **Scalars**: Observa valores como la tasa de aprendizaje o la precisión de evaluación.
+
+### Ejemplo de Optimización con Callbacks Adicionales
+
+Además del callback de TensorBoard, puedes agregar otros callbacks para mejorar el entrenamiento:
+
+```python
+from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateau
+
+# Early stopping para detener el entrenamiento si no hay mejoras en precisión de validación
+early_stopping = EarlyStopping(monitor='val_accuracy', patience=5, restore_best_weights=True)
+
+# Reduce la tasa de aprendizaje si no hay mejoras
+reduce_lr = ReduceLROnPlateau(monitor='val_loss', factor=0.2, patience=3, min_lr=0.001)
+
+history = model.fit(train_dataset,
+                    epochs=20,
+                    validation_data=test_dataset,
+                    callbacks=[tensorboard_callback, early_stopping, reduce_lr])
+```
+
+### 9. **Resumen y análisis de resultados**
+
+Después de la optimización, revisa los gráficos en TensorBoard y observa cómo influyen los ajustes en el rendimiento. Identifica el momento en que el modelo empieza a sobreajustar y ajusta hiperparámetros según sea necesario para mejorar la precisión sin comprometer la generalización.
+
+Esta combinación de entrenamiento, evaluación y optimización con TensorBoard permite monitorear el desempeño y hacer ajustes efectivos en el modelo.
+
+**Lecturas recomendadas**
+
+[Introducción a variables relevantes del TensorBoard - Platzi](https://platzi.com/clases/2565-redes-neuronales-tensorflow/43033-introduccion-a-variables-relevantes-del-tensorboar/)
+
+[[Clase] entrenamiento-modelos.ipynb - Google Drive](https://drive.google.com/file/d/1XEt9xiJdX8w2O4Yp38vtQcLobQZR_mKK/view?usp=sharing)
+
+## Validación de modelo en un entorno de ejecución
+
+La validación de un modelo en un entorno de ejecución (también conocida como *deployment validation* o *model inference validation*) es una fase crítica en la puesta en producción de modelos de aprendizaje automático, incluyendo los modelos de *computer vision*. Esta fase asegura que el modelo funciona correctamente con datos reales y en las condiciones de un entorno de producción.
+
+Aquí tienes una guía general para validar un modelo en un entorno de ejecución:
+
+### 1. Preparación del Entorno de Ejecución
+
+   - **Definir el entorno**: Asegúrate de que el entorno de ejecución tenga las mismas bibliotecas y versiones utilizadas durante el entrenamiento. Esto es especialmente importante para bibliotecas como TensorFlow, PyTorch, OpenCV, etc.
+   - **Hardware adecuado**: Para modelos de *computer vision*, el hardware GPU suele mejorar el rendimiento. Asegúrate de que el entorno de producción tenga acceso a GPU si fue utilizada en el entrenamiento.
+
+### 2. Pruebas de Entrada y Salida del Modelo
+
+   - **Verificar el preprocesamiento**: Asegúrate de que el preprocesamiento de las imágenes (o datos) de entrada en el entorno de producción sea idéntico al realizado durante el entrenamiento. Esto incluye redimensionamiento, normalización y cambio de canales de color.
+   - **Ejecutar pruebas con datos reales**: Pasa algunas muestras reales (o cercanas a las reales) a través del modelo para verificar que las predicciones sean consistentes con los resultados esperados.
+   - **Probar distintos casos de uso**: Intenta incluir datos variados (imágenes de diferentes calidades, ángulos o resoluciones) para evaluar cómo el modelo se comporta en distintos escenarios del entorno real.
+
+### 3. Validación de Inferencia (Predicción)
+
+   - **Medir precisión en el entorno**: Evalúa las métricas de desempeño que usaste durante el entrenamiento (como precisión, *recall*, o *mAP* para detección de objetos) pero usando datos en el entorno de producción.
+   - **Tiempos de respuesta y latencia**: Mide el tiempo de inferencia de cada muestra. La latencia es un factor importante en entornos de producción, especialmente para aplicaciones en tiempo real.
+   - **Comparación de predicciones**: Si tienes predicciones previas (ground truth) para algunas imágenes de prueba, compáralas con las salidas del modelo para confirmar que no ha habido degradación en su rendimiento.
+
+### 4. Implementación de Monitoreo en Producción
+
+   - **Monitoreo de métricas de desempeño**: Implementa herramientas de monitoreo que puedan medir las métricas del modelo de forma continua, para detectar si la precisión del modelo disminuye con el tiempo debido a cambios en los datos reales.
+   - **Alertas de desempeño**: Configura alertas en caso de que las métricas del modelo caigan por debajo de un umbral predefinido, lo que podría indicar que el modelo necesita ser recalibrado o reentrenado.
+
+### 5. Evaluación y Ajustes Posteriores
+
+   - **Análisis de errores**: Revisa las muestras en las que el modelo falla más a menudo para entender sus limitaciones. Esto puede ayudar a determinar si el modelo requiere más entrenamiento o ajustes.
+   - **Actualización del modelo**: Si encuentras que el modelo falla consistentemente en ciertas áreas, considera hacer ajustes, ya sea en la arquitectura del modelo o en los datos de entrenamiento para mejorarlo.
+
+Validar un modelo en el entorno de ejecución ayuda a asegurar que el modelo no solo funciona bien en condiciones controladas, sino que también se desempeña eficazmente en situaciones de la vida real.
+
+**Lecturas recomendadas**
+
+[[Clase] inference.ipynb - Google Drive](https://drive.google.com/file/d/1iv8C6V-X6-cYr_NWG40ZLzmm9LUsy4iP/view?usp=sharing)
+
+## Re-entrenamiento del modelo para obtener mejores resultados
+
+El re-entrenamiento de un modelo para obtener mejores resultados es un proceso clave en la mejora de su rendimiento. A continuación te doy algunos enfoques comunes para mejorar el modelo mediante re-entrenamiento:
+
+### 1. **Recolección de Datos Adicionales**
+   - **Expande el conjunto de datos**: Si el modelo no está alcanzando un buen rendimiento, es posible que no tenga suficiente diversidad en los datos de entrenamiento. Obtener más datos o incluir más ejemplos representativos de las clases puede mejorar el modelo.
+   - **Aumento de datos**: Si no puedes obtener más datos, puedes usar técnicas de aumento de datos, como la rotación o el cambio de escala en imágenes, o la sustitución de sinónimos en texto, para simular más datos.
+
+### 2. **Preprocesamiento de Datos**
+   - **Limpieza de datos**: Eliminar o corregir datos incorrectos o faltantes puede mejorar significativamente los resultados.
+   - **Normalización/Estandarización**: Para muchos modelos, especialmente aquellos basados en redes neuronales, normalizar o estandarizar los datos puede hacer que el entrenamiento sea más estable y efectivo.
+
+### 3. **Ajuste de Hiperparámetros**
+   - **Búsqueda de hiperparámetros**: Usar técnicas como la búsqueda en cuadrícula o la optimización bayesiana para encontrar los valores óptimos de hiperparámetros como la tasa de aprendizaje, el tamaño del batch, el número de capas, entre otros.
+   - **Reducción de la tasa de aprendizaje**: Si el modelo no mejora, a veces reducir la tasa de aprendizaje o usar un esquema de disminución de la tasa de aprendizaje puede ayudar a mejorar el rendimiento.
+
+### 4. **Cambiar la Arquitectura del Modelo**
+   - **Rediseñar el modelo**: Cambiar la estructura del modelo, por ejemplo, añadiendo más capas o cambiando la función de activación, puede ser beneficioso para mejorar el rendimiento.
+   - **Preentrenamiento y transferencia de aprendizaje**: Si estás utilizando un modelo preentrenado, podrías intentar afinar aún más el modelo con tu conjunto de datos específico.
+
+### 5. **Técnicas de Regularización**
+   - **Dropout y L2 Regularization**: Estos métodos ayudan a prevenir el sobreajuste y a mejorar la capacidad de generalización del modelo.
+   - **Early Stopping**: Detener el entrenamiento antes de que el modelo se sobreajuste a los datos de entrenamiento también es una técnica eficaz.
+
+### 6. **Evaluación y Ajuste Continuo**
+   - **Evaluar con datos de validación**: Asegúrate de evaluar el modelo no solo en el conjunto de entrenamiento, sino también en un conjunto de validación para asegurarte de que el modelo está generalizando correctamente.
+   - **Métricas de evaluación**: Asegúrate de utilizar las métricas adecuadas para tu problema (precisión, recall, F1, AUC, etc.) y ajusta el modelo en función de estas métricas.
+
+### 7. **Entrenamiento Continuo (Online Learning)**
+   Si los datos siguen llegando con el tiempo (por ejemplo, en un sistema en producción), puedes entrenar el modelo continuamente con nuevos datos, en lugar de hacer un reentrenamiento completo cada vez.
+
+Cada uno de estos pasos puede llevar a una mejora incremental del modelo, pero el proceso de re-entrenamiento debe ser iterativo y ajustado según los resultados obtenidos en cada fase.
+
+**Lecturas recomendadas**
+
+[linkedai](https://www.linkedai.co/)
+
+[dataset_original_2.zip - Google Drive](https://drive.google.com/file/d/1DsxMySffJ7cDnLLYGW-EmJ3qEeLJ4a3w/view?usp=sharing)
+
+[dataset_final_2.zip - Google Drive](https://drive.google.com/file/d/1llFWmfdum3x6M7B6u0lrbL1LR1CBkBmK/view?usp=sharing)
+
+[fine_tuned_model.zip - Google Drive](https://drive.google.com/file/d/12C7PB2_FOwEBsq_eSOhIjUCOCLyDuGka/view?usp=sharing)
+
+[label_map.pbtxt - Google Drive](https://drive.google.com/file/d/152kHsn7e6J1BGxKIJZ2ts-KhVgiELbTO/view?usp=sharing)
+
+[train_2.json - Google Drive](https://drive.google.com/file/d/1FugvDxMQ68l_6NNct9xyYmWvrbEuOboh/view?usp=sharing)
+
+[test_2.json - Google Drive](https://drive.google.com/file/d/1FugvDxMQ68l_6NNct9xyYmWvrbEuOboh/view?usp=sharing)
+
+[train_2.record - Google Drive](https://drive.google.com/file/d/1G9qrVMoWIf_3JLAmdE9GenywbJd8MS_W/view?usp=sharing)
+
+[test_2.record - Google Drive](https://drive.google.com/file/d/1ybT_Qn58I8czHlZSJOrTrF0HycsRnPtk/view?usp=sharing)
+
+[[Clase] objectDetectionTracking.ipynb - Google Drive](https://drive.google.com/file/d/15svqOcCx2Q8t7ZTWuPsK_C4u-frlUsn4/view?usp=sharing)
+
+## Seguimiento de centroides con OpenCV
+
+El seguimiento de centroides en OpenCV generalmente se realiza utilizando algoritmos de procesamiento de imágenes para detectar objetos o regiones de interés en cada fotograma y luego calcular su centroide (un punto representativo del centro del objeto). A continuación, te doy un ejemplo básico de cómo realizar un seguimiento de centroides en un video utilizando OpenCV:
+
+### 1. **Instalar OpenCV**
+Si aún no has instalado OpenCV, puedes hacerlo con el siguiente comando:
+
+```bash
+pip install opencv-python
+```
+
+### 2. **Código para Seguimiento de Centroides:**
+
+Este ejemplo detecta objetos en un video utilizando un umbral para detectar cambios en las áreas de la imagen y luego calcula y sigue el centroide de esos objetos a lo largo de los fotogramas.
+
+```python
+import cv2
+import numpy as np
+
+# Abre el video
+cap = cv2.VideoCapture('video.mp4')
+
+while True:
+    # Lee el siguiente fotograma
+    ret, frame = cap.read()
+    if not ret:
+        break
+    
+    # Convierte el fotograma a escala de grises
+    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    
+    # Aplica un umbral para detectar las áreas de interés
+    _, thresh = cv2.threshold(gray, 127, 255, cv2.THRESH_BINARY)
+    
+    # Encuentra los contornos de las áreas detectadas
+    contours, _ = cv2.findContours(thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    
+    # Dibuja los contornos y calcula los centroides
+    for contour in contours:
+        if cv2.contourArea(contour) > 500:  # Filtra contornos pequeños
+            # Calcula el momento (centroide) del contorno
+            M = cv2.moments(contour)
+            if M["m00"] != 0:  # Evita la división por cero
+                cX = int(M["m10"] / M["m00"])
+                cY = int(M["m01"] / M["m00"])
+                
+                # Dibuja el centroide en el fotograma
+                cv2.circle(frame, (cX, cY), 7, (0, 255, 0), -1)
+                cv2.putText(frame, f"({cX}, {cY})", (cX + 10, cY), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+    
+    # Muestra el fotograma con los centroides
+    cv2.imshow("Centroides", frame)
+    
+    # Salir si se presiona 'q'
+    if cv2.waitKey(1) & 0xFF == ord('q'):
+        break
+
+# Libera los recursos
+cap.release()
+cv2.destroyAllWindows()
+```
+
+### Explicación del Código:
+
+1. **Abrir Video**: Usamos `cv2.VideoCapture` para abrir un archivo de video (también puede ser una cámara en vivo).
+   
+2. **Conversión a Escala de Grises**: Convertimos cada fotograma a escala de grises para simplificar el procesamiento.
+   
+3. **Umbralización**: Aplicamos un umbral binario con `cv2.threshold` para separar las áreas del objeto del fondo. Esto genera una imagen en blanco y negro donde las áreas de interés (por ejemplo, los objetos) se destacan.
+
+4. **Detección de Contornos**: Con `cv2.findContours`, detectamos los contornos de los objetos encontrados en el umbral.
+
+5. **Cálculo del Centroide**: Para cada contorno detectado, calculamos los momentos con `cv2.moments` para obtener el centroide (usando las coordenadas del primer y segundo momento).
+
+6. **Dibujo del Centroide**: Usamos `cv2.circle` para dibujar el centroide y `cv2.putText` para mostrar las coordenadas en el video.
+
+7. **Salir del Bucle**: Se puede presionar 'q' para salir del bucle de video.
+
+### 3. **Modificaciones adicionales**
+   - **Filtrado de objetos pequeños**: Usamos `cv2.contourArea(contour) > 500` para descartar contornos pequeños, puedes ajustar este valor según las necesidades.
+   - **Seguimiento más avanzado**: Si deseas un seguimiento más avanzado y robusto, puedes usar técnicas como el filtro de Kalman o el algoritmo de seguimiento de objetos de OpenCV como `cv2.Tracker`.
+
+Este código te proporciona una base para realizar el seguimiento de centroides en tiempo real en un video. Si quieres trabajar con diferentes tipos de objetos o mejorar la precisión, puedes modificar la segmentación (por ejemplo, usando técnicas como el umbral adaptativo o la segmentación por colores).
+
+**Lecturas recomendadas**
+
+[Simple object tracking with OpenCV - PyImageSearch](https://www.pyimagesearch.com/2018/07/23/simple-object-tracking-with-opencv/)
+
+[Find Center of a Blob (Centroid) Using OpenCV (C++/Python) | LearnOpenCV](https://learnopencv.com/find-center-of-blob-centroid-using-opencv-cpp-python/)
+
+[Videos_prueba.zip - Google Drive](https://drive.google.com/file/d/1yi4KbtJzxZiJa-gPmbvixzmVn00AR5Xw/view?usp=sharing)
+
+[centroidtracker.py - Google Drive](https://drive.google.com/file/d/16GwjG5X_hLgra1IjjCNdTJWe0QaGi2NF/view?usp=sharing)
+
+[trackableobject.py - Google Drive](https://drive.google.com/file/d/1pkW2GkZkG2WknE2OikpBJw-E6IZdkjwl/view?usp=sharing)
+
+[[Clase] inference.ipynb - Google Drive](https://drive.google.com/file/d/1iv8C6V-X6-cYr_NWG40ZLzmm9LUsy4iP/view?usp=sharing)
+
+## Configuración de los centroides con OpenCV
+
+Configurar correctamente el seguimiento de centroides en OpenCV implica ajustar varios parámetros para detectar y seguir los objetos de interés de manera más precisa. Aquí algunos pasos que puedes tomar para mejorar y configurar el seguimiento de centroides en OpenCV:
+
+### 1. **Ajustar el Método de Segmentación**
+   La segmentación es clave para detectar correctamente los objetos. Puedes experimentar con métodos de segmentación como:
+
+   - **Umbral Adaptativo**: Ayuda cuando la iluminación no es uniforme en la imagen.
+   ```python
+   thresh = cv2.adaptiveThreshold(gray, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 11, 2)
+   ```
+   
+   - **Segmentación por Color**: Si los objetos tienen colores específicos, puedes usar máscaras de color en el espacio de color HSV.
+   ```python
+   hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+   lower_color = np.array([H_min, S_min, V_min])  # Ajusta estos valores
+   upper_color = np.array([H_max, S_max, V_max])  # Ajusta estos valores
+   mask = cv2.inRange(hsv, lower_color, upper_color)
+   ```
+
+   - **Detección de Bordes (Canny)**: Puede ayudar a detectar contornos en objetos con bordes definidos.
+   ```python
+   edges = cv2.Canny(gray, 100, 200)
+   ```
+
+### 2. **Filtrado de Contornos por Tamaño o Forma**
+   Para evitar la detección de ruido o pequeños objetos, filtra los contornos según su área o forma:
+
+   ```python
+   min_area = 500  # Área mínima del contorno
+   for contour in contours:
+       if cv2.contourArea(contour) > min_area:
+           # Procesar el contorno si cumple con el área mínima
+           # ...
+   ```
+
+### 3. **Suavizar el Video (Filtro Gaussiano o Blur)**
+   Aplicar un filtro Gaussiano antes de la detección puede ayudar a reducir el ruido en la imagen:
+
+   ```python
+   gray = cv2.GaussianBlur(gray, (5, 5), 0)
+   ```
+
+### 4. **Configuración del Cálculo del Centroide**
+   Asegúrate de que el cálculo del centroide se haga correctamente usando momentos. Si trabajas con varios objetos, puedes asignar un identificador único a cada uno y seguirlos en cada fotograma.
+
+   ```python
+   M = cv2.moments(contour)
+   if M["m00"] != 0:
+       cX = int(M["m10"] / M["m00"])
+       cY = int(M["m01"] / M["m00"])
+   ```
+
+### 5. **Añadir Estabilidad al Centroide (Filtro de Promedio)**
+   Si el centroide varía mucho, puedes suavizar su movimiento usando un promedio móvil para estabilizar el seguimiento.
+
+   ```python
+   alpha = 0.7  # Factor de suavizado (entre 0 y 1)
+   cX_smooth = int(alpha * prev_cX + (1 - alpha) * cX)
+   cY_smooth = int(alpha * prev_cY + (1 - alpha) * cY)
+   ```
+
+### 6. **Usar Algoritmos de Seguimiento Adicionales**
+   Si necesitas una mayor estabilidad en el seguimiento, puedes usar algoritmos como el filtro de Kalman o los trackers de OpenCV para una mejora considerable en la predicción y seguimiento de trayectorias.
+
+   ```python
+   tracker = cv2.TrackerCSRT_create()  # Puedes cambiar el tipo de tracker
+   tracker.init(frame, bbox)  # bbox es el cuadro delimitador inicial del objeto
+   ```
+
+### Ejemplo Completo
+
+Aquí tienes un ejemplo de código que combina algunos de estos ajustes:
+
+```python
+import cv2
+import numpy as np
+
+# Abre el video
+cap = cv2.VideoCapture('video.mp4')
+min_area = 500  # Área mínima para considerar un contorno válido
+
+# Variables para suavizar el centroide
+alpha = 0.7
+prev_cX, prev_cY = 0, 0
+
+while True:
+    ret, frame = cap.read()
+    if not ret:
+        break
+
+    # Conversión a escala de grises y suavizado
+    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    gray = cv2.GaussianBlur(gray, (5, 5), 0)
+
+    # Umbralización adaptativa para segmentar
+    thresh = cv2.adaptiveThreshold(gray, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 11, 2)
+    
+    # Encontrar contornos
+    contours, _ = cv2.findContours(thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
+    for contour in contours:
+        if cv2.contourArea(contour) > min_area:
+            M = cv2.moments(contour)
+            if M["m00"] != 0:
+                cX = int(M["m10"] / M["m00"])
+                cY = int(M["m01"] / M["m00"])
+
+                # Suavizar la posición del centroide
+                cX_smooth = int(alpha * prev_cX + (1 - alpha) * cX)
+                cY_smooth = int(alpha * prev_cY + (1 - alpha) * cY)
+                
+                # Actualizar las posiciones anteriores
+                prev_cX, prev_cY = cX_smooth, cY_smooth
+                
+                # Dibuja el centroide
+                cv2.circle(frame, (cX_smooth, cY_smooth), 7, (0, 255, 0), -1)
+                cv2.putText(frame, f"({cX_smooth}, {cY_smooth})", (cX_smooth + 10, cY_smooth), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+    
+    # Mostrar el resultado
+    cv2.imshow("Seguimiento de Centroides", frame)
+    if cv2.waitKey(1) & 0xFF == ord('q'):
+        break
+
+cap.release()
+cv2.destroyAllWindows()
+```
+
+### Descripción de los Pasos:
+
+1. **Umbralización Adaptativa**: Segmenta la imagen sin depender de un umbral fijo, lo cual es útil en condiciones de iluminación variable.
+2. **Filtrado de Contornos por Área**: Asegura que solo se rastrean los objetos relevantes.
+3. **Suavizado de Centroide**: Suaviza el movimiento del centroide para evitar fluctuaciones rápidas.
+
+Estas configuraciones ayudan a mejorar la detección y el seguimiento de centroides en OpenCV, especialmente en situaciones de video en tiempo real o donde la iluminación puede variar.
+
+**Lecturas recomendadas**
+
+[Videos_prueba.zip - Google Drive](https://drive.google.com/file/d/1yi4KbtJzxZiJa-gPmbvixzmVn00AR5Xw/view?usp=sharing)
+
+[centroidtracker.py - Google Drive](https://drive.google.com/file/d/16GwjG5X_hLgra1IjjCNdTJWe0QaGi2NF/view?usp=sharing)
+
+[trackableobject.py - Google Drive](https://drive.google.com/file/d/1pkW2GkZkG2WknE2OikpBJw-E6IZdkjwl/view?usp=sharing)
+
+[[Clase] inference.ipynb - Google Drive](https://drive.google.com/file/d/1iv8C6V-X6-cYr_NWG40ZLzmm9LUsy4iP/view?usp=sharing)
+
+[[Clase] inference.ipynb - Google Drive](https://drive.google.com/file/d/1iv8C6V-X6-cYr_NWG40ZLzmm9LUsy4iP/view?usp=sharing)
+
+## Algoritmo de dirección y conteo con OpenCV
+
+Un algoritmo de dirección y conteo con OpenCV es útil en aplicaciones donde se desea contar objetos que se mueven en una dirección específica, como en sistemas de monitoreo de tráfico o conteo de personas en una entrada. Aquí te doy un ejemplo básico de cómo implementar un sistema de conteo con dirección usando OpenCV.
+
+### Conceptos Básicos del Algoritmo
+
+1. **Detección de Objetos**: Identificar objetos en movimiento en cada fotograma.
+2. **Definir una Línea de Conteo**: Una línea imaginaria a través de la cual se deben mover los objetos para ser contados. La dirección de cruce se determina dependiendo del lado de entrada y salida.
+3. **Determinar la Dirección**: Verificar la posición actual y la anterior de cada objeto para saber en qué dirección se mueve.
+4. **Conteo de Objetos**: Incrementar el contador de acuerdo con la dirección del movimiento cuando un objeto cruza la línea.
+
+### Implementación
+
+Este ejemplo realiza un seguimiento de centroides de objetos en movimiento y cuenta cuántos cruzan una línea imaginaria en una dirección específica.
+
+```python
+import cv2
+import numpy as np
+
+# Abre el video
+cap = cv2.VideoCapture('video.mp4')
+
+# Parámetros de conteo
+line_y = 300  # Posición de la línea de conteo en el eje y
+up_count = 0
+down_count = 0
+
+# Parámetros de segmentación y detección
+fgbg = cv2.createBackgroundSubtractorMOG2(history=100, varThreshold=50)
+
+# Posiciones previas de los centroides
+prev_positions = {}
+
+while True:
+    ret, frame = cap.read()
+    if not ret:
+        break
+    
+    # Preprocesamiento: conversión a escala de grises y suavizado
+    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    gray = cv2.GaussianBlur(gray, (5, 5), 0)
+    
+    # Aplicar sustracción de fondo
+    fgmask = fgbg.apply(gray)
+    
+    # Eliminar ruido
+    _, thresh = cv2.threshold(fgmask, 240, 255, cv2.THRESH_BINARY)
+    thresh = cv2.dilate(thresh, None, iterations=2)
+    
+    # Encontrar contornos
+    contours, _ = cv2.findContours(thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    
+    # Dibuja la línea de conteo
+    cv2.line(frame, (0, line_y), (frame.shape[1], line_y), (255, 0, 0), 2)
+    
+    # Procesar cada contorno encontrado
+    for contour in contours:
+        if cv2.contourArea(contour) > 500:  # Filtra contornos pequeños
+            M = cv2.moments(contour)
+            if M["m00"] != 0:
+                cX = int(M["m10"] / M["m00"])
+                cY = int(M["m01"] / M["m00"])
+                
+                # Asigna un ID al objeto usando el centroide como referencia
+                obj_id = f"{cX}_{cY}"
+                
+                # Verificar posición anterior para detectar dirección
+                if obj_id in prev_positions:
+                    prev_cX, prev_cY = prev_positions[obj_id]
+                    
+                    # Si cruza hacia arriba
+                    if prev_cY > line_y and cY <= line_y:
+                        up_count += 1
+                        print(f"Subiendo: {up_count}")
+                    
+                    # Si cruza hacia abajo
+                    elif prev_cY < line_y and cY >= line_y:
+                        down_count += 1
+                        print(f"Bajando: {down_count}")
+                
+                # Actualiza la posición anterior del objeto
+                prev_positions[obj_id] = (cX, cY)
+                
+                # Dibuja el centroide y dirección en el fotograma
+                cv2.circle(frame, (cX, cY), 5, (0, 255, 0), -1)
+                cv2.putText(frame, f"ID: {obj_id}", (cX + 10, cY), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+    
+    # Muestra el conteo en el video
+    cv2.putText(frame, f"Conteo Arriba: {up_count}", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 0, 255), 2)
+    cv2.putText(frame, f"Conteo Abajo: {down_count}", (10, 60), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 0, 255), 2)
+    
+    # Mostrar el fotograma
+    cv2.imshow("Dirección y Conteo", frame)
+    
+    # Salir si se presiona 'q'
+    if cv2.waitKey(30) & 0xFF == ord('q'):
+        break
+
+cap.release()
+cv2.destroyAllWindows()
+```
+
+### Explicación del Código
+
+1. **Definición de Parámetros de Conteo**:
+   - `line_y`: Posición de la línea en el eje y que los objetos deben cruzar para ser contados.
+   - `up_count` y `down_count`: Contadores de objetos que se mueven en direcciones opuestas.
+
+2. **Sustracción de Fondo**:
+   - Usamos `cv2.createBackgroundSubtractorMOG2` para detectar objetos en movimiento, ya que esta técnica elimina el fondo estático y resalta los objetos en movimiento.
+
+3. **Limpieza de Ruido**:
+   - Se usa dilatación (`cv2.dilate`) para eliminar el ruido en la imagen binaria después de la sustracción de fondo.
+
+4. **Identificación de Objetos**:
+   - Detectamos los contornos de los objetos y filtramos los más pequeños.
+
+5. **Cálculo del Centroide y Seguimiento**:
+   - Calculamos el centroide de cada contorno usando los momentos.
+   - Cada objeto es identificado por su centroide. Esto es simplificado para la detección, pero en una implementación más avanzada, podrías usar un algoritmo de seguimiento de objetos como `cv2.Tracker` o un identificador basado en distancia o en propiedades del objeto.
+
+6. **Detección de Dirección**:
+   - Verificamos la posición previa de cada objeto y, si cruza la línea en dirección hacia arriba o hacia abajo, incrementamos el conteo correspondiente.
+
+7. **Dibujo y Visualización**:
+   - Se muestra el centroide, ID y contadores en pantalla.
+   - La línea de conteo se dibuja para indicar la posición de cruce.
+
+### Mejoras Potenciales
+
+- **Asignación de ID a Objetos**: Para un seguimiento más preciso, podrías usar técnicas de asociación de centroides basadas en distancia, como el algoritmo de `detección de proximidad más cercana`.
+- **Filtro de Kalman**: Si deseas mayor estabilidad y predicción en el movimiento, puedes usar un filtro de Kalman para suavizar la trayectoria.
+- **Trackers de OpenCV**: OpenCV incluye varios algoritmos de seguimiento (`KLT`, `CSRT`, `MedianFlow`, etc.) que puedes utilizar para mejorar el seguimiento de objetos entre fotogramas. 
+
+Este código proporciona una base funcional para un sistema de conteo direccional y es extensible para aplicaciones como conteo de vehículos, personas o cualquier objeto en movimiento.
+
+**Lecturas recomendadas**
+
+[[Clase] inference.ipynb - Google Drive](https://colab.research.google.com/drive/1iv8C6V-X6-cYr_NWG40ZLzmm9LUsy4iP?authuser=1)
+
+## Crea un ciclo de entrenamiento de tu modelo: MLOps
+
+Crear un ciclo de entrenamiento automatizado es un paso fundamental en MLOps, ya que permite desarrollar, probar y desplegar modelos de manera continua y confiable. Para configurar un ciclo de entrenamiento en un flujo de MLOps, es común usar herramientas como **Docker**, **Git**, **DVC (Data Version Control)**, **MLFlow** y servicios de CI/CD (como **GitHub Actions** o **Jenkins**) para orquestar el proceso. Este pipeline automatiza las tareas de preparación de datos, entrenamiento del modelo, validación y despliegue.
+
+A continuación, te muestro un flujo básico de un ciclo de entrenamiento automatizado utilizando Python y MLFlow para el registro de experimentos, DVC para la gestión de datos y GitHub Actions como herramienta de CI/CD.
+
+### 1. **Estructura del Proyecto**
+
+Tu estructura de directorios puede verse así:
+
+```
+my_ml_project/
+├── data/                   # Datos versionados con DVC
+├── models/                 # Carpeta para guardar el modelo entrenado
+├── notebooks/              # Notebooks para exploración de datos y prototipado
+├── src/                    # Código fuente de scripts de entrenamiento y evaluación
+│   ├── train.py            # Script principal de entrenamiento
+│   ├── evaluate.py         # Script para evaluación del modelo
+│   └── utils.py            # Funciones auxiliares
+├── dvc.yaml                # Configuración de pipeline DVC
+├── mlflow_tracking/        # Carpeta para el registro de MLFlow
+├── Dockerfile              # Definición del contenedor Docker
+├── requirements.txt        # Librerías requeridas
+└── .github/workflows/      # Flujos de trabajo de GitHub Actions
+    └── train_model.yml     # Pipeline de entrenamiento automatizado
+```
+
+### 2. **Configuración del Entrenamiento en `train.py`**
+
+Este script realiza el entrenamiento del modelo, registra los parámetros y resultados en MLFlow, y guarda el modelo entrenado.
+
+```python
+# src/train.py
+import mlflow
+import dvc.api
+import pandas as pd
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score
+import joblib
+
+# Configuración de MLFlow
+mlflow.set_tracking_uri("file:./mlflow_tracking")
+mlflow.set_experiment("MyModelExperiment")
+
+def train():
+    # Cargar los datos versionados con DVC
+    data_url = dvc.api.get_url("data/dataset.csv")
+    data = pd.read_csv(data_url)
+    
+    # Preparar los datos
+    X = data.drop("target", axis=1)
+    y = data["target"]
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+    
+    # Configuración de hiperparámetros
+    params = {
+        "n_estimators": 100,
+        "max_depth": 5,
+        "random_state": 42
+    }
+    
+    # Entrenamiento
+    with mlflow.start_run():
+        model = RandomForestClassifier(**params)
+        model.fit(X_train, y_train)
+        
+        # Evaluación
+        predictions = model.predict(X_test)
+        accuracy = accuracy_score(y_test, predictions)
+        
+        # Registro de métricas y parámetros en MLFlow
+        mlflow.log_params(params)
+        mlflow.log_metric("accuracy", accuracy)
+        
+        # Guardar el modelo entrenado
+        joblib.dump(model, "models/model.joblib")
+        mlflow.log_artifact("models/model.joblib")
+
+if __name__ == "__main__":
+    train()
+```
+
+### 3. **Configuración de GitHub Actions para CI/CD (`train_model.yml`)**
+
+GitHub Actions permite definir un flujo automatizado para ejecutar el ciclo de entrenamiento cada vez que hay cambios en el código. Este archivo YAML configura el flujo en GitHub Actions.
+
+```yaml
+# .github/workflows/train_model.yml
+name: Train Model
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  train_model:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.8'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Install DVC
+        run: |
+          pip install dvc
+          dvc pull
+
+      - name: Run training script
+        run: |
+          python src/train.py
+
+      - name: Upload model artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: model
+          path: models/model.joblib
+```
+
+### 4. **Configuración de `DVC` para la Gestión de Datos**
+
+DVC permite versionar datasets grandes y mantener el control de versiones en Git. Puedes inicializar DVC en el proyecto y luego agregar datos.
+
+```bash
+# Inicializar DVC y agregar datos
+dvc init
+dvc add data/dataset.csv
+
+# Trackear en Git
+git add data/dataset.csv.dvc .gitignore
+git commit -m "Agregar dataset a DVC"
+
+# Configurar almacenamiento remoto (e.g., S3, Google Drive, etc.)
+dvc remote add -d myremote s3://mybucket/path
+dvc push
+```
+
+### 5. **Configurar MLFlow para el Registro de Experimentos**
+
+Puedes iniciar un servidor local de MLFlow para visualizar los experimentos ejecutando:
+
+```bash
+mlflow ui --backend-store-uri file:./mlflow_tracking
+```
+
+Esto abrirá una interfaz web donde podrás ver las métricas y parámetros registrados durante cada ejecución del modelo.
+
+### 6. **Ejecución del Pipeline Completo**
+
+1. **Entrenamiento Local**:
+   Puedes ejecutar el script de entrenamiento localmente para probar el flujo antes de automatizarlo en GitHub Actions.
+
+   ```bash
+   python src/train.py
+   ```
+
+2. **Automatización en CI/CD**:
+   Cada vez que empujes cambios al repositorio en la rama `main`, GitHub Actions ejecutará el pipeline completo:
+   - Verificará el repositorio.
+   - Configurará el entorno e instalará dependencias.
+   - Sincronizará los datos con DVC.
+   - Ejecutará el ciclo de entrenamiento.
+   - Subirá el modelo generado como un artefacto de la ejecución.
+
+### 7. **Implementación de Validación y Despliegue**
+
+Para una implementación completa en MLOps, agrega pasos de validación y, opcionalmente, despliegue del modelo a un entorno de producción después de evaluar la calidad del modelo. Para esto podrías crear una etapa adicional en GitHub Actions o configurar otro flujo de CI/CD. 
+
+### Resumen
+
+Este pipeline básico cubre los siguientes pasos clave de MLOps:
+
+- **Versionado de Datos**: DVC maneja la versión de datos, mientras que Git controla el código.
+- **Registro de Experimentos**: MLFlow almacena los parámetros y métricas de cada ejecución.
+- **Automatización de Entrenamiento**: GitHub Actions o cualquier otra herramienta de CI/CD ejecuta el entrenamiento en cada cambio.
+- **Versionado de Modelos**: Almacena el modelo resultante en el repositorio o un sistema de almacenamiento remoto (como S3).
+
+Este flujo establece una base sólida que puedes escalar en función de necesidades específicas, como validación, despliegue y monitorización en producción.
+
+**Lecturas recomendadas**
+
+[Curso de DevOps [Empieza Gratis] - Platzi](https://platzi.com/cursos/devops/)
+
+[Curso de Introducción a Google Cloud Platform - Platzi](https://platzi.com/cursos/fundamentos-google/)
+
+[Curso de Almacenamiento en la Nube con Google Cloud Platform - Platzi](https://platzi.com/cursos/almacenamiento-gcp/)
+
+[Curso de Big Data y Machine Learning con Google Cloud Platform - Platzi](https://platzi.com/cursos/bigdata-ml-gcp/)
+
+[Curso de Docker [Empieza Gratis] - Platzi](https://platzi.com/cursos/docker/)
+
+[Curso de Introducción al Despliegue de Modelos de Machine Learning](https://platzi.com/cursos/despliegue-ml/)
+
+## Prepara tu entorno en Google Cloud Platform
+
+Para implementar un flujo de MLOps en Google Cloud Platform (GCP), se pueden utilizar servicios como **Vertex AI**, **Cloud Storage**, **Cloud Build**, **Cloud Functions**, y **Artifact Registry**. A continuación, te guiaré en la configuración de un entorno básico de MLOps en GCP que incluye preparación de datos, entrenamiento de modelos, y despliegue en producción.
+
+### 1. **Configurar el Proyecto en Google Cloud Platform**
+
+Primero, necesitas un proyecto en GCP para alojar todos los recursos de la plataforma. Puedes hacerlo desde la consola de GCP o con el siguiente comando si tienes instalado el SDK de Google Cloud.
+
+```bash
+# Configurar el proyecto de GCP
+gcloud config set project [PROJECT_ID]
+```
+
+### 2. **Crear un Bucket en Google Cloud Storage**
+
+Google Cloud Storage es ideal para almacenar datasets y modelos entrenados.
+
+```bash
+# Crear un bucket de almacenamiento en GCP para los datos y modelos
+gsutil mb -l us-central1 gs://[NOMBRE_BUCKET]
+```
+
+**Nota**: Reemplaza `[NOMBRE_BUCKET]` con un nombre único y `[PROJECT_ID]` con el ID de tu proyecto.
+
+### 3. **Configurar Vertex AI para Entrenamiento de Modelos**
+
+Vertex AI permite entrenar modelos a escala en GCP, ideal para entrenamientos de larga duración o grandes volúmenes de datos.
+
+#### a. **Crear el Entorno de Entrenamiento en Vertex AI**
+
+1. En la consola de Google Cloud, navega a **Vertex AI > Entrenamiento**.
+2. Selecciona **Entrenamiento personalizado**.
+3. Elige un tipo de máquina, por ejemplo, `n1-standard-4`, y configura el contenedor con una imagen de entrenamiento personalizada o una imagen preconfigurada de TensorFlow, PyTorch, o Scikit-learn.
+
+#### b. **Subir el Script de Entrenamiento al Bucket de GCS**
+
+Guarda tus scripts de entrenamiento (`train.py`, por ejemplo) en el bucket de GCS.
+
+```bash
+# Subir el script de entrenamiento
+gsutil cp src/train.py gs://[NOMBRE_BUCKET]/scripts/train.py
+```
+
+### 4. **Crear una Imagen de Entrenamiento Personalizada (Opcional)**
+
+Si tu modelo requiere dependencias específicas, puedes crear una imagen Docker personalizada y alojarla en **Artifact Registry** para usarla en Vertex AI.
+
+#### a. **Configurar Artifact Registry**
+
+```bash
+# Crear un repositorio de Artifact Registry
+gcloud artifacts repositories create my-repo --repository-format=docker --location=us-central1
+```
+
+#### b. **Crear y Publicar la Imagen Docker**
+
+En tu proyecto, crea un archivo `Dockerfile` para tu entorno de entrenamiento personalizado:
+
+```dockerfile
+# Dockerfile
+FROM python:3.8-slim
+WORKDIR /app
+COPY requirements.txt requirements.txt
+RUN pip install -r requirements.txt
+COPY . .
+```
+
+Compila y sube la imagen al registro:
+
+```bash
+# Autenticar Docker con GCP
+gcloud auth configure-docker us-central1-docker.pkg.dev
+
+# Compilar la imagen Docker
+docker build -t us-central1-docker.pkg.dev/[PROJECT_ID]/my-repo/my-ml-image .
+
+# Subir la imagen a Artifact Registry
+docker push us-central1-docker.pkg.dev/[PROJECT_ID]/my-repo/my-ml-image
+```
+
+### 5. **Configurar DVC para el Versionado de Datos en GCS**
+
+Usar **DVC** con **Google Cloud Storage** permite versionar los datos y mantener el control de datasets grandes.
+
+```bash
+# Configurar un remote de DVC apuntando a GCS
+dvc remote add -d myremote gs://[NOMBRE_BUCKET]/dvc
+dvc remote modify myremote --local credentialpath ~/.config/gcloud/application_default_credentials.json
+```
+
+### 6. **Automatizar Entrenamiento con Cloud Build**
+
+**Cloud Build** permite crear un pipeline de CI/CD para ejecutar el entrenamiento del modelo y guardar el modelo entrenado en el bucket de GCS.
+
+#### a. **Crear Archivo de Configuración de Cloud Build**
+
+En la raíz de tu proyecto, crea un archivo `cloudbuild.yaml` para definir el pipeline:
+
+```yaml
+# cloudbuild.yaml
+steps:
+  - name: 'gcr.io/cloud-builders/gcloud'
+    args: ['ai-platform', 'jobs', 'submit', 'training', 'train_job_{{BUILD_ID}}',
+           '--region', 'us-central1',
+           '--module-name', 'trainer.task',
+           '--package-path', './src',
+           '--job-dir', 'gs://[NOMBRE_BUCKET]/models/{{BUILD_ID}}/',
+           '--runtime-version', '2.8',
+           '--python-version', '3.8']
+timeout: '3600s'
+```
+
+#### b. **Ejecutar Cloud Build**
+
+Cada vez que ejecutes el siguiente comando, Cloud Build entrenará el modelo en Vertex AI y guardará el modelo en el bucket de GCS.
+
+```bash
+gcloud builds submit --config cloudbuild.yaml .
+```
+
+### 7. **Despliegue del Modelo con Vertex AI Endpoint**
+
+1. Una vez entrenado, puedes desplegar el modelo en un endpoint de Vertex AI para servir predicciones.
+2. Dirígete a **Vertex AI > Modelos** en la consola de GCP.
+3. Selecciona **Implementar en un endpoint** y elige el modelo entrenado.
+
+### 8. **Configuración de Predicción en Tiempo Real con Cloud Functions (Opcional)**
+
+Si quieres exponer el endpoint como una API, puedes utilizar **Cloud Functions** para crear una función que llame al endpoint de Vertex AI.
+
+#### a. **Crear la Función en `main.py`**
+
+```python
+# main.py
+import google.auth
+from google.cloud import aiplatform
+from flask import Flask, request, jsonify
+
+app = Flask(__name__)
+
+# Inicializar cliente de Vertex AI
+_, project = google.auth.default()
+aiplatform.init(project=project, location="us-central1")
+
+@app.route('/predict', methods=['POST'])
+def predict():
+    content = request.get_json()
+    endpoint = aiplatform.Endpoint(endpoint_name="projects/[PROJECT_ID]/locations/us-central1/endpoints/[ENDPOINT_ID]")
+    
+    # Realizar predicción
+    prediction = endpoint.predict(instances=[content['data']])
+    return jsonify({"predictions": prediction})
+```
+
+#### b. **Implementar la Función en Cloud Functions**
+
+```bash
+gcloud functions deploy my_predict_function \
+    --runtime python38 \
+    --trigger-http \
+    --allow-unauthenticated \
+    --entry-point app \
+    --project [PROJECT_ID] \
+    --region us-central1
+```
+
+### Resumen del Flujo Completo
+
+Este flujo de trabajo te permite:
+
+1. **Versionar Datos y Código**: DVC y Git se encargan del versionado de datos y scripts.
+2. **Entrenamiento Automatizado**: Cloud Build y Vertex AI orquestan el entrenamiento del modelo en la nube.
+3. **Despliegue del Modelo**: Vertex AI sirve el modelo en un endpoint.
+4. **Predicción en Tiempo Real**: Cloud Functions expone el modelo como una API para predicciones en tiempo real.
+
+Este entorno en Google Cloud Platform se puede escalar para incluir más funcionalidades avanzadas como monitorización de modelos, tuning de hiperparámetros y mantenimiento continuo del pipeline, logrando una solución de MLOps completa.
+
+**Lecturas recomendadas**
+
+[Curso de Introducción a Google Cloud Platform - Platzi](https://platzi.com/cursos/fundamentos-google/)
+
+[Curso de Big Data y Machine Learning con Google Cloud Platform - Platzi](https://platzi.com/cursos/bigdata-ml-gcp/)
+
+[Curso de Almacenamiento en la Nube con Google Cloud Platform - Platzi](https://platzi.com/cursos/almacenamiento-gcp/)
