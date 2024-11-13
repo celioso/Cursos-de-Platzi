@@ -2458,3 +2458,670 @@ Este entorno en Google Cloud Platform se puede escalar para incluir más funcion
 [Curso de Big Data y Machine Learning con Google Cloud Platform - Platzi](https://platzi.com/cursos/bigdata-ml-gcp/)
 
 [Curso de Almacenamiento en la Nube con Google Cloud Platform - Platzi](https://platzi.com/cursos/almacenamiento-gcp/)
+
+## Carga y preprocesamiento de modelos
+
+El preprocesamiento y la carga de modelos en Google Cloud Platform (GCP) son pasos fundamentales en el ciclo de MLOps. GCP proporciona herramientas para administrar estos pasos, entre ellas **Vertex AI**, **Cloud Storage**, y **BigQuery**. A continuación, describo los pasos para realizar el preprocesamiento de datos y cargar modelos entrenados en GCP usando Python, GCS, y Vertex AI.
+
+### 1. **Configurar Google Cloud SDK e Instalar Librerías Necesarias**
+
+Primero, asegúrate de tener el SDK de Google Cloud instalado y autenticado.
+
+```bash
+# Autenticación en Google Cloud
+gcloud auth login
+
+# Configuración del proyecto en Google Cloud
+gcloud config set project [PROJECT_ID]
+```
+
+Luego, instala las bibliotecas necesarias si estás trabajando en un entorno local.
+
+```bash
+pip install google-cloud-storage google-cloud-bigquery google-cloud-aiplatform pandas scikit-learn
+```
+
+### 2. **Carga y Preprocesamiento de Datos en Google Cloud**
+
+La preparación de datos es clave para obtener un rendimiento óptimo del modelo. Este proceso suele incluir tareas como limpieza de datos, transformación y almacenamiento en un formato eficiente para el entrenamiento.
+
+#### a. **Cargar Datos desde Cloud Storage**
+
+Para almacenar y cargar datos, sube tus archivos a un bucket en **Google Cloud Storage (GCS)** y utiliza la biblioteca `google-cloud-storage` para acceder a ellos.
+
+```python
+from google.cloud import storage
+import pandas as pd
+
+def load_data_from_gcs(bucket_name, file_name):
+    client = storage.Client()
+    bucket = client.get_bucket(bucket_name)
+    blob = bucket.blob(file_name)
+    data = blob.download_as_string()
+    # Leer el archivo en un DataFrame
+    df = pd.read_csv(pd.io.common.StringIO(data.decode('utf-8')))
+    return df
+
+# Ejemplo de uso
+bucket_name = "my-bucket"
+file_name = "data/dataset.csv"
+df = load_data_from_gcs(bucket_name, file_name)
+```
+
+#### b. **Preprocesar los Datos**
+
+Con el dataset cargado en un DataFrame de Pandas, puedes realizar transformaciones de preprocesamiento, como normalización, codificación de variables categóricas, y dividir los datos en conjuntos de entrenamiento y prueba.
+
+```python
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+
+def preprocess_data(df):
+    # Ejemplo: eliminar valores nulos
+    df = df.dropna()
+    
+    # Dividir características y variable objetivo
+    X = df.drop(columns=['target'])
+    y = df['target']
+    
+    # Escalado de características
+    scaler = StandardScaler()
+    X_scaled = scaler.fit_transform(X)
+    
+    # Dividir en conjuntos de entrenamiento y prueba
+    X_train, X_test, y_train, y_test = train_test_split(X_scaled, y, test_size=0.2, random_state=42)
+    
+    return X_train, X_test, y_train, y_test
+
+X_train, X_test, y_train, y_test = preprocess_data(df)
+```
+
+### 3. **Entrenamiento del Modelo en Vertex AI**
+
+Para entrenar el modelo en GCP, puedes usar **Vertex AI**, que permite entrenar modelos en la nube con tus propios scripts de Python o imágenes de Docker personalizadas.
+
+#### a. **Subir el Script de Entrenamiento a GCS**
+
+Guarda tu script de entrenamiento (`train.py`) y súbelo a un bucket de GCS.
+
+```bash
+gsutil cp src/train.py gs://[BUCKET_NAME]/scripts/train.py
+```
+
+#### b. **Configurar el Entrenamiento en Vertex AI**
+
+1. Desde la consola de Google Cloud, dirígete a **Vertex AI > Entrenamiento**.
+2. Elige **Entrenamiento personalizado** y selecciona tu script o contenedor personalizado.
+3. Configura los parámetros del entrenamiento, como el tamaño de la máquina, los hiperaparámetros y el bucket de salida donde se almacenará el modelo entrenado.
+
+#### c. **Entrenamiento del Modelo en Vertex AI con Python**
+
+También puedes ejecutar el entrenamiento programáticamente utilizando la biblioteca `google-cloud-aiplatform`:
+
+```python
+from google.cloud import aiplatform
+
+aiplatform.init(project="my-project", location="us-central1")
+
+# Configurar job de entrenamiento
+job = aiplatform.CustomPythonPackageTrainingJob(
+    display_name="my_training_job",
+    python_package_gcs_uri="gs://[BUCKET_NAME]/scripts/train.py",
+    python_module_name="train",
+    container_uri="gcr.io/cloud-aiplatform/training/tf-cpu.2-3:latest",
+)
+
+# Ejecutar el entrenamiento
+job.run(
+    replica_count=1,
+    model_display_name="my_trained_model",
+    args=["--param1", "value1", "--param2", "value2"],
+    base_output_dir="gs://[BUCKET_NAME]/models/"
+)
+```
+
+### 4. **Almacenamiento y Carga de Modelos en Google Cloud**
+
+Una vez que el modelo esté entrenado, guárdalo en un bucket de GCS para poder cargarlo y hacer inferencias.
+
+#### a. **Guardar el Modelo en Cloud Storage**
+
+Si estás usando `joblib` o `pickle` para serializar el modelo, puedes guardarlo directamente en un bucket de GCS.
+
+```python
+import joblib
+from google.cloud import storage
+
+def save_model_to_gcs(model, bucket_name, model_path):
+    # Guardar el modelo en un archivo temporal
+    joblib.dump(model, "model.joblib")
+    
+    # Subir a GCS
+    client = storage.Client()
+    bucket = client.bucket(bucket_name)
+    blob = bucket.blob(model_path)
+    blob.upload_from_filename("model.joblib")
+    print("Modelo guardado en GCS")
+
+# Ejemplo de uso
+save_model_to_gcs(model, bucket_name="my-bucket", model_path="models/model.joblib")
+```
+
+#### b. **Cargar el Modelo desde Cloud Storage**
+
+Para cargar el modelo guardado en GCS:
+
+```python
+def load_model_from_gcs(bucket_name, model_path):
+    client = storage.Client()
+    bucket = client.bucket(bucket_name)
+    blob = bucket.blob(model_path)
+    blob.download_to_filename("model.joblib")
+    model = joblib.load("model.joblib")
+    return model
+
+# Ejemplo de uso
+model = load_model_from_gcs("my-bucket", "models/model.joblib")
+```
+
+### 5. **Implementación y Predicción en Tiempo Real con Vertex AI**
+
+Puedes desplegar el modelo en un endpoint de **Vertex AI** para realizar predicciones en tiempo real.
+
+1. En la consola de Google Cloud, dirígete a **Vertex AI > Modelos**.
+2. Selecciona **Implementar en un endpoint** para crear un nuevo endpoint o seleccionar uno existente.
+3. Configura el endpoint, el tamaño de la máquina y la cantidad de réplicas.
+
+También puedes hacer esto desde Python:
+
+```python
+# Configuración de Vertex AI para el proyecto
+aiplatform.init(project="my-project", location="us-central1")
+
+# Desplegar el modelo en un endpoint
+endpoint = aiplatform.Endpoint.create(display_name="my_model_endpoint")
+endpoint.deploy(
+    model=model,
+    deployed_model_display_name="my_deployed_model",
+    machine_type="n1-standard-4",
+)
+```
+
+### 6. **Hacer Inferencias con el Endpoint de Vertex AI**
+
+Después de desplegar el modelo, puedes hacer predicciones en tiempo real:
+
+```python
+# Datos de ejemplo para la predicción
+instance = {"data": [1, 2, 3, 4]}  # Cambia los valores según tu modelo
+
+# Realizar la predicción
+prediction = endpoint.predict(instances=[instance])
+print("Predicción:", prediction)
+```
+
+### Resumen
+
+1. **Carga de Datos y Preprocesamiento**: Usa Google Cloud Storage para almacenar y cargar datos, y preprocesa el dataset antes de entrenar.
+2. **Entrenamiento en Vertex AI**: Configura Vertex AI para entrenar el modelo usando scripts personalizados o contenedores.
+3. **Almacenamiento y Carga de Modelos**: Guarda el modelo entrenado en GCS y cárgalo cuando sea necesario.
+4. **Despliegue en Vertex AI**: Implementa el modelo en un endpoint para servir predicciones en tiempo real.
+
+Este flujo básico proporciona un entorno robusto para desarrollar y desplegar modelos en Google Cloud.
+
+**Lecturas recomendadas**
+
+[Curso de Introducción a Google Cloud Platform - Platzi](http://platzi.com/cursos/fundamentos-google)
+
+[Curso de Big Data y Machine Learning con Google Cloud Platform - Platzi](https://platzi.com/cursos/bigdata-ml-gcp/)
+
+[Curso de Almacenamiento en la Nube con Google Cloud Platform - Platzi](https://platzi.com/cursos/almacenamiento-gcp/)
+
+[Curso de Flask - Platzi](http://platzi.com/flask)
+
+[ai-platform.ipynb - Google Drive](https://drive.google.com/file/d/1Dbl-a3fhxEbFv5iVt0WkNFRQ95O8-S_v/view?usp=sharing)
+
+[Curso de Introducción al Despliegue de Modelos de Machine Learning - Platzi](https://platzi.com/cursos/despliegue-ml/)
+
+## Postprocesamiento de modelos
+
+El postprocesamiento de modelos en Machine Learning implica tomar las predicciones del modelo y transformarlas o interpretarlas de una manera que sea útil para los usuarios o los sistemas que consumen esos resultados. Este proceso varía según el tipo de modelo, los datos y los requisitos de la aplicación. A continuación, se describen algunas técnicas comunes de postprocesamiento de modelos, así como una guía de implementación para algunos de estos métodos.
+
+### 1. **Escalado y Normalización de Resultados**
+
+Si el modelo devuelve valores en una escala que no es adecuada para la aplicación final, es común reescalar estos resultados. Por ejemplo, algunos modelos de redes neuronales pueden dar como salida valores no acotados, por lo que se utiliza una función de activación final para comprimir los valores en un rango específico (ej., [0, 1] o [-1, 1]).
+
+```python
+import numpy as np
+
+# Supón que `predicciones` es un array de predicciones que necesitas reescalar a [0, 1]
+def rescale(predictions):
+    return (predictions - predictions.min()) / (predictions.max() - predictions.min())
+    
+# Aplicar reescalado
+predictions_rescaled = rescale(predictions)
+```
+
+### 2. **Filtrado de Ruido en Resultados**
+
+Para evitar resultados erráticos, especialmente en aplicaciones de visión por computadora o series temporales, se pueden aplicar técnicas de suavizado como filtros de media o mediana, filtros gausianos, o algoritmos de suavizado exponencial.
+
+```python
+# Ejemplo de suavizado usando un filtro de media simple
+def moving_average(predictions, window_size=3):
+    return np.convolve(predictions, np.ones(window_size)/window_size, mode='valid')
+    
+# Aplicar suavizado
+smoothed_predictions = moving_average(predictions)
+```
+
+### 3. **Umbralización para Detección Binaria**
+
+En algunos modelos, como los de clasificación binaria, la salida del modelo es una probabilidad. Para clasificar estos resultados, es común establecer un umbral que determina si el resultado se considera positivo o negativo.
+
+```python
+def apply_threshold(predictions, threshold=0.5):
+    return (predictions >= threshold).astype(int)
+
+# Convertir probabilidades a etiquetas binarias
+binary_predictions = apply_threshold(predictions, threshold=0.7)
+```
+
+### 4. **Decodificación de Clases**
+
+En clasificación multiclase, los modelos suelen devolver probabilidades para cada clase. Si necesitas obtener la clase final, toma el índice de la probabilidad más alta como la predicción.
+
+```python
+# Supón que `predicciones` es una matriz donde cada fila contiene las probabilidades para cada clase
+def decode_classes(predictions):
+    return np.argmax(predictions, axis=1)
+
+# Obtener clases predichas
+predicted_classes = decode_classes(predictions)
+```
+
+### 5. **Agrupación y Agravación de Resultados**
+
+Para aplicaciones donde se necesita tomar decisiones basadas en secuencias de predicciones (por ejemplo, en reconocimiento de voz o análisis de series temporales), se pueden aplicar técnicas de agrupación para unificar varias predicciones en un resultado final, como el método de votación mayoritaria.
+
+```python
+from scipy.stats import mode
+
+def aggregate_predictions(predictions, method='majority'):
+    if method == 'majority':
+        return mode(predictions)[0][0]
+    # Agrega más métodos según sea necesario
+
+# Ejemplo de uso
+aggregated_result = aggregate_predictions(predicted_classes)
+```
+
+### 6. **Explicabilidad y Generación de Reportes**
+
+En algunos casos, es importante que los resultados sean interpretables para los usuarios. Herramientas como **SHAP** o **LIME** pueden ayudar a entender cómo el modelo llegó a sus predicciones.
+
+```python
+import shap
+
+# Supón que tienes un modelo de Scikit-Learn y datos de entrada para el análisis
+explainer = shap.TreeExplainer(model)
+shap_values = explainer.shap_values(X_test)
+
+# Visualización con SHAP
+shap.summary_plot(shap_values, X_test, plot_type="bar")
+```
+
+### 7. **Conversión a Formatos Requeridos (JSON, CSV, ProtoBuf)**
+
+Para que los resultados sean consumidos por otras aplicaciones o servicios, puedes convertir las predicciones a un formato específico. JSON es común para servicios web, mientras que CSV puede ser útil para reportes.
+
+```python
+import json
+import pandas as pd
+
+# Convertir predicciones a JSON
+predictions_json = json.dumps(predictions.tolist())
+
+# Convertir predicciones a CSV
+pd.DataFrame(predictions).to_csv("predictions.csv", index=False)
+```
+
+### 8. **Redondeo y Acondicionamiento de Resultados**
+
+Si los valores predichos representan cantidades que requieren redondeo (como precios, cantidad de unidades, etc.), puedes redondear los resultados según sea necesario.
+
+```python
+# Redondeo a dos decimales para valores monetarios
+predictions_rounded = np.round(predictions, 2)
+```
+
+### 9. **Postprocesamiento de Detección de Objetos**
+
+Para detección de objetos (usualmente en visión por computadora), el postprocesamiento puede incluir la eliminación de detecciones duplicadas usando **Non-Maximum Suppression (NMS)**.
+
+```python
+import cv2
+
+# Suponiendo que tienes las predicciones de bounding boxes y sus probabilidades
+def non_maximum_suppression(boxes, scores, threshold=0.5):
+    indices = cv2.dnn.NMSBoxes(boxes, scores, score_threshold=threshold, nms_threshold=0.4)
+    return [boxes[i] for i in indices]
+
+# Aplicar NMS
+final_boxes = non_maximum_suppression(boxes, scores)
+```
+
+### 10. **Automatización del Postprocesamiento en Google Cloud**
+
+Para sistemas en producción, puedes configurar una función de postprocesamiento en **Cloud Functions** o **Vertex AI Pipelines** en Google Cloud Platform.
+
+#### Ejemplo usando Cloud Functions:
+
+```python
+from google.cloud import storage
+import json
+
+def postprocess(event, context):
+    client = storage.Client()
+    bucket = client.get_bucket(event['bucket'])
+    blob = bucket.blob(event['name'])
+    
+    # Cargar las predicciones desde el archivo
+    predictions = json.loads(blob.download_as_string())
+    
+    # Ejemplo de umbralización
+    thresholded_predictions = apply_threshold(predictions)
+    
+    # Guardar el resultado postprocesado
+    result_blob = bucket.blob("processed/" + event['name'])
+    result_blob.upload_from_string(json.dumps(thresholded_predictions))
+```
+
+Para activar esta función, configúrala para que se ejecute automáticamente cada vez que se suban nuevas predicciones al bucket de GCS.
+
+### Resumen de Postprocesamiento
+
+1. **Escalado y Normalización**: Reescalar valores según el rango deseado.
+2. **Filtrado de Ruido**: Suavizar predicciones para evitar cambios abruptos.
+3. **Umbralización**: Convertir probabilidades en etiquetas binarias.
+4. **Decodificación de Clases**: Obtener las clases predichas en clasificación multiclase.
+5. **Agrupación**: Combinar múltiples predicciones en una sola salida.
+6. **Explicabilidad**: Utilizar herramientas como SHAP para entender las predicciones.
+7. **Conversión de Formatos**: Convertir resultados a JSON, CSV u otros formatos requeridos.
+8. **Redondeo y Acondicionamiento**: Ajustar valores numéricos finales.
+9. **Non-Maximum Suppression (NMS)**: Filtrar detecciones en visión por computadora.
+10. **Automatización**: Configurar postprocesamiento automático en Google Cloud.
+
+Este enfoque asegura que tus resultados sean precisos, limpios y fácilmente interpretables para la aplicación final.
+
+**Lecturas recomendadas**
+
+[Curso de Docker [Empieza Gratis] - Platzi](https://platzi.com/cursos/docker/)
+
+[requirements.txt - Google Drive](https://drive.google.com/file/d/1jLF_WldeWBSmWsXhHMM2S0ALTlE6IOi_/view?usp=sharing)
+
+[Dockerfile - Google Drive](https://drive.google.com/file/d/1yQKUJKG9FxDB-I3_Ui0zM-WN-7jGk62j/view?usp=sharing)
+
+[app.py - Google Drive](https://drive.google.com/file/d/1cbEcWSvt3n5udEe1qcSVKVGmypoYPnvV/view?usp=sharing)
+
+[centroidtracker.py - Google Drive](https://drive.google.com/file/d/1Rz035gO31QK2fm-1F79F81akfFOCnWOP/view?usp=sharing)
+
+[Dockerfile - Google Drive](https://drive.google.com/file/d/1H6va8eMiPn4y_NJCbfZ0NaI0tuFpqWe8/view?usp=sharing)
+
+[prediction.py - Google Drive](https://drive.google.com/file/d/1j_H65GlylMDXgNeT_y6CdNkRDQ3QUX0F/view?usp=sharing)
+
+[requirements.txt - Google Drive](https://drive.google.com/file/d/19SvMgFUT82dwQCN__H5BEac2Y0eJ_7Cn/view?usp=sharing)
+
+[trackableobject.py - Google Drive](https://drive.google.com/file/d/1T16ZzP7QXkqhI31hf5ra2sH_JzZeP3Ld/view?usp=sharing)
+
+[ai-platform.ipynb - Google Drive](https://drive.google.com/file/d/1Dbl-a3fhxEbFv5iVt0WkNFRQ95O8-S_v/view?usp=sharing)
+
+## Despliega y consume tu modelo en producción
+
+Para desplegar un modelo en producción y consumirlo, necesitas configurar un entorno donde el modelo esté accesible, por ejemplo, a través de un endpoint de API. En plataformas como Google Cloud Platform (GCP), AWS o Azure, puedes automatizar estos pasos. Aquí te explico cómo hacerlo en Google Cloud Platform utilizando **Vertex AI** para desplegar el modelo y acceder a él en producción.
+
+### Paso 1: **Subir y Preparar el Modelo**
+
+Primero, debes tener el modelo entrenado y listo para ser desplegado. Sube el modelo a Google Cloud Storage (GCS) si aún no lo has hecho.
+
+```bash
+# Comando para subir el modelo a GCS
+gsutil cp model.joblib gs://[YOUR_BUCKET_NAME]/models/model.joblib
+```
+
+### Paso 2: **Desplegar el Modelo en Vertex AI**
+
+Usaremos **Vertex AI** para crear un endpoint de API donde estará alojado el modelo, permitiendo el consumo de predicciones en tiempo real.
+
+#### a. **Iniciar Vertex AI y Configurar el Proyecto**
+
+Asegúrate de haber configurado Vertex AI para tu proyecto:
+
+```python
+from google.cloud import aiplatform
+
+# Inicializar el entorno de Vertex AI
+aiplatform.init(project="my-project", location="us-central1")
+```
+
+#### b. **Crear y Desplegar el Modelo en Vertex AI**
+
+Crea una instancia del modelo en Vertex AI, especificando el URI del modelo en GCS. Esto creará un recurso en Vertex AI que se podrá consumir mediante un endpoint.
+
+```python
+# Crear el modelo desde un archivo en GCS
+model = aiplatform.Model.upload(
+    display_name="my_model_name",
+    artifact_uri="gs://[YOUR_BUCKET_NAME]/models/",
+    serving_container_image_uri="us-docker.pkg.dev/vertex-ai/prediction/sklearn-cpu.0-24:latest"  # Imagen compatible con Scikit-Learn
+)
+```
+
+#### c. **Desplegar el Modelo en un Endpoint**
+
+Desplega el modelo en un endpoint de Vertex AI para que esté accesible en producción.
+
+```python
+endpoint = model.deploy(
+    machine_type="n1-standard-4",  # Especifica el tipo de máquina según tus necesidades
+    deployed_model_display_name="my_deployed_model",
+)
+print("Endpoint ID:", endpoint.name)
+```
+
+### Paso 3: **Consumir el Modelo en Producción**
+
+Ahora que el modelo está desplegado, puedes enviar solicitudes al endpoint para obtener predicciones. A continuación, muestro cómo hacer una solicitud de predicción con Python.
+
+#### a. **Preparar los Datos de Entrada**
+
+Asegúrate de que los datos estén en el formato que el modelo espera (por ejemplo, una lista de listas o un JSON estructurado).
+
+```python
+# Datos de entrada de ejemplo
+instances = [
+    [5.1, 3.5, 1.4, 0.2],  # Reemplaza con tus valores reales
+    [6.2, 3.4, 5.4, 2.3],
+]
+```
+
+#### b. **Hacer una Solicitud de Predicción**
+
+Con la instancia de `endpoint`, realiza una predicción enviando los datos de entrada.
+
+```python
+prediction = endpoint.predict(instances=instances)
+print("Predicción:", prediction.predictions)
+```
+
+### Paso 4: **Acceso al Modelo desde una API REST (Opcional)**
+
+Si quieres consumir el modelo desde otra aplicación, como una API REST, puedes utilizar el ID del endpoint y la **API de Vertex AI** para interactuar con el modelo desde un entorno externo.
+
+1. **Obtener el Token de Autenticación**:
+
+   En la mayoría de los casos, necesitarás un token de autenticación para la API de Google Cloud.
+
+   ```bash
+   gcloud auth application-default print-access-token
+   ```
+
+2. **Hacer la Solicitud de Predicción con cURL o HTTP**:
+
+   Con el token, puedes realizar una solicitud HTTP al endpoint:
+
+   ```bash
+   curl -X POST \
+   -H "Authorization: Bearer $(gcloud auth application-default print-access-token)" \
+   -H "Content-Type: application/json" \
+   -d '{
+         "instances": [[5.1, 3.5, 1.4, 0.2], [6.2, 3.4, 5.4, 2.3]]
+       }' \
+   https://us-central1-aiplatform.googleapis.com/v1/projects/[PROJECT_ID]/locations/us-central1/endpoints/[ENDPOINT_ID]:predict
+   ```
+
+### Paso 5: **Monitoreo y Mantenimiento**
+
+Una vez que el modelo está en producción, es importante monitorearlo para evaluar su rendimiento y realizar ajustes si es necesario:
+
+- **Configura alertas y logs**: GCP te permite monitorear el uso del endpoint y los errores en **Cloud Monitoring** y **Cloud Logging**.
+- **Realiza pruebas continuas**: Implementa pruebas para asegurar que el modelo se mantenga preciso con datos nuevos o diferentes.
+- **Configura la reentrenamiento automático**: Si el rendimiento decae, configura una pipeline en **Vertex AI Pipelines** para reentrenar el modelo automáticamente con nuevos datos.
+
+Este flujo cubre los pasos básicos para desplegar y consumir un modelo en producción utilizando Google Cloud Platform. Además, puedes extender estos pasos para automatizar el mantenimiento y la actualización del modelo mediante herramientas de MLOps.
+
+**Archivos de la clase**
+
+[videos-prueba-1.zip](https://static.platzi.com/media/public/uploads/videos_prueba-1_79640aa8-eec9-4ee3-ba3b-9415472b8c45.zip)
+
+**Lecturas recomendadas**
+
+[Base64](https://base64.guru/)
+
+[Video to Base64 | Base64 Encode | Base64 Converter | Base64](https://base64.guru/converter/encode/video)
+
+[Base64 to Video | Base64 Decode | Base64 Converter | Base64](https://base64.guru/converter/decode/video)
+
+[Curso de Postman - Platzi](https://platzi.com/cursos/postman/)
+
+[Curso de Meditación - Platzi](https://platzi.com/cursos/meditacion/)
+
+[Videos_prueba.zip - Google Drive](https://drive.google.com/file/d/1yi4KbtJzxZiJa-gPmbvixzmVn00AR5Xw/view?usp=sharing)
+
+##Bonus: aprende a apagar las máquinas de GCP para evitar sobrecostos
+
+Más que aprender a crear servicios en la nube, la clave es aprender a administrarlos para poder evitar sobrecostos y sacarle el mayor provecho a cada herramienta que utilices. Por esta razón, en esta clase nos enfocaremos en darte las herramientas necesarias para que aprendas a apagar cada uno de los servicios creados este curso.
+
+Dividiremos esta clase en cada uno de los servicios creados:
+
+1. Cloud Storage
+
+2. Notebook en AI Models
+
+3. Cloud Run
+
+4. Facturación
+
+Siempre iniciaremos desde el dashboard principal del proyecto, asegúrate de estar en el mismo proyecto que creaste para el proyecto de este curso.
+
+
+![Cloud Storage](images/gcplatform.jpg)
+
+## Cloud Storage
+
+El primer paso es buscar en la barra de búsqueda el servicio Cloud Storage.
+
+![Cloud Storage 1](images/cloudstorage.jpg)
+
+En esta ventana vamos a visualizar cada uno de los buckets creados durante el curso. El siguiente paso es seleccionarlos todos y, seguido a esto, presionar el botón borrar.
+
+![Cloud Storage 2](images/cloudstorage2.jpg)
+
+Siempre cuando vayas a borrar un servicio en GCP te va a preguntar si estas seguro de hacerlo, ya que después de eliminado no tendrás forma de recuperar la información. ⚠ SOLO ELIMINALO SI YA NO LO VOLVERÁS A UTILIZAR.
+
+![Cloud Storage 3](images/cloudstorage3.jpg)
+
+El sistema tardará un par de segundos en eliminar los buckets y ya tendremos todos los servicios de Cloud Storage eliminados.
+
+![Cloud Storage 4](images/cloudstorage4.jpg)
+
+## AI models
+
+El primer paso es buscar en la barra de búsqueda el servicio AI Platform.
+
+![AI models 1](images/AImodels.jpg)
+
+En el caso de AI Platform solamente utilizamos sus notebook preconfigurados. Por esa razón nos dirigiremos al módulo Notebook en el menú izquierdo.
+
+![AI models 2](images/AImodels1.jpg)
+
+Seleccionamos el Notebook que utilizamos y presionamos en el botón de borrar.
+
+![AI models 3](images/AImodels2.jpg)
+
+Genial, hasta acá ya tenemos eliminados el servicio de Cloud Storage y el servicio de Notebook de AI Platform o Vertex AI.
+
+## Cloud Run
+
+El primer paso es buscar en la barra de búsqueda el servicio Cloud Run.
+
+![Cloud Run](images/cloudrun.jpg)
+
+En el dashboard de Cloud Run selecciona el módulo que deseamos eliminar y presionamos en el botón borrar.
+
+![Cloud Run 1](images/cloudrun1.jpg)
+
+Y de esta forma ya tendrías eliminado el servicio de Cloud Run en tu proyecto.
+
+## Facturación
+
+Como bono final revisaremos el módulo de facturación. Conoceremos los gastos que hemos tenido en cada uno de los servicios utilizados.
+
+Para eso podemos acceder por la barra de búsqueda escribiendo **Facturación** o directamente desde el menú lateral y buscando **Facturación**.
+
+![Facturación](images/facturacion.jpg)
+
+En el dashboard de facturación y para obtener mayor informacción accedemos a Ver informe.
+
+![Facturación 1](images/facturacion1.jpg)
+
+La nube de GCP nos despliega toda la información detallada en gastos que hemos tenido. Sin embargo, en este caso nos enfocaremos en el módulo básico de informes, el cual nos permite entender la distribución de gastos según ciertos filtros.
+
+![Facturación 2](images/facturacion2.jpg)
+
+Te recomiendo profundizar aún más, entender los costos y gastos asociados a la creación de un producto es fundamental. Para ello te dejo el siguiente video directamente de Google en donde explican más a detalle.
+
+[google](https://www.youtube.com/watch?v=jRb8piwa2GI&ab_channel=GoogleCloudTech "google")
+
+[![Video Tutorial](https://img.youtube.com/vi/VIDEO_ID/0.jpg)](https://www.youtube.com/watch?v=jRb8piwa2GI&ab_channel=GoogleCloudTech)
+
+
+También te recomiendo leer la [guía de facturación de Google Cloud Platform.](https://cloud.google.com/billing/docs/how-to "guía de facturación de Google Cloud Platform.")
+
+Cuando presionemos informes, visualizaremos un menú en el lateral derecho con múltiples filtros. Los filtros más valiosos son las fechas y la agrupación de costos.
+
+![Facturación 3](images/facturacion3.jpg)
+
+Adicional a esto, podemos observar que todos los valores están en cero, esto sucede porque tenemos habilitada la opción de eliminar **Descuentos y Créditos**. Sin embargo, para mí es fundamental como empresa conocer cuáles fueron mis costos mensuales asociados a mi producto. Para eso vamos a ir a créditos y vamos a quitar la selección de **Descuentos y Promociones**.
+
+![Facturación 4](images/facturacion4.jpg)
+
+Con esto vamos a poder visualizar todos los costos de nuestros productos agrupados por proyecto, SKU, servicio o región. Te recomiendo distribuirlo por SKU así vas a poder entender más a detalle el consumo de cada uno de los servicios.
+
+![Facturación 5](images/facturacion5.jpg)
+
+Genial, hasta acá aprendimos a eliminar los servicios de Cloud Storage, Notebooks en AI Platform y Cloud Run. Adicionalmente, aprendimos a visualizar nuestros costos asociados al producto.
+
+**⚠ RECUERDA QUE ES FUNDAMENTAL APAGAR LOS SERVIDORES PARA EVITAR SOBRECOSTOS.**
+
+![meme](images/meme.jpg)
+
+¡Te veo en la siguiente clase para concluir con el curso!
+
+## Siguientes pasos en inteligencia artificial
+
+**Lecturas recomendadas**
+
+[Switch AI](https://switchai.co/)
+
+[Curso de Introducción al Despliegue de Modelos de Machine Learning - Platzi](https://platzi.com/cursos/despliegue-ml/)

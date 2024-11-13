@@ -1,0 +1,14 @@
+tf_slim
+tf-models-official
+lvis
+Cython 
+contextlib2 
+pillow 
+lxml 
+matplotlib
+pycocotools
+flask
+imutils
+numpy
+dlib
+opencv-contrib-python
