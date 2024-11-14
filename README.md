@@ -10,7 +10,7 @@
 - [Curso de Python: Comprehensions,Funciones y Manejo de Errores](CursodePythonComprehensions,FuncionesyManejodeErrores)
 - [Curso de Python: PIP y Entornos Virtuales](CursoDePythonPIPyEntornosVirtuales)
 - [Curso de Unit Testing en Python](CursodeUnitTestingenPython)
-- [Curso de Patrones de Diseño y SOLID en Python](CursodePatronesdeDiseñoySOLIDenPython)
+- [Curso de Patrones de Diseño y SOLID en Python](CursodePatronesdeDisenoySOLIDenPython)
 - [Curso de Django](CursodeDjango)
 - [Curso De FastAPI](CursoDeFastAPI)
 - [Curso De Introduccion Al Pensamiento Computacional Con Python](CursoDeIntroduccionAlPensamientoComputacionalConPython)
