@@ -1289,3 +1289,249 @@ if __name__ == "__main__":
 - **Pruebas**: Las pruebas se integran de forma natural en la estructura, permitiendo que cada módulo tenga sus pruebas específicas.
 
 Organizar y estructurar bien un proyecto en Python es esencial para el éxito a largo plazo. Mantener estas buenas prácticas hará que el desarrollo sea más eficiente y sostenible.
+
+## Patrón Strategy en Python
+
+El Patrón Strategy es un patrón de diseño de comportamiento que permite definir una familia de algoritmos, encapsular cada uno y hacerlos intercambiables. Esto significa que puedes cambiar la estrategia utilizada en tiempo de ejecución sin alterar el contexto que la utiliza. Es particularmente útil en situaciones donde se necesita seleccionar entre múltiples algoritmos que resuelven el mismo problema de diferentes maneras.
+
+En el contexto de tu curso, se utiliza en servicios de pago donde puedes modificar el procesador de pagos (estrategia) mediante un método como SetProcessor, permitiendo flexibilidad y escalabilidad en el código.
+
+El patrón de diseño Strategy es una herramienta clave en el desarrollo de software, permitiendo cambiar dinámicamente entre diferentes algoritmos o estrategias para resolver un problema, sin alterar la estructura del programa. Este patrón es ideal para situaciones donde múltiples soluciones son viables, adaptándose al contexto en tiempo de ejecución, como lo ejemplifica el procesamiento de pagos.
+
+### ¿Qué es el patrón Strategy?
+
+Este patrón de comportamiento facilita el intercambio de algoritmos que resuelven el mismo problema de distintas formas. Es útil en situaciones donde diferentes estrategias pueden ser aplicadas según el contexto, permitiendo que el programa sea flexible y adaptable sin modificar su estructura central.
+
+### ¿Cómo permite el patrón modificar estrategias en tiempo de ejecución?
+
+El patrón Strategy permite la modificación de la estrategia mediante métodos que cambian la clase o el algoritmo que se está utilizando. En el ejemplo presentado, se utiliza el método `SetProcessor`, que permite al servicio de pagos intercambiar entre diferentes procesadores de pago durante la ejecución del programa.
+
+### ¿Cómo se implementa en el código?
+
+- Se define una interfaz o protocolo que las diferentes estrategias deben implementar.
+- La clase de alto nivel, en este caso `PaymentService`, no depende de las implementaciones concretas, sino de la interfaz.
+- Las estrategias concretas implementan esta interfaz, lo que permite la inyección de la estrategia adecuada según el contexto.
+- Un método como `SetProcessor` facilita la selección y aplicación de la estrategia durante la ejecución.
+
+### ¿Cómo seleccionar la mejor estrategia?
+
+La elección de la estrategia adecuada puede hacerse a través de una función externa o clase que analice las condiciones del problema y determine cuál es la mejor solución. Esta selección no tiene que estar dentro de la clase de alto nivel, permitiendo una mayor modularidad y escalabilidad en el sistema.
+
+### ¿Cuáles son los beneficios del patrón Strategy?
+
+- Flexibilidad para intercambiar algoritmos sin cambiar la lógica central.
+- Desacopla las clases de alto nivel de las implementaciones específicas.
+- Mejora la mantenibilidad y escalabilidad del código.
+
+El **Patrón Strategy** es un patrón de diseño de comportamiento que permite definir una familia de algoritmos, encapsular cada uno de ellos y hacerlos intercambiables. Este patrón facilita que los algoritmos puedan variar independientemente del cliente que los utiliza, promoviendo la extensibilidad y reducción de la complejidad.
+
+### Conceptos Clave del Patrón Strategy
+
+1. **Estrategia (Strategy)**: Es una interfaz o clase abstracta que define un comportamiento común para un conjunto de algoritmos o estrategias.
+2. **Estrategias Concretas (Concrete Strategies)**: Son las clases que implementan el comportamiento de una estrategia específica.
+3. **Contexto (Context)**: Es la clase que utiliza una estrategia para llevar a cabo su operación. El contexto contiene una referencia a una estrategia y permite cambiarla dinámicamente.
+
+### Ejemplo en Python: Estrategia de Pago
+
+Imaginemos que tenemos una tienda en línea que acepta diferentes métodos de pago. Usaremos el patrón Strategy para poder intercambiar fácilmente entre métodos de pago, como tarjeta de crédito, PayPal y criptomonedas.
+
+#### Paso 1: Definir la Interfaz de Estrategia
+
+Definimos una interfaz común que todos los métodos de pago deben implementar. Esta interfaz tiene un método `pay` que cada estrategia concreta debe sobreescribir.
+
+```python
+from abc import ABC, abstractmethod
+
+class PaymentStrategy(ABC):
+    @abstractmethod
+    def pay(self, amount):
+        pass
+```
+
+#### Paso 2: Crear las Estrategias Concretas
+
+Implementamos diferentes métodos de pago como clases concretas que heredan de `PaymentStrategy` y proporcionan una implementación del método `pay`.
+
+```python
+class CreditCardPayment(PaymentStrategy):
+    def pay(self, amount):
+        print(f"Paying {amount} using Credit Card.")
+
+class PayPalPayment(PaymentStrategy):
+    def pay(self, amount):
+        print(f"Paying {amount} using PayPal.")
+
+class CryptoPayment(PaymentStrategy):
+    def pay(self, amount):
+        print(f"Paying {amount} using Cryptocurrency.")
+```
+
+Cada clase concreta implementa `pay` de una manera diferente, proporcionando su propio comportamiento específico.
+
+#### Paso 3: Crear la Clase Contexto
+
+La clase `ShoppingCart` actúa como el contexto en el cual se usa el patrón Strategy. Esta clase permite que el usuario seleccione una estrategia de pago y luego la ejecuta al confirmar el pago.
+
+```python
+class ShoppingCart:
+    def __init__(self):
+        self.total_amount = 0
+        self.payment_strategy = None
+
+    def add_item(self, price):
+        self.total_amount += price
+
+    def set_payment_strategy(self, strategy: PaymentStrategy):
+        self.payment_strategy = strategy
+
+    def checkout(self):
+        if not self.payment_strategy:
+            raise Exception("Payment strategy not set!")
+        self.payment_strategy.pay(self.total_amount)
+```
+
+- `add_item` permite agregar el precio de los artículos al carrito.
+- `set_payment_strategy` establece la estrategia de pago deseada (tarjeta, PayPal, etc.).
+- `checkout` realiza el pago utilizando la estrategia de pago configurada.
+
+#### Paso 4: Usar el Patrón Strategy
+
+Con esta estructura, podemos cambiar la estrategia de pago en cualquier momento, sin modificar la clase `ShoppingCart`.
+
+```python
+# Crear un carrito de compras
+cart = ShoppingCart()
+cart.add_item(50)
+cart.add_item(100)
+
+# Usar la estrategia de pago con tarjeta de crédito
+cart.set_payment_strategy(CreditCardPayment())
+cart.checkout()
+# Output: Paying 150 using Credit Card.
+
+# Cambiar la estrategia de pago a PayPal
+cart.set_payment_strategy(PayPalPayment())
+cart.checkout()
+# Output: Paying 150 using PayPal.
+
+# Cambiar la estrategia de pago a Criptomoneda
+cart.set_payment_strategy(CryptoPayment())
+cart.checkout()
+# Output: Paying 150 using Cryptocurrency.
+```
+
+### Ventajas del Patrón Strategy
+
+1. **Extensibilidad**: Es fácil añadir nuevas estrategias sin modificar las clases existentes, simplemente creando nuevas clases de estrategia.
+2. **Cambio Dinámico de Comportamiento**: Podemos cambiar el comportamiento del contexto en tiempo de ejecución sin modificar su código.
+3. **Separación de Responsabilidades**: Cada algoritmo se encapsula en su propia clase, manteniendo un código más limpio y organizado.
+
+### Desventajas del Patrón Strategy
+
+1. **Aumento del Número de Clases**: Cada estrategia es una nueva clase, lo que puede aumentar la complejidad en proyectos grandes.
+2. **Complejidad**: Puede ser excesivo para casos simples, especialmente si los algoritmos son pequeños y similares.
+
+### Conclusión
+
+El patrón Strategy en Python es útil cuando queremos implementar múltiples algoritmos o comportamientos intercambiables para una tarea específica. Nos permite cumplir con el Principio Abierto/Cerrado (OCP) al hacer el sistema extensible y modular, mejorando la mantenibilidad y escalabilidad de nuestras aplicaciones.
+
+## Introducción a los Patrones de Diseño
+
+Los **Patrones de Diseño** son soluciones reutilizables a problemas comunes en el diseño de software. Estas soluciones están basadas en la experiencia de desarrolladores a lo largo del tiempo, y son aplicables a una variedad de situaciones en programación orientada a objetos (OOP). Los patrones de diseño permiten estructurar el código de manera que sea más fácil de entender, mantener, extender y reutilizar, promoviendo la buena arquitectura del software.
+
+### ¿Qué son los Patrones de Diseño?
+
+En términos simples, un patrón de diseño es una plantilla que muestra cómo estructurar o resolver un problema de diseño en el desarrollo de software. Estos patrones no son fragmentos de código específicos, sino conceptos abstractos que pueden ser implementados en cualquier lenguaje orientado a objetos. Su propósito es mejorar la calidad del código y hacerlo más robusto, evitando problemas comunes.
+
+### Clasificación de los Patrones de Diseño
+
+Los patrones de diseño se dividen en tres categorías principales:
+
+1. **Patrones Creacionales**: Ayudan a instanciar objetos de manera que el sistema sea independiente de cómo se crean y organizan esos objetos. Ejemplos:
+   - Singleton
+   - Factory Method
+   - Abstract Factory
+   - Builder
+   - Prototype
+
+2. **Patrones Estructurales**: Se enfocan en cómo componer clases y objetos para formar estructuras más grandes y complejas, asegurando que estas sean flexibles y eficientes. Ejemplos:
+   - Adapter
+   - Decorator
+   - Facade
+   - Composite
+   - Proxy
+   - Bridge
+   - Flyweight
+
+3. **Patrones de Comportamiento**: Se centran en la comunicación entre objetos, definiendo cómo interactúan y se comunican entre ellos. Ejemplos:
+   - Strategy
+   - Observer
+   - Command
+   - State
+   - Template Method
+   - Iterator
+   - Chain of Responsibility
+   - Mediator
+   - Visitor
+   - Memento
+   - Interpreter
+
+### Beneficios de Usar Patrones de Diseño
+
+1. **Reutilización**: Los patrones permiten reutilizar soluciones ya probadas, lo cual reduce el tiempo de desarrollo.
+2. **Mantenibilidad**: Facilitan el mantenimiento y modificación del código al estar organizados en estructuras claras y modulares.
+3. **Extensibilidad**: Muchos patrones facilitan la extensión del sistema al permitir la adición de nuevas funcionalidades sin modificar el código existente.
+4. **Legibilidad y Comunicación**: Los patrones crean una terminología común para los desarrolladores, permitiendo que el equipo de trabajo entienda rápidamente la arquitectura del software.
+5. **Reducción de Errores**: Al utilizar soluciones bien definidas, es menos probable que ocurran errores comunes asociados con problemas de diseño.
+
+### Ejemplos de Uso Común de Algunos Patrones
+
+#### 1. **Singleton**
+   - **Objetivo**: Garantiza que una clase tenga una única instancia y proporciona un punto de acceso global a ella.
+   - **Uso típico**: En configuraciones de aplicaciones, conexiones a bases de datos, controladores de acceso a hardware.
+
+#### 2. **Factory Method**
+   - **Objetivo**: Permite que una clase delegue a sus subclases la instanciación de objetos, promoviendo la creación dinámica de objetos.
+   - **Uso típico**: En aplicaciones donde se crean objetos con distintas configuraciones o tipos, como en creadores de interfaces o juegos.
+
+#### 3. **Adapter**
+   - **Objetivo**: Permite que dos interfaces incompatibles trabajen juntas, actuando como un traductor entre ellas.
+   - **Uso típico**: Integrar bibliotecas o API de terceros en sistemas con interfaces distintas.
+
+#### 4. **Observer**
+   - **Objetivo**: Define una dependencia uno a muchos, de manera que cuando un objeto cambia su estado, se notifica automáticamente a todos sus dependientes.
+   - **Uso típico**: Sistemas de eventos, notificaciones, y aplicaciones con un sistema de suscripción o monitoreo.
+
+#### 5. **Strategy**
+   - **Objetivo**: Define una familia de algoritmos y permite que estos sean intercambiables en tiempo de ejecución.
+   - **Uso típico**: En aplicaciones que requieren varios algoritmos para realizar una operación, como sistemas de pago o algoritmos de búsqueda y clasificación.
+
+### Ejemplo Práctico en Python: Patrón Singleton
+
+Para ilustrar cómo se implementa un patrón de diseño, veamos el patrón Singleton en Python. Este patrón es útil cuando necesitamos garantizar que solo una instancia de una clase esté en uso.
+
+```python
+class Singleton:
+    _instance = None
+
+    def __new__(cls, *args, **kwargs):
+        if not cls._instance:
+            cls._instance = super(Singleton, cls).__new__(cls, *args, **kwargs)
+        return cls._instance
+
+# Prueba del Singleton
+singleton1 = Singleton()
+singleton2 = Singleton()
+
+print(singleton1 is singleton2)  # Output: True, ya que ambos son la misma instancia
+```
+
+### Buenas Prácticas al Usar Patrones de Diseño
+
+1. **No sobreutilizar**: No es necesario aplicar patrones de diseño en cada situación. Usar un patrón cuando no es necesario puede añadir complejidad innecesaria.
+2. **Comprender el propósito del patrón**: Antes de implementarlo, asegúrate de entender completamente el problema que soluciona el patrón.
+3. **Combinar patrones cuando sea adecuado**: Algunos patrones pueden combinarse para resolver problemas más complejos. Por ejemplo, `Abstract Factory` y `Singleton` pueden trabajar juntos en la creación de una instancia única de una familia de objetos.
+
+### Conclusión
+
+Los patrones de diseño en Python, y en cualquier otro lenguaje de programación orientado a objetos, son herramientas poderosas para estructurar el código y resolver problemas comunes de diseño. La comprensión y aplicación de estos patrones permiten crear software más modular, extensible y fácil de mantener, proporcionando una base sólida para aplicaciones escalables y robustas.

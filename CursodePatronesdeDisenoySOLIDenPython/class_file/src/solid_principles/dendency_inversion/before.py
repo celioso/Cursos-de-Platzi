@@ -294,7 +294,7 @@ class PaymentService:
     notifier: Notifier
     customer_validator: CustomerValidator
     payment_validator: PaymentDataValidator
-    logger: TransactionLogger = field(default_factory=TransactionLogger)
+    logger: TransactionLogger #= field(default_factory=TransactionLogger)
     recurring_processor: Optional[RecurringPaymentProtocol] = None
     refund_processor: Optional[RefundPaymentProtocol] = None
 
