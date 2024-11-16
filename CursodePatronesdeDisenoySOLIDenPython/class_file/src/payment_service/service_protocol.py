@@ -1,25 +1,26 @@
 from typing import Protocol
 from typing import Optional, Self
 
-from .commons import CustomerData, PaymentData, PaymentResponse
-from .loggers import TransactionLogger
-from .notifiers import NotifierProtocol
-from .processors import (
+from commons import CustomerData, PaymentData, PaymentResponse
+from loggers import TransactionLogger
+from notifiers import NotifierProtocol
+from processors import (
     PaymentProcessorProtocol,
     RecurringPaymentProcessorProtocol,
     RefundProcessorProtocol,
 )
-from .validators import CustomerValidator, PaymentDataValidator
-
-from service_protocol import PaymentServiceProtocol
+from validators import CustomerValidator, PaymentDataValidator
+from listeners import ListenerManager
+from validators import ChainHandler
 
 
 class PaymentServiceProtocol(Protocol):
     payment_processor: PaymentProcessorProtocol
     notifier: NotifierProtocol
-    customer_validator: CustomerValidator
-    payment_validator: PaymentDataValidator
+
+    validators: ChainHandler
     logger: TransactionLogger
+    listeners: ListenerManager
     refund_processor: Optional[RefundProcessorProtocol] = None
     recurring_processor: Optional[RecurringPaymentProcessorProtocol] = None
 

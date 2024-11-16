@@ -2323,3 +2323,879 @@ Casa con 2 habitaciones, hecha de madera y techo paja.
 ### Conclusión
 
 El **Patrón Builder** es ideal para escenarios donde el objeto a construir tiene múltiples configuraciones posibles o pasos de inicialización complejos. En Python, la fluidez del patrón se beneficia del uso de métodos encadenados, lo que resulta en un código elegante y legible.
+
+## Implementando el Patrón Builder: Construye Servicios de Pago
+
+El **Patrón Builder** puede ser una excelente solución para construir servicios de pago que admiten configuraciones flexibles, como métodos de pago, monedas soportadas, opciones de validación antifraude y notificaciones. Veamos cómo implementar este patrón para un sistema de pagos.
+
+### Paso 1: Definir la Clase del Producto
+
+El producto será un objeto `ServicioPago` que representa el servicio configurado.
+
+```python
+class ServicioPago:
+    def __init__(self):
+        self.metodo_pago = None
+        self.moneda = None
+        self.validacion_antifraude = False
+        self.notificacion = False
+
+    def __str__(self):
+        return (f"Servicio de Pago configurado:\n"
+                f" - Método de pago: {self.metodo_pago}\n"
+                f" - Moneda: {self.moneda}\n"
+                f" - Validación antifraude: {self.validacion_antifraude}\n"
+                f" - Notificación: {self.notificacion}")
+```
+
+### Paso 2: Crear el Builder
+
+El `BuilderServicioPago` permitirá configurar las diferentes opciones del servicio paso a paso.
+
+```python
+class BuilderServicioPago:
+    def __init__(self):
+        self.servicio = ServicioPago()
+
+    def set_metodo_pago(self, metodo):
+        self.servicio.metodo_pago = metodo
+        return self
+
+    def set_moneda(self, moneda):
+        self.servicio.moneda = moneda
+        return self
+
+    def habilitar_validacion_antifraude(self):
+        self.servicio.validacion_antifraude = True
+        return self
+
+    def habilitar_notificacion(self):
+        self.servicio.notificacion = True
+        return self
+
+    def build(self):
+        return self.servicio
+```
+
+### Paso 3: Usar el Builder para Crear un Servicio de Pago
+
+Ahora podemos crear servicios de pago con diferentes configuraciones de manera sencilla.
+
+```python
+# Crear el builder
+builder = BuilderServicioPago()
+
+# Construir un servicio de pago básico
+servicio_basico = (
+    builder
+    .set_metodo_pago("Tarjeta de Crédito")
+    .set_moneda("USD")
+    .build()
+)
+
+print(servicio_basico)
+
+# Construir un servicio de pago avanzado
+servicio_avanzado = (
+    builder
+    .set_metodo_pago("PayPal")
+    .set_moneda("EUR")
+    .habilitar_validacion_antifraude()
+    .habilitar_notificacion()
+    .build()
+)
+
+print("\n" + str(servicio_avanzado))
+```
+
+**Salida esperada:**
+
+```
+Servicio de Pago configurado:
+ - Método de pago: Tarjeta de Crédito
+ - Moneda: USD
+ - Validación antifraude: False
+ - Notificación: False
+
+Servicio de Pago configurado:
+ - Método de pago: PayPal
+ - Moneda: EUR
+ - Validación antifraude: True
+ - Notificación: True
+```
+
+### Paso 4: Añadir un Director para Configuraciones Comunes
+
+Un **Director** puede estandarizar la creación de configuraciones predefinidas.
+
+```python
+class DirectorServicioPago:
+    def __init__(self, builder):
+        self.builder = builder
+
+    def construir_servicio_basico(self):
+        return (
+            self.builder
+            .set_metodo_pago("Tarjeta de Débito")
+            .set_moneda("USD")
+            .build()
+        )
+
+    def construir_servicio_premium(self):
+        return (
+            self.builder
+            .set_metodo_pago("Stripe")
+            .set_moneda("GBP")
+            .habilitar_validacion_antifraude()
+            .habilitar_notificacion()
+            .build()
+        )
+```
+
+#### Usar el Director
+
+```python
+# Crear el builder y el director
+builder = BuilderServicioPago()
+director = DirectorServicioPago(builder)
+
+# Construir un servicio básico
+servicio_basico_director = director.construir_servicio_basico()
+print(servicio_basico_director)
+
+# Construir un servicio premium
+servicio_premium_director = director.construir_servicio_premium()
+print("\n" + str(servicio_premium_director))
+```
+
+**Salida esperada:**
+
+```
+Servicio de Pago configurado:
+ - Método de pago: Tarjeta de Débito
+ - Moneda: USD
+ - Validación antifraude: False
+ - Notificación: False
+
+Servicio de Pago configurado:
+ - Método de pago: Stripe
+ - Moneda: GBP
+ - Validación antifraude: True
+ - Notificación: True
+```
+
+### Ventajas del Patrón Builder en Servicios de Pago
+
+1. **Flexibilidad**: Puedes crear configuraciones específicas para cada cliente o integración.
+2. **Modularidad**: Los métodos encadenados permiten extender las opciones del servicio sin afectar las existentes.
+3. **Cumplimiento de SOLID**:
+   - **Responsabilidad Única**: Cada clase tiene una responsabilidad clara.
+   - **Abierto/Cerrado**: Puedes añadir nuevas opciones de configuración sin modificar el código existente.
+
+### Posibles Extensiones
+
+1. **Validación personalizada**: Agrega un método para verificar que todas las configuraciones requeridas estén completas antes de construir el objeto.
+2. **Decoradores adicionales**: Usa el Patrón Decorator para añadir características dinámicamente, como reportes de actividad o auditorías.
+3. **Fluidez API**: Implementa un sistema de configuración a partir de archivos JSON o YAML para integraciones externas.
+
+### Conclusión
+
+El **Patrón Builder** ofrece una manera estructurada y flexible de construir servicios de pago configurables. Es especialmente útil en aplicaciones empresariales donde las opciones de configuración varían según las necesidades del cliente o el sistema. Al combinarlo con otros patrones como Decorator o Factory, puedes lograr soluciones robustas y altamente reutilizables.
+
+## Patrón Observer en Python
+
+El **Patrón Observer** es un patrón de diseño de comportamiento que define una relación de dependencia entre objetos, de manera que cuando un objeto cambia de estado (el *subject*), todos los objetos que dependen de él (los *observers*) son notificados automáticamente.
+
+Este patrón es útil para escenarios donde múltiples objetos deben reaccionar a los cambios en otro objeto sin acoplarse estrechamente.
+
+### Ejemplo Clásico: Sistema de Notificaciones
+
+Vamos a implementar un sistema donde varios *observers* (como usuarios o servicios) sean notificados cuando un sistema de pagos cambie de estado, por ejemplo, cuando se procese un pago.
+
+### Paso 1: Definir el Subject
+
+El **Subject** es el objeto principal al que los observadores se suscriben.
+
+```python
+class Subject:
+    def __init__(self):
+        self._observers = []
+
+    def attach(self, observer):
+        """Agrega un observer a la lista."""
+        self._observers.append(observer)
+
+    def detach(self, observer):
+        """Elimina un observer de la lista."""
+        self._observers.remove(observer)
+
+    def notify(self, message):
+        """Notifica a todos los observers."""
+        for observer in self._observers:
+            observer.update(message)
+```
+
+### Paso 2: Definir la Interfaz del Observer
+
+Cada **Observer** debe implementar un método `update` que será llamado por el Subject.
+
+```python
+from abc import ABC, abstractmethod
+
+class Observer(ABC):
+    @abstractmethod
+    def update(self, message):
+        pass
+```
+
+### Paso 3: Implementar Observers Concretos
+
+Crea clases concretas que implementen la interfaz del Observer.
+
+```python
+class EmailNotifier(Observer):
+    def update(self, message):
+        print(f"EmailNotifier: Enviando email con el mensaje: '{message}'")
+
+class SMSNotifier(Observer):
+    def update(self, message):
+        print(f"SMSNotifier: Enviando SMS con el mensaje: '{message}'")
+
+class LogNotifier(Observer):
+    def update(self, message):
+        print(f"LogNotifier: Registrando en el log: '{message}'")
+```
+
+### Paso 4: Usar el Patrón Observer
+
+Ahora conectemos todo. Supongamos que tenemos un sistema de pagos que notifica a los observadores cuando un pago se procesa.
+
+```python
+class PaymentSystem(Subject):
+    def process_payment(self, amount, method):
+        print(f"Procesando pago de {amount} usando {method}.")
+        self.notify(f"Pago de {amount} procesado con {method}.")
+```
+
+#### Código Principal
+
+```python
+# Crear un sistema de pagos
+payment_system = PaymentSystem()
+
+# Crear observers
+email_notifier = EmailNotifier()
+sms_notifier = SMSNotifier()
+log_notifier = LogNotifier()
+
+# Suscribir observers al sistema de pagos
+payment_system.attach(email_notifier)
+payment_system.attach(sms_notifier)
+payment_system.attach(log_notifier)
+
+# Procesar un pago
+payment_system.process_payment(100, "Tarjeta de Crédito")
+
+# Desuscribir un observer
+payment_system.detach(sms_notifier)
+
+# Procesar otro pago
+payment_system.process_payment(200, "PayPal")
+```
+
+### Salida Esperada
+
+**Primer pago (todos los observers suscritos):**
+```
+Procesando pago de 100 usando Tarjeta de Crédito.
+EmailNotifier: Enviando email con el mensaje: 'Pago de 100 procesado con Tarjeta de Crédito.'
+SMSNotifier: Enviando SMS con el mensaje: 'Pago de 100 procesado con Tarjeta de Crédito.'
+LogNotifier: Registrando en el log: 'Pago de 100 procesado con Tarjeta de Crédito.'
+```
+
+**Segundo pago (SMSNotifier desuscrito):**
+```
+Procesando pago de 200 usando PayPal.
+EmailNotifier: Enviando email con el mensaje: 'Pago de 200 procesado con PayPal.'
+LogNotifier: Registrando en el log: 'Pago de 200 procesado con PayPal.'
+```
+
+### Ventajas del Patrón Observer
+
+1. **Desacoplamiento**: Los *subjects* no necesitan conocer los detalles de implementación de los *observers*.
+2. **Flexibilidad**: Puedes añadir o eliminar *observers* en tiempo de ejecución.
+3. **Reutilización**: Los *observers* pueden ser reutilizados en diferentes *subjects*.
+
+### Aplicaciones Reales
+
+1. **Interfaces de usuario**: Notificación de cambios en un modelo a vistas o controladores.
+2. **Sistemas de eventos**: Como el patrón *pub-sub* en sistemas de mensajería.
+3. **Notificaciones en tiempo real**: Servicios como websockets o push notifications.
+
+### Conclusión
+
+El **Patrón Observer** es una solución robusta para implementar sistemas donde un objeto central (como un sistema de pagos) necesita informar a otros objetos sobre sus cambios de estado. Su implementación en Python es simple y aprovecha características como listas dinámicas para gestionar observadores de manera eficiente.
+
+## Implementando el Patrón Observer
+
+Implementar el **Patrón Observer** implica crear un sistema donde un objeto central (*subject*) notifica automáticamente a varios objetos suscritos (*observers*) cada vez que su estado cambia. Veamos cómo implementarlo paso a paso en Python.
+
+### Escenario: Sistema de Notificaciones para Pedidos
+
+Vamos a construir un ejemplo donde un sistema de pedidos notifica a varios servicios (correo electrónico, SMS, registro en el log) cuando se procesa un pedido.
+
+### Paso 1: Crear el Subject
+
+El *subject* gestiona la lista de *observers* y los notifica cuando ocurre un cambio.
+
+```python
+class Subject:
+    def __init__(self):
+        self._observers = []
+
+    def attach(self, observer):
+        """Suscribe un observer al subject."""
+        self._observers.append(observer)
+
+    def detach(self, observer):
+        """Elimina un observer del subject."""
+        self._observers.remove(observer)
+
+    def notify(self, message):
+        """Notifica a todos los observers."""
+        for observer in self._observers:
+            observer.update(message)
+```
+
+### Paso 2: Crear la Interfaz del Observer
+
+Define una clase base para los *observers*. Esto asegura que todos implementen el método `update`.
+
+```python
+from abc import ABC, abstractmethod
+
+class Observer(ABC):
+    @abstractmethod
+    def update(self, message):
+        """Define cómo reaccionará el observer al mensaje."""
+        pass
+```
+
+### Paso 3: Crear Observers Concretos
+
+Cada *observer* define su propia implementación del método `update`.
+
+```python
+class EmailNotifier(Observer):
+    def update(self, message):
+        print(f"EmailNotifier: Enviando email con el mensaje: '{message}'")
+
+class SMSNotifier(Observer):
+    def update(self, message):
+        print(f"SMSNotifier: Enviando SMS con el mensaje: '{message}'")
+
+class LogNotifier(Observer):
+    def update(self, message):
+        print(f"LogNotifier: Registrando en el log: '{message}'")
+```
+
+### Paso 4: Crear un Subject Concreto
+
+Crea una clase que represente el *subject*. En este caso, un sistema de pedidos.
+
+```python
+class OrderSystem(Subject):
+    def process_order(self, order_id):
+        print(f"Procesando pedido {order_id}...")
+        self.notify(f"Pedido {order_id} ha sido procesado con éxito.")
+```
+
+### Paso 5: Integrar Todo
+
+Conecta los *observers* al *subject* y prueba el sistema.
+
+```python
+# Crear el sistema de pedidos
+order_system = OrderSystem()
+
+# Crear los observers
+email_notifier = EmailNotifier()
+sms_notifier = SMSNotifier()
+log_notifier = LogNotifier()
+
+# Suscribir los observers al sistema de pedidos
+order_system.attach(email_notifier)
+order_system.attach(sms_notifier)
+order_system.attach(log_notifier)
+
+# Procesar un pedido
+order_system.process_order("12345")
+
+# Eliminar un observer
+order_system.detach(sms_notifier)
+
+# Procesar otro pedido
+order_system.process_order("67890")
+```
+
+### Salida Esperada
+
+**Primer pedido (todos los observers suscritos):**
+
+```
+Procesando pedido 12345...
+EmailNotifier: Enviando email con el mensaje: 'Pedido 12345 ha sido procesado con éxito.'
+SMSNotifier: Enviando SMS con el mensaje: 'Pedido 12345 ha sido procesado con éxito.'
+LogNotifier: Registrando en el log: 'Pedido 12345 ha sido procesado con éxito.'
+```
+
+**Segundo pedido (SMSNotifier eliminado):**
+
+```
+Procesando pedido 67890...
+EmailNotifier: Enviando email con el mensaje: 'Pedido 67890 ha sido procesado con éxito.'
+LogNotifier: Registrando en el log: 'Pedido 67890 ha sido procesado con éxito.'
+```
+
+### Ventajas del Patrón Observer
+
+1. **Desacoplamiento**: Los *subjects* no necesitan saber cómo funcionan los *observers*.
+2. **Flexibilidad**: Puedes añadir o eliminar *observers* dinámicamente.
+3. **Reutilización**: Los *observers* son reutilizables en diferentes sistemas.
+
+### Casos de Uso Reales
+
+- **Interfaces gráficas de usuario**: Actualización de vistas cuando el modelo cambia.
+- **Sistemas de eventos**: Publicación/suscripción (*pub-sub*), como en servicios de mensajería.
+- **Notificaciones en tiempo real**: Alertas en aplicaciones.
+
+### Conclusión
+
+El **Patrón Observer** es ideal para sistemas en los que un cambio en un objeto afecta a otros. Su implementación en Python es directa y altamente extensible, lo que lo hace una herramienta poderosa para sistemas desacoplados y dinámicos.
+
+## Patrón Chain of Responsibility en Python
+
+El **Patrón Chain of Responsibility** es un patrón de diseño de comportamiento que permite procesar una solicitud a través de una cadena de objetos (o manejadores), donde cada objeto decide si procesa la solicitud o la pasa al siguiente en la cadena.
+
+### Escenario de Ejemplo
+
+Imaginemos un sistema de soporte técnico donde diferentes niveles de soporte (básico, avanzado, experto) procesan las solicitudes de los clientes según su complejidad.
+
+### Implementación Paso a Paso
+
+#### Paso 1: Crear la Clase Base para los Manejadores
+
+Definimos una interfaz común para todos los manejadores en la cadena.
+
+```python
+from abc import ABC, abstractmethod
+
+class Manejador(ABC):
+    def __init__(self):
+        self.siguiente = None
+
+    def establecer_siguiente(self, manejador):
+        """Establece el siguiente manejador en la cadena."""
+        self.siguiente = manejador
+        return manejador
+
+    @abstractmethod
+    def manejar(self, solicitud):
+        """Intenta procesar la solicitud o pasa al siguiente manejador."""
+        pass
+```
+
+#### Paso 2: Crear los Manejadores Concretos
+
+Cada manejador procesa la solicitud si cumple sus criterios; de lo contrario, la pasa al siguiente.
+
+```python
+class SoporteBasico(Manejador):
+    def manejar(self, solicitud):
+        if solicitud == "problema básico":
+            return "Soporte Básico: Resolviendo el problema básico."
+        elif self.siguiente:
+            return self.siguiente.manejar(solicitud)
+        return "Soporte Básico: No se pudo resolver el problema."
+
+class SoporteAvanzado(Manejador):
+    def manejar(self, solicitud):
+        if solicitud == "problema avanzado":
+            return "Soporte Avanzado: Resolviendo el problema avanzado."
+        elif self.siguiente:
+            return self.siguiente.manejar(solicitud)
+        return "Soporte Avanzado: No se pudo resolver el problema."
+
+class SoporteExperto(Manejador):
+    def manejar(self, solicitud):
+        if solicitud == "problema crítico":
+            return "Soporte Experto: Resolviendo el problema crítico."
+        elif self.siguiente:
+            return self.siguiente.manejar(solicitud)
+        return "Soporte Experto: No se pudo resolver el problema."
+```
+
+#### Paso 3: Configurar la Cadena de Responsabilidad
+
+Conectamos los manejadores en el orden deseado.
+
+```python
+# Crear los manejadores
+soporte_basico = SoporteBasico()
+soporte_avanzado = SoporteAvanzado()
+soporte_experto = SoporteExperto()
+
+# Configurar la cadena
+soporte_basico.establecer_siguiente(soporte_avanzado).establecer_siguiente(soporte_experto)
+```
+
+#### Paso 4: Probar la Cadena
+
+Creamos solicitudes y las pasamos al primer manejador de la cadena.
+
+```python
+# Probar la cadena con diferentes solicitudes
+solicitudes = ["problema básico", "problema avanzado", "problema crítico", "problema desconocido"]
+
+for solicitud in solicitudes:
+    print(f"Solicitud: {solicitud}")
+    respuesta = soporte_basico.manejar(solicitud)
+    print(f"Respuesta: {respuesta}\n")
+```
+
+### Salida Esperada
+
+```
+Solicitud: problema básico
+Respuesta: Soporte Básico: Resolviendo el problema básico.
+
+Solicitud: problema avanzado
+Respuesta: Soporte Avanzado: Resolviendo el problema avanzado.
+
+Solicitud: problema crítico
+Respuesta: Soporte Experto: Resolviendo el problema crítico.
+
+Solicitud: problema desconocido
+Respuesta: Soporte Experto: No se pudo resolver el problema.
+```
+
+### Ventajas del Patrón Chain of Responsibility
+
+1. **Desacoplamiento**: Cada manejador es independiente y no necesita conocer la implementación de otros manejadores.
+2. **Flexibilidad**: Puedes reorganizar o extender la cadena sin modificar los manejadores existentes.
+3. **Reutilización**: Los manejadores son reutilizables en diferentes cadenas o sistemas.
+
+### Aplicaciones Reales
+
+1. **Sistemas de soporte técnico**: Escalar problemas a niveles superiores.
+2. **Validación de datos**: Verificar diferentes aspectos de una solicitud de manera secuencial.
+3. **Procesamiento de eventos**: Manejar eventos en sistemas complejos donde cada paso puede delegar al siguiente.
+
+### Conclusión
+
+El **Patrón Chain of Responsibility** es una solución elegante para manejar solicitudes dinámicas que pueden requerir diferentes niveles de procesamiento. Su implementación en Python es sencilla y proporciona un sistema flexible, modular y fácil de mantener.
+
+## Implementando el Patrón Chain of Responsibility: Flujo Eficiente de Validaciones
+
+El **Patrón Chain of Responsibility** es ideal para implementar un flujo flexible de validaciones donde cada paso puede aceptar, rechazar o delegar una solicitud al siguiente manejador en la cadena.
+
+Supongamos que estamos construyendo un sistema para validar formularios de usuario con múltiples pasos de validación, como comprobar si los datos están completos, si el email tiene un formato válido y si la contraseña cumple los criterios de seguridad.
+
+### Paso 1: Clase Base para los Manejadores
+
+La clase base define una estructura común para todos los pasos de validación.
+
+```python
+from abc import ABC, abstractmethod
+
+class Validador(ABC):
+    def __init__(self):
+        self.siguiente = None
+
+    def establecer_siguiente(self, validador):
+        """Establece el siguiente validador en la cadena."""
+        self.siguiente = validador
+        return validador
+
+    @abstractmethod
+    def manejar(self, datos):
+        """Intenta validar los datos o pasa al siguiente validador."""
+        pass
+```
+
+### Paso 2: Validadores Concretos
+
+Cada validador implementa su propia lógica de validación.
+
+```python
+class ValidadorDatosCompletos(Validador):
+    def manejar(self, datos):
+        if not datos.get("email") or not datos.get("password"):
+            return "Error: Datos incompletos."
+        elif self.siguiente:
+            return self.siguiente.manejar(datos)
+        return "Validación completada."
+
+class ValidadorFormatoEmail(Validador):
+    def manejar(self, datos):
+        if "@" not in datos.get("email", ""):
+            return "Error: Formato de email inválido."
+        elif self.siguiente:
+            return self.siguiente.manejar(datos)
+        return "Validación completada."
+
+class ValidadorSeguridadPassword(Validador):
+    def manejar(self, datos):
+        password = datos.get("password", "")
+        if len(password) < 8 or not any(char.isdigit() for char in password):
+            return "Error: Contraseña no cumple los criterios de seguridad."
+        elif self.siguiente:
+            return self.siguiente.manejar(datos)
+        return "Validación completada."
+```
+
+### Paso 3: Configuración de la Cadena de Validación
+
+Conectamos los validadores en un flujo secuencial.
+
+```python
+# Crear los validadores
+validador_datos_completos = ValidadorDatosCompletos()
+validador_formato_email = ValidadorFormatoEmail()
+validador_seguridad_password = ValidadorSeguridadPassword()
+
+# Configurar la cadena
+validador_datos_completos.establecer_siguiente(validador_formato_email).establecer_siguiente(validador_seguridad_password)
+```
+
+### Paso 4: Probar el Sistema de Validación
+
+Validamos diferentes conjuntos de datos usando la cadena configurada.
+
+```python
+# Datos de prueba
+casos = [
+    {"email": "", "password": ""},  # Datos incompletos
+    {"email": "usuario", "password": "12345678"},  # Formato de email inválido
+    {"email": "usuario@example.com", "password": "short"},  # Contraseña insegura
+    {"email": "usuario@example.com", "password": "secure123"}  # Datos válidos
+]
+
+# Probar cada caso
+for i, caso in enumerate(casos, start=1):
+    print(f"Caso {i}: {caso}")
+    resultado = validador_datos_completos.manejar(caso)
+    print(f"Resultado: {resultado}\n")
+```
+
+### Salida Esperada
+
+```
+Caso 1: {'email': '', 'password': ''}
+Resultado: Error: Datos incompletos.
+
+Caso 2: {'email': 'usuario', 'password': '12345678'}
+Resultado: Error: Formato de email inválido.
+
+Caso 3: {'email': 'usuario@example.com', 'password': 'short'}
+Resultado: Error: Contraseña no cumple los criterios de seguridad.
+
+Caso 4: {'email': 'usuario@example.com', 'password': 'secure123'}
+Resultado: Validación completada.
+```
+
+### Ventajas del Patrón Chain of Responsibility para Validaciones
+
+1. **Modularidad**: Cada validador tiene una única responsabilidad, facilitando la lectura y el mantenimiento.
+2. **Flexibilidad**: Es fácil agregar o quitar validadores sin afectar el sistema general.
+3. **Reutilización**: Los validadores pueden ser usados en otras cadenas de validación.
+
+### Casos de Uso Reales
+
+- Validación de formularios de usuario.
+- Procesamiento de reglas de negocio en sistemas complejos.
+- Flujos de autorización en aplicaciones.
+
+### Conclusión
+
+El **Patrón Chain of Responsibility** es una solución elegante para implementar flujos de validación escalables y flexibles. En este ejemplo, los datos pasan por una serie de validadores, cada uno con la posibilidad de manejar la solicitud o delegarla al siguiente en la cadena. Este enfoque mejora la modularidad y el mantenimiento del código.
+
+## Patrones de Diseño y Principios SOLID en un Procesador de Pagos
+
+Diseñar un **Procesador de Pagos** utilizando **Patrones de Diseño** y aplicando los **Principios SOLID** permite crear un sistema flexible, extensible y fácil de mantener. Este ejemplo integrará los principios SOLID y varios patrones de diseño.
+
+### Escenario
+
+Un sistema de procesador de pagos que soporta múltiples métodos de pago (tarjeta de crédito, PayPal, transferencia bancaria) y permite extensiones futuras para agregar nuevos métodos sin modificar el código existente.
+
+## Principios SOLID Aplicados
+
+1. **Principio de Responsabilidad Única (SRP)**:  
+   Cada clase tendrá una única responsabilidad, como manejar un método de pago específico.
+2. **Principio Abierto/Cerrado (OCP)**:  
+   Permitimos agregar nuevos métodos de pago sin modificar las clases existentes, gracias al uso de interfaces y el patrón *Factory*.
+3. **Principio de Sustitución de Liskov (LSP)**:  
+   Las clases derivadas de una interfaz o clase base pueden ser utilizadas indistintamente.
+4. **Principio de Segregación de Interfaces (ISP)**:  
+   Las interfaces estarán bien segmentadas, asegurando que cada clase implemente solo lo que necesita.
+5. **Principio de Inversión de Dependencias (DIP)**:  
+   El sistema dependerá de abstracciones y no de implementaciones concretas.
+
+## Arquitectura y Patrones Usados
+
+1. **Patrón Strategy**:  
+   Se utilizará para definir los métodos de pago como estrategias intercambiables.
+2. **Patrón Factory**:  
+   Ayuda a crear instancias de métodos de pago según sea necesario.
+3. **Patrón Decorator**:  
+   Para agregar funcionalidad adicional, como registro o validación.
+4. **Patrón Chain of Responsibility**:  
+   Para validar las solicitudes de pago en pasos secuenciales.
+
+
+## Implementación en Python
+
+### 1. Definición de Interfaces y Clases Base
+
+Definimos una interfaz para los métodos de pago.
+
+```python
+from abc import ABC, abstractmethod
+
+class MetodoPago(ABC):
+    @abstractmethod
+    def procesar_pago(self, monto):
+        """Procesa el pago."""
+        pass
+```
+
+### 2. Métodos de Pago Concretos
+
+Creamos implementaciones específicas para cada método de pago.
+
+```python
+class TarjetaCredito(MetodoPago):
+    def procesar_pago(self, monto):
+        print(f"Procesando pago de ${monto} con tarjeta de crédito.")
+
+class PayPal(MetodoPago):
+    def procesar_pago(self, monto):
+        print(f"Procesando pago de ${monto} con PayPal.")
+
+class TransferenciaBancaria(MetodoPago):
+    def procesar_pago(self, monto):
+        print(f"Procesando pago de ${monto} mediante transferencia bancaria.")
+```
+
+### 3. Patrón Factory
+
+Creamos un *factory* para generar instancias de métodos de pago.
+
+```python
+class MetodoPagoFactory:
+    @staticmethod
+    def crear_metodo_pago(tipo):
+        if tipo == "tarjeta":
+            return TarjetaCredito()
+        elif tipo == "paypal":
+            return PayPal()
+        elif tipo == "transferencia":
+            return TransferenciaBancaria()
+        else:
+            raise ValueError(f"Método de pago no soportado: {tipo}")
+```
+
+### 4. Validación con Chain of Responsibility
+
+Definimos una cadena para validar las solicitudes de pago.
+
+```python
+class Validador(ABC):
+    def __init__(self):
+        self.siguiente = None
+
+    def establecer_siguiente(self, validador):
+        self.siguiente = validador
+        return validador
+
+    @abstractmethod
+    def validar(self, datos):
+        pass
+
+class ValidadorMonto(Validador):
+    def validar(self, datos):
+        if datos.get("monto", 0) <= 0:
+            return "Error: Monto inválido."
+        elif self.siguiente:
+            return self.siguiente.validar(datos)
+        return "Validación completada."
+
+class ValidadorMetodoPago(Validador):
+    def validar(self, datos):
+        if not datos.get("metodo_pago"):
+            return "Error: Método de pago no especificado."
+        elif self.siguiente:
+            return self.siguiente.validar(datos)
+        return "Validación completada."
+```
+
+### 5. Decorador para Funcionalidades Adicionales
+
+Usamos el patrón *Decorator* para agregar funcionalidades como registro.
+
+```python
+class LoggerDecorator(MetodoPago):
+    def __init__(self, metodo_pago):
+        self._metodo_pago = metodo_pago
+
+    def procesar_pago(self, monto):
+        print(f"Registrando el pago de ${monto}.")
+        self._metodo_pago.procesar_pago(monto)
+```
+
+### 6. Flujo Principal
+
+Integramos todo en un flujo de procesamiento.
+
+```python
+# Configurar validaciones
+validador_monto = ValidadorMonto()
+validador_metodo_pago = ValidadorMetodoPago()
+validador_monto.establecer_siguiente(validador_metodo_pago)
+
+# Datos de pago
+datos_pago = {"monto": 150, "metodo_pago": "paypal"}
+
+# Validar datos
+resultado_validacion = validador_monto.validar(datos_pago)
+if resultado_validacion != "Validación completada.":
+    print(resultado_validacion)
+else:
+    # Crear el método de pago
+    metodo_pago = MetodoPagoFactory.crear_metodo_pago(datos_pago["metodo_pago"])
+
+    # Decorar con registro
+    metodo_pago = LoggerDecorator(metodo_pago)
+
+    # Procesar el pago
+    metodo_pago.procesar_pago(datos_pago["monto"])
+```
+
+### Salida Esperada
+
+```
+Validación completada.
+Registrando el pago de $150.
+Procesando pago de $150 con PayPal.
+```
+
+## Beneficios del Diseño
+
+1. **Extensibilidad**: Se pueden agregar nuevos métodos de pago sin modificar el código existente.
+2. **Modularidad**: Cada componente tiene una responsabilidad única y bien definida.
+3. **Flexibilidad**: Los validadores y decoradores se pueden reorganizar o ampliar fácilmente.
+4. **Mantenibilidad**: El código está organizado de forma lógica, facilitando los cambios futuros.
+
+Este diseño combina lo mejor de los principios SOLID y patrones de diseño para crear un procesador de pagos robusto, escalable y fácil de mantener.
+
+[GitHub del Profesor](https://github.com/platzi/solid-principles-python/tree/main)

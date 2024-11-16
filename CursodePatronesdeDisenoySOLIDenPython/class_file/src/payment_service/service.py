@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from typing import Optional, Self
 
-from .commons import CustomerData, PaymentData, PaymentResponse
+from .commons import CustomerData, PaymentData, PaymentResponse, Request
 from .loggers import TransactionLogger
 from .notifiers import NotifierProtocol
 from .processors import (
@@ -11,15 +11,17 @@ from .processors import (
 )
 from .validators import CustomerValidator, PaymentDataValidator
 from factory import PaymentProcessorFactory
+from listeners import ListenerManager
+from validators import ChainHandler
 
 
 @dataclass
 class PaymentService:
     payment_processor: PaymentProcessorProtocol
     notifier: NotifierProtocol
-    customer_validator: CustomerValidator
-    payment_validator: PaymentDataValidator
+    validators: ChainHandler
     logger: TransactionLogger
+    listeners: ListenerManager
     refund_processor: Optional[RefundProcessorProtocol] = None
     recurring_processor: Optional[RecurringPaymentProcessorProtocol] = None
 
@@ -40,11 +42,19 @@ class PaymentService:
     def process_transaction(
         self, customer_data: CustomerData, payment_data: PaymentData
     ) -> PaymentResponse:
-        self.customer_validator.validate(customer_data)
-        self.payment_validator.validate(payment_data)
+
+        try:
+            request = Request(customer_data=customer_data, payment_data=payment_data)
+            self.validators.handle(request= request)
+        except Exception as e:
+            print(f"fallo en las validaciones: {e}")
+            raise e
         payment_response = self.payment_processor.process_transaction(
             customer_data, payment_data
         )
+        self.listeners.notifyAll(
+            f"Pago exitoso al evento: {payment_response.transaction_id}"
+            )
         self.notifier.send_confirmation(customer_data)
         self.logger.log_transaction(
             customer_data, payment_data, payment_response
