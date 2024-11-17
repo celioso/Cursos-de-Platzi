@@ -1,4 +1,4 @@
-### Curso Profesional de Redes Neuronales con TensorFlow
+# Curso Profesional de Redes Neuronales con TensorFlow
 
 1. **¿Qué debe componer una base de datos como mínimo para crear algoritmos supervisados de clasificación de imágenes?**
 
