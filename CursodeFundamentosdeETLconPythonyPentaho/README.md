@@ -824,3 +824,19 @@ Pandas no está diseñado para datos en tiempo real, pero puede integrarse con h
    ```
 
 Con estas técnicas, puedes extraer datos desde diversas fuentes y trabajar con ellos eficientemente en tus proyectos de ingeniería de datos. 😊
+
+**Lecturas recomendadas**
+
+[template_ETL_OEC.ipynb - Google Drive](https://drive.google.com/file/d/1P5kQo5_0bkzLNakbBwlf-9evT9PYtae_/view?usp=share_link)
+
+Curso de Python: PIP y Entornos Virtuales - Platzi
+
+[JetBrains DataSpell: The IDE for Data Scientists](https://www.jetbrains.com/dataspell/)
+
+[country_data.json - Google Drive](https://drive.google.com/file/d/19QM_nHhUZ4s3yZcV7ePis5mD1dTtCl9Z/view?usp=share_link)
+
+[hs_codes.csv - Google Drive](https://drive.google.com/file/d/1C6EwxoQmROiC27gvTsUNBVPhrtfH8mDI/view?usp=share_link)
+
+[postgres_public_trades.sql - Google Drive](https://drive.google.com/file/d/19U7l0kp3mEh8SYYG6BjoDp0kVPYWDsqI/view?usp=share_link)
+
+[guia_ETL_OEC.ipynb - Google Drive](https://drive.google.com/file/d/1LjmlMnpajBsNnTqWozh8T-5NpbetIzO_/view?usp=share_link)
