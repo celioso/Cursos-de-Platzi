@@ -840,3 +840,190 @@ Curso de Python: PIP y Entornos Virtuales - Platzi
 [postgres_public_trades.sql - Google Drive](https://drive.google.com/file/d/19U7l0kp3mEh8SYYG6BjoDp0kVPYWDsqI/view?usp=share_link)
 
 [guia_ETL_OEC.ipynb - Google Drive](https://drive.google.com/file/d/1LjmlMnpajBsNnTqWozh8T-5NpbetIzO_/view?usp=share_link)
+
+## Transformación
+
+En el contexto de **ETL (Extract, Transform, Load)**, la **Transformación** es la etapa intermedia del proceso. Su propósito principal es convertir los datos extraídos desde las fuentes en un formato adecuado para ser almacenados y utilizados en el sistema de destino, como un Data Warehouse.  
+
+### Principales tareas en la Transformación:
+1. **Limpieza de datos**:  
+   - Eliminar duplicados.
+   - Gestionar valores faltantes.
+   - Corregir errores en los datos.
+
+2. **Estandarización**:  
+   - Asegurar que los datos tienen el mismo formato y estructura.
+   - Por ejemplo, unificar formatos de fechas o convertir unidades.
+
+3. **Enriquecimiento de datos**:  
+   - Combinar datos de múltiples fuentes para agregar más contexto o información útil.
+
+4. **Cálculos y derivaciones**:  
+   - Crear nuevas columnas o métricas a partir de los datos existentes, como calcular ingresos netos o márgenes de ganancia.
+
+5. **Filtrado**:  
+   - Seleccionar solo los datos relevantes o necesarios para la aplicación objetivo.
+
+6. **Validación**:  
+   - Verificar que los datos transformados cumplen con las reglas de negocio y estándares requeridos.
+
+7. **Agrupación y agregación**:  
+   - Resumir datos, como calcular promedios, totales, o conteos por categorías.
+
+### Ejemplo en Python con Pandas:
+Supongamos que extraemos datos de ventas de un archivo CSV y necesitamos realizar transformaciones básicas.
+
+```python
+import pandas as pd
+
+# Cargar datos
+data = pd.read_csv("ventas.csv")
+
+# Limpieza: Eliminar duplicados
+data = data.drop_duplicates()
+
+# Estandarización: Convertir fechas al mismo formato
+data['fecha'] = pd.to_datetime(data['fecha'], format='%Y-%m-%d')
+
+# Enriquecimiento: Calcular total de ventas
+data['total_ventas'] = data['precio_unitario'] * data['cantidad']
+
+# Filtrar: Seleccionar datos relevantes
+data = data[data['total_ventas'] > 1000]
+
+print(data.head())
+```
+
+En este ejemplo, se realizan tareas comunes de transformación antes de cargar los datos transformados en un destino.  
+
+La transformación es crucial porque asegura que los datos sean consistentes, precisos y útiles para el análisis.
+
+## Transformación de datos de transacciones
+
+La **transformación de datos de transacciones** es un paso clave dentro de un proceso de **ETL** (Extracción, Transformación y Carga) en el que los datos se procesan para que sean más útiles y adecuados para su análisis posterior. En el contexto de las transacciones financieras o de ventas, este paso implica la conversión de datos crudos provenientes de diferentes fuentes en un formato más estandarizado, limpio y estructurado. Aquí te dejo algunos aspectos clave y ejemplos de cómo se realiza la transformación de datos de transacciones:
+
+### 1. **Limpieza de Datos**
+   La limpieza es fundamental para asegurar que no haya errores en los datos antes de cargarlos a la base de datos o al sistema de análisis.
+
+   - **Eliminar registros duplicados**: Si tienes registros de transacciones duplicados, necesitarás eliminarlos.
+   - **Rellenar valores nulos**: Algunas transacciones pueden tener valores faltantes, como un monto o una fecha. Dependiendo de las reglas del negocio, podrías decidir rellenar estos valores con un valor predeterminado o eliminarlos.
+   - **Formato de fechas**: Es posible que las fechas de las transacciones vengan en diferentes formatos (por ejemplo, `DD/MM/YYYY` o `MM-DD-YYYY`). Se deben estandarizar en un formato único.
+
+   **Ejemplo en Python (Pandas)**:
+   ```python
+   import pandas as pd
+
+   # Eliminar duplicados
+   df = df.drop_duplicates(subset=["transaction_id"])
+
+   # Rellenar valores nulos
+   df["transaction_amount"].fillna(0, inplace=True)
+
+   # Convertir fechas
+   df["transaction_date"] = pd.to_datetime(df["transaction_date"], format="%Y-%m-%d")
+   ```
+
+### 2. **Agregación de Datos**
+   Las transacciones a menudo deben agregarse para obtener métricas clave como el total de ventas por día, el total de transacciones por usuario, etc. Esto se hace mediante operaciones como la suma, el promedio, el conteo, etc.
+
+   - **Total de ventas diarias**: Si cada transacción tiene un monto asociado, puedes agregar las ventas por día.
+   - **Transacciones por usuario**: Puedes contar el número de transacciones realizadas por cada cliente o usuario.
+
+   **Ejemplo en Python (Pandas)**:
+   ```python
+   # Total de ventas por día
+   df_daily_sales = df.groupby("transaction_date")["transaction_amount"].sum().reset_index()
+
+   # Número de transacciones por cliente
+   df_transactions_per_user = df.groupby("user_id")["transaction_id"].count().reset_index()
+   ```
+
+### 3. **Normalización y Estandarización**
+   Los datos de transacciones pueden tener diferentes unidades o escalas. Es importante estandarizar estos valores para que sean consistentes.
+
+   - **Normalización de montos**: Si tienes transacciones en diferentes monedas, deberías convertirlas a una moneda común.
+   - **Transformar categorías**: Las categorías de productos o servicios pueden tener diferentes etiquetas (por ejemplo, "Electrónica", "Electrodomésticos", "Tech"). Puedes agruparlos bajo categorías estandarizadas.
+
+   **Ejemplo en Python (Pandas)**:
+   ```python
+   # Convertir montos a una moneda común (suponiendo una tasa de cambio de 1 USD = 0.85 EUR)
+   df["transaction_amount_usd"] = df["transaction_amount"] * 0.85
+
+   # Estandarizar categorías de productos
+   category_map = {"Electrodomésticos": "Electronics", "Tech": "Electronics"}
+   df["product_category"] = df["product_category"].replace(category_map)
+   ```
+
+### 4. **Cálculo de Métricas Derivadas**
+   Las métricas derivadas son cálculos adicionales basados en los datos de transacciones que pueden ayudar a tomar decisiones o hacer análisis.
+
+   - **Monto de transacciones por usuario**: Calcular cuánto ha gastado cada usuario.
+   - **Margen de beneficio**: Si tienes datos sobre el costo y el precio de los productos, puedes calcular el margen de beneficio.
+
+   **Ejemplo en Python (Pandas)**:
+   ```python
+   # Calcular el monto total por usuario
+   df_user_spending = df.groupby("user_id")["transaction_amount"].sum().reset_index()
+
+   # Calcular margen de beneficio
+   df["profit_margin"] = (df["transaction_amount"] - df["cost_amount"]) / df["transaction_amount"]
+   ```
+
+### 5. **Enriquecimiento de Datos**
+   A veces es necesario enriquecer los datos de transacciones con información adicional que provenga de otras fuentes. Esto podría incluir detalles sobre el usuario, ubicación, productos o promociones.
+
+   - **Datos de cliente**: Puedes agregar información sobre los clientes, como el nombre, la ubicación o su nivel de fidelidad.
+   - **Categorías de productos**: Si tienes una lista de productos con su categoría, puedes añadirla a cada transacción.
+
+   **Ejemplo en Python (Pandas)**:
+   ```python
+   # Suponiendo que tienes un DataFrame con información de clientes
+   df_customers = pd.DataFrame({"user_id": [1, 2], "customer_name": ["Alice", "Bob"]})
+
+   # Unir la información de los clientes con las transacciones
+   df = pd.merge(df, df_customers, on="user_id", how="left")
+   ```
+
+### 6. **Formato de Salida**
+   Finalmente, los datos de transacciones transformados deben estar en el formato adecuado para su almacenamiento o análisis posterior. Pueden almacenarse en bases de datos, archivos CSV, formatos como JSON o Parquet, entre otros.
+
+   **Ejemplo en Python (Pandas)**:
+   ```python
+   # Guardar los datos transformados en un archivo CSV
+   df.to_csv("transacciones_transformadas.csv", index=False)
+   ```
+
+### Resumen del Proceso de Transformación de Datos de Transacciones:
+1. **Limpieza de datos**: Eliminar duplicados, rellenar valores nulos, convertir fechas.
+2. **Agregación de datos**: Sumar transacciones por fecha, contar transacciones por usuario.
+3. **Normalización**: Convertir unidades (como moneda) y estandarizar categorías.
+4. **Cálculo de métricas derivadas**: Calcular métricas adicionales como el gasto total por cliente o el margen de beneficio.
+5. **Enriquecimiento de datos**: Agregar datos adicionales como la información del cliente.
+6. **Exportación y almacenamiento**: Guardar los datos en el formato deseado (CSV, base de datos, etc.).
+
+Este proceso de transformación es clave para preparar los datos para su análisis o para generar informes de negocio confiables.
+
+**Lecturas recomendadas**
+
+[country_data.json - Google Drive](https://drive.google.com/file/d/19QM_nHhUZ4s3yZcV7ePis5mD1dTtCl9Z/view?usp=share_link)
+
+[template_ETL_OEC.ipynb - Google Drive](https://drive.google.com/file/d/1P5kQo5_0bkzLNakbBwlf-9evT9PYtae_/view?usp=share_link)
+
+## Carga
+
+En el contexto de un proceso ETL (Extract, Transform, Load), la **carga (Load)** se refiere al paso final en el que los datos transformados se cargan en el sistema de destino o en el almacén de datos (Data Warehouse). Este paso es crucial porque los datos deben estar disponibles para su análisis o uso en el sistema al que se dirigen.
+
+### Tipos de carga de datos:
+1. **Carga completa (Full Load)**:
+   - Se cargan todos los datos desde cero. Es útil cuando el dataset es pequeño o cuando se necesita reemplazar completamente los datos existentes en el sistema de destino.
+   
+2. **Carga incremental (Incremental Load)**:
+   - Solo se cargan los datos nuevos o modificados desde la última carga. Esto es eficiente para datasets grandes, ya que solo se agregan cambios, no todo el conjunto de datos.
+
+3. **Carga en tiempo real (Real-Time Load)**:
+   - Los datos se cargan en tiempo real, lo que significa que se actualizan casi inmediatamente después de que los datos son transformados. Es útil en aplicaciones que requieren datos actualizados constantemente.
+
+### Consideraciones en la carga de datos:
+- **Consistencia**: Asegurarse de que los datos en el sistema de destino estén completos y sin errores.
+- **Performance**: La carga de grandes volúmenes de datos debe realizarse de manera eficiente para evitar bloqueos o cuellos de botella en el sistema de destino.
+- **Automatización**: La carga debe ser un proceso automatizado, ejecutado a intervalos regulares o en función de cambios en los datos.
