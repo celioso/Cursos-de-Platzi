@@ -8,12 +8,5 @@
       <jdbc-url>jdbc:postgresql://localhost:5432/postgres</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
-    <data-source source="LOCAL" name="dev@demo-platzi-curso-etl.cfchlxbs3ith.us-west-2.redshift.amazonaws.com" uuid="cf211383-fe8b-409e-ae72-1e3da4a4b11f">
-      <driver-ref>redshift</driver-ref>
-      <synchronize>true</synchronize>
-      <jdbc-driver>com.amazon.redshift.jdbc.Driver</jdbc-driver>
-      <jdbc-url>jdbc:redshift://demo-platzi-curso-etl.cfchlxbs3ith.us-west-2.redshift.amazonaws.com:5439/dev</jdbc-url>
-      <working-dir>$ProjectFileDir$</working-dir>
-    </data-source>
   </component>
 </project>

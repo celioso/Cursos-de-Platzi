@@ -1637,3 +1637,636 @@ Con este enfoque, puedes integrar Redshift con tus flujos de datos en Python de 
 [Curso de AWS Redshift para Manejo de Big Data - Platzi](https://platzi.com/cursos/redshift-big-data/)
 
 [template_ETL_OEC.ipynb - Google Drive](https://drive.google.com/file/d/1P5kQo5_0bkzLNakbBwlf-9evT9PYtae_/view?usp=share_link)
+
+## Instalación de Pentaho
+
+### Instalación en Windows
+
+**1. Descarga de Pentaho**
+
+Primero descarga la última versión de Pentaho Community Edition desde el [sitio web oficial](https://pentaho.com/pentaho-developer-edition/ "sitio web oficial") de Pentaho.
+buscar el 'prd-ce-10.2.0.0-222.zip'
+Pentaho Report Designer  (Base Install)
+
+![dowload Pentaho](images/dowloadPentaho.png)
+
+**2. Descomprime el archivo**
+
+Descomprime el archivo que acabas de descargar. Puedes hacerlo haciendo clic derecho en el archivo y seleccionando “Extraer aquí”.
+
+![Pentaho Zip](images/Pentahozip.png)
+
+**3. Instalar Java**
+
+Pentaho requiere Java para ejecutarse. Si aún no tienes Java instalado en tu sistema, puedes instalarlo desde el sitio web oficial.
+
+![download java](images/downloadjava.png)
+
+**4. Ejecuta Spoon**
+
+Para acceder al programa solo hace falta abrir el archivo “Spoon” del tipo Batch file (con la extensión .bat).
+
+![Ejecuta Spoon](images/ejecutaspoon.png)
+
+### Instalación en Linux
+
+**1. Descarga de Pentaho**
+
+Primero descarga la última versión de Pentaho Community Edition desde el [sitio web oficial](https://pentaho.com/pentaho-developer-edition/#communityProducts "sitio web oficial") de Pentaho.
+
+![dowload Pentaho](images/dowloadPentaho.png)
+
+2. Descomprime el archivo
+Descomprime el archivo que acabas de descargar. Puedes hacerlo haciendo clic derecho en el archivo y seleccionando “Extraer aquí”.
+
+![Pentaho Zip](images/Pentahozip.png)
+
+**3. Instalar Java**
+
+Pentaho requiere Java para ejecutarse. Si aún no tienes Java instalado en tu sistema, puedes instalarlo desde la terminal de tu Linux con los siguientes comandos:
+
+```bash
+sudo apt-get update
+sudo apt-get install default-jdk
+```
+
+**4. Configura Java**
+
+Es necesario que configuremos las variables de entorno de Java para que Pentaho pueda encontrar la instalación de Java. Para ello, abre el archivo de configuración de Java en la terminal:
+
+```bash
+sudo nano /etc/environment
+```
+
+Agrega la siguiente línea al final del archivo:
+
+```bash
+JAVA_HOME="/usr/lib/jvm/default-java"
+```
+
+Guarda y cierra el archivo. Puedes hacerlo con ctrl + o (guardar), seguido de “enter” (aceptar los cambios) y finalmente ctrl + x (salir).
+
+**5. Ejecutar Spoon**
+
+Ahora podemos ejecutar Pentaho. Desde tu terminal dirígete a la carpeta donde descomprimiste el archivo de Pentaho y ejecuta el siguiente comando:
+
+```bash
+./spoon.sh
+```
+
+**Posibles errores:**
+
+a) **Missing libwebktgtk package.**
+
+![libwebktgtk package](images/libwebktgtkpackage.png)
+
+Para solucionar esto solamente hay que instalar la librería faltante. Para ellos sigue los siguientes pasos:
+
+1. Abre la terminal y copia el siguiente código:
+
+`sudo nano /etc/apt/sources.list`
+
+2. Ve hasta el final del archivo y copia la siguiente línea:
+
+`deb http://cz.archive.ubuntu.com/ubuntu bionic main universe`
+
+3. Guarda y cierra el archivo. Puedes hacerlo con ctrl + o (guardar), seguido de “enter” (aceptar los cambios) y finalmente ctrl + x (salir).
+
+4. Luego instala la librería con estos comandos:
+
+```bash
+sudo apt-get update
+
+sudo apt-get install libwebkitgtk-1.0-0
+```
+
+5. Ahora podemos ejecutar Pentaho. Dirígete a la carpeta donde descomprimiste el archivo de Pentaho y ejecuta el siguiente comando en la terminal:
+
+`./spoon.sh`
+
+b) “**failed to load module “canberra-gtk-module**”
+
+Este error ocurre cuando el sistema intenta acceder al módulo GTK y este no está instalado en el sistema. La solución es bastante simple y hasta intuitiva: instalar el módulo. Para ello solo hace falta ir a la terminal y copiar el siguiente comando:
+
+`sudo apt install libcanberra-gtk-module libcanberra-gtk3-module`
+
+### Instalación en macOS
+
+1. Descarga de Pentaho
+
+Primero descarga la última versión de Pentaho Community Edition desde el sitio web oficial de Pentaho.
+
+![dowload Pentaho](images/dowloadPentaho.png)
+
+2. Descomprime el archivo
+Descomprime el archivo que acabas de descargar. Puedes hacerlo haciendo clic derecho en el archivo y seleccionando “Extraer aquí” o como te resulte más conveniente la extracción de archivos ZIP.
+
+![Pentaho Zip](images/Pentahozip.png)
+
+3. Instalar Java
+
+Descarga e instala Java Development Kit (JDK) en tu sistema si no lo tienes instalado. Puedes descargarlo desde el [sitio web oficial](https://www.java.com/es/download/help/mac_install.html "sitio web oficial").
+
+![java mac](images/javamac.png)
+
+4. Ejecutar Spoon
+
+Ahora podemos ejecutar Pentaho. Desde tu terminal de macOS dirígete a la carpeta donde descomprimiste el archivo de Pentaho y ejecuta el siguiente comando:
+
+`./spoon.sh`
+
+- Si aparece un mensaje de advertencia indicando que el archivo no se puede abrir, es posible que debas cambiar los permisos del archivo. Para hacerlo, ejecuta el siguiente comando en la terminal:
+
+`chmod +x spoon.sh`
+
+¡Listo! Con esto podrás ejecutar Pentaho a través de Spoon en las próximas clases. Cualquier duda o problema que hayas tenido no dudes en comentarlo en esta clase para que puedan apoyarte, y si lograste instalarlo y resolver algún error durante la instalación ayuda a alguna persona con alguna complicación. ¡Así crecemos en comunidad! 💚
+
+## Extracción de datos con Pentaho
+
+La **extracción de datos con Pentaho** es un proceso esencial en el ciclo ETL (Extracción, Transformación y Carga). Utilizando **Pentaho Data Integration (PDI)**, también conocido como **Kettle**, puedes extraer datos desde diversas fuentes de manera eficiente y visual. 
+
+### Proceso de Extracción de Datos en Pentaho:
+
+1. **Identificar las fuentes de datos**:
+   Pentaho soporta una variedad de fuentes, tales como:
+   - Bases de datos relacionales (MySQL, PostgreSQL, Oracle, etc.).
+   - Archivos planos (CSV, TXT, JSON, XML, etc.).
+   - APIs REST o SOAP.
+   - Almacenes en la nube (Amazon S3, Google Cloud Storage).
+   - Fuentes personalizadas.
+
+2. **Crear una transformación**:
+   - Una **transformación** en PDI es una tarea que describe cómo los datos serán extraídos, transformados y almacenados.
+   - Se configura a través de una interfaz gráfica que permite arrastrar y soltar componentes.
+
+3. **Agregar un paso de entrada**:
+   En la paleta de herramientas de Pentaho, selecciona el paso adecuado para la fuente:
+   - **Table Input**: Extraer datos de una base de datos.
+   - **Text File Input**: Cargar datos desde archivos planos como CSV o TXT.
+   - **Excel Input**: Leer datos desde archivos de Excel.
+   - **REST Client**: Obtener datos desde una API REST.
+   - **MongoDB Input**: Extraer datos de bases de datos NoSQL.
+
+4. **Configurar el paso de entrada**:
+   - Define la conexión (nombre del servidor, usuario, contraseña, etc.).
+   - Especifica detalles específicos de la fuente, como:
+     - Una consulta SQL en el caso de bases de datos.
+     - La ruta del archivo para fuentes como CSV o JSON.
+     - El endpoint y parámetros para APIs.
+
+5. **Conectar con otros pasos (opcional)**:
+   - Puedes añadir pasos adicionales para filtrar, transformar o cargar los datos hacia un destino específico.
+
+6. **Ejecutar y validar la extracción**:
+   - Ejecuta la transformación para verificar que los datos se extraen correctamente.
+   - Utiliza la opción de "vista previa" para inspeccionar los datos obtenidos.
+
+---
+
+### Ejemplo Práctico: Extracción de Datos desde una Base de Datos
+
+1. **Configurar la conexión**:
+   - En la pestaña de conexiones, crea una nueva conexión a la base de datos.
+   - Proporciona los parámetros: tipo de base de datos, host, usuario, contraseña y puerto.
+
+2. **Añadir un paso de entrada**:
+   - Arrastra el paso **Table Input** a la ventana de trabajo.
+   - Conéctalo a la fuente de datos configurada.
+
+3. **Escribir una consulta SQL**:
+   - Por ejemplo:
+     ```sql
+     SELECT * FROM ventas WHERE fecha > '2024-01-01';
+     ```
+
+4. **Ejecutar la transformación**:
+   - Haz clic en "Ejecutar" para iniciar el proceso.
+   - Verifica los resultados en el área de previsualización.
+
+---
+
+### Herramientas y Pasos Comunes para Fuentes de Datos:
+
+- **Archivos CSV/Excel**:
+  - Usa pasos como **Text File Input** o **Excel Input**.
+  - Define delimitadores, codificaciones y nombres de columnas.
+  
+- **APIs REST**:
+  - Configura el paso **REST Client** para conectar con un servicio web.
+  - Establece el método HTTP, headers y parámetros necesarios.
+  
+- **Almacenes en la nube**:
+  - Configura la conexión a servicios como Amazon S3 mediante pasos específicos o mediante scripts personalizados.
+
+---
+
+### Beneficios de Pentaho para la Extracción de Datos:
+
+- **Interfaz gráfica fácil de usar**: Reduce la necesidad de codificación manual.
+- **Compatibilidad con múltiples fuentes**: Integra datos de diversos formatos y sistemas.
+- **Escalabilidad**: Capaz de manejar grandes volúmenes de datos.
+- **Automatización**: Permite programar extracciones periódicas.
+
+## Transformación de datos con Pentaho
+
+La **transformación de datos con Pentaho** se refiere al proceso de modificar, limpiar, enriquecer y estructurar los datos extraídos para prepararlos para su análisis o almacenamiento. En **Pentaho Data Integration (PDI)**, las transformaciones se crean mediante pasos específicos en un entorno visual que facilita la manipulación de datos de manera eficiente.
+
+### Proceso de Transformación de Datos en Pentaho
+
+1. **Crear una transformación**:
+   - En Pentaho Data Integration, una **transformación** es un conjunto de pasos conectados que procesan datos.
+   - Se inicia creando un nuevo archivo de transformación (.ktr).
+
+2. **Agregar pasos para transformar los datos**:
+   - Desde la paleta de herramientas, selecciona los pasos según la necesidad:
+     - **Filter Rows**: Filtrar filas con base en condiciones.
+     - **Replace in String**: Sustituir valores en cadenas de texto.
+     - **Sort Rows**: Ordenar los datos.
+     - **Calculator**: Realizar cálculos matemáticos o lógicos.
+     - **Join Rows**: Combinar datos de múltiples fuentes.
+     - **Row Normalizer**: Convertir columnas en filas.
+     - **Row Denormalizer**: Convertir filas en columnas.
+
+3. **Conectar los pasos**:
+   - Arrastra líneas de conexión entre pasos para definir el flujo de datos.
+   - Asegúrate de que cada paso recibe correctamente la salida del anterior.
+
+4. **Configurar cada paso**:
+   - Define las reglas o configuraciones para cada operación:
+     - En **Filter Rows**, especifica las condiciones para filtrar.
+     - En **Replace in String**, define los valores a buscar y reemplazar.
+     - En **Join Rows**, selecciona las claves para combinar los conjuntos de datos.
+
+5. **Validar la transformación**:
+   - Utiliza la opción de **vista previa** para verificar cómo se procesan los datos después de cada paso.
+
+### Ejemplo Práctico: Transformar un Archivo de Ventas
+
+1. **Escenario**:
+   - Dispones de un archivo CSV con las columnas: `producto, cantidad, precio_unitario, fecha`.
+   - Necesitas:
+     - Calcular el valor total (`cantidad * precio_unitario`).
+     - Filtrar los registros con fecha mayor a `2024-01-01`.
+     - Enriquecer los datos agregando una columna `categoría` basada en el producto.
+
+2. **Pasos en Pentaho**:
+
+   - **Leer el archivo CSV**:
+     1. Agrega un paso **Text File Input** y selecciona el archivo.
+     2. Configura los delimitadores y nombres de columnas.
+
+   - **Calcular el valor total**:
+     1. Agrega el paso **Calculator**.
+     2. Define una nueva columna `valor_total` con la operación `cantidad * precio_unitario`.
+
+   - **Filtrar registros**:
+     1. Usa el paso **Filter Rows**.
+     2. Configura la condición `fecha > '2024-01-01'`.
+
+   - **Agregar la categoría**:
+     1. Usa el paso **Add Constants** o **Mapping (sub-transformación)**.
+     2. Crea una regla condicional que asigne categorías según el producto.
+
+   - **Escribir el resultado**:
+     1. Agrega un paso **Text File Output**.
+     2. Especifica el archivo de salida y las columnas a incluir.
+
+3. **Ejecutar la transformación**:
+   - Haz clic en "Ejecutar" y revisa los resultados.
+
+### Pasos Comunes en Transformaciones
+
+- **Limpieza de datos**:
+  - **Select Values**: Seleccionar o renombrar columnas.
+  - **Data Validator**: Validar datos contra reglas específicas.
+
+- **Combinación de datos**:
+  - **Merge Join**: Combinar tablas mediante una unión (JOIN).
+  - **Append Streams**: Fusionar dos flujos de datos secuencialmente.
+
+- **Conversión de datos**:
+  - **String Operations**: Manipular cadenas de texto.
+  - **Number Range**: Categorizar valores numéricos en rangos.
+
+- **Agregación**:
+  - **Group By**: Calcular sumas, promedios o contar elementos.
+
+### Beneficios de Transformar Datos con Pentaho
+
+- **Automatización**: Configura procesos reutilizables y programables.
+- **Flexibilidad**: Admite múltiples formatos y tipos de datos.
+- **Escalabilidad**: Puede manejar grandes volúmenes de datos.
+- **Simplicidad visual**: Permite diseñar transformaciones complejas sin necesidad de programación.
+
+## Transformación de datos con Pentaho: parte 2
+
+En esta segunda parte sobre **transformación de datos con Pentaho**, vamos a profundizar en otros aspectos importantes que puedes aplicar en tus procesos de ETL (Extracción, Transformación y Carga):
+
+### **1. Enriquecimiento de Datos**
+Pentaho permite enriquecer los datos provenientes de diferentes fuentes, añadiendo información adicional o calculando nuevos campos. Algunas herramientas y pasos útiles:
+
+- **Add Constants**: Agrega columnas con valores constantes a los datos procesados.
+- **Calculator**: Permite realizar operaciones matemáticas sobre los campos existentes.
+- **Lookup Fields**: Busca y agrega valores desde otra tabla o flujo de datos.
+
+#### Ejemplo:
+**Agregar una columna "Región" con valores constantes:**
+```plaintext
+ID   | Nombre     ->    ID   | Nombre    | Región
+-----|-------------    ------|-----------|-------
+001  | Pedro            001  | Pedro     | América
+002  | María            002  | María     | América
+```
+
+### **2. Filtrado y Limpieza de Datos**
+Es importante filtrar los datos irrelevantes o corregir errores en los datos fuente antes de cargarlos.
+
+- **Filter Rows**: Filtra las filas en base a condiciones lógicas.
+- **Data Cleanser**: Corrige errores comunes como capitalización, eliminar espacios en blanco, etc.
+- **Replace Values**: Reemplaza valores específicos en un campo.
+
+#### Ejemplo:
+**Filtrar registros con edad menor a 18 años:**
+```plaintext
+Entrada:
+ID   | Nombre     | Edad
+-----|------------|-----
+001  | Pedro      | 17
+002  | María      | 21
+
+Salida:
+ID   | Nombre     | Edad
+-----|------------|-----
+002  | María      | 21
+```
+
+### **3. Unión y División de Flujos de Datos**
+Cuando trabajas con múltiples fuentes, puedes necesitar unirlas o dividirlas según condiciones específicas.
+
+- **Merge Join**: Une dos flujos de datos según claves comunes.
+- **Switch/Case**: Divide un flujo de datos en varios en función de una condición.
+- **Union Rows**: Combina dos o más flujos de datos.
+
+#### Ejemplo:
+**División por región usando Switch/Case:**
+```plaintext
+Entrada:
+ID   | Nombre    | Región
+-----|-----------|-------
+001  | Pedro     | América
+002  | María     | Europa
+
+Salida:
+Flujo América:
+ID   | Nombre    | Región
+-----|-----------|-------
+001  | Pedro     | América
+
+Flujo Europa:
+ID   | Nombre    | Región
+-----|-----------|-------
+002  | María     | Europa
+```
+
+### **4. Generación de Nuevos Datos**
+Pentaho facilita la generación de nuevos datos, como claves únicas o registros simulados.
+
+- **Generate Row Number**: Genera números consecutivos en los registros.
+- **Row Generator**: Crea datos simulados útiles para pruebas.
+
+#### Ejemplo:
+**Generar números únicos:**
+```plaintext
+Entrada:
+Nombre
+------
+Pedro
+María
+
+Salida:
+ID   | Nombre
+-----|-------
+1    | Pedro
+2    | María
+```
+
+### **5. Carga de Datos Transformados**
+
+Los datos procesados pueden cargarse en diversas plataformas, como bases de datos, archivos planos, o sistemas en la nube.
+
+- **Table Output**: Carga los datos en una base de datos.
+- **Text File Output**: Escribe los datos en un archivo de texto (CSV, JSON, etc.).
+- **S3 File Output**: Guarda los datos transformados directamente en un bucket de Amazon S3.
+
+#### Ejemplo:
+
+**Escribir un archivo CSV:**
+```plaintext
+Entrada:
+ID   | Nombre    | Edad
+-----|-----------|-----
+001  | Pedro     | 21
+002  | María     | 25
+
+Salida (CSV):
+ID,Nombre,Edad
+001,Pedro,21
+002,María,25
+```
+
+### **Mejoras Adicionales en las Transformaciones**
+
+1. **Monitoreo y Logs**:
+   - Usa el paso **Write to log** para registrar información durante el proceso.
+2. **Uso de Variables**:
+   - Las variables pueden hacer que tus transformaciones sean dinámicas, adaptándose a diferentes escenarios.
+3. **Manejo de Errores**:
+   - Configura rutas de manejo de errores para procesar registros problemáticos sin interrumpir el flujo.
+
+## Transformación de datos con Pentaho: parte 3
+
+Ahora que hemos abordado cómo diagnosticar y solucionar errores comunes en las transformaciones de Pentaho, vamos a enfocarnos en cómo realizar una **transformación de datos robusta y eficiente** en un flujo más complejo.
+
+### **1. Optimización de la Entrada de Datos**
+Asegúrate de que los pasos iniciales, como *Table Input* o *CSV Input*, estén correctamente configurados:
+- **Conexiones a Bases de Datos**:
+  - Verifica que la conexión esté activa y las credenciales sean correctas.
+  - Testea la consulta SQL en el paso *Table Input* y valida que devuelva datos esperados.
+- **Archivos CSV**:
+  - Usa el paso *CSV Input* para leer los archivos. Configura delimitadores, encabezados y codificación correctamente.
+
+### **2. Limpieza de Datos**
+Pentaho ofrece múltiples pasos para transformar y limpiar datos antes de procesarlos:
+- **Select Values**:
+  - Renombra campos, elimina columnas innecesarias y ajusta tipos de datos.
+- **String Operations**:
+  - Modifica cadenas, como convertirlas a mayúsculas/minúsculas o aplicar expresiones regulares.
+- **Replace Values**:
+  - Sustituye valores nulos o incorrectos por predeterminados.
+
+Ejemplo: Unifica valores inconsistentes en una columna `Country`.
+```plaintext
+USA -> United States
+US -> United States
+```
+
+### **3. Combinación de Datos**
+Utiliza pasos como *Merge Join* o *Append Streams* para consolidar datos de múltiples fuentes:
+- **Merge Join**:
+  - Realiza combinaciones basadas en una clave común (similar a un *JOIN* en SQL).
+  - Tipos soportados: INNER, LEFT OUTER, RIGHT OUTER, FULL OUTER.
+- **Append Streams**:
+  - Une dos flujos de datos con la misma estructura en uno solo.
+
+Ejemplo de configuración de un *Merge Join*:
+```xml
+<join_type>INNER</join_type>
+<step1>Stream A</step1>
+<step2>Stream B</step2>
+<keys_1>
+  <key>id</key>
+</keys_1>
+<keys_2>
+  <key>id</key>
+</keys_2>
+```
+
+### **4. Transformación Compleja**
+Si necesitas realizar cálculos avanzados o transformar los datos:
+- **Calculator**:
+  - Realiza operaciones matemáticas como sumar, dividir o calcular porcentajes.
+- **User Defined Java Expression**:
+  - Aplica lógica personalizada usando expresiones en Java.
+- **Modified JavaScript Value**:
+  - Permite escribir transformaciones más complejas usando JavaScript.
+
+Ejemplo: Convertir precios en USD a EUR usando una tasa de cambio.
+```javascript
+price_eur = price_usd * 0.92;
+```
+
+### **5. Validación de Datos**
+Antes de cargar datos, verifica su calidad:
+- **Filter Rows**:
+  - Filtra registros según condiciones específicas.
+- **Data Validator**:
+  - Asegúrate de que los datos cumplan con criterios como valores no nulos o rangos aceptables.
+
+### **6. Carga de Datos**
+Finalmente, carga los datos en el destino:
+- **Table Output**:
+  - Inserta datos en una base de datos (PostgreSQL, Redshift, MySQL, etc.).
+- **S3 File Output**:
+  - Almacena resultados en Amazon S3.
+- **CSV File Output**:
+  - Genera archivos listos para compartir.
+
+### **7. Manejo de Errores**
+Configura el manejo de errores para evitar interrupciones en la transformación:
+1. Haz clic derecho en un paso y selecciona **Error Handling**.
+2. Define una salida secundaria para registrar errores y analizarlos posteriormente.
+3. Almacena errores en un archivo CSV para su auditoría.
+
+### Ejemplo de Flujo Completo
+1. **Entrada**:
+   - Paso *Table Input* para extraer datos de una base de datos.
+2. **Transformación**:
+   - Usa *Select Values* para renombrar columnas.
+   - Usa *Filter Rows* para excluir datos inconsistentes.
+   - Aplica un *Merge Join* para combinar datos de dos fuentes.
+3. **Salida**:
+   - Usa *Table Output* para insertar datos limpios en una base de datos destino.
+   - Genera un archivo de log con registros rechazados.
+
+### **8. Ejecución y Verificación**
+- Ejecuta la transformación con métricas activadas para monitorizar:
+  - Registros procesados.
+  - Registros escritos y rechazados.
+  - Tiempo de ejecución.
+- Analiza los logs de Spoon para confirmar que no haya errores.
+
+## Carga de datos con Pentaho
+
+La **carga de datos** con Pentaho se realiza comúnmente en la etapa final de un proceso ETL (Extracción, Transformación y Carga). Este proceso implica mover los datos transformados hacia un sistema destino, que puede ser un almacenamiento como bases de datos, archivos CSV, sistemas analíticos, o incluso APIs.
+
+### **Pasos para realizar la carga de datos con Pentaho**
+
+#### **1. Configuración Inicial**
+Antes de empezar, asegúrate de lo siguiente:
+- Tener los datos correctamente transformados y limpios.
+- Definir el sistema destino, como una base de datos (PostgreSQL, MySQL, Redshift, etc.), un archivo CSV, o un sistema en la nube.
+- Crear una conexión en Pentaho Spoon para acceder al destino.
+
+#### **2. Conexión al Sistema Destino**
+1. **Agregar una Conexión (si usas una base de datos):**
+   - Ve a la pestaña *Explorador de Conexiones* en Spoon.
+   - Haz clic en **Nueva Conexión** y selecciona el tipo de base de datos.
+   - Configura los parámetros:
+     - Host (servidor).
+     - Puerto.
+     - Nombre de la base de datos.
+     - Usuario y contraseña.
+     - Probar conexión.
+
+2. **Definir un archivo destino (si usas CSV/Excel):**
+   - Usa el paso **Text File Output** para guardar los datos en un archivo.
+   - Especifica el nombre del archivo y el delimitador.
+
+#### **3. Agregar el Paso de Carga de Datos**
+Dependiendo del destino, selecciona el paso adecuado:
+
+1. **Table Output (Salida a Tabla)**:
+   - Conecta este paso al flujo de datos transformados.
+   - Configura:
+     - Nombre de la tabla.
+     - Modo de inserción (Insertar, Actualizar, Upsert).
+     - Opciones adicionales como truncar la tabla antes de cargar los datos.
+
+2. **Text File Output (Salida a Archivo de Texto)**:
+   - Configura:
+     - Ruta del archivo.
+     - Delimitador de columnas (coma, tabulación, etc.).
+     - Codificación del archivo (UTF-8 es la más común).
+     - Encabezados (incluir o no).
+
+3. **Load to Cloud (Carga a la Nube)**:
+   - Usa pasos como **S3 File Output** o conexiones API para cargar datos a sistemas en la nube.
+
+#### **4. Configurar Opciones Avanzadas**
+- **Manejo de Errores:**
+  - Configura un flujo de errores para capturar registros que no se carguen correctamente.
+  - Usa el paso **Write to Log** o **Text File Output** para registrar errores.
+  
+- **Control de Batch:**
+  - Si estás cargando grandes volúmenes de datos, ajusta los tamaños de lote (batch size) para optimizar la carga.
+
+- **Compresión:**
+  - Para grandes cantidades de datos, usa compresión (gzip, zip) para optimizar el almacenamiento.
+
+#### **5. Probar y Ejecutar la Transformación**
+1. Ejecuta la transformación desde Spoon.
+2. Monitorea los logs en la consola para identificar errores.
+3. Verifica en el sistema destino que los datos se hayan cargado correctamente.
+
+### **Ejemplo Práctico: Carga a una Tabla MySQL**
+1. Crea una conexión a la base de datos MySQL.
+2. Agrega el paso **Table Output** al final del flujo.
+3. Configura:
+   - Tabla destino: `ventas_mensuales`.
+   - Modo: `Insert`.
+   - Activa "Commit Size" (por ejemplo, 500 registros por lote).
+4. Ejecuta y valida los datos en MySQL.
+
+
+### **Consejos Adicionales**
+- **Validar Datos**: Usa pasos como *Select Values* o *Filter Rows* antes de la carga para asegurarte de que los datos cumplen con las reglas de negocio.
+- **Automatización**: Si necesitas realizar cargas frecuentes, usa Pentaho Carte para programar transformaciones.
+- **Optimización**: Si cargas a una base de datos, usa índices adecuados en las tablas destino.
+
+Con estos pasos, puedes implementar un flujo robusto para la carga de datos con Pentaho. 
+
+**Lecturas recomendadas**
+
+[Curso de Fundamentos de Apache Airflow - Platzi](https://platzi.com/cursos/fundamentos-airflow/)
+
+[Platzi: Cursos online profesionales de tecnología](https://platzi.com/data-engineer)

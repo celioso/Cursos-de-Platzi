@@ -100,6 +100,15 @@
 - [Curso de Manejo de Datos Faltantes: Detección y Exploración](CursodeManejodeDatosFaltantesDeteccionyExploracion)
 - [Curso de Manejo de Datos Faltantes: Imputación](CursodeManejodeDatosFaltantesImputacion)
 
+## Data Warehousing y ETL
+
+- [Curso de Fundamentos de ETL con Python y Pentaho](CursodeFundamentosdeETLconPythonyPentaho)
+- [Curso de Data Warehousing y Modelado OLAP]()
+- [Curso de Fundamentos de Apache Airflow]()
+- [Curso de AWS Redshift para Manejo de Big Data]()
+- [Curso de Databricks: Arquitectura Delta Lake]()
+
+
 ## Fundamentos de Servidores Linux
 
 - [Curso de Introducción a la Terminal y Línea de Comandos](Curso-de-Introducción-a-la-Terminal-y-Linea-de-Comandos)
