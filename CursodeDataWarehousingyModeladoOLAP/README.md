@@ -1246,3 +1246,139 @@ El diseño de un modelo dimensional se centra en estructurar los datos para faci
 [Diseño modelo dimensional - dbdiagram](https://drive.google.com/file/d/1g0kckTsNym7cQ1jPTP9VJ8FXjCt4RL49/view)
 
 [dbdiagram.io - Database Relationship Diagrams Design Tool](https://dbdiagram.io/home)
+
+## Documento de mapeo
+
+Un **documento de mapeo** es una herramienta clave en procesos de ETL y modelado de datos, ya que especifica cómo se deben transformar y mover los datos desde las fuentes hacia los destinos, como un Data Warehouse. A continuación, se detallan los pasos para crearlo y cómo realizarlo:
+
+---
+
+### **1. Definir el objetivo del documento**
+- **¿Qué se necesita lograr?**
+  - Consolidar datos en un Data Warehouse.
+  - Transformar datos para un reporte específico.
+  - Cargar datos en una tabla destino con un esquema definido.
+- **¿Quiénes son los usuarios principales?**
+  - Equipo de ETL, analistas de datos, o desarrolladores.
+
+---
+
+### **2. Identificar las fuentes de datos**
+- **Pasos:**
+  - Listar las bases de datos, archivos, o APIs que contienen la información necesaria.
+  - Especificar detalles técnicos:
+    - Nombre de la base de datos o archivo.
+    - Tablas, columnas, o endpoints relevantes.
+    - Tipos de datos en cada columna.
+    - Reglas de acceso o autenticación.
+
+- **Ejemplo:**
+  | Fuente | Tabla/Archivo | Columna       | Tipo de Dato | Detalles       |
+  |--------|---------------|---------------|--------------|----------------|
+  | CRM    | Clientes      | ID_Cliente    | INT          | Clave primaria |
+  | ERP    | Ventas        | Fecha_Venta   | DATE         | Fecha de venta |
+
+---
+
+### **3. Definir el destino**
+- **Pasos:**
+  - Establecer las tablas destino y sus esquemas.
+  - Documentar las relaciones entre tablas si es un modelo dimensional.
+  - Identificar restricciones (índices, claves foráneas, etc.).
+
+- **Ejemplo:**
+  | Tabla Destino  | Columna           | Tipo de Dato | Restricción         |
+  |----------------|-------------------|--------------|---------------------|
+  | dwh.dim_clientes | id_cliente       | INT          | Clave primaria      |
+  | dwh.fact_ventas  | total_venta      | DECIMAL(10,2)| No nulo             |
+
+---
+
+### **4. Mapear las transformaciones**
+- **Pasos:**
+  - Especificar cómo se transformarán los datos:
+    - Cambios de formato (fechas, números).
+    - Unión de datos de múltiples fuentes.
+    - Limpieza de datos (eliminar duplicados, manejar nulos).
+  - Incluir reglas de negocio que afecten las transformaciones.
+  - Definir validaciones requeridas.
+
+- **Ejemplo:**
+  | Fuente                | Columna Origen  | Transformación                     | Columna Destino     |
+  |-----------------------|-----------------|------------------------------------|---------------------|
+  | CRM.Clientes          | Nombre, Apellido | CONCAT(Nombre, ' ', Apellido)     | Nombre_Completo     |
+  | ERP.Ventas            | Fecha_Venta     | FORMAT(Fecha_Venta, 'yyyy-MM-dd') | Fecha               |
+  | ERP.Ventas, CRM.Clientes | ID_Venta, ID_Cliente | JOIN por ID_Cliente             | Cliente_Venta       |
+
+---
+
+### **5. Especificar los controles de calidad**
+- **Pasos:**
+  - Definir qué verificaciones asegurarán la calidad de los datos.
+    - Validar valores nulos o atípicos.
+    - Verificar que las claves primarias son únicas.
+    - Comparar totales entre origen y destino.
+  - Documentar los procedimientos de remediación para errores.
+
+- **Ejemplo:**
+  | Validación            | Regla                                  | Acción en Caso de Error         |
+  |-----------------------|----------------------------------------|---------------------------------|
+  | Duplicados            | ID_Cliente debe ser único             | Eliminar duplicados            |
+  | Rango de Fechas       | Fecha_Venta > '2000-01-01'            | Ignorar registros fuera del rango |
+  | Tipos de Datos        | Total_Venta es DECIMAL(10,2)           | Notificar error al desarrollador |
+
+---
+
+### **6. Diseñar el flujo ETL**
+- **Pasos:**
+  - Dibujar un diagrama que muestre:
+    - Extracción de fuentes.
+    - Transformaciones aplicadas.
+    - Carga en destino.
+  - Incluir herramientas o scripts utilizados.
+
+---
+
+### **7. Crear un cronograma**
+- **Pasos:**
+  - Establecer el orden de ejecución de las tareas.
+  - Definir dependencias y tiempos estimados.
+
+---
+
+### **8. Documentar excepciones y reglas adicionales**
+- **Pasos:**
+  - Incluir notas sobre:
+    - Reglas de negocio específicas.
+    - Limitaciones conocidas de las fuentes de datos.
+    - Manejo de errores (logs, alertas, etc.).
+
+---
+
+### **9. Validar el documento**
+- **Pasos:**
+  - Revisar el documento con los equipos involucrados (negocio, desarrollo, QA).
+  - Ajustar según sea necesario antes de iniciar el proceso ETL.
+
+---
+
+### **10. Ejemplo Completo de Mapeo**
+
+| Fuente               | Tabla Destino    | Columna Origen       | Transformación               | Columna Destino    | Reglas/Notas                          |
+|----------------------|------------------|----------------------|------------------------------|--------------------|---------------------------------------|
+| CRM.Clientes         | dwh.dim_clientes | Nombre, Apellido     | CONCAT(Nombre, ' ', Apellido)| Nombre_Completo    | Aplicar trim() para espacios extras.  |
+| ERP.Ventas           | dwh.fact_ventas  | Fecha_Venta          | FORMAT(Fecha_Venta, 'yyyy-MM-dd') | Fecha        | Fechas en formato ISO 8601.          |
+| ERP.Ventas           | dwh.fact_ventas  | Total_Venta          | Redondear a 2 decimales       | Total_Venta       | Ignorar ventas negativas.             |
+
+---
+
+Este documento detallado servirá como guía durante la implementación del proceso de ETL y ayudará a todos los equipos a mantenerse alineados.
+
+**Lecturas recomendadas**
+
+[Documento de mapeo (template).xlsx - Google Sheets](https://docs.google.com/spreadsheets/d/1s8NZSjawX-UtTDrN4ysAUmaz5JMDESGl/edit?usp=sharing&amp;ouid=115816351930689908744&amp;rtpof=true&amp;sd=true)
+
+[Diseño modelo dimensional - dbdiagram.sql - Google Drive](https://drive.google.com/file/d/1g0kckTsNym7cQ1jPTP9VJ8FXjCt4RL49/view)
+
+
+'../BusinessEntity.csv'
