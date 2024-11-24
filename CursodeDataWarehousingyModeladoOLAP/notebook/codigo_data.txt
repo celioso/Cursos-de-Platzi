@@ -1,0 +1,55 @@
+Table dwh.dim_clientes {
+id_cliente int pk
+codigo_cliente varchar
+nombre varchar
+apellido varchar
+nombre_completo varchar
+numero_celular varchar 
+numero_casa varchar
+numero_trabajo varchar
+ciudad_casa varchar
+}
+
+Ref:dwh.dim_clientes.id_cliente < dwh.fact_venta.id_cliente
+
+Table dwh.dim_producto {
+id_producto int pk
+codigo_producto varchar
+nombre_producto varchar
+color varchar
+tamano varchar
+categoria varchar
+}
+
+Ref:dwh.dim_producto.id_producto < dwh.fact_venta.id_producto
+
+Table dwh.fact_venta {
+id_venta int pk
+id_cliente int pk
+id_producto int pk
+id_vendedor int pk
+id_ubicacion int pk
+cantidad int
+valor decimal
+descuento decimal
+valor_neto decimal
+}
+
+Table dwh.dim_vendedor {
+id_vendedor int pk
+cod_vendedor varchar
+nombre varchar
+apellido varchar
+}
+
+Ref:dwh.dim_vendedor.id_vendedor < dwh.fact_venta.id_vendedor
+
+Table dwh.dim_ubicacion {
+id_ubicacion int pk
+cod_ubicacion varchar
+pais varchar
+estado varchar
+ciudad varchar
+}
+
+Ref:dwh.dim_ubicacion.id_ubicacion < dwh.fact_venta.id_ubicacion

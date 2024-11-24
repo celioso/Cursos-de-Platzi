@@ -911,3 +911,338 @@ Una **tabla de hechos** (o *fact table*) es un componente esencial en el diseño
 ### **Importancia de las tablas de hechos:**
 - Permiten realizar análisis detallados de métricas y tendencias.
 - Sirven como el centro de un modelo dimensional, conectándose con múltiples dimensiones para proporcionar un contexto analítico completo.
+
+
+## Configuración de herramientas para Data Warehouse y ETL
+
+¡Hola, te doy la bienvenida a este tutorial! Configurarás las bases de datos y herramientas que usaremos para el ETL y crear un data warehouse.
+
+Usaremos **PostgreSQL** con la base de datos **Adventureworks**. Será nuestra base de datos transaccional y la fuente de información para llevar al data warehouse.
+
+Ejecuta las siguientes instrucciones para configurar esto:
+
+### Ruby
+
+**Instalación de Ruby en Ubuntu o WSL con Ubuntu**
+
+1. Abre la terminal de Ubuntu
+2. Ejecuta el siguiente comando en la terminal para actualizar la lista de paquetes disponibles:
+
+`sudo apt-get update`
+
+3. Una vez actualizada la lista de paquetes, instala Ruby ejecutando el siguiente comando en la terminal:
+
+`sudo apt-get install ruby-full`
+
+4. Verifica que Ruby se haya instalado correctamente ejecutando ruby -v en la terminal.
+
+### Instalación de Ruby en Windows
+
+1. Descarga el instalador de Ruby desde la página oficial de Ruby para Windows: [https://rubyinstaller.org/downloads/](https://rubyinstaller.org/downloads/ "https://rubyinstaller.org/downloads/")
+2. Selecciona la versión de Ruby que deseas instalar.
+3. Ejecuta el instalador y sigue las instrucciones del asistente de instalación.
+4. Una vez completada la instalación, abre la línea de comandos de Windows (cmd.exe) y escribe ruby -v para verificar que la instalación se haya realizado correctamente.
+
+### Instalación de Ruby en macOS
+
+1. Abre la terminal de macOS.
+2. Instala Homebrew ejecutando el siguiente comando en la terminal:
+
+```bash
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+```
+
+3. Una vez instalado Homebrew, ejecuta el siguiente comando en la terminal para instalar Ruby:
+
+`brew install ruby`
+
+4. Verifica que Ruby se haya instalado correctamente ejecutando ruby `-v` en la terminal.
+
+Con estos pasos ya has instalado Ruby.
+
+### PostgreSQL y pgAdmin o DBeaver
+
+Estas herramientas ya deberías tenerla instaladas. Si no las tienes, vuelve a revisar [esta clase tutorial](https://platzi.com/clases/1480-postgresql/24177-instalacion-y-configuracion-de-la-base-de-datos/ "esta clase tutorial") o sigue la [documentación de PostgreSQL](https://www.postgresql.org/docs/current/tutorial-install.html "documentación de PostgreSQL"). ⬅️💡
+
+⚠️**Nota**: si usas Windows recuerda asignar las variables de entorno para PostgreSQL.
+
+![variables entorno](variables_entorno.png)
+
+### Descarga y configuración de la base de datos AdventureWorks
+
+1. Descarga el repositorio en [https://github.com/lorint/AdventureWorks-for-Postgres](https://github.com/lorint/AdventureWorks-for-Postgres "https://github.com/lorint/AdventureWorks-for-Postgres")
+
+Ejecuta el siguiente comando de Git:
+
+`git clone https://github.com/lorint/AdventureWorks-for-Postgres.git`
+
+Este repositorio contiene los archivos para crear las tablas y vistas de la base de datos.
+
+2. Descarga [Adventure Works 2014 OLTP Script](https://github.com/Microsoft/sql-server-samples/releases/download/adventureworks/AdventureWorks-oltp-install-script.zip "Adventure Works 2014 OLTP Script").
+
+Contiene los archivos para llenar las tablas de la base de datos.
+
+3. Copia y pega el archivo **AdventureWorks-oltp-install-script.zip** en el directorio **AdventureWorks-for-Postgres**.
+
+4. En tu terminal úbicate en el directorio **AdventureWorks-for-Postgres** y descomprime **AdventureWorks-oltp-install-script.zip:**
+
+```bash
+cd AdventureWorks-for-Postgres/
+unzip AdventureWorks-oltp-install-script.zip
+```
+
+5. En la terminal, ubicándote en el directorio AdventureWorks-for-Postgres, ejecuta el siguiente comando para convertir los archivos csv:
+
+`ruby update_csvs.rb`
+
+6.  Activa la conexión con postgresql:
+
+`sudo service postgresql start`
+
+7. Crea la base de datos con el siguiente comando de PostgreSQL:
+
+`psql -c "CREATE DATABASE \"Adventureworks\";"`
+o
+
+`psql -c "CREATE DATABASE \"Adventureworks\";" -U postgres -h localhost`
+
+8. Ejecuta el script que llena las tablas de la base de datos:
+
+`psql -d Adventureworks < install.sql`
+o
+
+`psql -d Adventureworks < install.sql -U postgres -h localhost`
+
+9. Conecta tu base de datos en DBeaver o pgAdmin.
+
+ 1. Abre DBeaver o pgAdmin.
+
+ 2. Selecciona la opción para crear una nueva conexión.
+
+ 3. Selecciona PostgreSQL en la lista de bases de datos.
+
+ 4. Ingresa la información de conexión necesaria en la pestaña.
+
+- 	Host: **localhost**
+- 	Port: **5432**
+- 	Base de datos: **Adventureworks**
+- 	Nombre de usuario: **postgres**
+- 	Password: **la que tengas de tu user de postgresql**.
+
+![DBeaver connect](DBeaver_connect.png)
+
+5. Haz clic en **Test Connection** para asegurarte de que los detalles de conexión sean correctos y que puedas conectarte a la base de datos.
+
+6. Si la prueba de conexión es exitosa, haz clic en "Finalizar" para guardar la configuración de la conexión.
+
+### Configuración de Pentaho
+
+Esta herramienta la utilizaremos para crear las ETL de los datos transaccionales (DB Adventureworks) en Postgres a el Data Warehouse en AWS Redshift.
+
+Esta herramienta deberías tenerla instalada del [Curso de Fundamentos de ETL con Python y Pentaho](https://platzi.com/cursos/fundamentos-etl/ "Curso de Fundamentos de ETL con Python y Pentaho"). Si no la tienes revisa [esta clase tutorial](https://platzi.com/clases/6211-fundamentos-etl/60034-instalacion-de-pentaho/ "esta clase tutorial"). ⬅️💡
+
+### Instalación y configuración de AWS CLI
+
+Este servicio lo usarás para realizar la conexión a S3 y cargar archivos planos que luego serán cargados a AWS Redshift con el comando COPY.
+
+Esta herramienta la configuraste en el [Curso Práctico de AWS: Roles y Seguridad con IAM](https://platzi.com/cursos/aws-iam/ "Curso Práctico de AWS: Roles y Seguridad con IAM") en su módulo SDK, **CLI y AWS Access Keys**. ⬅️💡
+
+Vuelve a ver esas clases o sigue la siguiente documentación de AWS si no lo tienes configurado:
+
+- Instalar AWS CLI: [https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html "https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html")
+- Configurar AWS CLI: [https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html "https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html")
+
+### Configuración de AWS Redshift
+
+AWS Redshift será utilizado como data warehouse. Será el lugar donde construiremos las dimensiones, tablas de hechos y llevaremos los datos modelados y limpios que se obtuvieron del sistema transaccional.
+
+1. Crea un nuevo clúster de AWS Redshift de manera similar al Curso de Fundamentos de ETL con Python y Pentaho. Puedes seguir las clases tutoriales de ese curso:
+
+- [Configuración de clúster en AWS Redshift.](https://platzi.com/clases/6211-fundamentos-etl/60268-configuracion-de-tu-primer-aws-redshift/ "Configuración de clúster en AWS Redshift.")
+
+⚠️ Recuerda nombrar diferente al **clúster de AWS Redshift** y al **bucket de AWS S3** que usarás para el proyecto de este curso.
+
+Con esto has completado la configuración de herramientas a usar en las siguientes clases del curso.
+
+Deja en los comentarios si tienes alguna duda o problema que impida tu progreso, para que en comunidad podamos apoyarte.
+
+Avanza a la siguiente clase. ⚙️➡️
+
+## Modelado dimensional: identificación de dimensiones y métricas
+
+El **modelado dimensional** es una técnica de diseño de bases de datos utilizada principalmente en Data Warehousing para organizar y optimizar datos para análisis y consultas. Consiste en identificar las **dimensiones** y las **métricas (hechos)** clave, que permiten representar el negocio desde múltiples perspectivas.
+
+## **Pasos para identificar dimensiones y métricas:**
+
+### **1. Definir el objetivo del análisis:**
+   - Identifica qué preguntas de negocio necesitas responder.
+   - Ejemplo: "¿Cuáles son las ventas mensuales por región y producto?"
+
+### **2. Identificar las métricas o hechos (Facts):**
+   - **Definición:** Son los valores numéricos o medibles que representan eventos o transacciones del negocio.
+   - **Ejemplos comunes:**
+     - Ventas totales
+     - Cantidad de productos vendidos
+     - Costos operativos
+     - Tiempo empleado en un proceso
+     - Beneficios
+
+   **Preguntas clave para identificar métricas:**
+   - ¿Qué indicadores se quieren analizar o medir?
+   - ¿Qué datos numéricos se calculan o resumen?
+
+### **3. Identificar las dimensiones (Dimensions):**
+   - **Definición:** Son las categorías descriptivas que contextualizan los hechos. Proporcionan las perspectivas desde las que se analizan las métricas.
+   - **Ejemplos comunes:**
+     - Fecha
+     - Producto
+     - Cliente
+     - Región o Ubicación
+     - Canal de venta
+
+   **Preguntas clave para identificar dimensiones:**
+   - ¿Qué contexto o perspectiva es relevante para analizar las métricas?
+   - ¿Cómo se clasifica o agrupa la información?
+   - ¿Qué información complementaria se necesita para entender los hechos?
+
+### **4. Determinar la granularidad:**
+   - **Granularidad:** Nivel de detalle al que los datos serán almacenados en la tabla de hechos.
+   - **Ejemplos:**
+     - Nivel de transacción individual (más granular)
+     - Nivel agregado diario, mensual, o anual (menos granular)
+   - Es fundamental definirlo al inicio, ya que afecta el diseño del modelo.
+
+### **5. Diseñar las relaciones entre hechos y dimensiones:**
+   - Establece relaciones entre las métricas y sus dimensiones a través de llaves foráneas.
+   - Define cómo las dimensiones proporcionan el contexto para analizar los hechos.
+
+## **Ejemplo práctico: Ventas en un supermercado**
+
+### **Objetivo del análisis:**
+   - Analizar las ventas por producto, cliente y región a lo largo del tiempo.
+
+### **Identificación de métricas:**
+   - Total de ventas (`importe_venta`)
+   - Cantidad de productos vendidos (`cantidad_vendida`)
+   - Descuentos aplicados (`descuento`)
+
+### **Identificación de dimensiones:**
+   - **Dim_Fecha:** Día, mes, trimestre, año.
+   - **Dim_Producto:** Código, categoría, marca, precio.
+   - **Dim_Cliente:** ID del cliente, nombre, edad, género.
+   - **Dim_Ubicación:** País, ciudad, tienda.
+   - **Dim_Canal de Venta:** Tienda física, en línea.
+
+### **Granularidad:**
+
+   - **Nivel:** Una fila por cada transacción en cada tienda.
+
+## **Modelo dimensional: Esquema Estrella**
+
+### Tabla de hechos: `Fact_Ventas`
+
+| FechaID | ProductoID | ClienteID | UbicacionID | CanalID | Cantidad_Vendida | Importe_Venta | Descuento |
+|---------|------------|-----------|-------------|---------|------------------|---------------|-----------|
+
+### Tablas de dimensiones:
+1. **Dim_Fecha**
+   | FechaID | Día | Mes | Año | Trimestre |
+   |---------|-----|-----|-----|-----------|
+
+2. **Dim_Producto**
+   | ProductoID | Nombre | Categoría | Marca | Precio |
+   |------------|--------|-----------|-------|--------|
+
+3. **Dim_Cliente**
+   | ClienteID | Nombre | Edad | Género |
+   |-----------|--------|------|--------|
+
+4. **Dim_Ubicación**
+   | UbicacionID | País | Ciudad | Tienda |
+   |-------------|------|--------|-------|
+
+5. **Dim_Canal**
+   | CanalID | Canal |
+   |---------|-------|
+
+
+## **Herramientas útiles para identificar dimensiones y métricas:**
+
+- **Entrevistas a usuarios clave:** Identifica las necesidades de análisis de los equipos de negocio.
+- **Revisión de reportes actuales:** Observa qué datos ya están siendo utilizados.
+- **Documentación de procesos:** Comprende los eventos clave que generan datos en la empresa.
+
+Este proceso asegura que el diseño del Data Warehouse esté alineado con las necesidades reales del negocio y optimizado para el análisis de datos.
+
+## Modelado dimensional: diseño de modelo
+
+El diseño de un modelo dimensional se centra en estructurar los datos para facilitar la consulta y el análisis, utilizando un enfoque orientado al usuario final. A continuación, se describen los pasos principales para diseñar un modelo dimensional:
+
+### **1. Definir el propósito del modelo**
+   - **Objetivo:** Comprender las preguntas de negocio que el modelo debe responder. Por ejemplo:
+     - ¿Qué métricas se analizarán (ventas, ingresos, costos)?
+     - ¿Qué dimensiones (perspectivas) interesan (tiempo, producto, región)?
+   - Esto ayuda a determinar las métricas clave y las dimensiones necesarias.
+
+### **2. Identificar los procesos de negocio**
+   - **Paso:** Identificar los procesos principales de la organización que generan datos para el análisis (ventas, inventario, finanzas).
+   - **Ejemplo:** Un negocio de retail podría enfocarse en las ventas y el inventario como procesos clave.
+
+### **3. Determinar las métricas (hechos)**
+   - **Definición:** Las métricas (o hechos) son los valores cuantitativos que se analizan.
+   - **Ejemplo:**
+     - Ventas totales, cantidad de productos vendidos, ingresos generados.
+   - **Nota:** Asegúrate de que los hechos sean numéricos y agregables.
+
+### **4. Identificar las dimensiones**
+   - **Definición:** Las dimensiones son los atributos que contextualizan las métricas.
+   - **Ejemplo:**
+     - Tiempo (año, mes, día)
+     - Producto (categoría, marca, nombre)
+     - Cliente (edad, región, género)
+   - Las dimensiones deben estar diseñadas para responder preguntas como: "¿Qué productos se venden más en cada región?"
+
+### **5. Elegir el esquema dimensional**
+   - **Opciones comunes:**
+     - **Esquema estrella (Star Schema):** Una tabla de hechos en el centro conectada directamente a las tablas de dimensiones.
+     - **Esquema copo de nieve (Snowflake Schema):** Extiende las tablas de dimensiones en subdimensiones para normalización.
+   - **Ejemplo de esquema estrella:**
+     - Tabla de hechos: `ventas`
+     - Dimensiones: `dim_producto`, `dim_cliente`, `dim_tiempo`.
+
+### **6. Diseñar las tablas de hechos**
+   - Incluir:
+     - **Clave primaria compuesta:** Llaves foráneas de las dimensiones.
+     - **Métricas:** Las medidas a analizar.
+   - **Ejemplo:**
+     - Tabla `fact_ventas`:
+       - Claves foráneas: `id_producto`, `id_tiempo`, `id_cliente`.
+       - Métricas: `cantidad_vendida`, `ingreso_total`.
+
+### **7. Diseñar las tablas de dimensiones**
+   - Cada dimensión debe incluir:
+     - **Clave primaria:** Identificador único (`id_tiempo`, `id_producto`).
+     - **Atributos descriptivos:** Detalles útiles para el análisis (`nombre_producto`, `marca`, `año`, `mes`).
+   - **Ejemplo:**
+     - Tabla `dim_producto`:
+       - `id_producto`, `nombre`, `marca`, `categoría`.
+
+### **8. Establecer relaciones entre tablas**
+   - Definir las claves foráneas en la tabla de hechos para conectar con las tablas de dimensiones.
+   - Asegurarse de mantener la integridad referencial.
+
+### **9. Validar el modelo**
+   - Reunirse con los interesados para asegurarse de que las necesidades del negocio están cubiertas.
+   - Ejecutar consultas de prueba para verificar que el modelo responde correctamente.
+
+### **10. Optimizar el modelo**
+   - Desnormalizar si es necesario para mejorar el rendimiento de las consultas.
+   - Crear índices en claves foráneas y columnas más consultadas.
+
+**Lecturas recomendadas**
+
+[curso-data-warehouse-olap/Diseño modelo dimensional - dbdiagram.sql at main · platzi/curso-data-warehouse-olap · GitHub](https://github.com/platzi/curso-data-warehouse-olap/blob/main/Proyecto%20Data%20Warehouse/Dise%C3%B1o%20modelo%20dimensional%20-%20dbdiagram.sql)
+
+[Diseño modelo dimensional - dbdiagram](https://drive.google.com/file/d/1g0kckTsNym7cQ1jPTP9VJ8FXjCt4RL49/view)
+
+[dbdiagram.io - Database Relationship Diagrams Design Tool](https://dbdiagram.io/home)
