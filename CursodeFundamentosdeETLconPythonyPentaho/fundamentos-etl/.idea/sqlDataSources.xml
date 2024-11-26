@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DdlMappings">
+    <mapping uuid="a2f110fe-b04b-414b-957e-edfc3add4d45" name="Adventureworks@localhost Mapping">
+      <data-sources db="8fed20d0-b541-4fb1-b2a0-25fbb9c7a0af" />
+      <scope>
+        <node kind="database" qname="postgres" />
+      </scope>
+    </mapping>
+  </component>
+</project>

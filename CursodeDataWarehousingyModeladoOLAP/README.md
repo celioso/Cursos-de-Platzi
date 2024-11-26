@@ -998,6 +998,8 @@ unzip AdventureWorks-oltp-install-script.zip
 6.  Activa la conexión con postgresql:
 
 `sudo service postgresql start`
+o
+`net start postgresql-x64-17` windows
 
 7. Crea la base de datos con el siguiente comando de PostgreSQL:
 
@@ -1012,6 +1014,101 @@ o
 o
 
 `psql -d Adventureworks < install.sql -U postgres -h localhost`
+
+o
+
+`pg_restore -U postgres -h localhost -d Adventureworks -v "C:\Users\celio\OneDrive\Escritorio\programación\platzi\CursodeDataWarehousingyModeladoOLAP\Course_folder\AdventureWorks-for-Postgres\install.sql"`
+
+o
+
+`psql -U postgres -h localhost -d Adventureworks -f "C:\Users\celio\OneDrive\Escritorio\programación\platzi\CursodeDataWarehousingyModeladoOLAP\Course_folder\AdventureWorks-for-Postgres\install.sql"`
+
+**Nota:** Conexion en windows.  para elcurso se descargo los dos Adventureworks uno que fue AdventureWorks-oltp-install-script.zip y el otro AdventureWorks-for-Postgres.zip de la carpeta AdventureWorks-for-Postgres.zip copie los archivos Install.sql y update_csvs.rb en la carpeta AdventureWorks-oltp-install-script. y segui los sigientes pasos pero en cmd lo utilice como administrador, si lo osa de la otra forma no funciona.
+a continuacion coloco los paso en codigo bash de lo que realice para cargar los datos.
+
+```bash
+C:\Windows\System32>cd C:\Users\celio\OneDrive\Escritorio\programación\platzi\CursodeDataWarehousingyModeladoOLAP\Course_folder
+
+C:\Users\celio\OneDrive\Escritorio\programación\platzi\CursodeDataWarehousingyModeladoOLAP\Course_folder>unzip AdventureWorks-oltp-install-script.zip
+"unzip" no se reconoce como un comando interno o externo,
+programa o archivo por lotes ejecutable. en este punto es bueno tener decomprimido el archivo de una ves.
+
+C:\Users\celio\OneDrive\Escritorio\programación\platzi\CursodeDataWarehousingyModeladoOLAP\Course_folder>unzip AdventureWorks-oltp-install-script.zip
+"unzip" no se reconoce como un comando interno o externo,
+programa o archivo por lotes ejecutable.
+
+C:\Users\celio\OneDrive\Escritorio\programación\platzi\CursodeDataWarehousingyModeladoOLAP\Course_folder>cd AdventureWorks-oltp-install-script
+
+C:\Users\celio\OneDrive\Escritorio\programación\platzi\CursodeDataWarehousingyModeladoOLAP\Course_folder\AdventureWorks-oltp-install-script>ruby -v
+ruby 3.3.6 (2024-11-05 revision 75015d4c1f) [x64-mingw-ucrt]
+
+
+C:\Users\celio\OneDrive\Escritorio\programación\platzi\CursodeDataWarehousingyModeladoOLAP\Course_folder\AdventureWorks-oltp-install-script>ruby update_csvs.rb
+Processing ./Address.csv
+Processing ./BusinessEntity.csv
+Processing ./BusinessEntityAddress.csv
+Processing ./BusinessEntityContact.csv
+Processing ./CountryRegion.csv
+Processing ./CountryRegionCurrency.csv
+Processing ./Document.csv
+Processing ./EmailAddress.csv
+Processing ./Employee.csv
+Processing ./Illustration.csv
+Processing ./JobCandidate.csv
+Processing ./JobCandidate_TOREMOVE.csv
+Processing ./Password.csv
+Processing ./Person.csv
+Processing ./PersonPhone.csv
+Processing ./PhoneNumberType.csv
+Processing ./ProductDescription.csv
+Processing ./ProductModel.csv
+Processing ./ProductModelorg.csv
+Processing ./ProductPhoto.csv
+Processing ./StateProvince.csv
+Processing ./Store.csv
+
+C:\Users\celio\OneDrive\Escritorio\programación\platzi\CursodeDataWarehousingyModeladoOLAP\Course_folder\AdventureWorks-oltp-install-script>net start postgresql-x64-17
+El servicio solicitado ya ha sido iniciado.
+
+Puede obtener más ayuda con el comando NET HELPMSG 2182.
+
+
+C:\Users\celio\OneDrive\Escritorio\programación\platzi\CursodeDataWarehousingyModeladoOLAP\Course_folder\AdventureWorks-oltp-install-script>psql -c "CREATE DATABASE \"Adventureworks\";" -U postgres -h localhost
+Contraseña para usuario postgres:
+CREATE DATABASE
+
+C:\Users\celio\OneDrive\Escritorio\programación\platzi\CursodeDataWarehousingyModeladoOLAP\Course_folder\AdventureWorks-oltp-install-script>psql -d Adventureworks < instawdb.sql -U postgres -h localhost
+Contraseña para usuario postgres:
+ERROR:  secuencia de bytes no vÃ¡lida para codificaciÃ³n Â«UTF8Â»: 0xff
+
+C:\Users\celio\OneDrive\Escritorio\programación\platzi\CursodeDataWarehousingyModeladoOLAP\Course_folder\AdventureWorks-oltp-install-script>psql -d Adventureworks < install.sql -U postgres -h localhost
+Contraseña para usuario postgres:
+CREATE EXTENSION
+CREATE EXTENSION
+CREATE DOMAIN
+CREATE DOMAIN
+CREATE DOMAIN
+CREATE DOMAIN
+CREATE DOMAIN
+CREATE DOMAIN
+CREATE SCHEMA
+COMMENT
+ Copying data into Person.BusinessEntity
+
+COPY 20777
+ Copying data into Person.Person
+
+COPY 19972
+ Copying data into Person.StateProvince
+
+COPY 181
+ Copying data into Person.Address
+
+COPY 19614
+ Copying data into Person.AddressType
+```
+
+ya se puede continuer con el paso 9
 
 9. Conecta tu base de datos en DBeaver o pgAdmin.
 
@@ -1381,4 +1478,390 @@ Este documento detallado servirá como guía durante la implementación del proc
 [Diseño modelo dimensional - dbdiagram.sql - Google Drive](https://drive.google.com/file/d/1g0kckTsNym7cQ1jPTP9VJ8FXjCt4RL49/view)
 
 
-'../BusinessEntity.csv'
+## Creación del modelo físico
+
+La **creación del modelo físico** es el paso en el que el diseño conceptual y lógico de una base de datos se traduce en una implementación real en un sistema de gestión de bases de datos (DBMS) como PostgreSQL. A continuación, te detallo los pasos necesarios para crear un modelo físico:
+
+---
+
+### **1. Preparación**
+Antes de crear el modelo físico:
+- Define las tablas, columnas, tipos de datos y restricciones en base a tu modelo lógico.
+- Determina las relaciones entre tablas (claves primarias, claves foráneas).
+- Establece índices para optimizar el rendimiento de las consultas.
+- Planifica los aspectos físicos como particiones, almacenamiento, y volúmenes de datos.
+
+---
+
+### **2. Traducción del modelo lógico al físico**
+Convierte cada elemento del modelo lógico en estructuras físicas:
+
+#### **Tablas**
+- Cada entidad del modelo lógico se convierte en una tabla.
+- Usa los nombres definidos en el modelo lógico, ajustándolos si es necesario a las convenciones del DBMS.
+
+```sql
+CREATE TABLE cliente (
+    id_cliente SERIAL PRIMARY KEY,
+    nombre VARCHAR(50) NOT NULL,
+    apellido VARCHAR(50) NOT NULL,
+    telefono VARCHAR(15),
+    email VARCHAR(100)
+);
+```
+
+#### **Relaciones**
+- Implementa las relaciones mediante claves foráneas:
+
+```sql
+CREATE TABLE pedido (
+    id_pedido SERIAL PRIMARY KEY,
+    fecha DATE NOT NULL,
+    id_cliente INT NOT NULL,
+    total NUMERIC(10, 2),
+    FOREIGN KEY (id_cliente) REFERENCES cliente (id_cliente)
+);
+```
+
+#### **Restricciones**
+- Asegúrate de incluir:
+  - **Restricciones de unicidad**: Evitar datos duplicados.
+  - **Restricciones de integridad**: Garantizar consistencia entre tablas.
+
+```sql
+ALTER TABLE cliente
+ADD CONSTRAINT unique_email UNIQUE (email);
+```
+
+#### **Índices**
+- Crea índices para mejorar el rendimiento en las consultas.
+
+```sql
+CREATE INDEX idx_cliente_nombre ON cliente (nombre);
+```
+
+#### **Particiones (Opcional)**
+- Para grandes volúmenes de datos, implementa particiones si es necesario:
+
+```sql
+CREATE TABLE pedidos_2023 PARTITION OF pedido
+FOR VALUES FROM ('2023-01-01') TO ('2023-12-31');
+```
+
+---
+
+### **3. Configuración del almacenamiento**
+- Ajusta parámetros de tablas, como el espacio en disco o el método de compresión, según las capacidades del DBMS.
+
+---
+
+### **4. Implementación**
+- Conecta tu DBMS (PostgreSQL, MySQL, etc.).
+- Ejecuta el script SQL que contiene todas las instrucciones para crear las tablas, relaciones, y configuraciones.
+
+Ejemplo en PostgreSQL:
+```bash
+psql -U postgres -d nombre_base_datos -f modelo_fisico.sql
+```
+
+---
+
+### **5. Verificación**
+Una vez implementado:
+- Usa comandos como `\d nombre_tabla` en PostgreSQL para verificar que las tablas y relaciones estén correctamente configuradas.
+- Realiza pruebas de inserción, actualización y eliminación de datos para garantizar que las restricciones y claves funcionan.
+
+---
+
+### **6. Documentación**
+Mantén un registro claro de:
+- Esquemas de tablas.
+- Relaciones y restricciones.
+- Índices y particiones.
+- Scripts de creación.
+
+---
+
+**Lecturas recomendadas**
+
+[curso-data-warehouse-olap/Modelo Fisico dwh_adventureworks.sql at main · platzi/curso-data-warehouse-olap · GitHub](https://github.com/platzi/curso-data-warehouse-olap/blob/main/Proyecto%20Data%20Warehouse/Modelo%20Fisico%20dwh_adventureworks.sql)
+
+[Documento de mapeo.xlsx - Google Sheets](https://docs.google.com/spreadsheets/d/16BCjF6t_XggPgzXs-wvNLQ0fBUR1Qrfn/edit?usp=share_link&amp;ouid=115816351930689908744&amp;rtpof=true&amp;sd=true)
+
+## Extracción: querys en SQL
+
+La **extracción** en SQL se refiere a la obtención de datos desde una o más tablas dentro de una base de datos. Las consultas SQL pueden variar en complejidad dependiendo de los datos que necesitas extraer. Aquí tienes ejemplos y estructuras comunes de **querys de extracción en SQL**:
+
+---
+
+### **1. Consulta básica**
+Seleccionar todas las columnas de una tabla.
+
+```sql
+SELECT * 
+FROM nombre_tabla;
+```
+
+**Ejemplo:**
+```sql
+SELECT * 
+FROM empleados;
+```
+
+---
+
+### **2. Consulta con selección específica de columnas**
+Extraer solo columnas relevantes.
+
+```sql
+SELECT columna1, columna2 
+FROM nombre_tabla;
+```
+
+**Ejemplo:**
+```sql
+SELECT nombre, apellido, salario 
+FROM empleados;
+```
+
+---
+
+### **3. Filtrar datos (con `WHERE`)**
+Extraer registros que cumplen ciertas condiciones.
+
+```sql
+SELECT columna1, columna2 
+FROM nombre_tabla
+WHERE condición;
+```
+
+**Ejemplo:**
+```sql
+SELECT nombre, apellido, salario 
+FROM empleados
+WHERE salario > 50000;
+```
+
+---
+
+### **4. Ordenar datos (con `ORDER BY`)**
+Organizar el resultado en orden ascendente o descendente.
+
+```sql
+SELECT columna1, columna2 
+FROM nombre_tabla
+ORDER BY columna ASC|DESC;
+```
+
+**Ejemplo:**
+```sql
+SELECT nombre, salario 
+FROM empleados
+ORDER BY salario DESC;
+```
+
+---
+
+### **5. Agrupar datos (con `GROUP BY`)**
+Agrupar registros por una columna y realizar cálculos agregados.
+
+```sql
+SELECT columna, función_agregada(columna)
+FROM nombre_tabla
+GROUP BY columna;
+```
+
+**Ejemplo:**
+```sql
+SELECT departamento_id, AVG(salario) AS salario_promedio
+FROM empleados
+GROUP BY departamento_id;
+```
+
+---
+
+### **6. Combinar datos de varias tablas (con `JOIN`)**
+Unir datos de dos o más tablas basadas en una relación.
+
+```sql
+SELECT t1.columna1, t2.columna2 
+FROM tabla1 t1
+JOIN tabla2 t2
+ON t1.columna_comun = t2.columna_comun;
+```
+
+**Ejemplo:**
+```sql
+SELECT e.nombre, d.nombre AS departamento
+FROM empleados e
+JOIN departamentos d
+ON e.departamento_id = d.departamento_id;
+```
+
+---
+
+### **7. Consulta con subconsultas (Subqueries)**
+Utilizar el resultado de una consulta dentro de otra consulta.
+
+```sql
+SELECT columna1 
+FROM nombre_tabla
+WHERE columna2 IN (SELECT columna FROM otra_tabla WHERE condición);
+```
+
+**Ejemplo:**
+```sql
+SELECT nombre 
+FROM empleados
+WHERE departamento_id IN (
+    SELECT departamento_id 
+    FROM departamentos 
+    WHERE nombre = 'Finanzas'
+);
+```
+
+---
+
+### **8. Extracción con funciones agregadas**
+Realizar cálculos como suma, promedio, conteo, etc.
+
+```sql
+SELECT función_agregada(columna) 
+FROM nombre_tabla
+WHERE condición;
+```
+
+**Ejemplo:**
+```sql
+SELECT COUNT(*) AS total_empleados
+FROM empleados
+WHERE salario > 50000;
+```
+
+---
+
+### **9. Limitar resultados (con `LIMIT`)**
+Obtener solo un número específico de registros.
+
+```sql
+SELECT columna1 
+FROM nombre_tabla
+LIMIT número;
+```
+
+**Ejemplo:**
+```sql
+SELECT nombre 
+FROM empleados
+ORDER BY salario DESC
+LIMIT 5;
+```
+
+---
+
+### **10. Extracción de datos únicos (con `DISTINCT`)**
+Eliminar duplicados en los resultados.
+
+```sql
+SELECT DISTINCT columna
+FROM nombre_tabla;
+```
+
+**Ejemplo:**
+```sql
+SELECT DISTINCT departamento_id 
+FROM empleados;
+```
+
+---
+
+### **11. Union de resultados (con `UNION`)**
+Combinar resultados de varias consultas.
+
+```sql
+SELECT columna1 FROM tabla1
+UNION
+SELECT columna1 FROM tabla2;
+```
+
+**Ejemplo:**
+```sql
+SELECT nombre FROM empleados
+WHERE departamento_id = 1
+UNION
+SELECT nombre FROM empleados
+WHERE departamento_id = 2;
+```
+
+---
+
+Estas son las estructuras y ejemplos más comunes para extracción de datos en SQL.
+
+**Lecturas recomendadas**
+
+[curso-data-warehouse-olap/extracción clientes.sql at main · platzi/curso-data-warehouse-olap · GitHub](https://github.com/platzi/curso-data-warehouse-olap/blob/main/Proyecto%20Data%20Warehouse/extracci%C3%B3n%20clientes.sql)
+
+[Modelo Fisico dwh_adventureworks.sql - Google Drive](https://drive.google.com/file/d/1_qAbvw7dYC3kfM0V6Ld8cQEDf6llrHSC/view)
+
+[Curso de Fundamentos de ETL con Python y Pentaho - Platzi](https://platzi.com/cursos/fundamentos-etl/)
+
+## Extracción en Pentaho
+
+La **extracción de datos en Pentaho** se refiere a la capacidad de obtener datos de diversas fuentes y transformarlos en el formato adecuado para su almacenamiento o análisis. Pentaho ofrece diversas herramientas para realizar este proceso, y una de las más utilizadas es **Pentaho Data Integration (PDI)**, también conocido como **Kettle**.
+
+### Pasos básicos para realizar una extracción en Pentaho Data Integration (PDI):
+
+1. **Abrir Pentaho Data Integration**:
+   - Ejecuta el programa **Spoon**, que es la herramienta de diseño de trabajos y transformaciones en Pentaho.
+
+2. **Crear una nueva transformación**:
+   - En **Spoon**, haz clic en **Archivo** > **Nuevo** > **Transformación**.
+
+3. **Conectar con una fuente de datos**:
+   - Para extraer datos desde una base de datos (por ejemplo, PostgreSQL, MySQL, etc.), arrastra el paso **"Base de datos de entrada"** (Database Input) desde el panel izquierdo (en "Design") a la pantalla de trabajo.
+   - Haz doble clic en el paso para configurarlo.
+   - Configura la **conexión a la base de datos**: 
+     - Selecciona el **tipo de base de datos**.
+     - Ingresa las credenciales de conexión: **host**, **puerto**, **base de datos**, **usuario** y **contraseña**.
+   
+4. **Escribir una consulta SQL**:
+   - En la ventana de configuración de **"Base de datos de entrada"**, ve a la pestaña **"Consulta SQL"**.
+   - Aquí puedes escribir una consulta SQL para extraer los datos que necesitas.
+     - Por ejemplo, si deseas obtener datos de una tabla específica, podrías escribir algo como:
+       ```sql
+       SELECT * FROM my_table WHERE condition = 'value';
+       ```
+
+5. **Ejecutar la consulta**:
+   - Haz clic en el botón **"Test"** para verificar que la consulta funciona correctamente.
+   - Si la prueba es exitosa, los datos serán extraídos y podrás ver los resultados.
+
+6. **Transformar los datos (opcional)**:
+   - Puedes aplicar transformaciones a los datos extraídos utilizando otros pasos disponibles en Pentaho (como **"Filtrar filas"**, **"Agregación"**, **"Modificar campos"**, etc.) si necesitas limpiar o modificar los datos antes de cargarlos.
+
+7. **Guardar los datos**:
+   - Una vez que los datos sean extraídos (y transformados si es necesario), puedes cargarlos en otra base de datos, un archivo CSV, o cualquier otro destino que elijas.
+   - Arrastra el paso **"Base de datos de salida"** o **"Archivo de salida"** (como **CSV File Output** o **Text File Output**) a la pantalla de trabajo.
+   - Configura el destino de los datos, por ejemplo, seleccionando un archivo CSV para guardar los datos extraídos.
+
+8. **Ejecutar la transformación**:
+   - Finalmente, haz clic en el botón **"Ejecutar"** en la parte superior para ejecutar la transformación.
+   - Los datos se extraerán, transformarán (si se configuró) y se cargarán en el destino que hayas configurado.
+
+### Ejemplo de una transformación básica:
+
+- **Entrada**: Consulta SQL desde una base de datos PostgreSQL.
+- **Transformación**: Filtrar y renombrar columnas.
+- **Salida**: Exportar los datos a un archivo CSV.
+
+### Consejos adicionales:
+- Si necesitas trabajar con **archivos planos** (CSV, Excel), Pentaho también permite extraer datos de estos tipos de archivos utilizando el paso **"Archivo de entrada"** (CSV File Input).
+- Para fuentes de datos más complejas (como **APIs REST** o **Web Services**), Pentaho tiene pasos como **"HTTP Request"** y **"Web Service Consumer"**.
+
+Con estos pasos básicos, deberías poder configurar y realizar una extracción de datos en Pentaho.
+
+**Lecturas recomendadas**
+
+[curso-data-warehouse-olap/extracción clientes.sql at main · platzi/curso-data-warehouse-olap · GitHub](https://github.com/platzi/curso-data-warehouse-olap/blob/main/Proyecto%20Data%20Warehouse/extracci%C3%B3n%20clientes.sql)
+
+[extracción clientes.sql - Google Drive](https://drive.google.com/file/d/1_gSq4wE-FrH1k0zelCei4qXKBEOkU56c/view)
