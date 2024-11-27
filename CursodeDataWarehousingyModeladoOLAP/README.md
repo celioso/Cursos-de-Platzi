@@ -1860,8 +1860,293 @@ La **extracción de datos en Pentaho** se refiere a la capacidad de obtener dato
 
 Con estos pasos básicos, deberías poder configurar y realizar una extracción de datos en Pentaho.
 
+**NOTA**: para conectar pentaho con redshift se tien que descargar el driver [Amazon Redshift JDBC driver](https://docs.aws.amazon.com/redshift/latest/mgmt/jdbc20-download-driver.html) he instalaerlo en la libreria de pentaho o la carpeta llamada **lib** el archivo `redshift-jdbc42-2.1.0.31.jar` aunque yo copie todos el **lib**.
+
 **Lecturas recomendadas**
 
-[curso-data-warehouse-olap/extracción clientes.sql at main · platzi/curso-data-warehouse-olap · GitHub](https://github.com/platzi/curso-data-warehouse-olap/blob/main/Proyecto%20Data%20Warehouse/extracci%C3%B3n%20clientes.sql)
+[curso-data-warehouse-olap/extracción clientess.sql at main · platzi/curso-data-warehouse-olap · GitHub](https://github.com/platzi/curso-data-warehouse-olap/blob/main/Proyecto%20Data%20Warehouse/extracci%C3%B3n%20clientes.sql)
 
 [extracción clientes.sql - Google Drive](https://drive.google.com/file/d/1_gSq4wE-FrH1k0zelCei4qXKBEOkU56c/view)
+
+## Transformación: dimensión de cliente
+
+Crear una **dimensión de cliente** en Pentaho implica extraer datos de una fuente, transformarlos según los requisitos del modelo dimensional y cargarlos en una tabla de base de datos de destino. A continuación te muestro cómo puedes crear esta transformación en Pentaho para construir una dimensión de cliente:
+
+### **1. Diseño del esquema de la dimensión de cliente**
+
+#### **Estructura típica de la tabla `dim_cliente`**
+```sql
+CREATE TABLE dim_cliente (
+    id_cliente INT PRIMARY KEY,
+    codigo_cliente VARCHAR(50),
+    nombre VARCHAR(50),
+    apellido VARCHAR(50),
+    nombre_completo VARCHAR(100),
+    telefono_celular VARCHAR(20),
+    telefono_casa VARCHAR(20),
+    telefono_trabajo VARCHAR(20),
+    ciudad VARCHAR(50),
+    estado VARCHAR(50),
+    fecha_carga TIMESTAMP,
+    fecha_actualizacion TIMESTAMP
+);
+```
+
+### **2. Creación de la transformación en Pentaho**
+
+#### **a. Preparación**
+1. Abre **Spoon** en Pentaho.
+2. Crea una nueva transformación: **File > New > Transformation**.
+
+#### **b. Fuentes de datos**
+1. **Arrastra un paso de entrada**:
+   - **Input > Table Input**.
+   - Configura la conexión a la base de datos de origen.
+   - Usa una consulta para extraer los datos relevantes:
+     ```sql
+     SELECT 
+         c.customerid AS id_cliente,
+         c.customer_code AS codigo_cliente,
+         p.firstname AS nombre,
+         p.lastname AS apellido,
+         p.firstname || ' ' || p.lastname AS nombre_completo,
+         CASE WHEN pp.phonenumbertypeid = 1 THEN pp.phonenumber ELSE NULL END AS telefono_celular,
+         CASE WHEN pp.phonenumbertypeid = 2 THEN pp.phonenumber ELSE NULL END AS telefono_casa,
+         CASE WHEN pp.phonenumbertypeid = 3 THEN pp.phonenumber ELSE NULL END AS telefono_trabajo,
+         a.city AS ciudad,
+         a.state AS estado
+     FROM customer c
+     LEFT JOIN person p ON c.personid = p.businessentityid
+     LEFT JOIN person.personphone pp ON p.businessentityid = pp.businessentityid
+     LEFT JOIN address a ON c.addressid = a.addressid;
+     ```
+
+#### **c. Transformaciones**
+1. **Limpieza de datos**:
+   - **Data Cleansing**:
+     - Usa el paso de **Data Validator** para asegurarte de que los datos cumplen con las reglas de negocio, como:
+       - Los nombres no son nulos.
+       - Los códigos de cliente tienen formato válido.
+   - **Replace Values**:
+     - Reemplaza valores inconsistentes, por ejemplo, ciudades mal escritas.
+
+2. **Generar columnas adicionales**:
+   - Usa un paso de **Calculator** para calcular `fecha_carga` y `fecha_actualizacion`:
+     - `fecha_carga`: Fecha actual.
+     - `fecha_actualizacion`: Fecha actual o última modificación.
+
+#### **d. Salida de datos**
+1. **Configura la salida**:
+   - Arrastra un paso de **Table Output**.
+   - Configura la conexión a la base de datos de destino.
+   - Selecciona la tabla `dim_cliente`.
+
+2. **Mapeo de columnas**:
+   - Asegúrate de mapear correctamente las columnas de la entrada a las columnas de la tabla de destino.
+
+#### **e. Manejo de dimensiones tipo 2 (opcional)**
+Si necesitas realizar un seguimiento de los cambios históricos en los datos de cliente, puedes usar un paso de **Dimension Lookup/Update** para manejar las dimensiones lentamente cambiantes (SCD Type 2).
+
+### **3. Guardar y ejecutar**
+1. Guarda la transformación con un nombre descriptivo: `transformacion_dim_cliente.ktr`.
+2. Ejecuta la transformación y verifica los resultados en la tabla de destino.
+
+### **4. Validación**
+1. Comprueba que los datos en la tabla `dim_cliente` coincidan con los datos esperados.
+2. Verifica la integridad referencial con las tablas relacionadas.
+3. Si implementaste dimensiones tipo 2, asegúrate de que los registros históricos se gestionen correctamente.
+
+**Lecturas recomendadas**
+
+[curso-data-warehouse-olap/Proyecto Data Warehouse/Transformaciones at main · platzi/curso-data-warehouse-olap · GitHub](https://github.com/platzi/curso-data-warehouse-olap/tree/main/Proyecto%20Data%20Warehouse/Transformaciones)
+
+## Carga: dimensión de cliente
+
+Para cargar una **dimensión de cliente** en Pentaho Data Integration (PDI) de manera efectiva, necesitas realizar un proceso que involucre varios pasos, especialmente si estás trabajando con datos de un sistema transaccional hacia una base de datos de tipo **Data Warehouse** o un esquema de **dimensiones**. El proceso típico para cargar una dimensión de cliente generalmente incluye la carga de datos desde un origen (como una base de datos operativa) y luego insertarlos o actualizarlos en la dimensión correspondiente.
+
+Aquí hay un ejemplo de cómo configurar una transformación en Pentaho para cargar una dimensión de cliente correctamente:
+
+### Pasos para cargar la Dimensión de Cliente
+
+1. **Obtener los Datos de Clientes (Input Step)**:
+   El primer paso es leer los datos de cliente desde la fuente de datos (una base de datos, un archivo CSV, etc.). Esto se puede hacer con un paso **"Table Input"** o **"CSV File Input"** dependiendo de la fuente de datos.
+
+   - Si estás usando **"Table Input"**, la consulta podría ser algo así:
+     ```sql
+     SELECT id_cliente, nombre, direccion, telefono, email FROM clientes;
+     ```
+
+2. **Manejo de Secuencias y Variables (Add Sequence)**:
+   Si estás generando un ID único para cada cliente en la dimensión (por ejemplo, en caso de que no haya un ID preexistente o si necesitas una secuencia incremental), puedes usar el paso **"Add Sequence"**.
+   
+   Para esto:
+   - Configura el paso **"Add Sequence"**.
+   - Define un **valor inicial** para la secuencia, por ejemplo, **1**.
+   - Si la secuencia necesita empezar desde un valor específico (por ejemplo, el valor máximo ya presente en la base de datos), puedes utilizar una variable. Para esto, crea un paso previo que obtenga el valor máximo de `id_cliente` de la tabla de la dimensión de cliente.
+
+3. **Comprobación de la Dimensión (Lookup o Join)**:
+   Utiliza un paso **"Lookup"** o **"Join"** para verificar si el cliente ya existe en la dimensión de cliente. Esto es especialmente útil si estás usando un modelo de **slowly changing dimension (SCD)** y deseas realizar actualizaciones en lugar de insertar datos duplicados.
+
+   - Si utilizas **"Lookup"**, configúralo para que busque el `id_cliente` en la tabla de dimensión y compare si existe un registro con el mismo `id_cliente`.
+   - Si el cliente ya existe, puedes realizar una actualización; si no, realiza una **inserción**.
+
+4. **Manejo de Tipo de Cambio (Slowly Changing Dimension - SCD)**:
+   Si estás trabajando con un **SCD** (dimensiones de cambio lento), deberás gestionar la lógica de actualización para manejar clientes que han cambiado, por ejemplo:
+   - Si un cliente ha cambiado su dirección o estado, debes actualizar el registro existente en la dimensión.
+   - Puedes usar un paso **"SCD"** para gestionar este proceso. Configúralo para que:
+     - Detecte si hay cambios en los datos (como dirección o teléfono).
+     - Marque los registros antiguos como **"inactivos"** y cree un nuevo registro con la nueva información del cliente.
+
+5. **Cargar los Datos a la Dimensión (Output Step)**:
+   Una vez que los datos han sido procesados (ya sea insertados o actualizados), necesitas cargarlos en la tabla de la dimensión. Para esto puedes usar un paso **"Table Output"** o **"Insert/Update"**.
+
+   - **"Table Output"**: Si estás insertando datos nuevos, configura este paso para cargar los datos en la tabla de dimensión.
+   - **"Insert/Update"**: Si deseas realizar actualizaciones o inserciones, usa este paso para manejar ambas acciones.
+
+6. **Configuración del Pasaje de Variables**:
+   Si estás utilizando variables, asegúrate de que estén bien definidas antes de que los pasos que las necesiten se ejecuten. Esto se puede hacer con el paso **"Set Variables"** o en la configuración de la transformación.
+
+### Ejemplo de Flujo Completo de Transformación:
+
+1. **Table Input**: Leer los registros de clientes desde la base de datos origen.
+2. **Add Sequence**: Agregar un ID secuencial si es necesario.
+3. **Lookup**: Verificar si el cliente ya existe en la dimensión.
+4. **SCD (Slowly Changing Dimension)**: Aplicar lógica de actualización si el cliente ya existe.
+5. **Table Output o Insert/Update**: Cargar los datos procesados en la tabla de dimensión de clientes.
+
+### Notas adicionales:
+- **Manejo de Nulos**: Asegúrate de manejar los valores nulos adecuadamente, especialmente si alguno de los campos clave, como `id_cliente`, `email`, o `telefono`, puede estar vacío o incompleto.
+- **Verificación de Errores**: Revisa los logs de Pentaho para encontrar cualquier error relacionado con la carga de los datos. El error común suele estar relacionado con tipos de datos incompatibles o problemas con las variables no definidas.
+
+**NOTA**:
+
+En windows tuve que hacer lo siguiente para poder conectar al s3: te vas a la carpeta donde tienes pentaho en mi caso es la siguiente:
+
+`C:\Users\User\Desktop\pdi-ce-9.4.0.0-343\data-integration`
+
+despues buscamos el archivo Spoon.bat , click derecho abrir con code
+
+y despues de los primeros comentarios escribimos las keys de s3:
+
+![spoot.bat](images/spoot_bat.png)
+
+guardamos y cerramos pentaho si esta abierto
+
+y listo (asi fue como me funciono intente)
+
+
+**Lecturas recomendadas**
+
+[curso-data-warehouse-olap/Proyecto Data Warehouse/Transformaciones at main · platzi/curso-data-warehouse-olap · GitHub](https://github.com/platzi/curso-data-warehouse-olap/tree/main/Proyecto%20Data%20Warehouse/Transformaciones)
+
+[Curso de AWS Redshift para Manejo de Big Data - Platzi](https://platzi.com/cursos/redshift-big-data/)
+
+## Soluciones ETL de las tablas de dimensiones y hechos
+
+La construcción de un modelo de **Tablas de Dimensiones y Hechos** para un Data Warehouse (DW) implica procesos específicos de ETL (Extract, Transform, Load) que deben ejecutarse correctamente para garantizar la integridad y utilidad de los datos.
+
+A continuación, te explico cómo implementar soluciones ETL para cargar tablas de dimensiones y hechos paso a paso:
+
+### **1. Conceptos Básicos**
+
+### **Tablas de Dimensiones**
+- Contienen atributos descriptivos o categóricos.
+- Usadas para filtrar, agrupar o segmentar datos (por ejemplo, "Productos", "Clientes", "Tiempo").
+
+### **Tablas de Hechos**
+- Contienen métricas o medidas numéricas y claves foráneas a las dimensiones.
+- Por ejemplo, una tabla de ventas tendrá "Cantidad", "Ingresos" y claves a dimensiones como "Fecha", "Producto", "Cliente".
+
+### **2. Proceso General de ETL**
+### **a. Extracción (Extract)**
+Obtén datos desde las fuentes, que pueden ser bases de datos, archivos planos, API, etc.
+
+- **Ejemplo**:
+  - Datos de ventas desde un ERP (hechos).
+  - Datos de clientes desde un CRM (dimensiones).
+  - Fechas generadas dinámicamente o desde una base de datos de tiempo.
+
+### **b. Transformación (Transform)**
+Limpia, normaliza y organiza los datos según los requerimientos del modelo dimensional.
+
+- **Operaciones comunes**:
+  - Eliminar duplicados y valores nulos.
+  - Aplicar reglas de negocio (por ejemplo, convertir monedas o unidades).
+  - Generar claves sustitutas (surrogate keys) para las dimensiones.
+  - Identificar y gestionar cambios históricos en dimensiones lentamente cambiantes (**SCD**).
+
+### **c. Carga (Load)**
+Inserta los datos procesados en el DW en el formato definido.
+
+- **Estrategias**:
+  - Carga incremental (solo nuevos o actualizados).
+  - Carga completa (en raras ocasiones, para reiniciar datos).
+
+### **3. Carga de Tablas de Dimensiones**
+### **Estrategia para Dimensiones SCD**
+Dimensiones con cambios lentos pueden usar uno de estos métodos:
+- **SCD Tipo 1**: Sobrescribe el registro actual.
+- **SCD Tipo 2**: Mantiene un historial de los cambios (nueva fila por cada cambio).
+- **SCD Tipo 3**: Agrega una columna adicional para el valor anterior.
+
+#### **Ejemplo de Proceso ETL**
+1. **Extraer** datos de la dimensión desde la fuente.
+2. **Transformar**:
+   - Generar claves sustitutas si no existen.
+   - Comparar registros para identificar nuevos o actualizados.
+   - Aplicar reglas SCD según corresponda.
+3. **Cargar**:
+   - Insertar registros nuevos.
+   - Actualizar registros existentes si se usa SCD Tipo 1.
+   - Insertar una nueva fila para cambios en SCD Tipo 2.
+
+#### **Ejemplo con Pentaho (Transformación para Dimensiones)**
+1. Paso de entrada: extrae datos desde la fuente.
+2. Paso de comparación: usa el **"Merge Join"** para detectar registros nuevos o actualizados.
+3. Condiciones:
+   - Si el registro es nuevo, insértalo en la dimensión.
+   - Si cambió, aplica la lógica de actualización (SCD 1/2/3).
+
+### **4. Carga de Tablas de Hechos**
+### **Pasos Clave**
+1. **Extraer** datos transaccionales desde las fuentes.
+2. **Transformar**:
+   - Generar claves sustitutas para las dimensiones (usando los datos existentes en las tablas de dimensiones).
+   - Calcular métricas.
+   - Asegurarte de que no haya registros duplicados.
+3. **Cargar**:
+   - Inserta los datos en la tabla de hechos.
+
+### **Uso de Claves Foráneas**
+- Antes de insertar un registro en la tabla de hechos, asegúrate de resolver las claves sustitutas de las dimensiones.
+
+#### **Ejemplo con Pentaho (Carga de Hechos)**
+1. Paso de entrada: carga datos transaccionales.
+2. Paso de mapeo: usa un **"Stream lookup"** o **"Database lookup"** para buscar claves sustitutas en las dimensiones.
+3. Inserta los registros en la tabla de hechos.
+
+### **5. Casos Prácticos**
+### **a. Dimensión de Tiempo**
+Una tabla de tiempo puede generarse con una transformación separada:
+- Año, mes, día, trimestre, etc.
+- Usa herramientas como un generador de fechas en Pentaho.
+
+### **b. Hechos de Ventas**
+1. Carga transacciones de ventas (SKU, cantidad, ingresos, etc.).
+2. Busca las claves de las dimensiones relacionadas (producto, cliente, tienda, tiempo).
+3. Inserta datos en la tabla de hechos con todas las claves foráneas resueltas.
+
+### **6. Optimización y Buenas Prácticas**
+- **Automatización**: Usa un job ETL para ejecutar procesos secuenciales:
+  1. Carga de dimensiones primero.
+  2. Luego, carga de hechos.
+- **Gestión de Errores**:
+  - Agrega pasos para capturar y registrar errores (por ejemplo, datos no encontrados en dimensiones).
+- **Carga Incremental**:
+  - Usa marcas de tiempo o identificadores únicos para cargar solo datos nuevos o actualizados.
+- **Pruebas**:
+  - Valida los resultados de carga, verificando las métricas y la consistencia de las claves.
+
+**Lecturas recomendadas**
+
+[curso-data-warehouse-olap/Proyecto Data Warehouse/Transformaciones at main · platzi/curso-data-warehouse-olap · GitHub](https://github.com/platzi/curso-data-warehouse-olap/tree/main/Proyecto%20Data%20Warehouse/Transformaciones)
