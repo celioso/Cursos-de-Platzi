@@ -2147,6 +2147,325 @@ Una tabla de tiempo puede generarse con una transformación separada:
 - **Pruebas**:
   - Valida los resultados de carga, verificando las métricas y la consistencia de las claves.
 
+para comprobar los erroes puede usar el siguiente query:
+
+```sql
+SELECT * FROM stl_load_errors ORDER BY starttime DESC LIMIT 10;
+```
+
 **Lecturas recomendadas**
 
 [curso-data-warehouse-olap/Proyecto Data Warehouse/Transformaciones at main · platzi/curso-data-warehouse-olap · GitHub](https://github.com/platzi/curso-data-warehouse-olap/tree/main/Proyecto%20Data%20Warehouse/Transformaciones)
+
+## Parámetros en ETL
+
+En un proceso ETL (**Extract, Transform, Load**), los **parámetros** son valores dinámicos que controlan el comportamiento del flujo de trabajo y permiten flexibilidad y reutilización del proceso. Estos parámetros son fundamentales para manejar configuraciones, ejecutar procesos dinámicos y adaptarse a diferentes entornos (desarrollo, pruebas, producción). 
+
+A continuación, se detallan los conceptos clave y ejemplos de uso:
+
+---
+
+### **1. Tipos de Parámetros en ETL**
+#### **a) Parámetros globales**
+- Aplican a toda la herramienta o al proyecto ETL.
+- Configuran valores como rutas de archivo, nombres de base de datos, o claves de acceso.
+- Ejemplo: `DB_HOST`, `DB_USER`, `DB_PASSWORD`.
+
+#### **b) Parámetros de transformación o flujo**
+- Aplican únicamente a una transformación o trabajo específico dentro del proceso ETL.
+- Ejemplo: Rango de fechas, valores límite, nombres de tablas.
+
+#### **c) Variables de entorno**
+- Definidas en el sistema operativo o en configuraciones externas (por ejemplo, archivos `.env`).
+- Se usan para separar datos sensibles o configuraciones entre entornos.
+
+#### **d) Parámetros dinámicos**
+- Se generan o calculan durante la ejecución de una transformación.
+- Ejemplo: Fecha actual (`CURRENT_DATE`), rutas dinámicas (`concat('data_', CURRENT_DATE, '.csv')`).
+
+---
+
+### **2. Usos Comunes de los Parámetros**
+#### **a) Conexiones dinámicas a bases de datos**
+Permite usar diferentes configuraciones según el entorno:
+
+```plaintext
+DB_HOST=localhost
+DB_USER=admin
+DB_PASSWORD=1234
+```
+
+En la herramienta ETL, estas variables se referencian como `${DB_HOST}`, `${DB_USER}`, `${DB_PASSWORD}`.
+
+#### **b) Rutas de entrada y salida dinámicas**
+En lugar de codificar rutas estáticas, se usa un parámetro para flexibilizar:
+
+```plaintext
+INPUT_PATH=/data/input
+OUTPUT_PATH=/data/output
+```
+
+Referencia en el flujo:
+```plaintext
+${INPUT_PATH}/file_to_process.csv
+```
+
+#### **c) Filtrado o partición de datos**
+Se usan parámetros para aplicar filtros en el proceso de extracción o transformación:
+- Parámetro: `START_DATE`, `END_DATE`.
+- Consulta SQL en el paso de extracción:
+
+```sql
+SELECT * FROM ventas WHERE fecha BETWEEN '${START_DATE}' AND '${END_DATE}';
+```
+
+#### **d) Procesamiento de lotes**
+Si tienes que procesar un lote específico:
+- Parámetro: `BATCH_ID`.
+- Uso en una transformación:
+
+```sql
+DELETE FROM tabla_procesada WHERE batch_id = '${BATCH_ID}';
+```
+
+---
+
+### **3. Ventajas de Usar Parámetros**
+1. **Flexibilidad:** Permiten ajustar el proceso sin modificar el diseño del ETL.
+2. **Reusabilidad:** Puedes reutilizar el flujo con diferentes configuraciones.
+3. **Separación de configuraciones:** Ayudan a mantener las configuraciones separadas del código principal.
+4. **Seguridad:** Las credenciales y datos sensibles se almacenan como variables externas.
+
+---
+
+### **4. Ejemplo Práctico en Pentaho Data Integration**
+#### Definir un parámetro
+1. Ve a `Edit > Settings > Parameters`.
+2. Agrega un nuevo parámetro, por ejemplo:
+   - Nombre: `FILE_PATH`.
+   - Valor predeterminado: `/data/input/`.
+
+#### Usar el parámetro
+1. En cualquier paso (como "Text file input"), usa `${FILE_PATH}` para referenciarlo.
+2. Durante la ejecución, puedes sobrescribirlo con un valor diferente, ya sea desde:
+   - La línea de comandos:
+     ```bash
+     kitchen.sh -param:FILE_PATH="/new/path/to/data/"
+     ```
+   - O desde un trabajo que invoque la transformación.
+
+---
+
+### **5. Parámetros en Otras Herramientas ETL**
+- **Informatica PowerCenter:** Define parámetros en los archivos de configuración o variables de sesión.
+- **Talend:** Usa contextos (`Contexts`) para gestionar parámetros.
+- **Apache Nifi:** Configura variables en el nivel del flujo de datos (`Flow Variables`).
+- **SSIS (SQL Server Integration Services):** Usa variables en paquetes de integración.
+
+**Lecturas recomendadas**
+
+[Curso de Fundamentos de ETL con Python y Pentaho - Platzi](https://platzi.com/cursos/fundamentos-etl/)
+
+[curso-data-warehouse-olap/Proyecto Data Warehouse/Transformación parms at main · platzi/curso-data-warehouse-olap · GitHub](https://github.com/platzi/curso-data-warehouse-olap/tree/main/Proyecto%20Data%20Warehouse/Transformaci%C3%B3n%20parms)
+
+
+## Orquestar ETL en Pentaho: job
+
+Orquestar un ETL en Pentaho usando un **job** implica estructurar los pasos necesarios para ejecutar transformaciones, manejar flujos condicionales, y realizar tareas como mover archivos, enviar correos, o cargar datos. Aquí tienes una guía práctica para crear un **job** en Pentaho Data Integration (PDI):
+
+---
+
+### **Pasos para crear un job en Pentaho**
+
+#### **1. Crear un nuevo Job**
+1. Abre *Spoon*.
+2. Ve a `File > New > Job`.
+3. Se abrirá un lienzo en blanco específico para un job.
+
+#### **2. Definir los elementos básicos del job**
+Un job puede incluir los siguientes elementos:
+- **Start**: El paso inicial que activa el flujo del job.
+- **Transformations**: Los ETL propiamente dichos (cargar, transformar, o exportar datos).
+- **Tareas adicionales**:
+  - Mover o copiar archivos.
+  - Ejecutar comandos de shell.
+  - Conectar con servicios externos como bases de datos, FTP, o APIs.
+  - Condiciones para decidir qué pasos ejecutar basándose en resultados previos.
+
+#### **3. Configurar el paso inicial**
+1. Arrastra el icono de **Start** desde la paleta a tu lienzo.
+2. Conéctalo al siguiente paso que quieras ejecutar.
+
+---
+
+### **4. Agregar transformaciones**
+1. **Añadir transformaciones al job**:
+   - Arrastra el objeto **Transformation** desde la paleta al lienzo.
+   - Haz doble clic en el objeto y selecciona la transformación (`.ktr`) que deseas ejecutar.
+   
+2. **Pasar parámetros entre job y transformación**:
+   - Ve a la pestaña *Parameters* al configurar la transformación.
+   - Define los parámetros necesarios (como nombres de tablas o rutas de archivos).
+   - Vincúlalos con valores desde el job.
+
+---
+
+### **5. Añadir pasos de control**
+- **Decisiones condicionales**:
+  - Usa el paso **Evaluate rows number in a table** para verificar condiciones en la base de datos.
+  - Usa **Check if a file exists** para validar la existencia de archivos antes de procesarlos.
+- **Manejo de errores**:
+  - Configura conexiones condicionales desde un paso hacia otro en caso de éxito o fallo.
+  - Utiliza el paso **Abort job** para detener la ejecución si ocurre un error.
+
+---
+
+### **6. Trabajar con sistemas externos**
+1. **Mover archivos**:
+   - Usa el paso **Copy Files** para mover o copiar archivos entre directorios.
+   - Configura las rutas de origen y destino.
+2. **Ejecutar comandos**:
+   - Usa **Shell** para ejecutar scripts o comandos de sistemas operativos.
+3. **Enviar correos electrónicos**:
+   - Usa **Mail** para notificar al equipo de resultados o errores.
+   - Configura el servidor SMTP y los detalles del correo.
+
+---
+
+### **7. Configurar el flujo del job**
+1. Conecta los pasos arrastrando líneas entre ellos.
+2. Configura las condiciones de flujo:
+   - **Éxito**: Ejecuta el siguiente paso solo si el actual tuvo éxito.
+   - **Error**: Redirige el flujo en caso de fallo.
+3. Define condiciones usando los conectores:
+   - Haz clic derecho en una línea de conexión y selecciona una opción (éxito, error, o ambos).
+
+---
+
+### **8. Probar y depurar el job**
+1. Ejecuta el job desde *Spoon*:
+   - Haz clic en el botón de **Run**.
+   - Configura cualquier parámetro necesario.
+2. Observa la consola de logs para identificar problemas.
+3. Usa opciones como *Breakpoints* y *Step Metrics* para depuración detallada.
+
+---
+
+### **9. Guardar y documentar**
+1. Guarda el job con la extensión `.kjb`.
+2. Añade comentarios y documentación en los pasos para que el flujo sea comprensible.
+
+---
+
+### **10. Implementar en un servidor de ejecución**
+Si deseas orquestar y ejecutar este job automáticamente:
+1. Usa el cliente **Kitchen** para ejecutar el job desde línea de comandos.
+2. Agrega el comando a un *cron job* o tarea programada para ejecución periódica.
+
+**Ejemplo de comando para ejecutar un job**:
+```bash
+kitchen.sh -file=/ruta/del/job.kjb -level=Basic -param:PARAM1=valor1 -param:PARAM2=valor2
+```
+
+Este archivo XML es un ejemplo de un **job** para Pentaho Data Integration. Cada entrada representa un paso del flujo ETL, desde la validación de parámetros hasta la carga de datos en el destino. Los pasos están conectados mediante hops para definir el orden de ejecución.
+
+### Pasos a seguir:
+1. Abre Pentaho Spoon.
+2. Crea un nuevo **Job**.
+3. Copia y pega el contenido del XML en el editor del Job.
+4. Ajusta las rutas de las transformaciones (`.ktr`) según tu configuración.
+5. Prueba y ejecuta el Job.
+
+[ejemplo](notebook/Orquestar_ETL.kjb)
+
+## Revisión de todo el ETL
+
+Para realizar una revisión exhaustiva de tu proceso ETL en Pentaho, es importante considerar las siguientes áreas clave:
+
+### **1. Validación de Parámetros y Variables**
+- **Revisión:** 
+  - Confirma que las variables usadas (`${CONSECUTIVO}`, `${TABLA}`, etc.) estén definidas y que se pasen correctamente al Job o a las transformaciones.
+  - Usa el paso de "Set Variables" en el Job si es necesario definir variables globales.
+- **Prueba:**
+  - Ejecuta un paso de prueba para asegurarte de que las variables se están resolviendo correctamente.
+
+### **2. Extracción de Datos**
+- **Revisión:**
+  - Verifica las consultas SQL para garantizar que:
+    - Tengan la sintaxis correcta.
+    - Devuelvan los resultados esperados.
+    - Se adapten al tipo de base de datos (PostgreSQL, Redshift, etc.).
+  - Revisa conexiones en "Database Connections":
+    - Dirección del servidor.
+    - Credenciales.
+    - Puerto y esquema correcto.
+- **Prueba:**
+  - Ejecuta cada consulta en un cliente de base de datos externo antes de incluirla en el ETL.
+
+### **3. Transformaciones**
+- **Revisión:**
+  - Analiza cada transformación (`.ktr`) incluida en el Job:
+    - Los pasos tienen configuraciones válidas y conexiones entre ellos.
+    - Se manejan excepciones o datos inválidos adecuadamente.
+    - Las salidas son coherentes con los requisitos del proceso.
+- **Prueba:**
+  - Ejecuta cada transformación por separado y valida sus salidas antes de integrarlas al Job.
+
+### **4. Limpieza y Enriquecimiento de Datos**
+- **Revisión:**
+  - Asegúrate de que los pasos de transformación manejen:
+    - Nulls y valores faltantes (IfNull, Replace Value, etc.).
+    - Tipos de datos correctos para las operaciones posteriores.
+    - Enriquecimiento basado en reglas de negocio.
+- **Prueba:**
+  - Revisa ejemplos de datos antes y después de los pasos críticos (usa "Preview Rows").
+
+### **5. Carga en Destino**
+- **Revisión:**
+  - Valida que las tablas de destino:
+    - Existan y sean accesibles.
+    - Coincidan con la estructura esperada por el ETL.
+    - Sean gestionadas correctamente (truncar, insertar, actualizar).
+  - Revisa configuraciones de pasos como "Table Output" o "Insert/Update".
+- **Prueba:**
+  - Ejecuta cargas de prueba con datos controlados.
+
+### **6. Manejo de Errores**
+- **Revisión:**
+  - Configura logs y pasos de salida de errores:
+    - Define "Error Handling" en pasos clave.
+    - Registra errores en un archivo o tabla.
+  - Usa condiciones en los hops para manejar errores y redirigir el flujo del Job.
+- **Prueba:**
+  - Simula errores para comprobar que el Job se comporta adecuadamente.
+
+### **7. Rendimiento**
+- **Revisión:**
+  - Evalúa tiempos de ejecución.
+  - Optimiza pasos pesados (filtros, transformaciones complejas, etc.).
+  - Configura paralelización si es necesario.
+- **Prueba:**
+  - Ejecuta el ETL en condiciones de producción y monitorea tiempos y uso de recursos.
+
+### **8. Documentación**
+- **Revisión:**
+  - Añade descripciones claras en cada paso del Job y transformaciones.
+  - Documenta dependencias, rutas de archivos y credenciales.
+
+### **9. Pruebas End-to-End**
+- **Revisión:**
+  - Ejecuta el Job completo con datos reales (o simulados) y verifica:
+    - La integridad de los datos en cada paso.
+    - Que los datos cargados en el destino cumplan con las expectativas.
+  - Compara los resultados con un conjunto de datos esperado.
+
+### **10. Plan de Mantenimiento**
+- **Revisión:**
+  - Diseña estrategias para:
+    - Gestionar cambios en las estructuras de datos de origen o destino.
+    - Monitorear errores en ejecución.
+    - Escalar el proceso ETL si crece el volumen de datos.
+
+**Lecturas recomendadas**
+
+[curso-data-warehouse-olap/Proyecto Data Warehouse/Jobs at main · platzi/curso-data-warehouse-olap · GitHub](https://github.com/platzi/curso-data-warehouse-olap/tree/main/Proyecto%20Data%20Warehouse/Jobs)

@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<job>
+  <name>Orquestar_ETL</name>
+  <description>Job para orquestar ETL en Pentaho</description>
+  <entries>
+
+    <!-- Inicio del Job -->
+    <entry>
+      <name>Inicio</name>
+      <type>START</type>
+      <xloc>50</xloc>
+      <yloc>50</yloc>
+      <description>Punto inicial del Job</description>
+      <job>False</job>
+    </entry>
+
+    <!-- Validar Parámetros -->
+    <entry>
+      <name>Validar_Parametros</name>
+      <type>TRANS</type>
+      <transname>validar_parametros.ktr</transname>
+      <xloc>200</xloc>
+      <yloc>50</yloc>
+      <description>Valida los parámetros iniciales</description>
+      <job>False</job>
+    </entry>
+
+    <!-- Cargar Datos Fuente -->
+    <entry>
+      <name>Cargar_Datos_Fuente</name>
+      <type>TRANS</type>
+      <transname>cargar_datos_fuente.ktr</transname>
+      <xloc>400</xloc>
+      <yloc>50</yloc>
+      <description>Obtiene datos desde la fuente</description>
+      <job>False</job>
+    </entry>
+
+    <!-- Procesar Datos -->
+    <entry>
+      <name>Procesar_Datos</name>
+      <type>TRANS</type>
+      <transname>procesar_datos.ktr</transname>
+      <xloc>600</xloc>
+      <yloc>50</yloc>
+      <description>Realiza transformaciones en los datos</description>
+      <job>False</job>
+    </entry>
+
+    <!-- Cargar a Destino -->
+    <entry>
+      <name>Cargar_Datos_Destino</name>
+      <type>TRANS</type>
+      <transname>cargar_datos_destino.ktr</transname>
+      <xloc>800</xloc>
+      <yloc>50</yloc>
+      <description>Escribe los datos procesados en el destino</description>
+      <job>False</job>
+    </entry>
+
+    <!-- Finalizar -->
+    <entry>
+      <name>Finalizar</name>
+      <type>DUMMY</type>
+      <xloc>1000</xloc>
+      <yloc>50</yloc>
+      <description>Punto final del Job</description>
+      <job>False</job>
+    </entry>
+
+  </entries>
+
+  <!-- Conexiones entre pasos -->
+  <hops>
+    <hop>
+      <from>Inicio</from>
+      <to>Validar_Parametros</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Validar_Parametros</from>
+      <to>Cargar_Datos_Fuente</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Cargar_Datos_Fuente</from>
+      <to>Procesar_Datos</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Procesar_Datos</from>
+      <to>Cargar_Datos_Destino</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Cargar_Datos_Destino</from>
+      <to>Finalizar</to>
+      <enabled>Y</enabled>
+    </hop>
+  </hops>
+</job>
