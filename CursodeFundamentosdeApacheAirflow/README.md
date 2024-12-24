@@ -1381,3 +1381,319 @@ with DAG(
 - Integraciones con herramientas o sistemas no soportados nativamente por Airflow.
 
 Esto te permite adaptar Airflow a las necesidades exactas de tus proyectos.
+
+## Orquestando un DAG I
+
+Un DAG (Directed Acyclic Graph) en el contexto de la orquestación de tareas (como Apache Airflow) es una estructura que define la secuencia y las dependencias entre las tareas que se ejecutan como parte de un flujo de trabajo. Si estás interesado en aprender o trabajar con un DAG, te puedo ayudar con los siguientes pasos:
+
+### 1. **Entender los Componentes de un DAG**
+   - **Nodos**: Representan las tareas individuales.
+   - **Aristas (Edges)**: Representan las dependencias entre las tareas.
+   - **Atributos del DAG**: Incluyen el identificador, la programación (schedule), y los parámetros globales.
+
+### 2. **Instalar Herramientas Necesarias**
+   - Si estás usando Apache Airflow, instala el paquete con:
+     ```bash
+     pip install apache-airflow
+     ```
+   - Configura una base de datos para Airflow y el servidor web.
+
+### 3. **Crear un DAG Básico**
+   Un ejemplo básico de código para crear un DAG en Python usando Airflow:
+
+   ```python
+   from airflow import DAG
+   from airflow.operators.python import PythonOperator
+   from datetime import datetime, timedelta
+
+   # Define una función de ejemplo
+   def print_hello():
+       print("Hola, este es un DAG de prueba.")
+
+   # Configuración del DAG
+   default_args = {
+       'owner': 'Mario Alexander Vargas Celis',
+       'depends_on_past': False,
+       'email_on_failure': False,
+       'email_on_retry': False,
+       'retries': 1,
+       'retry_delay': timedelta(minutes=5),
+   }
+
+   with DAG(
+       'dag_prueba',
+       default_args=default_args,
+       description='Un DAG simple para imprimir un mensaje',
+       schedule_interval=timedelta(days=1),
+       start_date=datetime(2024, 1, 1),
+       catchup=False,
+   ) as dag:
+       
+       # Tarea
+       tarea_hello = PythonOperator(
+           task_id='tarea_hello',
+           python_callable=print_hello,
+       )
+   ```
+
+### 4. **Definir Dependencias entre Tareas**
+   Las dependencias en Airflow se definen con operadores como `>>` (para indicar que una tarea debe ejecutarse antes de otra):
+   ```python
+   tarea_hello >> otra_tarea
+   ```
+
+### 5. **Ejecutar el DAG**
+   1. Inicializa la base de datos:
+      ```bash
+      airflow db init
+      ```
+   2. Inicia el servidor:
+      ```bash
+      airflow webserver --port 8080
+      ```
+   3. Corre el planificador:
+      ```bash
+      airflow scheduler
+      ```
+
+   Luego, puedes visitar la interfaz en `http://localhost:8080` y monitorear la ejecución del DAG.
+
+**Lecturas recomendadas**
+
+[DAG Runs — Airflow Documentation](https://airflow.apache.org/docs/apache-airflow/stable/dag-run.html?highlight=cron)
+
+[Crontab.guru - The cron schedule expression editor](https://crontab.guru/)
+
+## Orquestando un DAG II
+
+En la segunda etapa de "Orquestando un DAG", profundizamos en conceptos avanzados y optimizaciones para manejar tareas más complejas. Aquí exploraremos técnicas clave para escalar, depurar, y mejorar la eficiencia en el diseño y la ejecución de DAGs.
+
+### **1. Definiendo Dependencias Complejas**
+A medida que tu flujo de trabajo crece, es posible que necesites manejar múltiples dependencias entre tareas:
+
+- **Dependencias Lineales**:
+  ```python
+  tarea_1 >> tarea_2 >> tarea_3
+  ```
+- **Dependencias Ramificadas**:
+  ```python
+  [tarea_1, tarea_2] >> tarea_3
+  tarea_3 >> [tarea_4, tarea_5]
+  ```
+  
+- **Configuración Dinámica de Dependencias**:
+  Si las tareas dependen de un número variable de entradas:
+  ```python
+  for i in range(5):
+      previous_task >> PythonOperator(
+          task_id=f'tarea_{i}',
+          python_callable=funcion_dinamica,
+      )
+  ```
+
+### **2. Uso de Sensores**
+Los sensores son operadores especiales que esperan un evento o condición antes de continuar. Por ejemplo, esperar a que un archivo se cree:
+
+```python
+from airflow.sensors.filesystem import FileSensor
+
+esperar_archivo = FileSensor(
+    task_id='esperar_archivo',
+    filepath='/ruta/al/archivo',
+    poke_interval=30,  # Verifica cada 30 segundos
+    timeout=600,       # Expira después de 10 minutos
+)
+```
+
+### **3. Paralelismo y Pools**
+Para flujos de trabajo grandes, el paralelismo optimiza el uso de recursos:
+
+- **Configurar `concurrency` del DAG**:
+  Limita el número máximo de tareas simultáneas en un DAG.
+  ```python
+  with DAG(
+      'dag_con_paralelismo',
+      concurrency=10,  # Máximo de 10 tareas a la vez
+      ...
+  )
+  ```
+
+- **Usar Pools**:
+  Agrupa tareas para compartir recursos específicos:
+  ```bash
+  airflow pools set pool_name 5 "Descripción del pool"
+  ```
+
+  Luego, asigna el pool en las tareas:
+  ```python
+  tarea_optimizada = PythonOperator(
+      task_id='tarea_optimizada',
+      python_callable=mi_funcion,
+      pool='pool_name',
+  )
+  ```
+### **4. Manejo de Errores y Retries**
+Es importante configurar estrategias de manejo de errores para mantener la robustez del DAG:
+
+```python
+default_args = {
+    'retries': 3,  # Reintenta 3 veces
+    'retry_delay': timedelta(minutes=5),  # Espera 5 minutos entre reintentos
+    'on_failure_callback': mi_funcion_de_notificacion,
+}
+```
+
+Además, puedes especificar una tarea en particular que debe ejecutarse en caso de fallos:
+```python
+tarea_fallida >> tarea_notificar_fallo
+```
+
+### **5. Integración con APIs y Scripts Externos**
+Es común ejecutar scripts o interactuar con APIs externas desde un DAG. Por ejemplo, usando `BashOperator` o `HttpSensor`:
+
+- **Ejecutar un Script Bash**:
+  ```python
+  from airflow.operators.bash import BashOperator
+
+  tarea_bash = BashOperator(
+      task_id='ejecutar_script',
+      bash_command='python3 /ruta/a/mi_script.py',
+  )
+  ```
+
+- **Esperar una Respuesta de API**:
+  ```python
+  from airflow.sensors.http import HttpSensor
+
+  esperar_api = HttpSensor(
+      task_id='esperar_api',
+      http_conn_id='mi_api',
+      endpoint='/status',
+      response_check=lambda response: response.status_code == 200,
+  )
+  ```
+
+### **6. Depuración Avanzada**
+Para depurar errores en tareas o DAGs complejos:
+- **Ver Logs Detallados**:
+  Usa la interfaz de Airflow o la CLI:
+  ```bash
+  airflow tasks logs dag_id task_id execution_date
+  ```
+  
+- **Ejecutar Tareas en Modo Local**:
+  ```bash
+  airflow tasks test dag_id task_id execution_date
+  ```
+
+### **7. Prácticas de Diseño Escalable**
+- Divide DAGs grandes en DAGs más pequeños, vinculados mediante **ExternalTaskSensor**.
+- Usa **temporalidad dinámica** con el parámetro `execution_date` para manejar tareas dependientes del tiempo.
+- Emplea variables o conexiones definidas en Airflow para parametrizar tareas.
+
+**Lecturas recomendadas**
+
+[Crontab.guru - The cron schedule expression editor](https://crontab.guru/)
+
+## Monitoring
+
+### **Monitoring en la Orquestación de DAGs**
+
+El monitoreo es una parte crucial para garantizar que tus flujos de trabajo (DAGs) se ejecuten de manera eficiente, manejando fallos y obteniendo visibilidad en tiempo real de su estado. En el contexto de herramientas como Apache Airflow, aquí tienes las mejores prácticas y herramientas para el monitoreo efectivo:
+
+### **1. Interfaz Web**
+La interfaz web de Airflow es la herramienta principal para el monitoreo visual de DAGs:
+
+- **Vista de DAGs**:
+  - Observa el estado general de todos los DAGs.
+  - Muestra colores para representar el estado de las tareas:
+    - Verde: Éxito
+    - Rojo: Fallo
+    - Amarillo: En ejecución
+    - Gris: Sin ejecutar
+
+- **Vista de Gantt**:
+  - Proporciona un análisis temporal de las tareas ejecutadas.
+  - Ayuda a identificar cuellos de botella.
+
+- **Vista de Logs**:
+  - Para cada tarea, puedes acceder a los registros de ejecución.
+  - Ideal para depurar errores o evaluar tiempos de ejecución.
+
+### **2. Alertas y Notificaciones**
+Configura alertas automáticas para informar sobre fallos o eventos clave:
+
+- **Notificaciones por Correo Electrónico**:
+  Configura `email_on_failure` o `email_on_retry` en las tareas:
+  ```python
+  default_args = {
+      'email': ['mario.vargas@example.com'],
+      'email_on_failure': True,
+      'email_on_retry': False,
+  }
+  ```
+
+- **Callbacks Personalizados**:
+  Usa `on_failure_callback` o `on_success_callback` para realizar acciones específicas, como enviar un mensaje a Slack o registrar errores en un sistema externo:
+  ```python
+  def notificar_error(context):
+      print(f"Tarea fallida: {context['task_instance'].task_id}")
+
+  tarea = PythonOperator(
+      task_id='mi_tarea',
+      python_callable=mi_funcion,
+      on_failure_callback=notificar_error,
+  )
+  ```
+
+### **3. Métricas y Logs Centralizados**
+Integra Airflow con sistemas externos para recolectar y visualizar métricas:
+
+- **Prometheus y Grafana**:
+  - Configura el **exportador Prometheus** para Airflow.
+  - Visualiza métricas como:
+    - Número de tareas completadas.
+    - Tiempos promedio de ejecución.
+    - Tareas fallidas por DAG.
+
+- **Elasticsearch**:
+  - Centraliza los logs de ejecución para búsquedas y análisis más eficientes.
+
+### **4. Manejo de Retries y Fallos**
+Supervisa y ajusta las políticas de reintentos en tareas problemáticas:
+
+- **Configurar Retries**:
+  ```python
+  tarea = PythonOperator(
+      task_id='mi_tarea',
+      python_callable=mi_funcion,
+      retries=3,
+      retry_delay=timedelta(minutes=5),
+  )
+  ```
+
+- **Resúmenes de Errores**:
+  La interfaz web permite acceder a listas de tareas fallidas para análisis detallado.
+
+### **5. Auditorías y Seguimiento Histórico**
+Monitorea cómo ha evolucionado el rendimiento de tus DAGs a lo largo del tiempo:
+
+- **Historial de Ejecuciones**:
+  Usa la vista "Tree View" o "Graph View" para ver el historial y patrones de fallos o ejecuciones exitosas.
+
+- **Exportar Logs**:
+  Guarda los registros para auditorías externas:
+  ```bash
+  airflow tasks logs dag_id task_id execution_date > log.txt
+  ```
+
+### **6. Optimización Basada en Monitoreo**
+Identifica cuellos de botella y optimiza el rendimiento:
+- Observa tareas que consumen mucho tiempo y evalúa su paralelización.
+- Usa sensores de manera eficiente, evitando bloqueos prolongados.
+- Configura límites de concurrencia y priorización de tareas.
+
+### **7. Integración con Herramientas Externas**
+- **Slack**: Notifica fallos directamente a un canal de Slack.
+- **PagerDuty**: Alerta en caso de errores críticos en tiempo real.
+- **AWS CloudWatch** (si se ejecuta en AWS): Monitorea recursos y ejecuta acciones automáticas en función del uso.
