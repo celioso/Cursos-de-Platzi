@@ -1697,3 +1697,15 @@ Identifica cuellos de botella y optimiza el rendimiento:
 - **Slack**: Notifica fallos directamente a un canal de Slack.
 - **PagerDuty**: Alerta en caso de errores críticos en tiempo real.
 - **AWS CloudWatch** (si se ejecuta en AWS): Monitorea recursos y ejecuta acciones automáticas en función del uso.
+
+## Task Actions
+
+En Apache Airflow, puedes realizar diversas acciones relacionadas con tareas. Aquí tienes algunas acciones comunes en español:
+
+1. **Crear Tarea**: Crear una nueva tarea definiendo su DAG (Directed Acyclic Graph) y configurando sus parámetros.
+2. **Ver Tarea**: Ver los detalles de una tarea específica proporcionando su ID o nombre.
+3. **Actualizar Tarea**: Editar los detalles de una tarea existente, como el nombre, la dependencia, la configuración o el código Python asociado.
+4. **Eliminar Tarea**: Eliminar una tarea proporcionando su ID o nombre.
+5. **Marcar como Completada**: Marcado una tarea como completada tras su ejecución.
+6. **Listar Tareas**: Mostrar una lista de todas las tareas o filtrar según criterios como estado, prioridad o fecha de vencimiento.
+7. **Buscar Tareas**: Buscar tareas usando palabras clave o filtros específicos como estado, categoría o fecha de vencimiento.
