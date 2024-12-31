@@ -1709,3 +1709,455 @@ En Apache Airflow, puedes realizar diversas acciones relacionadas con tareas. Aq
 5. **Marcar como Completada**: Marcado una tarea como completada tras su ejecución.
 6. **Listar Tareas**: Mostrar una lista de todas las tareas o filtrar según criterios como estado, prioridad o fecha de vencimiento.
 7. **Buscar Tareas**: Buscar tareas usando palabras clave o filtros específicos como estado, categoría o fecha de vencimiento.
+
+## Trigger Rules
+
+**Trigger rules** son reglas que especifican cuándo se debe ejecutar un proceso o una acción en diferentes contextos, como sistemas de automatización, bases de datos, pipelines de CI/CD, o sistemas de gestión de tareas. Su propósito es activar automáticamente ciertas acciones en función de condiciones definidas.
+
+Aquí hay ejemplos y contextos comunes donde se usan **Trigger Rules**:
+
+### 1. **En Pipelines de CI/CD (por ejemplo, en Jenkins o Airflow):**
+En sistemas como Apache Airflow, las **Trigger Rules** controlan cómo se ejecutan las tareas basándose en el estado de tareas anteriores. Ejemplo de reglas en Airflow:
+
+- **All Success** (Por defecto): La tarea se ejecuta solo si todas las tareas previas se ejecutaron con éxito.
+- **All Failed**: La tarea se ejecuta solo si todas las tareas previas fallaron.
+- **One Success**: La tarea se ejecuta si al menos una tarea previa se completó con éxito.
+- **One Failed**: La tarea se ejecuta si al menos una tarea previa falló.
+- **None Skipped**: La tarea se ejecuta si ninguna tarea previa fue omitida.
+
+Código de ejemplo en Airflow:
+```python
+from airflow import DAG
+from airflow.operators.dummy import DummyOperator
+from datetime import datetime
+
+with DAG('trigger_rule_example', start_date=datetime(2024, 1, 1), schedule_interval=None) as dag:
+    task_1 = DummyOperator(task_id='task_1')
+    task_2 = DummyOperator(task_id='task_2')
+    task_3 = DummyOperator(
+        task_id='task_3',
+        trigger_rule='one_failed'  # Esta tarea se ejecuta si al menos una tarea previa falla
+    )
+    
+    [task_1, task_2] >> task_3
+```
+
+### 2. **En Bases de Datos (Triggers en SQL):**
+En sistemas de bases de datos, los **triggers** son reglas que se ejecutan automáticamente en respuesta a eventos específicos en una tabla o vista. Los eventos incluyen `INSERT`, `UPDATE`, `DELETE`.
+
+Ejemplo en PostgreSQL:
+```sql
+CREATE OR REPLACE FUNCTION log_update() RETURNS TRIGGER AS $$
+BEGIN
+    INSERT INTO audit_table (user_id, old_data, new_data, change_time)
+    VALUES (NEW.user_id, OLD.*, NEW.*, now());
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER after_update_trigger
+AFTER UPDATE ON users
+FOR EACH ROW
+EXECUTE FUNCTION log_update();
+```
+
+### 3. **En Automatización (como IFTTT o Zapier):**
+En herramientas como **IFTTT** (If This Then That) o **Zapier**, las trigger rules se configuran como eventos condicionales:
+
+- **Ejemplo:** 
+  - **Trigger:** "Cuando recibo un correo con un archivo adjunto."
+  - **Acción:** "Guardar el archivo en Google Drive."
+
+### 4. **En Frameworks Backend (como Django):**
+Django ofrece **signals** que pueden actuar como triggers para realizar tareas cuando ocurren ciertos eventos, como la creación o modificación de un modelo.
+
+Ejemplo:
+```python
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from myapp.models import UserProfile
+
+@receiver(post_save, sender=UserProfile)
+def create_profile(sender, instance, created, **kwargs):
+    if created:
+        print(f"User profile for {instance.user} created!")
+```
+
+### 5. **En Herramientas de Integración Continua (como Jenkins):**
+Un **trigger rule** puede especificar que un pipeline se ejecute automáticamente cuando:
+- Se hace un commit a una rama específica.
+- Se abre un pull request.
+- Se programa en un tiempo específico.
+
+Ejemplo en Jenkinsfile:
+```groovy
+pipeline {
+    triggers {
+        pollSCM('H/15 * * * *')  // Revisa cada 15 minutos si hay cambios en el código fuente
+    }
+    stages {
+        stage('Build') {
+            steps {
+                echo 'Building...'
+            }
+        }
+    }
+}
+```
+
+## ¿Qué son los sensores?
+
+Los **sensores** son dispositivos o componentes que detectan cambios en el entorno y convierten esa información en señales eléctricas o digitales que pueden ser procesadas. Se utilizan ampliamente en diversas aplicaciones, desde la ingeniería y la robótica hasta la automatización industrial y los dispositivos cotidianos.
+
+### **Características principales de los sensores**
+1. **Detección de magnitudes físicas o químicas:**
+   - Detectan variables como temperatura, presión, luz, movimiento, humedad, nivel de gases, etc.
+   
+2. **Conversión de señales:**
+   - Transforman la magnitud detectada en una señal interpretable, como una corriente eléctrica, voltaje, frecuencia o datos digitales.
+
+3. **Precisión y sensibilidad:**
+   - La precisión indica qué tan cerca está la medición del valor real.
+   - La sensibilidad se refiere a la capacidad del sensor de detectar pequeños cambios en la magnitud.
+
+4. **Rango de operación:**
+   - El rango especifica los límites entre los cuales un sensor puede operar correctamente.
+
+### **Tipos de sensores por magnitud medida**
+1. **Sensores físicos:**
+   - Detectan propiedades físicas como:
+     - **Temperatura:** Termopares, sensores RTD, termistores.
+     - **Luz:** Fotodiodos, sensores LDR, cámaras.
+     - **Presión:** Sensores piezoeléctricos, barómetros.
+     - **Aceleración:** Acelerómetros.
+     - **Movimiento:** Sensores PIR, giroscopios.
+
+2. **Sensores químicos:**
+   - Detectan cambios químicos o la presencia de sustancias:
+     - **Gas:** Sensores MQ, detectores de monóxido de carbono.
+     - **pH:** Sensores de pH en soluciones.
+     - **Humedad:** Sensores de humedad capacitivos o resistivos.
+
+3. **Sensores biológicos:**
+   - Detectan variables en procesos biológicos:
+     - Sensores de glucosa, sensores de oxígeno en sangre.
+
+4. **Sensores eléctricos:**
+   - Miden propiedades eléctricas:
+     - Voltaje, corriente, resistencia.
+
+### **Clasificación por tipo de señal**
+1. **Sensores analógicos:**
+   - Generan una salida continua en función de la magnitud medida.
+   - Ejemplo: Un sensor de temperatura que produce un voltaje proporcional a los grados Celsius.
+
+2. **Sensores digitales:**
+   - Generan una salida discreta o digital (0 y 1).
+   - Ejemplo: Un sensor de proximidad que detecta presencia como "activo/inactivo".
+
+### **Aplicaciones de los sensores**
+1. **Robótica:**
+   - Detección de obstáculos, navegación autónoma, equilibrio.
+   
+2. **Automóviles:**
+   - Sensores de velocidad, presión de neumáticos, monitoreo de gases.
+
+3. **Electrodomésticos:**
+   - Sensores de temperatura en hornos, sensores de nivel en lavadoras.
+
+4. **Industria:**
+   - Sensores de presión para monitorear sistemas hidráulicos, sensores de flujo para control de procesos.
+
+5. **Salud:**
+   - Pulsómetros, oxímetros, sensores para dispositivos médicos portátiles.
+
+### **Ejemplo práctico: Sensor de temperatura**
+Un sensor de temperatura como el **LM35** produce un voltaje que es proporcional a la temperatura medida.  
+- Si mide 25°C, genera 0.25 V (10 mV por grado Celsius).  
+- Este valor se procesa para mostrarlo en una pantalla o para activar sistemas de control.
+
+**Lecturas recomendadas**
+
+[Sensors — Airflow Documentation](https://airflow.apache.org/docs/apache-airflow/stable/concepts/sensors.html)
+
+[airflow.sensors — Airflow Documentation](https://airflow.apache.org/docs/apache-airflow/stable/_api/airflow/sensors/index.html?highlight=sensors#module-airflow.sensors)
+
+## ExternalTaskSensor
+
+El **ExternalTaskSensor** es un operador de Apache Airflow utilizado para sincronizar tareas entre diferentes DAGs (Directed Acyclic Graphs). Su propósito principal es garantizar que una tarea en un DAG no comience hasta que una tarea específica en otro DAG se complete con éxito.
+
+### **Contexto de uso**
+En proyectos complejos, puede haber dependencias entre DAGs. Por ejemplo:
+
+- Un DAG se encarga de recopilar datos (ETL).
+- Otro DAG analiza esos datos.
+- El análisis no debe comenzar hasta que la recopilación haya terminado.
+
+En estos casos, el **ExternalTaskSensor** ayuda a coordinar la ejecución entre los DAGs.
+
+### **Características clave**
+1. **Espera activa**: Este sensor verifica periódicamente el estado de la tarea externa hasta que detecta que se completó con éxito.
+2. **Condiciones configurables**: Puedes especificar la tarea y el DAG externo, el intervalo de verificación, y el tiempo máximo de espera.
+3. **Detección de estado**: Solo continúa si la tarea especificada tiene el estado `success` (por defecto).
+
+### **Parámetros principales**
+- `external_dag_id`: El ID del DAG externo.
+- `external_task_id`: El ID de la tarea en el DAG externo que debe completarse.
+- `execution_date`: Opcional, para especificar una fecha de ejecución específica.
+- `timeout`: Tiempo máximo (en segundos) que el sensor espera antes de fallar.
+- `poke_interval`: Intervalo (en segundos) entre verificaciones.
+- `mode`: Puede ser:
+  - `'poke'` (por defecto): Comprueba periódicamente.
+  - `'reschedule'`: Optimiza recursos del scheduler.
+
+### **Ejemplo práctico**
+Imagina que tienes dos DAGs: `dag_etl` y `dag_analysis`. El DAG de análisis debe esperar a que el DAG de ETL complete su tarea llamada `extract_data`.
+
+Código para el DAG `dag_analysis`:
+```python
+from airflow import DAG
+from airflow.sensors.external_task import ExternalTaskSensor
+from airflow.operators.dummy import DummyOperator
+from datetime import datetime, timedelta
+
+default_args = {
+    'owner': 'airflow',
+    'retries': 1,
+    'retry_delay': timedelta(minutes=5),
+}
+
+with DAG(
+    'dag_analysis',
+    default_args=default_args,
+    description='DAG que depende de otro DAG',
+    schedule_interval=None,
+    start_date=datetime(2024, 1, 1),
+    catchup=False,
+) as dag:
+
+    wait_for_etl = ExternalTaskSensor(
+        task_id='wait_for_etl',
+        external_dag_id='dag_etl',  # ID del DAG externo
+        external_task_id='extract_data',  # ID de la tarea en el DAG externo
+        poke_interval=30,  # Revisa cada 30 segundos
+        timeout=3600,  # Espera hasta 1 hora
+        mode='poke',  # Usa espera activa
+    )
+
+    start_analysis = DummyOperator(task_id='start_analysis')
+
+    wait_for_etl >> start_analysis
+```
+
+### **Consideraciones**
+1. **Ejecución previa:** Asegúrate de que el DAG externo tenga una ejecución previa exitosa.
+2. **Ciclo de vida del DAG:** Ambos DAGs deben estar habilitados para que el sensor funcione.
+3. **Uso de recursos:** Usa el modo `reschedule` para reducir el consumo de recursos en el scheduler si el tiempo de espera es largo.
+
+## FileSensor
+
+El **FileSensor** es un operador de sensor en Apache Airflow que espera la existencia de un archivo en un directorio específico. Es útil cuando se necesita que un archivo esté presente antes de que una tarea o flujo continúe.
+
+### **Casos de uso**
+- Procesamiento de datos: Esperar la llegada de un archivo en una carpeta para iniciar su procesamiento.
+- Integración con sistemas externos: Asegurar que un archivo generado por otro sistema esté disponible antes de continuar.
+
+### **Parámetros principales**
+- **`filepath`**: Ruta al archivo que el sensor espera. Puede ser una ruta absoluta o relativa.
+- **`fs_conn_id`**: ID de la conexión al sistema de archivos, si es un almacenamiento externo (por ejemplo, S3 o HDFS).
+- **`poke_interval`**: Intervalo de tiempo (en segundos) entre cada verificación.
+- **`timeout`**: Tiempo máximo (en segundos) que el sensor espera antes de marcar un fallo.
+- **`mode`**: Define cómo espera el sensor:
+  - `'poke'`: Verifica continuamente (espera activa).
+  - `'reschedule'`: Reduce el uso de recursos pausando entre verificaciones.
+
+### **Ejemplo básico con un archivo local**
+En este ejemplo, el sensor espera un archivo llamado `data_ready.txt` en la carpeta `/tmp`.
+
+```python
+from datetime import datetime
+from airflow import DAG
+from airflow.sensors.filesystem import FileSensor
+from airflow.operators.bash import BashOperator
+
+default_args = {
+    'start_date': datetime(2024, 1, 1),
+}
+
+with DAG(
+    dag_id="file_sensor_example",
+    schedule_interval="@daily",
+    default_args=default_args,
+    catchup=False,
+) as dag:
+
+    wait_for_file = FileSensor(
+        task_id="wait_for_file",
+        filepath="/tmp/data_ready.txt",
+        poke_interval=30,  # Verifica cada 30 segundos
+        timeout=600,       # Falla si el archivo no aparece en 10 minutos
+        mode="poke",       # Espera activa
+    )
+
+    process_file = BashOperator(
+        task_id="process_file",
+        bash_command="cat /tmp/data_ready.txt && echo 'Archivo procesado!'",
+    )
+
+    wait_for_file >> process_file
+```
+
+### **Conexión a sistemas externos**
+Si necesitas monitorear archivos en sistemas como Amazon S3, HDFS o Google Cloud Storage, puedes usar el parámetro `fs_conn_id` con una conexión configurada en Airflow.
+
+Ejemplo para un archivo en Amazon S3:
+
+```python
+from airflow.providers.amazon.aws.sensors.s3 import S3KeySensor
+
+with DAG(
+    dag_id="s3_file_sensor_example",
+    schedule_interval="@daily",
+    start_date=datetime(2024, 1, 1),
+    catchup=False,
+) as dag:
+
+    wait_for_s3_file = S3KeySensor(
+        task_id="wait_for_s3_file",
+        bucket_name="my-bucket",
+        bucket_key="path/to/data_ready.txt",
+        aws_conn_id="my_s3_conn",  # Configurado en Airflow
+        poke_interval=60,  # Verifica cada minuto
+        timeout=3600,      # Tiempo máximo de espera: 1 hora
+    )
+```
+
+### **Consideraciones importantes**
+1. **Error si el archivo no aparece:**
+   - Configura un `timeout` adecuado para evitar que el sensor quede en espera indefinida.
+   - Maneja el error con notificaciones o tareas de limpieza si el archivo no llega.
+
+2. **Uso eficiente de recursos:**
+   - Usa `mode="reschedule"` si esperas largos períodos entre verificaciones para reducir la carga del scheduler.
+
+3. **Pruebas locales:**
+   - Durante el desarrollo, prueba la creación manual del archivo en el directorio especificado para verificar que el sensor lo detecta correctamente.
+
+## ¿Qué son los templates con Jinja?
+
+Los **templates con Jinja** son un mecanismo que permite generar contenido dinámico en aplicaciones y scripts utilizando el motor de plantillas **Jinja2**. Jinja2 es un motor de plantillas para Python ampliamente utilizado en herramientas como **Flask**, **Django**, y también en frameworks como **Apache Airflow** para crear configuraciones y comandos dinámicos.
+
+### **Conceptos básicos**
+Un **template** es un archivo (generalmente texto o HTML) con marcadores de posición que pueden ser reemplazados dinámicamente por valores. Jinja2 permite utilizar **variables**, **control de flujo** (bucles y condicionales), y **filtros** para construir plantillas complejas.
+
+#### **Sintaxis básica**
+1. **Variables:**
+   ```jinja
+   Hola, {{ nombre }}!
+   ```
+   Esto reemplazará `{{ nombre }}` con el valor de la variable `nombre`.
+
+2. **Control de flujo:**
+   - **Condicionales:**
+     ```jinja
+     {% if usuario %}
+       Hola, {{ usuario }}!
+     {% else %}
+       Hola, invitado!
+     {% endif %}
+     ```
+   - **Bucles:**
+     ```jinja
+     {% for item in lista %}
+       {{ item }}
+     {% endfor %}
+     ```
+
+3. **Filtros:**
+   Los filtros transforman datos, por ejemplo:
+   ```jinja
+   {{ texto | upper }}  # Convierte el texto a mayúsculas
+   ```
+
+### **Uso de Jinja en Apache Airflow**
+En Airflow, Jinja es crucial para construir comandos dinámicos en operadores como `BashOperator`, `PythonOperator`, o incluso configuraciones en tareas y sensores.
+
+#### **Ejemplo básico**
+Generar un archivo con un nombre dinámico basado en la fecha de ejecución:
+```python
+from airflow import DAG
+from airflow.operators.bash import BashOperator
+from datetime import datetime
+
+with DAG(dag_id="example_jinja",
+         start_date=datetime(2024, 1, 1),
+         schedule_interval="@daily",
+         catchup=False) as dag:
+
+    t1 = BashOperator(
+        task_id="create_file",
+        bash_command="echo 'Archivo generado el {{ ds }}' > /tmp/archivo_{{ ds_nodash }}.txt"
+    )
+```
+
+- **`{{ ds }}`**: Representa la fecha de ejecución (por ejemplo, `2024-01-01`).
+- **`{{ ds_nodash }}`**: Fecha sin guiones (`20240101`), útil para nombres de archivos.
+
+#### **Plantillas personalizadas**
+Puedes incluir variables adicionales en tus plantillas utilizando el argumento `params`:
+```python
+t1 = BashOperator(
+    task_id="custom_file",
+    bash_command="echo 'Hola, {{ params.nombre }}!' > /tmp/saludo.txt",
+    params={"nombre": "Mario"}
+)
+```
+
+### **Plantillas en otros contextos**
+
+#### **HTML en aplicaciones web**
+Jinja es muy usado en frameworks como Flask o Django para generar contenido HTML dinámico.
+
+```html
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Bienvenido</title>
+</head>
+<body>
+  <h1>Hola, {{ usuario }}!</h1>
+  <p>Hoy es {{ fecha | date('d/m/Y') }}.</p>
+</body>
+</html>
+```
+
+#### **Configuraciones dinámicas**
+Jinja puede utilizarse en scripts de configuración, como YAML o JSON, para ajustar valores dinámicamente.
+
+```yaml
+app_name: "{{ name }}"
+version: "{{ version }}"
+```
+
+### **Filtros útiles en Jinja**
+- **`upper`**: Convierte a mayúsculas.
+- **`lower`**: Convierte a minúsculas.
+- **`replace`**: Reemplaza texto.
+  ```jinja
+  {{ texto | replace('a', 'o') }}
+  ```
+- **`default`**: Establece un valor predeterminado.
+  ```jinja
+  {{ variable | default('valor por defecto') }}
+  ```
+
+### **Ventajas de Jinja**
+1. **Flexibilidad**: Permite generar contenido dinámico.
+2. **Separación de lógica y presentación**: Útil para aplicaciones web.
+3. **Facilidad de uso**: Sintaxis simple y potente.
+
+**Lecturas recomendadas**
+
+[Templates reference — Airflow Documentation](https://airflow.apache.org/docs/apache-airflow/stable/templates-ref.html)
+
+[Tutorials — Airflow Documentation](https://airflow.apache.org/docs/apache-airflow/stable/tutorial/index.html)
