@@ -2161,3 +2161,224 @@ version: "{{ version }}"
 [Templates reference — Airflow Documentation](https://airflow.apache.org/docs/apache-airflow/stable/templates-ref.html)
 
 [Tutorials — Airflow Documentation](https://airflow.apache.org/docs/apache-airflow/stable/tutorial/index.html)
+
+## ¿Qué son los Xcoms?
+
+En Apache Airflow, los **XComs** (abreviatura de *"Cross Communications"*) son una herramienta que permite a las tareas intercambiar mensajes o compartir datos entre sí dentro de un DAG. Esencialmente, los XComs son un mecanismo de paso de mensajes utilizado para transferir pequeños fragmentos de datos entre tareas.
+
+### Conceptos Clave de los XComs:
+1. **Almacenamiento**: Los XComs se almacenan en la base de datos de Airflow.
+2. **Tamaño**: Están pensados para transmitir datos pequeños, no para manejar grandes volúmenes de información.
+3. **Contexto**: Usan un contexto de ejecución que incluye atributos como `dag_id`, `task_id`, `execution_date` y `key`.
+
+### ¿Cómo funcionan los XComs?
+
+1. **Poner un valor en XCom**:
+   Las tareas pueden enviar datos usando el método `xcom_push`.
+
+   ```python
+   from airflow.operators.python import PythonOperator
+   from airflow import DAG
+   from datetime import datetime
+
+   def push_function(**kwargs):
+       # Empuja un valor al XCom
+       kwargs['ti'].xcom_push(key='my_key', value='Hola, Airflow!')
+
+   with DAG(
+       dag_id='xcom_example',
+       start_date=datetime(2024, 1, 1),
+       schedule_interval=None,
+   ) as dag:
+       push_task = PythonOperator(
+           task_id='push_task',
+           python_callable=push_function
+       )
+   ```
+
+   Aquí, `my_key` es la clave para identificar el valor enviado al XCom.
+
+2. **Obtener un valor de XCom**:
+   Una tarea puede recuperar un valor de XCom usando el método `xcom_pull`.
+
+   ```python
+   def pull_function(**kwargs):
+       # Recupera el valor desde el XCom
+       value = kwargs['ti'].xcom_pull(key='my_key', task_ids='push_task')
+       print(f'Valor recibido: {value}')
+
+   pull_task = PythonOperator(
+       task_id='pull_task',
+       python_callable=pull_function
+   )
+
+   push_task >> pull_task
+   ```
+
+   En este ejemplo, `task_ids='push_task'` indica de qué tarea obtener el valor.
+
+### Uso con Operadores Bash
+
+Los XComs también pueden ser utilizados con operadores como `BashOperator`, donde el resultado de un comando Bash se almacena automáticamente en el XCom:
+
+```python
+from airflow.operators.bash import BashOperator
+
+bash_task = BashOperator(
+    task_id='bash_task',
+    bash_command='echo "Hola desde Bash"',
+    xcom_push=True  # Habilita el envío del resultado al XCom
+)
+
+python_task = PythonOperator(
+    task_id='read_bash_xcom',
+    python_callable=lambda **kwargs: print(kwargs['ti'].xcom_pull(task_ids='bash_task'))
+)
+
+bash_task >> python_task
+```
+
+### Contextos Comunes de Uso
+1. **Transferir datos entre tareas**:
+   - Por ejemplo, una tarea puede descargar datos y otra procesarlos.
+   
+2. **Gestionar dependencias dinámicas**:
+   - Usar datos de una tarea anterior para modificar el comportamiento de una tarea posterior.
+
+3. **Combinación con Jinja Templates**:
+   - Los XComs pueden ser utilizados directamente en plantillas Jinja para pasar valores dinámicos a operadores.
+
+   ```python
+   t2 = BashOperator(
+       task_id='dynamic_task',
+       bash_command='echo "Valor: {{ ti.xcom_pull(task_ids="push_task", key="my_key") }}"'
+   )
+   ```
+
+### Buenas Prácticas
+1. **Evita XComs para datos grandes**:
+   - Los XComs no están diseñados para manejar archivos o grandes volúmenes de datos. Usa sistemas externos como S3 o bases de datos para esto.
+
+2. **Uso explícito de claves**:
+   - Asigna claves descriptivas a los XComs para mantener claridad en los datos transferidos.
+
+3. **Limpieza de datos antiguos**:
+   - Los XComs permanecen en la base de datos de Airflow hasta que se eliminan manualmente. Usa estrategias de limpieza para evitar que se acumulen.
+
+**Lecturas recomendadas**
+
+[XComs — Airflow Documentation](https://airflow.apache.org/docs/apache-airflow/stable/concepts/xcoms.html)
+
+## BranchPythonOperator
+
+El operador `BranchPythonOperator` en Apache Airflow permite la creación de flujos de trabajo dinámicos al seleccionar la rama de ejecución en función de una condición evaluada en tiempo de ejecución. Es ideal cuando necesitas tomar decisiones basadas en datos o lógica dentro de un DAG.
+
+### Funcionamiento del `BranchPythonOperator`
+
+1. **Lógica de Rama**:
+   - Ejecuta una función Python que devuelve el `task_id` de la(s) tarea(s) que debe(n) ejecutarse a continuación.
+   - Las tareas que no sean seleccionadas por el operador serán automáticamente marcadas como **"skip"** (omitidas).
+
+2. **Uso Contextual**:
+   - Diseñado para escenarios donde el flujo de ejecución varía según una condición lógica, como resultados de una tarea previa o valores externos.
+
+### Ejemplo Básico de Uso
+
+```python
+from airflow import DAG
+from airflow.operators.python import BranchPythonOperator, PythonOperator
+from airflow.operators.dummy import DummyOperator
+from datetime import datetime
+
+
+def decidir_rama(**kwargs):
+    # Lógica para elegir una rama basada en el contexto
+    condicion = kwargs['execution_date'].day % 2  # Ejemplo: días pares o impares
+    if condicion == 0:
+        return 'rama_par'
+    else:
+        return 'rama_impar'
+
+
+with DAG(
+    dag_id='branch_example',
+    start_date=datetime(2024, 1, 1),
+    schedule_interval='@daily',
+    catchup=False,
+) as dag:
+    inicio = DummyOperator(task_id='inicio')
+
+    branch_task = BranchPythonOperator(
+        task_id='branch_decision',
+        python_callable=decidir_rama
+    )
+
+    rama_par = DummyOperator(task_id='rama_par')
+    rama_impar = DummyOperator(task_id='rama_impar')
+
+    fin = DummyOperator(task_id='fin', trigger_rule='none_failed_min_one_success')
+
+    # Flujo del DAG
+    inicio >> branch_task
+    branch_task >> rama_par >> fin
+    branch_task >> rama_impar >> fin
+```
+
+### Explicación del Código:
+
+1. **Tareas iniciales**:
+   - La tarea `inicio` se ejecuta antes del operador de bifurcación.
+
+2. **`BranchPythonOperator`**:
+   - La tarea `branch_decision` evalúa una condición y selecciona una rama:
+     - Si el día es par, selecciona `rama_par`.
+     - Si es impar, selecciona `rama_impar`.
+
+3. **Tareas de ramas**:
+   - `rama_par` y `rama_impar` representan las ramas divergentes.
+
+4. **Tarea final**:
+   - La tarea `fin` se ejecuta cuando al menos una de las ramas ha tenido éxito, controlado mediante la regla de disparo `none_failed_min_one_success`.
+
+### Notas Clave:
+
+1. **Devuelve uno o varios `task_id`s**:
+   - La función que se usa en `python_callable` puede devolver:
+     - Una cadena para seleccionar una sola tarea.
+     - Una lista de cadenas para seleccionar múltiples tareas.
+
+2. **Integración con XComs**:
+   - El `BranchPythonOperator` puede usar datos de tareas anteriores recuperados mediante XComs para decidir qué rama ejecutar.
+
+3. **Trigger Rule**:
+   - Las tareas posteriores a las ramas deben manejarse con cuidado en términos de reglas de activación (`trigger_rule`), ya que las tareas no seleccionadas serán marcadas como omitidas.
+
+### Ejemplo Avanzado con Datos Dinámicos y XComs
+
+```python
+def calcular_rama(**kwargs):
+    # Obtener un valor de XCom
+    valor = kwargs['ti'].xcom_pull(task_ids='tarea_inicial')
+    if valor == 'A':
+        return 'rama_a'
+    else:
+        return 'rama_b'
+
+
+tarea_inicial = PythonOperator(
+    task_id='tarea_inicial',
+    python_callable=lambda: 'A'
+)
+
+branch_task = BranchPythonOperator(
+    task_id='branch_decision',
+    python_callable=calcular_rama,
+    provide_context=True
+)
+```
+
+## Definición del proyecto
+
+**Archivos de la clase**
+
+[proyecto.pdf](https://static.platzi.com/media/public/uploads/proyecto_b467e2e1-f8ba-476a-9768-8079eb1aa090.pdf)
