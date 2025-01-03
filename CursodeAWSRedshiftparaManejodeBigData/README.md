@@ -532,3 +532,978 @@ Para optimizar tus consultas en Redshift:
 
 [redshift_course/Tickit_db at master · alarcon7a/redshift_course · GitHub](https://github.com/alarcon7a/redshift_course/tree/master/Tickit_db)
 
+## ¿Qué es la compresión en Redshift?
+
+La compresión en Amazon Redshift, conocida como **Encoding** o **Compression Encoding**, es una característica que permite reducir el tamaño del almacenamiento de los datos en las columnas de las tablas, optimizando el uso de recursos y mejorando el rendimiento de las consultas al minimizar la cantidad de datos leídos desde el disco.
+
+### Características principales de la compresión en Redshift:
+
+1. **Compresión basada en columnas**:
+   - Redshift almacena los datos de forma columnar, lo que facilita la aplicación de algoritmos de compresión específicos para cada tipo de dato en una columna.
+   - Las columnas que contienen valores repetitivos o con patrones predecibles son altamente eficientes para la compresión.
+
+2. **Compresión automática**:
+   - Al cargar datos mediante el comando `COPY`, Redshift puede analizar los datos y sugerir automáticamente el mejor algoritmo de compresión para cada columna.
+   - Esta funcionalidad es útil si no se han especificado opciones de compresión al crear la tabla.
+
+3. **Beneficios de la compresión**:
+   - **Reducción del almacenamiento**: Reduce el espacio necesario en disco para almacenar datos.
+   - **Mejor rendimiento**: Disminuye la cantidad de datos que deben ser leídos desde el disco en consultas.
+   - **Costos más bajos**: Al necesitar menos almacenamiento, se reducen los costos asociados.
+
+4. **Algoritmos de compresión**:
+   Redshift soporta diferentes algoritmos de compresión que son aplicables según el tipo de dato. Algunos de los más comunes incluyen:
+   - **RAW**: Sin compresión.
+   - **BYTEDICT**: Codificación basada en diccionarios para columnas con pocos valores únicos.
+   - **DELTA**: Almacena diferencias consecutivas, ideal para datos secuenciales.
+   - **RUNLENGTH**: Para columnas con muchos valores repetidos.
+   - **ZSTD**: Algoritmo de compresión general que ofrece alta compresión y velocidad.
+   - **TEXT255/TEXT32K**: Codificación eficiente para cadenas de texto.
+   - **DELTA32K**: Una variante de DELTA para datos más grandes.
+
+5. **Aplicación manual**:
+   Puedes definir la compresión al momento de crear una tabla. Por ejemplo:
+   ```sql
+   CREATE TABLE ventas (
+       venta_id INT ENCODE RAW,
+       cliente_id INT ENCODE BYTEDICT,
+       fecha TIMESTAMP ENCODE DELTA,
+       monto DECIMAL(10, 2) ENCODE ZSTD
+   );
+   ```
+
+6. **Análisis de compresión**:
+   - Puedes usar la utilidad `ANALYZE COMPRESSION` para evaluar qué algoritmos de compresión son más eficientes para una tabla.
+   - Ejemplo:
+     ```sql
+     ANALYZE COMPRESSION mi_tabla;
+     ```
+
+7. **Limitaciones**:
+   - No todas las columnas se benefician de la compresión (por ejemplo, columnas de tipo `BOOLEAN` suelen usar poca memoria de forma predeterminada).
+   - La compresión no puede cambiarse directamente una vez aplicada; necesitas recrear la tabla con la nueva configuración.
+
+### Mejores prácticas:
+- Usa compresión para todas las tablas que almacenan grandes volúmenes de datos.
+- Ejecuta `ANALYZE COMPRESSION` periódicamente para garantizar que se están usando los mejores algoritmos.
+- Carga datos con el comando `COPY` para aprovechar la compresión automática.
+
+La compresión es clave para maximizar el rendimiento y la eficiencia en Amazon Redshift, especialmente en entornos con grandes cantidades de datos.
+
+**Lecturas recomendadas**
+
+[Compression encodings - Amazon Redshift](https://docs.aws.amazon.com/redshift/latest/dg/c_Compression_encodings.html)
+
+[Amazon Redshift presenta AZ64, una nueva codificación de compresión para lograr un almacenamiento optimizado y un alto rendimiento de consultas](https://aws.amazon.com/es/about-aws/whats-new/2019/10/amazon-redshift-introduces-az64-a-new-compression-encoding-for-optimized-storage-and-high-query-performance/)
+
+## Algoritmos de compresión con Redshift
+
+Amazon Redshift utiliza una variedad de **algoritmos de compresión** (o **codificación**) para optimizar el almacenamiento y el rendimiento de las consultas. Estos algoritmos se aplican a nivel de columna y están diseñados para diferentes tipos de datos y patrones. A continuación, se explican los principales algoritmos de compresión disponibles en Redshift:
+
+### **1. RAW**
+- **Descripción**: Sin compresión.
+- **Usos**: Se utiliza cuando no se aplica ninguna compresión a los datos. Recomendado solo si los datos no se benefician de la compresión.
+- **Ejemplo**:
+  ```sql
+  columna1 INT ENCODE RAW;
+  ```
+
+### **2. BYTEDICT**
+- **Descripción**: Codificación basada en diccionarios. Asigna valores únicos de una columna a un índice.
+- **Usos**: Eficiente para columnas con pocos valores únicos, como códigos de estado, categorías o etiquetas.
+- **Ejemplo**:
+  ```sql
+  columna1 VARCHAR(50) ENCODE BYTEDICT;
+  ```
+
+### **3. RUNLENGTH**
+- **Descripción**: Compresión por longitud de ejecución.
+- **Usos**: Ideal para columnas con muchos valores consecutivos repetidos (como estados binarios o datos ordenados).
+- **Ejemplo**:
+  ```sql
+  columna1 CHAR(1) ENCODE RUNLENGTH;
+  ```
+
+### **4. DELTA**
+- **Descripción**: Almacena diferencias entre valores consecutivos.
+- **Usos**: Adecuado para datos secuenciales, como fechas, IDs incrementales o series temporales.
+- **Ejemplo**:
+  ```sql
+  columna1 TIMESTAMP ENCODE DELTA;
+  ```
+
+### **5. DELTA32K**
+- **Descripción**: Variante de `DELTA` para datos con diferencias mayores (hasta 32,000).
+- **Usos**: Útil para datos numéricos o fechas con saltos grandes entre valores consecutivos.
+- **Ejemplo**:
+  ```sql
+  columna1 INT ENCODE DELTA32K;
+  ```
+
+### **6. ZSTD (Zstandard)**
+- **Descripción**: Algoritmo de compresión general que equilibra eficiencia y velocidad.
+- **Usos**: Adecuado para la mayoría de los tipos de datos. Es altamente eficiente y flexible.
+- **Ejemplo**:
+  ```sql
+  columna1 DECIMAL(10, 2) ENCODE ZSTD;
+  ```
+
+### **7. TEXT255**
+- **Descripción**: Codificación para cadenas de texto de hasta 255 caracteres.
+- **Usos**: Columnas de texto cortas, como nombres, correos electrónicos, códigos de producto, etc.
+- **Ejemplo**:
+  ```sql
+  columna1 VARCHAR(255) ENCODE TEXT255;
+  ```
+
+### **8. TEXT32K**
+- **Descripción**: Codificación para cadenas de texto más largas (hasta 32,000 caracteres).
+- **Usos**: Columnas de texto largas, como descripciones o comentarios.
+- **Ejemplo**:
+  ```sql
+  columna1 VARCHAR(32000) ENCODE TEXT32K;
+  ```
+
+### **9. MOSTLY**
+- **Descripción**: Variantes de codificación que optimizan el almacenamiento para columnas con valores predominantemente repetidos.
+  - **MOSTLY8**: Para columnas con valores enteros en un rango pequeño.
+  - **MOSTLY16**: Para columnas con valores enteros en un rango más amplio.
+  - **MOSTLY32**: Para columnas con valores enteros grandes pero que tienen muchos valores repetidos.
+
+### **Cómo determinar el mejor algoritmo**
+1. **Automático con `COPY`**:
+   - Cuando cargas datos con el comando `COPY` sin especificar la compresión, Redshift analiza los datos y aplica automáticamente el algoritmo más adecuado.
+   - Ejemplo:
+     ```sql
+     COPY mi_tabla
+     FROM 's3://ruta-del-archivo'
+     CREDENTIALS '...';
+     ```
+
+2. **Manual con `ANALYZE COMPRESSION`**:
+   - Analiza la tabla para sugerir el mejor algoritmo de compresión para cada columna.
+   - Ejemplo:
+     ```sql
+     ANALYZE COMPRESSION mi_tabla;
+     ```
+
+### **Mejores prácticas**
+- Usa compresión en todas las columnas que no sean claves de partición o distribución.
+- Revisa los resultados de `ANALYZE COMPRESSION` antes de aplicar configuraciones manuales.
+- Si cargas datos dinámicos o desconocidos, deja que el comando `COPY` determine la compresión automáticamente.
+
+La elección del algoritmo correcto puede mejorar significativamente el rendimiento de las consultas y reducir costos de almacenamiento.
+
+## Aplicando algoritmos de compresión
+
+Aplicar algoritmos de compresión en Amazon Redshift implica configurar cómo se almacenan las columnas de una tabla para optimizar el uso del almacenamiento y mejorar el rendimiento de las consultas. A continuación, se explica cómo aplicar los algoritmos de compresión en Redshift paso a paso:
+
+### **1. Crear una tabla con algoritmos de compresión**
+Puedes definir la compresión en el momento de la creación de una tabla utilizando el parámetro `ENCODE` en cada columna.
+
+**Ejemplo**:
+```sql
+CREATE TABLE mi_tabla (
+    id INT ENCODE RAW,                 -- Sin compresión
+    nombre VARCHAR(255) ENCODE BYTEDICT, -- Diccionario de bytes
+    fecha TIMESTAMP ENCODE DELTA,     -- Compresión por diferencias
+    estado CHAR(1) ENCODE RUNLENGTH,  -- Compresión por longitud de ejecución
+    comentario TEXT ENCODE ZSTD       -- Algoritmo ZSTD para texto largo
+);
+```
+
+### **2. Aplicar compresión en tablas existentes**
+Si ya tienes una tabla creada sin compresión o con compresión ineficiente, puedes aplicar algoritmos usando `ALTER TABLE`.
+
+**Ejemplo**:
+```sql
+ALTER TABLE mi_tabla
+ALTER COLUMN nombre ENCODE BYTEDICT;
+```
+
+> ⚠️ **Nota**: Si la tabla tiene datos, deberás recrearla o usar herramientas específicas para evitar pérdida de datos.
+
+### **3. Analizar compresión con `ANALYZE COMPRESSION`**
+El comando `ANALYZE COMPRESSION` evalúa los datos existentes y sugiere los mejores algoritmos de compresión para cada columna.
+
+**Ejemplo**:
+```sql
+ANALYZE COMPRESSION mi_tabla;
+```
+
+**Salida esperada**:
+Un informe con sugerencias para las columnas. Por ejemplo:
+```
+columna1: DELTA
+columna2: BYTEDICT
+columna3: ZSTD
+```
+
+### **4. Recargar datos con compresión automática**
+El comando `COPY` puede determinar automáticamente los algoritmos de compresión adecuados al cargar datos.
+
+**Ejemplo**:
+```sql
+COPY mi_tabla
+FROM 's3://mi-bucket/mi-dataset.csv'
+IAM_ROLE 'arn:aws:iam::123456789012:role/MiRole'
+CSV;
+```
+Esto analizará los datos y aplicará la compresión más eficiente.
+
+### **5. Recrear la tabla para optimizar la compresión**
+Una opción más avanzada consiste en:
+1. Crear una nueva tabla con las configuraciones de compresión sugeridas.
+2. Transferir los datos de la tabla original a la nueva tabla.
+3. Renombrar la nueva tabla como la tabla original.
+
+**Ejemplo**:
+```sql
+CREATE TABLE mi_tabla_nueva (
+    id INT ENCODE RAW,
+    nombre VARCHAR(255) ENCODE BYTEDICT,
+    fecha TIMESTAMP ENCODE DELTA,
+    estado CHAR(1) ENCODE RUNLENGTH,
+    comentario TEXT ENCODE ZSTD
+);
+
+INSERT INTO mi_tabla_nueva
+SELECT * FROM mi_tabla;
+
+DROP TABLE mi_tabla;
+
+ALTER TABLE mi_tabla_nueva RENAME TO mi_tabla;
+```
+
+### **6. Validar el uso de compresión**
+Puedes verificar qué algoritmo se está usando en cada columna consultando la vista del sistema `SVV_TABLE_INFO` o `PG_TABLE_DEF`.
+
+**Ejemplo**:
+```sql
+SELECT "column", encoding
+FROM pg_table_def
+WHERE tablename = 'mi_tabla';
+```
+
+### **7. Mejoras y beneficios**
+- **Reducción de almacenamiento**: La compresión puede reducir significativamente el espacio en disco, especialmente para datos repetitivos o categóricos.
+- **Consultas más rápidas**: Menos datos físicos que leer significa consultas más rápidas.
+- **Costos más bajos**: Al utilizar menos almacenamiento, puedes optimizar costos en tu clúster Redshift.
+
+### **Mejores prácticas**
+- Siempre analiza los datos con `ANALYZE COMPRESSION` antes de aplicar compresión manualmente.
+- Usa compresión automática durante cargas masivas con `COPY`.
+- Optimiza las columnas más grandes o aquellas que se usan frecuentemente en consultas.
+
+## Análisis de desempeño con diferentes tipos de compresión
+
+El análisis de desempeño con diferentes tipos de compresión en Amazon Redshift implica medir cómo los algoritmos de compresión afectan tanto el almacenamiento como el rendimiento de las consultas. Redshift ofrece varios algoritmos, cada uno optimizado para ciertos tipos de datos. A continuación, se describen los pasos y consideraciones clave para realizar este análisis.
+
+### **1. Tipos de compresión en Redshift**
+Redshift soporta varios algoritmos de compresión, como:
+
+- **RAW**: Sin compresión.
+- **BYTEDICT**: Ideal para columnas con valores categóricos cortos.
+- **DELTA**: Eficiente para valores secuenciales, como fechas.
+- **DELTA32K**: Similar a DELTA, pero para valores más grandes.
+- **LZO**: Útil para datos generales, menos eficiente que ZSTD.
+- **RUNLENGTH**: Excelente para valores repetitivos.
+- **ZSTD**: Algoritmo moderno y eficiente para datos mixtos.
+
+### **2. Configuración del experimento**
+#### a. **Creación de tablas**
+Crea tablas con las mismas columnas, pero aplica diferentes algoritmos de compresión.
+
+```sql
+CREATE TABLE sin_compresion (
+    id INT ENCODE RAW,
+    nombre VARCHAR(255) ENCODE RAW,
+    fecha TIMESTAMP ENCODE RAW,
+    estado CHAR(1) ENCODE RAW
+);
+
+CREATE TABLE con_zstd (
+    id INT ENCODE RAW,
+    nombre VARCHAR(255) ENCODE ZSTD,
+    fecha TIMESTAMP ENCODE ZSTD,
+    estado CHAR(1) ENCODE ZSTD
+);
+
+CREATE TABLE con_bytedict (
+    id INT ENCODE RAW,
+    nombre VARCHAR(255) ENCODE BYTEDICT,
+    fecha TIMESTAMP ENCODE RAW,
+    estado CHAR(1) ENCODE RUNLENGTH
+);
+```
+
+#### b. **Carga de datos**
+Utiliza el comando `COPY` para cargar el mismo conjunto de datos en cada tabla.
+
+```sql
+COPY sin_compresion
+FROM 's3://mi-bucket/dataset.csv'
+IAM_ROLE 'arn:aws:iam::123456789012:role/MiRole'
+CSV;
+
+COPY con_zstd
+FROM 's3://mi-bucket/dataset.csv'
+IAM_ROLE 'arn:aws:iam::123456789012:role/MiRole'
+CSV;
+
+COPY con_bytedict
+FROM 's3://mi-bucket/dataset.csv'
+IAM_ROLE 'arn:aws:iam::123456789012:role/MiRole'
+CSV;
+```
+
+### **3. Métricas a medir**
+#### a. **Espacio en disco**
+Consulta la vista del sistema `SVV_TABLE_INFO` para medir el almacenamiento utilizado.
+
+```sql
+SELECT table_id, encoded, size
+FROM SVV_TABLE_INFO
+WHERE table_name IN ('sin_compresion', 'con_zstd', 'con_bytedict');
+```
+
+#### b. **Rendimiento de consultas**
+Ejecuta consultas comunes en las tablas y mide el tiempo de ejecución.
+
+**Ejemplo de consulta**:
+```sql
+SELECT estado, COUNT(*)
+FROM con_zstd
+GROUP BY estado;
+```
+
+Repite la consulta para cada tabla y registra los tiempos usando herramientas como `EXPLAIN`.
+
+#### c. **Costo de carga**
+Mide el tiempo y los recursos utilizados para cargar los datos en cada tabla.
+
+### **4. Análisis de resultados**
+Crea una comparación basada en las métricas recogidas:
+
+| **Tabla**           | **Algoritmo** | **Espacio usado (MB)** | **Tiempo de consulta (s)** | **Tiempo de carga (s)** |
+|----------------------|---------------|-------------------------|-----------------------------|-------------------------|
+| `sin_compresion`     | RAW           | 500                    | 1.2                         | 10                      |
+| `con_zstd`           | ZSTD          | 150                    | 0.8                         | 15                      |
+| `con_bytedict`       | BYTEDICT      | 200                    | 0.7                         | 12                      |
+
+
+### **5. Interpretación de resultados**
+- **Espacio en disco**: `ZSTD` y `BYTEDICT` suelen reducir significativamente el uso de almacenamiento.
+- **Rendimiento de consultas**: Los algoritmos como `BYTEDICT` y `RUNLENGTH` mejoran el rendimiento de consultas cuando las columnas tienen valores repetidos o categóricos.
+- **Tiempo de carga**: Algoritmos más complejos como `ZSTD` pueden incrementar ligeramente el tiempo de carga.
+
+### **6. Recomendaciones**
+1. **Usar `ANALYZE COMPRESSION`**: Siempre evalúa los datos antes de aplicar compresión para seleccionar el mejor algoritmo.
+2. **Balancear entre espacio y velocidad**: Escoge compresión avanzada como `ZSTD` si el almacenamiento es crítico, o más simple como `BYTEDICT` si el tiempo de consulta es prioritario.
+3. **Revisar columnas individuales**: No todas las columnas necesitan compresión; optimiza solo las que consumen más espacio.
+
+### **7. Herramientas avanzadas**
+- **Auto WLM**: Configura Workload Management en Redshift para priorizar recursos a consultas críticas.
+- **Spectrum**: Si el conjunto de datos es enorme, usa Redshift Spectrum para analizar datos almacenados directamente en S3.
+
+## Estilos de distribución con Redshift
+
+En Amazon Redshift, los estilos de distribución son fundamentales para determinar cómo se almacenan las filas de una tabla en los nodos de un clúster. Una elección correcta puede mejorar significativamente el rendimiento de las consultas, mientras que una selección incorrecta puede resultar en un procesamiento ineficiente y altos tiempos de respuesta.
+
+### **1. Tipos de estilos de distribución**
+Redshift ofrece tres estilos principales de distribución:
+
+#### **a. EVEN (Distribución uniforme)**
+- **Características**:
+  - Las filas se distribuyen de manera uniforme entre todos los nodos del clúster.
+  - No tiene en cuenta el contenido de los datos.
+- **Uso recomendado**:
+  - Cuando no existe una relación natural entre los datos y otras tablas.
+  - Para tablas grandes que no están involucradas en operaciones de `JOIN` o `WHERE` frecuentes.
+- **Ejemplo**:
+  ```sql
+  CREATE TABLE ventas (
+      id INT,
+      producto VARCHAR(100),
+      cantidad INT
+  )
+  DISTSTYLE EVEN;
+  ```
+
+#### **b. KEY (Distribución por clave)**
+- **Características**:
+  - Las filas se distribuyen basándose en el valor de una columna específica (la clave de distribución).
+  - Las filas con el mismo valor de clave se almacenan en el mismo nodo.
+- **Uso recomendado**:
+  - Para tablas que participan en operaciones de `JOIN` frecuentes, utilizando la columna de clave de distribución.
+  - Para minimizar la transferencia de datos entre nodos durante consultas.
+- **Ejemplo**:
+  ```sql
+  CREATE TABLE ordenes (
+      id_orden INT,
+      cliente_id INT,
+      fecha TIMESTAMP
+  )
+  DISTSTYLE KEY
+  DISTKEY(cliente_id);
+  ```
+
+#### **c. ALL (Distribución completa)**
+- **Características**:
+  - Cada nodo almacena una copia completa de la tabla.
+  - Incrementa el uso de almacenamiento en el clúster.
+- **Uso recomendado**:
+  - Para tablas pequeñas que se unen frecuentemente con otras tablas.
+  - Ideal para tablas de referencia o dimensiones.
+- **Ejemplo**:
+  ```sql
+  CREATE TABLE categorias (
+      id_categoria INT,
+      nombre_categoria VARCHAR(100)
+  )
+  DISTSTYLE ALL;
+  ```
+
+### **2. Consideraciones clave**
+#### **a. Transferencia de datos entre nodos**
+- Durante operaciones como `JOIN`, si las tablas están distribuidas de manera subóptima, Redshift transfiere datos entre nodos, lo que puede aumentar el tiempo de consulta.
+
+#### **b. Tamaño de las tablas**
+- Usa `DISTSTYLE ALL` solo para tablas pequeñas, ya que el almacenamiento completo en todos los nodos puede ser ineficiente para tablas grandes.
+
+#### **c. Análisis del patrón de consultas**
+- Identifica las columnas utilizadas con mayor frecuencia en condiciones `JOIN` o `WHERE`. Estas columnas son buenos candidatos para claves de distribución.
+
+#### **d. Uso de la vista del sistema**
+- La vista `SVL_QUERY_REPORT` te ayuda a identificar problemas relacionados con el movimiento de datos entre nodos.
+
+### **3. Estrategia para elegir el estilo de distribución**
+1. **Tablas grandes y no relacionadas**: Usa `DISTSTYLE EVEN`.
+2. **Tablas involucradas en JOIN frecuentes**:
+   - Si una columna específica se usa frecuentemente, elige `DISTSTYLE KEY` con esa columna como clave.
+3. **Tablas pequeñas de referencia**: Usa `DISTSTYLE ALL`.
+
+### **4. Ejemplo práctico**
+#### Escenario:
+- Tienes una tabla de ventas (`ventas`) y una tabla de clientes (`clientes`). Quieres optimizar consultas como:
+
+```sql
+SELECT clientes.nombre, SUM(ventas.total)
+FROM ventas
+JOIN clientes ON ventas.cliente_id = clientes.cliente_id
+GROUP BY clientes.nombre;
+```
+
+#### Implementación:
+1. Distribuye `ventas` por `cliente_id`:
+   ```sql
+   CREATE TABLE ventas (
+       venta_id INT,
+       cliente_id INT,
+       total DECIMAL(10, 2)
+   )
+   DISTSTYLE KEY
+   DISTKEY(cliente_id);
+   ```
+
+2. Configura `clientes` con `DISTSTYLE ALL`:
+   ```sql
+   CREATE TABLE clientes (
+       cliente_id INT,
+       nombre VARCHAR(100)
+   )
+   DISTSTYLE ALL;
+   ```
+
+### **5. Validación y optimización**
+- Usa `EXPLAIN` para analizar el plan de consulta y detectar transferencias de datos no deseadas entre nodos.
+- Monitorea la vista `SVL_QUERY_REPORT` para identificar consultas que puedan beneficiarse de ajustes en el estilo de distribución.
+
+## Evaluando los estilos de distribución
+
+La evaluación de los estilos de distribución en Amazon Redshift implica analizar cómo cada estilo afecta el rendimiento de las consultas y el uso de los recursos del clúster. Esta evaluación se realiza considerando patrones de consultas, tamaño de las tablas y relaciones entre datos.
+
+### **1. Factores a evaluar**
+#### **a. Costo de transferencia de datos**
+- Redshift puede mover datos entre nodos durante operaciones como `JOIN`, `GROUP BY` o agregaciones.
+- El estilo de distribución elegido puede minimizar (o maximizar) este movimiento.
+
+#### **b. Paralelismo**
+- Una distribución bien diseñada utiliza eficientemente todos los nodos del clúster.
+- Distribuciones desequilibradas pueden sobrecargar ciertos nodos y subutilizar otros.
+
+#### **c. Tamaño y uso de tablas**
+- Tablas pequeñas pueden replicarse (usando `DISTSTYLE ALL`) para mejorar consultas frecuentes.
+- Tablas grandes requieren distribuciones específicas para evitar cuellos de botella.
+
+### **2. Comparación práctica de estilos**
+#### **a. EVEN**
+- **Ventajas**:
+  - Balancea uniformemente las filas entre nodos.
+  - Ideal para tablas que no tienen relaciones directas con otras.
+- **Desventajas**:
+  - Puede causar transferencias de datos significativas en operaciones `JOIN`.
+- **Caso de uso**:
+  ```sql
+  CREATE TABLE logs (
+      log_id INT,
+      timestamp TIMESTAMP,
+      message TEXT
+  )
+  DISTSTYLE EVEN;
+  ```
+
+#### **b. KEY**
+- **Ventajas**:
+  - Optimiza operaciones `JOIN` y `WHERE` basadas en la clave de distribución.
+  - Reduce la transferencia de datos si las tablas relacionadas comparten la misma clave.
+- **Desventajas**:
+  - Si la clave tiene una distribución sesgada, puede sobrecargar ciertos nodos.
+- **Caso de uso**:
+  ```sql
+  CREATE TABLE pedidos (
+      pedido_id INT,
+      cliente_id INT,
+      fecha TIMESTAMP
+  )
+  DISTSTYLE KEY
+  DISTKEY(cliente_id);
+  ```
+
+#### **c. ALL**
+- **Ventajas**:
+  - Cada nodo tiene una copia completa de la tabla, eliminando transferencias de datos en `JOIN`.
+  - Perfecto para tablas pequeñas de referencia.
+- **Desventajas**:
+  - Aumenta el uso de almacenamiento.
+  - No es adecuado para tablas grandes.
+- **Caso de uso**:
+  ```sql
+  CREATE TABLE productos (
+      producto_id INT,
+      nombre VARCHAR(100)
+  )
+  DISTSTYLE ALL;
+  ```
+
+### **3. Métricas de evaluación**
+#### **a. Análisis de consultas**
+- Usa `EXPLAIN` para identificar movimientos de datos (indicador de distribución subóptima).
+
+#### **b. Métricas del sistema**
+- Monitorea vistas del sistema como `SVL_QUERY_REPORT` y `SVL_QUERY_SUMMARY` para analizar el rendimiento.
+
+#### **c. Balance de nodos**
+- Verifica la vista `SVV_DISKUSAGE` para confirmar que los nodos están utilizando un almacenamiento equilibrado.
+
+### **4. Estrategia de evaluación**
+1. **Define patrones de consultas principales**:
+   - Identifica consultas frecuentes y operaciones críticas (`JOIN`, `GROUP BY`, etc.).
+2. **Asigna estilos de distribución a tablas**:
+   - Usa `DISTSTYLE ALL` para tablas pequeñas relacionadas.
+   - Usa `DISTSTYLE KEY` para tablas relacionadas con claves frecuentes.
+   - Usa `DISTSTYLE EVEN` para tablas independientes.
+3. **Prueba y optimiza**:
+   - Ejecuta consultas representativas y mide tiempos de ejecución.
+   - Ajusta estilos de distribución si las transferencias de datos son elevadas o si el paralelismo es bajo.
+
+### **5. Ejemplo de evaluación**
+#### Escenario:
+- Tienes una tabla de ventas (`ventas`) y otra de clientes (`clientes`).
+- Las consultas frecuentes incluyen:
+
+```sql
+SELECT clientes.nombre, SUM(ventas.total)
+FROM ventas
+JOIN clientes ON ventas.cliente_id = clientes.cliente_id
+GROUP BY clientes.nombre;
+```
+
+#### Proceso:
+1. Define `ventas` con `DISTSTYLE KEY` y `DISTKEY(cliente_id)`:
+   ```sql
+   CREATE TABLE ventas (
+       venta_id INT,
+       cliente_id INT,
+       total DECIMAL(10, 2)
+   )
+   DISTSTYLE KEY
+   DISTKEY(cliente_id);
+   ```
+
+2. Configura `clientes` con `DISTSTYLE ALL`:
+   ```sql
+   CREATE TABLE clientes (
+       cliente_id INT,
+       nombre VARCHAR(100)
+   )
+   DISTSTYLE ALL;
+   ```
+
+3. Ejecuta la consulta y analiza:
+   - Usa `EXPLAIN` para verificar movimientos de datos.
+   - Monitorea vistas del sistema para confirmar mejoras en el rendimiento.
+
+### **6. Conclusión**
+Evaluar los estilos de distribución en Redshift es una tarea iterativa. Comienza con configuraciones basadas en patrones de uso y ajusta en función de las métricas de rendimiento. Una configuración óptima maximiza el paralelismo, minimiza transferencias de datos y mejora los tiempos de respuesta de las consultas.
+
+## Llaves de ordenamiento para optimizar nuestras consultas
+
+En Amazon Redshift, las llaves de ordenamiento (`SORT KEYS`) son fundamentales para optimizar el rendimiento de las consultas. Estas claves determinan cómo se almacenan y organizan físicamente los datos en el clúster, lo que afecta directamente el tiempo de ejecución de consultas, especialmente aquellas que incluyen filtros, uniones y ordenaciones.
+
+### **1. Tipos de llaves de ordenamiento**
+#### **a. COMPOUND SORTKEY (Llave de ordenamiento compuesta)**
+- Ordena los datos en función de las columnas en el orden especificado.
+- Las consultas que filtran datos por la primera columna de la llave son muy rápidas.
+- Si las consultas utilizan columnas que no son la primera de la llave, el rendimiento puede disminuir.
+
+**Ejemplo:**
+```sql
+CREATE TABLE ventas (
+    venta_id INT,
+    fecha DATE,
+    total DECIMAL(10, 2)
+)
+COMPOUND SORTKEY (fecha, venta_id);
+```
+
+#### **b. INTERLEAVED SORTKEY (Llave de ordenamiento entrelazada)**
+- Optimiza para consultas que filtran por cualquier columna en la llave, no solo la primera.
+- Requiere más recursos para la carga de datos y actualizaciones.
+
+**Ejemplo:**
+```sql
+CREATE TABLE inventario (
+    producto_id INT,
+    almacen_id INT,
+    fecha_ingreso DATE
+)
+INTERLEAVED SORTKEY (producto_id, almacen_id, fecha_ingreso);
+```
+
+### **2. Selección de llaves de ordenamiento**
+#### **a. COMPOUND SORTKEY**
+- Útil si las consultas filtran datos consistentemente por la primera columna de la llave.
+- Recomendado para tablas con acceso secuencial.
+
+**Caso de uso:**
+- Consultas que filtran o agrupan principalmente por fechas:
+  ```sql
+  SELECT *
+  FROM ventas
+  WHERE fecha = '2025-01-01';
+  ```
+
+#### **b. INTERLEAVED SORTKEY**
+- Ideal si las consultas utilizan varias columnas para filtrar los datos y no siempre siguen un patrón fijo.
+- Beneficioso para tablas que soportan múltiples casos de uso.
+
+**Caso de uso:**
+- Consultas con múltiples filtros dinámicos:
+  ```sql
+  SELECT *
+  FROM inventario
+  WHERE producto_id = 100 AND fecha_ingreso = '2025-01-01';
+  ```
+
+### **3. Beneficios de las llaves de ordenamiento**
+- **Mejoran el filtrado:** Redshift puede escanear solo los bloques necesarios en lugar de toda la tabla.
+- **Optimizan el almacenamiento:** Datos relacionados físicamente se agrupan, lo que facilita lecturas secuenciales.
+- **Aceleran uniones y agrupaciones:** Especialmente si las columnas utilizadas en estas operaciones están bien ordenadas.
+
+### **4. Estrategia para implementar llaves de ordenamiento**
+#### **a. Analiza patrones de consultas**
+- Usa las vistas del sistema (`SVL_QUERY_SUMMARY`, `STL_SCAN`, etc.) para identificar las columnas más utilizadas en filtros, ordenaciones y agrupaciones.
+
+#### **b. Considera el tamaño de la tabla**
+- Para tablas grandes con acceso secuencial, utiliza `COMPOUND SORTKEY`.
+- Para tablas con patrones de acceso diversos, utiliza `INTERLEAVED SORTKEY`.
+
+#### **c. Prueba y ajusta**
+- Carga datos de prueba y ejecuta consultas representativas.
+- Evalúa tiempos de ejecución antes y después de implementar llaves de ordenamiento.
+
+### **5. Ejemplo práctico**
+#### Escenario:
+- Tienes una tabla de ventas con millones de registros.
+- Las consultas comunes son:
+  1. Filtrar por fecha (`fecha`).
+  2. Filtrar por cliente (`cliente_id`).
+
+#### Solución:
+1. **Llave de ordenamiento compuesta:**
+   - Si la mayoría de las consultas filtran principalmente por `fecha`:
+   ```sql
+   CREATE TABLE ventas (
+       venta_id INT,
+       fecha DATE,
+       cliente_id INT,
+       total DECIMAL(10, 2)
+   )
+   COMPOUND SORTKEY (fecha, cliente_id);
+   ```
+
+2. **Llave de ordenamiento entrelazada:**
+   - Si las consultas filtran por `fecha` o `cliente_id` indistintamente:
+   ```sql
+   CREATE TABLE ventas (
+       venta_id INT,
+       fecha DATE,
+       cliente_id INT,
+       total DECIMAL(10, 2)
+   )
+   INTERLEAVED SORTKEY (fecha, cliente_id);
+   ```
+
+### **6. Consideraciones finales**
+- Usar una `SORT KEY` adecuada puede reducir significativamente el tiempo de escaneo de datos.
+- `COMPOUND SORTKEY` es más eficiente en cargas de datos frecuentes y patrones de acceso predecibles.
+- `INTERLEAVED SORTKEY` requiere más recursos pero ofrece mayor flexibilidad para consultas diversas.
+- Es crucial probar y ajustar las configuraciones en función de las necesidades específicas del caso de uso.
+
+## Aplicando ordenamiento de columnas
+
+### Aplicando Ordenamiento de Columnas en Amazon Redshift
+
+El ordenamiento de columnas mediante **llaves de ordenamiento (`SORT KEYS`)** en Redshift permite optimizar el rendimiento de las consultas organizando físicamente los datos en disco. Este enfoque reduce el tiempo de escaneo de bloques y acelera las operaciones comunes como filtros, uniones y agregaciones.
+
+---
+
+### **1. Estrategia para Aplicar Llaves de Ordenamiento**
+Antes de implementar llaves de ordenamiento, sigue estos pasos:
+
+#### **a. Analiza los patrones de consulta**
+Identifica las columnas que se utilizan más frecuentemente en:
+- Cláusulas `WHERE`
+- Cláusulas `JOIN`
+- Cláusulas `GROUP BY` y `ORDER BY`
+
+#### **b. Evalúa el volumen de datos**
+El rendimiento mejora significativamente en tablas grandes donde la selección es crítica.
+
+#### **c. Define el tipo de llave de ordenamiento**
+- **COMPOUND SORTKEY**: Útil para accesos secuenciales.
+- **INTERLEAVED SORTKEY**: Beneficioso para múltiples patrones de acceso.
+
+### **2. Ejemplo Práctico: Implementación de Llaves de Ordenamiento**
+
+#### Escenario:
+- Tienes una tabla de transacciones llamada `ventas` con las siguientes columnas:
+  - `venta_id`
+  - `fecha`
+  - `cliente_id`
+  - `total`
+- Las consultas comunes incluyen filtros por `fecha` y `cliente_id`.
+
+#### **a. Llave de Ordenamiento Compuesta**
+Si las consultas filtran principalmente por `fecha`:
+```sql
+CREATE TABLE ventas (
+    venta_id INT,
+    fecha DATE,
+    cliente_id INT,
+    total DECIMAL(10, 2)
+)
+COMPOUND SORTKEY (fecha, cliente_id);
+```
+- Redshift ordena físicamente los datos primero por `fecha` y luego por `cliente_id`.
+
+#### **b. Llave de Ordenamiento Entrelazada**
+Si las consultas filtran dinámicamente por `fecha` o `cliente_id`:
+```sql
+CREATE TABLE ventas (
+    venta_id INT,
+    fecha DATE,
+    cliente_id INT,
+    total DECIMAL(10, 2)
+)
+INTERLEAVED SORTKEY (fecha, cliente_id);
+```
+- Redshift optimiza para acceder rápidamente a cualquier columna especificada en la llave entrelazada.
+
+### **3. Cargando Datos con Llaves de Ordenamiento**
+Cuando cargas datos en una tabla con llaves de ordenamiento:
+- Utiliza la instrucción `COPY` para importar datos desde S3 u otra fuente.
+- Redshift aplicará automáticamente el orden especificado en las llaves durante la carga.
+
+#### Ejemplo de carga:
+```sql
+COPY ventas
+FROM 's3://mi-bucket/ventas.csv'
+CREDENTIALS 'aws_access_key_id=XXX;aws_secret_access_key=YYY'
+CSV;
+```
+
+### **4. Verificando el Ordenamiento**
+Redshift proporciona vistas del sistema para evaluar el rendimiento de tus llaves de ordenamiento:
+
+#### **a. Verifica el uso de columnas en consultas**
+Consulta la vista `SVL_QUERY_SUMMARY` para ver cómo las consultas usan las columnas:
+```sql
+SELECT table_id, column, sum(scan_count) AS total_scans
+FROM svl_query_summary
+GROUP BY table_id, column
+ORDER BY total_scans DESC;
+```
+
+#### **b. Evalúa la distribución de datos**
+Consulta la vista `SVV_TABLE_INFO` para revisar la distribución de datos:
+```sql
+SELECT table_id, diststyle, sortkey1, skew_sortkey1, rows
+FROM svv_table_info
+WHERE table_name = 'ventas';
+```
+
+### **5. Optimizando el Ordenamiento**
+#### **a. Ajusta las claves según el uso**
+Si cambian los patrones de consulta, considera ajustar las llaves de ordenamiento:
+1. Crea una nueva tabla con el nuevo esquema.
+2. Copia los datos a la nueva tabla:
+   ```sql
+   INSERT INTO nueva_tabla SELECT * FROM ventas;
+   ```
+3. Renombra las tablas si es necesario.
+
+#### **b. Reclama espacio en disco**
+Usa `VACUUM` para reorganizar datos y aplicar el ordenamiento:
+```sql
+VACUUM ventas;
+```
+
+### **6. Consideraciones Adicionales**
+- **Costo de mantenimiento:** `INTERLEAVED SORTKEY` tiene mayor costo en actualizaciones y cargas masivas.
+- **Tamaño de las tablas:** Las tablas pequeñas no suelen beneficiarse significativamente de llaves de ordenamiento.
+
+### **Conclusión**
+Aplicar llaves de ordenamiento correctamente puede transformar el rendimiento de tu clúster Redshift. Evalúa cuidadosamente tus patrones de uso, selecciona el tipo de llave adecuado y monitorea el impacto para garantizar un rendimiento óptimo.
+
+**Lecturas recomendadas**
+
+[redshift_course/Claves_de_ordenamiento at master · alarcon7a/redshift_course · GitHub](https://github.com/alarcon7a/redshift_course/tree/master/Claves_de_ordenamiento)
+
+## Evaluando algoritmos de ordenamiento
+
+### Evaluando Algoritmos de Ordenamiento en Amazon Redshift
+
+El uso de **llaves de ordenamiento (`SORT KEYS`)** es crucial para optimizar las consultas en Redshift, especialmente en tablas grandes y con consultas complejas. Los algoritmos de ordenamiento disponibles en Redshift incluyen **COMPOUND** e **INTERLEAVED**, cada uno diseñado para diferentes casos de uso. Evaluarlos correctamente asegura un rendimiento óptimo para tus necesidades específicas.
+
+### **1. Tipos de Algoritmos de Ordenamiento**
+
+#### **a. Llave de Ordenamiento Compuesta (COMPOUND SORTKEY)**
+Ordena físicamente los datos en el disco de manera secuencial, basándose en las columnas especificadas.
+
+- **Ventajas:**
+  - Ideal para consultas que filtran o agrupan por la primera columna de la llave.
+  - Bajo costo de mantenimiento.
+- **Desventajas:**
+  - Menos eficiente si las consultas dependen de columnas secundarias en la llave.
+  - No es flexible para patrones de consulta variados.
+
+#### **b. Llave de Ordenamiento Entrelazada (INTERLEAVED SORTKEY)**
+Distribuye el ordenamiento entre todas las columnas especificadas, optimizando el acceso a cualquiera de ellas.
+
+- **Ventajas:**
+  - Más flexible para patrones de consulta variados.
+  - Beneficia consultas que filtran por cualquier combinación de columnas en la llave.
+- **Desventajas:**
+  - Mayor costo de mantenimiento (especialmente con inserciones y cargas masivas).
+  - Menor eficiencia si la mayoría de las consultas dependen de una sola columna.
+
+### **2. Métodos de Evaluación de Algoritmos**
+
+#### **a. Pruebas de Rendimiento**
+Evalúa cada algoritmo mediante pruebas de rendimiento específicas para tu carga de trabajo.
+
+1. **Crea Tablas de Prueba:**
+   - Una con llave compuesta.
+   - Otra con llave entrelazada.
+   ```sql
+   CREATE TABLE ventas_compound (
+       venta_id INT,
+       fecha DATE,
+       cliente_id INT,
+       total DECIMAL(10, 2)
+   )
+   COMPOUND SORTKEY (fecha, cliente_id);
+
+   CREATE TABLE ventas_interleaved (
+       venta_id INT,
+       fecha DATE,
+       cliente_id INT,
+       total DECIMAL(10, 2)
+   )
+   INTERLEAVED SORTKEY (fecha, cliente_id);
+   ```
+
+2. **Carga los Datos:**
+   Utiliza datos representativos de tu carga de trabajo.
+   ```sql
+   COPY ventas_compound
+   FROM 's3://mi-bucket/ventas.csv'
+   CREDENTIALS 'aws_access_key_id=XXX;aws_secret_access_key=YYY'
+   CSV;
+
+   COPY ventas_interleaved
+   FROM 's3://mi-bucket/ventas.csv'
+   CREDENTIALS 'aws_access_key_id=XXX;aws_secret_access_key=YYY'
+   CSV;
+   ```
+
+3. **Ejecuta Consultas de Prueba:**
+   Ejecuta las consultas más comunes y mide los tiempos de respuesta.
+   ```sql
+   EXPLAIN SELECT * FROM ventas_compound WHERE fecha = '2025-01-01';
+   EXPLAIN SELECT * FROM ventas_interleaved WHERE fecha = '2025-01-01';
+   ```
+
+#### **b. Monitoreo de Uso**
+Utiliza las vistas del sistema de Redshift para monitorear el uso de las columnas en las consultas.
+
+- Consulta columnas utilizadas en escaneos:
+   ```sql
+   SELECT table_id, column, sum(scan_count) AS total_scans
+   FROM svl_query_summary
+   GROUP BY table_id, column
+   ORDER BY total_scans DESC;
+   ```
+
+- Evalúa la distribución de datos y el rendimiento:
+   ```sql
+   SELECT table_id, diststyle, sortkey1, skew_sortkey1, rows
+   FROM svv_table_info
+   WHERE table_name = 'ventas';
+   ```
+
+### **3. Casos de Uso de Cada Algoritmo**
+
+| **Criterio**              | **COMPOUND SORTKEY**                 | **INTERLEAVED SORTKEY**             |
+|---------------------------|--------------------------------------|-------------------------------------|
+| **Consultas Secuenciales** | Alta eficiencia                     | Eficiencia moderada                 |
+| **Consultas con Múltiples Columnas** | Menos eficiente                   | Alta eficiencia                     |
+| **Mantenimiento**         | Bajo costo                          | Alto costo                          |
+| **Flexibilidad**          | Baja                                | Alta                                |
+
+
+### **4. Consideraciones Adicionales**
+
+#### **a. Tamaño de la Tabla**
+- Tablas pequeñas no se benefician significativamente de llaves de ordenamiento.
+- Tablas grandes con patrones de acceso predecibles suelen usar `COMPOUND SORTKEY`.
+
+#### **b. Frecuencia de Cargas de Datos**
+- Si realizas muchas inserciones o cargas masivas, el costo de mantenimiento de `INTERLEAVED SORTKEY` puede ser prohibitivo.
+
+#### **c. Reclamo de Espacio y Optimización**
+Usa `VACUUM` y `ANALYZE` para optimizar la disposición física de los datos después de cambios significativos.
+```sql
+VACUUM ventas_compound;
+ANALYZE ventas_compound;
+```
+
+### **Conclusión**
+
+La elección del algoritmo de ordenamiento depende de tus patrones de acceso y la flexibilidad que necesitas. Realiza pruebas y monitorea el impacto en el rendimiento para seleccionar la mejor estrategia para tu carga de trabajo en Amazon Redshift.
+
+**Lecturas recomendadas**
+
+[redshift_course/Claves_de_ordenamiento at master · alarcon7a/redshift_course · GitHub](https://github.com/alarcon7a/redshift_course/tree/master/Claves_de_ordenamiento)

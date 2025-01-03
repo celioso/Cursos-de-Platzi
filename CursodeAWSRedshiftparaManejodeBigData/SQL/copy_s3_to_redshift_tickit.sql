@@ -27,3 +27,5 @@ credentials 'aws_iam_role=arn:aws:iam::528757819805:role/MyRoleRedshift'
 delimiter '\t' timeformat 'MM/DD/YYYY HH:MI:SS' region 'us-west-2';
 
 select *from listing limit 10;
+
+select count(0) from listing;

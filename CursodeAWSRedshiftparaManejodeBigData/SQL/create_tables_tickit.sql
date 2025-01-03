@@ -71,4 +71,4 @@ create table sales(
 	commission decimal(8,2),
 	saletime timestamp);
 	
-select * from sales;
+select * from users;
