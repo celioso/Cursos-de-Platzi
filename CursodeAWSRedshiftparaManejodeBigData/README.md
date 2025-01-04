@@ -1507,3 +1507,693 @@ La elección del algoritmo de ordenamiento depende de tus patrones de acceso y l
 **Lecturas recomendadas**
 
 [redshift_course/Claves_de_ordenamiento at master · alarcon7a/redshift_course · GitHub](https://github.com/alarcon7a/redshift_course/tree/master/Claves_de_ordenamiento)
+
+## Buenas prácticas para diseñar tablas en Redshift
+
+Diseñar tablas en Amazon Redshift implica optimizar tanto el almacenamiento como el rendimiento de las consultas. Esto requiere una planificación cuidadosa en cuanto a la distribución de datos, el ordenamiento, la compresión y otros aspectos clave. A continuación, se presentan las mejores prácticas para maximizar la eficiencia.
+
+### **1. Selección del Estilo de Distribución**
+
+El estilo de distribución define cómo se almacenan los datos en los nodos del clúster. Una distribución adecuada minimiza el movimiento de datos entre nodos durante las consultas.
+
+#### **a. KEY**
+- Usa una columna común en las consultas para distribuir los datos.
+- Ideal para tablas con combinaciones frecuentes.
+- Ejemplo:
+  ```sql
+  CREATE TABLE ventas (
+      venta_id INT,
+      cliente_id INT,
+      fecha DATE
+  )
+  DISTKEY (cliente_id);
+  ```
+
+#### **b. ALL**
+- Replica la tabla en todos los nodos.
+- Útil para tablas pequeñas utilizadas en muchas combinaciones.
+- Ejemplo:
+  ```sql
+  CREATE TABLE estados (
+      estado_id INT,
+      descripcion VARCHAR(50)
+  )
+  DISTSTYLE ALL;
+  ```
+
+#### **c. EVEN**
+- Distribuye filas uniformemente entre nodos.
+- Ideal para tablas grandes con accesos no predecibles.
+- Ejemplo:
+  ```sql
+  CREATE TABLE logs (
+      log_id INT,
+      mensaje VARCHAR(255),
+      fecha DATE
+  )
+  DISTSTYLE EVEN;
+  ```
+
+### **2. Definición de Llaves de Ordenamiento (`SORTKEY`)**
+
+Las llaves de ordenamiento optimizan el escaneo de datos en disco, reduciendo el tiempo de ejecución de consultas.
+
+#### **a. Llave Compuesta (COMPOUND)**
+- Ordena físicamente por las columnas definidas, en el orden especificado.
+- Útil para consultas que filtran por la primera columna.
+- Ejemplo:
+  ```sql
+  CREATE TABLE ventas (
+      venta_id INT,
+      fecha DATE,
+      cliente_id INT
+  )
+  COMPOUND SORTKEY (fecha, cliente_id);
+  ```
+
+#### **b. Llave Entrelazada (INTERLEAVED)**
+- Distribuye el ordenamiento entre varias columnas.
+- Ideal para consultas con filtros en cualquier combinación de columnas.
+- Ejemplo:
+  ```sql
+  CREATE TABLE ventas (
+      venta_id INT,
+      fecha DATE,
+      cliente_id INT
+  )
+  INTERLEAVED SORTKEY (fecha, cliente_id);
+  ```
+
+### **3. Uso de Compresión (`ENCODE`)**
+
+Aplica compresión para reducir el espacio en disco y mejorar el rendimiento. Redshift selecciona automáticamente el mejor algoritmo al analizar los datos.
+
+#### **a. Compresión Manual**
+- Especifica el algoritmo si conoces el tipo de datos.
+- Ejemplo:
+  ```sql
+  CREATE TABLE ventas (
+      venta_id INT ENCODE delta,
+      fecha DATE ENCODE lzo,
+      cliente_id INT ENCODE zstd
+  );
+  ```
+
+#### **b. Analiza y Optimiza**
+- Usa el comando `ANALYZE COMPRESSION` para determinar los mejores algoritmos.
+  ```sql
+  ANALYZE COMPRESSION ventas;
+  ```
+
+### **4. Partición de Tablas Grandes**
+
+Divide tablas muy grandes en subconjuntos manejables mediante claves de partición lógica, como fechas.
+
+#### **Ejemplo:**
+Crear tablas mensuales basadas en la fecha.
+```sql
+CREATE TABLE ventas_2025_01 (
+    venta_id INT,
+    fecha DATE,
+    cliente_id INT
+)
+DISTKEY (cliente_id)
+SORTKEY (fecha);
+```
+
+### **5. Mantenimiento Regular**
+
+#### **a. VACUUM**
+- Reorganiza datos fragmentados y mejora la velocidad de lectura.
+  ```sql
+  VACUUM FULL ventas;
+  ```
+
+#### **b. ANALYZE**
+- Actualiza las estadísticas de la tabla para optimizar el planificador de consultas.
+  ```sql
+  ANALYZE ventas;
+  ```
+
+#### **c. DEEP COPY**
+- Realiza una copia profunda de tablas críticas para reorganizar los datos.
+  ```sql
+  CREATE TABLE ventas_copy AS SELECT * FROM ventas;
+  DROP TABLE ventas;
+  ALTER TABLE ventas_copy RENAME TO ventas;
+  ```
+
+### **6. Índices y Optimización de Consultas**
+
+Aunque Redshift no utiliza índices tradicionales, puedes optimizar las consultas con:
+
+- **Llaves de ordenamiento:** Para reducir el escaneo de datos.
+- **Proyección de columnas:** Selecciona solo las columnas necesarias.
+  ```sql
+  SELECT cliente_id, fecha FROM ventas WHERE fecha = '2025-01-01';
+  ```
+
+### **7. Evitar Buenas Prácticas Comunes en Bases de Datos Relacionales**
+
+Redshift no es una base de datos relacional tradicional; evita:
+
+- Uso excesivo de normalización: Prioriza tablas desnormalizadas para evitar combinaciones costosas.
+- Inserciones individuales frecuentes: Utiliza cargas masivas con `COPY`.
+  ```sql
+  COPY ventas
+  FROM 's3://mi-bucket/ventas.csv'
+  IAM_ROLE 'arn:aws:iam::123456789012:role/MyRedshiftRole'
+  CSV;
+  ```
+
+### **8. Uso de Monitoreo y Ajuste**
+
+Monitorea las consultas para identificar cuellos de botella.
+
+- **Consultas más lentas:**
+  ```sql
+  SELECT query, starttime, endtime, substring
+  FROM svl_qlog
+  WHERE aborted = 0
+  ORDER BY endtime - starttime DESC
+  LIMIT 10;
+  ```
+
+- **Tablas más usadas:**
+  ```sql
+  SELECT tbl, sum(scan_count) AS scans
+  FROM svv_table_info
+  GROUP BY tbl
+  ORDER BY scans DESC;
+  ```
+
+### Conclusión
+
+El diseño eficiente de tablas en Redshift requiere una planificación que tenga en cuenta la carga de trabajo y los patrones de consulta. Aplicando estas buenas prácticas, puedes garantizar un rendimiento óptimo y una experiencia más fluida con Redshift.
+
+**Archivos de la clase**
+
+[evaluar-diseno-tablas.sql](https://static.platzi.com/media/public/uploads/evaluar_diseno_tablas_541ffc47-2252-41e1-b84c-562eea2c21dd.sql)
+
+**Lecturas recomendadas**
+
+[Analyzing table design - Amazon Redshift](https://docs.aws.amazon.com/es_es/redshift/latest/dg/c_analyzing-table-design.html)
+
+## Tipos de datos en AWS Redshift
+
+En esta clase conoceremos los tipos de datos que maneja Redshift, y como ya lo sabes, Redshift está basado en PostgreSQL, de manera que si estás familiarizado con los tipos de datos de PostgreSQL esta clase se te facilitará.
+
+Como otras bases de datos, Redshift maneja datos de tipo numérico, texto, de lógica booleana y estos datos tienen ciertas particularidades.
+
+### Tipos de datos para texto:
+
+En estos tipos de datos almacenaremos caracteres y cadenas de texto como pueden ser nombres, direcciones, descripciones, etc.
+
+Lo más importante que debes saber al momento de manejar estos tipos de datos es que el parámetro que le indiques a cada dato no es la longitud, es el número de bytes que trabajará, de manera que un dato VARCHAR(2) no indica que reciba 2 caracteres de longitud, sino que el contenido es de 2 bytes.
+
+```sql
+CREATE  TABLE  test_tipo_dato (
+dato  varchar(2)
+)
+
+insert  into  test_tipo_dato  values ('AA');
+insert  into  test_tipo_dato  values ('€');
+```
+
+Si ejecutas las anteriores sentencias notarás que el primer insert se ejecuta sin ningún problema, “A” es un carácter que solo ocupa 1 byte. De modo que “AA” ocupa un total de 2 bytes. Pero, la segunda sentencia de insert falló y esta solo contiene un carácter “€”, esto ocurre por que este carácter tiene una longitud de 3 bytes por sí solo, de manera que rompe la restricción de tipo de dato VARCHAR(2).
+
+![CleanShot](images/CleanShot.png)
+
+Como ves los tipos de dato BPCHAR son convertidos por Redshift a CHAR y los tipos de dato TEXT a VARCHAR; también es importante tener en cuenta que un dato CHAR de 10, siempre ocupara 10 bytes, y dado el caso que el dato guardado no complete los 10 bytes Redshift lo completa con espacios en blanco, esto no ocurre en el tipo de dato VARCHAR.
+
+**Compruébalo tú mismo:**
+
+```sql
+create  table  test_char (
+dato  char(10)
+);
+
+insert  into  test_char  values ('dato');
+select * from  test_char;
+```
+
+**Tipos de datos numéricos:**
+
+Estos tipos de datos se deben usar para el manejo de números, en casos como cantidades, medidas, llaves únicas etc, los datos numéricos pueden ser enteros, decimales y de coma flotante.
+
+**Enteros:**
+
+![Enteros](images/Enteros.png)
+
+Decimales:
+
+![Decimales](images/decimales.png)
+
+Para el manejo de datos decimales, decimal(precisión, escala), debes tener en cuenta que se manejan dos parámetros, la precisión y la escala.
+
+Para explicarte como funciona usemos un ejemplo:
+
+```sql
+create  table  test_decimal (
+dato  decimal(4,2)
+);
+
+insert  into  test_decimal  values (4581.54);
+insert  into  test_decimal  values (121.7);
+insert  into  test_decimal  values (12.21);
+insert  into  test_decimal  values (12.2);
+insert  into  test_decimal  values (12.21222);
+```
+
+Como puedes observar los dos primeros “insert” fallaron, y quizá te estés preguntando, ¿por qué ocurrió esto? si en la sentencia dice 4 enteros y 2 decimales… pero no, el valor de precisión (4 para este ejemplo) indica el número total de dígitos que puede recibir, y escala indica el número de decimales que se trabajarán, de modo que en realidad este dato puede máximo guardar un número de 2 enteros y 2 decimales (4,2), pero ¿y la última sentencia insert que tenía 2 enteros y 5 decimales? ¿por qué funcioné?, bueno Redshift nota que el número de enteros es válido y solo redondea las cifras decimales a 2 dígitos para este caso.
+
+### Otros tipos de dato:
+
+Los valores de fecha como date, timestamp, timestampz se manejan como cualquier otra base de datos, también los tipos de dato bool, boolean, los cuales solo pueden recibir un byte de longitud.
+
+A continuación te comparto la tabla que usa Redshift para el manejo de tipos de datos.
+
+![datos redshift](images/datos-redshift.png)
+
+## Reto: mejora el desempeño de tu base de datos
+
+**Lecturas recomendadas**
+
+[Step 1: Create a test data set - Amazon Redshift](https://docs.aws.amazon.com/redshift/latest/dg/tutorial-tuning-tables-create-test-data.html)
+
+[redshift_course/Reto_Diseño_Tablas at master · alarcon7a/redshift_course · GitHub](https://github.com/alarcon7a/redshift_course/tree/master/Reto_Dise%C3%B1o_Tablas)
+
+## Olvídate de los insert, el copy llego para quedarse
+
+¡Exactamente! 🚀 El comando `COPY` es una de las herramientas más poderosas en Amazon Redshift para cargar datos de manera eficiente. Comparado con los tradicionales `INSERT`, ofrece varias ventajas:
+
+### **Ventajas del comando `COPY`:**
+1. **Eficiencia:**  
+   - `COPY` está diseñado para manejar grandes volúmenes de datos mucho más rápido que `INSERT`.
+   - Aprovecha el paralelismo al dividir el trabajo en múltiples nodos del clúster Redshift.
+
+2. **Flexibilidad:**  
+   - Permite cargar datos desde diferentes fuentes como Amazon S3, Amazon DynamoDB, archivos locales o flujos de datos.
+
+3. **Compatibilidad con formatos comprimidos:**  
+   - Soporta varios formatos comprimidos como `GZIP`, `BZIP2` y `LZOP`, lo que ayuda a reducir el tiempo de transferencia y almacenamiento.
+
+4. **Optimización automática:**  
+   - Opciones como `COMPUPDATE` ajustan automáticamente las estrategias de compresión para mejorar el rendimiento de las consultas.
+
+### **Buenas prácticas para `COPY` en Redshift:**
+1. **Preprocesar los datos:**
+   - Verifica que los datos estén limpios y en el formato esperado antes de cargarlos.
+   - Divide grandes archivos en fragmentos de 1 GB para maximizar el rendimiento.
+
+2. **Usar columnas distribuidas y claves de ordenamiento:**
+   - Define correctamente las claves de distribución y ordenamiento para evitar skew y mejorar las consultas posteriores.
+
+3. **Habilitar carga paralela:**
+   - Si los datos se dividen en múltiples archivos, Redshift cargará todos los archivos en paralelo, aprovechando al máximo los nodos disponibles.
+
+4. **Monitorear y ajustar la carga:**
+   - Utiliza vistas como `STL_LOAD_COMMITS` y `STL_LOAD_ERRORS` para depurar problemas y optimizar futuras cargas.
+
+### **Ejemplo típico de `COPY`:**
+```sql
+COPY sales
+FROM 's3://my-bucket/data/sales_data'
+IAM_ROLE 'arn:aws:iam::123456789012:role/MyRedshiftRole'
+CSV
+GZIP
+IGNOREHEADER 1
+REGION 'us-west-2';
+```
+
+Con estas ventajas y prácticas, el `COPY` no solo "llegó para quedarse", sino que es el estándar para cargar datos masivos en Redshift.
+
+## Cargando archivos tipo JSON
+
+En esta clase conoceremos cómo cargar datos en formato json a Redshift con el comando Copy, ya conoces las ventajas de este comando, ahora veremos cómo llevar nuestros datos a Redshift dado el caso que nuestro origen de datos se encuentre en un formato json.
+
+Lo primero que debemos saber es que existen dos formas de cargar los datos en formato json en Redshift, una es la forma automática, en donde cada “key” del archivo json debe hacer match con cada columna que queramos llenar de una tabla en Redshift.
+
+Es importante saber que las columnas en Redshift se crean en minúsculas, de manera que las “key” del archivo en json deben estar en minúscula también. La segunda forma es especificando la estructura del archivo para que este pueda ser cargado a la tabla, para ello utilizaremos un archivo extra denominado jsonpaths.
+
+**Carga automática:**
+
+Usando la estructura de tabla que hemos manejado en este curso:
+
+```sql
+--Create table
+create  table  estudiante
+( id  int2,
+nombre  varchar(20),
+apellido  varchar(20),
+edad  int2,
+fecha_ingreso  date );
+```
+
+Crearemos una estructura en Redshift que pueda satisfacer las necesidades de esta tabla, de modo que puede quedar algo así (recuerda que los “key” del archivo se debe llamar igual que en la tabla):
+
+```json
+{
+	"id": 4544,
+	"nombre": "test_1",
+	"apellido": "json_1",
+	"edad": 33,
+	"fecha_ingreso": "2020-08-01"
+}
+{
+	"id": 23232,
+	"nombre": "test_2",
+	"apellido": "json_2",
+	"edad": 22,
+	"fecha_ingreso": "2020-08-03"
+}
+```
+
+Ahora lo subimos a S3 con el nombre que queramos y procedemos a cargarlo de la siguiente manera:
+
+```sql
+copy  public.estudiante  from  's3://[tu_propia_ruta_del_archivo_json]'  credentials  'aws_iam_role=[tu_iam_role]'
+format  as  json  'auto'  region  '[tu_region]';
+```
+
+Como se ve en la gráfica, la tabla se encuentra cargada con los datos que existen en el archivo json.
+
+**Carga con jsonpaths:**
+
+Esta carga consiste en determinar una estructura basada en el archivo json que pueda ser insertada en la tabla, como sabemos en un archivo json podemos tener datos no estructurados, pero Redshift requiere de data estructurada; de manera que lo primero será crear un pequeño ejemplo de un archivo json con datos no estructurada.
+
+```json
+{
+	"id": 4544,
+	"nombre": "test_json3",
+	"apellido": "test_json3",
+	"edad": [
+		24332,
+		33,
+		443,
+		323232,
+		43434
+	],
+	"fechas": [
+		{
+			"id": 0,
+			"fecha_ingreso": "2015-05-01"
+		},
+		{
+			"id": 1,
+			"fecha_ingreso": "2016-05-30"
+		}
+	]
+}
+```
+
+Vamos a suponer que de la lista de edades son la segunda posición o sea la posición [1] es la que yo requiero, y para las fechas, la fecha que en verdad me interesa es la contenida en el segundo bloque, para especificar estas reglas crearemos un nuevo archivo con la siguiente estructura y lo nombraremos “jsonpaths”:
+
+```json
+{
+	"jsonpaths": [
+		"$['id']",
+		"$['nombre']",
+		"$['apellido']",
+		"$['edad'][1]",
+		"$['fechas'][1]['fecha_ingreso']"
+	]
+}
+```
+
+En donde el símbolo **($)** indica la raíz del archivo json.
+
+Ahora subimos nuestros dos archivos a S3 y ejecutamos la siguiente sentencia en nuestro editor SQL.
+
+```sql
+copy  public.estudiante  from  's3://[tu_propia_ruta_del_archivo_json]'  credentials  'aws_iam_role=[tu_iam_role]'
+format  as  json  's3://[tu_propia_ruta_del_archivo_jsonpaths]'  region  'tu_propia_region';
+```
+
+Y como vemos, el registro fue cargado exitosamente.
+
+![redshift-table.png](images/redshift-table.png)
+
+## El comando copy a fondo
+
+¡Vamos a profundizar en el comando `COPY` de Amazon Redshift! Es la herramienta más eficaz para cargar datos a gran escala en tablas de Redshift.
+
+### **¿Qué hace el comando `COPY`?**
+`COPY` transfiere datos desde fuentes externas, como **Amazon S3**, **DynamoDB**, o **servidores locales**, a tablas de Redshift. Su diseño aprovecha la arquitectura distribuida de Redshift para realizar la carga de datos de manera paralela y eficiente.
+
+### **Sintaxis Básica:**
+```sql
+COPY table_name
+FROM 'data_source'
+CREDENTIALS 'aws_credentials'
+FORMAT [AS] data_format
+[COMPUPDATE {ON | OFF}]
+[STATUPDATE {ON | OFF}]
+[REGION 'region']
+[DELIMITER 'delimiter']
+[IGNOREHEADER n]
+[GZIP | BZIP2 | LZOP]
+[MANIFEST]
+[TIMEFORMAT 'format']
+[DATEFORMAT 'format']
+[ENCODING 'encoding'];
+```
+
+### **Parámetros Clave del Comando `COPY`:**
+
+#### **1. `FROM`**  
+- Especifica la fuente de datos. Puede ser una ubicación en **Amazon S3**, una tabla de **DynamoDB**, o un archivo en un servidor local.  
+- **Ejemplo:**  
+  ```sql
+  FROM 's3://my-bucket/data/'
+  ```
+
+#### **2. `CREDENTIALS`**  
+- Define cómo Redshift accede a la fuente. Usualmente mediante un rol de IAM.  
+- **Ejemplo:**  
+  ```sql
+  CREDENTIALS 'aws_iam_role=arn:aws:iam::123456789012:role/MyRedshiftRole'
+  ```
+
+#### **3. `FORMAT`**  
+- Define el formato de los datos: **CSV**, **JSON**, **PARQUET**, **AVRO**, etc.  
+- **Ejemplo:**  
+  ```sql
+  FORMAT AS JSON 'auto'
+  ```
+
+#### **4. `DELIMITER` y `IGNOREHEADER`**  
+- Especifica el delimitador de columnas y si se deben ignorar filas de encabezado.  
+- **Ejemplo:**  
+  ```sql
+  DELIMITER ',' IGNOREHEADER 1
+  ```
+
+#### **5. Compresión (`GZIP`, `BZIP2`, `LZOP`)**  
+- Redshift puede descomprimir automáticamente archivos comprimidos.  
+- **Ejemplo:**  
+  ```sql
+  GZIP
+  ```
+
+#### **6. `REGION`**  
+- Especifica la región de AWS donde se encuentra la fuente.  
+- **Ejemplo:**  
+  ```sql
+  REGION 'us-west-2'
+  ```
+
+#### **7. Opciones de optimización:**
+- **`COMPUPDATE`**: Ajusta automáticamente la estrategia de compresión para las columnas de la tabla.  
+  ```sql
+  COMPUPDATE ON
+  ```
+- **`STATUPDATE`**: Actualiza automáticamente las estadísticas de la tabla después de la carga.  
+  ```sql
+  STATUPDATE ON
+  ```
+
+### **Formatos de Datos Admitidos:**
+
+1. **CSV**  
+   - Común para datos tabulares.  
+   - **Ejemplo:**  
+     ```sql
+     FORMAT AS CSV DELIMITER ',' IGNOREHEADER 1;
+     ```
+
+2. **JSON**  
+   - Ideal para datos semi-estructurados.  
+   - **Ejemplo:**  
+     ```sql
+     FORMAT AS JSON 's3://my-bucket/jsonpath_file.json';
+     ```
+
+3. **PARQUET** y **AVRO**  
+   - Diseñados para big data y optimizados para almacenamiento.  
+   - **Ejemplo:**  
+     ```sql
+     FORMAT AS PARQUET;
+     ```
+
+### **Ejemplo Completo:**
+```sql
+COPY sales_data
+FROM 's3://my-bucket/sales/'
+IAM_ROLE 'arn:aws:iam::123456789012:role/MyRedshiftRole'
+CSV
+DELIMITER ','
+IGNOREHEADER 1
+GZIP
+REGION 'us-west-2'
+COMPUPDATE ON
+STATUPDATE ON;
+```
+
+### **Monitoreo del Comando `COPY`:**
+
+#### **Vistas útiles:**
+1. **`STL_LOAD_COMMITS`**  
+   - Detalles de las cargas exitosas.
+2. **`STL_LOAD_ERRORS`**  
+   - Detalles sobre errores en las cargas.
+3. **`SVV_TABLE_INFO`**  
+   - Información sobre distribución, ordenamiento y tamaños de tabla.
+
+#### **Consultar errores:**
+```sql
+SELECT * FROM STL_LOAD_ERRORS WHERE filename LIKE 's3://my-bucket/sales/%';
+```
+
+### **Buenas Prácticas al Usar `COPY`:**
+1. **Dividir archivos grandes en fragmentos de ~1 GB.**  
+2. **Usar columnas distribuidas y claves de ordenamiento.**  
+3. **Limitar el uso de `STATUPDATE` y `COMPUPDATE` si el volumen de datos es muy alto.**  
+4. **Verificar permisos de IAM antes de ejecutar el comando.**
+
+El comando `COPY` es una joya para el procesamiento masivo de datos en Redshift, combinando velocidad, eficiencia y flexibilidad. 
+
+**Lecturas recomendadas**
+
+[Data conversion parameters - Amazon Redshift](https://docs.aws.amazon.com/es_es/redshift/latest/dg/copy-parameters-data-conversion.html#copy-escape)
+
+[redshift_course/Copy at master · alarcon7a/redshift_course · GitHub](https://github.com/alarcon7a/redshift_course/tree/master/Copy)
+
+## Manifiestos y uso de COMPUPDATE para carga con compresión automática
+
+### **Manifiestos y Uso de COMPUPDATE para Carga con Compresión Automática en Amazon Redshift**
+
+Amazon Redshift proporciona herramientas avanzadas para manejar cargas de datos de manera eficiente, aprovechando el uso de **manifiestos** y la opción **COMPUPDATE** para compresión automática. A continuación, desglosamos estos conceptos, su implementación y mejores prácticas.
+
+---
+
+### **Manifiestos en Amazon Redshift**
+
+Un **manifiesto** es un archivo en formato JSON que contiene una lista de objetos almacenados en Amazon S3 para ser cargados a una tabla de Redshift. Los manifiestos son útiles cuando se trabaja con grandes volúmenes de datos distribuidos en múltiples archivos o carpetas.
+
+#### **Ventajas del Uso de Manifiestos**
+1. **Control de Archivos**: Garantiza que solo se carguen los archivos especificados.
+2. **Evita Duplicados**: Previene la carga de archivos no deseados.
+3. **Manejo de Errores**: Define si la carga debe fallar si un archivo específico no está disponible.
+
+#### **Formato del Archivo de Manifiesto**
+Un manifiesto típico tiene la siguiente estructura:
+```json
+{
+  "entries": [
+    {"url": "s3://my-bucket/data/file1.gz", "mandatory": true},
+    {"url": "s3://my-bucket/data/file2.gz", "mandatory": false}
+  ]
+}
+```
+- **`url`**: Ruta del archivo en S3.
+- **`mandatory`**: Define si el proceso debe fallar si el archivo no está disponible (`true`) o continuar (`false`).
+
+#### **Uso en el Comando COPY**
+El manifiesto se especifica con la opción `MANIFEST` en el comando `COPY`:
+```sql
+COPY table_name
+FROM 's3://my-bucket/path-to-manifest/manifest.json'
+CREDENTIALS 'aws_iam_role=arn:aws:iam::123456789012:role/MyRole'
+REGION 'us-west-2'
+MANIFEST;
+```
+
+---
+
+### **COMPUPDATE: Compresión Automática**
+
+La opción **COMPUPDATE** del comando `COPY` permite que Redshift analice automáticamente los datos cargados y aplique algoritmos de compresión óptimos a las columnas de la tabla.
+
+#### **Modos de COMPUPDATE**
+- **`COMPUPDATE ON` (por defecto):** 
+  Redshift ajusta las columnas para usar el mejor algoritmo de compresión basado en los datos cargados.
+  
+- **`COMPUPDATE OFF`:** 
+  Desactiva el ajuste de compresión durante la carga. Útil si las columnas ya tienen compresión definida.
+
+- **`COMPUPDATE PRESET`:** 
+  Aplica configuraciones de compresión preexistentes, sin analizar los datos.
+
+#### **Beneficios de COMPUPDATE**
+1. **Optimización Automática**: Reduce el espacio de almacenamiento utilizado.
+2. **Mejora el Desempeño**: Las consultas son más rápidas en tablas comprimidas.
+3. **Facilidad de Uso**: Redshift maneja la elección de algoritmos sin intervención manual.
+
+---
+
+### **Ejemplo Completo: Manifiestos y COMPUPDATE**
+Supongamos que tenemos datos en múltiples archivos comprimidos en S3, listados en un manifiesto. Para cargarlos con compresión automática:
+
+#### **Archivo de Manifiesto (`manifest.json`)**
+```json
+{
+  "entries": [
+    {"url": "s3://my-bucket/sales-data/file1.csv.gz", "mandatory": true},
+    {"url": "s3://my-bucket/sales-data/file2.csv.gz", "mandatory": true}
+  ]
+}
+```
+
+#### **Comando COPY**
+```sql
+COPY sales_table
+FROM 's3://my-bucket/sales-data/manifest.json'
+CREDENTIALS 'aws_iam_role=arn:aws:iam::123456789012:role/MyRole'
+REGION 'us-west-2'
+MANIFEST
+COMPUPDATE ON
+GZIP;
+```
+- **`MANIFEST`**: Utiliza el archivo de manifiesto.
+- **`COMPUPDATE ON`**: Redshift ajusta automáticamente la compresión.
+- **`GZIP`**: Indica que los archivos están comprimidos en formato GZIP.
+
+---
+
+### **Buenas Prácticas**
+1. **Preanalizar Compresión**: Antes de cargar datos, utiliza `ANALYZE COMPRESSION` para determinar los algoritmos de compresión óptimos:
+   ```sql
+   ANALYZE COMPRESSION table_name;
+   ```
+
+2. **Usar Manifiestos para Archivos Grandes**: Divide los datos en archivos más pequeños y utiliza un manifiesto para manejarlos eficientemente.
+
+3. **Desactivar COMPUPDATE en Tablas Optimizadas**: Si la tabla ya está configurada con compresión óptima, desactiva `COMPUPDATE` para ahorrar tiempo.
+
+4. **Monitorizar Cargas**: Revisa tablas de sistema como `stl_load_commits` y `stl_load_errors` para verificar el estado de las cargas.
+
+5. **Asegurar Permisos en S3**: Confirma que los roles de IAM tienen acceso a los archivos especificados en el manifiesto.
+
+---
+
+### **Resumen**
+- **Manifiestos**: Ayudan a controlar la carga de datos desde múltiples archivos en S3.
+- **COMPUPDATE**: Optimiza automáticamente la compresión de columnas durante la carga.
+- **Combinación Poderosa**: Usar ambos en conjunto asegura cargas eficientes y tablas optimizadas para consultas rápidas.
+
+Implementar estas herramientas en tu flujo de trabajo mejora significativamente la eficiencia y el desempeño en Amazon Redshift. 🚀
+
+**Lecturas recomendadas**
+
+[redshift_course/Copy/Manifest at master · alarcon7a/redshift_course · GitHub](https://github.com/alarcon7a/redshift_course/tree/master/Copy/Manifest)
