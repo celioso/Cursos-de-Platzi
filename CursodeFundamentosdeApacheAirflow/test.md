@@ -80,8 +80,7 @@
     
 **R//=** El logical date de nuestro DAG
 
-21. **
-Los XComs nos permiten que las tareas se comuniquen entre sí?**
+21. **Los XComs nos permiten que las tareas se comuniquen entre sí?**
     
 **R//=** TRUE
 

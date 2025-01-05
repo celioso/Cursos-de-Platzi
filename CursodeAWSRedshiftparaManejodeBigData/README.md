@@ -2626,6 +2626,7 @@ Para realizar estadísticas y limpieza en tablas de bases de datos como Redshift
    ```
 
 3. **Subqueries**:  
+
    Una subconsulta es una consulta anidada dentro de otra consulta.
 
    ```sql
