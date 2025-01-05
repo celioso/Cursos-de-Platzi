@@ -2197,3 +2197,806 @@ Implementar estas herramientas en tu flujo de trabajo mejora significativamente 
 **Lecturas recomendadas**
 
 [redshift_course/Copy/Manifest at master · alarcon7a/redshift_course · GitHub](https://github.com/alarcon7a/redshift_course/tree/master/Copy/Manifest)
+
+## Métodos de carga alternativos al comando copy
+
+### **Métodos de Carga Alternativos al Comando COPY en Amazon Redshift**
+
+Aunque el comando `COPY` es el método más eficiente para cargar datos en Amazon Redshift, existen alternativas que pueden ser útiles según el caso de uso, el volumen de datos o las herramientas disponibles.
+
+---
+
+### **1. INSERT Statements**
+El método más básico para insertar datos en Amazon Redshift.
+
+#### **Uso**
+```sql
+INSERT INTO table_name (column1, column2, ...)
+VALUES ('value1', 'value2', ...), ('value3', 'value4', ...);
+```
+
+#### **Ventajas**
+- Sencillo para cargas pequeñas o pruebas rápidas.
+- Útil para datos generados dinámicamente.
+
+#### **Desventajas**
+- Lento para grandes volúmenes de datos.
+- No aprovecha las optimizaciones internas de Redshift para cargas masivas.
+
+---
+
+### **2. Amazon Redshift Data API**
+Permite interactuar con Redshift sin necesidad de un cliente o controlador JDBC/ODBC.
+
+#### **Uso**
+La API acepta comandos SQL, incluidos INSERT y COPY, desde aplicaciones modernas.
+
+#### **Ventajas**
+- Ideal para aplicaciones serverless o sin infraestructura fija.
+- Puede integrarse con herramientas como AWS Lambda.
+
+#### **Desventajas**
+- Menos eficiente que `COPY` para cargas masivas.
+
+---
+
+### **3. AWS Glue**
+AWS Glue puede usarse para preparar y cargar datos en Amazon Redshift.
+
+#### **Proceso**
+1. Configurar un catálogo de datos en Glue.
+2. Crear y ejecutar un trabajo de ETL (Extract, Transform, Load) en Glue.
+3. Escribir los datos transformados directamente en una tabla de Redshift.
+
+#### **Ventajas**
+- Excelente para transformar y cargar datos complejos.
+- Automático y escalable.
+
+#### **Desventajas**
+- Configuración inicial más compleja.
+- Puede ser más lento que `COPY` si no se optimiza.
+
+---
+
+### **4. Redshift Spectrum**
+Carga datos directamente desde S3 sin necesidad de moverlos a Redshift, ideal para análisis en datos no estructurados.
+
+#### **Uso**
+Crea una tabla externa vinculada a un bucket de S3:
+```sql
+CREATE EXTERNAL TABLE schema_name.table_name (
+  column1 data_type,
+  column2 data_type
+)
+STORED AS file_format
+LOCATION 's3://bucket_name/';
+```
+
+#### **Ventajas**
+- Permite trabajar directamente con grandes volúmenes de datos en S3.
+- No es necesario cargar los datos físicamente a Redshift.
+
+#### **Desventajas**
+- Las consultas pueden ser más lentas que con tablas internas.
+- Requiere AWS Glue para definir el catálogo.
+
+---
+
+### **5. Amazon Kinesis Data Firehose**
+Envía flujos de datos en tiempo real a Amazon Redshift.
+
+#### **Proceso**
+1. Configura una entrega de datos en Kinesis Data Firehose con destino a Redshift.
+2. Proporciona las credenciales y la tabla de destino.
+
+#### **Ventajas**
+- Ideal para cargas en tiempo real.
+- Automatiza la ingesta de datos.
+
+#### **Desventajas**
+- No es adecuado para grandes volúmenes de datos históricos.
+- Configuración más avanzada.
+
+---
+
+### **6. Herramientas de ETL Externas**
+Herramientas de terceros como **Informatica**, **Talend**, **Matillion**, o **Pentaho** pueden integrarse con Redshift para cargar datos.
+
+#### **Ventajas**
+- Interfaces gráficas fáciles de usar.
+- Funciones avanzadas de transformación.
+
+#### **Desventajas**
+- Licencias y costos adicionales.
+- Menor control sobre la optimización.
+
+---
+
+### **7. Unload/Load desde y hacia Amazon S3**
+Se utiliza para mover datos entre tablas de Redshift o entre clústeres.
+
+#### **Proceso**
+1. Exporta los datos desde Redshift a S3 con `UNLOAD`.
+   ```sql
+   UNLOAD ('SELECT * FROM table_name') 
+   TO 's3://bucket_name/prefix' 
+   CREDENTIALS 'aws_iam_role=arn:aws:iam::123456789012:role/MyRole'
+   PARALLEL ON;
+   ```
+2. Carga los datos en otra tabla o clúster usando `COPY`.
+
+#### **Ventajas**
+- Ideal para migraciones o copias entre entornos.
+- Mantiene la eficiencia del comando `COPY`.
+
+#### **Desventajas**
+- Requiere espacio en S3 para datos temporales.
+- Puede ser más lento que `COPY` directo.
+
+---
+
+### **8. Federated Queries**
+Permite cargar datos desde bases de datos externas como RDS o Aurora directamente a Redshift.
+
+#### **Uso**
+Define una fuente de datos externa y utiliza consultas SQL para cargar los datos:
+```sql
+CREATE EXTERNAL SCHEMA ext_schema
+FROM POSTGRES
+DATABASE 'db_name'
+URI 'jdbc:postgresql://host:port'
+IAM_ROLE 'arn:aws:iam::123456789012:role/MyRole';
+```
+
+#### **Ventajas**
+- No es necesario extraer datos manualmente.
+- Reduce la duplicación de datos.
+
+#### **Desventajas**
+- Las consultas federadas pueden ser más lentas que el uso de `COPY`.
+
+---
+
+### **Conclusión**
+- **Volúmenes grandes y cargas masivas:** El comando `COPY` sigue siendo el más eficiente.
+- **Datos en tiempo real:** Kinesis Data Firehose es la mejor opción.
+- **Transformación compleja de datos:** AWS Glue o herramientas de ETL externas.
+- **Análisis directo en S3:** Redshift Spectrum.
+
+Elegir el método adecuado depende de las necesidades específicas, la infraestructura existente y los requisitos de transformación y velocidad.
+
+**Lecturas recomendadas**
+
+[Performing a deep copy - Amazon Redshift](https://docs.aws.amazon.com/redshift/latest/dg/performing-a-deep-copy.html)
+
+## ¿Cómo ejecutar sentencias UPDATE y DELETE?
+
+En Amazon Redshift, las sentencias `UPDATE` y `DELETE` son compatibles con el SQL estándar, pero debido a la naturaleza columnares de Redshift y su optimización para análisis de datos, es importante usarlas con cuidado para garantizar el rendimiento.
+
+---
+
+## **1. Ejecución de sentencias `UPDATE`**
+
+### **Sintaxis básica**
+```sql
+UPDATE table_name
+SET column_name = new_value
+WHERE condition;
+```
+
+### **Ejemplo**
+Actualizar el correo electrónico de un cliente en la tabla `customers`:
+```sql
+UPDATE customers
+SET email = 'new_email@example.com'
+WHERE customer_id = 123;
+```
+
+---
+
+### **Buenas prácticas al usar `UPDATE` en Redshift**:
+1. **Usar condiciones específicas (`WHERE`)**:
+   - Siempre filtra los registros que deseas actualizar para evitar modificar toda la tabla accidentalmente.
+2. **Evitar actualizaciones frecuentes**:
+   - Redshift no optimiza las actualizaciones tanto como otras bases de datos relacionales. Las actualizaciones frecuentes pueden fragmentar los bloques y degradar el rendimiento.
+3. **Alternativa eficiente: Usar tablas temporales**:
+   - Crea una nueva tabla con los valores actualizados y reemplaza la original. Esto es más eficiente para actualizar grandes cantidades de datos.
+
+**Ejemplo alternativo**:
+```sql
+CREATE TABLE customers_temp AS
+SELECT 
+    customer_id,
+    CASE 
+        WHEN customer_id = 123 THEN 'new_email@example.com'
+        ELSE email
+    END AS email
+FROM customers;
+
+-- Reemplazar la tabla original
+DROP TABLE customers;
+ALTER TABLE customers_temp RENAME TO customers;
+```
+
+---
+
+## **2. Ejecución de sentencias `DELETE`**
+
+### **Sintaxis básica**
+```sql
+DELETE FROM table_name
+WHERE condition;
+```
+
+### **Ejemplo**
+Eliminar un cliente de la tabla `customers`:
+```sql
+DELETE FROM customers
+WHERE customer_id = 123;
+```
+
+---
+
+### **Buenas prácticas al usar `DELETE` en Redshift**:
+1. **Siempre usa una condición (`WHERE`)**:
+   - Asegúrate de que la eliminación esté restringida a los registros necesarios.
+2. **Evitar eliminar grandes volúmenes de datos**:
+   - Las eliminaciones masivas pueden generar espacio desperdiciado en bloques de almacenamiento.
+   - Usa el comando `VACUUM` después de eliminar para reorganizar la tabla y recuperar espacio.
+3. **Alternativa eficiente: Usar tablas filtradas**:
+   - Similar al enfoque de `UPDATE`, filtra los datos en una tabla temporal y reemplaza la original.
+
+**Ejemplo alternativo**:
+```sql
+CREATE TABLE customers_temp AS
+SELECT * 
+FROM customers
+WHERE customer_id != 123;
+
+-- Reemplazar la tabla original
+DROP TABLE customers;
+ALTER TABLE customers_temp RENAME TO customers;
+```
+
+---
+
+## **3. Reorganización de la tabla (`VACUUM` y `ANALYZE`)**
+Después de realizar `UPDATE` o `DELETE`, es importante ejecutar comandos para optimizar la tabla:
+
+- **`VACUUM`**: Reorganiza los datos para reducir la fragmentación.
+- **`ANALYZE`**: Actualiza las estadísticas de la tabla para mejorar el rendimiento de las consultas.
+
+**Ejemplo**:
+```sql
+VACUUM FULL customers;
+ANALYZE customers;
+```
+
+---
+
+### **Consideraciones adicionales**
+- **Optimización orientada a lotes**: Si necesitas realizar cambios frecuentes, considera realizar actualizaciones o eliminaciones en lotes grandes, en lugar de cambios individuales.
+- **Evitar transacciones prolongadas**: Redshift no maneja bloqueos como otras bases de datos, pero las transacciones largas pueden consumir recursos innecesariamente.
+- **Pruebas previas**: Antes de realizar una eliminación o actualización masiva, prueba tu consulta con un `SELECT` para verificar los resultados.
+
+Con estas prácticas, puedes usar `UPDATE` y `DELETE` de manera eficiente en Amazon Redshift.
+
+## ¿Cómo mantener el desempeño de tu base de datos?
+
+Mantener el desempeño de una base de datos, especialmente en un entorno como Amazon Redshift, requiere una combinación de diseño inicial adecuado, monitoreo continuo y optimización regular. Aquí hay estrategias clave para lograrlo:
+
+### **1. Diseña correctamente las tablas**
+- **Usa estilos de distribución adecuados**:
+  - **KEY**: Para tablas relacionadas mediante una clave común.
+  - **ALL**: Para tablas pequeñas referenciadas con frecuencia (dimensiones).
+  - **EVEN**: Para tablas grandes sin claves específicas.
+- **Define claves de ordenamiento (`SORTKEY`)**:
+  - Optimiza consultas mediante columnas que aparecen frecuentemente en filtros (`WHERE`) o en ordenamientos (`ORDER BY`).
+- **Aplica compresión**:
+  - Usa el comando `ANALYZE COMPRESSION` para identificar los mejores algoritmos de compresión y reducir el tamaño del almacenamiento.
+
+### **2. Monitorea y limpia regularmente**
+- **Ejecuta `VACUUM`**:
+  - Elimina fragmentación y organiza los bloques de datos.
+  - Ejemplo:
+    ```sql
+    VACUUM FULL my_table;
+    ```
+- **Ejecuta `ANALYZE`**:
+  - Actualiza las estadísticas para mejorar el desempeño del optimizador de consultas.
+  - Ejemplo:
+    ```sql
+    ANALYZE my_table;
+    ```
+- **Usa tablas temporales para actualizaciones y eliminaciones**:
+  - Redshift no maneja eficientemente transacciones que actualizan o eliminan datos directamente. Reemplazar tablas es más rápido.
+
+### **3. Optimiza consultas**
+- **Evita `SELECT *`**:
+  - Selecciona solo las columnas necesarias para reducir el tamaño de los resultados.
+- **Divide consultas complejas**:
+  - Usa vistas materializadas o tablas intermedias para procesar datos en pasos más pequeños.
+- **Usa índices eficientes**:
+  - Aprovecha las claves de ordenamiento para reducir la cantidad de bloques leídos.
+- **Revisa el plan de consultas**:
+  - Usa `EXPLAIN` para entender cómo se ejecuta una consulta.
+  ```sql
+  EXPLAIN SELECT * FROM my_table WHERE col = 'value';
+  ```
+
+### **4. Administra carga y recursos**
+- **Distribuye la carga de trabajo**:
+  - Programa tareas intensivas en momentos de baja actividad.
+- **Cargas eficientes**:
+  - Usa el comando `COPY` para cargar datos en lugar de `INSERT`.
+  - Ejemplo:
+    ```sql
+    COPY my_table
+    FROM 's3://mybucket/data.csv'
+    CREDENTIALS 'aws_access_key_id=KEY;aws_secret_access_key=SECRET'
+    REGION 'us-west-2';
+    ```
+- **Divide cargas masivas en particiones**:
+  - Procesa datos en bloques más pequeños para evitar tiempos de espera prolongados.
+
+### **5. Escala y monitorea el clúster**
+- **Aumenta nodos si es necesario**:
+  - Escala horizontalmente el clúster agregando nodos para manejar mayores volúmenes de datos.
+- **Monitorea métricas clave**:
+  - Uso de CPU, memoria y espacio en disco.
+  - Identifica consultas lentas usando el sistema de vistas como `STL_QUERY` y `SVV_TABLE_INFO`.
+
+### **6. Automatiza y planifica el mantenimiento**
+- **Scripts automatizados**:
+  - Usa herramientas como AWS Lambda o cron jobs para ejecutar `VACUUM` y `ANALYZE` regularmente.
+- **Backups periódicos**:
+  - Redshift ofrece snapshots automáticos; asegúrate de configurar el intervalo adecuado.
+- **Actualizaciones del clúster**:
+  - Mantén el clúster actualizado con los parches y mejoras más recientes de Redshift.
+
+### **7. Usa herramientas y vistas del sistema**
+- **Vistas del sistema**:
+  - Revisa vistas como `STL_QUERY` para analizar el desempeño de las consultas.
+  - Ejemplo:
+    ```sql
+    SELECT *
+    FROM STL_QUERY
+    WHERE userid > 1
+    ORDER BY starttime DESC
+    LIMIT 10;
+    ```
+- **Monitorización con Amazon CloudWatch**:
+  - Configura alarmas para detectar uso excesivo de recursos.
+
+Con estas prácticas, puedes mantener una base de datos en Redshift eficiente, minimizando problemas de rendimiento y optimizando el análisis de datos.
+
+## Estadísticas y limpieza de las tablas
+
+Para realizar estadísticas y limpieza en tablas de bases de datos como Redshift, es importante seguir algunos pasos clave. Aquí algunos consejos:
+
+### 1. **Actualización de estadísticas**:
+- **Refrescar estadísticas**: En Redshift, las estadísticas deben mantenerse actualizadas para que las consultas sean eficientes. Puedes actualizar las estadísticas manualmente o configurar un trabajo automatizado para hacerlo regularmente.
+  
+  ```sql
+  ANALYZE TABLE nombre_tabla;
+  ```
+
+- **Parámetro relevante**: 
+  - `autovacuum` y `vacuum`: Mantener una buena gestión de estos parámetros ayuda a mantener las estadísticas y la limpieza de datos.
+
+### 2. **Limpieza de datos**:
+- **Eliminar datos antiguos o redundantes**:
+  
+  ```sql
+  DELETE FROM nombre_tabla WHERE fecha_columna < 'fecha_limite';
+  ```
+
+- **Optimización de almacenamiento**:
+  - Evaluar el uso de compresión y distribución para reducir el tamaño de las tablas.
+  - Usar **vacuum** para liberar espacio ocupado por datos eliminados.
+
+  ```sql
+  VACUUM nombre_tabla;
+  ```
+
+### 3. **Optimización de rendimiento**:
+- Revisar y ajustar las distribuciones de las tablas según su uso.
+- Verificar el uso de índices y optimizar las claves.
+
+## Agrupamiento, ordenamiento y subqueries
+
+### Agrupamiento, Ordenamiento y Subqueries en SQL
+
+1. **Agrupamiento**:  
+   Se utiliza para agrupar los datos según ciertas condiciones y aplicar funciones agregadas a estos grupos.
+
+   ```sql
+   SELECT columna1, columna2, COUNT(*)
+   FROM nombre_tabla
+   GROUP BY columna1, columna2;
+   ```
+
+2. **Ordenamiento**:  
+   Permite ordenar los resultados basados en una o varias columnas.
+
+   ```sql
+   SELECT columna1, columna2
+   FROM nombre_tabla
+   ORDER BY columna1 ASC;  -- Orden ascendente
+   ```
+
+3. **Subqueries**:  
+   Una subconsulta es una consulta anidada dentro de otra consulta.
+
+   ```sql
+   SELECT columna1, columna2
+   FROM nombre_tabla
+   WHERE columna3 IN (
+       SELECT columna4
+       FROM otra_tabla
+       WHERE columna5 = 'valor'
+   );
+   ```
+
+### Ejemplos combinados:
+
+1. **Agrupamiento con Ordenamiento**:
+   ```sql
+   SELECT columna1, COUNT(*)
+   FROM nombre_tabla
+   GROUP BY columna1
+   ORDER BY COUNT(*) DESC;
+   ```
+
+2. **Subquery con Ordenamiento**:
+   ```sql
+   SELECT columna1, columna2
+   FROM nombre_tabla
+   WHERE columna3 IN (
+       SELECT columna4
+       FROM otra_tabla
+       WHERE columna5 = 'valor'
+   )
+   ORDER BY columna1;
+   ```
+
+Estos son métodos comunes para manejar agrupación, ordenamiento y subqueries en SQL, los cuales son fundamentales para el análisis y la manipulación de datos complejos.
+
+## ¿Qué es y cómo interpretar un explain plan?
+
+### ¿Qué es un **Explain Plan**?
+
+Un **Explain Plan** es una herramienta utilizada en bases de datos para analizar y entender cómo se ejecuta una consulta SQL. Proporciona detalles sobre cada paso del proceso para llegar al resultado final, incluyendo:
+
+- Cómo se seleccionan y filtran los datos.
+- Cómo se usan índices.
+- Las operaciones de acceso a datos (como scans de tablas, joins, etc.).
+- Las agrupaciones y filtros aplicados.
+- La eficiencia de la ejecución (tiempos, coste estimado).
+
+### Componentes de un Explain Plan:
+
+1. **Select Step**: Representa los pasos involucrados en la obtención de datos.
+2. **Join Steps**: Detalla cómo se unen las tablas en la consulta.
+3. **Filter**: Filtros aplicados a los datos.
+4. **Projection**: La selección de columnas.
+5. **Sort/Group**: Ordenamientos o agrupamientos.
+6. **Access Methods**: Cómo se accede a los datos, ya sea por Full Table Scan, Index Scan, o Access mediante índices.
+7. **Cost**: Estimación del costo de cada paso según recursos utilizados (I/O, CPU).
+
+### Cómo interpretar un Explain Plan:
+
+1. **Operation**: Muestra qué tipo de operación se está realizando (SELECT, JOIN, FILTER, INDEX SCAN, etc.).
+   
+2. **Cost**: Mide la complejidad o costo estimado de la operación, generalmente en términos de recursos (CPU, lectura/escritura, etc.). Menor costo indica mejor eficiencia.
+
+3. **Rows**: Número de filas que se procesarán en esa operación.
+
+4. **Filter/Condition**: Detalles sobre los filtros o condiciones aplicadas en cada paso.
+
+5. **Access Path**: Tipo de acceso que se usa, como **Index Scan**, **Table Scan**, **Nested Loop Join**, etc.
+
+### Ejemplo de Explain Plan:
+
+```sql
+EXPLAIN PLAN FOR
+SELECT nombre, direccion
+FROM clientes
+WHERE ciudad = 'Bogotá'
+AND edad > 30
+ORDER BY nombre;
+```
+
+**Ejemplo Interpretación**:
+
+- `Index Scan` o `Table Scan` nos indica cómo los datos son accedidos.
+- `Nested Loop Join` se usa para operaciones relacionadas entre tablas.
+- El `Cost` nos indica la eficiencia: valores más bajos son mejores.
+
+Este plan ayuda a identificar problemas como accesos innecesarios a índices o tablas, filtrados lentos, o ineficiencias en el proceso de datos.
+
+![explain distribution](images/explain_distribution.png)
+
+**Archivos de la clase**
+
+[explain-distribution.png](https://static.platzi.com/media/public/uploads/explain_distribution_908bd0ad-7490-4e52-94e4-2d3b55223cad.png)
+
+**Lecturas recomendadas**
+
+[Evaluating the query plan - Amazon Redshift](https://docs.aws.amazon.com/es_es/redshift/latest/dg/c_data_redistribution.html)
+
+## ¿Cómo descargar datos eficientemente con UNLOAD?
+
+### **¿Qué es el comando UNLOAD en Amazon Redshift?**
+
+El comando **UNLOAD** permite exportar datos desde una tabla en Amazon Redshift hacia un archivo en un bucket de Amazon S3. Es una forma eficiente de descargar datos para análisis externo, respaldo, o migración. Este proceso aprovecha la arquitectura paralela de Redshift para generar múltiples archivos en S3 simultáneamente, optimizando el tiempo de exportación.
+
+### **Sintaxis básica del comando UNLOAD**
+
+```sql
+UNLOAD ('consulta_SQL')
+TO 's3://ruta-del-bucket/nombre-archivo'
+CREDENTIALS 'aws_access_key_id=<ACCESS_KEY_ID>;aws_secret_access_key=<SECRET_ACCESS_KEY>'
+DELIMITER ','
+ADDQUOTES
+ALLOWOVERWRITE
+PARALLEL OFF;
+```
+
+### **Parámetros importantes**
+
+1. **Consulta SQL**:
+   - Define los datos que deseas exportar. Puede ser desde una tabla o un subconjunto mediante una consulta SQL.
+   - Ejemplo: `SELECT * FROM tabla_ventas WHERE fecha > '2024-01-01'`.
+
+2. **TO**:
+   - Especifica el bucket de S3 y el prefijo del archivo donde se exportarán los datos.
+   - Ejemplo: `'s3://mi-bucket/redshift-export/ventas_'`.
+
+3. **CREDENTIALS**:
+   - Incluye las credenciales de AWS necesarias para que Redshift acceda al bucket de S3.
+   - También se puede usar un **IAM Role**:
+     ```sql
+     CREDENTIALS 'aws_iam_role=arn:aws:iam::123456789012:role/RedshiftRole'
+     ```
+
+4. **DELIMITER**:
+   - Define el separador entre columnas en el archivo resultante (por defecto es coma `,`).
+
+5. **ADDQUOTES**:
+   - Rodea los valores de texto con comillas para evitar problemas al cargar los datos posteriormente.
+
+6. **ALLOWOVERWRITE**:
+   - Permite sobrescribir los archivos existentes en el bucket de S3.
+
+7. **PARALLEL**:
+   - Si está activado (`ON`), Redshift genera múltiples archivos en paralelo.
+   - Si está desactivado (`OFF`), genera un único archivo.
+
+### **Ejemplo práctico**
+
+Exportar datos de ventas mayores a $1000 a S3:
+
+```sql
+UNLOAD ('SELECT * FROM ventas WHERE total > 1000')
+TO 's3://mi-bucket/redshift-data/ventas_mayores_1000_'
+CREDENTIALS 'aws_iam_role=arn:aws:iam::123456789012:role/RedshiftRole'
+DELIMITER '|'
+ADDQUOTES
+ALLOWOVERWRITE
+PARALLEL ON;
+```
+
+**Detalles del ejemplo**:
+- Los datos se exportarán en archivos con el prefijo `ventas_mayores_1000_`.
+- Cada columna estará separada por el carácter `|`.
+- Los valores de texto estarán rodeados de comillas.
+- Los archivos serán generados en paralelo.
+
+### **Buenas prácticas para usar UNLOAD**
+
+1. **Dividir datos en archivos más pequeños**:
+   - Usar `PARALLEL ON` para dividir los datos en múltiples archivos facilita la transferencia y el procesamiento en sistemas externos.
+
+2. **Optimizar la consulta SQL**:
+   - Asegúrate de que la consulta tenga filtros adecuados para reducir la cantidad de datos exportados.
+
+3. **Uso de prefijos únicos**:
+   - Utiliza prefijos únicos para evitar sobrescribir datos accidentalmente.
+
+4. **Definir delimitadores adecuados**:
+   - Selecciona un delimitador que no exista en los datos para evitar errores al analizar los archivos.
+
+5. **Verificar el espacio en S3**:
+   - Asegúrate de que el bucket tenga suficiente espacio para almacenar los datos exportados.
+
+6. **Seguridad**:
+   - Usa IAM roles en lugar de credenciales de acceso para una mayor seguridad.
+
+### **Verificación del proceso**
+
+Después de ejecutar el comando, verifica los archivos en el bucket de S3 para asegurarte de que se exportaron correctamente. Usa herramientas como AWS CLI para listar los archivos:
+
+```bash
+aws s3 ls s3://mi-bucket/redshift-data/
+```
+
+**Lecturas recomendadas**
+
+[UNLOAD - Amazon Redshift](https://docs.aws.amazon.com/es_es/redshift/latest/dg/r_UNLOAD.html#unload-usage-notes)
+
+## Otras tablas útiles de Redshift para entender el comportamiento de nuestros datos
+
+Amazon Redshift proporciona varias vistas del sistema y tablas que son útiles para monitorear, optimizar y entender el comportamiento de los datos en tu clúster. Estas tablas te permiten analizar el rendimiento, detectar problemas y tomar decisiones informadas sobre la estructura de tus datos. A continuación, se describen algunas de las más relevantes:
+
+### **1. `SVV_TABLE_INFO`**
+Proporciona información sobre las tablas en la base de datos, incluyendo tamaño, distribución, y claves de ordenamiento.
+
+- **Columnas importantes**:
+  - `schema`: Esquema de la tabla.
+  - `table`: Nombre de la tabla.
+  - `size`: Tamaño de la tabla en MB.
+  - `diststyle`: Estilo de distribución.
+  - `sortkey1`: Primera columna de la clave de ordenamiento (si existe).
+  - `encoded`: Indica si las columnas están comprimidas.
+
+**Consulta útil**:
+```sql
+SELECT schema, "table", size, diststyle, sortkey1, encoded
+FROM svv_table_info
+ORDER BY size DESC;
+```
+
+### **2. `STL_ALERT_EVENT_LOG`**
+Registra eventos y alertas que indican problemas potenciales en las consultas o en el clúster.
+
+- **Columnas importantes**:
+  - `userid`: Usuario que ejecutó la consulta.
+  - `event_time`: Hora del evento.
+  - `alert_severity`: Severidad de la alerta.
+  - `event`: Descripción del evento.
+
+**Consulta útil**:
+```sql
+SELECT event_time, alert_severity, event
+FROM stl_alert_event_log
+WHERE alert_severity = 'WARNING'
+ORDER BY event_time DESC;
+```
+
+### **3. `STV_BLOCKLIST`**
+Muestra cómo están distribuidos los bloques de datos en los nodos del clúster.
+
+- **Columnas importantes**:
+  - `slice`: Número de partición.
+  - `tbl`: ID de la tabla.
+  - `blocknum`: Número del bloque.
+  - `num_values`: Número de filas en el bloque.
+
+**Consulta útil**:
+```sql
+SELECT slice, COUNT(*) AS blocks_per_slice
+FROM stv_blocklist
+GROUP BY slice
+ORDER BY blocks_per_slice DESC;
+```
+
+### **4. `STL_QUERY`**
+Contiene información sobre las consultas ejecutadas en el clúster.
+
+- **Columnas importantes**:
+  - `userid`: Usuario que ejecutó la consulta.
+  - `starttime`: Inicio de la consulta.
+  - `endtime`: Fin de la consulta.
+  - `query`: ID de la consulta.
+  - `text`: Texto de la consulta.
+
+**Consulta útil**:
+```sql
+SELECT query, starttime, endtime, text
+FROM stl_query
+WHERE starttime >= CURRENT_DATE - INTERVAL '1 day'
+ORDER BY starttime DESC;
+```
+
+### **5. `STL_SCAN`**
+Registra detalles sobre cómo las consultas escanean los datos.
+
+- **Columnas importantes**:
+  - `query`: ID de la consulta.
+  - `table_id`: ID de la tabla escaneada.
+  - `rows`: Filas escaneadas.
+  - `rows_pre_filtered`: Filas antes de aplicar filtros.
+
+**Consulta útil**:
+```sql
+SELECT query, table_id, rows, rows_pre_filtered
+FROM stl_scan
+WHERE query = <query_id>;
+```
+
+### **6. `STV_PARTITIONS`**
+Proporciona información sobre las particiones de los datos en las tablas.
+
+- **Columnas importantes**:
+  - `tbl`: ID de la tabla.
+  - `slice`: Partición donde están los datos.
+  - `rows`: Número de filas en cada partición.
+
+**Consulta útil**:
+```sql
+SELECT tbl, slice, rows
+FROM stv_partitions
+ORDER BY rows DESC;
+```
+
+### **7. `SVL_QUERY_SUMMARY`**
+Resume las estadísticas de rendimiento de las consultas.
+
+- **Columnas importantes**:
+  - `query`: ID de la consulta.
+  - `elapsed`: Tiempo total de ejecución.
+  - `blocks_to_disk`: Bloques que se escribieron en el disco.
+  - `rows`: Filas procesadas.
+
+**Consulta útil**:
+```sql
+SELECT query, elapsed, rows, blocks_to_disk
+FROM svl_query_summary
+ORDER BY elapsed DESC;
+```
+
+### **8. `SVV_DISKUSAGE`**
+Muestra el uso del disco por tabla y nodo.
+
+- **Columnas importantes**:
+  - `database`: Base de datos a la que pertenece la tabla.
+  - `schema`: Esquema de la tabla.
+  - `table`: Nombre de la tabla.
+  - `disk_in_bytes`: Uso de disco en bytes.
+
+**Consulta útil**:
+```sql
+SELECT schema, "table", disk_in_bytes / 1024 / 1024 AS disk_usage_mb
+FROM svv_diskusage
+ORDER BY disk_usage_mb DESC;
+```
+
+### **9. `SVV_TRANSACTIONS`**
+Muestra detalles sobre las transacciones activas en el clúster.
+
+- **Columnas importantes**:
+  - `pid`: ID del proceso de la transacción.
+  - `userid`: Usuario que inició la transacción.
+  - `starttime`: Inicio de la transacción.
+
+**Consulta útil**:
+```sql
+SELECT pid, userid, starttime
+FROM svv_transactions;
+```
+
+### **10. `SVV_REDSHIFT_COLUMNS`**
+Proporciona detalles sobre las columnas de las tablas en Redshift.
+
+- **Columnas importantes**:
+  - `schema_name`: Esquema de la tabla.
+  - `table_name`: Nombre de la tabla.
+  - `column_name`: Nombre de la columna.
+  - `data_type`: Tipo de dato.
+  - `encoding`: Algoritmo de compresión aplicado.
+
+**Consulta útil**:
+```sql
+SELECT schema_name, table_name, column_name, data_type, encoding
+FROM svv_redshift_columns
+WHERE encoding IS NOT NULL;
+```
+
+### **Conclusión**
+
+Estas tablas y vistas del sistema son herramientas esenciales para monitorear y optimizar tu base de datos Redshift. Utilízalas regularmente para identificar problemas de rendimiento, analizar patrones de uso y asegurar que las configuraciones de distribución, ordenamiento y compresión sean las óptimas.
+
+**Lecturas recomendadas**
+
+[System tables reference - Amazon Redshift](https://docs.aws.amazon.com/es_es/redshift/latest/dg/cm_chap_system-tables.html)
