@@ -374,3 +374,491 @@ En este ejemplo:
 
 [¿Cuáles son las Transformaciones y Acciones en Spark?](https://keepcoding.io/blog/transformaciones-y-acciones-en-spark/)
 
+## ¿Qué son los RDD en Apache Spark?
+
+### **Resilient Distributed Dataset (RDD)** en Apache Spark
+
+Los **RDD** son la unidad básica de datos en Apache Spark y representan un conjunto distribuido, inmutable y tolerante a fallos de datos que puede procesarse en paralelo. Fueron la primera API de abstracción de datos introducida en Spark y se utilizan para realizar cálculos distribuidos de manera eficiente.
+
+---
+
+### **Características principales de los RDD**
+1. **Inmutabilidad**: Una vez creado, un RDD no puede modificarse, pero puede derivarse uno nuevo aplicando transformaciones.
+2. **Distribución**: Los datos están divididos en particiones que se distribuyen entre los nodos del clúster para su procesamiento paralelo.
+3. **Tolerancia a fallos**: Spark registra las operaciones realizadas sobre los datos (línea de tiempo de transformación) y puede reconstruir las particiones perdidas en caso de fallos.
+4. **Evaluación perezosa**: Las transformaciones sobre un RDD no se ejecutan de inmediato, sino hasta que se realiza una acción.
+5. **Operaciones de alto nivel**: Soportan operaciones como `map`, `filter`, `reduce`, y más, lo que permite construir complejos flujos de datos de forma sencilla.
+
+---
+
+### **Cómo se crean los RDD**
+1. **Desde datos existentes**:
+   - Desde un archivo (como texto, CSV, etc.).
+   - Desde una colección en el programa principal.
+   - Ejemplo:
+     ```python
+     rdd = spark.sparkContext.parallelize([1, 2, 3, 4, 5])
+     ```
+     ```python
+     rdd = spark.sparkContext.textFile("ruta/al/archivo.txt")
+     ```
+
+2. **A partir de transformaciones**:
+   - Aplicando transformaciones (como `map` o `filter`) a un RDD existente.
+
+3. **Generado a partir de datos externos**:
+   - Desde bases de datos, sistemas de almacenamiento como HDFS, S3, etc.
+
+---
+
+### **Operaciones en RDD**
+Las operaciones sobre los RDD se dividen en dos categorías:
+
+1. **Transformaciones**:
+   - Crean un nuevo RDD a partir de otro.
+   - Ejemplos:
+     - `map(función)`: Aplica una función a cada elemento.
+     - `filter(función)`: Filtra elementos que cumplen una condición.
+     - `flatMap(función)`: Aplica una función y aplana los resultados.
+     - `union()`: Combina dos RDD.
+     - `reduceByKey(función)`: Combina valores con la misma clave.
+   - **Evaluación**: Perezosa (no se ejecutan hasta que se llame a una acción).
+
+2. **Acciones**:
+   - Ejecutan las transformaciones y devuelven un resultado.
+   - Ejemplos:
+     - `collect()`: Recupera todos los elementos.
+     - `count()`: Cuenta los elementos.
+     - `take(n)`: Recupera los primeros `n` elementos.
+     - `saveAsTextFile(path)`: Guarda los datos en un archivo de texto.
+
+---
+
+### **Ventajas de los RDD**
+1. **Procesamiento paralelo**: Los datos se dividen en particiones para procesarse simultáneamente.
+2. **Tolerancia a fallos**: Spark puede reconstruir datos automáticamente a partir de la secuencia de transformaciones.
+3. **Flexibilidad**: Los RDD admiten varios tipos de operaciones y datos.
+4. **Integración con Hadoop**: Pueden usar HDFS, HBase y otras fuentes de datos.
+
+---
+
+### **Limitaciones de los RDD**
+1. **Complejidad**: La API de RDD requiere escribir más código para tareas comunes, comparado con APIs más modernas como DataFrames y Datasets.
+2. **Optimización limitada**: Los RDD no aprovechan las optimizaciones automáticas de Spark SQL y Catalyst.
+3. **Eficiencia**: Operaciones como agrupamientos o filtrados pueden ser menos eficientes que las realizadas con DataFrames o Datasets.
+
+---
+
+### **Ejemplo de uso de RDD**
+```python
+from pyspark import SparkContext
+
+# Crear un contexto de Spark
+sc = SparkContext("local", "EjemploRDD")
+
+# Crear un RDD desde una lista
+datos = [1, 2, 3, 4, 5]
+rdd = sc.parallelize(datos)
+
+# Aplicar transformaciones
+rdd_filtrado = rdd.filter(lambda x: x % 2 == 0)  # Filtrar números pares
+rdd_cuadrado = rdd_filtrado.map(lambda x: x**2)  # Elevar al cuadrado
+
+# Ejecutar una acción
+resultado = rdd_cuadrado.collect()
+print(resultado)  # Salida: [4, 16]
+
+# Detener el contexto
+sc.stop()
+```
+
+En este ejemplo:
+1. Se crea un RDD desde una lista.
+2. Se aplican transformaciones (`filter` y `map`).
+3. Se ejecuta una acción (`collect`) para obtener el resultado.
+
+**Lecturas recomendadas**
+
+[¿Qué es RDD (Resilient Distributed Datasets)?](https://keepcoding.io/blog/rdd-resilient-distributed-datasets/)
+
+## Apache Spark: acciones
+
+En Apache Spark, las **acciones** son operaciones que ejecutan el flujo de transformaciones definido sobre un RDD, DataFrame o Dataset, devolviendo un resultado al controlador (driver) o guardando los datos en almacenamiento externo. 
+
+A diferencia de las transformaciones, que son **evaluadas de forma perezosa**, las acciones **desencadenan la ejecución** de todas las transformaciones previas en el pipeline.
+
+---
+
+### **Características de las Acciones**
+1. **Inicia el cálculo**: Producen un resultado final o guardan datos en un sistema externo.
+2. **Devuelve un valor**: El resultado puede ser un valor al controlador, un conteo, una lista de elementos o datos almacenados.
+3. **Forzan la evaluación**: Ejecutan todas las transformaciones acumuladas hasta ese punto.
+4. **Consume recursos del clúster**: Las acciones generan cargas en los nodos al procesar los datos.
+
+---
+
+### **Principales Acciones en Spark**
+A continuación, se describen las acciones más comunes, junto con ejemplos en Python y Scala.
+
+#### 1. **`collect()`**
+   - Recupera todos los elementos del RDD o DataFrame y los devuelve al controlador como una lista.
+   - **Uso**:
+     - Ideal para conjuntos de datos pequeños, ya que todos los datos deben caber en la memoria del controlador.
+   - **Ejemplo**:
+     ```python
+     rdd = sc.parallelize([1, 2, 3, 4, 5])
+     resultado = rdd.collect()
+     print(resultado)  # Salida: [1, 2, 3, 4, 5]
+     ```
+
+#### 2. **`count()`**
+   - Cuenta el número total de elementos en un RDD o DataFrame.
+   - **Ejemplo**:
+     ```python
+     rdd = sc.parallelize([1, 2, 3, 4, 5])
+     total = rdd.count()
+     print(total)  # Salida: 5
+     ```
+
+#### 3. **`take(n)`**
+   - Recupera los primeros `n` elementos del RDD o DataFrame.
+   - **Ejemplo**:
+     ```python
+     rdd = sc.parallelize([10, 20, 30, 40, 50])
+     primeros = rdd.take(3)
+     print(primeros)  # Salida: [10, 20, 30]
+     ```
+
+#### 4. **`reduce(función)`**
+   - Aplica una función de reducción a los elementos del RDD o DataFrame y devuelve un único valor.
+   - **Ejemplo**:
+     ```python
+     rdd = sc.parallelize([1, 2, 3, 4])
+     suma = rdd.reduce(lambda x, y: x + y)
+     print(suma)  # Salida: 10
+     ```
+
+#### 5. **`first()`**
+   - Devuelve el primer elemento del RDD o DataFrame.
+   - **Ejemplo**:
+     ```python
+     rdd = sc.parallelize([100, 200, 300])
+     primero = rdd.first()
+     print(primero)  # Salida: 100
+     ```
+
+#### 6. **`saveAsTextFile(path)`**
+   - Guarda el RDD como un archivo de texto en la ruta especificada. Cada partición se almacena como un archivo separado.
+   - **Ejemplo**:
+     ```python
+     rdd = sc.parallelize(["Hola", "Mundo", "Spark"])
+     rdd.saveAsTextFile("ruta/salida.txt")
+     ```
+
+#### 7. **`saveAsSequenceFile(path)`**
+   - Guarda los datos como un archivo de secuencia (usado para claves y valores).
+   - **Ejemplo**:
+     ```python
+     rdd = sc.parallelize([(1, "A"), (2, "B"), (3, "C")])
+     rdd.saveAsSequenceFile("ruta/salida-secuencia")
+     ```
+
+#### 8. **`countByValue()`**
+   - Devuelve un mapa con la frecuencia de cada elemento en el RDD.
+   - **Ejemplo**:
+     ```python
+     rdd = sc.parallelize([1, 2, 2, 3, 3, 3])
+     frecuencias = rdd.countByValue()
+     print(frecuencias)  # Salida: {1: 1, 2: 2, 3: 3}
+     ```
+
+#### 9. **`foreach(función)`**
+   - Aplica una función a cada elemento del RDD sin devolver un resultado al controlador.
+   - **Ejemplo**:
+     ```python
+     rdd = sc.parallelize([1, 2, 3])
+     rdd.foreach(lambda x: print(x))  # Imprime cada elemento
+     ```
+
+#### 10. **`takeSample(withReplacement, num, seed=None)`**
+   - Devuelve una muestra de elementos del RDD.
+   - **Parámetros**:
+     - `withReplacement`: Indica si los elementos pueden repetirse en la muestra.
+     - `num`: Tamaño de la muestra.
+     - `seed`: Semilla opcional para reproducibilidad.
+   - **Ejemplo**:
+     ```python
+     rdd = sc.parallelize([1, 2, 3, 4, 5])
+     muestra = rdd.takeSample(False, 3, seed=42)
+     print(muestra)  # Salida: [1, 4, 5]
+     ```
+
+#### 11. **`saveAsObjectFile(path)`**
+   - Serializa el RDD y lo guarda como un archivo binario en la ruta especificada.
+   - **Ejemplo**:
+     ```python
+     rdd = sc.parallelize(["a", "b", "c"])
+     rdd.saveAsObjectFile("ruta/archivo_objeto")
+     ```
+
+---
+
+### **Consideraciones importantes**
+- Usar acciones como `collect()` o `take()` con datos grandes puede saturar la memoria del controlador. En esos casos, es mejor usar acciones que guarden los datos en almacenamiento externo.
+- Las acciones desencadenan todas las transformaciones pendientes, por lo que es esencial diseñar flujos eficientes.
+
+--- 
+
+### **Ejemplo de flujo completo**
+```python
+from pyspark import SparkContext
+
+# Crear un contexto de Spark
+sc = SparkContext("local", "AccionesEjemplo")
+
+# Crear un RDD
+rdd = sc.parallelize([1, 2, 3, 4, 5, 6])
+
+# Transformaciones
+rdd_pares = rdd.filter(lambda x: x % 2 == 0)
+rdd_cuadrados = rdd_pares.map(lambda x: x**2)
+
+# Acción
+resultado = rdd_cuadrados.collect()
+print(resultado)  # Salida: [4, 16, 36]
+
+# Detener el contexto
+sc.stop()
+```
+
+En este flujo:
+1. Se crean transformaciones (`filter` y `map`) para filtrar números pares y elevarlos al cuadrado.
+2. Se ejecuta la acción `collect()` para obtener el resultado final.
+
+**Lecturas recomendadas**
+
+[Practica extra RDD (1).pdf - Google Drive](https://drive.google.com/file/d/1Ocy3sydSBhmmVjJWIDY1D446C2MRFiF8/view?usp=sharing)
+
+[Resolucion - RDD.ipynb - Google Drive](https://drive.google.com/file/d/1Hhd7-oyjswG6FiALMajxZQIGSyT-iS59/view?usp=sharing)
+
+## Lectura de datos con Spark
+
+La lectura de datos en Spark es una de las operaciones iniciales más comunes. Spark puede leer datos desde múltiples fuentes, como archivos de texto, CSV, JSON, Parquet, bases de datos, sistemas de almacenamiento distribuido (como HDFS, S3, y Azure Blob Storage), entre otros.
+
+A continuación, se detallan los pasos y ejemplos para leer datos usando Spark en Python.
+
+---
+
+### **1. Configuración inicial**
+Primero, necesitas importar las bibliotecas necesarias y configurar un **SparkSession**:
+
+```python
+from pyspark.sql import SparkSession
+
+# Crear una sesión de Spark
+spark = SparkSession.builder \
+    .appName("Lectura de datos") \
+    .getOrCreate()
+```
+
+---
+
+### **2. Tipos de datos que puedes leer**
+
+#### **a. Archivos de texto**
+Para leer archivos de texto, Spark genera un RDD o DataFrame donde cada línea del archivo es un registro.
+
+```python
+rdd = spark.sparkContext.textFile("ruta/al/archivo.txt")
+print(rdd.collect())  # Muestra el contenido del archivo
+```
+
+#### **b. CSV**
+Spark soporta la lectura de archivos CSV con opciones como encabezados, separadores personalizados y manejo de tipos de datos.
+
+```python
+# Leer un archivo CSV con encabezado
+df_csv = spark.read.csv("ruta/al/archivo.csv", header=True, inferSchema=True)
+
+# Mostrar las primeras filas
+df_csv.show()
+```
+
+**Parámetros comunes:**
+- `header=True`: Indica si la primera fila contiene nombres de columnas.
+- `inferSchema=True`: Infieren los tipos de datos automáticamente.
+- `sep=',':` Define el separador del archivo (por defecto, coma).
+
+#### **c. JSON**
+Spark puede leer datos en formato JSON, que pueden ser simples o anidados.
+
+```python
+# Leer un archivo JSON
+df_json = spark.read.json("ruta/al/archivo.json")
+
+# Mostrar la estructura del DataFrame
+df_json.printSchema()
+df_json.show()
+```
+
+#### **d. Parquet**
+Parquet es un formato columnar altamente eficiente y compatible con Spark.
+
+```python
+# Leer un archivo Parquet
+df_parquet = spark.read.parquet("ruta/al/archivo.parquet")
+
+# Mostrar las primeras filas
+df_parquet.show()
+```
+
+#### **e. JDBC (Bases de datos)**
+Puedes conectar Spark a bases de datos relacionales mediante JDBC.
+
+```python
+df_jdbc = spark.read \
+    .format("jdbc") \
+    .option("url", "jdbc:mysql://host:puerto/nombre_base") \
+    .option("driver", "com.mysql.jdbc.Driver") \
+    .option("dbtable", "nombre_tabla") \
+    .option("user", "usuario") \
+    .option("password", "contraseña") \
+    .load()
+
+df_jdbc.show()
+```
+
+---
+
+### **3. Opciones adicionales**
+Spark proporciona diversas opciones para ajustar cómo se leen los datos:
+
+```python
+df_csv = spark.read \
+    .option("header", "true") \
+    .option("sep", ";") \
+    .option("inferSchema", "true") \
+    .csv("ruta/al/archivo.csv")
+df_csv.show()
+```
+
+---
+
+### **4. Guardar datos después de leerlos**
+Después de leer datos, puedes procesarlos y guardarlos en otros formatos.
+
+```python
+# Guardar en Parquet
+df_csv.write.parquet("ruta/salida/parquet")
+
+# Guardar en JSON
+df_csv.write.json("ruta/salida/json")
+```
+
+---
+
+### **Ejemplo completo**
+
+```python
+from pyspark.sql import SparkSession
+
+# Crear la sesión de Spark
+spark = SparkSession.builder \
+    .appName("Ejemplo de lectura de datos") \
+    .getOrCreate()
+
+# Leer un archivo CSV
+df_csv = spark.read.csv("ruta/al/archivo.csv", header=True, inferSchema=True)
+
+# Mostrar información del DataFrame
+df_csv.printSchema()
+df_csv.show()
+
+# Filtrar y guardar en formato Parquet
+df_filtrado = df_csv.filter(df_csv['columna'] > 10)
+df_filtrado.write.parquet("ruta/salida/filtrado.parquet")
+
+# Finalizar la sesión de Spark
+spark.stop()
+```
+
+---
+
+### **Conclusión**
+- Spark permite leer datos desde una amplia variedad de fuentes.
+- Puedes usar parámetros como `header`, `inferSchema`, y `sep` para personalizar la lectura.
+- Una vez cargados, los datos pueden transformarse y guardarse en diferentes formatos. 
+
+Esto facilita trabajar con grandes volúmenes de datos en un flujo de trabajo de análisis o procesamiento distribuido.
+
+**Lecturas recomendadas**
+
+[Clase_Lectura_de_Datos.ipynb - Google Drive](https://drive.google.com/file/d/1AynZXI_u1KNp9czQX7ww1Nl2sqU_01xn/view?usp=sharing)
+
+## ¿Qué es la Spark UI?
+
+La **Spark UI (Spark User Interface)** es una interfaz gráfica de usuario integrada en Apache Spark que proporciona información detallada sobre la ejecución de trabajos, etapas y tareas en un clúster de Spark. Es una herramienta esencial para monitorear, depurar y optimizar aplicaciones en Spark.
+
+### **Funciones principales de Spark UI**
+1. **Monitoreo en tiempo real**:
+   - Muestra el progreso de los trabajos (jobs) y etapas (stages) que se están ejecutando.
+   - Proporciona detalles de las tareas individuales que componen cada etapa.
+
+2. **Optimización de rendimiento**:
+   - Ayuda a identificar cuellos de botella, como tareas lentas o desbalanceo en la distribución de datos.
+   - Permite analizar el uso de recursos como CPU y memoria.
+
+3. **Depuración de errores**:
+   - Proporciona información detallada sobre errores en trabajos fallidos.
+   - Muestra la cantidad de datos procesados, el tiempo de ejecución y las métricas relacionadas.
+
+4. **Historial de aplicaciones**:
+   - Permite revisar el historial de aplicaciones completadas, si se ha configurado un almacenamiento para el historial de eventos.
+
+### **Componentes principales de Spark UI**
+1. **Jobs**:
+   - Lista todos los trabajos ejecutados en la aplicación, con detalles como estado (en ejecución, completado, fallido), duración y etapas asociadas.
+
+2. **Stages**:
+   - Muestra todas las etapas del trabajo, incluyendo métricas como tiempo de ejecución, shuffle read/write y número de tareas.
+
+3. **Tasks**:
+   - Detalla el progreso de las tareas dentro de cada etapa, con información sobre el tiempo de ejecución y recursos utilizados.
+
+4. **Storage**:
+   - Muestra información sobre los datos almacenados en caché o persistentes, como el tamaño de las particiones y el nivel de almacenamiento.
+
+5. **Environment**:
+   - Proporciona detalles sobre el entorno de ejecución, incluyendo configuraciones de Spark, variables del sistema y propiedades del clúster.
+
+6. **SQL**:
+   - Si se ejecutan consultas SQL, esta pestaña muestra los planes de ejecución físicos y lógicos, ayudando a optimizar las consultas.
+
+7. **Streaming** (si se usa Spark Streaming):
+   - Muestra métricas relacionadas con micro-batches, como la latencia y el tamaño de los lotes procesados.
+
+### **Acceso a Spark UI**
+- Para acceder a Spark UI, utiliza la URL proporcionada por tu entorno de Spark. Por ejemplo:
+  - En un clúster local: `http://localhost:4040`
+  - En un entorno como Databricks, Spark UI se integra con la interfaz de Databricks.
+
+- Si Spark se ejecuta en un clúster distribuido, cada nodo maestro o administrador puede tener una URL específica para la Spark UI.
+
+### **Beneficios de usar Spark UI**
+- **Diagnóstico rápido**: Identifica problemas en la aplicación sin necesidad de examinar grandes cantidades de registros.
+- **Optimización continua**: Mejora el rendimiento mediante el análisis de patrones de ejecución.
+- **Simplicidad**: Proporciona una visión clara de procesos complejos en un formato visual.
+
+### **Limitaciones**
+- No ofrece soporte directo para depuración a nivel de código fuente.
+- En aplicaciones largas o complejas, el análisis de grandes cantidades de datos en la interfaz puede ser tedioso.
+- La interfaz local se pierde cuando se cierra la aplicación, a menos que se configure un almacenamiento de eventos para mantener el historial.
+
+La Spark UI es una herramienta clave para trabajar con Apache Spark, ofreciendo insights poderosos para desarrolladores, administradores de clúster y analistas de datos.
+
+**Lecturas recomendadas**
+
+[Entendiendo la interfaz de usuario de Spark. Web UI Spark I | by Brayan Buitrago | iWannaBeDataDriven | Medium](https://medium.com/iwannabedatadriven/entendiendo-la-interfaz-de-usuario-de-spark-web-ui-spark-i-d03c6bd562a5#:~:text=Interfaz%20de%20usuario%20de%20Spark%20%E2%80%94%20Jobs&amp;text=Apache%20Spark%20proporciona%20una%20interfaz,varios%20monitores%20para%20diferentes%20prop%C3%B3sitos.)
+
+## ¿Cómo instalar una librería en Databricks?
+
