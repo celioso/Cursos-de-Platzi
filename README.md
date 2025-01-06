@@ -13,6 +13,7 @@
 - [Curso de Patrones de Diseño y SOLID en Python](CursodePatronesdeDisenoySOLIDenPython)
 - [Curso de Django](CursodeDjango)
 - [Curso De FastAPI](CursoDeFastAPI)
+- [Curso De FastAPI parte 2](CursodeFastAPI1)
 - [Curso De Introduccion Al Pensamiento Computacional Con Python](CursoDeIntroduccionAlPensamientoComputacionalConPython)
 - [Curso de Complejidad Algorítmica con Python](CursoDePOOyAlgoritmosConPython)
 - [Curso de Estructuras de Datos Lineales con Python](CursodeEstructurasdeDatosLinealesconPython)

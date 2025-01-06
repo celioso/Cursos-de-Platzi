@@ -1418,3 +1418,168 @@ Para concluir, estas características y beneficios hacen que Delta Lake sea una 
 [What is the medallion lakehouse architecture? - Azure Databricks | Microsoft Learn](https://learn.microsoft.com/en-us/azure/databricks/lakehouse/medallion)
 
 [Lectura - Arquitectura Medallion.pdf - Google Drive](https://drive.google.com/file/d/1CB473K1shy0ulgclYHMi6uGoKJ0x1Pze/view?usp=sharing)
+
+## Comandos esenciales de DBFS
+
+Databricks File System (DBFS) es un sistema de archivos distribuido integrado en la plataforma de Apache Spark y Databricks. Proporciona acceso a datos y archivos almacenados en un entorno de Databricks.
+
+A continuación, se presentan algunos comandos esenciales de DBFS que puedes utilizar en un notebook de Databricks o a través de Databricks CLI, en el caso de utilizar la versión de pago de Databricks:
+
+![Esenciales de DBFS](images/esencialesdeDBFS.jpg)
+
+Estos comandos son ejecutados en celdas de código en un notebook de Databricks y utilizan el prefijo %fs para indicar que se están ejecutando comandos de sistema de archivos.
+
+También, es posible utilizar los comandos basados en “dbutils”:
+
+- [https://docs.databricks.com/en/dev-tools/databricks-utils.html](https://docs.databricks.com/en/dev-tools/databricks-utils.html)
+
+**Importante:** Cuando se ejecuta el comando %fs, no se puede colocar ningún código adicional en la celda, únicamente el comando de DBFS.
+
+## Implementación de un Delta Lake sobre Databrikcs - Parte 1
+
+Delta Lake es un formato de almacenamiento de datos en la nube que ofrece características avanzadas para la gestión de datos en entornos distribuidos. Es ideal para proyectos de análisis, Machine Learning y otros casos de uso donde se requiere confiabilidad, rendimiento y escalabilidad en el manejo de datos.
+
+#### Paso 1: Crear una carpeta para Delta Lake
+
+Primero, crea un contenedor para almacenar los datos en Delta Lake utilizando Databricks. Puedes hacerlo utilizando DBFS (Databricks File System).
+
+```python
+dbutils.fs.mkdirs("/mnt/delta-demo")
+```
+
+#### Paso 2: Crear un Delta Lake
+
+1. **Cargar datos en un DataFrame**:
+   Supongamos que tienes un archivo CSV que deseas cargar en Delta Lake.
+
+```python
+df = spark.read.csv('/dbfs/mnt/delta-demo/sample-data.csv', header=True, inferSchema=True)
+df.show()
+```
+
+2. **Crear un Delta Lake**:
+   Una vez cargados los datos, puedes guardar estos datos en un Delta Lake.
+
+```python
+df.write.format("delta").mode("overwrite").save("/mnt/delta-demo/delta-lake")
+```
+
+#### Paso 3: Consultar datos desde Delta Lake
+
+Después de guardar los datos en Delta Lake, puedes consultar los datos como cualquier DataFrame.
+
+```python
+delta_df = spark.read.format("delta").load("/mnt/delta-demo/delta-lake")
+delta_df.show()
+```
+
+#### Paso 4: Optimización del Delta Lake
+
+- **Z-Ordering**: Mejora el rendimiento para consultas específicas.
+  
+  ```python
+  delta_df.optimize("column_name").execute()
+  ```
+
+- **Vaciar versiones viejas**: Mantener versiones de Delta Lake para gestionar el crecimiento de datos.
+
+  ```python
+  delta_df.history()  # Para ver el historial de cambios.
+  delta_df.vacuum(1)  # Mantener solo las últimas versiones.
+  ```
+
+#### Paso 5: Escribir en Delta Lake con transacciones ACID
+
+Delta Lake garantiza transacciones ACID, lo que permite operaciones seguras, consistentes y reproducibles en datos.
+
+- **Atomicidad**: Todas las partes de la transacción deben completarse.
+- **Consistencia**: Sólo se puede llegar desde el estado inicial al estado final permitiendo la transición válida.
+- **Aislamiento**: Las transacciones concurrentes no se interrumpen mutuamente.
+- **Durabilidad**: Una vez completada la transacción, los cambios persistirán.
+
+Esta es una introducción básica para implementar Delta Lake sobre Databricks. Puedes expandir esta base agregando optimizaciones adicionales y gestionando diferentes formatos de datos.
+
+**Lecturas recomendadas**
+
+[Clase - Implementacion de un DeltaLake sobre Databrikcs.ipynb - Google Drive](https://drive.google.com/file/d/1lXF4DW3T9RlkIp8L_QMqfcXgt9vtHdMc/view?usp=sharing)
+
+## Implementación de un Delta Lake sobre Databrikcs - Parte 2
+
+En esta segunda parte, se continuará con la implementación de Delta Lake sobre Databricks, añadiendo funcionalidades adicionales y explorando más casos prácticos.
+
+#### Paso 1: Leer datos desde Delta Lake y explorar
+
+Una vez que los datos han sido guardados en un Delta Lake, puedes leer estos datos y explorar su contenido.
+
+```python
+delta_df = spark.read.format("delta").load("/mnt/delta-demo/delta-lake")
+delta_df.show()
+```
+
+#### Paso 2: Filtrado y análisis en Delta Lake
+
+- **Filtrar registros**:
+  Puedes filtrar registros específicos utilizando DataFrame.
+
+```python
+filtered_df = delta_df.filter(delta_df.column_name == 'value')
+filtered_df.show()
+```
+
+- **GroupBy y Agregación**:
+  Realizar operaciones agregadas sobre grupos de datos.
+
+```python
+agg_df = delta_df.groupBy("group_column").agg({'numeric_column': 'sum'})
+agg_df.show()
+```
+
+#### Paso 3: Realizar actualizaciones en Delta Lake
+
+Delta Lake permite actualizaciones seguras y consistentes a los datos usando operaciones `MERGE`.
+
+- **Actualizar datos**:
+  Por ejemplo, actualizar registros según alguna condición.
+
+```python
+delta_df = delta_df.withColumn("column_name_updated", when(delta_df.column_name == 'old_value', 'new_value').otherwise(delta_df.column_name))
+delta_df.write.format("delta").mode("overwrite").save("/mnt/delta-demo/delta-lake")
+```
+
+#### Paso 4: Optimización y Compresión
+
+- **Compresión de datos**: Optimizar el almacenamiento de datos con la compresión.
+
+```python
+delta_df.write.format("delta").mode("overwrite").option("delta.properties.compressionCodec", "snappy").save("/mnt/delta-demo/delta-lake")
+```
+
+- **Z-Ordering**: Mejora las consultas para conjuntos de datos grandes.
+
+```python
+delta_df.optimize("column_to_optimize").execute()
+```
+
+#### Paso 5: Gestión de Historias en Delta Lake
+
+Delta Lake proporciona un historial completo de los datos. Puedes explorar todas las versiones anteriores y llevar a cabo operaciones de "vacuum" para mantener solo las versiones relevantes.
+
+```python
+history_df = delta_df.history()
+history_df.show()
+delta_df.vacuum(2)  # Mantener las últimas dos versiones
+```
+
+#### Paso 6: Escribir y leer en Delta Lake con transacciones ACID
+
+Mantener la integridad de los datos es esencial. Las transacciones ACID garantizan que los datos permanezcan consistentes y seguros.
+
+```python
+delta_df.write.format("delta").mode("overwrite").save("/mnt/delta-demo/delta-lake")
+```
+
+En esta parte, hemos explorado cómo leer, modificar y optimizar los datos en un Delta Lake en Databricks. Delta Lake mejora significativamente la gestión de datos en entornos distribuidos al ofrecer capacidades avanzadas como transacciones seguras, optimización de rendimiento y auditoría de cambios.
+
+**Lecturas recomendadas**
+
+[Clase - Implementacion de un DeltaLake sobre Databrikcs.ipynb - Google Drive](https://drive.google.com/file/d/1lXF4DW3T9RlkIp8L_QMqfcXgt9vtHdMc/view?usp=sharing)
