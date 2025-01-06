@@ -862,3 +862,130 @@ La Spark UI es una herramienta clave para trabajar con Apache Spark, ofreciendo 
 
 ## ¿Cómo instalar una librería en Databricks?
 
+En Databricks, instalar librerías es un proceso simple y directo. Puedes instalar librerías en un clúster desde diferentes fuentes como PyPI, Maven, CRAN, archivos locales, o incluso archivos de librerías personalizados almacenados en DBFS o S3.
+
+### **Pasos para instalar una librería en Databricks**
+
+#### **1. Desde el menú del clúster**
+1. **Accede al clúster**:
+   - En el menú lateral, ve a **Compute** y selecciona el clúster donde deseas instalar la librería.
+
+2. **Selecciona "Libraries"**:
+   - Haz clic en la pestaña **Libraries** en la interfaz del clúster.
+
+3. **Instala la librería**:
+   - Haz clic en **Install New**.
+   - Selecciona la fuente de la librería:
+     - **PyPI**: Para librerías de Python (e.g., `pandas`, `numpy`).
+     - **Maven**: Para librerías de Java/Scala.
+     - **CRAN**: Para librerías de R.
+     - **Local Jar/Library**: Para archivos locales.
+     - **Custom Library**: Para librerías en almacenamiento remoto (e.g., DBFS, S3).
+
+4. **Especifica la librería**:
+   - Si es de **PyPI**, escribe el nombre (e.g., `requests`) o incluye una versión específica (`requests==2.26.0`).
+   - Haz clic en **Install**.
+
+#### **2. Desde un notebook**
+Puedes instalar una librería directamente desde un notebook usando comandos mágicos:
+
+##### **Para PyPI:**
+```python
+%pip install nombre_libreria
+```
+Ejemplo:
+```python
+%pip install matplotlib
+```
+
+##### **Para librerías de Maven:**
+```python
+%scala
+spark.jars.packages += "grupo:nombre:versión"
+```
+Ejemplo:
+```scala
+spark.jars.packages += "org.apache.spark:spark-avro_2.12:3.4.0"
+```
+
+##### **Para librerías R:**
+```R
+install.packages("nombre_libreria")
+```
+Ejemplo:
+```R
+install.packages("ggplot2")
+```
+
+### **Verificación**
+1. Si la instalación fue desde el clúster, la librería estará disponible en todos los notebooks asociados al clúster.
+2. Si fue desde un notebook, estará disponible únicamente en ese notebook.
+
+### **Consideraciones importantes**
+- **Reinicio del clúster**: Algunas instalaciones pueden requerir un reinicio del clúster para que los cambios surtan efecto.
+- **Versiones compatibles**: Asegúrate de instalar versiones de librerías compatibles con tu versión de Spark y Databricks.
+- **Ámbito**: Las librerías instaladas a través de `%pip` están limitadas al ámbito del notebook, mientras que las instaladas a nivel de clúster son globales para todos los notebooks del clúster.
+
+Con estos pasos, podrás instalar cualquier librería en Databricks y empezar a usarla en tus análisis o flujos de trabajo.
+
+**Lecturas recomendadas**
+
+[Clase - Cómo instalar una librería en Databricks_.ipynb - Google Drive](https://drive.google.com/file/d/1mobRLK6j5PHKL09k2XrVt7lcByAGjNyZ/view?usp=sharing)
+
+[MVN Repository](https://mvnrepository.com/)
+
+## Spark en local vs. en la nube
+
+**Spark en local** y **Spark en la nube** tienen diferencias significativas en términos de configuración, escalabilidad, rendimiento y accesibilidad. A continuación se comparan ambos entornos:
+
+### **Spark en local**
+
+#### Ventajas:
+- **Costo**: Es gratuito para uso personal o de desarrollo (requieres tener un entorno configurado en tu máquina).
+- **Flexibilidad**: Puedes personalizar y optimizar Spark de acuerdo a tu hardware.
+- **Desarrollo y Pruebas**: Ideal para pruebas locales o desarrollo rápido.
+
+#### Desventajas:
+- **Escalabilidad limitada**: Dependiente del hardware de la máquina local, lo que puede limitar el procesamiento a conjuntos de datos más pequeños.
+- **Mantención**: Necesitas gestionar la configuración, los recursos y cualquier problema relacionado con el hardware.
+
+#### Uso típico:
+- Pequeñas cantidades de datos.
+- Desarrollo, pruebas y demostraciones.
+
+### **Spark en la nube (como Databricks o AWS EMR)**
+
+#### Ventajas:
+- **Escalabilidad**: Puedes escalar según tus necesidades utilizando clústeres distribuidos en la nube, desde pocos hasta miles de nodos.
+- **Acceso compartido**: Varias instancias pueden trabajar simultáneamente en el mismo clúster sin preocuparte por el estado de recursos físicos.
+- **Optimización**: Servicios optimizados específicamente para Spark en la nube, lo que facilita la gestión de recursos.
+- **Seguridad**: Integraciones robustas de IAM (gestión de identidad y acceso) y políticas empresariales.
+
+#### Desventajas:
+- **Costo**: Usualmente más caro que ejecutar Spark en local, especialmente a gran escala.
+- **Dependencia externa**: Requiere acceso a internet y servicios en la nube, que puede generar costos adicionales por tráfico o almacenamiento.
+
+#### Uso típico:
+- Grandes conjuntos de datos.
+- Procesamiento en tiempo real.
+- Colaboración y trabajo en equipo.
+- Modelos complejos o machine learning.
+
+### **Comparación General**
+
+| Aspecto              | Local                            | Cloud                           |
+|---------------------|---------------------------------|---------------------------------|
+| **Escalabilidad**   | Limitada por el hardware local.    | Prácticamente ilimitada mediante clústeres distribuidos. |
+| **Rendimiento**    | Menor rendimiento para conjuntos de datos grandes. | Alto rendimiento mediante recursos optimizados. |
+| **Configuración**  | Configuración manual y compleja.  | Configuración simplificada con servicios gestionados. |
+| **Costo**          | Bajo o gratuito para pequeñas pruebas. | Puede ser más caro, pero escalable y manejado por proveedores. |
+| **Seguridad**      | Gestionado manualmente.            | Integraciones robustas y políticas empresariales. |
+
+### **Recomendación**
+
+- **Desarrollo y pruebas**: Inicia en local para entender la herramienta y ajustar configuraciones.
+- **Producción y grandes datasets**: Usa Spark en la nube para garantizar escalabilidad, optimización y seguridad.
+
+**Lecturas recomendadas**
+
+[Spark local mode vs Cluster mode](https://ar.video.search.yahoo.com/search/video?fr=mcafee&ei=UTF-8&p=spark+local+vs+nube&type=E210AR885G0#id=3&vid=7a3598f010ed006b93d0565d10324662&action=click)
