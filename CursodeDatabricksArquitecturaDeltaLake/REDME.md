@@ -989,3 +989,432 @@ Con estos pasos, podrás instalar cualquier librería en Databricks y empezar a 
 **Lecturas recomendadas**
 
 [Spark local mode vs Cluster mode](https://ar.video.search.yahoo.com/search/video?fr=mcafee&ei=UTF-8&p=spark+local+vs+nube&type=E210AR885G0#id=3&vid=7a3598f010ed006b93d0565d10324662&action=click)
+
+## ¿Qué son los Dataframes en Apache Spark?
+
+En Apache Spark, un DataFrame es una estructura de datos distribuida que se organiza en filas y columnas. Es una abstracción de datos tabulares que se asemeja a una tabla en una base de datos relacional o a un DataFrame en lenguajes de programación como R o Python.
+
+Resulta importante mencionar que un DataFrame en Spark puede ser creado a partir de diversas fuentes de datos como archivos CSV, JSON, Parquet, bases de datos SQL, entre otros. Por supuesto, también lo podemos crear desde 0.
+
+En esencia, un dataframe proporciona una interfaz de programación para manipular y procesar datos de manera distribuida en un clúster de computadoras. A este tipo de objeto también es posible aplicarle transformaciones y acciones en Spark.
+
+Algunas características clave de los DataFrames en Apache Spark son:
+
+1. **Inmutabilidad**: Al igual que en otros contextos de Spark los DataFrames son inmutables, lo que significa que no se pueden modificar directamente después de su creación. Las transformaciones en un Dataframe crean otro nuevo.
+2. **Optimización de consultas**: Spark optimiza automáticamente las consultas en los DataFrames utilizando su motor de ejecución Catalyst. Esto permite realizar operaciones de manera eficiente y optimizada.
+3. **Soporte para varios lenguajes**: Los DataFrames en Spark están disponibles en varios lenguajes de programación como Scala, Java, Python y R, lo que facilita su uso en diferentes entornos.
+4. **Integración con fuentes de datos externas**: Pueden leer y escribir datos desde y hacia una variedad de fuentes de datos, lo que facilita la integración con diferentes sistemas y formatos.
+5. API rica: Los DataFrames proporcionan una API rica que permite realizar operaciones complejas de manipulación y análisis de datos de manera declarativa, lo que facilita la expresión de la lógica de procesamiento.
+
+Por lo tanto, podemos concluir que los DataFrames en Apache Spark ofrecen una interfaz de alto nivel para el procesamiento de datos distribuidos, facilitando la manipulación y el análisis de grandes conjuntos de datos de manera eficiente en clústeres de computadoras.
+
+**Escritura y lectura de dataframes en Spark**
+
+En Apache Spark, la lectura y escritura de DataFrames se realiza utilizando las API correspondientes proporcionadas por Spark.
+
+Lectura de DataFrames:
+
+**A. Desde un archivo CSV:**
+
+ ```python
+from pyspark.sql import SparkSession
+
+ spark = SparkSession.builder.appName("example").getOrCreate()
+
+ df = spark.read.csv("ruta/del/archivo.csv", header=True, inferSchema=True)
+```
+ 
+En este ejemplo, **header=True** indica que la primera fila del archivo CSV contiene nombres de columnas, y **inferSchema=True** intentará inferir automáticamente los tipos de datos de las columnas.
+
+**B. Desde un archivo Parquet:**
+
+```python
+ df = spark.read.parquet("ruta/del/archivo.parquet")
+```
+
+Parquet es un formato de almacenamiento eficiente para datos estructurados y es compatible con Spark.
+
+**C. Desde una tabla de base de datos SQL:**
+
+```python
+df = spark.read.jdbc(url="jdbc:mysql://localhost:3306/base_de_datos", table="nombre_tabla", properties={"user": "usuario", "password": "contraseña"})
+```
+
+En este ejemplo se lee desde una tabla de una base de datos SQL.
+
+Escritura de DataFrames:
+
+1. **A un archivo CSV:**
+
+`df.write.csv(“ruta/de/destino”, header=True)`
+
+Esto escribirá el DataFrame en formato CSV en la ruta especificada.
+
+**2. A un archivo Parquet:**
+
+`df.write.parquet(“ruta/de/destino”)`
+
+Escribir en formato Parquet es eficiente y puede ser una buena opción para el almacenamiento a largo plazo.
+
+**3. A una tabla de base de datos SQL:**
+
+```python
+df.write.jdbc(url=“jdbc:mysql://localhost:3306/base_de_datos”, table=“nombre_tabla”, mode=“overwrite”, properties={“user”: “usuario”, “password”: “contraseña”})
+```
+
+En este ejemplo, mode=“overwrite” indica que se sobrescribirán los datos si la tabla ya existe. Otras opciones incluyen “append” y “ignore”.
+
+Más información: [https://spark.apache.org/docs/latest/sql-programming-guide.html](https://spark.apache.org/docs/latest/sql-programming-guide.html "https://spark.apache.org/docs/latest/sql-programming-guide.html")
+
+## Laboratorio - PySpark SQL - Parte 1
+
+¿Te gustaría que cree un laboratorio práctico en formato paso a paso para trabajar con PySpark SQL? Puedo incluir ejercicios que cubran desde la configuración inicial hasta consultas más avanzadas con ejemplos prácticos. Por ejemplo:
+
+1. **Configuración inicial**: Instalación de PySpark y creación de un entorno en Databricks o localmente.
+2. **Carga de datos**: Lectura de archivos CSV, JSON o Parquet.
+3. **Transformaciones básicas**: Uso de operaciones como `select`, `filter`, y `groupBy`.
+4. **Consultas SQL**: Registro de DataFrames como tablas temporales y ejecución de consultas SQL.
+5. **Acciones y exportación de resultados**: Uso de `show`, `collect` y escritura de resultados en archivos.
+
+## Laboratorio - PySpark SQL - Parte 2
+
+¡Entendido! Si estás trabajando en un laboratorio de PySpark SQL, seguramente estás explorando cómo usar las capacidades SQL en PySpark para consultas, análisis y manipulación de datos.
+
+### Parte 2: Ejemplo estructurado para PySpark SQL
+
+A continuación, te guiaré a través de una estructura típica para trabajar con PySpark SQL en un laboratorio:
+
+#### 1. **Crear o cargar un DataFrame**
+Cargamos datos desde un archivo CSV o creamos un DataFrame manualmente.
+
+```python
+from pyspark.sql import SparkSession
+from pyspark.sql.functions import col
+
+# Crear una SparkSession
+spark = SparkSession.builder.appName("PySpark SQL Lab").getOrCreate()
+
+# Crear un DataFrame manualmente
+data = [
+    (1, "Alice", 5000),
+    (2, "Bob", 4000),
+    (3, "Charlie", 7000),
+    (4, "David", 10000),
+]
+columns = ["id", "name", "salary"]
+
+df = spark.createDataFrame(data, columns)
+
+# Mostrar los datos iniciales
+df.show()
+```
+
+#### 2. **Registrar una vista temporal**
+Registrar una tabla temporal para ejecutar consultas SQL.
+
+```python
+# Registrar el DataFrame como una tabla temporal
+df.createOrReplaceTempView("employees")
+```
+
+#### 3. **Ejecutar consultas SQL**
+Usar Spark SQL para ejecutar consultas sobre los datos.
+
+```python
+# Ejemplo 1: Seleccionar todos los registros
+result = spark.sql("SELECT * FROM employees")
+result.show()
+
+# Ejemplo 2: Filtrar empleados con salario mayor a 5000
+result = spark.sql("SELECT * FROM employees WHERE salary > 5000")
+result.show()
+
+# Ejemplo 3: Agregar una columna calculada (bonus)
+result = spark.sql("SELECT *, salary * 0.1 AS bonus FROM employees")
+result.show()
+
+# Ejemplo 4: Calcular la suma total de salarios
+result = spark.sql("SELECT SUM(salary) AS total_salary FROM employees")
+result.show()
+```
+
+#### 4. **Realizar transformaciones adicionales**
+Combinar operaciones SQL y funciones PySpark.
+
+```python
+# Agregar una columna 'bonus' al DataFrame original y calcular el total
+df = df.withColumn("bonus", col("salary") * 0.1)
+df = df.withColumn("total", col("salary") + col("bonus"))
+
+# Mostrar el DataFrame actualizado
+df.show()
+```
+
+#### 5. **Guardar los resultados**
+Guardar el resultado de las consultas o transformaciones en diferentes formatos.
+
+```python
+# Guardar el DataFrame actualizado como un archivo CSV
+df.write.csv("output/employees_with_bonus", header=True)
+```
+
+**Lecturas recomendadas**
+
+[Spark SQL - Consigna.ipynb - Google Drive](https://drive.google.com/file/d/17pfMCkUSoWT1vlx0BEs2Vi6X9LzsDaBa/view?usp=sharing)
+
+[Spark SQL - Resolucion.ipynb - Google Drive](https://drive.google.com/file/d/1_WSDtU96W_Mhlm5Ne6k-Apk7qxeTBogK/view?usp=sharing)
+
+[Clase - Laboratorio - PySpark SQL - Parte 2.ipynb - Google Drive](https://drive.google.com/file/d/1dt4NGhhlwvm8Ur1cdrCUcw0HMXuYgTKB/view?usp=sharing)
+
+## UDF en Apache Spark
+
+En Apache Spark, una **UDF (User Defined Function)** es una función definida por el usuario que puedes utilizar para realizar transformaciones personalizadas en los datos. Las UDF permiten aplicar lógica compleja a columnas de un DataFrame que no está disponible con las funciones integradas de Spark.
+
+### Características principales de las UDF:
+1. **Personalización**: Permiten agregar lógica específica del negocio.
+2. **Compatibilidad**: Se pueden usar con diferentes lenguajes como Python, Scala, Java y R.
+3. **Desempeño**: Las UDF pueden ser más lentas que las funciones integradas de Spark porque se ejecutan en el intérprete del lenguaje (por ejemplo, Python) y no están optimizadas para la ejecución distribuida.
+
+### 1. Crear una UDF en Python
+Puedes registrar una función personalizada como una UDF y usarla en transformaciones.
+
+#### Paso 1: Importar las funciones necesarias
+```python
+from pyspark.sql.functions import udf
+from pyspark.sql.types import StringType, IntegerType
+```
+
+#### Paso 2: Definir la función personalizada
+```python
+# Función Python normal
+def categorize_salary(salary):
+    if salary < 5000:
+        return "Low"
+    elif salary <= 8000:
+        return "Medium"
+    else:
+        return "High"
+```
+
+#### Paso 3: Registrar la función como UDF
+```python
+categorize_salary_udf = udf(categorize_salary, StringType())
+```
+
+#### Paso 4: Aplicar la UDF al DataFrame
+```python
+data = [
+    (1, "Alice", 4000),
+    (2, "Bob", 5000),
+    (3, "Charlie", 9000),
+]
+columns = ["id", "name", "salary"]
+
+df = spark.createDataFrame(data, columns)
+
+# Usar la UDF para transformar los datos
+df = df.withColumn("salary_category", categorize_salary_udf(df["salary"]))
+df.show()
+```
+
+**Salida esperada:**
+```
++---+-------+------+---------------+
+| id|   name|salary|salary_category|
++---+-------+------+---------------+
+|  1|  Alice|  4000|            Low|
+|  2|    Bob|  5000|         Medium|
+|  3|Charlie|  9000|           High|
++---+-------+------+---------------+
+```
+
+### 2. UDF con SQL
+Puedes registrar una UDF y usarla en consultas SQL.
+
+```python
+# Registrar la UDF en el contexto SQL
+spark.udf.register("categorize_salary", categorize_salary, StringType())
+
+# Registrar la tabla temporal
+df.createOrReplaceTempView("employees")
+
+# Ejecutar una consulta SQL con la UDF
+result = spark.sql("SELECT id, name, salary, categorize_salary(salary) AS salary_category FROM employees")
+result.show()
+```
+
+### 3. Tipos de datos soportados
+Cuando defines una UDF, necesitas especificar el tipo de dato de salida usando las clases de `pyspark.sql.types`:
+
+- **StringType**: Para cadenas.
+- **IntegerType**: Para enteros.
+- **DoubleType**: Para números decimales.
+- **ArrayType**: Para listas o arreglos.
+- **StructType**: Para estructuras anidadas.
+
+Ejemplo con un tipo complejo:
+```python
+from pyspark.sql.types import ArrayType
+
+def split_name(name):
+    return name.split(" ")
+
+split_name_udf = udf(split_name, ArrayType(StringType()))
+df = df.withColumn("name_parts", split_name_udf(df["name"]))
+df.show()
+```
+
+### 4. Consideraciones de rendimiento
+- **Uso de funciones integradas**: Siempre que sea posible, usa las funciones integradas de Spark en lugar de UDF, ya que están optimizadas para la ejecución distribuida.
+- **Vectorización con Pandas UDF**: Para mejorar el rendimiento, puedes usar Pandas UDFs, que están optimizadas para operaciones vectorizadas y aprovechan mejor los recursos de Spark.
+
+Ejemplo de Pandas UDF:
+```python
+from pyspark.sql.functions import pandas_udf
+from pyspark.sql.types import StringType
+
+@pandas_udf(StringType())
+def categorize_salary_pandas(salary_series):
+    return salary_series.apply(categorize_salary)
+
+df = df.withColumn("salary_category", categorize_salary_pandas(df["salary"]))
+```
+
+**Lecturas recomendadas**
+
+[¿Qué son las funciones definidas por el usuario (UDF)? - Azure Databricks | Microsoft Learn](https://learn.microsoft.com/es-es/azure/databricks/udf/)
+
+[Clase - Ejemplo practico de UDF.ipynb - Google Drive](https://drive.google.com/file/d/1SYF9CzzrAys6aALSbXibNPmHIMx4ensw/view?usp=sharing)
+
+[Ejercicios.pdf - Google Drive](https://drive.google.com/file/d/1_QyDZaZO9TNI6abWk1_33YSx-iknR9yA/view?usp=sharing)
+
+[Resolucion - UDF.ipynb - Google Drive](https://drive.google.com/file/d/1wl51xG3t6KG4C18bKb0R80yzdbqlNLdD/view?usp=sharing)
+
+## Arquitectura Data Lake vs Delta Lake
+
+**Data Lake**:
+
+1. **Definición**: Un Data Lake es un repositorio centralizado para almacenar grandes volúmenes de datos estructurados, semi-estructurados y no estructurados a gran escala. No requiere un esquema previo, permitiendo que los datos se carguen en bruto.
+
+2. **Características**:
+   - **Esquema opcional**: Los datos pueden ingresar en cualquier formato sin necesidad de un esquema definido inicialmente.
+   - **Flexibilidad**: Ideal para almacenar grandes cantidades de datos variados.
+   - **Desventajas**: Falta de rendimiento en consultas masivas o transformaciones complejas, ya que no se optimiza el almacenamiento.
+
+3. **Ejemplo**: Amazon S3, Azure Data Lake, Google Cloud Storage.
+
+**Delta Lake**:
+
+1. **Definición**: Delta Lake es una solución de almacenamiento que combina las ventajas de un Data Lake con las capacidades de un almacenamiento optimizado y altamente eficiente. Es un formato de datos abierto, compatible con Spark, que permite operaciones ACID (Atomicidad, Consistencia, Aislamiento, Durabilidad).
+
+2. **Características**:
+   - **Optimización**: Delta Lake ofrece una mejor optimización de las operaciones mediante el uso de metadata, almacenamiento optimizado y eliminación de duplicados.
+   - **Transacciones ACID**: Soporte para operaciones seguras y consistentes, con rollback de transacciones.
+   - **Integración con Spark**: Compatible con Apache Spark, permitiendo procesamiento rápido y eficiente.
+   - **Historial de datos**: Soporte para la evolución del esquema con control de versiones y registros de cambios.
+
+3. **Ventajas**:
+   - **Rendimiento** mejorado en consultas y transformaciones.
+   - **Optimización de almacenamiento** a través de particiones y eliminación de archivos innecesarios.
+   - **Alta seguridad** y gestión del acceso a datos.
+
+4. **Ejemplo**: Delta Lake en Databricks o en servicios compatibles como Azure Synapse y Google Cloud BigLake.
+
+### Comparación:
+
+- **Data Lake** es una solución genérica de almacenamiento de datos, mientras que **Delta Lake** agrega capacidades avanzadas de optimización, versionamiento, y transacciones.
+
+**Lecturas recomendadas**
+
+[What is the Difference Between a Data Lake and a Delta Lake? | by Ansam Yousry | Technology Hits | Medium](https://medium.com/technology-hits/what-is-the-difference-between-a-data-lake-and-a-delta-lake-2ff64d85758b)
+
+[Lectura - Parquet vs Delta.pdf - Google Drive](https://drive.google.com/file/d/1cK1MbwM8eEZScfUWaOKg2LPWlQrRGaLh/view?usp=sharing)
+
+## Características y beneficios del Delta Lake
+
+Como ya hemos visto, Delta Lake es una solución de almacenamiento de datos basada en un sistema de archivos distribuido diseñado para mejorar la calidad, la confiabilidad y el rendimiento de los datos en entornos de big data.
+
+**Características de Delta Lake:**
+
+- *Transacciones ACID:*
+Delta Lake proporciona soporte nativo para transacciones ACID (atomicidad, consistencia, aislamiento y durabilidad), lo que garantiza un rendimiento fluido de lectura y escritura, y consistente incluso en entornos distribuidos.
+
+- *Control de versiones:*
+Admite un historial de versiones completo de los datos almacenados, lo que le permite analizar los cambios a lo largo del tiempo y volver a versiones anteriores si es necesario.
+
+- *Operaciones de fusión y actualización:*
+Facilita las operaciones de fusión y actualización de datos, lo que simplifica el procesamiento y la edición de datos.
+
+- *Optimizaciones de lectura y escritura:*
+Contiene optimizaciones que aceleran las operaciones de lectura y escritura, como la indexación y la gestión de estadísticas que mejoran el rendimiento en comparación con el uso del sistema de archivos directamente sin estas optimizaciones.
+
+- *Compatibilidad con Apache Spark:*
+Delta Lake es totalmente compatible con Apache Spark lo que facilita la integración en el ecosistema Spark y aprovecha las capacidades de procesamiento distribuido.
+
+- *Evolución del esquema:*
+Facilita la evolución del esquema de datos a lo largo del tiempo, permitiendo cambios en la estructura de datos sin afectar la compatibilidad con versiones anteriores.
+
+- *Gestión de metadatos:*
+Delta Lake almacena metadatos internos que proporcionan información sobre los datos, facilitando la gestión y el control de los datos.
+
+**Beneficios del Delta Lake**
+
+- *Integridad y coherencia de los datos:*
+La gestión de transacciones ACID garantiza la integridad y la coherencia de los datos, lo cual es fundamental en entornos donde la precisión de los datos es fundamental.
+
+- *Mejor rendimiento:*
+Las optimizaciones internas, como la indexación y la gestión de estadísticas, mejoran el rendimiento de las operaciones de lectura y escritura y permiten un acceso más eficiente a los datos.
+
+- *Historial de versiones para revisión:*
+El historial de versiones le permite monitorear y analizar los cambios de datos a lo largo del tiempo y proporciona una descripción detallada de la evolución de los conjuntos de datos.
+
+- *Flexibilidad en el desarrollo de esquemas:*
+La capacidad de evolucionar sin problemas el esquema de datos facilita una adaptación perfecta a los cambios comerciales.
+
+- *Operaciones simplificadas:*
+Delta Lake simplifica operaciones como la fusión y la actualización lo que facilita el trabajo con datos.
+
+- *Compatibilidad con herramientas de big data:*
+Al admitir Apache Spark, Delta Lake se puede utilizar fácilmente con otras herramientas de big data, ampliando su aplicabilidad en entornos distribuidos.
+
+Para concluir, estas características y beneficios hacen que Delta Lake sea una solución poderosa para el almacenamiento y la gestión de datos en entornos de big data, proporcionando un conjunto de funcionalidades avanzadas para abordar desafíos comunes en la administración de grandes volúmenes de datos.
+
+## Medallion architecture
+
+**Medallion Architecture** es un enfoque moderno para la arquitectura de almacenamiento de datos que utiliza capas definidas para gestionar diferentes tipos de datos y casos de uso en un solo sistema de datos. Es ampliamente utilizado en entornos de datos en la nube y sistemas distribuidos.
+
+#### Componentes de la Medallion Architecture:
+
+1. **Bronze Layer (Capa Bronce)**:
+   - **Descripción**: Capa de entrada de datos sin procesar. Aquí se cargan datos en bruto desde sistemas fuentes como Data Lakes, S3, o bases de datos.
+   - **Objetivo**: Almacenamiento de datos originales, sin transformación ni limpieza.
+   - **Usos**: Datos históricos, raw data, logs, o registros sin procesar.
+
+2. **Silver Layer (Capa Plata)**:
+   - **Descripción**: Capa de procesamiento y transformación de datos. Los datos en esta capa son más estructurados y limpios que en la capa bronce.
+   - **Objetivo**: Procesamiento y transformación de datos, aplicación de esquemas, y creación de datasets que pueden ser utilizados en análisis.
+   - **Usos**: Datos transformados para reporting, Machine Learning, y análisis en tiempo real.
+
+3. **Gold Layer (Capa Oro)**:
+   - **Descripción**: Capa de datos finales optimizada para consumo de aplicaciones analíticas o modelos predictivos. Esta capa almacena datos altamente procesados y enriquecidos.
+   - **Objetivo**: Crear conjuntos de datos preprocesados optimizados para dashboards, visualizaciones, o modelos analíticos avanzados.
+   - **Usos**: Datos listos para su uso en BI, análisis ad-hoc, inteligencia empresarial (BI), y visualizaciones.
+
+#### Ventajas de la Medallion Architecture:
+
+- **Flexibilidad**: Permite gestionar diferentes tipos de datos y transformaciones en un solo flujo de trabajo.
+- **Optimización**: Mejor rendimiento y escalabilidad gracias a la separación de capas.
+- **Seguridad**: Datos brutos en la capa bronce, procesados en la capa plata y altamente estructurados en la capa oro.
+- **Historial y evolución**: Cada capa puede evolucionar su esquema y agregar datos históricos.
+
+#### Implementación en Databricks:
+
+- **Bronze**: Almacenamiento inicial en DBFS o Delta Lake sin transformaciones.
+- **Silver**: Transformaciones, limpieza y procesamiento usando PySpark o Databricks Notebooks.
+- **Gold**: Datos altamente optimizados para uso analítico y reporting.
+
+**Lecturas recomendadas**
+
+[What is the medallion lakehouse architecture? - Azure Databricks | Microsoft Learn](https://learn.microsoft.com/en-us/azure/databricks/lakehouse/medallion)
+
+[Lectura - Arquitectura Medallion.pdf - Google Drive](https://drive.google.com/file/d/1CB473K1shy0ulgclYHMi6uGoKJ0x1Pze/view?usp=sharing)
