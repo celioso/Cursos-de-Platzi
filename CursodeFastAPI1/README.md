@@ -190,3 +190,232 @@ Como reto, intenta instalar FastAPI en tu entorno de desarrollo. La documentaci�
 [Welcome to Pydantic - Pydantic](https://docs.pydantic.dev/latest/)
 
 [Starlette](https://www.starlette.io/)
+
+## Instalación y configuración de FastAPI
+
+Para trabajar con un framework en Python como FastAPI, siempre es recomendable emplear entornos virtuales. Estos entornos permiten gestionar las dependencias de un proyecto sin interferir con otros. A continuación, se explican los pasos clave para crear y configurar un entorno virtual y desarrollar una primera API básica.
+
+### ¿Cómo crear un entorno virtual para FastAPI?
+
+1. **Crear el entorno virtual:**
+
+ - Abre la terminal y navega a la carpeta donde se encuentra tu proyecto. Utiliza el módulo venv de Python para crear un entorno virtual:
+ 
+`python -m venv vm`
+
+ - Esto generará un entorno virtual en una carpeta llamada vm dentro de tu proyecto.
+ 
+2. **Activar el entorno virtual:**
+
+ - En sistemas Unix, ejecuta el siguiente comando:
+ 
+`source vm/bin/activate`
+
+ - Esto permite aislar las dependencias de tu proyecto dentro del entorno virtual.
+ 
+### ¿Cómo instalar FastAPI y sus dependencias?
+
+1. **Instalar FastAPI:**
+
+ - Con el entorno virtual activo, instala FastAPI:
+ 
+`pip install "fastapi[standard]"`
+
+ - Si recibes errores de interpretación, agrega comillas dobles para evitar problemas con las llaves {} que incluyen dependencias adicionales para la ejecución de FastAPI en entornos locales.
+ 
+2. **Verificar las dependencias instaladas:**
+
+ - Tras la instalación, puedes listar las dependencias para observar los paquetes añadidos, como **Jinja** (templates), **Markdown** (manejo de texto) y **Uvicorn** (para ejecutar aplicaciones como servidor web).
+ 
+### ¿Cómo crear un primer endpoint con FastAPI?
+
+1. **Configurar la estructura de archivos:**
+
+ - Crea una carpeta para el proyecto:
+ 
+`mkdir curso_fastapi_project`
+
+ - Dentro de esta carpeta, crea un archivo main.py para definir el primer endpoint.
+ 
+2. **Desarrollar la API en` main.py`:**
+
+ - Abre el archivo en tu editor y añade el siguiente código básico:
+ 
+```python
+from fastapi import FastAPI
+
+app = FastAPI()
+
+@app.get("/")
+def root():
+    return {"mensaje": "Hola, Mundo"}
+```
+
+ - La función root define un endpoint básico que devuelve un mensaje JSON. Utiliza el decorador `@app.get("/")` para indicar que este endpoint responde a solicitudes GET en la ruta raíz (`/`).
+ 
+### ¿Cómo ejecutar y probar la API en desarrollo?
+
+1. **Iniciar el servidor:**
+
+ - Usa Uvicorn para ejecutar la aplicación:
+ 
+`uvicorn main:app --reload`
+
+ - El parámetro --reload activa el modo de desarrollo, permitiendo recargar la API automáticamente cada vez que guardes cambios en el código.
+ 
+2. **Verificar en la terminal:**
+
+Al ejecutar, Uvicorn muestra la URL de acceso a la API y la documentación generada automáticamente en `/docs`. Puedes acceder a la API en [http://localhost:8000](http://localhost:8000/ "http://localhost:8000") y la documentación en [http://localhost:8000/docs](http://localhost:8000/docs "http://localhost:8000/docs").
+
+**Lecturas recomendadas**
+
+[Uvicorn](https://www.uvicorn.org/)
+
+[FastAPI](https://fastapi.tiangolo.com/)
+
+[GitHub - fastapi/fastapi: FastAPI framework, high performance, easy to learn, fast to code, ready for production](https://github.com/fastapi/fastapi)
+
+## Parámetros de ruta y consultas en FastAPI
+
+Crear un endpoint en FastAPI que devuelva la hora en función del país permite ofrecer una API flexible y personalizable. A continuación, exploramos cómo construir esta funcionalidad con un endpoint dinámico y cómo incluir parámetros adicionales para definir el formato de la hora.
+
+### ¿Cómo crear un endpoint que devuelva la hora del servidor?
+
+1. **Función inicial para la hora del servidor**
+
+En el archivo de sincronización (`sync`), creamos una función llamada `time` que retorne la hora actual del servidor. Para ello:
+
+ - Importamos el módulo datetime desde la librería de Python.
+ - En la función, utilizamos datetime.now() para obtener la hora actual.
+ 
+2. **Configurar la función como endpoint**
+
+Para que el endpoint sea accesible, decoramos la función con **@app.get("/time")**. Este decorador registra el endpoint para que esté disponible en la URL **/time**.
+
+### ¿Cómo agregar variables en un endpoint?
+
+Un endpoint estático es poco común en aplicaciones que requieren personalización. FastAPI permite recibir variables directamente en la URL, por lo que podemos modificar el endpoint para que acepte un código de país y devuelva la hora correspondiente en ese huso horario.
+
+1. **Añadir el código ISO del país**
+
+Modificamos el endpoint y añadimos un parámetro en la URL. Por ejemplo: `@app.get("/time/{iso_code}")`. Así, cuando el usuario indique el código de país, el sistema sabrá de qué huso horario obtener la hora.
+
+2. **Tipar la variable**
+
+Es esencial declarar el tipo de dato del parámetro `iso_code`. Al indicar `iso_code: str`, ayudamos a que FastAPI maneje correctamente el dato, garantizando que se trate de un texto. Esto también permite acceder a métodos específicos de cadenas de texto en Python, como `.upper()`.
+
+### ¿Cómo ajustar el formato de entrada del parámetro?
+
+Para mejorar la usabilidad:
+
+- Convertimos `iso_code` a mayúsculas (`iso_code.upper()`). Así, la entrada será uniforme sin importar cómo el usuario ingrese el código.
+
+- Definimos un diccionario que contiene los husos horarios por país, en el que las claves están en mayúsculas. Esto asegura que, al consultar el diccionario, se encuentre el huso horario correcto.
+
+### ¿Cómo devolver la hora en el huso horario del país?
+
+1. **Obtener el huso horario**
+Con el código ISO del país, utilizamos `timezone.get(iso_code)` para obtener la zona horaria correspondiente.
+
+2. **Formatear la hora según el huso horario**
+
+Importamos el módulo `zoneinfo` y configuramos la zona horaria del resultado. De este modo, al retornar `datetime.now(tz=timezone)`, se muestra la hora correspondiente al país especificado.
+
+### ¿Cómo agregar parámetros opcionales para formato de hora?
+
+Finalmente, para que el usuario pueda decidir el formato de hora:
+
+- Añadimos un parámetro opcional (`format_24`) que indique si se desea la hora en formato de 24 horas.
+- En la lógica de la función, verificamos el parámetro y ajustamos el formato de salida para que muestre la hora en el formato deseado.
+
+En **FastAPI**, los parámetros de ruta y las consultas son fundamentales para manejar la entrada de datos HTTP de manera flexible. A continuación te explico cómo funcionan y cómo utilizarlos.
+
+### **Parámetros de ruta**  
+Los parámetros de ruta son aquellos que se pasan directamente en la URL. Se pueden definir usando corchetes `{}` dentro de las funciones `app.get()`.
+
+#### Sintaxis básica:
+```python
+from fastapi import FastAPI
+
+app = FastAPI()
+
+@app.get("/items/{item_id}")
+async def read_item(item_id: int):
+    return {"item_id": item_id}
+```
+
+**Uso**:
+- `{item_id}` es un parámetro de ruta que espera un valor entero (`int`).
+- El valor del `item_id` que se pase en la URL será accesible como un argumento en la función.
+
+#### **Ejemplo**:
+- URL: `/items/123`
+- Respuesta: `{"item_id": 123}`
+
+### **Parámetros de consulta**  
+Los parámetros de consulta son aquellos que se incluyen después del signo de interrogación `?` en la URL, y pueden tener varios pares clave-valor separados por `&`. Se pueden definir en la función `app.get()` usando el parámetro `query`.
+
+#### Sintaxis básica:
+```python
+from fastapi import FastAPI
+from typing import Optional
+
+app = FastAPI()
+
+@app.get("/search")
+async def search(
+    q: Optional[str] = None,       # Parámetro de consulta opcional
+    limit: int = 10,                # Parámetro de consulta con un valor por defecto
+    offset: int = 0
+):
+    return {"query": q, "limit": limit, "offset": offset}
+```
+
+**Uso**:
+- `q` es un parámetro de consulta que acepta un valor de tipo `str`, que puede ser opcional (`Optional[str]`).
+- `limit` es un parámetro de consulta que define el número máximo de resultados, con un valor por defecto de `10`.
+- `offset` es otro parámetro de consulta que indica el número de resultados a saltar, con un valor por defecto de `0`.
+
+#### **Ejemplo**:
+- URL: `/search?q=fastapi&limit=5&offset=10`
+- Respuesta: `{"query": "fastapi", "limit": 5, "offset": 10}`
+
+### **Combinar parámetros de ruta y consulta**  
+Se pueden usar ambos al mismo tiempo en una misma ruta. FastAPI los maneja de manera ordenada y los puede distinguir fácilmente.
+
+#### Sintaxis combinada:
+```python
+from fastapi import FastAPI
+
+app = FastAPI()
+
+@app.get("/items/{item_id}")
+async def read_item(item_id: int, q: Optional[str] = None):
+    return {"item_id": item_id, "query": q}
+```
+
+**Uso**:
+- `item_id` es el parámetro de ruta.
+- `q` es el parámetro de consulta opcional.
+
+#### **Ejemplo**:
+- URL: `/items/123?q=fastapi`
+- Respuesta: `{"item_id": 123, "query": "fastapi"}`
+
+### **Validación de parámetros**  
+En FastAPI puedes especificar el tipo de validación que deseas realizar en los parámetros utilizando las anotaciones de tipo (`int`, `str`, `float`, etc.) y los posibles valores por defecto, como se ha visto en los ejemplos anteriores.
+
+#### **Validaciones adicionales**:
+- Se pueden añadir validaciones más detalladas, como especificar el rango de valores, o establecer valores por defecto.
+
+### **Resumen**:
+- **Parámetros de ruta**: Pasados directamente en la URL y accesibles por medio de `app.get("/{param}")`.
+- **Parámetros de consulta**: Pasados después del `?` en la URL y accesibles por medio de `app.get("/route?param=value")`.
+
+Esto te permite manejar de manera flexible cómo los usuarios interactúan con tus APIs en función de sus necesidades.
+
+**Lecturas recomendadas**
+
+[datetime — Basic date and time types — Python 3.13.0 documentation](https://docs.python.org/3/library/datetime.html)
+
+[zoneinfo — IANA time zone support — Python 3.13.0 documentation](https://docs.python.org/3/library/zoneinfo.html)
