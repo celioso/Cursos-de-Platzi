@@ -419,3 +419,812 @@ Esto te permite manejar de manera flexible cómo los usuarios interactúan con t
 [datetime — Basic date and time types — Python 3.13.0 documentation](https://docs.python.org/3/library/datetime.html)
 
 [zoneinfo — IANA time zone support — Python 3.13.0 documentation](https://docs.python.org/3/library/zoneinfo.html)
+
+## ¿Cómo validar datos en FastAPI con Pydantic?
+
+En FastAPI, la validación de datos se realiza mediante modelos de **Pydantic**. Estos modelos permiten definir la estructura y los tipos de datos esperados para solicitudes entrantes, como datos JSON enviados en un `POST` o `PUT`. Pydantic valida automáticamente los datos y genera respuestas de error claras cuando los datos no cumplen con las restricciones.
+
+### Pasos para validar datos con Pydantic
+
+1. **Definir un modelo Pydantic**:
+   Utiliza la clase `BaseModel` de Pydantic para definir los campos esperados y sus tipos.
+
+2. **Usar el modelo como parámetro en las rutas**:
+   Declara el modelo en la función de la ruta, y FastAPI automáticamente lo usará para validar la entrada.
+
+3. **Agregar validaciones personalizadas** (opcional):
+   Puedes incluir restricciones como valores máximos, mínimos, expresiones regulares, etc.
+
+---
+
+### Ejemplo básico
+
+```python
+from fastapi import FastAPI
+from pydantic import BaseModel
+
+app = FastAPI()
+
+# Modelo Pydantic
+class User(BaseModel):
+    username: str
+    email: str
+    age: int
+
+# Ruta que valida el cuerpo de la solicitud
+@app.post("/create-user/")
+async def create_user(user: User):
+    return {"message": "User created successfully!", "user": user}
+```
+
+**Explicación**:
+- `username`: debe ser una cadena (`str`).
+- `email`: debe ser una cadena que represente un correo electrónico.
+- `age`: debe ser un número entero (`int`).
+
+Si envías un JSON mal formado, FastAPI responderá con un error como este:
+
+```json
+{
+    "detail": [
+        {
+            "loc": ["body", "age"],
+            "msg": "value is not a valid integer",
+            "type": "type_error.integer"
+        }
+    ]
+}
+```
+
+---
+
+### Ejemplo avanzado con validaciones personalizadas
+
+Puedes usar Pydantic para agregar restricciones más avanzadas:
+
+```python
+from pydantic import BaseModel, EmailStr, Field
+
+class User(BaseModel):
+    username: str = Field(..., min_length=3, max_length=50)
+    email: EmailStr
+    age: int = Field(..., ge=18, le=120, description="Age must be between 18 and 120")
+
+@app.post("/create-user/")
+async def create_user(user: User):
+    return {"message": "User created successfully!", "user": user}
+```
+
+**Restricciones añadidas**:
+1. `username`: Longitud mínima de 3 caracteres, máxima de 50.
+2. `email`: Usa el tipo especial `EmailStr` para validar que es un correo válido.
+3. `age`: El rango permitido es entre 18 y 120 (`ge=18`, `le=120`).
+
+---
+
+### Ejemplo con parámetros de consulta y cuerpo
+
+FastAPI permite combinar validaciones en el cuerpo (`body`) y parámetros de consulta (`query`):
+
+```python
+from fastapi import Query, Body
+
+@app.post("/create-user/")
+async def create_user(
+    username: str = Query(..., min_length=3, max_length=50),
+    email: str = Body(...),
+    age: int = Query(..., ge=18, le=120)
+):
+    return {"username": username, "email": email, "age": age}
+```
+
+Aquí:
+- `Query`: Valida los parámetros de consulta.
+- `Body`: Valida el cuerpo de la solicitud.
+
+---
+
+### Documentación automática
+
+Cuando usas modelos de Pydantic, FastAPI genera automáticamente documentación en Swagger UI (accesible en `/docs`) y en ReDoc (accesible en `/redoc`), mostrando las restricciones de los campos esperados.
+
+---
+
+### Resumen
+FastAPI + Pydantic te permite:
+- Definir estructuras claras y tipos de datos para las entradas.
+- Realizar validaciones automáticas.
+- Generar documentación interactiva automáticamente.
+
+### Resumen
+
+Para crear un endpoint dinámico y seguro en FastAPI, es fundamental validar la información recibida, especialmente si el contenido se envía en el cuerpo de la solicitud. Los usuarios pueden ingresar datos incorrectos o no válidos, como un correo electrónico mal formateado, por lo que validar estos datos es crucial para el correcto funcionamiento de la API. FastAPI facilita esta validación a través de **Pydantic**, una biblioteca de Python que permite construir modelos de datos robustos. A continuación, exploraremos cómo crear un modelo básico de cliente para validar datos en un endpoint.
+
+### ¿Cómo estructurar un modelo de datos en FastAPI?
+
+Para definir un modelo de datos, FastAPI emplea Pydantic, que permite usar clases para representar un esquema y validar la información que ingresa. Los pasos iniciales incluyen:
+
+- Importar `BaseModel` de Pydantic.
+- Crear una clase llamada `Customer` que herede de `BaseModel`.
+- Definir campos dentro de la clase con sus tipos, por ejemplo, `name: str` para el nombre y `age: int` para la edad.
+- Utilizar `typing` para permitir múltiples tipos de datos, como en el campo description, que podría ser de tipo `str` o `None` (opcional).
+
+FastAPI valida automáticamente los datos ingresados en cada campo según el tipo especificado. Por ejemplo, si se establece que el campo `name` debe ser un string, cualquier otro tipo de entrada generará un error de validación.
+
+### ¿Cómo integrar el modelo en un endpoint?
+
+Una vez definido el modelo, el siguiente paso es integrarlo en un endpoint. Esto se realiza mediante una función asincrónica, por ejemplo, `async def create_customer`, que acepta datos de tipo `Customer` en el cuerpo de la solicitud.
+
+1. Se define el endpoint con el método `POST`, para cumplir con las recomendaciones REST al crear recursos.
+2. Se registran los datos del cliente con el decorador `@app.post("/customers")`.
+3. En el cuerpo de la solicitud, los datos enviados serán automáticamente validados según el esquema de `Customer`.
+4. Finalmente, la función puede retornar los mismos datos recibidos para verificar su recepción o realizar acciones adicionales como guardar en una base de datos o enviar una notificación.
+
+### ¿Qué sucede al probar el endpoint?
+
+Para probar el endpoint, FastAPI proporciona una documentación interactiva en `/docs`. Allí, es posible ver los campos requeridos y probar el endpoint directamente:
+
+- Al hacer clic en “Try it out”, se pueden llenar los campos y enviar la solicitud.
+- La respuesta muestra el JSON recibido o los errores de validación. Por ejemplo, si name debe ser un string pero se envía un número, se mostrará un mensaje de error detallado indicando el problema y el campo afectado.
+
+Si el servidor responde con un `200 OK`, es posible que se esté usando el código HTTP incorrecto para una creación de recurso. En estos casos, lo recomendable es devolver un `201 Created` cuando el recurso se haya almacenado correctamente.
+
+### ¿Cómo manejar errores y otros códigos de respuesta?
+
+FastAPI permite definir diferentes códigos de respuesta, esenciales para indicar el estado de las solicitudes:
+
+- **200**: Solicitud exitosa.
+- **201**: Recurso creado.
+- **422**: Error de validación, útil cuando los datos ingresados no cumplen con el modelo definido.
+
+Al enviar datos no válidos, como un número en el campo `name`, FastAPI devuelve automáticamente un `422`, especificando el error en el JSON de la respuesta. Este sistema facilita identificar problemas y proporciona mensajes claros para corregir errores en el frontend.
+
+**Lecturas recomendadas**
+
+[Welcome to Pydantic - Pydantic](https://docs.pydantic.dev/latest/)
+
+## Modelado de Datos en APIs con FastAPI
+
+El modelado de datos en APIs con FastAPI se basa en el uso de **Pydantic** para definir y validar esquemas de datos de manera declarativa. Esto permite crear APIs robustas y confiables que manejan entradas y salidas con estructuras bien definidas.
+
+### **Elementos clave del modelado de datos**
+
+1. **Modelos de Pydantic**:
+   Los modelos de Pydantic son clases basadas en `BaseModel` que definen los datos esperados y sus validaciones.
+
+   ```python
+   from pydantic import BaseModel
+
+   class User(BaseModel):
+       id: int
+       name: str
+       email: str
+       age: int
+       is_active: bool = True  # Valor por defecto
+   ```
+
+   - Cada atributo se tipa explícitamente.
+   - Puedes incluir valores predeterminados.
+   - Se valida automáticamente cuando los datos son enviados a la API.
+
+2. **Validación automática**:
+   FastAPI valida automáticamente los datos enviados a través del cuerpo, parámetros de consulta, encabezados, cookies, etc.
+
+   - **Cuerpo de la solicitud**:
+     ```python
+     from fastapi import FastAPI
+     from pydantic import BaseModel
+
+     app = FastAPI()
+
+     class User(BaseModel):
+         id: int
+         name: str
+         email: str
+
+     @app.post("/users/")
+     async def create_user(user: User):
+         return user
+     ```
+
+     En este caso:
+     - Si se envían datos incompletos o con tipos incorrectos, FastAPI devuelve automáticamente un error 422.
+
+3. **Validación personalizada**:
+   Puedes agregar validaciones adicionales usando decoradores o métodos de Pydantic.
+
+   - **Validador personalizado**:
+     ```python
+     from pydantic import BaseModel, validator
+
+     class User(BaseModel):
+         name: str
+         age: int
+
+         @validator("age")
+         def check_age(cls, age):
+             if age < 18:
+                 raise ValueError("Age must be 18 or above.")
+             return age
+     ```
+
+4. **Anidamiento de modelos**:
+   Los modelos pueden contener otros modelos, permitiendo estructurar datos complejos.
+
+   ```python
+   class Address(BaseModel):
+       city: str
+       country: str
+
+   class User(BaseModel):
+       id: int
+       name: str
+       address: Address
+   ```
+
+   Entrada JSON esperada:
+   ```json
+   {
+       "id": 1,
+       "name": "Mario",
+       "address": {
+           "city": "Bogotá",
+           "country": "Colombia"
+       }
+   }
+   ```
+
+5. **Modelos de respuesta**:
+   Puedes definir qué datos se devuelven como respuesta.
+
+   ```python
+   @app.post("/users/", response_model=User)
+   async def create_user(user: User):
+       return user
+   ```
+
+   Esto asegura que solo se devuelvan los campos definidos en el modelo de respuesta, incluso si el objeto tiene más datos.
+
+6. **Tipos avanzados**:
+   Pydantic soporta validación para:
+   - Listas y diccionarios (`List`, `Dict`).
+   - Datos opcionales (`Optional`).
+   - Estructuras complejas (como `Union`).
+
+   ```python
+   from typing import List, Optional
+
+   class Item(BaseModel):
+       name: str
+       tags: Optional[List[str]] = None
+   ```
+
+### Beneficios del modelado con Pydantic en FastAPI
+- **Validación automática y clara**: Reduce errores manuales.
+- **Código legible y mantenible**: Uso de Python estándar.
+- **Manejo robusto de errores**: Mensajes de error claros para entradas inválidas.
+- **Generación automática de documentación**: Los modelos son reflejados en la documentación interactiva (Swagger).
+
+### Resumen
+
+Para diseñar una API robusta, es esencial modelar correctamente los datos, especialmente al crear nuevos modelos que organicen y relacionen la información eficientemente. En esta guía, exploraremos cómo crear modelos en FastAPI para estructurar datos, conectar modelos y optimizar la funcionalidad de nuestra API.
+
+### ¿Cómo crear y organizar modelos en FastAPI?
+
+Al crear una API, tener todos los modelos en un archivo separado, como `models.py`, ayuda a evitar el “código espagueti” y mantiene el código modular y ordenado. FastAPI no exige esta organización, pero es una buena práctica. Primero, copiamos el modelo de `customer` y el BaseModel de FastAPI desde el archivo principal (`main.py`) y los pegamos en `models.py`.
+
+### ¿Cómo construir un modelo de transacción?
+
+Para estructurar las transacciones en nuestra API, creamos el modelo `Transaction` en `models.py`, derivado de `BaseModel`. Incluimos los siguientes campos:
+
+- `id`: un identificador único, de tipo entero.
+- `amount`: un entero en vez de `float` para representar valores financieros, evitando problemas de precisión.
+- `description`: un campo de tipo `str`, obligatorio para describir la transacción.
+
+Esta estructura permite gestionar las transacciones de manera segura y clara.
+
+### ¿Cómo construir un modelo de factura y conectar los modelos?
+
+El modelo `Invoice` representa una factura y también hereda de BaseModel. Además de un id, el modelo Invoice conecta los datos al incluir:
+
+- customer: un campo de tipo `Customer`, que enlaza la factura con el cliente correspondiente.
+- `transactions`: una lista de `Transaction` que contiene todas las transacciones asociadas a la factura.
+
+Para indicar que `transactions` es una lista, usamos el tipo `List` con `Transaction`, lo que permite que FastAPI gestione adecuadamente este arreglo de datos.
+
+### ¿Cómo calcular el total de una factura?
+
+Para calcular el total de las transacciones en una factura, se agrega un método `total` en el modelo `Invoice`. Este método:
+
+- Utiliza un decorador `@property`, haciendo que se acceda como un atributo.
+- Suma el campo `amount` de cada `Transaction` en la lista `transactions` mediante una comprensión de listas, retornando el total.
+
+De esta forma, el total se calcula automáticamente, y se puede utilizar para generar el subtotal al momento de consultar el endpoint de facturación.
+
+### ¿Cómo usar los modelos en los endpoints de la API?
+
+Los modelos se importan al archivo principal (`main.py`), y se crean nuevos endpoints para gestionar `transactions` e `invoices`. FastAPI genera automáticamente la documentación de estos endpoints, mostrando los datos necesarios para crear facturas con un cliente y una lista de transacciones, simplificando el uso de la API para el usuario final.
+
+### ¿Cómo validar tipos de datos con Pydantic?
+
+Utilizar Pydantic para definir los tipos de datos en nuestros modelos permite validaciones automáticas y mensajes de error claros en caso de datos incorrectos. Por ejemplo, el campo `email` en el modelo `customer` se puede validar agregando el tipo `EmailStr`, lo que permite a la API detectar y rechazar correos no válidos.
+
+## Validación y Gestión de Modelos en FastAPI
+
+La **validación y gestión de modelos en FastAPI** se centra en usar las capacidades de **Pydantic** para garantizar que los datos enviados a la API cumplan con los requisitos esperados. Esto incluye definir estructuras claras, realizar validaciones avanzadas y manejar respuestas correctamente.
+
+## **1. Definición de Modelos**
+
+Los modelos en FastAPI se basan en `BaseModel` de **Pydantic** y son el núcleo de la validación de datos.
+
+### **Ejemplo básico:**
+
+```python
+from pydantic import BaseModel
+
+class User(BaseModel):
+    id: int
+    name: str
+    email: str
+    age: int
+    is_active: bool = True  # Valor por defecto
+```
+
+### **Características clave:**
+- Cada campo tiene un tipo explícito.
+- Los valores predeterminados son opcionales.
+- Se valida automáticamente al usarlo en la API.
+
+## **2. Validación Automática**
+
+FastAPI valida automáticamente los datos enviados a través de:
+- **Cuerpo de la solicitud (`request body`)**:
+  ```python
+  from fastapi import FastAPI
+  from pydantic import BaseModel
+
+  app = FastAPI()
+
+  class User(BaseModel):
+      id: int
+      name: str
+      email: str
+
+  @app.post("/users/")
+  async def create_user(user: User):
+      return {"message": "User created", "user": user}
+  ```
+
+  Si el cliente envía un dato no válido, FastAPI responde con un error HTTP **422 Unprocessable Entity**.
+
+- **Parámetros de consulta**:
+  ```python
+  @app.get("/users/")
+  async def get_user(limit: int = 10, active: bool = True):
+      return {"limit": limit, "active": active}
+  ```
+
+## **3. Validación Personalizada**
+
+Puedes agregar validaciones avanzadas con los validadores de Pydantic.
+
+### **Uso de decoradores `@validator`:**
+
+```python
+from pydantic import BaseModel, validator
+
+class User(BaseModel):
+    name: str
+    age: int
+
+    @validator("age")
+    def check_age(cls, value):
+        if value < 18:
+            raise ValueError("Age must be 18 or above.")
+        return value
+```
+
+## **4. Respuestas Controladas con Modelos**
+
+Los modelos también pueden usarse para controlar las respuestas de la API.
+
+### **Modelo de respuesta:**
+```python
+from fastapi import FastAPI
+from pydantic import BaseModel
+
+app = FastAPI()
+
+class User(BaseModel):
+    id: int
+    name: str
+
+@app.get("/users/{user_id}", response_model=User)
+async def read_user(user_id: int):
+    return {"id": user_id, "name": "Mario", "email": "mario@example.com"}
+```
+
+En este ejemplo:
+- El cliente solo verá los campos definidos en el modelo `User`, incluso si el objeto tiene más datos.
+
+## **5. Estructuras de Datos Complejas**
+
+### **Anidamiento de modelos:**
+Los modelos pueden contener otros modelos para manejar datos más complejos.
+
+```python
+class Address(BaseModel):
+    city: str
+    country: str
+
+class User(BaseModel):
+    id: int
+    name: str
+    address: Address
+```
+
+Entrada JSON esperada:
+```json
+{
+    "id": 1,
+    "name": "Mario",
+    "address": {
+        "city": "Bogotá",
+        "country": "Colombia"
+    }
+}
+```
+
+## **6. Validación de Tipos Compuestos**
+
+FastAPI admite tipos avanzados como:
+- **Listas y diccionarios**:
+  ```python
+  from typing import List
+
+  class Item(BaseModel):
+      name: str
+      tags: List[str]
+  ```
+
+- **Datos opcionales (`Optional`)**:
+  ```python
+  from typing import Optional
+
+  class User(BaseModel):
+      id: int
+      name: Optional[str] = None
+  ```
+
+## **7. Manejo de Errores Personalizados**
+
+Puedes personalizar los errores de validación usando excepciones.
+
+### **Ejemplo con `HTTPException`:**
+```python
+from fastapi import FastAPI, HTTPException
+
+app = FastAPI()
+
+@app.get("/users/{user_id}")
+async def read_user(user_id: int):
+    if user_id < 0:
+        raise HTTPException(status_code=400, detail="Invalid user ID")
+    return {"user_id": user_id}
+```
+
+## **8. Documentación Automática**
+
+FastAPI genera automáticamente documentación interactiva basada en los modelos y validaciones.
+
+Accede a:
+- **Swagger UI**: `/docs`
+- **Redoc**: `/redoc`
+
+## **9. Ejemplo Completo**
+
+```python
+from fastapi import FastAPI, HTTPException
+from pydantic import BaseModel, validator
+from typing import List
+
+app = FastAPI()
+
+class Address(BaseModel):
+    city: str
+    country: str
+
+class User(BaseModel):
+    id: int
+    name: str
+    email: str
+    age: int
+    address: Address
+    hobbies: List[str] = []
+
+    @validator("age")
+    def validate_age(cls, value):
+        if value < 18:
+            raise ValueError("User must be at least 18 years old.")
+        return value
+
+@app.post("/users/", response_model=User)
+async def create_user(user: User):
+    return user
+```
+
+### **Prueba:**
+Entrada:
+```json
+{
+    "id": 1,
+    "name": "Mario",
+    "email": "mario@example.com",
+    "age": 20,
+    "address": {
+        "city": "Bogotá",
+        "country": "Colombia"
+    },
+    "hobbies": ["coding", "reading"]
+}
+```
+
+Salida:
+```json
+{
+    "id": 1,
+    "name": "Mario",
+    "email": "mario@example.com",
+    "age": 20,
+    "address": {
+        "city": "Bogotá",
+        "country": "Colombia"
+    },
+    "hobbies": ["coding", "reading"]
+}
+```
+
+### Recursos
+
+La validación de datos y la gestión de modelos en FastAPI permite crear endpoints seguros y eficientes. En este ejemplo, mostramos cómo manejar un modelo para recibir y devolver datos sin exponer identificadores innecesarios. Partimos del modelo `Customer` y desarrollamos un modelo específico para la creación, `CustomerCreate`, que omite el ID para que sea generado automáticamente en el backend.
+
+### ¿Cómo configuramos los modelos para crear un nuevo cliente sin ID?
+
+Para evitar enviar un ID manualmente, creamos `CustomerCreate`, que hereda de `Customer` pero excluye el ID, dejándolo en blanco hasta que se complete la validación. Esto es útil porque:
+
+- El ID se asigna automáticamente en la base de datos o mediante código en memoria.
+- Evitamos exposición de datos sensibles innecesarios en las solicitudes.
+
+### ¿Cómo gestionamos la validación y asignación de ID en el backend?
+
+FastAPI permite validar datos mediante modelos y gestionar IDs sin base de datos:
+
+- Se usa una variable `current_id` inicializada en 0 que se incrementa por cada nuevo registro.
+- Los datos recibidos son validados y convertidos a diccionario (`model.dict()`), creando una entrada limpia y sin errores.
+- En un entorno asincrónico, no se recomienda incrementar `current_id` de forma manual, por lo que una lista simula la base de datos en memoria, donde el ID es el índice del elemento.
+
+### ¿Cómo configuramos un endpoint para listar clientes?
+
+El endpoint `GET` permite visualizar todos los clientes registrados:
+
+- Definimos un modelo `List[Customer]` como response_model para mostrar un JSON con los clientes.
+- FastAPI convierte automáticamente la lista de `Customer` a un JSON, haciéndola accesible desde la documentación.
+
+### ¿Qué ocurre al crear un nuevo cliente en memoria?
+
+Dado que estamos trabajando en memoria:
+
+- Los datos se borran al reiniciar el servidor.
+- Para cada cliente creado, asignamos un ID basado en el índice de la lista, simulando el autoincremento de una base de datos real.
+
+### ¿Cómo crear un endpoint para obtener un cliente específico por ID?
+
+Finalmente, para acceder a un cliente específico, añadimos un nuevo endpoint que recibe el ID en la URL:
+
+- Este endpoint busca en la lista por ID y devuelve el cliente en formato JSON.
+- Si el cliente no existe, FastAPI devuelve un error, protegiendo la integridad de los datos.
+
+## ¿Cómo conectar FastAPI a una base de datos usando SQLModel?
+
+Para conectar **FastAPI** a una base de datos utilizando **SQLModel**, puedes seguir estos pasos. **SQLModel** combina lo mejor de **SQLAlchemy** y **Pydantic**, permitiendo trabajar con modelos como clases Pydantic mientras administra una base de datos relacional.
+
+### Pasos para conectar FastAPI a una base de datos con SQLModel:
+
+1. **Instalar las dependencias necesarias**:
+   ```bash
+   pip install fastapi sqlmodel uvicorn sqlite
+   ```
+
+2. **Configurar los modelos de datos con SQLModel**:
+   Define las tablas de la base de datos utilizando clases que heredan de `SQLModel`.
+
+3. **Configurar la conexión a la base de datos**:
+   Utiliza una base de datos como SQLite (ideal para desarrollo) o conecta a un motor como PostgreSQL o MySQL en producción.
+
+4. **Crear los endpoints necesarios**:
+   Utiliza las operaciones CRUD para interactuar con la base de datos a través de FastAPI.
+
+### Ejemplo práctico: Gestión de clientes
+
+#### 1. **Definir los modelos de datos**
+```python
+from sqlmodel import SQLModel, Field
+from typing import Optional
+
+class Customer(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    name: str
+    email: str
+    age: Optional[int]
+```
+
+En este modelo:
+- `table=True` indica que la clase corresponde a una tabla en la base de datos.
+- El campo `id` es una clave primaria.
+
+#### 2. **Configurar la conexión a la base de datos**
+```python
+from sqlmodel import SQLModel, create_engine, Session
+
+DATABASE_URL = "sqlite:///./test.db"  # Cambia la URL según el motor de tu base de datos
+engine = create_engine(DATABASE_URL, echo=True)
+
+# Crear todas las tablas definidas en los modelos
+def create_db_and_tables():
+    SQLModel.metadata.create_all(engine)
+```
+
+#### 3. **Crear los endpoints en FastAPI**
+```python
+from fastapi import FastAPI, HTTPException, Depends
+from sqlmodel import Session, select
+
+app = FastAPI()
+
+# Crear la base de datos al iniciar la aplicación
+@app.on_event("startup")
+def on_startup():
+    create_db_and_tables()
+
+# Dependency para manejar sesiones
+def get_session():
+    with Session(engine) as session:
+        yield session
+
+@app.post("/customers/", response_model=Customer)
+def create_customer(customer: Customer, session: Session = Depends(get_session)):
+    session.add(customer)
+    session.commit()
+    session.refresh(customer)
+    return customer
+
+@app.get("/customers/", response_model=list[Customer])
+def list_customers(session: Session = Depends(get_session)):
+    statement = select(Customer)
+    results = session.exec(statement).all()
+    return results
+
+@app.get("/customers/{customer_id}", response_model=Customer)
+def get_customer(customer_id: int, session: Session = Depends(get_session)):
+    customer = session.get(Customer, customer_id)
+    if not customer:
+        raise HTTPException(status_code=404, detail="Customer not found")
+    return customer
+
+@app.delete("/customers/{customer_id}")
+def delete_customer(customer_id: int, session: Session = Depends(get_session)):
+    customer = session.get(Customer, customer_id)
+    if not customer:
+        raise HTTPException(status_code=404, detail="Customer not found")
+    session.delete(customer)
+    session.commit()
+    return {"message": "Customer deleted"}
+```
+
+### 4. **Probar la aplicación**
+Inicia el servidor con:
+```bash
+uvicorn main:app --reload
+```
+
+#### Pruebas con rutas:
+1. **Crear un cliente**:
+   - `POST /customers/`
+   ```json
+   {
+       "name": "Luis",
+       "email": "luis@example.com",
+       "age": 30
+   }
+   ```
+
+2. **Listar todos los clientes**:
+   - `GET /customers/`
+
+3. **Obtener un cliente por ID**:
+   - `GET /customers/1`
+
+4. **Eliminar un cliente**:
+   - `DELETE /customers/1`
+
+### 5. **Cambiar a otro motor de base de datos**
+Para usar motores como PostgreSQL o MySQL, cambia `DATABASE_URL` a algo como:
+- PostgreSQL:
+  ```python
+  DATABASE_URL = "postgresql://user:password@localhost/dbname"
+  ```
+- MySQL:
+  ```python
+  DATABASE_URL = "mysql+pymysql://user:password@localhost/dbname"
+  ```
+
+Asegúrate de instalar el controlador correspondiente:
+```bash
+pip install psycopg2  # Para PostgreSQL
+pip install pymysql   # Para MySQL
+```
+
+### Beneficios de usar SQLModel con FastAPI:
+1. **Simplicidad**: Combina SQLAlchemy y Pydantic en un único modelo.
+2. **Flexibilidad**: Fácil de escalar a bases de datos complejas.
+3. **Integración nativa con FastAPI**: Usa modelos SQLModel directamente en los endpoints.
+
+### Resumen
+
+Para conectar FastAPI con una base de datos real, primero configuraremos una base de datos SQLite utilizando la librería SQLModel, que facilita la integración sin necesidad de escribir SQL. SQLModel combina Pydantic y SQLAlchemy, permitiendo que nuestros modelos se almacenen directamente en bases de datos con una sintaxis simplificada.
+
+### ¿Cómo instalar y configurar SQLModel?
+
+1. I**nstalación**: Abre la terminal y ejecuta:
+
+`pip install sqlmodel`
+
+También es recomendable registrar las dependencias en un archivo `requirements.txt`, como SQLModel y FastAPI con sus respectivas versiones. Esto ayuda a instalar todas las dependencias en otros entornos fácilmente.
+
+2. Creación del archivo de configuración:
+
+ - Crea un archivo `db.py`.
+ - Importa las clases `Session` y `create_engine` de SQLModel para gestionar la conexión.
+ - Define las variables para la conexión, como la URL de la base de datos, en este caso `sqlite:///database_name.db`.
+ 
+3. Creación del `engine`:
+
+ - Utiliza create_engine con la URL de la base de datos para crear el motor que gestionará las sesiones.
+
+### ¿Cómo definir la sesión para la base de datos?
+
+Para manejar las conexiones, define una función `get_session` en `db.py`, la cual:
+
+- Crea un contexto que inicia y cierra la sesión automáticamente.
+- Facilita el uso de la sesión en varios endpoints de FastAPI.
+
+### ¿Cómo registrar la sesión como dependencia en FastAPI?
+
+Para que FastAPI use la sesión en sus endpoints:
+
+- Importa `Depends` de FastAPI.
+- Define una dependencia que gestione la sesión mediante `get_session`, facilitando el acceso a la base de datos desde cualquier endpoint.
+
+### ¿Cómo adaptar los modelos para almacenar datos en la base de datos?
+
+1. Modificación del modelo: Si usas modelos de Pydantic, ajústalos para heredar de `SQLModel` en vez de `BaseModel`. Esto conecta los modelos con la base de datos.
+
+2. Creación de tablas:
+
+ - En el modelo que representa una tabla, añade `table=True` para que SQLModel cree automáticamente la tabla en la base de datos.
+ - Hereda los atributos comunes de un modelo base (sin` table=True`) para evitar duplicaciones y asegurar que se incluyan todos los campos necesarios.
+ 
+3. Ejemplo de implementación:
+
+ - Define un modelo CustomerBase para los datos comunes.
+ - Crea un modelo Customer, que herede de CustomerBase y de SQLModel, con table=True para almacenar los registros en la tabla correspondiente.
+ 
+Con esta configuración, los datos se insertarán en la base de datos sin necesidad de escribir SQL directamente. Al definir la dependencia de sesión en FastAPI, cada vez que un endpoint la requiera, FastAPI se conectará a la base de datos automáticamente.
+
+**Lecturas recomendadas**
+
+[SQLModel](https://sqlmodel.tiangolo.com/)v)
+
+[sqlite3 — DB-API 2.0 interface for SQLite databases — Python 3.13.0 documentation](https://docs.python.org/3/library/sqlite3.html)
+
+[FastAPI](https://fastapi.tiangolo.com/tutorial/sql-databases/)
