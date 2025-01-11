@@ -1228,3 +1228,1389 @@ Con esta configuración, los datos se insertarán en la base de datos sin necesi
 [sqlite3 — DB-API 2.0 interface for SQLite databases — Python 3.13.0 documentation](https://docs.python.org/3/library/sqlite3.html)
 
 [FastAPI](https://fastapi.tiangolo.com/tutorial/sql-databases/)
+
+## Creación y consulta de registros en SQLite con SQLModel y FastAPI
+
+Aquí tienes un ejemplo funcional de cómo crear y consultar registros en una base de datos SQLite utilizando **SQLModel** y **FastAPI**. Este ejemplo incluye la creación de una tabla, la inserción de registros y la consulta de datos.
+
+---
+
+### **Requisitos Previos**
+Asegúrate de instalar los paquetes necesarios:
+```bash
+pip install fastapi uvicorn sqlmodel
+```
+
+---
+
+### **Código Completo**
+```python
+from fastapi import FastAPI, HTTPException, Depends
+from sqlmodel import Field, Session, SQLModel, create_engine, select
+from typing import Optional, List
+
+# Configuración de la base de datos SQLite
+sqlite_file_name = "database.sqlite"
+sqlite_url = f"sqlite:///{sqlite_file_name}"
+engine = create_engine(sqlite_url, echo=True)
+
+# Crear instancia de la aplicación FastAPI
+app = FastAPI()
+
+# Modelo de la tabla
+class Customer(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    name: str
+    email: str
+
+# Crear las tablas en la base de datos
+@app.on_event("startup")
+def on_startup():
+    SQLModel.metadata.create_all(engine)
+
+# Dependencia para la sesión de base de datos
+def get_session():
+    with Session(engine) as session:
+        yield session
+
+# Crear un nuevo cliente
+@app.post("/customers/", response_model=Customer)
+async def create_customer(customer: Customer, session: Session = Depends(get_session)):
+    session.add(customer)
+    session.commit()
+    session.refresh(customer)  # Refrescar para obtener el ID generado
+    return customer
+
+# Listar todos los clientes
+@app.get("/customers/", response_model=List[Customer])
+async def list_customers(session: Session = Depends(get_session)):
+    statement = select(Customer)
+    results = session.exec(statement).all()
+    return results
+
+# Obtener un cliente por ID
+@app.get("/customers/{customer_id}", response_model=Customer)
+async def get_customer(customer_id: int, session: Session = Depends(get_session)):
+    customer = session.get(Customer, customer_id)
+    if not customer:
+        raise HTTPException(status_code=404, detail="Customer not found")
+    return customer
+```
+
+---
+
+### **Explicación del Código**
+1. **Modelo `Customer`:**
+   - Define la estructura de la tabla con SQLModel. 
+   - El campo `id` es la clave primaria, y es autoincremental.
+
+2. **Configuración de SQLite:**
+   - Usa `create_engine` para configurar la conexión a la base de datos SQLite.
+   - Se crean automáticamente las tablas al iniciar la aplicación con `SQLModel.metadata.create_all(engine)`.
+
+3. **Dependencia `get_session`:**
+   - Proporciona una sesión de base de datos en cada solicitud.
+
+4. **Endpoints:**
+   - **`POST /customers/`:** Inserta un nuevo registro en la tabla `Customer`.
+   - **`GET /customers/`:** Devuelve todos los registros de la tabla.
+   - **`GET /customers/{customer_id}`:** Devuelve un registro específico según su `id`.
+
+---
+
+### **Pruebas**
+1. **Ejecutar el Servidor**
+   Usa el siguiente comando para iniciar el servidor FastAPI:
+   ```bash
+   uvicorn main:app --reload
+   ```
+
+2. **Crear un Cliente**
+   Usa una herramienta como `curl`, `Postman` o `httpie`:
+   ```bash
+   curl -X POST "http://127.0.0.1:8000/customers/" \
+   -H "Content-Type: application/json" \
+   -d '{"name": "Luis", "email": "luis@example.com"}'
+   ```
+
+   Respuesta esperada:
+   ```json
+   {
+       "id": 1,
+       "name": "Luis",
+       "email": "luis@example.com"
+   }
+   ```
+
+3. **Listar Clientes**
+   ```bash
+   curl -X GET "http://127.0.0.1:8000/customers/"
+   ```
+   Respuesta esperada:
+   ```json
+   [
+       {
+           "id": 1,
+           "name": "Luis",
+           "email": "luis@example.com"
+       }
+   ]
+   ```
+
+4. **Consultar Cliente por ID**
+   ```bash
+   curl -X GET "http://127.0.0.1:8000/customers/1"
+   ```
+   Respuesta esperada:
+   ```json
+   {
+       "id": 1,
+       "name": "Luis",
+       "email": "luis@example.com"
+   }
+   ```
+
+5. **Errores:**
+   - Si intentas obtener un cliente que no existe:
+     ```bash
+     curl -X GET "http://127.0.0.1:8000/customers/999"
+     ```
+     Respuesta esperada:
+     ```json
+     {
+         "detail": "Customer not found"
+     }
+     ```
+
+### Resumen
+
+Implementar SQLModel en una aplicación requiere precisión, especialmente en la creación y manipulación de tablas y registros. Aquí te explicamos cómo gestionar correctamente las claves primarias y la creación de tablas, además de cómo integrar los endpoints de creación y consulta en FastAPI.
+
+### ¿Por qué ocurre el error de primary key?
+
+El error de “no se encuentra ninguna primary key” surge porque al implementar SQLModel, los campos como el ID aún no están configurados como clave primaria. Para resolver esto:
+
+- Define el campo ID como primary_key=True.
+- Configura un valor por defecto, por ejemplo `None`, para que SQLModel pueda gestionar el incremento automático de la clave primaria en la base de datos.
+
+### ¿Cómo configurar los campos sin primary key para almacenarlos en la base de datos?
+
+Para que cada campo sea almacenado en la base de datos, es necesario:
+
+- Agregar la clase `Field` en cada campo sin primary key.
+- Definir `default=None` en cada campo para que SQLModel los incluya en la estructura de la tabla.
+- Asegúrate de que cualquier campo sin `Field` o configuración adicional no se guardará en la base de datos.
+
+### ¿Cómo crear las tablas en SQLite?
+Si aún no ves el archivo `.sqlite3` en tu directorio, es porque las tablas no se han creado. Para resolverlo:
+
+- Crea una función `create_all_tables` que reciba la instancia de FastAPI como parámetro.
+- Utiliza `SQLModel.metadata.create_all` junto con el motor de base de datos configurado para generar las tablas.
+- Ejecuta esta función al iniciar la aplicación en el archivo `main.py`.
+
+Este proceso generará automáticamente el archivo de base de datos SQLite y las tablas definidas en el modelo.
+
+### ¿Cómo integrar el endpoint de creación de customers?
+
+Para gestionar el endpoint de creación de customers y almacenar registros en la base de datos:
+
+- Usa `session.add(customer)` para agregar el nuevo customer en la sesión de base de datos.
+- Ejecuta `session.commit()` para guardar los cambios de manera definitiva.
+- Llama a `session.refresh(customer)` para actualizar el objeto en memoria con el ID generado por la base de datos.
+
+Esto garantiza que cada registro creado tenga su ID único asignado directamente desde la base de datos.
+
+### ¿Cómo consultar los customers desde la base de datos?
+
+Para listar todos los customers desde la base de datos y retornar los resultados en JSON:
+
+- Importa `select` de SQLModel.
+- Usa `session.execute(select(Customer)).all()` para obtener todos los registros de tipo customer.
+- Devuelve esta lista de customers directamente en la respuesta del endpoint.
+
+### ¿Cómo crear un endpoint para obtener un customer por ID?
+
+Como reto, implementa un endpoint que permita obtener un customer específico según su ID. Recuerda:
+
+- Usa la sesión para ejecutar la consulta SQL.
+- Considera los casos donde el customer solicitado no exista, devolviendo un mensaje adecuado o un código de error si es necesario.
+
+## Crear un CRUD básico en FastAPI: Eliminar
+
+Aquí tienes un ejemplo de cómo agregar la funcionalidad para **eliminar registros** en un CRUD básico con **FastAPI** y **SQLModel**:
+
+---
+
+### **Código para CRUD Completo con Eliminar**
+
+```python
+from fastapi import FastAPI, HTTPException, Depends
+from sqlmodel import Field, Session, SQLModel, create_engine, select
+from typing import Optional, List
+
+# Configuración de la base de datos SQLite
+sqlite_file_name = "database.sqlite"
+sqlite_url = f"sqlite:///{sqlite_file_name}"
+engine = create_engine(sqlite_url, echo=True)
+
+# Crear instancia de la aplicación FastAPI
+app = FastAPI()
+
+# Modelo de la tabla
+class Customer(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    name: str
+    email: str
+
+# Crear las tablas en la base de datos
+@app.on_event("startup")
+def on_startup():
+    SQLModel.metadata.create_all(engine)
+
+# Dependencia para la sesión de base de datos
+def get_session():
+    with Session(engine) as session:
+        yield session
+
+# Crear un cliente
+@app.post("/customers/", response_model=Customer)
+async def create_customer(customer: Customer, session: Session = Depends(get_session)):
+    session.add(customer)
+    session.commit()
+    session.refresh(customer)
+    return customer
+
+# Listar todos los clientes
+@app.get("/customers/", response_model=List[Customer])
+async def list_customers(session: Session = Depends(get_session)):
+    statement = select(Customer)
+    results = session.exec(statement).all()
+    return results
+
+# Obtener un cliente por ID
+@app.get("/customers/{customer_id}", response_model=Customer)
+async def get_customer(customer_id: int, session: Session = Depends(get_session)):
+    customer = session.get(Customer, customer_id)
+    if not customer:
+        raise HTTPException(status_code=404, detail="Customer not found")
+    return customer
+
+# Eliminar un cliente por ID
+@app.delete("/customers/{customer_id}", response_model=dict)
+async def delete_customer(customer_id: int, session: Session = Depends(get_session)):
+    customer = session.get(Customer, customer_id)
+    if not customer:
+        raise HTTPException(status_code=404, detail="Customer not found")
+    
+    session.delete(customer)
+    session.commit()
+    return {"message": f"Customer with id {customer_id} deleted successfully"}
+```
+
+---
+
+### **Explicación del Endpoint para Eliminar**
+1. **`@app.delete("/customers/{customer_id}")`**:
+   - Este endpoint recibe el `customer_id` como parámetro de la ruta.
+   - Verifica si el cliente existe en la base de datos usando `session.get(Customer, customer_id)`.
+   - Si no existe, lanza un error `404` con el mensaje `Customer not found`.
+   - Si existe, lo elimina usando `session.delete(customer)` seguido de `session.commit()`.
+
+2. **Respuesta**:
+   - Devuelve un mensaje de confirmación indicando que el cliente fue eliminado correctamente.
+
+---
+
+### **Pruebas**
+
+1. **Crear un Cliente**:
+   ```bash
+   curl -X POST "http://127.0.0.1:8000/customers/" \
+   -H "Content-Type: application/json" \
+   -d '{"name": "Luis", "email": "luis@example.com"}'
+   ```
+
+2. **Eliminar un Cliente**:
+   ```bash
+   curl -X DELETE "http://127.0.0.1:8000/customers/1"
+   ```
+   Respuesta esperada:
+   ```json
+   {
+       "message": "Customer with id 1 deleted successfully"
+   }
+   ```
+
+3. **Intentar Eliminar un Cliente No Existente**:
+   ```bash
+   curl -X DELETE "http://127.0.0.1:8000/customers/999"
+   ```
+   Respuesta esperada:
+   ```json
+   {
+       "detail": "Customer not found"
+   }
+   ```
+
+---
+
+### **Conclusión**
+
+Este código demuestra cómo manejar la funcionalidad de eliminación en un CRUD básico con FastAPI y SQLModel. Puedes integrar esta funcionalidad con las operaciones de creación, lectura y actualización para construir una API completa y funcional. 🚀
+
+### Resumen
+
+Crear y gestionar endpoints es fundamental para un CRUD completo en FastAPI. Aquí se explora cómo implementar la funcionalidad de detalle, borrado y actualización de clientes en una API. A lo largo de este proceso, se observa cómo manejar la consulta, validación y actualización de datos en la base de datos de manera robusta.
+
+### ¿Cómo obtener el detalle de un cliente?
+
+Para obtener el detalle de un cliente, es esencial recibir el `customer_id` y utilizar la sesión de la base de datos. Aquí se plantea una estructura básica:
+
+- **Declaración de Ruta**: Usamos app.get("/customer/{customer_id}") para definir la URL, en la que {customer_id} permite identificar el cliente específico.
+- **Consulta en la Base de Datos**: La sesión de la base de datos ejecuta get con el modelo y el customer_id.
+- **Manejo de Errores**: Si el cliente no existe, se lanza una excepción HTTPException con un código 404 Not Found y un mensaje personalizado, como Customer does not exist, asegurando claridad en la respuesta JSON.
+
+Esta estructura asegura que el cliente pueda consultarse de manera efectiva y que, en caso de no hallarse, el usuario reciba un mensaje adecuado.
+
+### ¿Cómo borrar un cliente en FastAPI?
+
+Para implementar el endpoint de borrado, se reutiliza en gran medida el código de consulta:
+
+- **Ruta de Borrado**: Cambiamos el método a `delete` para el endpoint `"/customer/{customer_id}"`, respetando la estructura previa.
+- **Eliminación de Cliente**: Una vez localizado el cliente, se usa `session.delete()` con el objeto correspondiente.
+- **Confirmación de Eliminació**n: Finalizamos con `session.commit()` para confirmar el cambio en la base de datos. La respuesta JSON debe incluir un mensaje como `{"detail": "Customer deleted successfully"}` para asegurar al usuario que la eliminación se realizó con éxito.
+
+Este proceso garantiza que el cliente se elimine completamente de la base de datos solo si existe.
+
+### ¿Cómo actualizar un cliente en FastAPI?
+
+Para completar el CRUD, solo falta el endpoint de actualización. Este implica recibir un cuerpo (`body`) con los datos actualizados:
+
+- **Crear la Ruta y Función**: Define un nuevo endpoint put o patch para actualizar. Se recibe el customer_id y el objeto con los nuevos datos, excluyendo el ID.
+- **Validación y Actualización**: Como en los otros endpoints, verifica que el cliente exista. Luego, actualiza los campos necesarios en el objeto del cliente.
+- **Confirmación de Actualización**: Usa session.commit() para guardar los cambios.
+
+Este endpoint permite modificar los datos del cliente según lo necesite el usuario, proporcionando flexibilidad y manteniendo la integridad de los datos en la base de datos.
+
+## Crear un CRUD básico en FastAPI: Actualizar
+
+Aquí tienes un ejemplo de cómo agregar la funcionalidad para **actualizar registros** en un CRUD básico con **FastAPI** y **SQLModel**.
+
+### **Código para CRUD Completo con Actualizar**
+
+```python
+from fastapi import FastAPI, HTTPException, Depends
+from sqlmodel import Field, Session, SQLModel, create_engine, select
+from typing import Optional, List
+
+# Configuración de la base de datos SQLite
+sqlite_file_name = "database.sqlite"
+sqlite_url = f"sqlite:///{sqlite_file_name}"
+engine = create_engine(sqlite_url, echo=True)
+
+# Crear instancia de la aplicación FastAPI
+app = FastAPI()
+
+# Modelo de la tabla
+class Customer(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    name: str
+    email: str
+
+class CustomerUpdate(SQLModel):
+    name: Optional[str]
+    email: Optional[str]
+
+# Crear las tablas en la base de datos
+@app.on_event("startup")
+def on_startup():
+    SQLModel.metadata.create_all(engine)
+
+# Dependencia para la sesión de base de datos
+def get_session():
+    with Session(engine) as session:
+        yield session
+
+# Crear un cliente
+@app.post("/customers/", response_model=Customer)
+async def create_customer(customer: Customer, session: Session = Depends(get_session)):
+    session.add(customer)
+    session.commit()
+    session.refresh(customer)
+    return customer
+
+# Listar todos los clientes
+@app.get("/customers/", response_model=List[Customer])
+async def list_customers(session: Session = Depends(get_session)):
+    statement = select(Customer)
+    results = session.exec(statement).all()
+    return results
+
+# Obtener un cliente por ID
+@app.get("/customers/{customer_id}", response_model=Customer)
+async def get_customer(customer_id: int, session: Session = Depends(get_session)):
+    customer = session.get(Customer, customer_id)
+    if not customer:
+        raise HTTPException(status_code=404, detail="Customer not found")
+    return customer
+
+# Actualizar un cliente por ID
+@app.patch("/customers/{customer_id}", response_model=Customer)
+async def update_customer(
+    customer_id: int, 
+    customer_data: CustomerUpdate, 
+    session: Session = Depends(get_session)
+):
+    customer = session.get(Customer, customer_id)
+    if not customer:
+        raise HTTPException(status_code=404, detail="Customer not found")
+    
+    # Actualizar campos si se proporcionan
+    customer_data_dict = customer_data.dict(exclude_unset=True)
+    for key, value in customer_data_dict.items():
+        setattr(customer, key, value)
+    
+    session.add(customer)
+    session.commit()
+    session.refresh(customer)
+    return customer
+```
+
+### **Explicación del Endpoint para Actualizar**
+
+1. **`@app.patch("/customers/{customer_id}")`**:
+   - Este endpoint recibe el `customer_id` como parámetro de la ruta y un modelo `CustomerUpdate` con los datos a actualizar.
+   - Si el cliente no existe, se lanza un error `404` con el mensaje `Customer not found`.
+   - Los campos del modelo `CustomerUpdate` que no se envían se omiten con `exclude_unset=True`.
+   - Los valores existentes se actualizan utilizando `setattr`.
+
+2. **Modelo `CustomerUpdate`**:
+   - Define los campos que son opcionales para actualizar (`name` y `email`).
+   - Esto permite que solo los campos enviados sean modificados.
+
+3. **Actualización en la Base de Datos**:
+   - Se agrega el objeto actualizado de nuevo a la sesión (`session.add(customer)`).
+   - Se confirman los cambios con `session.commit()`.
+   - Se actualiza el objeto en la sesión con `session.refresh(customer)`.
+
+### **Pruebas**
+
+1. **Crear un Cliente**:
+   ```bash
+   curl -X POST "http://127.0.0.1:8000/customers/" \
+   -H "Content-Type: application/json" \
+   -d '{"name": "Luis", "email": "luis@example.com"}'
+   ```
+
+   Respuesta:
+   ```json
+   {
+       "id": 1,
+       "name": "Luis",
+       "email": "luis@example.com"
+   }
+   ```
+
+2. **Actualizar un Cliente**:
+   ```bash
+   curl -X PATCH "http://127.0.0.1:8000/customers/1" \
+   -H "Content-Type: application/json" \
+   -d '{"email": "luis_updated@example.com"}'
+   ```
+
+   Respuesta:
+   ```json
+   {
+       "id": 1,
+       "name": "Luis",
+       "email": "luis_updated@example.com"
+   }
+   ```
+
+3. **Intentar Actualizar un Cliente No Existente**:
+   ```bash
+   curl -X PATCH "http://127.0.0.1:8000/customers/999" \
+   -H "Content-Type: application/json" \
+   -d '{"name": "Carlos"}'
+   ```
+
+   Respuesta:
+   ```json
+   {
+       "detail": "Customer not found"
+   }
+   ```
+
+---
+
+### **Conclusión**
+
+Este ejemplo muestra cómo implementar la funcionalidad de actualización en un CRUD básico con **FastAPI** y **SQLModel**, manejando tanto actualizaciones parciales como completas. 🚀
+
+## Arquitectura de APIs escalables en FastAPI
+
+**Arquitectura de APIs escalables en FastAPI** implica diseñar y estructurar tu aplicación para manejar un crecimiento en la cantidad de usuarios, datos y peticiones. Aquí tienes una guía práctica para lograrlo:
+
+### **1. Organización del Proyecto**
+Organiza tu código en módulos o capas para que sea mantenible y escalable:
+- **Routers:** Divide tus rutas por funcionalidad en módulos separados (`users.py`, `products.py`, etc.) y agrégalas al proyecto principal.
+- **Models:** Define tus modelos (SQLModel o Pydantic) en archivos específicos.
+- **Services:** Implementa lógica de negocio en servicios separados.
+- **Dependencies:** Utiliza dependencias de FastAPI para manejar configuraciones reutilizables (como bases de datos o autenticación).
+
+Ejemplo de estructura:
+```
+app/
+├── main.py
+├── routers/
+│   ├── users.py
+│   ├── products.py
+├── models/
+│   ├── user.py
+│   ├── product.py
+├── services/
+│   ├── user_service.py
+│   ├── product_service.py
+├── db/
+│   ├── database.py
+│   ├── migrations/
+```
+
+### **2. Base de Datos**
+- **ORM Escalable:** Utiliza un ORM como SQLModel, SQLAlchemy o Tortoise ORM para manejar bases de datos relacionales.
+- **Migraciones:** Integra herramientas como `Alembic` para gestionar cambios en los esquemas de la base de datos.
+- **Conexión eficiente:** Configura un pool de conexiones usando `asyncpg` o conexiones síncronas bien gestionadas.
+
+### **3. Rutas y Dependencias**
+- **Modularización:** Usa routers con prefijos y dependencias específicas para cada módulo.
+- **Inyección de Dependencias:** Utiliza `Depends` para manejar configuraciones como bases de datos, autenticación o validación de roles.
+
+Ejemplo:
+```python
+from fastapi import APIRouter, Depends
+
+router = APIRouter(prefix="/users", tags=["users"])
+
+@router.get("/")
+async def list_users():
+    return {"message": "List of users"}
+```
+
+### **4. Escalabilidad Horizontal**
+Implementa mecanismos para soportar múltiples instancias de tu API:
+- **Uvicorn Workers:** Ejecuta varios trabajadores con `uvicorn` o `gunicorn`.
+  ```bash
+  uvicorn app.main:app --host 0.0.0.0 --port 8000 --workers 4
+  ```
+- **Balanceadores de carga:** Usa Nginx o servicios como AWS Elastic Load Balancer.
+
+### **5. Cache**
+Integra un sistema de cache como Redis para reducir la carga en la base de datos:
+- **Resultados de consultas:** Guarda respuestas frecuentes.
+- **Tokens de autenticación:** Usa Redis para almacenar tokens de sesión.
+  
+Ejemplo con `aioredis`:
+```python
+import aioredis
+
+redis = aioredis.from_url("redis://localhost")
+```
+
+### **6. Middleware**
+- **Logging:** Agrega un middleware para registrar peticiones y respuestas.
+- **Autenticación:** Implementa autenticación con OAuth2 o JWT.
+- **CORS:** Configura middleware para habilitar solicitudes desde otros dominios.
+
+Ejemplo:
+```python
+from fastapi.middleware.cors import CORSMiddleware
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+```
+
+### **7. Pruebas**
+Escribe pruebas unitarias y de integración para garantizar la calidad:
+- **Pytest:** Usa pytest para probar rutas y lógica de negocio.
+- **Test de carga:** Usa herramientas como Locust o Artillery para simular alto tráfico.
+
+---
+
+### **8. Monitoreo y Observabilidad**
+- **Logs:** Usa herramientas como `Loguru` o servicios como Datadog.
+- **Métricas:** Integra Prometheus y Grafana para monitorear el rendimiento.
+- **Traza de peticiones:** Implementa OpenTelemetry.
+
+### **9. Escalabilidad en Infraestructura**
+- **Contenedores:** Dockeriza tu aplicación para facilitar la implementación.
+- **Orquestación:** Usa Kubernetes para gestionar múltiples contenedores.
+- **Serverless:** Considera AWS Lambda o Google Cloud Functions para servicios específicos.
+
+---
+
+### **10. Seguridad**
+- Usa HTTPS en todas las solicitudes.
+- Valida y sanitiza datos de entrada.
+- Configura políticas de seguridad en CORS y cabeceras.
+
+### **Ejemplo Integrado**
+```python
+from fastapi import FastAPI
+from app.routers import users, products
+from app.db.database import create_db_and_tables
+
+app = FastAPI()
+
+@app.on_event("startup")
+def on_startup():
+    create_db_and_tables()
+
+app.include_router(users.router)
+app.include_router(products.router)
+```
+
+Con esta arquitectura, tu API en FastAPI estará lista para manejar tanto un desarrollo inicial como un crecimiento significativo.
+
+### Resumen
+
+La organización de endpoints en una aplicación es crucial para mantener el código limpio y fácil de escalar. Cuando todos los endpoints están en un solo archivo, se vuelve complicado de manejar y actualizar, especialmente en aplicaciones robustas. Para evitar esto, FastAPI permite estructurar la aplicación con un enfoque modular, utilizando routers y etiquetado, facilitando su mantenimiento.
+
+### ¿Por qué dividir los endpoints en múltiples archivos?
+
+Tener todos los endpoints en un solo archivo lleva a un código excesivamente largo y difícil de modificar. Dividir los endpoints en archivos separados permite:
+
+- Mantener una estructura limpia y organizada.
+- Facilitar la búsqueda y edición de endpoints específicos.
+- Aumentar la claridad y reducir los errores al trabajar en el código.
+
+### ¿Cómo configurar la estructura de archivos en FastAPI?
+
+FastAPI recomienda crear una carpeta principal para la aplicación. Dentro de esta carpeta, se agregan varios archivos y subcarpetas:
+
+- **__init__.py**: convierte la carpeta en un módulo, permitiendo importar archivos de forma más sencilla.
+- **main.py**: contiene la configuración principal de la aplicación, incluyendo las dependencias y la raíz de la aplicación.
+- **dependencies.py**: archivo para definir dependencias comunes a varios endpoints.
+- **routers/**: subcarpeta que agrupa endpoints específicos, como customer, transactions, e invoices.
+
+Otros archivos recomendados incluyen `db.py` para la configuración de la base de datos y `models.py` para los modelos de datos. En aplicaciones con muchos modelos, se recomienda dividir estos en múltiples archivos dentro de un módulo.
+
+### ¿Qué es el API router y cómo agrupa endpoints?
+
+El API router es como una mini aplicación dentro de FastAPI que permite agrupar y organizar endpoints relacionados. Este agrupamiento facilita el soporte y la implementación de cambios en los endpoints específicos sin afectar el resto. Cada router puede manejar un recurso en particular, como `customer`, `transactions` o `invoices`.
+
+### Ejemplo de configuración de router
+
+1. En la carpeta routers/, creamos un archivo como customer.py.
+2. Copiamos los endpoints de customer a este archivo y realizamos los imports necesarios, como:
+ - `models` para acceder a los modelos de datos.
+ - `DB` para la configuración de la base de datos.
+ - `APIRouter` de FastAPI para definir el router.
+ 
+3. Modificamos el código para usar `router` en lugar de `app`, y así consolidamos el router de `customer`.
+
+### ¿Cómo registrar routers y resolver errores comunes?
+
+Al mover los endpoints a un archivo específico, debemos registrarlos en `main.py` usando `include_router`. Si al ejecutar la aplicación se encuentran errores, pueden ser causados por imports incorrectos. Es común que:
+
+ - Los imports de `models` o `DB` requieran ajustes en las rutas de acceso.
+ - Los routers deben incluir el punto y la ruta correcta, como `routers.customer`.
+
+### ¿Cómo agrupar endpoints con tags en FastAPI?
+
+Agregar etiquetas (tags) permite que los endpoints aparezcan agrupados en la documentación. Esto se logra fácilmente con FastAPI, lo que ayuda a:
+
+ - Identificar rápidamente endpoints relacionados en la documentación.
+ - Facilitar la navegación para desarrolladores y usuarios de la API.
+
+### Ejemplo de etiquetado en un router
+
+Dentro del archivo del router (`customer.py`):
+
+- Agregamos `tags=["customer"]` en cada endpoint.
+- Así, en la documentación, todos los endpoints de `customer` aparecerán agrupados bajo esta etiqueta.
+
+**Lecturas recomendadas**
+
+[Bigger Applications - Multiple Files - FastAPI](https://fastapi.tiangolo.com/tutorial/bigger-applications/)
+
+## ¿Cómo gestionar datos relacionados en SQLModel con FastAPI?
+
+Gestionar datos relacionados en **SQLModel** con **FastAPI** implica definir relaciones entre tablas, realizar consultas eficientes y diseñar endpoints que respeten estas relaciones. Aquí te explico cómo hacerlo paso a paso:
+
+---
+
+### **1. Definir Relaciones en SQLModel**
+
+SQLModel permite definir relaciones entre tablas utilizando **claves foráneas** y la opción `relationship` de SQLAlchemy. 
+
+#### **Ejemplo: Usuarios y Órdenes**
+```python
+from sqlmodel import SQLModel, Field, Relationship
+from typing import List, Optional
+
+class User(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    name: str
+    email: str
+
+    orders: List["Order"] = Relationship(back_populates="user")
+
+class Order(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    description: str
+    user_id: int = Field(foreign_key="user.id")
+
+    user: User = Relationship(back_populates="orders")
+```
+
+- `foreign_key`: Define la clave foránea en el modelo.
+- `Relationship`: Establece una relación entre tablas.
+- `back_populates`: Conecta las relaciones en ambas direcciones.
+
+---
+
+### **2. Crear las Tablas**
+
+En el arranque de la aplicación, asegúrate de crear todas las tablas relacionadas:
+```python
+from sqlmodel import SQLModel, create_engine
+
+sqlite_url = "sqlite:///database.db"
+engine = create_engine(sqlite_url)
+
+def create_db_and_tables():
+    SQLModel.metadata.create_all(engine)
+```
+
+Llama a esta función durante el evento `startup` de FastAPI:
+```python
+@app.on_event("startup")
+def on_startup():
+    create_db_and_tables()
+```
+
+---
+
+### **3. Gestionar Sesiones de Base de Datos**
+
+Crea una dependencia para gestionar sesiones:
+```python
+from sqlmodel import Session
+from typing import Generator
+
+def get_session() -> Generator[Session, None, None]:
+    with Session(engine) as session:
+        yield session
+```
+
+Utilízala con `Depends` en tus rutas.
+
+---
+
+### **4. Crear Relaciones en la Base de Datos**
+
+Cuando crees registros relacionados, asegúrate de gestionar las claves foráneas correctamente.
+
+#### Crear un usuario con órdenes:
+```python
+from fastapi import FastAPI, Depends, HTTPException
+from sqlmodel import Session
+
+app = FastAPI()
+
+@app.post("/users/")
+def create_user(user: User, session: Session = Depends(get_session)):
+    session.add(user)
+    session.commit()
+    session.refresh(user)
+    return user
+
+@app.post("/orders/")
+def create_order(order: Order, session: Session = Depends(get_session)):
+    session.add(order)
+    session.commit()
+    session.refresh(order)
+    return order
+```
+
+---
+
+### **5. Consultar Datos Relacionados**
+
+Puedes usar SQLAlchemy para cargar relaciones automáticamente con la opción `selectinload`.
+
+#### Consultar un usuario con sus órdenes:
+```python
+from sqlmodel import select
+from sqlalchemy.orm import selectinload
+
+@app.get("/users/{user_id}")
+def get_user_with_orders(user_id: int, session: Session = Depends(get_session)):
+    statement = select(User).options(selectinload(User.orders)).where(User.id == user_id)
+    result = session.exec(statement).first()
+    if not result:
+        raise HTTPException(status_code=404, detail="User not found")
+    return result
+```
+
+---
+
+### **6. Actualizar Relaciones**
+
+Para actualizar datos relacionados, primero consulta el registro, realiza los cambios y luego guarda los datos.
+
+```python
+@app.put("/orders/{order_id}")
+def update_order(order_id: int, description: str, session: Session = Depends(get_session)):
+    order = session.get(Order, order_id)
+    if not order:
+        raise HTTPException(status_code=404, detail="Order not found")
+    order.description = description
+    session.add(order)
+    session.commit()
+    session.refresh(order)
+    return order
+```
+
+---
+
+### **7. Eliminar Relaciones**
+
+Para eliminar registros relacionados, asegúrate de manejar las restricciones de claves foráneas (ON DELETE CASCADE o eliminarlas manualmente).
+
+```python
+@app.delete("/users/{user_id}")
+def delete_user(user_id: int, session: Session = Depends(get_session)):
+    user = session.get(User, user_id)
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    session.delete(user)
+    session.commit()
+    return {"message": "User deleted successfully"}
+```
+
+---
+
+### **8. Respuesta con Pydantic y Relación Anidada**
+
+Usa modelos de Pydantic para controlar la respuesta de datos relacionados.
+
+```python
+from pydantic import BaseModel
+from typing import List
+
+class OrderResponse(BaseModel):
+    id: int
+    description: str
+
+class UserResponse(BaseModel):
+    id: int
+    name: str
+    email: str
+    orders: List[OrderResponse]
+```
+
+Define la respuesta en las rutas:
+```python
+@app.get("/users/{user_id}", response_model=UserResponse)
+def get_user_with_orders(user_id: int, session: Session = Depends(get_session)):
+    statement = select(User).options(selectinload(User.orders)).where(User.id == user_id)
+    user = session.exec(statement).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    return user
+```
+
+---
+
+### **Buenas Prácticas**
+1. **Validaciones:** Usa modelos de entrada separados para validaciones (`UserCreate`, `OrderCreate`).
+2. **Cargar relaciones solo cuando sea necesario:** Utiliza `selectinload` o `joinedload` para evitar sobrecargar las consultas.
+3. **Optimización:** Limita los datos que cargas desde la base de datos para mejorar el rendimiento.
+
+---
+
+Esta estructura te permitirá gestionar eficientemente datos relacionados en **SQLModel** y construir APIs robustas con **FastAPI**.
+
+### Resumen
+
+Los modelos de datos en bases de datos relacionales permiten organizar y relacionar información sin duplicarla en múltiples tablas, optimizando así la gestión de datos. Al usar FastAPI y SQLModel, es posible configurar estas relaciones en los modelos que luego reflejarán las tablas en la base de datos, permitiendo un acceso eficiente y estructurado a los datos.
+
+### ¿Cómo se crea una relación uno a muchos entre modelos?
+
+En SQLModel, para crear una relación uno a muchos, como entre un `Customer` y sus `Transactions`, se establecen claves foráneas (foreign keys) que vinculan los registros de una tabla con los de otra. En este caso, la tabla `Transaction` incluirá un campo `customer_id` que hace referencia al `id` en la tabla `Customer`, garantizando que cada transacción esté asociada con un cliente.
+
+### Pasos principales:
+
+- **Definir el modelo `Transaction` como tabla**: Cambiando el modelo `Transaction` para que herede de `SQLModel` y estableciendo `table=True`, lo cual genera la tabla en la base de datos.
+- **Configurar claves foráneas**: Agregar un campo `customer_id` en `Transaction`, que será una clave foránea vinculada al `id` de `Customer`.
+- **Relaciones bidireccionales**: Usar `relationship` y `back_populates` para conectar ambos modelos, de modo que al acceder a un `Custome`r, se puedan ver todas sus `Transactions` y viceversa.
+
+### ¿Cómo se manejan los endpoints de FastAPI para estos modelos relacionados?
+
+Con FastAPI, la creación de endpoints para modelos relacionados implica definir operaciones de creación y consulta que respeten las relaciones establecidas.
+
+- **Crear un endpoint para listar transacciones**: Con una query básica que retorna todas las transacciones de la base de datos.
+- **Crear un endpoint para crear transacciones**: Requiere validar que el `customer_id` exista antes de añadir la transacción. Si no existe, el sistema devuelve un error `404` Not Found con un mensaje claro.
+- **Ajuste de código de estado en respuestas**: En este caso, el endpoint de creación debe responder con un código `201 Created` cuando una transacción se guarda exitosamente.
+
+### ¿Cómo probar las relaciones y endpoints configurados?
+
+Para verificar que las configuraciones funcionan correctamente:
+
+1. **Verificar la existencia de tablas**: Tras ejecutar el proyecto, se pueden revisar las tablas con comandos SQL (ej., `.tables` y `.schema` en SQLite).
+2. **Pruebas de creación de registros**: Crear un cliente y luego una transacción asociada a este. Intentar crear una transacción para un `customer_id` inexistente debería retornar un error claro.
+3. **Consulta de transacciones**: Al listar transacciones, deben mostrarse solo las asociadas al cliente indicado en `customer_id`.
+
+### ¿Cómo optimizar la consulta de datos en FastAPI y SQLModel?
+
+SQLModel simplifica el acceso a los datos mediante relaciones, evitando la necesidad de múltiples queries. Al usar `relationship`, se puede acceder a los datos relacionados directamente, ahorrando tiempo y simplificando el código.
+
+**Lecturas recomendadas**
+
+[SQLModel](https://sqlmodel.tiangolo.com/)
+
+## ¿Cómo crear relaciones de muchos a muchos en SQLModel?
+
+En **SQLModel**, puedes crear relaciones de muchos a muchos utilizando una **tabla intermedia** (también conocida como tabla puente). Esta tabla intermedia conecta dos entidades con claves foráneas, permitiendo que ambas tengan una relación bidireccional.
+
+Aquí tienes una guía para crear relaciones de muchos a muchos en **SQLModel**:
+
+### **1. Crear Modelos Base y Tabla Intermedia**
+
+Define los modelos principales y la tabla intermedia para la relación.
+
+#### Ejemplo: **Estudiantes y Cursos**
+Un estudiante puede estar inscrito en varios cursos, y un curso puede tener varios estudiantes.
+
+```python
+from sqlmodel import SQLModel, Field, Relationship
+from typing import List, Optional
+
+class StudentCourseLink(SQLModel, table=True):
+    student_id: Optional[int] = Field(default=None, foreign_key="student.id", primary_key=True)
+    course_id: Optional[int] = Field(default=None, foreign_key="course.id", primary_key=True)
+
+class Student(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    name: str
+    courses: List["Course"] = Relationship(back_populates="students", link_model=StudentCourseLink)
+
+class Course(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    title: str
+    students: List[Student] = Relationship(back_populates="courses", link_model=StudentCourseLink)
+```
+
+- **`StudentCourseLink`**: Es la tabla intermedia que conecta `Student` y `Course` mediante claves foráneas.
+- **`Relationship`**:
+  - `back_populates`: Conecta las relaciones en ambos lados.
+  - `link_model`: Especifica la tabla intermedia que establece la relación.
+
+### **2. Crear la Base de Datos**
+
+Crea todas las tablas en la base de datos.
+
+```python
+from sqlmodel import create_engine
+
+sqlite_url = "sqlite:///database.db"
+engine = create_engine(sqlite_url)
+
+def create_db_and_tables():
+    SQLModel.metadata.create_all(engine)
+
+create_db_and_tables()
+```
+
+### **3. Insertar Datos en la Relación**
+
+Para insertar datos en una relación de muchos a muchos, añade registros tanto en las tablas principales como en la tabla intermedia.
+
+#### Ejemplo de Inserción:
+```python
+from sqlmodel import Session
+
+def create_sample_data():
+    with Session(engine) as session:
+        # Crear estudiantes
+        student1 = Student(name="Alice")
+        student2 = Student(name="Bob")
+
+        # Crear cursos
+        course1 = Course(title="Math")
+        course2 = Course(title="Science")
+
+        # Establecer relaciones
+        student1.courses.append(course1)
+        student1.courses.append(course2)
+        student2.courses.append(course1)
+
+        # Guardar en la base de datos
+        session.add(student1)
+        session.add(student2)
+        session.commit()
+
+create_sample_data()
+```
+
+- Las relaciones se gestionan automáticamente gracias a `Relationship`.
+
+### **4. Consultar Datos Relacionados**
+
+Puedes cargar datos relacionados usando la sesión de SQLModel y la relación configurada.
+
+#### Consultar Estudiantes con sus Cursos:
+```python
+from sqlmodel import select
+
+def get_students_with_courses():
+    with Session(engine) as session:
+        students = session.exec(select(Student)).all()
+        for student in students:
+            print(f"Student: {student.name}")
+            for course in student.courses:
+                print(f"  Enrolled in: {course.title}")
+
+get_students_with_courses()
+```
+
+#### Consultar Cursos con sus Estudiantes:
+```python
+def get_courses_with_students():
+    with Session(engine) as session:
+        courses = session.exec(select(Course)).all()
+        for course in courses:
+            print(f"Course: {course.title}")
+            for student in course.students:
+                print(f"  Student: {student.name}")
+
+get_courses_with_students()
+```
+
+### **5. Actualizar Relaciones**
+
+Puedes actualizar las relaciones agregando o eliminando elementos en las listas de relaciones.
+
+#### Agregar un Curso a un Estudiante:
+```python
+def add_course_to_student(student_id: int, course_id: int):
+    with Session(engine) as session:
+        student = session.get(Student, student_id)
+        course = session.get(Course, course_id)
+        if student and course:
+            student.courses.append(course)
+            session.commit()
+
+add_course_to_student(student_id=1, course_id=2)
+```
+
+#### Eliminar un Curso de un Estudiante:
+```python
+def remove_course_from_student(student_id: int, course_id: int):
+    with Session(engine) as session:
+        student = session.get(Student, student_id)
+        course = session.get(Course, course_id)
+        if student and course:
+            student.courses.remove(course)
+            session.commit()
+
+remove_course_from_student(student_id=1, course_id=2)
+```
+
+### **6. Buenas Prácticas**
+1. **Utiliza Transacciones:** Asegúrate de usar transacciones al realizar múltiples cambios.
+2. **Consultas Optimizadas:** Usa `joinedload` o `selectinload` para cargar relaciones en una sola consulta.
+3. **Validaciones:** Valida los datos antes de agregarlos o eliminarlos de las relaciones.
+
+Con este enfoque, puedes gestionar relaciones de muchos a muchos en **SQLModel** de manera eficiente en tu aplicación con **FastAPI**.
+
+### Resumen
+
+Las relaciones de muchos a muchos permiten conectar múltiples elementos entre sí en bases de datos, utilizando una tabla intermedia. A continuación, exploramos cómo implementar esta relación en SQLModel, especialmente para un sistema donde un cliente puede tener múltiples planes, como premium o basic, y cada plan puede asociarse con varios clientes.
+
+### ¿Cómo se crea la tabla intermedia para una relación de muchos a muchos?
+
+Para manejar la relación de muchos a muchos, se requiere una tabla intermedia que conecte los identificadores de ambas tablas principales:
+
+- Primero, se crea una nueva clase `Plan`, que hereda de `SQLModel`. Esta tabla tendrá atributos como:
+
+ - `id`: Identificador primario de tipo entero.
+ - `nombre`: Nombre del plan (string, obligatorio).
+ - `precio`: Precio del plan (entero).
+ - `descripcion`: Descripción breve (string).
+- Después, se define la tabla intermedia CustomerPlan:
+
+ - `plan_id`: Llave foránea que se refiere al ID de `Plan`.
+ - `customer_id`: Llave foránea que se refiere al ID de `Customer`.
+ - Es importante definir un campo `id` como clave primaria para evitar errores al trabajar con SQLModel y Pydantic.
+
+### ¿Cómo se establece la relación en el modelo de datos?
+
+Para que los modelos `Customer` y `Plan` reconozcan esta relación, se usa la clase `relationship` de SQLModel en cada uno:
+
+- En `Plan`, se define un campo llamado `customers`, que será una lista de instancias de `Customer`.
+
+ - La relación se establece mediante `relationship`, utilizando `back_populates="plans"` y especificando el modelo de enlace `link_model=CustomerPlan`.
+- En `Customer`, se configura un campo `plans`, que será una lista de instancias de `Plan`.
+
+ - Se usa también `relationship`, pero esta vez con `back_populates="customers"` y `link_model=CustomerPlan`.
+
+Esta configuración asegura que ambas tablas se conecten a través de la tabla intermedia `CustomerPlan`, facilitando la consulta de todos los planes asociados a un cliente y viceversa.
+
+### ¿Cómo verificar la relación en la base de datos?
+
+Para confirmar que las tablas y relaciones están correctamente creadas:
+
+- Inicie la base de datos y ejecute el comando `tables` para listar todas las tablas creadas. Debería aparecer `customer_plan`.
+- Al revisar el esquema, debe visualizarse `plan_id` y `customer_id` con las llaves foráneas que apuntan a `Plan` y `Customer`, respectivamente.
+Esta estructura permite manejar dinámicamente la relación de muchos a muchos en SQLModel y simplifica la administración de datos asociados, como en este caso los planes de suscripción de un cliente.
+
+**Nota**: para utilizar el sqlite3 se utiliza **wsl** ya que powershell no funciona, se instala con `sudo apt install sqlite3` luego para ingresar se utiliza `sqlite3 fastAPI/db.sqlite3` o el destino del archivo db.sqlite3 se debe colocar la ruta bien.
+para ver la tablas se utiliza `.tables` y ver el contenido se utiliza `.schema <Tabla>` y salir del sqlite3 se utiliza `.quit`
+
+## Relacionar Modelos de Datos en FastAPI: Implementación de Relaciones
+
+Para relacionar modelos de datos en **FastAPI** con **SQLModel**, puedes usar las características de **relaciones** proporcionadas por SQLModel para conectar diferentes tablas en una base de datos relacional. Esto es útil para manejar relaciones comunes como **uno a muchos** y **muchos a muchos**.
+
+## **1. Configurar Relación "Uno a Muchos"**
+
+### Ejemplo: **Usuarios y Publicaciones**
+- Un usuario puede tener muchas publicaciones.
+- Una publicación pertenece a un usuario.
+
+### Modelo de Datos
+
+```python
+from typing import List, Optional
+from sqlmodel import SQLModel, Field, Relationship
+
+class User(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    name: str
+    email: str
+    posts: List["Post"] = Relationship(back_populates="owner")
+
+class Post(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    title: str
+    content: str
+    user_id: int = Field(foreign_key="user.id")
+    owner: User = Relationship(back_populates="posts")
+```
+
+### Explicación:
+- **`User` tiene una lista de publicaciones (`posts`)**: Relación uno a muchos.
+- **`Post` tiene un único `owner`**: Relación inversa con una clave foránea (`user_id`).
+
+### **2. Crear la Base de Datos**
+
+```python
+from sqlmodel import create_engine
+
+sqlite_url = "sqlite:///database.db"
+engine = create_engine(sqlite_url)
+
+def create_db_and_tables():
+    SQLModel.metadata.create_all(engine)
+
+create_db_and_tables()
+```
+
+### **3. Operaciones CRUD**
+
+#### Crear un Usuario y Publicaciones
+
+```python
+from sqlmodel import Session
+
+def create_sample_data():
+    with Session(engine) as session:
+        user = User(name="Alice", email="alice@example.com")
+        post1 = Post(title="My first post", content="This is my first post!", owner=user)
+        post2 = Post(title="Another post", content="This is another post!", owner=user)
+
+        session.add(user)
+        session.commit()
+
+create_sample_data()
+```
+
+#### Consultar un Usuario con sus Publicaciones
+
+```python
+from sqlmodel import select
+
+def get_user_with_posts(user_id: int):
+    with Session(engine) as session:
+        user = session.get(User, user_id)
+        print(f"User: {user.name}, Email: {user.email}")
+        for post in user.posts:
+            print(f"  Post: {post.title} - {post.content}")
+
+get_user_with_posts(user_id=1)
+```
+
+## **4. Configurar Relación "Muchos a Muchos"**
+
+### Ejemplo: **Estudiantes y Cursos**
+Un estudiante puede inscribirse en muchos cursos, y un curso puede tener muchos estudiantes.
+
+### Modelo de Datos
+
+```python
+class StudentCourseLink(SQLModel, table=True):
+    student_id: Optional[int] = Field(default=None, foreign_key="student.id", primary_key=True)
+    course_id: Optional[int] = Field(default=None, foreign_key="course.id", primary_key=True)
+
+class Student(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    name: str
+    courses: List["Course"] = Relationship(back_populates="students", link_model=StudentCourseLink)
+
+class Course(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    title: str
+    students: List[Student] = Relationship(back_populates="courses", link_model=StudentCourseLink)
+```
+
+### **5. Insertar y Consultar Relaciones**
+
+#### Insertar un Estudiante y Cursos
+
+```python
+def create_students_and_courses():
+    with Session(engine) as session:
+        student1 = Student(name="John Doe")
+        course1 = Course(title="Math 101")
+        course2 = Course(title="Physics 101")
+
+        student1.courses.append(course1)
+        student1.courses.append(course2)
+
+        session.add(student1)
+        session.commit()
+
+create_students_and_courses()
+```
+
+#### Consultar Cursos de un Estudiante
+
+```python
+def get_student_courses(student_id: int):
+    with Session(engine) as session:
+        student = session.get(Student, student_id)
+        print(f"Student: {student.name}")
+        for course in student.courses:
+            print(f"  Enrolled in: {course.title}")
+
+get_student_courses(student_id=1)
+```
+
+### **6. Relacionar con Endpoints en FastAPI**
+
+#### Endpoints para Usuarios y Publicaciones
+
+```python
+from fastapi import FastAPI, Depends
+from sqlmodel import Session
+
+app = FastAPI()
+
+@app.get("/users/{user_id}")
+def get_user(user_id: int, session: Session = Depends(lambda: Session(engine))):
+    user = session.get(User, user_id)
+    if not user:
+        return {"error": "User not found"}
+    return {"name": user.name, "email": user.email, "posts": [{"title": p.title, "content": p.content} for p in user.posts]}
+
+@app.post("/users")
+def create_user(user: User, session: Session = Depends(lambda: Session(engine))):
+    session.add(user)
+    session.commit()
+    return user
+```
+
+### **Resumen**
+
+1. **Relaciones Uno a Muchos**:
+   - Define una clave foránea en el modelo hijo.
+   - Usa `Relationship` con `back_populates`.
+
+2. **Relaciones Muchos a Muchos**:
+   - Define una tabla intermedia con claves foráneas de ambos modelos.
+   - Usa `link_model` en `Relationship`.
+
+3. **Consultas y CRUD**:
+   - Gestiona relaciones directamente mediante las propiedades definidas.
+   - Usa sesiones para consultas y cambios en la base de datos.
+
+4. **Integración con FastAPI**:
+   - Utiliza dependencias para manejar la sesión de la base de datos.
+   - Expón endpoints para manejar los datos relacionados.
+
+Estas técnicas te permiten estructurar y gestionar relaciones complejas en tus APIs con **FastAPI** y **SQLModel**.
+
+### Resumen
+
+Para crear un sistema de suscripción de clientes a planes en FastAPI, necesitamos desarrollar endpoints que gestionen tanto la creación de planes como la suscripción de clientes a estos planes. Además, se establecerá una relación entre los datos para permitir la consulta y gestión de estas suscripciones. A continuación, se detalla cómo implementar esta funcionalidad paso a paso.
+
+### ¿Cómo crear el endpoint para generar planes?
+
+1. **Configuración del archivo de rutas**: Comienza creando un archivo en la carpeta `routers`, denominado `plans`. Importa `APIRouter` de FastAPI y configura un nuevo router para gestionar los planes.
+2. Definición del endpoint `create_plan`: Este será un endpoint de tipo `POST`, con la ruta `/plans`. Recibirá:
+ - `plan_data`: información del plan, validada mediante un modelo (`Plan`) que se importa desde `models`.
+ - `session`: la sesión de base de datos importada desde `DB`.
+ 
+3. **Validación y almacenamiento de datos**:
+ - Valida la información recibida con el modelo `Plan`, que convierte el diccionario de datos en un modelo válido.
+ - Guarda el nuevo plan en la base de datos usando `session.add()` y luego confirma la transacción con `session.commit()`.
+ - Para devolver el plan, refresca la sesión y retorna el objeto.
+
+Este proceso permite registrar los planes correctamente en la base de datos. En caso de que se presente un error (por ejemplo, debido a cambios en el esquema), es posible regenerar la base de datos eliminando las tablas antiguas y ejecutando nuevamente la aplicación.
+
+### ¿Cómo suscribir un cliente a un plan específico?
+
+1. **Creación del endpoint de suscripción**:
+
+ - Dirígete al archivo de rutas de `customers` y crea un nuevo método `subscribe_customer_to_plan`.
+ - Define el método como `POST` y configura la URL para que reciba tanto el `customer_i`d como el `plan_id`.
+ - El método recibe ambos IDs (cliente y plan) y la sesión de base de datos.
+ 
+2. **Validación de existencia**:
+
+ - Usa la sesión para obtener los objetos `customer` y `plan` por sus IDs.
+ - Si alguno de ellos no existe, arroja una excepción `HTTPException` con un código de estado 404.
+ 
+3. **Creación de la relación**:
+
+ - Utiliza la relación definida en `models` (`CustomerPlan`), la cual requiere plan_id y `customer_id` para establecer la suscripción.
+ - Guarda esta relación en la base de datos con `session.add()`, realiza el `commit`, y refresca la sesión antes de retornarla.
+ 
+Este endpoint asegura que solo los clientes y planes existentes puedan ser suscritos. En el navegador, al probar con IDs válidos, se muestra la suscripción creada con sus respectivos IDs.
+
+### ¿Cómo listar las suscripciones de un cliente?
+
+1. **Endpoint para consultar suscripciones**:
+
+ - Define un nuevo método de tipo `GET` en el router de `customers`.
+ - La ruta debe recibir únicamente el `customer_id` como parámetro y la sesión de base de datos.
+ 
+2. Consulta y retorno:
+
+ - Realiza una consulta con la sesión para obtener el customer por su ID.
+ - Si no existe, retorna un error. Si existe, devuelve la lista de planes suscritos.
+Al probar este endpoint, se visualizan todas las suscripciones activas del cliente, incluyendo los detalles del plan.
+
+### ¿Cómo extender la funcionalidad con un campo de estado?
+
+Se sugiere un reto adicional: agregar un campo estado en la relación CustomerPlan, permitiendo filtrar solo los planes activos en el endpoint de suscripción. Para ello:
+
+1. Agrega el campo estado en el modelo CustomerPlan.
+2. Modifica el endpoint de listado de suscripciones para que solo devuelva las activas.
+3. Realiza pruebas para confirmar que el filtro funciona correctamente.
