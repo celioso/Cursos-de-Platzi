@@ -1,13 +1,13 @@
-from fastapi import APIRouter,status, HTTPException
+from fastapi import APIRouter,status, HTTPException, Query
 from sqlmodel import select
 
-from models import Customer, CustomerCreate, CustomerPlan, CustomerUpdate, Plan
+from models import Customer, CustomerCreate, CustomerPlan, CustomerUpdate, Plan, StatusEnum
 from db import SessionDep
 
 router = APIRouter()
 
 
-@router.post("/customers", response_model=Customer, tags=['Customers'])
+@router.post("/customers", response_model=Customer, status_code=status.HTTP_201_CREATED,tags=['Customers'])
 async def create_customer(customer_data: CustomerCreate, session: SessionDep):
     customer = Customer.model_validate(customer_data.model_dump())
     session.add(customer)
@@ -57,7 +57,7 @@ async def read_customer(id: int):
             return i'''
 
 @router.post("/customers/{customer_id}/plans/{plan_id}", status_code=status.HTTP_201_CREATED, tags=['Customers'])
-async def subcribe_customer_to_plan(customer_id: int, plan_id: int, session:SessionDep):
+async def subcribe_customer_to_plan(customer_id: int, plan_id: int,  session:SessionDep, plan_status: StatusEnum = Query()):
     customer_db = session.get(Customer, customer_id)
     plan_db = session.get(Plan, plan_id)
 
@@ -65,7 +65,7 @@ async def subcribe_customer_to_plan(customer_id: int, plan_id: int, session:Sess
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, 
             detail="the Customer or plan doesn't exist")
-    customer_plan_db = CustomerPlan(plan_id=plan_db.id, customer_id=customer_db.id)
+    customer_plan_db = CustomerPlan(plan_id=plan_db.id, customer_id=customer_db.id, status=plan_status)
 
     session.add(customer_plan_db)
     session.commit()
@@ -73,9 +73,17 @@ async def subcribe_customer_to_plan(customer_id: int, plan_id: int, session:Sess
     return customer_plan_db
 
 @router.get("/customers/{customer_id}/plans", status_code=status.HTTP_201_CREATED, tags=['Customers'])
-async def subcribe_customer_to_plan(customer_id: int, session: SessionDep):
+async def subcribe_customer_to_plan(customer_id: int, session: SessionDep,  plan_status: StatusEnum = Query()):
     customer_db = session.get(Customer, customer_id)
     if not customer_db:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
-    return customer_db.plans
+    
+    query = (
+        select(CustomerPlan)
+        .Where(CustomerPlan.customer_id == customer_id)
+        .where(CustomerPlan.status == plan_status)
+        )
+    
+    plans = session.exec(query).all()
+    return plans
 

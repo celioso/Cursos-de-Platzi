@@ -2378,7 +2378,7 @@ para ver la tablas se utiliza `.tables` y ver el contenido se utiliza `.schema <
 
 Para relacionar modelos de datos en **FastAPI** con **SQLModel**, puedes usar las características de **relaciones** proporcionadas por SQLModel para conectar diferentes tablas en una base de datos relacional. Esto es útil para manejar relaciones comunes como **uno a muchos** y **muchos a muchos**.
 
-## **1. Configurar Relación "Uno a Muchos"**
+### **1. Configurar Relación "Uno a Muchos"**
 
 ### Ejemplo: **Usuarios y Publicaciones**
 - Un usuario puede tener muchas publicaciones.
@@ -2456,7 +2456,7 @@ def get_user_with_posts(user_id: int):
 get_user_with_posts(user_id=1)
 ```
 
-## **4. Configurar Relación "Muchos a Muchos"**
+### **4. Configurar Relación "Muchos a Muchos"**
 
 ### Ejemplo: **Estudiantes y Cursos**
 Un estudiante puede inscribirse en muchos cursos, y un curso puede tener muchos estudiantes.
@@ -2614,3 +2614,1353 @@ Se sugiere un reto adicional: agregar un campo estado en la relación CustomerPl
 1. Agrega el campo estado en el modelo CustomerPlan.
 2. Modifica el endpoint de listado de suscripciones para que solo devuelva las activas.
 3. Realiza pruebas para confirmar que el filtro funciona correctamente.
+
+## Consultas avanzadas con SQLModel en FastAPI
+
+SQLModel es una herramienta poderosa para trabajar con consultas más avanzadas en FastAPI, aprovechando la combinación de SQLAlchemy y Pydantic. A continuación, te muestro cómo realizar consultas avanzadas utilizando SQLModel en un proyecto de FastAPI.
+
+
+### **1. Consultas con Filtros Múltiples**
+Puedes usar múltiples condiciones en una consulta para obtener resultados específicos.
+
+```python
+from sqlmodel import select, Session
+from app.models import Customer
+
+def get_customers_by_filters(session: Session, name: str = None, is_active: bool = None):
+    query = select(Customer)
+    if name:
+        query = query.where(Customer.name.contains(name))
+    if is_active is not None:
+        query = query.where(Customer.is_active == is_active)
+    return session.exec(query).all()
+```
+
+**Ejemplo de Uso:**
+
+```python
+@router.get("/customers/search", tags=["Customers"])
+async def search_customers(name: str = None, is_active: bool = None, session: Session = Depends(get_session)):
+    customers = get_customers_by_filters(session, name, is_active)
+    return customers
+```
+
+### **2. Consultas Agregadas**
+Las consultas agregadas permiten realizar operaciones como contar registros o calcular valores.
+
+#### **Contar Clientes Activos**
+```python
+from sqlmodel import func
+
+@router.get("/customers/count", tags=["Customers"])
+async def count_active_customers(session: Session = Depends(get_session)):
+    query = select(func.count()).where(Customer.is_active == True)
+    result = session.exec(query).first()
+    return {"active_customers": result[0]}
+```
+
+#### **Sumar y Agrupar**
+Por ejemplo, sumar el total de ingresos por cliente:
+
+```python
+@router.get("/customers/revenue", tags=["Customers"])
+async def calculate_revenue(session: Session = Depends(get_session)):
+    query = select(Customer.name, func.sum(Order.amount)).join(Order).group_by(Customer.name)
+    result = session.exec(query).all()
+    return result
+```
+
+### **3. Relación entre Modelos (Join)**
+Si tienes modelos relacionados, como `Customer` y `Order`, puedes realizar consultas entre ellos.
+
+#### **Modelo de Ejemplo**
+```python
+class Order(SQLModel, table=True):
+    id: int = Field(default=None, primary_key=True)
+    amount: float
+    customer_id: int = Field(foreign_key="customer.id")
+    customer: Optional["Customer"] = Relationship(back_populates="orders")
+
+class Customer(SQLModel, table=True):
+    id: int = Field(default=None, primary_key=True)
+    name: str
+    is_active: bool
+    orders: List[Order] = Relationship(back_populates="customer")
+```
+
+#### **Consultar Pedidos por Cliente**
+```python
+@router.get("/customers/{customer_id}/orders", tags=["Orders"])
+async def get_customer_orders(customer_id: int, session: Session = Depends(get_session)):
+    query = select(Order).where(Order.customer_id == customer_id)
+    orders = session.exec(query).all()
+    return orders
+```
+
+### **4. Subconsultas**
+Puedes utilizar subconsultas para casos más complejos.
+
+#### **Cliente con Mayor Gasto**
+```python
+from sqlmodel import subquery
+
+@router.get("/customers/top-spender", tags=["Customers"])
+async def get_top_spender(session: Session = Depends(get_session)):
+    subquery_orders = select(Order.customer_id, func.sum(Order.amount).label("total_spent")).group_by(Order.customer_id).subquery()
+    query = select(Customer, subquery_orders.c.total_spent).join(subquery_orders, subquery_orders.c.customer_id == Customer.id).order_by(subquery_orders.c.total_spent.desc()).limit(1)
+    result = session.exec(query).first()
+    return result
+```
+
+### **5. Paginación**
+Para manejar grandes cantidades de datos, puedes implementar paginación.
+
+```python
+@router.get("/customers", tags=["Customers"])
+async def get_customers(page: int = 1, page_size: int = 10, session: Session = Depends(get_session)):
+    query = select(Customer).offset((page - 1) * page_size).limit(page_size)
+    customers = session.exec(query).all()
+    return customers
+```
+
+### **6. Filtrar Datos Relacionados**
+Filtrar pedidos que excedan un monto específico:
+
+```python
+@router.get("/orders/high-value", tags=["Orders"])
+async def get_high_value_orders(min_amount: float, session: Session = Depends(get_session)):
+    query = select(Order).where(Order.amount > min_amount)
+    orders = session.exec(query).all()
+    return orders
+```
+
+### **Conclusión**
+Estas consultas avanzadas te permiten realizar operaciones complejas y específicas con SQLModel en FastAPI.
+
+### Resumen
+
+Aprender a realizar consultas avanzadas en SQL Model te permite filtrar datos de manera más precisa y mejorar el control sobre la información almacenada en la base de datos. En este caso, veremos cómo agregar un campo `status` para identificar si un plan de un cliente está activo o inactivo, y cómo integrarlo en las consultas de FastAPI mediante parámetros de consulta (query params).
+
+### ¿Cómo agregar un campo de estatus al modelo?
+
+Para gestionar los planes de clientes con distintos estados, comenzamos agregando un nuevo campo status en el modelo customer plan. Los pasos son los siguientes:
+
+- **Crear un Enum**: definimos una clase `StatusEnum` heredada de `enum` de Python, permitiendo los valores `active` e `inactive`. Esto facilita el manejo de estatus con una lista de opciones controladas.
+- **Agregar el nuevo campo**: se incluye el campo status en el modelo `customer plan`, con `active` como valor predeterminado.
+- **Actualizar la base de datos**: tras modificar el modelo, es necesario regenerar la base de datos, para lo cual detenemos la aplicación y la reiniciamos.
+
+### ¿Cómo utilizar el estatus en las consultas?
+
+Una vez añadido el estatus, podemos integrarlo en las consultas para filtrar solo los planes activos o inactivos.
+
+1. **Parámetros de consulta**: añadimos `plan_status` como un parámetro opcional en el router de creación de planes, utilizando `Query` de FastAPI para recibir valores a través de la URL.
+
+2. **Filtrar por estatus**: configuramos el parámetro `plan_status` para que sea opcional, de modo que el valor predeterminado será `active` si no se especifica.
+
+### ¿Cómo aplicar filtros en las consultas?
+
+Para listar los planes según su estatus, configuramos la consulta de esta manera:
+
+**Seleccionar planes específicos**: en el endpoint que lista todos los planes de un cliente, usamos session.select() con dos condiciones where:
+
+ - **Customer ID**: la consulta verifica que el customer ID coincida con el ID del cliente recibido en la URL.
+ - **Estatus**: se filtran los planes que coinciden con el plan_status especificado en la URL.
+ 
+- **Ejecutar la consulta**: llamamos a .all() sobre la consulta para obtener todos los elementos filtrados.
+
+### ¿Cómo probar y ajustar los filtros?
+
+Para probar el filtro, ejecutamos la aplicación y verificamos en el endpoint de creación de suscripciones si se muestra el plan_status como parámetro de consulta. Esto permite crear planes con el estatus deseado, y probar distintos valores para asegurarse de que el filtro funcione correctamente.
+
+**Lecturas recomendadas**
+
+[enum — Support for enumerations](https://docs.python.org/3/library/enum.html)
+
+## Implementación de validación de datos en FastAPI con Pydantic
+
+La **validación de datos** en FastAPI se realiza utilizando **Pydantic**, lo que permite definir reglas de validación de manera declarativa y eficaz. A continuación, exploraremos cómo implementar esta funcionalidad en FastAPI.
+
+### **1. Definición de Modelos de Pydantic**
+En FastAPI, los modelos de Pydantic son usados para validar datos de entrada y salida. Puedes establecer tipos de datos, valores predeterminados, restricciones y más.
+
+```python
+from pydantic import BaseModel, Field, EmailStr
+
+class User(BaseModel):
+    username: str = Field(..., min_length=3, max_length=50, description="Nombre del usuario")
+    email: EmailStr
+    age: int = Field(..., gt=0, le=120, description="Edad del usuario, debe ser entre 1 y 120 años")
+```
+
+### **2. Validación Automática en Endpoints**
+Cuando defines un endpoint con un modelo de Pydantic como parámetro, FastAPI valida automáticamente los datos recibidos.
+
+```python
+from fastapi import FastAPI, HTTPException
+
+app = FastAPI()
+
+@app.post("/users/")
+async def create_user(user: User):
+    return {"message": "Usuario creado exitosamente", "user": user}
+```
+
+#### **Validación en Acción**
+Si envías datos que no cumplen con las reglas definidas (por ejemplo, un correo no válido o un nombre muy corto), FastAPI responderá con un error 422 y detalles sobre la validación.
+
+### **3. Uso de Validaciones Personalizadas**
+Puedes definir validaciones adicionales utilizando métodos en el modelo de Pydantic.
+
+#### **Ejemplo: Validar Nombre Único**
+```python
+from pydantic import BaseModel, validator
+
+class User(BaseModel):
+    username: str
+    email: EmailStr
+    age: int
+
+    @validator("username")
+    def validate_unique_username(cls, value):
+        if value.lower() in ["admin", "root"]:
+            raise ValueError("El nombre de usuario no puede ser 'admin' o 'root'")
+        return value
+```
+
+### **4. Validación Compleja con Dependencias**
+Además de usar Pydantic, puedes implementar dependencias para manejar validaciones más dinámicas.
+
+```python
+from fastapi import Depends
+
+def validate_age(age: int):
+    if age < 18:
+        raise HTTPException(status_code=400, detail="La edad debe ser mayor o igual a 18")
+    return age
+
+@app.get("/validate/")
+async def check_age(age: int = Depends(validate_age)):
+    return {"message": f"La edad {age} es válida"}
+```
+
+### **5. Validación en la Salida**
+Puedes usar modelos de Pydantic para controlar cómo se devuelven los datos al cliente.
+
+```python
+from fastapi.responses import JSONResponse
+
+class UserOut(BaseModel):
+    username: str
+    email: EmailStr
+
+@app.get("/users/{user_id}", response_model=UserOut)
+async def get_user(user_id: int):
+    user = {"username": "john_doe", "email": "john.doe@example.com", "age": 30}  # Simulación
+    return user
+```
+
+En este caso, solo se devuelven `username` y `email`, aunque el objeto `user` contiene más datos.
+
+### **6. Validación de Entradas y Salidas Juntas**
+Puedes usar modelos diferentes para entrada y salida si los datos requeridos son distintos.
+
+```python
+class UserIn(BaseModel):
+    username: str
+    password: str
+
+class UserOut(BaseModel):
+    username: str
+    email: EmailStr
+
+@app.post("/users/", response_model=UserOut)
+async def create_user(user: UserIn):
+    new_user = {"username": user.username, "email": "user@example.com"}  # Simulación
+    return new_user
+```
+
+### **7. Uso de Tipos Avanzados**
+Puedes usar tipos avanzados como listas, diccionarios o incluso modelos anidados.
+
+```python
+from typing import List
+
+class Item(BaseModel):
+    name: str
+    price: float
+
+class Order(BaseModel):
+    order_id: int
+    items: List[Item]
+    total_price: float
+
+@app.post("/orders/")
+async def create_order(order: Order):
+    return order
+```
+
+### **8. Manejo de Errores de Validación**
+Si necesitas personalizar el comportamiento cuando ocurre un error de validación, puedes usar los **event handlers**.
+
+```python
+from fastapi.exceptions import RequestValidationError
+from fastapi.responses import JSONResponse
+from fastapi import Request
+
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(request: Request, exc: RequestValidationError):
+    return JSONResponse(
+        status_code=422,
+        content={"detail": exc.errors(), "body": exc.body},
+    )
+```
+
+### **Conclusión**
+La validación en FastAPI con Pydantic es robusta y flexible. Permite manejar desde casos simples hasta validaciones complejas con facilidad.
+
+### Resumen
+
+La validación de datos es fundamental en el desarrollo de software para asegurar que los datos ingresados sean correctos y cumplan con los requisitos establecidos. Aquí exploraremos cómo implementar validaciones específicas de emails utilizando Pydantic y FastAPI, además de cómo verificar la unicidad de los datos en la base de datos.
+
+### ¿Cómo validar emails correctamente?
+
+Para validar un email básico, necesitamos asegurarnos de que contenga un símbolo de arroba (`@`) y termine en un dominio válido. Pydantic facilita esta validación con tipos de datos específicos, como `EmailStr`, que podemos importar directamente. Al cambiar el tipo del campo de str a `EmailStr` en el modelo, logramos:
+
+- Validar el formato del email automáticamente.
+- Recibir errores claros cuando se ingresa un email incorrecto.
+
+Ejecutar esta validación en un endpoint nos permite identificar errores en el formato del email en tiempo real, devolviendo mensajes como “no es un email válido” cuando el formato no cumple con los requisitos.
+
+### ¿Cómo asegurar la unicidad de un email en la base de datos?
+
+Validar el formato del email no es suficiente en muchos casos, ya que necesitamos verificar que el email sea único en la base de datos para evitar duplicados. Para ello:
+
+1. Definimos una nueva función `validate_email`.
+2. Utilizamos el decorador `FieldValidator`, disponible en Pydantic 2, para validar campos específicos.
+
+Con `FieldValidator`, podemos verificar la unicidad del email en la base de datos. Esto requiere acceso a una sesión de base de datos para ejecutar una consulta que busque coincidencias de emails.
+
+¿Cómo integrar la validación con la base de datos?
+
+Para validar contra la base de datos, necesitamos importar elementos de SQLAlchemy:
+
+- **Sesión**: Creamos una sesión usando `SessionEngine` para gestionar la conexión con la base de datos.
+- **Consulta `select`**: Realizamos una consulta a la tabla `customer` con una cláusula `where` que verifica si el email ya existe.
+
+Esta configuración asegura que solo se cree un registro si el email es único. De lo contrario, la aplicación devuelve un error indicando la duplicación, protegiendo así la integridad de los datos.
+
+### ¿Cómo manejar la versión de Pydantic en FastAPI? 
+
+La transición de Pydantic de la versión 1 a la 2 trae cambios importantes en los decoradores de validación. Mientras que `validator` funcionaba en la versión 1, en la versión 2 se utiliza `FieldValidator`, que ofrece una estructura más flexible para validar múltiples campos.
+
+- **Cambio de `self` a `cls`**: FieldValidator se aplica a métodos de clase, por lo que debemos definirlos con `cls` en lugar de `self`.
+
+Este ajuste es esencial para que FastAPI y Pydantic funcionen de manera óptima en las versiones más recientes.
+
+## ¿Cómo implementar paginación de datos en FastAPI?
+
+La paginación es esencial para manejar grandes cantidades de datos en las API, mejorando el rendimiento y la experiencia del usuario. FastAPI facilita la implementación de paginación combinando parámetros de consulta (`query parameters`) y modelos de datos.
+
+A continuación, te explico cómo implementarla paso a paso:
+
+---
+
+### **1. Definición del Modelo de Datos**
+Usaremos un modelo para representar los datos que queremos paginar. 
+
+```python
+from typing import List
+from pydantic import BaseModel
+
+class Item(BaseModel):
+    id: int
+    name: str
+    description: str
+```
+
+### **2. Creación de Datos Simulados**
+Generemos algunos datos simulados para demostrar la paginación.
+
+```python
+items = [
+    {"id": i, "name": f"Item {i}", "description": f"Description for item {i}"}
+    for i in range(1, 101)
+]
+```
+
+### **3. Configuración de Parámetros de Paginación**
+Definimos parámetros de consulta (`query parameters`) como `skip` (elementos a omitir) y `limit` (número de elementos a devolver).
+
+```python
+from fastapi import FastAPI, Query
+
+app = FastAPI()
+
+@app.get("/items/", response_model=List[Item])
+async def get_items(skip: int = Query(0, ge=0), limit: int = Query(10, ge=1)):
+    return items[skip : skip + limit]
+```
+
+### **4. Uso del Endpoint**
+- Solicitud: `GET /items/?skip=10&limit=5`
+- Respuesta: Los 5 elementos que comienzan desde el índice 10.
+
+```json
+[
+    {
+        "id": 11,
+        "name": "Item 11",
+        "description": "Description for item 11"
+    },
+    {
+        "id": 12,
+        "name": "Item 12",
+        "description": "Description for item 12"
+    },
+    ...
+]
+```
+
+### **5. Respuesta Extendida con Metadatos**
+Puedes incluir metadatos como el total de elementos o la página actual en la respuesta.
+
+#### **Modelo para la Respuesta**
+```python
+from pydantic import BaseModel
+from typing import List, Optional
+
+class PaginatedResponse(BaseModel):
+    total: int
+    items: List[Item]
+    skip: int
+    limit: int
+```
+
+#### **Actualización del Endpoint**
+```python
+@app.get("/items/", response_model=PaginatedResponse)
+async def get_items(skip: int = Query(0, ge=0), limit: int = Query(10, ge=1)):
+    total = len(items)
+    paginated_items = items[skip : skip + limit]
+    return {"total": total, "items": paginated_items, "skip": skip, "limit": limit}
+```
+
+#### **Respuesta del Endpoint**
+```json
+{
+    "total": 100,
+    "items": [
+        {
+            "id": 11,
+            "name": "Item 11",
+            "description": "Description for item 11"
+        },
+        {
+            "id": 12,
+            "name": "Item 12",
+            "description": "Description for item 12"
+        }
+    ],
+    "skip": 10,
+    "limit": 2
+}
+```
+
+### **6. Paginación con SQLModel o SQLAlchemy**
+Si trabajas con una base de datos, puedes implementar paginación usando consultas SQL.
+
+```python
+from sqlmodel import Session, select
+from fastapi import Depends
+from database import get_session  # Función que proporciona la sesión de base de datos
+
+@app.get("/items/", response_model=PaginatedResponse)
+async def get_items(skip: int = Query(0, ge=0), limit: int = Query(10, ge=1), session: Session = Depends(get_session)):
+    statement = select(Item).offset(skip).limit(limit)
+    results = session.exec(statement).all()
+    total = session.exec(select(Item).count()).scalar()
+    return {"total": total, "items": results, "skip": skip, "limit": limit}
+```
+
+### **7. Mejores Prácticas**
+- **Valores predeterminados razonables:** Define un `limit` por defecto para evitar sobrecargar el servidor.
+- **Máximo permitido:** Establece un valor máximo para `limit` si necesitas evitar cargas excesivas.
+  
+  ```python
+  limit: int = Query(10, ge=1, le=100)
+  ```
+  
+- **Filtros adicionales:** Agrega parámetros de consulta para buscar o filtrar los datos.
+
+### **Conclusión**
+La implementación de paginación en FastAPI es directa, ya sea con datos simulados o bases de datos. Aprovecha los modelos de Pydantic para estructurar las respuestas y las consultas SQL para optimizar el rendimiento en bases de datos.
+
+### Resumen
+
+Para manejar grandes volúmenes de datos de forma eficiente, la paginación es esencial. Esta técnica permite responder rápidamente al usuario mostrando solo una porción del conjunto total de datos y cargando más solo cuando se solicita.
+
+### ¿Por qué la paginación mejora el rendimiento?
+
+Cuando se trabaja con muchos datos, los endpoints pueden tardar en responder, ya que la query puede traer más información de la que el usuario necesita visualizar en ese momento. Con la paginación:
+
+- Se muestra solo una cantidad limitada de datos por página.
+- La URL incluye parámetros que permiten cambiar la cantidad y posición de datos mostrados.
+- Esto optimiza los tiempos de carga y la experiencia del usuario, quien verá únicamente la información solicitada sin sobrecargar el sistema.
+
+### ¿Cómo implementar paginación en FastAPI?
+
+FastAPI facilita la implementación de paginación mediante parámetros en la URL y el modelo SQL de CBT. Para probarlo, puedes usar el archivo `create_multiple_transactions` disponible en el repositorio, que permite generar datos de prueba.
+
+1. **Preparación de datos de prueba**:
+
+ - Crea un cliente y luego, en un bucle, genera transacciones asociadas a ese cliente.
+ - Aumenta el valor de cada transacción de manera secuencial para facilitar las pruebas.
+ - Realiza el commit de todos los registros creados.
+
+2. **Configuración del endpoint de transacciones**:
+
+ - Ve al endpoint de transactions y ajusta el código para listar las transacciones.
+ - Incluye los parámetros de `skip` y `limit` en la URL para definir el número de registros omitidos y el límite de registros mostrados.
+ 
+### ¿Qué son los parámetros `skip` y `limit`?
+
+ - **skip**: Define cuántos registros se omitirán desde el inicio. Para la primera página, este valor será cero, ya que no se omite ningún dato.
+- **limit**: Determina el máximo de registros devueltos en cada página. Puedes establecerlo a diez, veinte o cualquier número deseado.
+
+Ambos parámetros se configuran como queries en la URL y permiten ajustar la cantidad de datos mostrados y omitidos según la página solicitada.
+
+### ¿Cómo se aplican los parámetros en la consulta?
+
+Para que `skip` y `limit` funcionen:
+
+- Utiliza `offset` en el select de la query, pasando el valor de `skip`.
+- Configura `limit` con el valor máximo de registros a devolver.
+- Guarda los cambios y prueba el endpoint; en la documentación de FastAPI, verás los nuevos campos `skip` y `limit`.
+
+### ¿Cómo probar la paginación en FastAPI?
+
+1. Ejecuta la aplicación y abre el endpoint en la documentación de FastAPI.
+2. Prueba el parámetro limit para ver diferentes cantidades de resultados en cada ejecución.
+3. Modifica el valor de skip para saltar registros y obtener datos de páginas posteriores.
+
+La paginación permite consultar grandes volúmenes de datos de forma segmentada, optimizando el rendimiento y la experiencia del usuario al mostrar
+
+## Implementación y Uso de Middlewares en FastAPI
+
+### **Implementación y Uso de Middlewares en FastAPI**
+
+En **FastAPI**, los *middlewares* son componentes que se ejecutan antes y después de que cada solicitud sea manejada por un endpoint. Son útiles para tareas como autenticación, registro de solicitudes, manejo de errores, compresión y más.
+
+---
+
+### **1. ¿Qué es un Middleware?**
+
+Un middleware es una función o clase que intercepta las solicitudes HTTP entrantes y las respuestas salientes. Esto permite realizar operaciones personalizadas, como:
+
+- Registrar logs de las solicitudes.
+- Verificar tokens de autenticación.
+- Modificar solicitudes o respuestas.
+
+---
+
+### **2. Crear un Middleware Básico**
+
+En FastAPI, los middlewares se implementan como clases que heredan de `BaseHTTPMiddleware` o se definen como funciones personalizadas.
+
+#### **Ejemplo básico: Registrar Logs**
+
+```python
+from fastapi import FastAPI, Request
+from starlette.middleware.base import BaseHTTPMiddleware
+
+app = FastAPI()
+
+class LogMiddleware(BaseHTTPMiddleware):
+    async def dispatch(self, request: Request, call_next):
+        # Antes de procesar la solicitud
+        print(f"Request: {request.method} {request.url}")
+        
+        # Procesar la solicitud
+        response = await call_next(request)
+        
+        # Después de procesar la solicitud
+        print(f"Response status: {response.status_code}")
+        return response
+
+# Agregar el middleware a la aplicación
+app.add_middleware(LogMiddleware)
+
+@app.get("/")
+async def read_root():
+    return {"message": "Hello, World!"}
+```
+
+---
+
+### **3. Uso de Middlewares Incorporados**
+
+FastAPI permite integrar middlewares ya existentes de **Starlette** o externos, como:
+
+- **CORS (Cross-Origin Resource Sharing):** Para permitir que dominios externos accedan a la API.
+- **GZipMiddleware:** Para comprimir respuestas grandes.
+
+#### **CORS Middleware**
+Permite configurar qué dominios pueden hacer solicitudes a tu API.
+
+```python
+from fastapi.middleware.cors import CORSMiddleware
+
+app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["https://example.com"],  # Dominios permitidos
+    allow_credentials=True,
+    allow_methods=["*"],  # Métodos permitidos (GET, POST, etc.)
+    allow_headers=["*"],  # Encabezados permitidos
+)
+
+@app.get("/")
+async def read_root():
+    return {"message": "Hello, CORS!"}
+```
+
+#### **GZip Middleware**
+Comprime las respuestas para mejorar el rendimiento.
+
+```python
+from starlette.middleware.gzip import GZipMiddleware
+
+app = FastAPI()
+
+app.add_middleware(GZipMiddleware)
+
+@app.get("/")
+async def read_root():
+    return {"message": "This response is compressed!"}
+```
+
+---
+
+### **4. Middleware Personalizado con Validaciones**
+
+Supongamos que deseas validar un encabezado personalizado en cada solicitud.
+
+```python
+from fastapi import Request, HTTPException
+from starlette.middleware.base import BaseHTTPMiddleware
+
+class HeaderValidationMiddleware(BaseHTTPMiddleware):
+    async def dispatch(self, request: Request, call_next):
+        if "x-custom-header" not in request.headers:
+            raise HTTPException(status_code=400, detail="Missing x-custom-header")
+        
+        # Pasar al siguiente middleware o endpoint
+        response = await call_next(request)
+        return response
+
+app = FastAPI()
+
+app.add_middleware(HeaderValidationMiddleware)
+
+@app.get("/")
+async def read_root():
+    return {"message": "Header is valid!"}
+```
+
+---
+
+### **5. Orden de los Middlewares**
+
+El orden en el que los middlewares son añadidos es importante, ya que se ejecutan en secuencia. Por ejemplo:
+
+```python
+app.add_middleware(MiddlewareA)
+app.add_middleware(MiddlewareB)
+```
+
+En este caso:
+
+1. `MiddlewareA` se ejecuta primero al procesar la solicitud.
+2. `MiddlewareB` se ejecuta después al procesar la solicitud.
+3. Durante la respuesta, el orden es inverso: `MiddlewareB` → `MiddlewareA`.
+
+---
+
+### **6. Middleware vs. Dependencias**
+
+Aunque los middlewares son globales y afectan todas las solicitudes, las dependencias en FastAPI ofrecen una forma más granular de validar o modificar solicitudes por endpoint.
+
+Usa middlewares para tareas generales y dependencias para validaciones específicas.
+
+---
+
+### **7. Ejemplo Completo: Middleware de Tiempo de Ejecución**
+
+Calcula cuánto tiempo tarda cada solicitud en ser procesada.
+
+```python
+import time
+from fastapi import Request
+from starlette.middleware.base import BaseHTTPMiddleware
+
+class TimerMiddleware(BaseHTTPMiddleware):
+    async def dispatch(self, request: Request, call_next):
+        start_time = time.time()
+        response = await call_next(request)
+        process_time = time.time() - start_time
+        response.headers["X-Process-Time"] = str(process_time)
+        return response
+
+app = FastAPI()
+
+app.add_middleware(TimerMiddleware)
+
+@app.get("/")
+async def read_root():
+    return {"message": "Check the X-Process-Time header for timing info."}
+```
+
+---
+
+### **Conclusión**
+
+Los middlewares en FastAPI son una herramienta poderosa para gestionar solicitudes y respuestas a nivel global. Puedes usarlos para optimizar tu API con tareas como autenticación, registro, compresión y validaciones. Asegúrate de combinarlos sabiamente con dependencias para una arquitectura eficiente.
+
+### Resumen
+
+Los middlewares en FastAPI son herramientas fundamentales para modificar el comportamiento de las requests de forma centralizada y eficiente. Un middleware, en términos sencillos, es una función que se ejecuta antes y después de cada request, permitiendo interceptar y extender la funcionalidad base de una API sin modificar cada endpoint individualmente.
+
+### ¿Cómo funcionan los middlewares en FastAPI?
+
+Un middleware captura cada request entrante, procesa alguna funcionalidad, y luego permite que el flujo continúe hacia el endpoint correspondiente. FastAPI ofrece varios middlewares predefinidos para casos comunes, pero también permite crear middlewares personalizados para necesidades específicas.
+
+### ¿Cómo implementar un middleware personalizado en FastAPI?
+
+Para crear un middleware personalizado, podemos definir una función asíncrona que registre el tiempo de procesamiento de cada request. Los pasos son:
+
+- En el archivo `main.py`, donde se define la aplicación, agregar una nueva función `log_request_time`.
+- Esta función recibe dos parámetros:
+ - `request`: El objeto que contiene la información del request.
+ - `call_next`: Una función que llama a la siguiente operación en la cadena de requests.
+ 
+El objetivo es registrar el tiempo antes y después de ejecutar el request, y luego calcular cuánto tiempo tomó el proceso completo.
+
+**Código de ejemplo**
+
+```python
+import time
+from fastapi import FastAPI, Request
+
+app = FastAPI()
+
+@app.middleware("http")
+async def log_request_time(request: Request, call_next):
+    start_time = time.time()  # Tiempo inicial del request
+    response = await call_next(request)  # Llama a la funcionalidad del request
+    process_time = time.time() - start_time  # Calcula el tiempo total de procesamiento
+    
+    # Imprime la URL y el tiempo de procesamiento en segundos
+    print(f"Request {request.url} completed in {process_time:.2f} seconds")
+    
+    return response
+```
+
+### ¿Cómo registrar el middleware en la aplicación?
+
+Para registrar el middleware, es necesario utilizar `app.middleware` y especificar el tipo. En este caso, usaremos el tipo `http` para que se ejecute con todos los requests HTTP.
+
+- Registrar `log_request_time` en la aplicación con `@app.middleware("http")`.
+- Importar `time` al inicio del archivo para calcular los tiempos de inicio y procesamiento.
+
+### ¿Cómo interpretar los resultados del middleware?
+
+Al ejecutar la aplicación y realizar un request, el middleware imprime en la consola la URL del endpoint y el tiempo de procesamiento en segundos. Este log ayuda a entender el rendimiento de los endpoints y a identificar posibles cuellos de botella.
+
+### ¿Cuál es el reto de implementación?
+
+Como reto, se sugiere crear un middleware adicional que imprima en la consola todos los headers enviados en cada request. Este ejercicio permite visualizar la información de los headers y comprender mejor la estructura de las requests.
+
+## Pruebas Unitarias en FastAPI: Configuración con Pytest y SQLAlchemy
+
+Realizar pruebas unitarias en FastAPI utilizando **Pytest** y **SQLAlchemy** permite validar el correcto funcionamiento de tus endpoints y la lógica de negocio, garantizando que tu aplicación se comporte como se espera. A continuación, te muestro cómo configurar un entorno de pruebas con estas herramientas:
+
+---
+
+## **Pasos para Configurar Pruebas Unitarias en FastAPI**
+
+### **1. Instalación de Dependencias**
+Asegúrate de instalar las librerías necesarias:
+
+```bash
+pip install pytest pytest-asyncio sqlalchemy
+```
+
+---
+
+### **2. Configurar la Base de Datos para Pruebas**
+Crea una base de datos en memoria para que tus pruebas no afecten los datos reales de producción.
+
+```python
+from sqlalchemy import create_engine
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
+
+Base = declarative_base()
+
+# Base de datos en memoria para pruebas
+TEST_DATABASE_URL = "sqlite:///:memory:"
+
+engine = create_engine(TEST_DATABASE_URL, connect_args={"check_same_thread": False})
+TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
+# Inicialización de la base de datos
+def init_test_db():
+    Base.metadata.create_all(bind=engine)
+
+def drop_test_db():
+    Base.metadata.drop_all(bind=engine)
+```
+
+---
+
+### **3. Crear un Cliente de Pruebas para FastAPI**
+FastAPI incluye un cliente de pruebas basado en **Starlette** para interactuar con la aplicación.
+
+```python
+from fastapi.testclient import TestClient
+from myapp.main import app  # Importa tu aplicación FastAPI
+
+# Crea un cliente de pruebas
+client = TestClient(app)
+```
+
+---
+
+### **4. Configuración de Sesiones de Base de Datos para Pruebas**
+Sobrescribe la dependencia de base de datos para que utilice la base de datos en memoria.
+
+```python
+from fastapi import Depends
+from sqlalchemy.orm import Session
+from myapp.database import get_db  # Tu dependencia real de la base de datos
+from myapp.models import Base
+
+# Crea una sesión de prueba
+def override_get_db():
+    db = TestingSessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
+# Sobrescribe la dependencia en tu aplicación
+app.dependency_overrides[get_db] = override_get_db
+
+# Inicializa la base de datos de pruebas
+init_test_db()
+```
+
+---
+
+### **5. Escribir Pruebas Unitarias**
+Crea un archivo de pruebas (por ejemplo, `test_app.py`) y escribe tus pruebas.
+
+#### **Ejemplo: Prueba de Creación de un Registro**
+```python
+from myapp.schemas import CustomerCreate
+
+def test_create_customer():
+    # Datos de prueba
+    data = {"name": "John Doe", "email": "johndoe@example.com"}
+
+    # Llama al endpoint para crear un cliente
+    response = client.post("/customers/", json=data)
+
+    # Verifica el código de respuesta y los datos retornados
+    assert response.status_code == 201
+    assert response.json()["name"] == data["name"]
+    assert response.json()["email"] == data["email"]
+```
+
+#### **Ejemplo: Prueba de Consulta de un Registro**
+```python
+def test_get_customer():
+    # Crea un cliente
+    data = {"name": "Jane Doe", "email": "janedoe@example.com"}
+    client.post("/customers/", json=data)
+
+    # Consulta el cliente creado
+    response = client.get("/customers/1")
+
+    # Verifica que los datos sean correctos
+    assert response.status_code == 200
+    assert response.json()["name"] == "Jane Doe"
+    assert response.json()["email"] == "janedoe@example.com"
+```
+
+---
+
+### **6. Ejecutar las Pruebas**
+Ejecuta las pruebas con Pytest desde la línea de comandos:
+
+```bash
+pytest -v
+```
+
+---
+
+## **Prácticas Recomendadas**
+1. **Usa Fixtures de Pytest**: Define datos o configuraciones comunes que puedan reutilizarse entre múltiples pruebas.
+   ```python
+   import pytest
+
+   @pytest.fixture
+   def test_client():
+       init_test_db()
+       yield client
+       drop_test_db()
+   ```
+
+2. **Aislar Pruebas**: Asegúrate de que cada prueba se ejecute de manera independiente, sin depender del estado de otras pruebas.
+
+3. **Validar Errores**: Además de probar casos exitosos, incluye pruebas para errores esperados (por ejemplo, registro no encontrado).
+
+4. **Limpiar la Base de Datos**: Si no usas una base en memoria, asegúrate de limpiar los datos después de cada prueba.
+
+---
+
+### **Conclusión**
+Este enfoque asegura que tus endpoints en FastAPI sean robustos y se comporten correctamente. Puedes extender este modelo para probar funcionalidades más avanzadas, como autenticación, relaciones de modelos, y manejo de excepciones.
+
+### Resumen
+
+Configurar pruebas unitarias en FastAPI permite evaluar endpoints y lógica de negocio de manera eficiente sin comprometer el entorno de producción. A continuación, se describe cómo iniciar un entorno de pruebas en FastAPI usando Pytest y configurando una base de datos temporal en memoria, ideal para entornos de testing.
+
+### ¿Cómo configurar el archivo de pruebas inicial en FastAPI?
+
+Para empezar, crea un archivo conftest.py, que contendrá las configuraciones principales de prueba. En este archivo:
+
+- **Importa Pytest** como framework base para gestionar y ejecutar las pruebas.
+- `Desde FastAPI`, importa `TestClient`, que simula las acciones de un navegador para realizar peticiones `POST`, `GET` y otros métodos HTTP.
+
+Este archivo servirá para centralizar las configuraciones de prueba, separadas del código de producción.
+
+### ¿Por qué es importante usar una base de datos específica para pruebas?
+
+Utilizar la base de datos de producción en pruebas puede provocar conflictos y pérdida de datos. Por eso:
+
+- **Configura una base de datos en memoria** mediante `SQLAlchemy`, usando `create_engine` y estableciendo `check_same_thread=False` para evitar errores en entornos multihilo.
+- Utiliza `StaticPool` para evitar la creación de múltiples instancias de bases de datos, asegurando un entorno limpio para cada prueba.
+
+### ¿Cómo definir sesiones de base de datos de prueba?
+
+Al configurar pruebas, es esencial crear sesiones de base de datos específicas:
+
+- Crea una **fixture** llamada `session_fixture` usando `metadata.create_all(engine)`. Esto genera las tablas necesarias en la base de datos de prueba.
+- Usa `yield` para devolver la sesión a las pruebas que lo requieran y ejecutar `drop_all` al finalizar, lo cual elimina las tablas y optimiza la memoria.
+
+### ¿Cómo sobreescribir dependencias en FastAPI?
+
+Para que las pruebas no utilicen la base de datos de producción:
+
+1. Importa la aplicación (app) desde el archivo principal.
+2. Define un método para sobrescribir la dependencia get_session. Esto permite que las pruebas utilicen la sesión de la base de datos de testing.
+3. Usa dependency_overrides de FastAPI para redirigir las dependencias de la app a las que corresponden al entorno de pruebas.
+
+### ¿Cómo se implementa el `TestClient` en una fixture?
+
+Crear una fixture de `TestClient` permite simular peticiones HTTP:
+
+- Declara una fixture llamada `client` que retorna un `TestClient` configurado con la app y las dependencias sobrescritas.
+- Con `yield client`, puedes usar el cliente de prueba en cualquier test. Una vez finalizado, limpia las dependencias con `dependency_overrides.clear()`.
+
+### ¿Cómo ejecutar una prueba simple con Pytest?
+
+Para verificar la configuración de tu cliente de prueba:
+
+1. Crea un archivo `test.py`.
+2. Define una prueba que reciba el `client` como parámetro. Pytest lo inyectará automáticamente gracias a las fixtures.
+3. Usa `assert` para validar el comportamiento, como el tipo de cliente.
+
+Ejecuta las pruebas con `pytest` desde la terminal. Si la configuración es correcta, verás un indicador de éxito en verde.
+
+### ¿Cuál es el reto adicional para mejorar las pruebas?
+Como desafío, intenta crear una nueva **fixture** que genere un `customer`. Esto permitirá que futuros tests puedan reutilizar este customer como dato inicial.
+
+## ¿Cómo implementar pruebas automáticas en endpoints de FastAPI?
+
+Implementar pruebas automáticas para los endpoints de **FastAPI** implica automatizar la validación de los resultados esperados cuando se interactúa con la API. Esto se logra utilizando herramientas como **Pytest** y el cliente de pruebas integrado de FastAPI basado en Starlette.
+
+### **Pasos para Implementar Pruebas Automáticas**
+
+### **1. Instalación de Dependencias**
+
+Primero, instala las herramientas necesarias para realizar pruebas:
+
+```bash
+pip install pytest pytest-asyncio httpx
+```
+
+### **2. Configurar el Cliente de Pruebas**
+
+FastAPI proporciona un cliente de pruebas para interactuar con la API de manera programada. Esto permite realizar solicitudes HTTP simuladas dentro del entorno de pruebas.
+
+```python
+from fastapi.testclient import TestClient
+from myapp.main import app  # Asegúrate de reemplazar `myapp.main` por la ubicación de tu aplicación
+
+client = TestClient(app)
+```
+
+### **3. Escribir Pruebas para los Endpoints**
+
+Las pruebas se escriben en archivos nombrados como `test_*.py`. Cada función de prueba debe comenzar con `test_`.
+
+#### **Ejemplo: Endpoint de Creación de Usuario**
+```python
+def test_create_user():
+    # Datos de prueba
+    data = {"username": "testuser", "email": "testuser@example.com", "password": "securepassword"}
+
+    # Realizar una solicitud POST al endpoint
+    response = client.post("/users/", json=data)
+
+    # Validar la respuesta
+    assert response.status_code == 201
+    assert response.json()["username"] == data["username"]
+    assert response.json()["email"] == data["email"]
+```
+
+#### **Ejemplo: Endpoint de Obtención de Usuario**
+```python
+def test_get_user():
+    # Crear un usuario previamente
+    data = {"username": "johndoe", "email": "johndoe@example.com", "password": "123456"}
+    client.post("/users/", json=data)
+
+    # Consultar el usuario
+    response = client.get("/users/johndoe")
+
+    # Validar los resultados
+    assert response.status_code == 200
+    assert response.json()["username"] == "johndoe"
+    assert response.json()["email"] == "johndoe@example.com"
+```
+
+### **4. Incluir Pruebas para Casos de Error**
+
+Es importante probar no solo los casos exitosos, sino también errores esperados.
+
+#### **Ejemplo: Usuario No Encontrado**
+```python
+def test_user_not_found():
+    response = client.get("/users/nonexistent")
+
+    assert response.status_code == 404
+    assert response.json()["detail"] == "User not found"
+```
+
+#### **Ejemplo: Validación de Datos Inválidos**
+```python
+def test_invalid_user_creation():
+    # Datos inválidos (falta el correo electrónico)
+    data = {"username": "invaliduser", "password": "123456"}
+    response = client.post("/users/", json=data)
+
+    assert response.status_code == 422  # Unprocessable Entity
+    assert "email" in response.json()["detail"][0]["loc"]
+```
+
+### **5. Configurar Fixtures para Pruebas**
+
+Las **fixtures** en Pytest ayudan a configurar estados iniciales comunes para las pruebas.
+
+#### **Ejemplo: Base de Datos Temporal**
+```python
+import pytest
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from myapp.database import Base, get_db
+
+# Crear una base de datos en memoria para pruebas
+TEST_DATABASE_URL = "sqlite:///:memory:"
+engine = create_engine(TEST_DATABASE_URL, connect_args={"check_same_thread": False})
+TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
+@pytest.fixture
+def test_client():
+    # Inicializa la base de datos
+    Base.metadata.create_all(bind=engine)
+
+    # Sobrescribe la dependencia de la base de datos
+    def override_get_db():
+        db = TestingSessionLocal()
+        try:
+            yield db
+        finally:
+            db.close()
+
+    app.dependency_overrides[get_db] = override_get_db
+
+    yield client
+
+    # Limpia la base de datos después de las pruebas
+    Base.metadata.drop_all(bind=engine)
+```
+
+Usa esta fixture en tus pruebas:
+
+```python
+def test_create_user_with_fixture(test_client):
+    data = {"username": "janedoe", "email": "janedoe@example.com", "password": "mypassword"}
+    response = test_client.post("/users/", json=data)
+
+    assert response.status_code == 201
+    assert response.json()["username"] == data["username"]
+```
+
+### **6. Ejecutar las Pruebas**
+
+Ejecuta todas las pruebas con el siguiente comando:
+
+```bash
+pytest -v
+```
+
+### **7. Cobertura de Pruebas (Opcional)**
+
+Para asegurarte de que todas las partes críticas de tu código están siendo probadas, puedes usar **Coverage.py**:
+
+```bash
+pip install pytest-cov
+pytest --cov=your_package_name tests/
+```
+
+### **Buenas Prácticas**
+1. **Aislar Pruebas**: Usa una base de datos en memoria o limpia los datos entre pruebas.
+2. **Automatizar Ejecución**: Integra las pruebas con un pipeline de CI/CD como GitHub Actions, GitLab CI o Jenkins.
+3. **Probar Casos Límites**: Incluye pruebas con datos extremos, valores faltantes o entradas mal formateadas.
+4. **Validar Autenticación**: Si tu API utiliza autenticación, asegúrate de incluir pruebas para usuarios autenticados y no autenticados.
+
+### **Conclusión**
+
+Con estas herramientas y pasos, puedes implementar pruebas automáticas robustas para tus endpoints en FastAPI. Esto mejora la calidad de tu aplicación y te permite detectar errores rápidamente antes de que lleguen a producción.
+
+**Nota**: ejecutar test `pytest app\tests\tests_customers.py` y para ver si paso se usa ` pytest app\tests\tests_customers.py -v` nuestra el nombre y si paso o no
+
+### Resumen
+
+Las pruebas en el desarrollo de software son cruciales para validar que la creación, edición y eliminación de recursos, en este caso “customers”, funciona correctamente. Al implementar pruebas automáticas, se identifican errores potenciales sin tener que revisar cada funcionalidad manualmente. En esta clase, desarrollamos pruebas específicas para asegurar que los endpoints de “customers” operen como se espera.
+
+### ¿Cómo organizar y crear las pruebas?
+
+Para organizar las pruebas, se recomienda crear una carpeta dedicada dentro de la aplicación. Esta carpeta contiene un archivo `__init__.py` para que funcione como módulo y permita agrupar todas las pruebas. Si el módulo de routers se llama `customers`, el archivo de pruebas se nombra `test_customers.py` para reflejar su propósito.
+
+### ¿Cómo implementar una prueba de creación de customers?
+
+1. `Configura el cliente`: Usa el cliente previamente creado para hacer un `POST` al endpoint de `customers`.
+2. `Define los datos`: En el `POST`, envía un JSON con datos necesarios para crear un cliente, como nombre, email y edad.
+3. **Verifica el status code**: Al ejecutar la prueba, usa `assert` para confirmar que el código de estado es 201 (creado), validando que la creación fue exitosa.
+4. **Ejecuta la prueba**: Utiliza el comando `pytest` en la terminal, especificando la ruta del archivo de pruebas.
+
+Es importante recordar el uso de `assert`, ya que sin él, la prueba se ejecuta pero no verifica nada. Si falta un `assert`, se podría pasar por alto un fallo en el código.
+
+### ¿Cómo solucionar errores en las pruebas?
+
+Durante la ejecución, puede aparecer un error si el código de estado no coincide con lo esperado. Por ejemplo, si se devuelve un 200 en lugar de un 201, esto indica que falta especificar el `status_code` correcto en el decorador del endpoint.
+
+Para solucionarlo:
+
+1. **Ajusta el endpoint**: Modifica el decorador de la ruta para que devuelva el `status_code` esperado, `201 Created`.
+2. **Reejecuta la prueba**: Confirma que ahora la prueba pasa sin errores.
+
+### ¿Cómo crear pruebas de lectura de customers?
+
+Después de la creación, se implementa una prueba de lectura (`GET`) para verificar que los datos del cliente puedan ser recuperados:
+
+1. **Configura la solicitud `GET`**: Usa el cliente para obtener los datos del `customer` creado, incluyendo el ID único.
+2. **Usa el JSON de la respuesta**: Extrae el ID del `customer` de la respuesta JSON para construir la URL del `GET`.
+3. **Verifica los datos y el status code**: Confirma que el nombre del cliente y el código de estado (200) son los esperados.
+4. **Ejecuta y verifica múltiples pruebas**: Usa `pytest -v` para ejecutar las pruebas y ver los nombres, útil para identificar el estatus de cada prueba.
+
+### ¿Qué beneficios aportan estas pruebas en la aplicación?
+
+Implementar pruebas automáticas no solo verifica el funcionamiento de los endpoints sino que permite identificar si cambios en otros módulos, como facturación o transacciones, afectan inadvertidamente a `customers`. Así, al realizar modificaciones, las pruebas protegen la funcionalidad de la aplicación en su conjunto.
+
+## Autenticación de API en FastAPI con HTTPBasicCredentials
+
+La autenticación en FastAPI utilizando `HTTPBasicCredentials` es una forma sencilla de proteger los endpoints de tu API mediante autenticación básica HTTP. Este enfoque es útil para aplicaciones que no requieren un sistema de autenticación complejo o para pruebas iniciales.
+
+### **Pasos para Implementar Autenticación con `HTTPBasicCredentials`**
+
+### **1. Importar las Dependencias Necesarias**
+
+FastAPI ofrece soporte nativo para la autenticación básica mediante el módulo `fastapi.security`.
+
+```python
+from fastapi import FastAPI, Depends, HTTPException, status
+from fastapi.security import HTTPBasic, HTTPBasicCredentials
+import secrets  # Para comparar credenciales de forma segura
+```
+
+### **2. Crear una Instancia de HTTPBasic**
+
+Esto se usa para obtener las credenciales enviadas por el cliente.
+
+```python
+security = HTTPBasic()
+```
+
+### **3. Configurar un Dependency para Validar Credenciales**
+
+Crea una función que actúe como dependencia para validar las credenciales proporcionadas.
+
+```python
+def authenticate(credentials: HTTPBasicCredentials = Depends(security)):
+    valid_username = "admin"
+    valid_password = "password123"
+
+    # Comparar credenciales de manera segura
+    is_correct_username = secrets.compare_digest(credentials.username, valid_username)
+    is_correct_password = secrets.compare_digest(credentials.password, valid_password)
+
+    if not (is_correct_username and is_correct_password):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid username or password",
+            headers={"WWW-Authenticate": "Basic"},
+        )
+
+    return credentials.username  # Retorna el nombre del usuario autenticado
+```
+
+### **4. Proteger Endpoints con la Dependencia**
+
+Usa la función `authenticate` como dependencia en los endpoints que deseas proteger.
+
+```python
+app = FastAPI()
+
+@app.get("/secure-data/")
+def get_secure_data(username: str = Depends(authenticate)):
+    return {"message": f"Welcome, {username}! This is your secure data."}
+```
+
+### **5. Probar la Autenticación**
+
+#### **Cliente HTTP**
+Puedes usar herramientas como **cURL**, **Postman**, o un navegador para probar la autenticación.
+
+#### **Ejemplo con cURL**:
+```bash
+curl -u admin:password123 http://127.0.0.1:8000/secure-data/
+```
+
+Si las credenciales son correctas, recibirás:
+
+```json
+{
+  "message": "Welcome, admin! This is your secure data."
+}
+```
+
+Con credenciales incorrectas:
+
+```json
+{
+  "detail": "Invalid username or password"
+}
+```
+
+### **6. Mejoras y Buenas Prácticas**
+
+1. **Uso de Variables de Entorno**: No almacenes credenciales en el código. Usa variables de entorno o un sistema de configuración segura como `python-decouple` o `dotenv`.
+
+   ```python
+   import os
+   valid_username = os.getenv("BASIC_AUTH_USERNAME", "admin")
+   valid_password = os.getenv("BASIC_AUTH_PASSWORD", "password123")
+   ```
+
+2. **Soporte para Múltiples Usuarios**: Si necesitas autenticar a múltiples usuarios, puedes usar un diccionario:
+
+   ```python
+   USERS = {
+       "admin": "password123",
+       "user1": "securepass",
+   }
+
+   def authenticate(credentials: HTTPBasicCredentials = Depends(security)):
+       if credentials.username not in USERS or not secrets.compare_digest(USERS[credentials.username], credentials.password):
+           raise HTTPException(
+               status_code=status.HTTP_401_UNAUTHORIZED,
+               detail="Invalid username or password",
+               headers={"WWW-Authenticate": "Basic"},
+           )
+       return credentials.username
+   ```
+
+3. **SSL/TLS Obligatorio**: Nunca uses autenticación básica sin HTTPS, ya que las credenciales se envían en texto claro.
+
+4. **Token en Lugar de Contraseñas**: Para mayor seguridad, considera usar un sistema de tokens en lugar de autenticación básica si planeas expandir la funcionalidad.
+
+### **7. Integrar con Middleware**
+
+Si deseas proteger toda la aplicación o ciertos grupos de rutas, puedes usar un middleware personalizado.
+
+#### **Middleware para Rutas Protegidas**
+```python
+@app.middleware("http")
+async def basic_auth_middleware(request: Request, call_next):
+    if request.url.path.startswith("/secure"):  # Proteger solo rutas específicas
+        credentials = security(request)
+        authenticate(credentials)
+    return await call_next(request)
+```
+
+### **8. Alternativas**
+
+Si planeas implementar un sistema de autenticación más robusto, considera:
+- **JWT (JSON Web Tokens)** para APIs modernas.
+- **OAuth2** con FastAPI, que proporciona soporte nativo para flujos OAuth2.
+
+Con estos pasos, puedes implementar autenticación básica HTTP en FastAPI de manera rápida y efectiva, ideal para casos sencillos o como punto de partida para sistemas más avanzados.
+
+### Resumen
+
+Proteger los datos es esencial en el desarrollo de APIs. FastAPI ofrece múltiples mecanismos para asegurar nuestros endpoints; entre ellos, el uso de autenticación con usuario y contraseña, que es rápido y sencillo. En esta guía, exploramos cómo implementar autenticación básica HTTP para proteger un endpoint específico, configurando dependencias y validando credenciales de usuario.
+
+### ¿Cómo implementar autenticación básica en FastAPI?
+
+- FastAPI facilita la autenticación básica mediante la clase `HTTPBasicCredentials`. Esta clase permite solicitar un nombre de usuario y una contraseña al intentar acceder a un endpoint específico.
+- Primero, se define una dependencia en el archivo `main`. Una dependencia en FastAPI es un parámetro que permite verificar si el valor es ingresado por el usuario o es parte de un flujo interno.
+- Se declara una variable `credentials` del tipo Depends y se especifica como dependencia de seguridad (`security`) usando `HTTPBasic`.
+
+### ¿Cómo se configura el código para proteger un endpoint?
+
+1. **Definición de Dependencias**: Se inicia importando `HTTPBasic` desde el módulo `security` de FastAPI y configurando `Depends` para utilizarlo como dependencia.
+2. **Configuración de la Función**: En la función del endpoint, se añade `credentials: HTTPBasicCredentials` como parámetro. Esto permite recibir y manejar las credenciales dentro del método.
+3. **Autocompletar Variables**: FastAPI admite anotaciones que mejoran la autocompletación de variables en el IDE, facilitando la codificación de dependencias y asegurando la ejecución sin errores.
+
+### ¿Cómo probar la autenticación en la documentación de FastAPI?
+
+- Al ejecutar la aplicación, la documentación autogenerada de FastAPI muestra un botón de autorización. Al hacer clic, se solicita ingresar un usuario y contraseña.
+- Cuando el endpoint está protegido, aparece un candado en el endpoint de la documentación, indicando que requiere autenticación.
+- Una vez autorizado, los valores ingresados se almacenan en la variable `credentials`.
+
+### ¿Cómo validar las credenciales en FastAPI?
+
+- Dentro de la función, se valida si el `username` y `password` son correctos.
+- Se utiliza un condicional `if` para verificar si las credenciales coinciden con un usuario autorizado. Si es así, se devuelve un mensaje de bienvenida. De lo contrario, se lanza una excepción `HTTPException` con un código `401 Unauthorized`.
+- Este control permite garantizar que solo usuarios con credenciales válidas puedan acceder al contenido del endpoint.
+
+### ¿Cómo simular una conexión con la base de datos para validar usuarios?
+
+- Con el nombre de usuario capturado, es posible conectarse a una base de datos para confirmar su existencia y permisos de acceso.
+- Una vez validado, se muestra la información privada correspondiente.
+- Este flujo es útil para extender la lógica de autenticación a otros endpoints y realizar búsquedas de usuario en la base de datos.
+
+**Lecturas recomendadas**
+
+[FastAPI Template](https://github.com/fastapi/full-stack-fastapi-template)
