@@ -107,7 +107,7 @@
 - [Curso de Data Warehousing y Modelado OLAP](CursodeDataWarehousingyModeladoOLAP)
 - [Curso de Fundamentos de Apache Airflow](CursodeFundamentosdeApacheAirflow)
 - [Curso de AWS Redshift para Manejo de Big Data](CursodeAWSRedshiftparaManejodeBigData)
-- [Curso de Databricks: Arquitectura Delta Lake]()
+- [Curso de Databricks: Arquitectura Delta Lake](CursodeDatabricksArquitecturaDeltaLake)
 
 
 ## Fundamentos de Servidores Linux
