@@ -79,7 +79,7 @@
 20. **¿Cuál diseño de modelo dimensional permite dar respuesta de la mejor manera las siguientes preguntas de negocio? a. ¿Cuál es el nombre, código y cantidad vendida por línea, talla y color de producto? b. Liste el nombre, dirección y total de ventas ($) por cada tienda. c. ¿Cuáles fueron las ventas en cantidades y total de ventas ($), día a día de los ùltimos 3 años?**
     
 **R//=** 
-![modelo2](images/modelo2-b0d46010-6057-40f2-9fbe-95b3c7bb5ed2.png)
+![modelo2](images/modelo2.png.png)
 
 21. **¿Cuál de las siguientes tablas funcionará como dimensión lentamente cambiante tipo 2 para una dimensión de Empleado?**
     

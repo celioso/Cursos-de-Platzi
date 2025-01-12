@@ -42,7 +42,7 @@
 
 11. **¿Cuál es el propósito principal de Spark UI?**
     
-**R//=** Realizar análisis de datos en Spark. XX
+**R//=** Monitorear y analizar el rendimiento de las aplicaciones Spark.
 
 12. **¿Cuál es una de las funciones principales de Spark UI durante la ejecución de una aplicación en Spark?**
     
