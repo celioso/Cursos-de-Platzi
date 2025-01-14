@@ -109,6 +109,47 @@
 - [Curso de AWS Redshift para Manejo de Big Data](CursodeAWSRedshiftparaManejodeBigData)
 - [Curso de Databricks: Arquitectura Delta Lake](CursodeDatabricksArquitecturaDeltaLake)
 
+## Data Engineer
+
+### Introducción a programación e ingeniería de datos
+
+- [Curso de Fundamentos de Ingeniería de Datos](CursodeFundamentosdeIngenieriadeDatos)
+- [Curso de Python:Comprehensions,Funciones y Manejo de Errores](CursodePythonComprehensions,FuncionesyManejodeErrores)
+- [Curso de Introducción a la Terminal y Línea de Comandos](Curso-de-Introducción-a-la-Terminal-y-Linea-de-Comandos)
+- [Curso Profesional de Git y GitHub](CursoProfesionaldeGityGitHub)
+- [Curso de Python: PIP y Entornos Virtuales](CursoDePythonPIPyEntornosVirtuales)
+- [Curso de Entorno de Trabajo para Ciencia de Datos con Jupyter Notebooks y Anaconda](cursentornotrabajotiencidatosjupyternotebooksanaconda)
+- [Curso de Python para Ciencia de Datos](CursodePythonparaCienciadeDato)
+- [Curso de Matemáticas para Data Science: Estadística Descriptiva](CursodeMatemáticasparaDataScienceEstadísticaDescriptiva)
+- [Curso de Análisis Exploratorio de Datos](CursoDeAnálisisExploratorioDeDatos)
+- [Curso de Configuración Profesional de Entorno de Trabajo para Ciencia de Datos](CursodeConfiguracionProfesionaldeEntornodeTrabajoparaCienciadeDatos)
+- [Curso de Manejo de Datos Faltantes: Detección y Exploración](CursodeManejodeDatosFaltantesDeteccionyExploracion)
+- [Curso de Manejo de Datos Faltantes: Imputación](CursodeManejodeDatosFaltantesImputacion)
+
+### Fuentes de datos y Data Warehousing
+
+- [Curso de PostgreSQL]()
+- [Curso Práctico de SQL](CursoPracticodeSQL)
+Curso de PostgreSQL Aplicado a Ciencia de Datos
+Curso de Base de Datos NoSQL
+Curso de Introducción a AWS: Fundamentos de Cloud Computing
+Curso de Introducción a AWS: Cómputo, Almacenamiento y Bases de Datos
+Curso de Introducción a AWS: Redes, Gobernanza y Machine Learning
+Curso Práctico de AWS: Roles y Seguridad con IAM
+- [Curso de Data Warehousing y Modelado OLAP](CursodeDataWarehousingyModeladoOLAP)
+- [Curso de Databricks: Arquitectura Delta Lake](CursodeDatabricksArquitecturaDeltaLake)
+- [Curso de Fundamentos de Apache Airflow](CursodeFundamentosdeApacheAirflow)
+- [Curso de Programación en Bash Shell](CursodeProgramacionenBashShell)
+
+### Computación en la nube
+
+- [Curso de Introducción a la Administración de Servidores Linux](CursodeIntroducciónalaAdministracióndeServidoresLinux)
+Curso Práctico de AWS: Cómputo con EC2
+Curso Práctico de Storage en AWS
+Curso Práctico de Bases de Datos en AWS
+Curso de Big Data en AWS
+- [Curso de AWS Redshift para Manejo de Big Data](CursodeAWSRedshiftparaManejodeBigData)
+[Curso de Docker: Fundamentos](CursoDeDockerFundamentos)
 
 ## Fundamentos de Servidores Linux
 
