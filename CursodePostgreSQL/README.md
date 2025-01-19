@@ -937,7 +937,7 @@ Ref: trenes.id_tren < trayectos.id_tren
 Table pasajeros {
   n_documento integer [primary key]
   nombre varchar(52)
-  dirrecion_residencia integer(52)
+  direccion_residencia integer(52)
   fecha_nacimiento date
 }
 
@@ -1185,3 +1185,1155 @@ DROP TABLE ventas_2023;
 1. Define particiones que representen un subconjunto claro y uniforme de los datos.
 2. Usa índices en las particiones individuales si las consultas son frecuentes.
 3. Automatiza la creación y eliminación de particiones con scripts periódicos.
+
+## Creación de Roles
+
+La creación de roles en PostgreSQL es una parte clave de la administración de usuarios y permisos. Un **rol** en PostgreSQL puede representar un usuario, un grupo, o ambos. Los roles son fundamentales para la seguridad y control de acceso en la base de datos.
+
+### 1. **Crear un rol**
+Para crear un rol en PostgreSQL, usa el comando `CREATE ROLE`. Puedes especificar varias opciones dependiendo de las necesidades.
+
+#### Ejemplo básico:
+```sql
+CREATE ROLE usuario_prueba;
+```
+
+Este comando crea un rol llamado `usuario_prueba`. Por defecto:
+- El rol no puede iniciar sesión.
+- No tiene permisos adicionales.
+
+### 2. **Crear un rol con permisos para iniciar sesión**
+Si necesitas que el rol actúe como un usuario que pueda conectarse a la base de datos, agrega la opción `LOGIN`.
+
+```sql
+CREATE ROLE usuario_login WITH LOGIN PASSWORD 'mi_contraseña';
+```
+
+Opciones adicionales:
+- **`PASSWORD`**: Establece una contraseña para el rol.
+- **`CREATEDB`**: Permite que el rol cree bases de datos.
+- **`SUPERUSER`**: Asigna permisos de superusuario.
+- **`INHERIT`**: Permite que herede permisos de roles a los que pertenece.
+- **`NOCREATEDB`** y **`NOSUPERUSER`**: Opciones inversas para restringir permisos.
+
+### 3. **Asignar un rol a otro rol (Grupos de usuarios)**
+Un rol puede actuar como un grupo para simplificar la administración de permisos.
+
+#### Crear un rol de grupo:
+```sql
+CREATE ROLE grupo_lectura;
+```
+
+#### Agregar un usuario al grupo:
+```sql
+GRANT grupo_lectura TO usuario_login;
+```
+
+Ahora, el usuario `usuario_login` hereda todos los permisos asignados al rol `grupo_lectura`.
+
+### 4. **Modificar un rol existente**
+Para cambiar las propiedades de un rol, usa el comando `ALTER ROLE`.
+
+#### Ejemplo:
+```sql
+ALTER ROLE usuario_prueba WITH LOGIN PASSWORD 'nueva_contraseña';
+ALTER ROLE usuario_prueba SET search_path = 'mi_esquema';
+```
+
+### 5. **Eliminar un rol**
+Elimina roles con el comando `DROP ROLE`. Asegúrate de que el rol no tenga dependencias (como bases de datos o pertenencia a grupos).
+
+```sql
+DROP ROLE usuario_prueba;
+```
+
+### 6. **Ver roles existentes**
+Usa el siguiente comando en `psql` para listar roles:
+
+```sql
+\du
+```
+
+Esto muestra todos los roles, sus atributos y permisos.
+
+### 7. **Ejemplo completo**
+Supongamos que deseas crear un rol administrador y un rol para usuarios con permisos de solo lectura.
+
+```sql
+-- Crear roles
+CREATE ROLE admin WITH SUPERUSER CREATEDB CREATEROLE LOGIN PASSWORD 'admin123';
+CREATE ROLE solo_lectura;
+
+-- Crear usuario y asignarlo al grupo de solo lectura
+CREATE ROLE usuario_lectura WITH LOGIN PASSWORD 'user123';
+GRANT solo_lectura TO usuario_lectura;
+
+-- Asignar permisos específicos al grupo
+GRANT SELECT ON ALL TABLES IN SCHEMA public TO solo_lectura;
+
+-- Verificar roles
+\du
+```
+
+Este ejemplo configura un administrador con todos los permisos y un usuario que solo puede leer tablas del esquema `public`.
+
+### Buenas prácticas:
+1. **Usa roles de grupo** para gestionar permisos de múltiples usuarios.
+2. **Restringe el uso de superusuarios** para evitar errores o brechas de seguridad.
+3. **Documenta los roles y permisos asignados** para facilitar el mantenimiento.
+
+**NOTAS**: 
+`\h` CREATE ROL opciones de la creacion de roles.
+`\dg` o `\du` consulta los roles.
+`CREATE ROLE usuario_consulta;` CREA un usuario.
+`ALTER ROLE usuario_consulta WITH LOGIN` altera el usuario y le asigna una clava.
+`ALTER ROLE usuario_consulta WITH PASSWORD '123456'` asigna clave al usuario.
+`ALTER ROLE usuario_consulta WITH SUPERUSER;` Cambia el rol al usuario.
+`DROP ROLE usuario_consulta;` Eliminar usuario.
+
+En PostgreSQL, los roles se utilizan para administrar permisos y controlar el acceso a las bases de datos. Existen varios tipos de roles según sus características y funcionalidades, que permiten definir distintos niveles de acceso y responsabilidades.
+
+### **1. Roles de Usuario**
+- Un rol que tiene la capacidad de iniciar sesión en PostgreSQL.
+- Se utiliza para representar a individuos que acceden a la base de datos.
+  
+#### Características:
+- Tiene habilitada la opción `LOGIN`.
+- Puede tener permisos específicos sobre objetos (tablas, vistas, esquemas, etc.).
+  
+#### Ejemplo:
+```sql
+CREATE ROLE usuario_login WITH LOGIN PASSWORD 'mi_contraseña';
+```
+
+### **2. Roles de Grupo**
+- No tienen acceso directo al sistema.
+- Actúan como contenedores de permisos para simplificar la administración.
+  
+#### Características:
+- No tienen la opción `LOGIN`.
+- Se pueden asignar a otros roles (usuarios) que heredan los permisos del grupo.
+  
+#### Ejemplo:
+```sql
+CREATE ROLE grupo_admin;
+GRANT grupo_admin TO usuario_login;
+```
+
+### **3. Rol de Superusuario**
+- Tiene todos los privilegios posibles en PostgreSQL.
+- Puede realizar cualquier operación, incluyendo la administración de bases de datos y roles.
+  
+#### Características:
+- Habilitado con la opción `SUPERUSER`.
+- Debe ser usado con cuidado debido a su nivel de acceso.
+
+#### Ejemplo:
+```sql
+CREATE ROLE superadmin WITH SUPERUSER LOGIN PASSWORD 'admin123';
+```
+
+### **4. Roles con Permisos Administrativos**
+- **`CREATEDB`**: Permite al rol crear bases de datos.
+- **`CREATEROLE`**: Permite crear, modificar o eliminar otros roles.
+- **`REPLICATION`**: Permite realizar tareas relacionadas con la replicación de datos.
+
+#### Ejemplo:
+```sql
+CREATE ROLE db_creator WITH CREATEDB LOGIN PASSWORD 'creator123';
+CREATE ROLE replicator WITH REPLICATION LOGIN PASSWORD 'replica123';
+```
+
+### **5. Rol sin Privilegios (por defecto)**
+- Es un rol básico sin permisos adicionales.
+- No tiene acceso a objetos o funciones hasta que se le otorguen explícitamente.
+
+#### Ejemplo:
+```sql
+CREATE ROLE usuario_básico WITH LOGIN PASSWORD 'user123';
+```
+
+### **6. Roles Personalizados**
+Se crean según las necesidades del sistema. Por ejemplo:
+
+- **Rol de Lectura**: Solo puede consultar datos.
+- **Rol de Escritura**: Puede consultar y modificar datos.
+- **Rol de Administrador de Esquema**: Puede gestionar objetos en un esquema.
+
+#### Ejemplo:
+```sql
+-- Rol de solo lectura
+CREATE ROLE solo_lectura;
+GRANT SELECT ON ALL TABLES IN SCHEMA public TO solo_lectura;
+
+-- Rol de solo escritura
+CREATE ROLE solo_escritura;
+GRANT INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO solo_escritura;
+
+-- Rol de administrador de esquema
+CREATE ROLE admin_esquema;
+GRANT ALL PRIVILEGES ON SCHEMA public TO admin_esquema;
+```
+
+### **Comparación de Roles**
+
+| **Rol**              | **Puede Iniciar Sesión** | **Privilegios**                          |
+|-----------------------|--------------------------|------------------------------------------|
+| Usuario              | Sí                      | Depende de los permisos asignados.       |
+| Grupo                | No                      | Permisos agrupados para otros roles.     |
+| Superusuario         | Sí                      | Todos los privilegios posibles.          |
+| Administrador de DB  | Opcional                | Puede crear y administrar bases de datos.|
+| Replicador           | Opcional                | Permisos para replicación.               |
+
+### **Visualizar Roles Existentes**
+Para listar los roles en PostgreSQL, utiliza:
+
+```sql
+\du
+```
+
+Esto muestra los roles creados, sus atributos y los permisos asociados.
+
+### Buenas Prácticas para el Uso de Roles
+1. **Usar roles de grupo** para administrar permisos comunes.
+2. **Evitar el uso excesivo de superusuarios**.
+3. **Asignar permisos mínimos necesarios** para cada usuario o rol.
+4. **Documentar los roles y permisos** para facilitar el mantenimiento.
+5. **Revisar regularmente los permisos y roles asignados** para garantizar la seguridad.
+
+## Llaves foráneas
+
+En PostgreSQL, una **clave foránea** (foreign key) se utiliza para garantizar la integridad referencial entre dos tablas. Define una relación entre una columna de una tabla (tabla hija) y una columna de otra tabla (tabla padre). Esto asegura que los valores en la columna de la tabla hija deben coincidir con los valores de la columna de la tabla padre o ser nulos.
+
+### **Sintaxis de Llave Foránea**
+
+```sql
+CREATE TABLE nombre_tabla_hija (
+    columna_hija tipo_de_dato,
+    ...
+    CONSTRAINT nombre_llave_foranea FOREIGN KEY (columna_hija)
+        REFERENCES nombre_tabla_padre (columna_padre)
+        [ON UPDATE acción]
+        [ON DELETE acción]
+);
+```
+
+### **Acciones para `ON UPDATE` y `ON DELETE`**
+
+Puedes definir lo que sucede cuando los valores de la clave referenciada en la tabla padre cambian o se eliminan:
+- **CASCADE**: Propaga el cambio o eliminación a la tabla hija.
+- **SET NULL**: Establece la columna de la tabla hija como `NULL`.
+- **SET DEFAULT**: Establece el valor predeterminado en la columna de la tabla hija.
+- **RESTRICT**: Impide la acción si hay registros relacionados.
+- **NO ACTION**: Similar a `RESTRICT`, pero permite que otras reglas intervengan antes de lanzar un error.
+
+### **Ejemplo Práctico**
+
+#### **Crear Tablas con Llaves Foráneas**
+
+```sql
+-- Tabla padre
+CREATE TABLE departamentos (
+    id_departamento SERIAL PRIMARY KEY,
+    nombre VARCHAR(50) NOT NULL
+);
+
+-- Tabla hija
+CREATE TABLE empleados (
+    id_empleado SERIAL PRIMARY KEY,
+    nombre VARCHAR(50) NOT NULL,
+    id_departamento INTEGER NOT NULL,
+    CONSTRAINT fk_departamento FOREIGN KEY (id_departamento)
+        REFERENCES departamentos (id_departamento)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE
+);
+```
+
+#### **Insertar Datos**
+
+```sql
+-- Insertar en la tabla padre
+INSERT INTO departamentos (nombre)
+VALUES ('Recursos Humanos'), ('IT'), ('Finanzas');
+
+-- Insertar en la tabla hija
+INSERT INTO empleados (nombre, id_departamento)
+VALUES ('Juan Pérez', 1), ('Ana Gómez', 2), ('Carlos Ruiz', 3);
+```
+
+### **Modificar Llaves Foráneas Existentes**
+
+#### **Agregar una Llave Foránea**
+
+Si la tabla ya existe y no tiene una clave foránea, puedes agregarla:
+
+```sql
+ALTER TABLE empleados
+ADD CONSTRAINT fk_departamento FOREIGN KEY (id_departamento)
+REFERENCES departamentos (id_departamento)
+ON DELETE CASCADE;
+```
+
+#### **Eliminar una Llave Foránea**
+
+Si necesitas eliminar una llave foránea:
+
+```sql
+ALTER TABLE empleados
+DROP CONSTRAINT fk_departamento;
+```
+
+### **Ver Llaves Foráneas en una Tabla**
+
+Para verificar las llaves foráneas en una tabla, puedes usar:
+
+```sql
+SELECT
+    conname AS nombre_llave,
+    conrelid::regclass AS tabla_hija,
+    a.attname AS columna_hija,
+    confrelid::regclass AS tabla_padre,
+    af.attname AS columna_padre
+FROM
+    pg_constraint c
+    JOIN pg_attribute a ON a.attnum = ANY (c.conkey) AND a.attrelid = c.conrelid
+    JOIN pg_attribute af ON af.attnum = ANY (c.confkey) AND af.attrelid = c.confrelid
+WHERE
+    contype = 'f'; -- 'f' significa foreign key
+```
+
+### **Buenas Prácticas**
+1. **Nombrar claramente las claves foráneas** para facilitar el mantenimiento.
+   - Ejemplo: `fk_<tabla_hija>_<tabla_padre>`
+2. **Definir correctamente las acciones `ON DELETE` y `ON UPDATE`** según las necesidades de la aplicación.
+3. **Asegurarse de que las columnas relacionadas tengan el mismo tipo de dato y longitud**.
+4. **Evitar valores huérfanos en tablas hijas** mediante el uso de `ON DELETE CASCADE` o validaciones.
+
+## Inserción y consulta de datos
+
+A continuación se explica cómo realizar inserciones y consultas de datos en PostgreSQL, con ejemplos prácticos.
+
+## **Inserción de Datos**
+
+### **Sintaxis Básica**
+Para insertar datos en una tabla, utiliza el comando `INSERT INTO`.
+
+```sql
+INSERT INTO nombre_tabla (columna1, columna2, columna3)
+VALUES (valor1, valor2, valor3);
+```
+
+### **Ejemplo Práctico**
+
+#### Crear la Tabla
+```sql
+CREATE TABLE empleados (
+    id_empleado SERIAL PRIMARY KEY,
+    nombre VARCHAR(50) NOT NULL,
+    cargo VARCHAR(50),
+    salario NUMERIC(10, 2)
+);
+```
+
+#### Insertar Datos
+```sql
+INSERT INTO empleados (nombre, cargo, salario)
+VALUES 
+('Juan Pérez', 'Analista', 2500.50),
+('Ana Gómez', 'Gerente', 5000.00),
+('Carlos Ruiz', 'Asistente', 1800.75);
+```
+
+## **Consulta de Datos**
+
+### **Sintaxis Básica**
+Para consultar datos, utiliza el comando `SELECT`.
+
+```sql
+SELECT columna1, columna2
+FROM nombre_tabla
+WHERE condición;
+```
+
+### **Tipos de Consultas**
+
+#### 1. **Consulta de Todos los Registros**
+```sql
+SELECT * FROM empleados;
+```
+
+**Resultado**:
+| id_empleado | nombre       | cargo      | salario  |
+|-------------|--------------|------------|----------|
+| 1           | Juan Pérez   | Analista   | 2500.50  |
+| 2           | Ana Gómez    | Gerente    | 5000.00  |
+| 3           | Carlos Ruiz  | Asistente  | 1800.75  |
+
+---
+
+#### 2. **Consulta con Filtros**
+Consulta empleados con salario mayor a 2000.
+
+```sql
+SELECT nombre, cargo, salario
+FROM empleados
+WHERE salario > 2000;
+```
+
+**Resultado**:
+| nombre      | cargo    | salario  |
+|-------------|----------|----------|
+| Juan Pérez  | Analista | 2500.50  |
+| Ana Gómez   | Gerente  | 5000.00  |
+
+---
+
+#### 3. **Consulta Ordenada**
+Ordenar los empleados por salario de manera descendente.
+
+```sql
+SELECT nombre, cargo, salario
+FROM empleados
+ORDER BY salario DESC;
+```
+
+#### 4. **Consulta con Límites**
+Obtener los 2 empleados con mayor salario.
+
+```sql
+SELECT nombre, cargo, salario
+FROM empleados
+ORDER BY salario DESC
+LIMIT 2;
+```
+
+#### 5. **Consulta con Agregación**
+Calcular el salario promedio de los empleados.
+
+```sql
+SELECT AVG(salario) AS salario_promedio
+FROM empleados;
+```
+
+**Resultado**:
+| salario_promedio |
+|------------------|
+| 3100.42          |
+
+#### 6. **Consulta con Funciones de Grupo**
+Número de empleados por cargo.
+
+```sql
+SELECT cargo, COUNT(*) AS cantidad_empleados
+FROM empleados
+GROUP BY cargo;
+```
+
+**Resultado**:
+| cargo     | cantidad_empleados |
+|-----------|--------------------|
+| Analista  | 1                  |
+| Gerente   | 1                  |
+| Asistente | 1                  |
+
+## **Combinar Inserción y Consulta**
+### Insertar y consultar de inmediato
+```sql
+WITH nuevo_empleado AS (
+    INSERT INTO empleados (nombre, cargo, salario)
+    VALUES ('Laura Sánchez', 'Supervisora', 3000.00)
+    RETURNING id_empleado, nombre, cargo, salario
+)
+SELECT * FROM nuevo_empleado;
+```
+
+## **Buenas Prácticas**
+1. **Verificar las restricciones antes de insertar datos**: Define claves primarias, claves foráneas, y restricciones únicas.
+2. **Utilizar transacciones para operaciones críticas**: Asegura que las inserciones o actualizaciones sean atómicas.
+3. **Evitar consultas sin filtros en tablas grandes**: Usa `WHERE` y `LIMIT` para optimizar el rendimiento.
+4. **Utilizar índices para mejorar las consultas**: Especialmente en columnas utilizadas en filtros o uniones.
+
+## Inserción masiva de datos
+
+La inserción masiva de datos en PostgreSQL es útil cuando necesitas cargar grandes volúmenes de información de manera eficiente. Hay dos enfoques principales para lograrlo:
+
+### **1. Usar el comando `COPY`**
+Este método permite importar datos desde un archivo directamente a una tabla.
+
+#### **Ejemplo:**
+Supongamos que tienes un archivo CSV llamado `estaciones.csv` con el siguiente contenido:
+
+```csv
+id_estacion,nombre,direccion
+2,Estación Norte,St 100 # 112
+3,Estación Sur,Av. 45 # 98-23
+4,Estación Este,Cra 12 # 24-15
+5,Estación Oeste,Calle 8 # 16-10
+```
+
+Puedes usar el siguiente comando para cargar estos datos:
+
+```sql
+COPY public.estaciones(id_estacion, nombre, direccion)
+FROM '/ruta/completa/estaciones.csv'
+DELIMITER ','
+CSV HEADER;
+```
+
+#### **Notas:**
+1. Reemplaza `'/ruta/completa/estaciones.csv'` con la ruta real al archivo CSV en tu sistema.
+2. Asegúrate de que el archivo sea accesible y que el usuario de PostgreSQL tenga permisos de lectura.
+3. Usa el parámetro `HEADER` si el archivo contiene nombres de columnas en la primera fila.
+
+### **2. Usar múltiples filas con `INSERT INTO`**
+Si no quieres usar un archivo externo, puedes insertar múltiples filas en un solo comando `INSERT`.
+
+#### **Ejemplo:**
+```sql
+INSERT INTO public.estaciones(id_estacion, nombre, direccion)
+VALUES
+    (2, 'Estación Norte', 'St 100 # 112'),
+    (3, 'Estación Sur', 'Av. 45 # 98-23'),
+    (4, 'Estación Este', 'Cra 12 # 24-15'),
+    (5, 'Estación Oeste', 'Calle 8 # 16-10');
+```
+
+### **3. Usar herramientas externas**
+- **pgAdmin**: Puedes usar la opción "Import/Export Data" en la interfaz gráfica para cargar datos desde un archivo.
+- **Herramientas ETL**: Programas como Apache Nifi, Talend, o Python con librerías como `psycopg2` o `SQLAlchemy` permiten automatizar la carga masiva.
+
+#### **Ejemplo con Python (`psycopg2`):**
+```python
+import psycopg2
+
+# Conexión a la base de datos
+conn = psycopg2.connect(
+    host="localhost",
+    database="mi_base_datos",
+    user="mi_usuario",
+    password="mi_contraseña"
+)
+cur = conn.cursor()
+
+# Archivo CSV
+with open('estaciones.csv', 'r') as f:
+    cur.copy_expert("COPY public.estaciones FROM STDIN WITH CSV HEADER", f)
+
+# Confirmar y cerrar
+conn.commit()
+cur.close()
+conn.close()
+```
+
+### **Consideraciones:**
+- Si trabajas con archivos grandes, prefiere `COPY` por su velocidad.
+- Verifica la estructura de tu archivo y la tabla destino para evitar errores de formato.
+
+**Lecturas recomendadas**
+
+[Mockaroo - Random Data Generator and API Mocking Tool | JSON / CSV / SQL / Excel](https://mockaroo.com/)
+
+## Cruzar tablas: SQL JOIN
+
+En SQL, un **JOIN** se utiliza para combinar filas de dos o más tablas en función de una condición relacionada entre ellas. Aquí tienes una guía de los tipos de **JOIN** más comunes y cómo utilizarlos:
+
+### **1. INNER JOIN**
+Devuelve solo las filas que tienen coincidencias en ambas tablas.
+
+```sql
+SELECT tabla1.columna1, tabla2.columna2
+FROM tabla1
+INNER JOIN tabla2
+ON tabla1.columna_comun = tabla2.columna_comun;
+```
+
+- **Ejemplo:**
+  Si tienes una tabla `clientes` y otra `pedidos`, y quieres ver los pedidos realizados por cada cliente:
+
+  ```sql
+  SELECT clientes.nombre, pedidos.fecha
+  FROM clientes
+  INNER JOIN pedidos
+  ON clientes.id_cliente = pedidos.id_cliente;
+  ```
+
+### **2. LEFT JOIN (LEFT OUTER JOIN)**
+Devuelve todas las filas de la primera tabla (izquierda) y las filas coincidentes de la segunda tabla. Si no hay coincidencia, las columnas de la segunda tabla tendrán valores `NULL`.
+
+```sql
+SELECT tabla1.columna1, tabla2.columna2
+FROM tabla1
+LEFT JOIN tabla2
+ON tabla1.columna_comun = tabla2.columna_comun;
+```
+
+- **Ejemplo:**
+  Si quieres listar todos los clientes, incluso aquellos que no tienen pedidos:
+
+  ```sql
+  SELECT clientes.nombre, pedidos.fecha
+  FROM clientes
+  LEFT JOIN pedidos
+  ON clientes.id_cliente = pedidos.id_cliente;
+  ```
+
+### **3. RIGHT JOIN (RIGHT OUTER JOIN)**
+Es similar al `LEFT JOIN`, pero devuelve todas las filas de la segunda tabla (derecha) y las filas coincidentes de la primera tabla. Si no hay coincidencia, las columnas de la primera tabla tendrán valores `NULL`.
+
+```sql
+SELECT tabla1.columna1, tabla2.columna2
+FROM tabla1
+RIGHT JOIN tabla2
+ON tabla1.columna_comun = tabla2.columna_comun;
+```
+
+- **Ejemplo:**
+  Si quieres listar todos los pedidos, incluso aquellos que no están asociados a un cliente:
+
+  ```sql
+  SELECT clientes.nombre, pedidos.fecha
+  FROM clientes
+  RIGHT JOIN pedidos
+  ON clientes.id_cliente = pedidos.id_cliente;
+  ```
+
+### **4. FULL JOIN (FULL OUTER JOIN)**
+Devuelve todas las filas cuando hay una coincidencia en cualquiera de las tablas. Si no hay coincidencia, las columnas no coincidentes tendrán valores `NULL`.
+
+```sql
+SELECT tabla1.columna1, tabla2.columna2
+FROM tabla1
+FULL JOIN tabla2
+ON tabla1.columna_comun = tabla2.columna_comun;
+```
+
+- **Ejemplo:**
+  Si quieres listar todos los clientes y todos los pedidos, incluso si no tienen coincidencias entre ellos:
+
+  ```sql
+  SELECT clientes.nombre, pedidos.fecha
+  FROM clientes
+  FULL JOIN pedidos
+  ON clientes.id_cliente = pedidos.id_cliente;
+  ```
+
+### **5. CROSS JOIN**
+Devuelve el producto cartesiano de las dos tablas (todas las combinaciones posibles). Se utiliza cuando no hay una relación entre las tablas o cuando quieres todas las combinaciones posibles.
+
+```sql
+SELECT tabla1.columna1, tabla2.columna2
+FROM tabla1
+CROSS JOIN tabla2;
+```
+
+### **Claves a tener en cuenta al usar JOIN:**
+1. **Relación de las tablas:** Asegúrate de que las tablas tengan una clave común (como `id_cliente`) para realizar el **JOIN** correctamente.
+2. **Optimización:** Los **JOIN** pueden ser costosos en términos de rendimiento, especialmente si las tablas son grandes. Utiliza índices en las columnas involucradas.
+3. **Alias:** Usa alias para simplificar las consultas y hacerlas más legibles.
+
+   ```sql
+   SELECT c.nombre, p.fecha
+   FROM clientes AS c
+   INNER JOIN pedidos AS p
+   ON c.id_cliente = p.id_cliente;
+   ```
+
+**Lecturas recomendadas**
+
+[Fundamentos de Bases de Datos](https://platzi.com/clases/bd/)
+
+[http://www.postgresqltutorial.com/wp-content/uploads/2018/12/PostgreSQL-Joins.png](http://www.postgresqltutorial.com/wp-content/uploads/2018/12/PostgreSQL-Joins.png)
+
+[PostgreSQL Joins](http://www.postgresqltutorial.com/postgresql-joins/)
+
+## Funciones Especiales Principales
+
+Las funciones especiales o principales en bases de datos SQL son herramientas que permiten realizar cálculos, transformaciones y manipulaciones de datos. Estas funciones pueden dividirse en varias categorías:
+
+### **1. Funciones de Agregación**
+Se usan para realizar cálculos en un conjunto de valores y devolver un único resultado.
+
+- **SUM():** Suma todos los valores de una columna.
+  ```sql
+  SELECT SUM(salario) AS total_salarios FROM empleados;
+  ```
+
+- **AVG():** Calcula el promedio.
+  ```sql
+  SELECT AVG(edad) AS edad_promedio FROM empleados;
+  ```
+
+- **COUNT():** Cuenta el número de filas o valores no nulos.
+  ```sql
+  SELECT COUNT(*) AS total_empleados FROM empleados;
+  ```
+
+- **MAX():** Devuelve el valor máximo.
+  ```sql
+  SELECT MAX(salario) AS salario_mayor FROM empleados;
+  ```
+
+- **MIN():** Devuelve el valor mínimo.
+  ```sql
+  SELECT MIN(edad) AS edad_menor FROM empleados;
+  ```
+
+### **2. Funciones de Fecha y Hora**
+Ayudan a trabajar con valores de tipo `DATE`, `TIME` y `TIMESTAMP`.
+
+- **NOW():** Devuelve la fecha y hora actual.
+  ```sql
+  SELECT NOW() AS fecha_actual;
+  ```
+
+- **CURRENT_DATE:** Devuelve la fecha actual.
+  ```sql
+  SELECT CURRENT_DATE AS fecha_hoy;
+  ```
+
+- **DATE_PART():** Extrae una parte específica de una fecha (PostgreSQL).
+  ```sql
+  SELECT DATE_PART('year', fecha_nacimiento) AS anio_nacimiento FROM empleados;
+  ```
+
+- **DATEDIFF():** Calcula la diferencia entre dos fechas (MySQL).
+  ```sql
+  SELECT DATEDIFF('2025-01-18', '2025-01-01') AS dias_diferencia;
+  ```
+
+### **3. Funciones de Texto**
+Manipulan cadenas de texto.
+
+- **UPPER():** Convierte el texto a mayúsculas.
+  ```sql
+  SELECT UPPER(nombre) AS nombre_mayusculas FROM empleados;
+  ```
+
+- **LOWER():** Convierte el texto a minúsculas.
+  ```sql
+  SELECT LOWER(nombre) AS nombre_minusculas FROM empleados;
+  ```
+
+- **CONCAT():** Combina varias cadenas en una sola.
+  ```sql
+  SELECT CONCAT(nombre, ' ', apellido) AS nombre_completo FROM empleados;
+  ```
+
+- **LENGTH():** Devuelve la longitud de una cadena.
+  ```sql
+  SELECT LENGTH(nombre) AS longitud_nombre FROM empleados;
+  ```
+
+- **SUBSTRING():** Extrae una parte de una cadena.
+  ```sql
+  SELECT SUBSTRING(nombre FROM 1 FOR 3) AS primeras_letras FROM empleados;
+  ```
+
+### **4. Funciones Matemáticas**
+Realizan cálculos numéricos.
+
+- **ROUND():** Redondea un número al número especificado de decimales.
+  ```sql
+  SELECT ROUND(salario, 2) AS salario_redondeado FROM empleados;
+  ```
+
+- **FLOOR():** Devuelve el mayor número entero menor o igual a un valor.
+  ```sql
+  SELECT FLOOR(edad / 10) AS decadas FROM empleados;
+  ```
+
+- **CEIL():** Devuelve el menor número entero mayor o igual a un valor.
+  ```sql
+  SELECT CEIL(edad / 10) AS decadas_superiores FROM empleados;
+  ```
+
+- **ABS():** Devuelve el valor absoluto.
+  ```sql
+  SELECT ABS(-15) AS valor_absoluto;
+  ```
+
+- **POWER():** Eleva un número a la potencia especificada.
+  ```sql
+  SELECT POWER(edad, 2) AS edad_cuadrada FROM empleados;
+  ```
+
+### **5. Funciones de Ventana (Window Functions)**
+Se utilizan para realizar cálculos en un conjunto de filas relacionadas.
+
+- **ROW_NUMBER():** Asigna un número secuencial a cada fila.
+  ```sql
+  SELECT ROW_NUMBER() OVER (ORDER BY salario DESC) AS ranking, nombre FROM empleados;
+  ```
+
+- **RANK():** Asigna un rango a cada fila, permitiendo empates.
+  ```sql
+  SELECT RANK() OVER (ORDER BY salario DESC) AS rango, nombre FROM empleados;
+  ```
+
+- **NTILE():** Divide las filas en un número de grupos aproximadamente iguales.
+  ```sql
+  SELECT NTILE(4) OVER (ORDER BY salario) AS cuartil, nombre FROM empleados;
+  ```
+
+Estas funciones te permiten manejar datos de manera eficiente y son esenciales para el análisis, transformación y reporte de información.
+
+Aquí tienes una explicación detallada de cada uno de estos conceptos de SQL en PostgreSQL:
+
+---
+
+### **1. `ON CONFLICT DO`**
+`ON CONFLICT DO` se utiliza para manejar conflictos que surgen al intentar insertar datos en una tabla con restricciones únicas.
+
+- **Sintaxis básica**:
+  ```sql
+  INSERT INTO table_name (column1, column2, ...)
+  VALUES (value1, value2, ...)
+  ON CONFLICT (conflict_column)
+  DO UPDATE SET column1 = value, column2 = value
+  WHERE condition;
+  ```
+
+- **Opciones**:
+  - **`DO NOTHING`**: Ignora el conflicto y no realiza ninguna acción.
+    ```sql
+    INSERT INTO usuarios (email, nombre)
+    VALUES ('user@example.com', 'Juan Pérez')
+    ON CONFLICT (email)
+    DO NOTHING;
+    ```
+  - **`DO UPDATE`**: Realiza una actualización de la fila existente.
+    ```sql
+    INSERT INTO usuarios (email, nombre)
+    VALUES ('user@example.com', 'Juan Pérez')
+    ON CONFLICT (email)
+    DO UPDATE SET nombre = EXCLUDED.nombre;
+    ```
+    Donde `EXCLUDED` se refiere a los valores de la fila que intentabas insertar.
+
+---
+
+### **2. `RETURNING`**
+La cláusula `RETURNING` se utiliza para devolver valores después de una operación de `INSERT`, `UPDATE` o `DELETE`. Esto es útil para obtener los valores generados automáticamente (como los de una columna serial) o verificar cambios.
+
+- **Sintaxis básica**:
+  ```sql
+  INSERT INTO table_name (column1, column2)
+  VALUES (value1, value2)
+  RETURNING column1, column2;
+  ```
+
+- **Ejemplo**:
+  Obtener el ID generado automáticamente:
+  ```sql
+  INSERT INTO usuarios (email, nombre)
+  VALUES ('user@example.com', 'Juan Pérez')
+  RETURNING id;
+  ```
+
+  Devolver valores después de actualizar:
+  ```sql
+  UPDATE usuarios
+  SET nombre = 'Juan Pérez'
+  WHERE email = 'user@example.com'
+  RETURNING *;
+  ```
+
+---
+
+### **3. `LIKE` e `ILIKE`**
+Se utilizan para realizar búsquedas en cadenas de texto con comodines (`%` y `_`).
+
+- **`LIKE`**: Realiza búsquedas **sensibles a mayúsculas**.
+  ```sql
+  SELECT * FROM usuarios
+  WHERE nombre LIKE 'Juan%'; -- Coincide con "Juan" y "Juan Pérez"
+  ```
+
+- **`ILIKE`**: Realiza búsquedas **insensibles a mayúsculas**.
+  ```sql
+  SELECT * FROM usuarios
+  WHERE nombre ILIKE 'juan%'; -- Coincide con "juan" o "Juan Pérez"
+  ```
+
+- **Comodines**:
+  - `%`: Representa cero o más caracteres.
+  - `_`: Representa un solo carácter.
+  
+  Ejemplo:
+  ```sql
+  SELECT * FROM usuarios
+  WHERE nombre LIKE '_uan%'; -- Coincide con "Juan" y "Auan"
+  ```
+
+---
+
+### **4. `IS` e `IS NOT`**
+Se utilizan para verificar si un valor es `NULL` o si cumple con una condición especial.
+
+- **`IS NULL`**: Verifica si un valor es `NULL`.
+  ```sql
+  SELECT * FROM usuarios
+  WHERE nombre IS NULL;
+  ```
+
+- **`IS NOT NULL`**: Verifica si un valor **no** es `NULL`.
+  ```sql
+  SELECT * FROM usuarios
+  WHERE nombre IS NOT NULL;
+  ```
+
+- **`IS DISTINCT FROM`**: Compara valores, incluyendo `NULL`, de forma que `NULL IS DISTINCT FROM NULL` devuelve `FALSE`.
+  ```sql
+  SELECT * FROM usuarios
+  WHERE email IS DISTINCT FROM 'user@example.com';
+  ```
+
+- **`IS TRUE`, `IS FALSE`**: Evalúan valores booleanos.
+  ```sql
+  SELECT * FROM usuarios
+  WHERE activo IS TRUE; -- Solo selecciona filas donde "activo" sea verdadero
+  ```
+
+---
+
+### **Combinación de estos conceptos**
+
+Ejemplo práctico:
+```sql
+INSERT INTO usuarios (email, nombre, activo)
+VALUES ('user@example.com', 'Juan Pérez', TRUE)
+ON CONFLICT (email)
+DO UPDATE SET nombre = EXCLUDED.nombre
+RETURNING id, nombre;
+
+SELECT * FROM usuarios
+WHERE nombre ILIKE 'juan%'
+AND activo IS TRUE;
+```
+
+Esto inserta o actualiza un registro, devuelve el ID y el nombre, y luego consulta todos los usuarios cuyo nombre comienza con "juan" (insensible a mayúsculas) y que están activos.
+
+## Funciones Especiales Avanzadas
+
+Aquí tienes una descripción de cada una de las funciones especiales avanzadas que mencionas, con ejemplos prácticos en PostgreSQL:
+
+### **1. `COALESCE`**
+La función `COALESCE` devuelve el primer valor no nulo de una lista de argumentos. Es útil para manejar valores nulos en consultas.
+
+- **Sintaxis**:
+  ```sql
+  COALESCE(value1, value2, ..., valueN)
+  ```
+
+- **Ejemplo**:
+  ```sql
+  SELECT nombre, COALESCE(telefono, 'Sin teléfono') AS telefono
+  FROM usuarios;
+  ```
+  Si `telefono` es `NULL`, se mostrará "Sin teléfono".
+
+### **2. `NULLIF`**
+La función `NULLIF` devuelve `NULL` si dos valores son iguales; de lo contrario, devuelve el primer valor.
+
+- **Sintaxis**:
+  ```sql
+  NULLIF(value1, value2)
+  ```
+
+- **Ejemplo**:
+  ```sql
+  SELECT nombre, NULLIF(ventas, 0) AS ventas_validas
+  FROM empleados;
+  ```
+  Si `ventas` es `0`, se devolverá `NULL`; de lo contrario, se devolverá el valor de `ventas`.
+
+### **3. `GREATEST`**
+La función `GREATEST` devuelve el valor máximo de una lista de argumentos.
+
+- **Sintaxis**:
+  ```sql
+  GREATEST(value1, value2, ..., valueN)
+  ```
+
+- **Ejemplo**:
+  ```sql
+  SELECT nombre, GREATEST(sueldo_base, bono) AS mayor_ingreso
+  FROM empleados;
+  ```
+  Devuelve el mayor valor entre `sueldo_base` y `bono`.
+
+---
+
+### **4. `LEAST`**
+La función `LEAST` devuelve el valor mínimo de una lista de argumentos.
+
+- **Sintaxis**:
+  ```sql
+  LEAST(value1, value2, ..., valueN)
+  ```
+
+- **Ejemplo**:
+  ```sql
+  SELECT nombre, LEAST(dias_vacaciones, dias_restantes) AS dias_a_usar
+  FROM empleados;
+  ```
+  Devuelve el menor valor entre `dias_vacaciones` y `dias_restantes`.
+
+### **5. Bloques Anónimos (`DO`)**
+Un bloque anónimo en PostgreSQL permite ejecutar código PL/pgSQL sin necesidad de crear una función almacenada. Es útil para tareas únicas o scripts.
+
+- **Sintaxis**:
+  ```sql
+  DO $$
+  BEGIN
+    -- Código PL/pgSQL aquí
+  END;
+  $$
+  ```
+
+- **Ejemplo**:
+  Insertar datos automáticamente:
+  ```sql
+  DO $$
+  BEGIN
+    FOR i IN 1..10 LOOP
+      INSERT INTO usuarios (nombre, email)
+      VALUES ('Usuario ' || i, 'user' || i || '@example.com');
+    END LOOP;
+  END;
+  $$;
+  ```
+
+- **Uso Avanzado con Condicionales**:
+  ```sql
+  DO $$
+  BEGIN
+    IF EXISTS (SELECT 1 FROM empleados WHERE nombre = 'Juan Pérez') THEN
+      RAISE NOTICE 'El empleado ya existe';
+    ELSE
+      INSERT INTO empleados (nombre, sueldo) VALUES ('Juan Pérez', 5000);
+    END IF;
+  END;
+  $$;
+  ```
+
+### **Combinación de funciones avanzadas**
+Ejemplo práctico:
+```sql
+SELECT 
+  COALESCE(telefono, 'Sin teléfono') AS telefono,
+  NULLIF(sueldo, 0) AS sueldo_validado,
+  GREATEST(sueldo, bono) AS mayor_ingreso,
+  LEAST(dias_vacaciones, dias_restantes) AS dias_minimos
+FROM empleados;
+```
+
+Esto aplica múltiples funciones avanzadas para manejar valores nulos, comparar valores y calcular mínimos/máximos en una sola consulta.
+
+## Vistas
+
+Las **vistas volátiles** y las **vistas materializadas** son conceptos clave en bases de datos relacionales que se usan para manejar datos consultados de manera repetitiva o compleja. A continuación, te explico las diferencias, ventajas, desventajas y cómo implementarlas en PostgreSQL.
+
+---
+
+### **1. Vista Volátil**
+Una vista volátil, también conocida como vista normal, es una consulta almacenada en la base de datos que no guarda físicamente los datos. Cada vez que accedes a la vista, la consulta subyacente se ejecuta dinámicamente.
+
+- **Características**:
+  - Los datos no se almacenan; se obtienen directamente de las tablas subyacentes al momento de la consulta.
+  - Siempre muestra datos actualizados porque ejecuta la consulta en tiempo real.
+  - Más lenta para consultas complejas debido a la ejecución dinámica.
+
+- **Sintaxis**:
+  ```sql
+  CREATE VIEW vista_volatil AS
+  SELECT columna1, columna2
+  FROM tabla
+  WHERE condiciones;
+  ```
+
+- **Ejemplo**:
+  ```sql
+  CREATE VIEW ventas_anuales AS
+  SELECT cliente_id, SUM(monto) AS total_ventas
+  FROM ventas
+  WHERE fecha BETWEEN '2023-01-01' AND '2023-12-31'
+  GROUP BY cliente_id;
+  ```
+
+- **Ventajas**:
+  - Siempre devuelve datos actualizados.
+  - No ocupa espacio adicional en disco.
+
+- **Desventajas**:
+  - Puede ser más lenta para consultas complejas o con grandes volúmenes de datos.
+
+---
+
+### **2. Vista Materializada**
+Una vista materializada almacena físicamente los resultados de una consulta en la base de datos. Se actualiza manualmente mediante comandos específicos.
+
+- **Características**:
+  - Los datos se almacenan físicamente, lo que mejora el rendimiento para consultas repetitivas.
+  - No se actualiza automáticamente; se debe usar el comando `REFRESH MATERIALIZED VIEW` para actualizar los datos.
+  - Ocupa espacio en disco.
+
+- **Sintaxis**:
+  ```sql
+  CREATE MATERIALIZED VIEW vista_materializada AS
+  SELECT columna1, columna2
+  FROM tabla
+  WHERE condiciones;
+  ```
+
+- **Ejemplo**:
+  ```sql
+  CREATE MATERIALIZED VIEW ventas_anuales_materializada AS
+  SELECT cliente_id, SUM(monto) AS total_ventas
+  FROM ventas
+  WHERE fecha BETWEEN '2023-01-01' AND '2023-12-31'
+  GROUP BY cliente_id;
+  ```
+
+- **Actualizar una vista materializada**:
+  ```sql
+  REFRESH MATERIALIZED VIEW ventas_anuales_materializada;
+  ```
+
+- **Ventajas**:
+  - Más rápida para consultas repetitivas, ya que no se ejecuta la consulta subyacente.
+  - Útil para escenarios donde los datos no cambian frecuentemente.
+
+- **Desventajas**:
+  - Los datos pueden quedar obsoletos si no se actualizan manualmente.
+  - Ocupa espacio adicional en disco.
+
+---
+
+### **Diferencias Principales**
+
+| Característica            | Vista Volátil                  | Vista Materializada            |
+|---------------------------|--------------------------------|--------------------------------|
+| **Almacenamiento**        | No guarda datos físicamente.  | Guarda datos físicamente.     |
+| **Actualización**         | Siempre muestra datos actuales. | Debe ser actualizada manualmente. |
+| **Rendimiento**           | Más lenta para consultas complejas. | Más rápida para consultas repetitivas. |
+| **Espacio en Disco**      | No ocupa espacio adicional.   | Ocupa espacio adicional.      |
+
+---
+
+### **¿Cuándo Usar Cada Una?**
+- **Vista Volátil**:
+  - Cuando los datos cambian frecuentemente y necesitas que las consultas reflejen siempre el estado más reciente.
+  - Ejemplo: Tableros en tiempo real, consultas dinámicas.
+  
+- **Vista Materializada**:
+  - Cuando los datos no cambian con frecuencia y se requiere alto rendimiento para consultas repetitivas.
+  - Ejemplo: Reportes periódicos o cálculos agregados costosos.
+
+---
+
+### **Uso Combinado**
+En algunos casos, puedes usar una combinación de ambas:
+1. Usa vistas volátiles para datos que cambian rápidamente.
+2. Usa vistas materializadas para cálculos complejos que necesitan ser ejecutados periódicamente, pero no en tiempo real.
