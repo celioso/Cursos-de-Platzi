@@ -1,6 +1,9 @@
 SELECT * FROM pasajeros
-join viajes ON (viajes.id_pasajero = pasajeros.n_documento);
+join viajes ON (viajes.n_documento = pasajeros.n_documento);
 
 SELECT * FROM pasajeros
-LEFT JOIN viajes ON (viajes.id_pasajero = pasajeros.n_documento)
-WHERE viajes.id_viajes IS NULL;
+LEFT JOIN viajes ON (viajes.n_documento = pasajeros.n_documento)
+WHERE viajes.id_viaje IS NULL;
+
+
+

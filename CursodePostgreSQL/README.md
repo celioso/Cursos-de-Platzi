@@ -1730,6 +1730,14 @@ conn.close()
 - Si trabajas con archivos grandes, prefiere `COPY` por su velocidad.
 - Verifica la estructura de tu archivo y la tabla destino para evitar errores de formato.
 
+-- Fecha
+
+`SELECT current_date;`
+
+-- hora
+
+`SELECT CURRENT_TIMESTAMP;`
+
 **Lecturas recomendadas**
 
 [Mockaroo - Random Data Generator and API Mocking Tool | JSON / CSV / SQL / Excel](https://mockaroo.com/)
