@@ -2345,3 +2345,331 @@ Una vista materializada almacena físicamente los resultados de una consulta en 
 En algunos casos, puedes usar una combinación de ambas:
 1. Usa vistas volátiles para datos que cambian rápidamente.
 2. Usa vistas materializadas para cálculos complejos que necesitan ser ejecutados periódicamente, pero no en tiempo real.
+
+## PL/SQL
+
+En PL/SQL, la consulta que compartiste puede ser adaptada para ejecutarse dentro de un bloque PL/SQL si necesitas procesar los resultados o realizar alguna acción en base a los datos obtenidos. Aquí te dejo una forma de hacerlo:
+
+### Consulta Adaptada en PL/SQL
+
+```plsql
+DECLARE
+    CURSOR cur_pax_without_travel IS
+        SELECT p.n_documento, p.nombre, p.apellido
+        FROM pasajeros p
+        LEFT JOIN viajes v
+        ON v.n_documento = p.n_documento
+        WHERE v.id_viaje IS NULL;
+    -- Variables para almacenar los datos del cursor
+    v_n_documento pasajeros.n_documento%TYPE;
+    v_nombre pasajeros.nombre%TYPE;
+    v_apellido pasajeros.apellido%TYPE;
+BEGIN
+    -- Abrimos el cursor
+    OPEN cur_pax_without_travel;
+    LOOP
+        -- Obtenemos cada registro del cursor
+        FETCH cur_pax_without_travel INTO v_n_documento, v_nombre, v_apellido;
+        -- Salimos del bucle cuando no hay más registros
+        EXIT WHEN cur_pax_without_travel%NOTFOUND;
+        
+        -- Aquí puedes realizar acciones con los datos obtenidos
+        DBMS_OUTPUT.PUT_LINE('Documento: ' || v_n_documento || 
+                             ', Nombre: ' || v_nombre || 
+                             ', Apellido: ' || v_apellido);
+    END LOOP;
+    -- Cerramos el cursor
+    CLOSE cur_pax_without_travel;
+END;
+/
+```
+
+### Explicación
+
+1. **Declaración del Cursor:**
+   El cursor `cur_pax_without_travel` contiene la consulta SQL para seleccionar los pasajeros que no tienen un viaje asociado.
+
+2. **Variables:**
+   Se declaran variables (`v_n_documento`, `v_nombre`, `v_apellido`) para almacenar temporalmente los datos extraídos del cursor.
+
+3. **Bucle `LOOP`:**
+   - Se abre el cursor y se recorren los registros uno por uno con `FETCH`.
+   - La condición `EXIT WHEN cur_pax_without_travel%NOTFOUND` asegura que el bucle se detenga cuando se procesen todos los registros.
+
+4. **Acciones:**
+   Dentro del bucle puedes realizar cualquier acción necesaria, como imprimir datos con `DBMS_OUTPUT.PUT_LINE` o realizar actualizaciones/inserciones en otras tablas.
+
+5. **Cerrar el Cursor:**
+   Después de procesar todos los registros, se cierra el cursor con `CLOSE`.
+
+### Consideraciones
+
+- **Habilitar `DBMS_OUTPUT`:** Si estás ejecutando este bloque desde SQL Developer u otra herramienta, asegúrate de habilitar la salida de `DBMS_OUTPUT` para ver los resultados.
+- **Manejo de Excepciones:** Es buena práctica agregar un bloque `EXCEPTION` para manejar posibles errores:
+  ```plsql
+  EXCEPTION
+    WHEN OTHERS THEN
+      DBMS_OUTPUT.PUT_LINE('Error: ' || SQLERRM);
+  ```
+- **Validar el Esquema:** Asegúrate de que las tablas `pasajeros` y `viajes` existen y los nombres de las columnas coinciden.
+
+**Lecturas recomendadas**
+
+[PostgreSQL: Documentation: 9.2: PL/pgSQL - SQL Procedural Language](https://www.postgresql.org/docs/9.2/plpgsql.html)
+
+## Triggers
+
+Un **trigger** en PostgreSQL es una función especial que se ejecuta automáticamente en respuesta a un evento en una tabla o vista. Es una herramienta poderosa para mantener la integridad de los datos, realizar auditorías, o automatizar procesos.
+
+### Tipos de Triggers
+1. **Basados en el momento:**
+   - `BEFORE`: Se ejecuta antes de que ocurra el evento.
+   - `AFTER`: Se ejecuta después de que el evento haya ocurrido.
+   - `INSTEAD OF`: Reemplaza la operación en vistas.
+
+2. **Basados en el evento:**
+   - `INSERT`: Se ejecuta al insertar un registro.
+   - `UPDATE`: Se ejecuta al actualizar un registro.
+   - `DELETE`: Se ejecuta al eliminar un registro.
+   - `TRUNCATE`: Se ejecuta al truncar la tabla.
+
+3. **Nivel de ejecución:**
+   - **`FOR EACH ROW`**: Se ejecuta una vez por cada fila afectada.
+   - **`FOR EACH STATEMENT`**: Se ejecuta una vez por cada declaración SQL.
+
+### Estructura General
+```sql
+CREATE OR REPLACE FUNCTION nombre_funcion_trigger()
+RETURNS TRIGGER AS $$
+BEGIN
+    -- Lógica del trigger
+    RETURN NEW; -- Para operaciones que modifican filas
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER nombre_trigger
+{ BEFORE | AFTER | INSTEAD OF } { INSERT | UPDATE | DELETE | TRUNCATE }
+ON nombre_tabla
+FOR EACH { ROW | STATEMENT }
+EXECUTE FUNCTION nombre_funcion_trigger();
+```
+
+### Ejemplo 1: Auditoría de Cambios en una Tabla
+
+#### 1. Crear la tabla principal y la tabla de auditoría
+```sql
+CREATE TABLE empleados (
+    id SERIAL PRIMARY KEY,
+    nombre VARCHAR(100),
+    salario NUMERIC
+);
+
+CREATE TABLE auditoria_empleados (
+    id SERIAL PRIMARY KEY,
+    accion VARCHAR(50),
+    id_empleado INT,
+    nombre_empleado VARCHAR(100),
+    salario NUMERIC,
+    fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+```
+
+#### 2. Crear la función del trigger
+```sql
+CREATE OR REPLACE FUNCTION auditoria_cambios()
+RETURNS TRIGGER AS $$
+BEGIN
+    IF (TG_OP = 'INSERT') THEN
+        INSERT INTO auditoria_empleados (accion, id_empleado, nombre_empleado, salario)
+        VALUES ('INSERT', NEW.id, NEW.nombre, NEW.salario);
+    ELSIF (TG_OP = 'UPDATE') THEN
+        INSERT INTO auditoria_empleados (accion, id_empleado, nombre_empleado, salario)
+        VALUES ('UPDATE', NEW.id, NEW.nombre, NEW.salario);
+    ELSIF (TG_OP = 'DELETE') THEN
+        INSERT INTO auditoria_empleados (accion, id_empleado, nombre_empleado, salario)
+        VALUES ('DELETE', OLD.id, OLD.nombre, OLD.salario);
+    END IF;
+    RETURN NEW; -- Necesario para `INSERT` o `UPDATE`
+END;
+$$ LANGUAGE plpgsql;
+```
+
+#### 3. Crear el trigger
+```sql
+CREATE TRIGGER trigger_auditoria_empleados
+AFTER INSERT OR UPDATE OR DELETE ON empleados
+FOR EACH ROW
+EXECUTE FUNCTION auditoria_cambios();
+```
+
+### Ejemplo 2: Validación Antes de un INSERT
+
+#### 1. Crear la función del trigger
+```sql
+CREATE OR REPLACE FUNCTION validar_salario()
+RETURNS TRIGGER AS $$
+BEGIN
+    IF (NEW.salario < 0) THEN
+        RAISE EXCEPTION 'El salario no puede ser negativo';
+    END IF;
+    RETURN NEW; -- Permite completar la operación
+END;
+$$ LANGUAGE plpgsql;
+```
+
+#### 2. Crear el trigger
+```sql
+CREATE TRIGGER trigger_validacion_salario
+BEFORE INSERT OR UPDATE ON empleados
+FOR EACH ROW
+EXECUTE FUNCTION validar_salario();
+```
+
+### Ejemplo 3: Trigger para Vistas con `INSTEAD OF`
+
+#### 1. Crear una vista y la función del trigger
+```sql
+CREATE VIEW empleados_vista AS
+SELECT id, nombre FROM empleados;
+
+CREATE OR REPLACE FUNCTION gestionar_vista_empleados()
+RETURNS TRIGGER AS $$
+BEGIN
+    INSERT INTO empleados (nombre, salario) VALUES (NEW.nombre, 0);
+    RETURN NULL; -- La operación original es reemplazada
+END;
+$$ LANGUAGE plpgsql;
+```
+
+#### 2. Crear el trigger en la vista
+```sql
+CREATE TRIGGER trigger_vista_empleados
+INSTEAD OF INSERT ON empleados_vista
+FOR EACH ROW
+EXECUTE FUNCTION gestionar_vista_empleados();
+```
+
+### Consultar Triggers Existentes
+Para listar los triggers en una tabla:
+```sql
+SELECT event_object_table AS tabla, trigger_name AS nombre_trigger, event_manipulation AS evento, action_timing AS momento
+FROM information_schema.triggers
+WHERE event_object_table = 'nombre_tabla';
+```
+
+## Simulando una conexión a Bases de Datos remotas
+
+En PostgreSQL, la extensión `dblink` permite conectarse y ejecutar consultas en bases de datos remotas directamente desde una base de datos local. Esto es útil para simular conexiones a bases de datos remotas en un entorno controlado. A continuación, se describe cómo configurarlo y usarlo:
+
+### **1. Activar la extensión `dblink`**
+Primero, asegúrate de que la extensión `dblink` esté instalada y activada en tu base de datos.
+
+Ejecuta este comando en tu base de datos:
+```sql
+CREATE EXTENSION IF NOT EXISTS dblink;
+```
+
+### **2. Configurar una conexión remota con `dblink`**
+Usa la función `dblink` para conectarte a una base de datos remota. Puedes especificar los detalles de conexión en una cadena de conexión.
+
+#### Ejemplo básico:
+Supongamos que tienes dos bases de datos:
+- **Local:** `db_local`
+- **Remota:** `db_remota`
+
+##### Crear una conexión y ejecutar una consulta:
+```sql
+SELECT * 
+FROM dblink(
+    'host=127.0.0.1 port=5432 dbname=db_remota user=postgres password=admin',
+    'SELECT id, nombre FROM usuarios'
+) AS remote_data(id INT, nombre TEXT);
+```
+
+### **3. Crear un objeto de conexión persistente**
+Puedes crear un objeto de conexión persistente con `dblink_connect`, lo que te permite reutilizar la conexión en múltiples consultas.
+
+#### Paso 1: Establecer la conexión
+```sql
+SELECT dblink_connect(
+    'conexion_remota',
+    'host=127.0.0.1 port=5432 dbname=db_remota user=postgres password=admin'
+);
+```
+
+#### Paso 2: Consultar la base de datos remota
+```sql
+SELECT * 
+FROM dblink(
+    'conexion_remota',
+    'SELECT id, nombre FROM usuarios'
+) AS remote_data(id INT, nombre TEXT);
+```
+
+#### Paso 3: Cerrar la conexión
+```sql
+SELECT dblink_disconnect('conexion_remota');
+```
+
+### **4. Insertar datos en la base de datos remota**
+También puedes usar `dblink` para insertar datos en una base de datos remota.
+
+#### Ejemplo:
+```sql
+SELECT dblink_exec(
+    'conexion_remota',
+    'INSERT INTO usuarios (id, nombre) VALUES (3, ''Carlos'')'
+);
+```
+
+### **5. Simular una conexión con bases de datos locales**
+Si deseas simular una conexión a una base de datos remota pero no tienes acceso a una, puedes usar otra base de datos local como "remota". Por ejemplo:
+
+1. Crea otra base de datos en tu servidor PostgreSQL:
+   ```bash
+   createdb db_remota
+   ```
+
+2. Llénala con datos de prueba:
+   ```sql
+   \c db_remota
+   CREATE TABLE usuarios (id SERIAL PRIMARY KEY, nombre TEXT);
+   INSERT INTO usuarios (nombre) VALUES ('Alice'), ('Bob');
+   ```
+
+3. Usa `dblink` desde la base de datos local para conectarte a esta nueva base de datos.
+
+### **6. Ejemplo completo**
+1. Configura las bases de datos:
+   ```sql
+   CREATE DATABASE db_local;
+   CREATE DATABASE db_remota;
+   ```
+
+2. En `db_remota`:
+   ```sql
+   CREATE TABLE usuarios (id SERIAL PRIMARY KEY, nombre TEXT);
+   INSERT INTO usuarios (nombre) VALUES ('Alice'), ('Bob');
+   ```
+
+3. En `db_local`:
+   ```sql
+   CREATE EXTENSION dblink;
+
+   SELECT * 
+   FROM dblink(
+       'host=127.0.0.1 port=5432 dbname=db_remota user=postgres password=admin',
+       'SELECT id, nombre FROM usuarios'
+   ) AS remote_data(id INT, nombre TEXT);
+   ```
+
+### **Consideraciones**
+- Asegúrate de que las configuraciones de red y autenticación (`pg_hba.conf`) permitan conexiones remotas.
+- Usa conexiones seguras (TLS/SSL) si estás trabajando con bases de datos en entornos de producción.
+- La extensión `postgres_fdw` es una alternativa más moderna y robusta a `dblink`.
+
+**Lecturas recomendadas**
+[Mockaroo - Random Data Generator and API Mocking Tool | JSON / CSV / SQL / Excel](https://mockaroo.com/)
+
+## Transacciones
+
