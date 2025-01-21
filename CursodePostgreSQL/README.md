@@ -2673,3 +2673,270 @@ Si deseas simular una conexión a una base de datos remota pero no tienes acceso
 
 ## Transacciones
 
+En PostgreSQL, las **transacciones** son bloques de instrucciones que se ejecutan como una unidad atómica, es decir, todas las operaciones dentro de una transacción deben completarse correctamente; de lo contrario, todas las operaciones se deshacen. Esto asegura la integridad de los datos y permite gestionar errores de forma eficiente.
+
+A continuación, se explican los conceptos básicos, comandos y ejemplos de transacciones en PostgreSQL:
+
+---
+
+### **Comandos Básicos de Transacciones**
+
+1. **BEGIN**  
+   Inicia una nueva transacción.
+   ```sql
+   BEGIN;
+   ```
+
+2. **COMMIT**  
+   Finaliza la transacción y guarda todos los cambios realizados.
+   ```sql
+   COMMIT;
+   ```
+
+3. **ROLLBACK**  
+   Deshace todas las operaciones realizadas en la transacción actual.
+   ```sql
+   ROLLBACK;
+   ```
+
+4. **SAVEPOINT**  
+   Crea un punto de restauración dentro de la transacción, al que puedes volver si ocurre un error.
+   ```sql
+   SAVEPOINT savepoint_name;
+   ```
+
+5. **ROLLBACK TO SAVEPOINT**  
+   Revierte la transacción al punto de restauración especificado, sin deshacer toda la transacción.
+   ```sql
+   ROLLBACK TO SAVEPOINT savepoint_name;
+   ```
+
+6. **RELEASE SAVEPOINT**  
+   Elimina un punto de restauración creado previamente.
+   ```sql
+   RELEASE SAVEPOINT savepoint_name;
+   ```
+
+---
+
+### **Ejemplo Básico de Transacción**
+```sql
+BEGIN;
+
+-- Insertar un nuevo usuario
+INSERT INTO usuarios (nombre, email) VALUES ('Juan', 'juan@example.com');
+
+-- Actualizar el saldo de un cliente
+UPDATE cuentas SET saldo = saldo - 100 WHERE id_cuenta = 1;
+
+-- Confirmar los cambios
+COMMIT;
+```
+
+Si alguna de las operaciones falla, puedes usar `ROLLBACK` para deshacer los cambios:
+```sql
+ROLLBACK;
+```
+
+---
+
+### **Ejemplo con SAVEPOINT**
+```sql
+BEGIN;
+
+-- Crear un savepoint
+SAVEPOINT antes_de_insercion;
+
+-- Intentar insertar un registro
+INSERT INTO usuarios (nombre, email) VALUES ('María', 'maria@example.com');
+
+-- Si ocurre un error, volver al savepoint
+ROLLBACK TO SAVEPOINT antes_de_insercion;
+
+-- Continuar con otras operaciones
+UPDATE cuentas SET saldo = saldo + 200 WHERE id_cuenta = 2;
+
+COMMIT;
+```
+
+---
+
+### **Transacciones Automáticas y Modo Autocommit**
+
+- **Autocommit:**  
+  Por defecto, PostgreSQL ejecuta cada instrucción SQL como una transacción independiente, es decir, hace un `COMMIT` automáticamente después de cada instrucción exitosa.  
+  Si deseas gestionar las transacciones manualmente, desactiva el autocommit con `BEGIN` o configurando el cliente.
+
+---
+
+### **Transacciones con Manejo de Errores**
+Usa bloques anónimos en PL/pgSQL para capturar y manejar errores dentro de una transacción:
+
+```sql
+DO $$
+BEGIN
+    BEGIN;
+
+    -- Intentar insertar datos
+    INSERT INTO usuarios (nombre, email) VALUES ('Pedro', 'pedro@example.com');
+
+    -- Forzar un error (si es necesario para pruebas)
+    PERFORM pg_sleep(-1);
+
+    COMMIT;
+EXCEPTION
+    WHEN OTHERS THEN
+        -- Deshacer cambios si ocurre un error
+        ROLLBACK;
+        RAISE NOTICE 'Se produjo un error. Transacción revertida.';
+END;
+$$ LANGUAGE plpgsql;
+```
+
+---
+
+### **Bloqueos y Concurrencia**
+- Las transacciones pueden bloquearse entre sí si intentan modificar los mismos registros.
+- Usa el comando `SELECT ... FOR UPDATE` para bloquear filas específicas durante una transacción.
+  ```sql
+  BEGIN;
+
+  -- Bloquear una fila para actualización
+  SELECT * FROM cuentas WHERE id_cuenta = 1 FOR UPDATE;
+
+  -- Modificar la fila bloqueada
+  UPDATE cuentas SET saldo = saldo - 500 WHERE id_cuenta = 1;
+
+  COMMIT;
+  ```
+
+---
+
+### **Prácticas Recomendadas**
+1. Mantén las transacciones cortas para evitar bloqueos prolongados.
+2. Usa `SAVEPOINT` para manejar errores parciales sin deshacer toda la transacción.
+3. Revisa los niveles de aislamiento si trabajas con múltiples transacciones concurrentes.
+
+## Otras Extensiones para Postgres
+
+PostgreSQL es conocido por su flexibilidad y robustez, en gran parte gracias a su soporte para extensiones. Las extensiones amplían las capacidades de PostgreSQL, permitiendo realizar operaciones avanzadas, optimización de consultas, gestión de datos, seguridad y muchas otras tareas.
+
+Aquí te presento algunas **extensiones populares** que se utilizan comúnmente en PostgreSQL:
+
+### 1. **PostGIS**
+   - **Descripción**: PostGIS es una extensión para PostgreSQL que añade soporte para trabajar con datos espaciales. Permite almacenar y consultar datos geográficos como puntos, líneas, polígonos, entre otros.
+   - **Usos comunes**: Aplicaciones SIG (Sistemas de Información Geográfica), análisis espacial, mapas.
+   - **Instalación**:
+     ```sql
+     CREATE EXTENSION postgis;
+     ```
+
+### 2. **pgAdmin**
+   - **Descripción**: pgAdmin es una extensión que añade una interfaz gráfica para administrar bases de datos PostgreSQL. Muy útil para consultas, ejecución de scripts y gestión visual de la base de datos.
+   - **Instalación**:
+     ```sql
+     CREATE EXTENSION pgadmin4;
+     ```
+
+### 3. **pgAudit**
+   - **Descripción**: pgAudit permite realizar auditoría detallada sobre las actividades y modificaciones realizadas en la base de datos, como quién ejecutó una operación y qué operaciones se realizaron.
+   - **Usos comunes**: Cumplimiento normativo y seguimiento de actividad.
+   - **Instalación**:
+     ```sql
+     CREATE EXTENSION pgaudit;
+     ```
+
+### 4. **pgBouncer**
+   - **Descripción**: pgBouncer es un proxy para PostgreSQL que ayuda a optimizar y escalar conexiones a la base de datos, reduciendo el uso de recursos y mejorando el rendimiento de las aplicaciones.
+   - **Usos comunes**: Optimización del uso de conexiones en aplicaciones con alto tráfico.
+   - **Instalación**:
+     ```sql
+     CREATE EXTENSION pgbouncer;
+     ```
+
+### 5. **TimescaleDB**
+   - **Descripción**: Extensión que añade soporte para bases de datos temporales o series temporales. Está optimizada para manejar grandes volúmenes de datos de tiempo y realizar consultas específicas de series temporales.
+   - **Usos comunes**: Análisis de IoT, análisis de tiempo, métricas de aplicaciones en tiempo real.
+   - **Instalación**:
+     ```sql
+     CREATE EXTENSION timescaledb;
+     ```
+
+### 6. **pgCrypto**
+   - **Descripción**: Extensión que proporciona funciones criptográficas avanzadas dentro de PostgreSQL. Permite realizar operaciones seguras como encriptación, generación de claves, firmas digitales, etc.
+   - **Usos comunes**: Seguridad, protección de datos sensibles, autenticación.
+   - **Instalación**:
+     ```sql
+     CREATE EXTENSION pgcrypto;
+     ```
+
+### 7. **uuid-ossp**
+   - **Descripción**: Genera identificadores únicos universales (UUID). Útil para crear claves primarias únicas de manera eficiente.
+   - **Instalación**:
+     ```sql
+     CREATE EXTENSION uuid-ossp;
+     ```
+
+### 8. **citus**
+   - **Descripción**: Extensión para sharding, que permite dividir bases de datos grandes en varias particiones distribuidas (horizontalmente) sobre diferentes nodos, mejorando el rendimiento y escalabilidad.
+   - **Usos comunes**: Bases de datos grandes y distribución de carga.
+   - **Instalación**:
+     ```sql
+     CREATE EXTENSION citus;
+     ```
+
+### 9. **pg_stat_statements**
+   - **Descripción**: Extensión para realizar el monitoreo detallado de consultas SQL. Permite analizar qué consultas se ejecutan con más frecuencia y qué recursos consumen.
+   - **Usos comunes**: Optimización de consultas, monitoreo de rendimiento.
+   - **Instalación**:
+     ```sql
+     CREATE EXTENSION pg_stat_statements;
+     ```
+
+### 10. **hstore**
+   - **Descripción**: Proporciona soporte para almacenar pares clave-valor dentro de una misma fila. Muy útil para datos estructurados.
+   - **Usos comunes**: Almacenamiento de configuraciones, metadatos, datos en formato clave-valor.
+   - **Instalación**:
+     ```sql
+     CREATE EXTENSION hstore;
+     ```
+
+### 11. **PL/pgSQL**
+   - **Descripción**: Un lenguaje procedural dentro de PostgreSQL que permite la escritura de funciones y procedimientos almacenados.
+   - **Usos comunes**: Creación de lógica comercial dentro de la base de datos, como validaciones y cálculos.
+   - **Instalación**: Ya está instalada por defecto.
+
+### 12. **intarray**
+   - **Descripción**: Proporciona soporte para trabajar con arreglos de enteros dentro de PostgreSQL.
+   - **Usos comunes**: Manipulación de conjuntos de datos numéricos.
+   - **Instalación**:
+     ```sql
+     CREATE EXTENSION intarray;
+     ```
+
+### 13. **uuid-ossp**
+   - **Descripción**: Permite la generación de UUID (identificadores únicos universales).
+   - **Usos comunes**: Creación de identificadores únicos para registros.
+   - **Instalación**:
+     ```sql
+     CREATE EXTENSION uuid-ossp;
+     ```
+
+### 14. **plpgsql_check**
+   - **Descripción**: Proporciona una validación adicional para funciones PL/pgSQL, como chequeo de posibles errores en las funciones almacenadas.
+   - **Instalación**:
+     ```sql
+     CREATE EXTENSION plpgsql_check;
+     ```
+
+### ¿Cómo instalar una extensión?
+Para instalar una extensión en PostgreSQL, puedes ejecutar el siguiente comando como usuario con permisos suficientes:
+
+```sql
+CREATE EXTENSION nombre_extensión;
+```
+
+- **Nota**: Algunas extensiones como TimescaleDB o Citus necesitan configuraciones adicionales o requerimientos específicos para su correcta utilización. 
+
+**Lecturas recomendadas**
+[PostgreSQL: Documentation: 11: Appendix F. Additional Supplied Modules](https://www.postgresql.org/docs/11/contrib.html)
