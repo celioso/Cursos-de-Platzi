@@ -129,7 +129,7 @@
 
 ### Fuentes de datos y Data Warehousing
 
-- [Curso de PostgreSQL]()
+- [Curso de PostgreSQL](CursodePostgreSQL)
 - [Curso Práctico de SQL](CursoPracticodeSQL)
 Curso de PostgreSQL Aplicado a Ciencia de Datos
 Curso de Base de Datos NoSQL
