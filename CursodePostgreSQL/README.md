@@ -2940,3 +2940,492 @@ CREATE EXTENSION nombre_extensión;
 
 **Lecturas recomendadas**
 [PostgreSQL: Documentation: 11: Appendix F. Additional Supplied Modules](https://www.postgresql.org/docs/11/contrib.html)
+
+## Backups y Restauración
+
+Realizar **backups y restauración** en PostgreSQL es esencial para garantizar la seguridad y disponibilidad de los datos. PostgreSQL ofrece varias herramientas y enfoques para realizar estas tareas de manera eficiente.
+
+### **1. Tipos de backups en PostgreSQL**
+#### a) **Backup lógico**
+   - Copia los datos y la estructura de la base de datos en un formato legible como SQL.
+   - Se realiza con herramientas como `pg_dump` y `pg_dumpall`.
+   - Ideal para mover bases de datos entre servidores o versiones de PostgreSQL.
+
+#### b) **Backup físico**
+   - Copia los archivos binarios de la base de datos tal como están en el sistema de archivos.
+   - Se realiza con `pg_basebackup` o manualmente.
+   - Es más rápido y adecuado para bases de datos grandes.
+
+### **2. Herramientas de backup**
+#### a) **pg_dump**
+   - Utilizada para realizar backups de una base de datos específica.
+   - Puede exportar datos en formato SQL o binario.
+
+   **Ejemplo de uso**:
+   ```bash
+   pg_dump -U postgres -d nombre_base > backup.sql
+   ```
+   - **Opciones comunes**:
+     - `-U`: Usuario.
+     - `-d`: Nombre de la base de datos.
+     - `-F`: Formato de salida (`p` para texto plano, `c` para personalizado, `d` para directorio).
+     - `--data-only`: Solo datos.
+     - `--schema-only`: Solo esquema.
+
+#### b) **pg_dumpall**
+   - Hace un backup lógico de todas las bases de datos de un clúster.
+   - Incluye roles y configuraciones globales.
+
+   **Ejemplo de uso**:
+   ```bash
+   pg_dumpall -U postgres > backup_completo.sql
+   ```
+
+#### c) **pg_basebackup**
+   - Realiza backups físicos.
+   - Útil para configuraciones de replicación o restauraciones rápidas.
+
+   **Ejemplo de uso**:
+   ```bash
+   pg_basebackup -D /ruta/destino -F tar -X stream -U replicator
+   ```
+
+### **3. Restauración**
+#### a) **Restauración con pg_restore**
+   - Restaura backups realizados con `pg_dump` en formato binario (`custom` o `directory`).
+
+   **Ejemplo de uso**:
+   ```bash
+   pg_restore -U postgres -d nombre_base backup.tar
+   ```
+   - **Opciones comunes**:
+     - `-c`: Limpia la base de datos antes de restaurar.
+     - `-j`: Especifica trabajos paralelos para mejorar el rendimiento.
+     - `--schema`: Restaura solo un esquema específico.
+
+#### b) **Restauración desde un backup lógico (SQL plano)**
+   - Se ejecuta directamente en el servidor de PostgreSQL.
+
+   **Ejemplo de uso**:
+   ```bash
+   psql -U postgres -d nombre_base < backup.sql
+   ```
+
+#### c) **Restauración de un backup completo (pg_dumpall)**
+   - Para restaurar múltiples bases de datos, usuarios y configuraciones globales:
+
+   **Ejemplo de uso**:
+   ```bash
+   psql -U postgres < backup_completo.sql
+   ```
+
+#### d) **Restauración desde un backup físico**
+   1. Detén el servicio de PostgreSQL.
+   2. Copia los archivos de respaldo en el directorio de datos de PostgreSQL.
+   3. Inicia el servicio de PostgreSQL.
+
+### **4. Automación de backups**
+#### Ejemplo de script en Bash:
+```bash
+#!/bin/bash
+FECHA=$(date +"%Y%m%d")
+DIRECTORIO_BACKUP="/ruta/destino"
+BASE_DATOS="nombre_base"
+USUARIO="postgres"
+
+# Realizar backup
+pg_dump -U $USUARIO -d $BASE_DATOS > $DIRECTORIO_BACKUP/backup_$BASE_DATOS_$FECHA.sql
+
+# Comprimir el archivo
+gzip $DIRECTORIO_BACKUP/backup_$BASE_DATOS_$FECHA.sql
+
+echo "Backup completado: $DIRECTORIO_BACKUP/backup_$BASE_DATOS_$FECHA.sql.gz"
+```
+
+### **5. Consideraciones importantes**
+- **Verifica los permisos**: Asegúrate de que el usuario tiene los permisos necesarios.
+- **Espacio en disco**: Realizar backups requiere espacio adicional en el sistema.
+- **Frecuencia**: Realiza backups regularmente dependiendo de la criticidad de los datos.
+- **Prueba las restauraciones**: Siempre prueba el proceso de restauración para evitar sorpresas durante emergencias.
+
+## Mantenimiento
+
+El mantenimiento en PostgreSQL es clave para garantizar la estabilidad, rendimiento y buen funcionamiento de la base de datos. Aquí tienes una descripción de las prácticas y herramientas principales para el mantenimiento:
+
+### **1. Vacío de tablas: `VACUUM`**
+#### **`VACUUM`**
+- Limpia las filas marcadas como eliminadas o actualizadas que ocupan espacio innecesario.
+- Previene la hinchazón de tablas y mejora el rendimiento.
+- **Ejemplo:**
+  ```sql
+  VACUUM;
+  ```
+- **`VACUUM FULL`**:
+  - Reorganiza completamente la tabla, recuperando espacio en disco.
+  - Bloquea la tabla durante su ejecución.
+  - **Ejemplo:**
+    ```sql
+    VACUUM FULL tabla;
+    ```
+
+#### **`AUTOVACUUM`**
+- Proceso automático de PostgreSQL para realizar operaciones de limpieza.
+- Puede configurarse en el archivo `postgresql.conf`.
+- Parámetros importantes:
+  - `autovacuum = on`: Habilita el autovacuum.
+  - `autovacuum_naptime`: Intervalo entre ejecuciones (por defecto 60s).
+
+### **2. Análisis de estadísticas: `ANALYZE`**
+- Actualiza las estadísticas de las tablas para optimizar los planes de consulta.
+- Se ejecuta automáticamente con `AUTOVACUUM`, pero puede realizarse manualmente.
+- **Ejemplo:**
+  ```sql
+  ANALYZE tabla;
+  ```
+
+### **3. Reindexación de índices: `REINDEX`**
+- Reconstruye índices dañados o que han crecido mucho en tamaño.
+- Mejora el rendimiento en consultas basadas en índices.
+- **Ejemplo:**
+  ```sql
+  REINDEX INDEX nombre_indice;
+  REINDEX TABLE tabla;
+  ```
+
+### **4. Monitoreo y ajuste de rendimiento**
+#### **a) Consultas lentas: `pg_stat_statements`**
+- Extensión para registrar estadísticas de consultas.
+- Habilitar en el archivo `postgresql.conf`:
+  ```conf
+  shared_preload_libraries = 'pg_stat_statements'
+  ```
+- Consultar las estadísticas:
+  ```sql
+  SELECT * FROM pg_stat_statements ORDER BY total_time DESC LIMIT 10;
+  ```
+
+#### **b) Ajustes de parámetros**
+- Ajustar parámetros en `postgresql.conf` según las necesidades del sistema:
+  - `work_mem`: Memoria para operaciones de ordenamiento.
+  - `shared_buffers`: Memoria compartida para datos en caché.
+  - `maintenance_work_mem`: Memoria para tareas de mantenimiento como `VACUUM`.
+
+### **5. Limpieza de archivos: `pg_archivecleanup`**
+- Elimina archivos antiguos en el caso de backups en modo WAL (Write-Ahead Logging).
+- Útil para gestionar el almacenamiento.
+
+### **6. Backups regulares**
+- Utiliza `pg_dump` para copias lógicas:
+  ```bash
+  pg_dump -U usuario -d base_de_datos -f backup.sql
+  ```
+- O utiliza `pg_basebackup` para copias físicas.
+
+### **7. Actualización y migración**
+- Mantén PostgreSQL actualizado para recibir mejoras de rendimiento y seguridad.
+- Utiliza herramientas como `pg_upgrade` para migrar versiones mayores.
+
+### **8. Limpieza de registros (logs)**
+- Configura la rotación de registros en `postgresql.conf`:
+  ```conf
+  log_rotation_size = 10MB
+  log_rotation_age = 1d
+  ```
+
+### **9. Supervisión y alertas**
+- Usa herramientas como `pgAdmin`, `Zabbix`, `Nagios` o `Prometheus` para supervisar el estado de tu base de datos.
+
+### **10. Validación e integridad**
+- Usa `CHECK` o `EXCLUDE` en las restricciones para garantizar datos correctos.
+- **Ejemplo:**
+  ```sql
+  ALTER TABLE tabla VALIDATE CONSTRAINT nombre_restriccion;
+  ```
+
+Con estas prácticas, puedes mantener tu base de datos PostgreSQL en buen estado, asegurando un rendimiento óptimo y una mayor disponibilidad.
+
+## Introducción a Réplicas
+
+La replicación en PostgreSQL permite mantener una o más copias de una base de datos en servidores secundarios, sincronizadas con el servidor primario. Esto se utiliza para mejorar la disponibilidad, el rendimiento y la tolerancia a fallos del sistema.
+
+## **Tipos de replicación en PostgreSQL**
+
+### 1. **Replicación lógica**
+- Replica datos a nivel de tabla, permitiendo replicar subconjuntos de datos o transformarlos.
+- Permite replicación entre diferentes versiones de PostgreSQL.
+- Ejemplo de uso:
+  - Replicar solo ciertas tablas.
+  - Migración entre diferentes bases de datos.
+
+### 2. **Replicación física**
+- Replica bloques de datos a nivel del disco.
+- Mantiene una copia exacta del servidor principal (incluidos los datos y el estado de las tablas).
+- Útil para alta disponibilidad y recuperación ante fallos.
+
+## **Modos de replicación física**
+
+### a) **Síncrona**
+- Los cambios en el servidor primario no se confirman hasta que al menos una réplica confirma que los datos se han recibido.
+- Alta consistencia pero puede afectar al rendimiento.
+
+### b) **Asíncrona**
+- El servidor primario no espera confirmación de las réplicas antes de confirmar los cambios.
+- Mejor rendimiento, pero puede haber pérdida de datos en caso de fallo.
+
+## **Configuración básica de replicación física**
+
+### **1. Configuración del servidor primario**
+1. Editar el archivo `postgresql.conf`:
+   ```conf
+   wal_level = replica
+   max_wal_senders = 10
+   wal_keep_size = 16MB
+   ```
+2. Configurar acceso en `pg_hba.conf`:
+   ```conf
+   host replication replicador 192.168.1.0/24 md5
+   ```
+3. Reiniciar el servidor PostgreSQL:
+   ```bash
+   systemctl restart postgresql
+   ```
+
+### **2. Configuración del servidor secundario**
+1. Crear una copia base del servidor primario:
+   ```bash
+   pg_basebackup -h IP_PRIMARIO -D /var/lib/postgresql/12/main -U replicador -Fp -Xs -P
+   ```
+2. Crear un archivo `recovery.conf` (o `standby.signal` en versiones recientes):
+   ```conf
+   standby_mode = 'on'
+   primary_conninfo = 'host=IP_PRIMARIO port=5432 user=replicador password=contraseña'
+   ```
+3. Iniciar el servidor secundario:
+   ```bash
+   systemctl start postgresql
+   ```
+
+## **Ventajas de la replicación**
+1. **Alta disponibilidad**:
+   - Si el servidor primario falla, las réplicas pueden asumir su rol.
+2. **Balanceo de carga**:
+   - Las consultas de solo lectura pueden redirigirse a las réplicas.
+3. **Recuperación ante desastres**:
+   - Permite recuperar datos en caso de fallo crítico en el servidor primario.
+4. **Descentralización**:
+   - Replicación entre ubicaciones geográficas.
+
+## **Desafíos de la replicación**
+1. **Consistencia**:
+   - Las réplicas asíncronas pueden estar desactualizadas.
+2. **Complejidad**:
+   - Requiere configuración y supervisión adicionales.
+3. **Sobrecarga en el servidor primario**:
+   - La replicación aumenta la carga de trabajo del servidor primario.
+
+## Implementación de Réplicas en Postgres
+
+La implementación de réplicas en PostgreSQL puede realizarse utilizando **replicación física** o **replicación lógica**. A continuación, se describe el proceso paso a paso para implementar cada tipo.
+
+### **1. Implementación de Réplica Física**
+
+La réplica física crea una copia exacta del servidor principal (primario) y replica datos a nivel de bloques. Es ideal para alta disponibilidad y recuperación ante fallos.
+
+### **Configuración del Servidor Primario**
+1. **Modificar el archivo `postgresql.conf`:**
+   Ajusta los parámetros para habilitar la replicación:
+   ```conf
+   wal_level = replica
+   max_wal_senders = 5
+   max_replication_slots = 5
+   wal_keep_size = 64MB
+   ```
+2. **Configurar permisos en `pg_hba.conf`:**
+   Permitir la conexión para la replicación desde las réplicas:
+   ```conf
+   host replication replicador 192.168.1.0/24 md5
+   ```
+3. **Reiniciar PostgreSQL para aplicar los cambios:**
+   ```bash
+   systemctl restart postgresql
+   ```
+
+4. **Crear un usuario para replicación:**
+   ```sql
+   CREATE ROLE replicador WITH REPLICATION LOGIN PASSWORD 'tu_contraseña';
+   ```
+
+### **Configuración del Servidor Secundario**
+1. **Realizar una copia base del servidor primario:**
+   Utiliza el comando `pg_basebackup`:
+   ```bash
+   pg_basebackup -h IP_PRIMARIO -D /var/lib/postgresql/13/main -U replicador -Fp -Xs -P
+   ```
+2. **Crear el archivo `standby.signal`:**
+   En el directorio de datos del secundario, crea el archivo vacío:
+   ```bash
+   touch /var/lib/postgresql/13/main/standby.signal
+   ```
+
+3. **Configurar conexión al primario en `postgresql.auto.conf`:**
+   Añade la conexión al servidor primario:
+   ```conf
+   primary_conninfo = 'host=IP_PRIMARIO port=5432 user=replicador password=tu_contraseña'
+   ```
+
+4. **Iniciar el servidor secundario:**
+   ```bash
+   systemctl start postgresql
+   ```
+
+### **2. Implementación de Réplica Lógica**
+
+La replicación lógica permite replicar tablas específicas o subconjuntos de datos, útil para migraciones o integración de datos.
+
+### **Configuración del Servidor Primario**
+1. **Modificar el archivo `postgresql.conf`:**
+   ```conf
+   wal_level = logical
+   max_replication_slots = 5
+   max_wal_senders = 5
+   ```
+2. **Configurar permisos en `pg_hba.conf`:**
+   ```conf
+   host replication replicador 192.168.1.0/24 md5
+   ```
+3. **Reiniciar PostgreSQL:**
+   ```bash
+   systemctl restart postgresql
+   ```
+
+4. **Crear una publicación lógica:**
+   Selecciona las tablas que deseas replicar:
+   ```sql
+   CREATE PUBLICATION mi_publicacion FOR TABLE tabla1, tabla2;
+   ```
+
+### **Configuración del Servidor Secundario**
+1. **Crear una suscripción lógica:**
+   En el secundario, conecta al primario y suscríbete a la publicación:
+   ```sql
+   CREATE SUBSCRIPTION mi_suscripcion
+   CONNECTION 'host=IP_PRIMARIO dbname=mi_base user=replicador password=tu_contraseña'
+   PUBLICATION mi_publicacion;
+   ```
+
+2. **Verificar el estado de la suscripción:**
+   ```sql
+   SELECT * FROM pg_stat_subscription;
+   ```
+
+### **Verificación de la Replicación**
+1. **Para réplicas físicas:**
+   - Verifica el estado de los procesos en el primario:
+     ```sql
+     SELECT * FROM pg_stat_replication;
+     ```
+
+2. **Para réplicas lógicas:**
+   - Revisa las publicaciones y suscripciones:
+     ```sql
+     SELECT * FROM pg_publication;
+     SELECT * FROM pg_subscription;
+     ```
+
+### **Pruebas y Monitoreo**
+- Inserta datos en el primario y verifica que aparecen en el secundario:
+  ```sql
+  INSERT INTO tabla1 (columna) VALUES ('valor');
+  ```
+- Usa herramientas de monitoreo como **pg_stat_activity** o extensiones como **pg_stat_statements**.
+
+¿Te interesa implementar alguna extensión adicional para facilitar la administración de réplicas, como `pgpool-II` o `repmgr`?
+
+**Lecturas recomendadas**
+
+[Multi-Cloud PaaS with Java, PHP, Node.js, Docker & Kubernetes Hosting | Jelastic](https://jelastic.com/)
+
+[Cloudjiffy](https://app.cloudjiffy.co/)
+
+## Otras buenas prácticas
+
+A continuación, se presentan **buenas prácticas para trabajar con PostgreSQL**, abarcando diseño, rendimiento, seguridad y mantenimiento:
+
+## **1. Diseño de la Base de Datos**
+- **Normalización adecuada:**
+  - Normaliza las tablas para eliminar redundancias.
+  - Usa desnormalización solo cuando sea necesario por rendimiento.
+- **Nombres descriptivos y consistentes:**
+  - Usa nombres significativos para tablas, columnas y restricciones.
+  - Sigue un formato de nomenclatura uniforme (e.g., `snake_case`).
+- **Clave primaria en todas las tablas:**
+  - Asegúrate de que todas las tablas tengan una clave primaria.
+- **Índices estratégicos:**
+  - Crea índices en columnas que se usan frecuentemente en búsquedas, filtros y uniones.
+  - Usa índices parciales y únicos cuando aplique.
+
+## **2. Rendimiento**
+- **Vaciar automáticamente tablas temporales:**
+  - Configura autovacuum para tablas que se actualizan frecuentemente.
+- **Optimización de consultas:**
+  - Usa `EXPLAIN` y `EXPLAIN ANALYZE` para identificar cuellos de botella.
+  - Optimiza consultas complejas dividiéndolas en partes más simples.
+- **Caché de resultados:**
+  - Considera usar **materialized views** para datos que no cambian frecuentemente.
+- **Límite de conexión:**
+  - Configura `max_connections` acorde con las capacidades del servidor.
+- **Pool de conexiones:**
+  - Implementa herramientas como `PgBouncer` para reducir la sobrecarga de conexiones.
+
+## **3. Seguridad**
+- **Usar roles y permisos:**
+  - Usa roles para asignar permisos en lugar de asignarlos directamente a usuarios.
+  - Usa privilegios mínimos para cada rol.
+- **Autenticación segura:**
+  - Habilita `md5` o `scram-sha-256` para conexiones.
+  - Usa SSL para proteger conexiones remotas.
+- **Auditoría:**
+  - Implementa extensiones como `pg_audit` para rastrear cambios.
+- **Cifrado de datos:**
+  - Cifra datos sensibles con herramientas externas o extensiones.
+
+## **4. Mantenimiento**
+- **Vacuum y análisis:**
+  - Configura y monitorea el autovacuum para prevenir la fragmentación.
+  - Usa manualmente `VACUUM` y `ANALYZE` si es necesario.
+- **Actualización de estadísticas:**
+  - Asegúrate de que las estadísticas de la base de datos estén actualizadas para que el optimizador funcione bien.
+- **Planificación de backups:**
+  - Realiza backups regulares usando herramientas como `pg_dump`, `pg_basebackup` o `barman`.
+  - Automatiza los backups y realiza pruebas periódicas de restauración.
+- **Monitoreo:**
+  - Usa herramientas como `pg_stat_activity` y `pg_stat_replication`.
+  - Implementa soluciones como **Prometheus** o **Zabbix** para monitoreo continuo.
+
+## **5. Escalabilidad**
+- **Particionado de tablas:**
+  - Usa particiones para manejar tablas grandes.
+- **Replicación:**
+  - Implementa replicación física o lógica según las necesidades.
+- **Sharding:**
+  - Para bases de datos grandes, considera herramientas como **Citus**.
+
+## **6. Manejo de Errores y Logs**
+- **Configurar logs:**
+  - Usa `log_min_duration_statement` para registrar consultas lentas.
+  - Monitorea errores y alertas en los logs de PostgreSQL.
+- **Manejo de transacciones:**
+  - Usa transacciones para operaciones que involucran múltiples pasos.
+  - Asegúrate de manejar correctamente `COMMIT` y `ROLLBACK`.
+
+## **7. Extensiones útiles**
+- **pg_stat_statements:**
+  - Para analizar consultas SQL.
+- **pg_partman:**
+  - Para gestionar particiones.
+- **PostGIS:**
+  - Para datos geoespaciales.
+- **TimescaleDB:**
+  - Para datos de series temporales.
+
+![tablas temporales](images/tablas_temporales.png)
