@@ -3341,6 +3341,129 @@ La replicación lógica permite replicar tablas específicas o subconjuntos de d
 
 ¿Te interesa implementar alguna extensión adicional para facilitar la administración de réplicas, como `pgpool-II` o `repmgr`?
 
+Configurar un contenedor de **PostgreSQL** en un entorno maestro-esclavo requiere la creación de dos contenedores: uno para el maestro y otro para el esclavo. Este entorno se puede configurar con **Docker Compose**. A continuación, te guiaré en la implementación:
+
+### **1. Requisitos previos**
+- Docker y Docker Compose instalados en tu máquina.
+- Archivo de configuración para definir las funciones de maestro y esclavo.
+
+### **2. Crear un archivo `docker-compose.yml`**
+Este archivo define los servicios para el maestro y el esclavo.
+
+```yaml
+version: '3.8'
+
+services:
+  master:
+    image: postgres:15
+    container_name: postgres_master
+    environment:
+      POSTGRES_USER: master_user
+      POSTGRES_PASSWORD: master_pass
+      POSTGRES_DB: master_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./master_data:/var/lib/postgresql/data
+    networks:
+      - postgres_cluster
+    command:
+      - "postgres"
+      - "-c"
+      - "wal_level=logical"
+      - "-c"
+      - "max_wal_senders=10"
+      - "-c"
+      - "max_replication_slots=10"
+
+  slave:
+    image: postgres:15
+    container_name: postgres_slave
+    environment:
+      POSTGRES_USER: slave_user
+      POSTGRES_PASSWORD: slave_pass
+      POSTGRES_DB: slave_db
+    ports:
+      - "5433:5432"
+    volumes:
+      - ./slave_data:/var/lib/postgresql/data
+    networks:
+      - postgres_cluster
+    depends_on:
+      - master
+    command:
+      - "postgres"
+      - "-c"
+      - "hot_standby=on"
+
+networks:
+  postgres_cluster:
+    driver: bridge
+```
+
+### **3. Configurar la replicación**
+Debes realizar configuraciones adicionales para la replicación.
+
+1. **Accede al contenedor maestro:**
+   ```bash
+   docker exec -it postgres_master bash
+   ```
+
+2. **Crea un usuario para la replicación:**
+   Dentro del contenedor maestro, ejecuta:
+   ```sql
+   CREATE ROLE replicator REPLICATION LOGIN ENCRYPTED PASSWORD 'replicator_pass';
+   ```
+
+3. **Configura el archivo `pg_hba.conf` para permitir la replicación:**
+   Agrega estas líneas al archivo `/var/lib/postgresql/data/pg_hba.conf`:
+   ```conf
+   host replication replicator 0.0.0.0/0 md5
+   host all all 0.0.0.0/0 md5
+   ```
+
+4. **Configura el archivo `postgresql.conf` en el maestro:**
+   Ajusta las siguientes variables:
+   ```conf
+   wal_level = logical
+   max_wal_senders = 10
+   max_replication_slots = 10
+   ```
+
+5. **Configura el esclavo:**
+   Copia el contenido del directorio de datos del maestro al esclavo:
+   ```bash
+   pg_basebackup -h postgres_master -D /var/lib/postgresql/data -U replicator -P -X stream
+   ```
+
+6. **Configura el archivo `recovery.conf` en el esclavo:**
+   Crea el archivo `/var/lib/postgresql/data/recovery.conf` con:
+   ```conf
+   standby_mode = 'on'
+   primary_conninfo = 'host=postgres_master port=5432 user=replicator password=replicator_pass'
+   trigger_file = '/tmp/trigger'
+   ```
+
+### **4. Levanta el entorno**
+Ejecuta el comando para iniciar los contenedores:
+```bash
+docker-compose up -d
+```
+
+### **5. Verifica la replicación**
+Conéctate al maestro y al esclavo para verificar la replicación:
+1. En el maestro:
+   ```bash
+   docker exec -it postgres_master psql -U master_user -d master_db -c "CREATE TABLE test (id SERIAL PRIMARY KEY, name TEXT);"
+   docker exec -it postgres_master psql -U master_user -d master_db -c "INSERT INTO test (name) VALUES ('Replicated data');"
+   ```
+
+2. En el esclavo:
+   ```bash
+   docker exec -it postgres_slave psql -U slave_user -d slave_db -c "SELECT * FROM test;"
+   ```
+
+
 **Lecturas recomendadas**
 
 [Multi-Cloud PaaS with Java, PHP, Node.js, Docker & Kubernetes Hosting | Jelastic](https://jelastic.com/)
