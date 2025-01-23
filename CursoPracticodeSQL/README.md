@@ -1416,3 +1416,166 @@ LIMIT 1;  -- Obtiene solo el primer registro.
 SELECT MAX(edad) AS max_edad
 FROM tabla;
 ```
+
+## desolviendo diferencias
+
+En SQL, resolver diferencias implica trabajar con conjuntos de datos y encontrar elementos que se encuentran en uno pero no en otro. Esto se puede lograr utilizando operadores como `EXCEPT`, subconsultas o uniones condicionales (`LEFT JOIN` con `WHERE`).
+
+### Usando `EXCEPT` (o `MINUS` en algunas bases de datos)
+El operador `EXCEPT` devuelve las filas que están en la primera consulta pero no en la segunda.
+
+```sql
+SELECT columna1, columna2
+FROM tabla1
+EXCEPT
+SELECT columna1, columna2
+FROM tabla2;
+```
+
+Esto muestra los datos que están en `tabla1` pero no en `tabla2`.
+
+### Usando `LEFT JOIN` y `WHERE`
+Otra forma de resolver diferencias es con un `LEFT JOIN` combinado con una condición `WHERE` para encontrar filas que no tienen coincidencias.
+
+```sql
+SELECT t1.columna1, t1.columna2
+FROM tabla1 t1
+LEFT JOIN tabla2 t2 ON t1.columna1 = t2.columna1
+WHERE t2.columna1 IS NULL;
+```
+
+Esto devuelve las filas de `tabla1` que no tienen un equivalente en `tabla2`.
+
+### Usando subconsultas
+También se puede usar una subconsulta con `NOT IN` o `NOT EXISTS`:
+
+**Con `NOT IN`:**
+```sql
+SELECT columna1, columna2
+FROM tabla1
+WHERE columna1 NOT IN (
+    SELECT columna1
+    FROM tabla2
+);
+```
+
+**Con `NOT EXISTS`:**
+```sql
+SELECT columna1, columna2
+FROM tabla1 t1
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM tabla2 t2
+    WHERE t1.columna1 = t2.columna1
+);
+```
+
+### Diferencia Simétrica (elementos que están en una tabla o en otra, pero no en ambas)
+Si necesitas encontrar los elementos que están **en una tabla o en otra, pero no en ambas**, puedes usar un `FULL OUTER JOIN` con una condición `WHERE`:
+
+```sql
+SELECT t1.columna1, t1.columna2
+FROM tabla1 t1
+FULL OUTER JOIN tabla2 t2 ON t1.columna1 = t2.columna1
+WHERE t1.columna1 IS NULL OR t2.columna1 IS NULL;
+```
+
+## Todas las uniones
+
+En SQL, las uniones (`JOINs`) son utilizadas para combinar datos de dos o más tablas en función de una condición relacionada. Aquí tienes una lista completa de los tipos de uniones más comunes, con ejemplos y explicaciones:
+
+### 1. **INNER JOIN** 
+Devuelve las filas que tienen coincidencias en ambas tablas.
+
+```sql
+SELECT a.id, a.nombre, b.curso
+FROM estudiantes a
+INNER JOIN cursos b ON a.curso_id = b.id;
+```
+- **Resultado:** Sólo incluye las filas que tienen valores coincidentes en ambas tablas.
+
+### 2. **LEFT JOIN** (o **LEFT OUTER JOIN**)
+Devuelve todas las filas de la primera tabla (izquierda) y las coincidencias de la segunda tabla (derecha). Si no hay coincidencias, muestra `NULL`.
+
+```sql
+SELECT a.id, a.nombre, b.curso
+FROM estudiantes a
+LEFT JOIN cursos b ON a.curso_id = b.id;
+```
+- **Resultado:** Incluye todas las filas de `estudiantes`, con datos de `cursos` si hay coincidencias; en caso contrario, muestra `NULL`.
+
+### 3. **RIGHT JOIN** (o **RIGHT OUTER JOIN**)
+Devuelve todas las filas de la segunda tabla (derecha) y las coincidencias de la primera tabla (izquierda). Si no hay coincidencias, muestra `NULL`.
+
+```sql
+SELECT a.id, a.nombre, b.curso
+FROM estudiantes a
+RIGHT JOIN cursos b ON a.curso_id = b.id;
+```
+- **Resultado:** Incluye todas las filas de `cursos`, con datos de `estudiantes` si hay coincidencias; en caso contrario, muestra `NULL`.
+
+### 4. **FULL JOIN** (o **FULL OUTER JOIN**)
+Devuelve todas las filas cuando hay coincidencias en cualquiera de las tablas. Si no hay coincidencias, muestra `NULL` en las columnas de la tabla que falta.
+
+```sql
+SELECT a.id, a.nombre, b.curso
+FROM estudiantes a
+FULL OUTER JOIN cursos b ON a.curso_id = b.id;
+```
+- **Resultado:** Todas las filas de ambas tablas, llenando con `NULL` donde no haya coincidencias.
+
+### 5. **CROSS JOIN**
+Devuelve el producto cartesiano de las dos tablas (todas las combinaciones posibles de filas).
+
+```sql
+SELECT a.nombre, b.curso
+FROM estudiantes a
+CROSS JOIN cursos b;
+```
+- **Resultado:** Si `estudiantes` tiene 5 filas y `cursos` tiene 4 filas, el resultado será de 20 filas (5 × 4).
+
+### 6. **SELF JOIN**
+Una tabla se une consigo misma. Se utiliza con alias para diferenciar las instancias.
+
+```sql
+SELECT a.id AS estudiante1, b.id AS estudiante2
+FROM estudiantes a
+INNER JOIN estudiantes b ON a.tutor_id = b.id;
+```
+- **Resultado:** Une los estudiantes con sus tutores, que también están en la misma tabla.
+
+### 7. **NATURAL JOIN**
+Une tablas automáticamente basándose en las columnas con el mismo nombre y tipo de datos.
+
+```sql
+SELECT *
+FROM estudiantes
+NATURAL JOIN cursos;
+```
+- **Resultado:** Une `estudiantes` y `cursos` en las columnas que tengan el mismo nombre, como `curso_id`.
+
+### 8. **USING**
+Es similar a `NATURAL JOIN`, pero especificas las columnas que deben coincidir.
+
+```sql
+SELECT *
+FROM estudiantes
+JOIN cursos USING (curso_id);
+```
+- **Resultado:** Une las tablas en la columna `curso_id`.
+
+### 9. **UNION JOIN** *(No estándar en SQL clásico)*
+Combina tablas en una estructura jerárquica. Esto es específico de algunas bases de datos.
+
+### Resumen de uniones:
+
+| Tipo de JOIN      | Descripción                                   |
+|-------------------|-----------------------------------------------|
+| **INNER JOIN**    | Coincidencias en ambas tablas.               |
+| **LEFT JOIN**     | Todas las filas de la tabla izquierda.       |
+| **RIGHT JOIN**    | Todas las filas de la tabla derecha.         |
+| **FULL JOIN**     | Todas las filas de ambas tablas.             |
+| **CROSS JOIN**    | Producto cartesiano de ambas tablas.         |
+| **SELF JOIN**     | Una tabla unida consigo misma.               |
+| **NATURAL JOIN**  | Une columnas comunes con el mismo nombre.    |
+| **USING**         | Une en base a columnas específicas.          |
