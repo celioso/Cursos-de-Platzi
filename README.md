@@ -131,7 +131,7 @@
 
 - [Curso de PostgreSQL](CursodePostgreSQL)
 - [Curso Práctico de SQL](CursoPracticodeSQL)
-Curso de PostgreSQL Aplicado a Ciencia de Datos
+- [Curso de PostgreSQL Aplicado a Ciencia de Datos](CursodePostgreSQLAplicadoaCienciadeDatos)
 Curso de Base de Datos NoSQL
 Curso de Introducción a AWS: Fundamentos de Cloud Computing
 Curso de Introducción a AWS: Cómputo, Almacenamiento y Bases de Datos
