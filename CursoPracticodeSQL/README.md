@@ -1579,3 +1579,1134 @@ Combina tablas en una estructura jerárquica. Esto es específico de algunas bas
 | **SELF JOIN**     | Una tabla unida consigo misma.               |
 | **NATURAL JOIN**  | Une columnas comunes con el mismo nombre.    |
 | **USING**         | Une en base a columnas específicas.          |
+
+## Triangulando
+
+¿Te refieres a "triangular" en SQL en el contexto de analizar relaciones entre tablas, optimizar consultas o realizar algún tipo de cálculo con geometría (como coordenadas)? Aquí hay varias interpretaciones según lo que necesites:
+
+### **1. Relaciones entre tablas (triangulación de relaciones)**  
+Si tienes tres tablas relacionadas (A, B, C) y quieres cruzar sus datos, podrías usar `JOIN` para construir la conexión triangular entre ellas:
+
+```sql
+SELECT a.columna1, b.columna2, c.columna3
+FROM tabla_a AS a
+INNER JOIN tabla_b AS b ON a.id = b.a_id
+INNER JOIN tabla_c AS c ON b.id = c.b_id;
+```
+
+Esto permite analizar cómo los datos de una tabla se relacionan con las otras dos a través de las claves foráneas.
+
+### **2. Optimización de consultas "trianguladas"**
+En algunos casos, los datos pueden estar en varias tablas que se relacionan indirectamente. Para evitar consultas complejas y costosas, puedes usar:
+- **Índices** en las columnas clave.
+- **Subconsultas** para simplificar pasos intermedios.
+
+Ejemplo de subconsulta:
+```sql
+SELECT *
+FROM tabla_a
+WHERE id IN (
+    SELECT a_id
+    FROM tabla_b
+    WHERE b_id IN (
+        SELECT id
+        FROM tabla_c
+        WHERE condicion = 'X'
+    )
+);
+```
+
+### **3. Geometría en SQL (Triángulos y coordenadas)**
+Si estás trabajando con coordenadas (ejemplo: latitud y longitud), puedes usar extensiones como **PostGIS** en PostgreSQL para calcular áreas de triángulos o distancias. 
+
+Ejemplo básico con geometría:
+```sql
+SELECT ST_Area(ST_MakePolygon(ARRAY[
+    ST_MakePoint(1, 1),
+    ST_MakePoint(5, 1),
+    ST_MakePoint(3, 4),
+    ST_MakePoint(1, 1) -- Cierra el triángulo
+]));
+```
+
+Esto calcula el área de un triángulo definido por tres puntos.
+
+En SQL, `LPAD` y `RPAD` son funciones que se utilizan para **rellenar cadenas** con caracteres específicos hasta alcanzar una longitud deseada. La diferencia clave está en **dónde se añade el relleno**:
+
+### **1. `LPAD` (Left Padding)**  
+Rellena la cadena por el **lado izquierdo**.  
+
+- **Sintaxis**:  
+  ```sql
+  LPAD(cadena, longitud_total, caracter_de_relleno)
+  ```
+- **Ejemplo**:  
+  ```sql
+  SELECT LPAD('SQL', 6, '*') AS resultado;
+  ```
+  **Resultado**:  
+  ```
+  ***SQL
+  ```
+
+### **2. `RPAD` (Right Padding)**  
+Rellena la cadena por el **lado derecho**.  
+
+- **Sintaxis**:  
+  ```sql
+  RPAD(cadena, longitud_total, caracter_de_relleno)
+  ```
+- **Ejemplo**:  
+  ```sql
+  SELECT RPAD('SQL', 6, '*') AS resultado;
+  ```
+  **Resultado**:  
+  ```
+  SQL***
+  ```
+
+### **Diferencias clave**  
+| Característica         | `LPAD`                  | `RPAD`                  |
+|------------------------|-------------------------|-------------------------|
+| Dirección del relleno  | Por la **izquierda**    | Por la **derecha**      |
+| Uso típico             | Alinear a la derecha    | Alinear a la izquierda  |
+
+### **Caso práctico: Formatear números**  
+Si necesitas formatear un número con ceros a la izquierda:  
+```sql
+SELECT LPAD('123', 6, '0') AS resultado;
+```
+**Resultado**:  
+```
+000123
+```
+
+Si necesitas agregar espacios o caracteres a la derecha:  
+```sql
+SELECT RPAD('123', 6, '0') AS resultado;
+```
+**Resultado**:  
+```
+123000
+```  
+
+## Generando rangos
+
+En SQL, **generar rangos** implica crear o consultar datos que se encuentren dentro de un intervalo determinado. Aquí te muestro varias formas de trabajar con rangos dependiendo de la situación:
+
+### **1. Generar rangos con `BETWEEN`**
+La cláusula `BETWEEN` se usa para seleccionar valores dentro de un rango, ya sea de números, fechas o texto.
+
+#### **Ejemplo: Filtrar números en un rango**
+```sql
+SELECT *
+FROM productos
+WHERE precio BETWEEN 100 AND 500;
+```
+**Explicación**: Devuelve todos los productos cuyo precio esté entre 100 y 500 (inclusive).
+
+#### **Ejemplo: Filtrar fechas en un rango**
+```sql
+SELECT *
+FROM ventas
+WHERE fecha BETWEEN '2024-01-01' AND '2024-12-31';
+```
+**Explicación**: Selecciona todas las ventas realizadas en el año 2024.
+
+### **2. Generar rangos dinámicos con una tabla de números (Series)**
+Algunas bases de datos permiten crear rangos dinámicos usando funciones específicas.
+
+#### **En PostgreSQL: Usando `generate_series`**
+```sql
+SELECT *
+FROM generate_series(1, 10) AS rango;
+```
+**Resultado**:  
+```
+rango
+-----
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+```
+
+#### **Generar rangos de fechas**
+```sql
+SELECT generate_series('2025-01-01'::DATE, '2025-01-10'::DATE, '1 day'::INTERVAL) AS fecha;
+```
+**Resultado**:  
+```
+fecha
+------------
+2025-01-01
+2025-01-02
+2025-01-03
+...
+2025-01-10
+```
+
+### **3. Generar rangos con expresiones en MySQL**
+En MySQL, puedes crear rangos utilizando tablas auxiliares o expresiones comunes de tabla (CTEs).
+
+#### **Ejemplo: Crear un rango de números**
+```sql
+WITH RECURSIVE rango AS (
+  SELECT 1 AS numero
+  UNION ALL
+  SELECT numero + 1
+  FROM rango
+  WHERE numero < 10
+)
+SELECT * FROM rango;
+```
+**Resultado**:  
+```
+numero
+------
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+```
+
+### **4. Generar rangos con operadores**
+En lugar de usar `BETWEEN`, también puedes usar operadores de comparación (`>=`, `<=`).
+
+#### **Ejemplo: Filtrar productos con precio en un rango**
+```sql
+SELECT *
+FROM productos
+WHERE precio >= 100 AND precio <= 500;
+```
+
+### **5. Dividir en rangos con `CASE`**
+Si necesitas clasificar datos en diferentes rangos, puedes usar un `CASE`.
+
+#### **Ejemplo: Clasificar precios en rangos**
+```sql
+SELECT nombre_producto,
+       CASE
+           WHEN precio < 100 THEN 'Barato'
+           WHEN precio BETWEEN 100 AND 500 THEN 'Moderado'
+           ELSE 'Caro'
+       END AS categoria
+FROM productos;
+```
+**Resultado**:
+```
+nombre_producto | categoria
+---------------------------
+Producto A       | Barato
+Producto B       | Moderado
+Producto C       | Caro
+```
+
+### **6. Aplicar rangos en consultas de agregación (`GROUP BY`)**
+#### **Ejemplo: Contar productos en diferentes rangos de precios**
+```sql
+SELECT 
+    CASE
+        WHEN precio < 100 THEN 'Menos de 100'
+        WHEN precio BETWEEN 100 AND 500 THEN 'Entre 100 y 500'
+        ELSE 'Más de 500'
+    END AS rango_precio,
+    COUNT(*) AS cantidad
+FROM productos
+GROUP BY rango_precio;
+```
+
+Estas son algunas formas de manejar rangos en SQL.
+
+## Regularizando expresiones
+
+En SQL, las **expresiones regulares** (RegEx) permiten buscar y manipular texto mediante patrones. Estas son extremadamente útiles para validar datos, realizar búsquedas avanzadas, y transformar información.
+
+Diferentes bases de datos soportan expresiones regulares de manera distinta. A continuación, te explico cómo usarlas en PostgreSQL, MySQL y Oracle.
+
+## **1. PostgreSQL y expresiones regulares**
+
+### **Operadores comunes**
+- `~` : Coincide con un patrón (sensible a mayúsculas y minúsculas).
+- `~*`: Coincide con un patrón (insensible a mayúsculas y minúsculas).
+- `!~` : No coincide con un patrón (sensible a mayúsculas y minúsculas).
+- `!~*`: No coincide con un patrón (insensible a mayúsculas y minúsculas).
+
+#### **Ejemplo: Buscar nombres que comienzan con "A"**
+```sql
+SELECT nombre
+FROM usuarios
+WHERE nombre ~ '^A';
+```
+**Explicación**: El patrón `^A` busca cadenas que empiezan con la letra "A".
+
+#### **Ejemplo: Buscar cadenas que terminan en un número**
+```sql
+SELECT nombre
+FROM usuarios
+WHERE nombre ~ '[0-9]$';
+```
+**Explicación**: `[0-9]$` busca cadenas que terminan con un dígito.
+
+### **Funciones relacionadas**
+- `regexp_matches`: Devuelve las coincidencias encontradas.
+- `regexp_replace`: Reemplaza texto basado en un patrón.
+
+#### **Ejemplo: Reemplazar espacios por guiones bajos**
+```sql
+SELECT regexp_replace(nombre, ' ', '_', 'g') AS nombre_modificado
+FROM usuarios;
+```
+**Explicación**: Reemplaza todos los espacios por guiones bajos.
+
+#### **Ejemplo: Extraer el dominio de un correo electrónico**
+```sql
+SELECT regexp_matches(email, '@(.+)$') AS dominio
+FROM usuarios;
+```
+**Explicación**: Extrae todo después del símbolo `@`.
+
+## **2. MySQL y expresiones regulares**
+
+En MySQL, se utiliza la función `REGEXP` para trabajar con expresiones regulares.
+
+### **Operadores comunes**
+- `REGEXP` o `RLIKE`: Para buscar coincidencias con un patrón.
+- `NOT REGEXP`: Para buscar lo que **no** coincide con el patrón.
+
+#### **Ejemplo: Buscar correos con dominio "gmail.com"**
+```sql
+SELECT email
+FROM usuarios
+WHERE email REGEXP 'gmail\\.com$';
+```
+**Explicación**: Busca correos que terminan con `gmail.com`. Se usa `\\.` para escapar el punto.
+
+#### **Ejemplo: Validar números de teléfono (10 dígitos)**
+```sql
+SELECT telefono
+FROM usuarios
+WHERE telefono REGEXP '^[0-9]{10}$';
+```
+**Explicación**: `^[0-9]{10}$` busca cadenas con exactamente 10 dígitos.
+
+### **Funciones relacionadas**
+- `REGEXP_REPLACE`: Introducido en MySQL 8.0 para reemplazar texto basado en un patrón.
+
+#### **Ejemplo: Reemplazar guiones en números de teléfono**
+```sql
+SELECT REGEXP_REPLACE(telefono, '-', '') AS telefono_limpio
+FROM usuarios;
+```
+**Explicación**: Elimina todos los guiones de la columna `telefono`.
+
+## **3. Oracle y expresiones regulares**
+
+Oracle incluye funciones avanzadas para expresiones regulares como `REGEXP_LIKE`, `REGEXP_REPLACE`, `REGEXP_INSTR` y `REGEXP_SUBSTR`.
+
+### **Ejemplo: Buscar nombres que contienen números**
+```sql
+SELECT nombre
+FROM usuarios
+WHERE REGEXP_LIKE(nombre, '[0-9]');
+```
+**Explicación**: Busca nombres que contengan algún dígito.
+
+### **Reemplazar texto con `REGEXP_REPLACE`**
+#### **Ejemplo: Convertir texto a minúsculas**
+```sql
+SELECT REGEXP_REPLACE(nombre, '[A-Z]', LOWER('\0')) AS nombre_minusculas
+FROM usuarios;
+```
+**Explicación**: Reemplaza todas las letras mayúsculas por minúsculas.
+
+### **Extraer texto con `REGEXP_SUBSTR`**
+#### **Ejemplo: Extraer el código postal de una dirección**
+```sql
+SELECT REGEXP_SUBSTR(direccion, '[0-9]{5}') AS codigo_postal
+FROM usuarios;
+```
+**Explicación**: Extrae un número de 5 dígitos (código postal) de la columna `direccion`.
+
+## **Patrones comunes en SQL**
+| Patrón        | Descripción                                |
+|---------------|--------------------------------------------|
+| `^`           | Inicio de la cadena.                      |
+| `$`           | Fin de la cadena.                        |
+| `.`           | Cualquier carácter.                      |
+| `[abc]`       | Coincide con cualquiera de `a`, `b` o `c`. |
+| `[^abc]`      | No coincide con `a`, `b` o `c`.           |
+| `[a-z]`       | Coincide con letras minúsculas de la `a` a la `z`. |
+| `[0-9]`       | Coincide con dígitos del 0 al 9.          |
+| `\d`          | Cualquier dígito (igual a `[0-9]`).       |
+| `\w`          | Cualquier carácter alfanumérico o guion bajo. |
+| `\s`          | Cualquier espacio en blanco.             |
+| `{n}`         | Exactamente `n` repeticiones.            |
+| `{n,}`        | Al menos `n` repeticiones.               |
+| `{n,m}`       | Entre `n` y `m` repeticiones.            |
+| `*`           | Cero o más repeticiones.                 |
+| `+`           | Una o más repeticiones.                  |
+| `?`           | Cero o una repetición.                   |
+
+## Bases de datos distribuidas
+
+Una **base de datos distribuida** es un sistema en el que los datos se almacenan en múltiples ubicaciones físicas que pueden estar en diferentes servidores, centros de datos o incluso países. A pesar de estar distribuidos, los datos se gestionan de forma lógica como si estuvieran en un único sistema.
+
+### **Características principales**
+
+1. **Distribución física**:
+   - Los datos están repartidos entre varios nodos (servidores o ubicaciones), pero son accesibles como si estuvieran en un solo lugar.
+
+2. **Transparencia**:
+   - Los usuarios no necesitan preocuparse por dónde están los datos; el sistema maneja la distribución y la recuperación de manera automática.
+
+3. **Escalabilidad**:
+   - Permite agregar más nodos para manejar más datos o mayor carga de trabajo sin afectar el rendimiento general.
+
+4. **Tolerancia a fallos**:
+   - Si un nodo falla, el sistema puede continuar funcionando utilizando réplicas o nodos alternativos.
+
+5. **Consistencia**:
+   - Garantiza que los datos sean coherentes en todas las ubicaciones, aunque esto puede variar dependiendo del modelo (consistencia fuerte, eventual, etc.).
+
+6. **Disponibilidad**:
+   - Los datos están disponibles incluso si algunos nodos no están accesibles.
+
+### **Tipos de bases de datos distribuidas**
+
+1. **Basadas en replicación**:
+   - Cada nodo almacena una copia completa o parcial de los datos.
+   - Ejemplo: Bases de datos de respaldo en tiempo real para alta disponibilidad.
+
+2. **Basadas en particionamiento (sharding)**:
+   - Los datos se dividen en fragmentos y cada fragmento se almacena en un nodo.
+   - Ejemplo: Redes sociales donde los datos de usuarios se dividen por regiones.
+
+3. **Híbridas**:
+   - Combinan replicación y particionamiento.
+
+### **Ventajas**
+
+1. **Rendimiento mejorado**:
+   - Al distribuir los datos, se reduce la carga en un único servidor, mejorando tiempos de respuesta.
+
+2. **Alta disponibilidad**:
+   - Si un nodo falla, los datos siguen siendo accesibles desde otros nodos.
+
+3. **Flexibilidad geográfica**:
+   - Los datos pueden estar más cerca de los usuarios finales, reduciendo latencia.
+
+4. **Escalabilidad horizontal**:
+   - Se pueden agregar más nodos para manejar mayor carga de trabajo sin rediseñar la arquitectura.
+
+5. **Resiliencia ante fallos**:
+   - La redundancia y replicación minimizan el impacto de fallos en nodos individuales.
+
+### **Desventajas**
+
+1. **Complejidad**:
+   - Gestionar una base de datos distribuida requiere planificación y conocimiento avanzado.
+
+2. **Latencia**:
+   - Las operaciones que implican múltiples nodos pueden ser más lentas debido a la comunicación entre ellos.
+
+3. **Consistencia vs. Disponibilidad**:
+   - Según el **Teorema CAP**, no se puede garantizar simultáneamente consistencia, disponibilidad y tolerancia a particiones en sistemas distribuidos.
+
+4. **Sobrecarga de red**:
+   - Las operaciones de replicación y sincronización pueden aumentar el tráfico en la red.
+
+### **Teorema CAP**
+
+El **teorema CAP** establece que una base de datos distribuida no puede garantizar las tres propiedades siguientes al mismo tiempo:
+
+1. **Consistencia**:
+   - Todos los nodos tienen los mismos datos en cualquier momento.
+
+2. **Disponibilidad**:
+   - Cada solicitud recibe una respuesta, incluso si algunos nodos fallan.
+
+3. **Tolerancia a particiones**:
+   - El sistema sigue funcionando incluso si hay fallos en la red que dividan los nodos.
+
+### **Ejemplos de bases de datos distribuidas**
+
+1. **Bases de datos relacionales**:
+   - PostgreSQL (con herramientas como Citus para distribución).
+   - MySQL (utilizando replicación o sharding).
+
+2. **Bases de datos NoSQL**:
+   - Cassandra: Ideal para escalabilidad horizontal y alta disponibilidad.
+   - MongoDB: Admite sharding y replicación.
+   - Couchbase: Combina memoria y almacenamiento distribuido.
+
+3. **Bases de datos en la nube**:
+   - Google Spanner: Consistencia global y baja latencia.
+   - Amazon Aurora: Base de datos relacional distribuida y escalable.
+   - Azure Cosmos DB: Compatible con múltiples modelos de datos (documentos, grafos, etc.).
+
+### **Casos de uso**
+
+1. **Comercio electrónico**:
+   - Catálogos de productos distribuidos geográficamente para accesos rápidos.
+
+2. **Redes sociales**:
+   - Manejo de datos masivos de usuarios globales.
+
+3. **Banca**:
+   - Gestión de transacciones en tiempo real desde múltiples sucursales.
+
+4. **Streaming**:
+   - Almacenamiento y entrega de contenido multimedia desde diferentes regiones.
+
+5. **Análisis de Big Data**:
+   - Procesamiento de grandes volúmenes de datos distribuidos.
+
+Las arquitecturas en sistemas de bases de datos distribuidas y otros sistemas computacionales describen cómo se organizan los componentes para garantizar el rendimiento, la disponibilidad y la escalabilidad. A continuación, se detallan diferentes **arquitecturas en bases de datos y sistemas distribuidos**:
+
+## **1. Arquitecturas de bases de datos**
+
+### **a. Arquitectura Cliente-Servidor**
+- **Descripción**: 
+  Los clientes envían solicitudes a un servidor de base de datos centralizado, que maneja las operaciones (consultas, actualizaciones, etc.).
+- **Ventajas**: 
+  - Sencillez en la administración.
+  - El cliente no realiza procesamiento pesado.
+- **Desventajas**:
+  - Escalabilidad limitada.
+  - Si el servidor falla, el sistema deja de funcionar.
+- **Ejemplo**: 
+  MySQL o PostgreSQL en modo monolítico.
+
+### **b. Arquitectura de 2 Capas**
+- **Descripción**: 
+  Se divide en:
+  - **Capa cliente**: Interfaz de usuario.
+  - **Capa servidor**: Gestión de datos.
+- **Ventajas**:
+  - Mejora el rendimiento al separar funciones.
+  - Reduce el acoplamiento entre componentes.
+- **Desventajas**:
+  - Todavía centralizado, con limitaciones de escalabilidad.
+- **Ejemplo**: 
+  Aplicaciones que acceden a bases de datos directamente desde un cliente.
+
+### **c. Arquitectura de 3 Capas**
+- **Descripción**: 
+  - **Capa cliente**: Interfaz de usuario.
+  - **Capa de lógica de negocio**: Procesamiento de datos y reglas de negocio.
+  - **Capa de datos**: Gestión de la base de datos.
+- **Ventajas**:
+  - Escalabilidad y modularidad.
+  - Separación clara de responsabilidades.
+- **Desventajas**:
+  - Mayor complejidad en el diseño y mantenimiento.
+- **Ejemplo**: 
+  Sistemas empresariales con una API intermedia para acceder a la base de datos.
+
+### **d. Arquitectura Distribuida**
+- **Descripción**: 
+  Los datos se distribuyen en múltiples nodos. Cada nodo puede manejar parte de las operaciones.
+- **Tipos**:
+  1. **Bases de datos fragmentadas**: Dividen los datos en fragmentos únicos.
+  2. **Bases de datos replicadas**: Cada nodo tiene copias de los datos.
+- **Ventajas**:
+  - Alta disponibilidad.
+  - Tolerancia a fallos.
+  - Mejor latencia.
+- **Desventajas**:
+  - Complejidad en la sincronización de datos.
+  - Posibles problemas de consistencia.
+- **Ejemplo**: 
+  Cassandra, MongoDB o Google Spanner.
+
+## **2. Arquitecturas de sistemas distribuidos**
+
+### **a. Arquitectura Monolítica**
+- **Descripción**: 
+  Toda la lógica de negocio y datos están centralizados en una sola aplicación.
+- **Ventajas**:
+  - Sencillez.
+  - Ideal para proyectos pequeños.
+- **Desventajas**:
+  - Difícil de escalar y mantener.
+- **Ejemplo**: 
+  Aplicaciones tradicionales con una única base de datos.
+
+### **b. Arquitectura de Microservicios**
+- **Descripción**: 
+  Se divide la aplicación en pequeños servicios independientes que interactúan entre sí.
+- **Ventajas**:
+  - Escalabilidad.
+  - Desarrollo y despliegue independientes.
+- **Desventajas**:
+  - Requiere mayor infraestructura (orquestación como Kubernetes).
+- **Ejemplo**: 
+  Amazon, Netflix.
+
+### **c. Arquitectura de Nube**
+- **Descripción**: 
+  Los recursos (datos, almacenamiento, procesamiento) están en la nube y son accesibles desde cualquier lugar.
+- **Tipos**:
+  1. **Nube pública**: Servicios compartidos (AWS, Azure).
+  2. **Nube privada**: Infraestructura dedicada.
+  3. **Nube híbrida**: Combinación de ambas.
+- **Ventajas**:
+  - Elasticidad y escalabilidad.
+  - Pago por uso.
+- **Desventajas**:
+  - Dependencia de proveedores externos.
+- **Ejemplo**: 
+  Bases de datos como Amazon Aurora, Google BigQuery.
+
+### **d. Arquitectura Peer-to-Peer**
+- **Descripción**: 
+  Cada nodo tiene responsabilidades iguales y puede actuar como cliente y servidor.
+- **Ventajas**:
+  - Tolerancia a fallos.
+  - Descentralización.
+- **Desventajas**:
+  - Dificultad para gestionar grandes sistemas.
+- **Ejemplo**: 
+  Redes blockchain.
+
+### **e. Arquitectura Lambda**
+- **Descripción**: 
+  Diseñada para sistemas de Big Data, combina procesamiento en tiempo real (streaming) con procesamiento por lotes.
+- **Ventajas**:
+  - Manejo de grandes volúmenes de datos.
+  - Flexibilidad para análisis histórico y en tiempo real.
+- **Desventajas**:
+  - Complejidad en la implementación.
+- **Ejemplo**: 
+  Apache Kafka con Apache Spark.
+
+### **f. Arquitectura Kappa**
+- **Descripción**: 
+  Variante simplificada de la arquitectura Lambda, enfocada solo en procesamiento en tiempo real.
+- **Ventajas**:
+  - Menos complejidad que Lambda.
+- **Desventajas**:
+  - No maneja eficientemente datos históricos.
+- **Ejemplo**: 
+  Apache Flink.
+
+## **Comparación: Centralizado vs Distribuido**
+
+| Aspecto             | Centralizado                         | Distribuido                           |
+|---------------------|--------------------------------------|---------------------------------------|
+| **Rendimiento**      | Limitado a los recursos del servidor | Escalable horizontalmente             |
+| **Disponibilidad**   | Riesgo de punto único de fallo       | Alta disponibilidad                   |
+| **Complejidad**      | Más sencillo                        | Requiere sincronización y particiones |
+| **Costo**            | Menor                               | Puede ser mayor (infraestructura)     |
+
+## Queries distribuídos
+
+Los **queries distribuidos** son consultas ejecutadas en un sistema de bases de datos distribuidas, donde los datos están repartidos en múltiples nodos o ubicaciones físicas. Estas consultas permiten acceder, combinar y procesar datos almacenados en diferentes servidores como si estuvieran en una sola base de datos.
+
+### **Características de los Queries Distribuidos**
+1. **Acceso a datos en diferentes ubicaciones:**
+   - Los datos están almacenados en múltiples nodos, pero el usuario puede consultar todo de manera transparente.
+   
+2. **Transparencia:**
+   - El usuario no necesita saber dónde están los datos físicamente; el sistema de gestión se encarga de la comunicación entre nodos.
+
+3. **Eficiencia:**
+   - Los queries se optimizan para minimizar la transferencia de datos entre nodos y reducir la latencia.
+
+4. **Consistencia:**
+   - Los sistemas deben garantizar la consistencia de los datos durante las consultas, especialmente en transacciones distribuidas.
+
+### **Ejemplo de Consultas Distribuidas**
+Supongamos que tienes un sistema distribuido con dos bases de datos en ubicaciones distintas:
+
+- **DB1** contiene la tabla `clientes`.
+- **DB2** contiene la tabla `pedidos`.
+
+#### **Consulta distribuida (JOIN entre nodos):**
+```sql
+SELECT c.nombre, p.producto, p.fecha
+FROM DB1.clientes c
+JOIN DB2.pedidos p
+ON c.id_cliente = p.id_cliente
+WHERE p.fecha >= '2025-01-01';
+```
+- Aquí se combinan datos de dos nodos para mostrar clientes junto con sus pedidos desde una fecha específica.
+
+### **Técnicas para Consultas Distribuidas**
+1. **Federated Queries (Consultas Federadas):**
+   - Permiten acceder a múltiples bases de datos heterogéneas (diferentes motores) desde una única consulta.
+   - Ejemplo en PostgreSQL usando `postgres_fdw`:
+     ```sql
+     CREATE SERVER db2_server FOREIGN DATA WRAPPER postgres_fdw OPTIONS (host '192.168.1.2', dbname 'db2');
+     IMPORT FOREIGN SCHEMA public FROM SERVER db2_server INTO public;
+     SELECT * FROM db2.tabla_remota;
+     ```
+
+2. **Sharding:**
+   - Los datos se dividen en fragmentos según ciertas claves (por ejemplo, geografía o cliente) y las consultas se distribuyen según el fragmento relevante.
+
+3. **Replicación:**
+   - Los datos se duplican en múltiples nodos para mejorar la disponibilidad y reducir latencia.
+   - Los queries distribuidos pueden ejecutarse localmente en nodos secundarios.
+
+4. **Optimización de Consultas:**
+   - Usa un optimizador para decidir cómo repartir el trabajo entre nodos y minimizar la transferencia de datos.
+
+### **Ventajas de los Queries Distribuidos**
+1. **Escalabilidad:**
+   - Permiten manejar grandes volúmenes de datos al repartir la carga entre múltiples servidores.
+
+2. **Disponibilidad:**
+   - Si un nodo falla, los datos pueden estar accesibles en otros nodos (dependiendo de la configuración de replicación).
+
+3. **Rendimiento:**
+   - Se distribuye el trabajo de las consultas, mejorando tiempos de respuesta.
+
+### **Desafíos de los Queries Distribuidos**
+1. **Latencia:**
+   - La comunicación entre nodos puede añadir tiempo a la ejecución de consultas.
+
+2. **Consistencia:**
+   - Garantizar la consistencia de los datos en transacciones distribuidas puede ser complejo.
+
+3. **Manejo de Errores:**
+   - Si un nodo no responde, el sistema debe manejar adecuadamente la consulta.
+
+4. **Optimización:**
+   - Requiere planificación cuidadosa para minimizar costos de transferencia de datos entre nodos.
+
+### **Herramientas y Tecnologías para Queries Distribuidos**
+1. **PostgreSQL con FDW (`postgres_fdw`):**
+   - Soporta consultas distribuidas con tablas externas.
+
+2. **Apache Hive:**
+   - Ideal para consultas distribuidas en grandes volúmenes de datos en Hadoop.
+
+3. **Google BigQuery:**
+   - Servicio de análisis de datos que permite consultas distribuidas a gran escala.
+
+4. **Apache Spark:**
+   - Framework que facilita el procesamiento distribuido de consultas.
+
+Ejemplo de queries distribuídos 
+
+```sql
+El Nodo A ejecuta SELECT COUNT(*) FROM empleados WHERE país = 'EE.UU.'; y devuelve el resultado (por ejemplo, 5000 empleados).
+El Nodo B ejecuta SELECT COUNT(*) FROM empleados WHERE país = 'México'; y devuelve el resultado (por ejemplo, 2000 empleados).
+El Nodo C ejecuta SELECT COUNT(*) FROM empleados WHERE país = 'Brasil'; y devuelve el resultado (por ejemplo, 3000 empleados).
+El nodo coordinador suma los resultados y devuelve un total de 10,000 empleados.
+```
+
+Un **query distributivo** en el contexto de bases de datos distribuidas es una consulta que puede ejecutarse de forma paralela y separada en diferentes nodos donde los datos están almacenados, y los resultados parciales luego se combinan para formar el resultado final. Este tipo de consultas es típico en sistemas distribuidos y se usa para mejorar el rendimiento y la escalabilidad.
+
+### **Ejemplo Práctico**
+
+Supongamos que tienes una base de datos distribuida que almacena información sobre ventas en diferentes regiones, dividida en dos nodos:
+
+- **Nodo 1:** Contiene la tabla `ventas_region_1`.
+- **Nodo 2:** Contiene la tabla `ventas_region_2`.
+
+Ambas tablas tienen la misma estructura:
+```sql
+CREATE TABLE ventas_region_1 (
+    id INT,
+    producto VARCHAR(100),
+    cantidad INT,
+    precio DECIMAL(10, 2),
+    fecha DATE
+);
+
+CREATE TABLE ventas_region_2 (
+    id INT,
+    producto VARCHAR(100),
+    cantidad INT,
+    precio DECIMAL(10, 2),
+    fecha DATE
+);
+```
+
+#### **Consulta: Calcular las ventas totales (recaudo) de todas las regiones**
+La consulta distributiva calcula el total de ventas combinando los datos de ambas tablas en diferentes nodos.
+
+```sql
+-- Nodo 1: Calcula el total en la región 1
+SELECT SUM(cantidad * precio) AS total_ventas_region_1
+FROM ventas_region_1;
+
+-- Nodo 2: Calcula el total en la región 2
+SELECT SUM(cantidad * precio) AS total_ventas_region_2
+FROM ventas_region_2;
+```
+
+Después de calcular los totales parciales, los resultados se combinan en el nodo principal:
+
+```sql
+-- Nodo Principal: Combina los resultados de ambas regiones
+SELECT SUM(total_ventas) AS total_ventas_global
+FROM (
+    SELECT SUM(cantidad * precio) AS total_ventas
+    FROM ventas_region_1
+    UNION ALL
+    SELECT SUM(cantidad * precio) AS total_ventas
+    FROM ventas_region_2
+) AS resultados_parciales;
+```
+
+### **Cómo funciona:**
+
+1. **Ejecución en paralelo:**
+   - La suma de ventas (`SUM(cantidad * precio)`) se calcula localmente en cada nodo, reduciendo la cantidad de datos transferidos.
+
+2. **Union de resultados:**
+   - Los resultados parciales de cada nodo se combinan usando `UNION ALL` en el nodo principal.
+
+3. **Ventaja:**
+   - Este enfoque distribuye la carga computacional entre los nodos, haciendo que la consulta sea más eficiente en grandes volúmenes de datos.
+
+### **Otras Aplicaciones Comunes de Queries Distributivos:**
+1. **Promedios:** Calcular el promedio total distribuyendo el cálculo de sumas parciales y conteos.
+2. **Conteos:** Contar filas distribuidas entre varios nodos.
+3. **Máximos y Mínimos:** Encontrar el valor máximo o mínimo en grandes conjuntos de datos distribuidos.
+
+## Sharding
+
+El **sharding** en SQL es una técnica de diseño de bases de datos distribuidas donde los datos se dividen en múltiples fragmentos (shards) que se almacenan en diferentes nodos o servidores. Cada shard contiene un subconjunto de los datos totales, y generalmente se distribuyen según una clave de partición, como el ID de usuario o una región geográfica.
+
+Esta técnica mejora el rendimiento y la escalabilidad al permitir que las consultas se procesen en paralelo en diferentes nodos y distribuye la carga de trabajo en múltiples servidores.
+
+
+### **Conceptos clave del sharding**
+
+1. **Clave de partición (Shard Key):** 
+   Es el atributo de los datos que determina en qué shard se almacenarán. Por ejemplo, un campo `user_id` o `region`.
+
+2. **Shards:**
+   Fragmentos de la base de datos distribuidos en diferentes servidores. Cada shard funciona como una base de datos independiente.
+
+3. **Coordinación:**
+   Un sistema de administración o middleware que dirige las consultas al shard correcto según la clave de partición.
+
+### **Ejemplo práctico: Sharding por región**
+
+Supongamos que tienes una tabla `clientes` con información de usuarios de diferentes regiones, y decides dividir los datos según la región (`region_id`):
+
+#### **Estructura original de la tabla**
+```sql
+CREATE TABLE clientes (
+    cliente_id INT PRIMARY KEY,
+    nombre VARCHAR(100),
+    region_id INT,
+    email VARCHAR(100)
+);
+```
+
+#### **División en shards**
+Se crean varias tablas en diferentes servidores para almacenar los datos de cada región:
+
+**Shard 1: Clientes de la región 1**
+```sql
+CREATE TABLE clientes_region_1 (
+    cliente_id INT PRIMARY KEY,
+    nombre VARCHAR(100),
+    region_id INT,
+    email VARCHAR(100)
+);
+```
+
+**Shard 2: Clientes de la región 2**
+```sql
+CREATE TABLE clientes_region_2 (
+    cliente_id INT PRIMARY KEY,
+    nombre VARCHAR(100),
+    region_id INT,
+    email VARCHAR(100)
+);
+```
+
+### **Consulta en un sistema con sharding**
+
+#### **Consulta directa a un shard**
+Si sabes que los datos están en la región 1:
+```sql
+SELECT * 
+FROM clientes_region_1 
+WHERE cliente_id = 123;
+```
+
+#### **Consulta distribuida a todos los shards**
+Para buscar en todas las regiones, un middleware o sistema de coordinación puede enviar la misma consulta a cada shard:
+```sql
+-- Enviada a todos los shards
+SELECT * 
+FROM clientes_region_1 
+WHERE cliente_id = 123;
+
+SELECT * 
+FROM clientes_region_2 
+WHERE cliente_id = 123;
+```
+
+Luego, los resultados se combinan.
+
+### **Ventajas del Sharding**
+1. **Escalabilidad:** Permite manejar grandes volúmenes de datos distribuyéndolos entre múltiples servidores.
+2. **Mejor rendimiento:** Las consultas se ejecutan en subconjuntos de datos más pequeños.
+3. **Tolerancia a fallos:** Si un shard falla, los demás siguen operativos.
+
+### **Desafíos del Sharding**
+1. **Complejidad:** El diseño, la implementación y el mantenimiento son más complicados.
+2. **Equilibrio de datos:** Asegurar que los shards estén equilibrados en términos de tamaño y carga de trabajo.
+3. **Consultas cruzadas:** Las consultas que necesitan datos de múltiples shards pueden ser más lentas y complicadas.
+
+### **¿Cuándo usar sharding?**
+1. Cuando tu base de datos crece rápidamente y no cabe en un solo servidor.
+2. Cuando el tráfico de consultas supera las capacidades de un solo servidor.
+3. Cuando necesitas una alta disponibilidad y redundancia.
+
+Aquí te dejo un ejemplo básico de cómo podrías implementar **sharding** en **PostgreSQL**. Este ejemplo muestra cómo dividir la base de datos en múltiples nodos (shards) y cómo coordinar las consultas entre esos nodos. Aunque la implementación completa de sharding requiere herramientas de middleware o un sistema especializado, aquí te mostraré cómo organizar las tablas en diferentes servidores y realizar consultas distribuidas.
+
+### **1. Dividiendo los Datos en Shards en PostgreSQL**
+
+Supongamos que tienes una base de datos que contiene una tabla de `clientes` y decides dividir los datos en diferentes shards según la `region_id`.
+
+#### **Crear las tablas en diferentes shards**
+
+En un sistema distribuido, cada shard estaría en un servidor diferente. Vamos a crear una tabla `clientes` en dos servidores diferentes, uno para la `region_id = 1` y otro para `region_id = 2`.
+
+**Shard 1: Servidor para `region_id = 1`**
+
+```sql
+-- Conectado a servidor 1
+CREATE TABLE clientes_region_1 (
+    cliente_id SERIAL PRIMARY KEY,
+    nombre VARCHAR(100),
+    region_id INT,
+    email VARCHAR(100)
+);
+```
+
+**Shard 2: Servidor para `region_id = 2`**
+
+```sql
+-- Conectado a servidor 2
+CREATE TABLE clientes_region_2 (
+    cliente_id SERIAL PRIMARY KEY,
+    nombre VARCHAR(100),
+    region_id INT,
+    email VARCHAR(100)
+);
+```
+
+En una base de datos de producción real, los servidores estarían configurados de manera física en máquinas distintas, pero aquí lo estamos simplificando.
+
+### **2. Middleware para Coordinación de Shards**
+
+El middleware sería responsable de dirigir las consultas al shard correcto basado en la `region_id`. Como PostgreSQL no tiene sharding incorporado, necesitarás usar herramientas como **Citus** o diseñar un sistema que se encargue de redirigir las consultas.
+
+Por ejemplo, si quieres consultar todos los clientes de la `region_id = 1`, la consulta se ejecutaría solo en el shard correspondiente:
+
+#### **Consulta en un shard específico**
+
+```sql
+-- Conectado al servidor del shard 1
+SELECT * 
+FROM clientes_region_1 
+WHERE region_id = 1;
+```
+
+Para obtener los clientes de la región 2:
+
+```sql
+-- Conectado al servidor del shard 2
+SELECT * 
+FROM clientes_region_2 
+WHERE region_id = 2;
+```
+
+### **3. Consultas Distribuidas**
+
+Si necesitas obtener datos de múltiples shards (por ejemplo, obtener todos los clientes), el middleware puede enviar las consultas a ambos shards y combinar los resultados.
+
+#### **Ejemplo de consulta distribuida a todos los shards**
+
+El sistema de coordinación enviaría consultas a los shards correspondientes y luego combinaría los resultados.
+
+```sql
+-- Conectado al servidor del shard 1
+SELECT * FROM clientes_region_1;
+
+-- Conectado al servidor del shard 2
+SELECT * FROM clientes_region_2;
+```
+
+Luego, el middleware combinaría los resultados.
+
+### **4. Implementación con Citus (PostgreSQL Sharding Extension)**
+
+[Citus](https://www.citusdata.com/) es una extensión de PostgreSQL que permite realizar sharding de manera más sencilla. Citus distribuye automáticamente los datos de las tablas entre múltiples nodos y coordina las consultas para ti.
+
+#### **Instalar Citus**
+
+Para instalar Citus en PostgreSQL, puedes seguir estos pasos en tu servidor:
+
+1. Agrega el repositorio de Citus:
+   ```bash
+   sudo add-apt-repository ppa:citusdata/citus
+   sudo apt-get update
+   ```
+
+2. Instala Citus:
+   ```bash
+   sudo apt-get install postgresql-12-citus-<version>
+   ```
+
+3. Configura PostgreSQL para usar Citus:
+   En el archivo `postgresql.conf`, habilita la extensión:
+   ```bash
+   shared_preload_libraries = 'citus'
+   ```
+
+4. Reinicia PostgreSQL.
+
+#### **Crear tablas distribuidas con Citus**
+
+Una vez que Citus está instalado y configurado, puedes crear una tabla distribuida utilizando una clave de partición. Por ejemplo, distribuyendo los datos de `clientes` por `region_id`:
+
+```sql
+-- Conectado al nodo maestro
+SELECT create_distributed_table('clientes', 'region_id');
+```
+
+Citus automáticamente distribuirá los datos entre varios nodos y manejará las consultas distribuidas por ti.
+
+### **5. Ventajas del Sharding en PostgreSQL**
+
+1. **Escalabilidad:** Puedes agregar más nodos (shards) según sea necesario.
+2. **Mejores tiempos de respuesta:** Las consultas se pueden ejecutar en paralelo en diferentes shards.
+3. **Tolerancia a fallos:** Si un shard falla, el resto del sistema puede seguir funcionando.
+
+### **Conclusión**
+
+El **sharding** en **PostgreSQL** se puede implementar utilizando un middleware para coordinar la distribución de los datos o mediante herramientas como **Citus**. Aunque PostgreSQL no tiene soporte nativo para sharding, existen soluciones que permiten distribuir datos entre diferentes servidores, mejorar la escalabilidad y reducir la carga en servidores individuales.
+
+## Window functions
+
+Las **window functions** (funciones de ventana) en SQL son una categoría especial de funciones que operan sobre un conjunto de filas relacionadas (o ventana de filas) y devuelven un valor para cada fila de ese conjunto sin agrupar las filas. Esto significa que puedes realizar cálculos agregados como **SUM**, **AVG**, **ROW_NUMBER**, **RANK**, entre otros, sin perder la granularidad de las filas originales.
+
+Las window functions son muy útiles cuando necesitas aplicar cálculos agregados o de ordenación sin eliminar la información detallada de las filas.
+
+### Sintaxis Básica de una Window Function
+
+La sintaxis básica para usar una **window function** es la siguiente:
+
+```sql
+SELECT columna1, columna2, 
+       función_ventana(columna) OVER (PARTITION BY columna ORDER BY columna) AS resultado
+FROM tabla;
+```
+
+- **función_ventana**: Es la función que se va a aplicar (por ejemplo, `ROW_NUMBER()`, `RANK()`, `SUM()`, etc.).
+- **PARTITION BY columna**: Opcional. Divide los datos en particiones (subgrupos) en los que la función se aplica. Si no se incluye, la función opera sobre toda la tabla.
+- **ORDER BY columna**: Ordena las filas dentro de cada partición antes de aplicar la función.
+
+### Ejemplos de Window Functions
+
+1. **ROW_NUMBER()**: Asigna un número de fila único a cada fila dentro de una partición, comenzando desde 1.
+
+```sql
+SELECT nombre, salario, 
+       ROW_NUMBER() OVER (PARTITION BY departamento ORDER BY salario DESC) AS fila
+FROM empleados;
+```
+Este ejemplo asigna un número de fila a cada empleado dentro de su departamento, ordenado por salario en orden descendente.
+
+2. **RANK()**: Asigna un rango a cada fila dentro de una partición, con la posibilidad de asignar el mismo rango a varias filas si tienen el mismo valor. Sin embargo, el siguiente rango no se incrementa en caso de empates.
+
+```sql
+SELECT nombre, salario, 
+       RANK() OVER (PARTITION BY departamento ORDER BY salario DESC) AS rango
+FROM empleados;
+```
+Esto asigna un rango a cada empleado dentro de su departamento basado en su salario, con empates posibles.
+
+3. **DENSE_RANK()**: Similar a **RANK()**, pero en lugar de dejar espacios entre los rangos, sigue el conteo sin saltos.
+
+```sql
+SELECT nombre, salario, 
+       DENSE_RANK() OVER (PARTITION BY departamento ORDER BY salario DESC) AS rango_denso
+FROM empleados;
+```
+
+4. **SUM()**: Realiza una agregación sobre un conjunto de filas, pero en lugar de devolver un solo valor para cada grupo, devuelve el valor acumulado para cada fila.
+
+```sql
+SELECT nombre, salario, 
+       SUM(salario) OVER (PARTITION BY departamento) AS suma_salarios
+FROM empleados;
+```
+Este ejemplo calcula la suma total de los salarios dentro de cada departamento, pero mostrando el total acumulado en cada fila.
+
+5. **AVG()**: Calcula el promedio de un conjunto de filas en una ventana.
+
+```sql
+SELECT nombre, salario, 
+       AVG(salario) OVER (PARTITION BY departamento) AS promedio_salarios
+FROM empleados;
+```
+Calcula el salario promedio dentro de cada departamento.
+
+6. **LEAD()**: Devuelve el valor de una fila "adelante" dentro de una partición, basado en el orden especificado.
+
+```sql
+SELECT nombre, salario, 
+       LEAD(salario, 1) OVER (ORDER BY salario DESC) AS siguiente_salario
+FROM empleados;
+```
+Este ejemplo obtiene el salario del siguiente empleado basado en el orden descendente de salarios.
+
+7. **LAG()**: Devuelve el valor de una fila "atrás" dentro de una partición, basado en el orden especificado.
+
+```sql
+SELECT nombre, salario, 
+       LAG(salario, 1) OVER (ORDER BY salario DESC) AS salario_anterior
+FROM empleados;
+```
+Obtiene el salario del empleado anterior al de la fila actual.
+
+8. **NTILE()**: Divide los datos en un número especificado de grupos (n-tiles), y asigna un número de grupo a cada fila.
+
+```sql
+SELECT nombre, salario, 
+       NTILE(4) OVER (ORDER BY salario DESC) AS cuartil
+FROM empleados;
+```
+Divide los empleados en 4 cuartiles basados en el salario.
+
+### Ventajas de las Window Functions
+- Permiten realizar cálculos complejos sin necesidad de subconsultas o uniones.
+- Puedes obtener resultados agregados o de clasificación sin perder la granularidad de los datos.
+- Son más eficientes que usar subconsultas anidadas, especialmente cuando se trabaja con grandes volúmenes de datos.
+
+### Consideraciones
+
+- Las **window functions** requieren que uses **ORDER BY** dentro del `OVER()` para indicar cómo se deben ordenar las filas dentro de cada partición.
+- Si no usas **PARTITION BY**, la función se aplicará sobre todas las filas de la consulta.
+- A diferencia de las funciones agregadas tradicionales (como `SUM()`, `COUNT()`, etc.), las **window functions** no eliminan las filas, sino que devuelven un valor calculado para cada fila.
+
+Las **window functions** son herramientas poderosas en SQL para realizar cálculos complejos de manera eficiente, sin perder la capacidad de ver los datos detallados. Son ampliamente utilizadas en análisis de datos, reportes, y otras tareas que requieren agregar o clasificar datos dentro de grupos específicos.
+
+## Particiones y agregación
+
