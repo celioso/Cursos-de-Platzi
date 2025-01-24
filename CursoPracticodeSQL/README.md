@@ -2710,3 +2710,119 @@ Las **window functions** son herramientas poderosas en SQL para realizar cálcul
 
 ## Particiones y agregación
 
+En SQL, las **particiones** y la **agregación** son conceptos clave cuando se trabaja con **window functions** (funciones de ventana) y también en operaciones tradicionales de agrupación como las realizadas con `GROUP BY`.
+
+### 1. **Particiones**
+
+Una **partición** en SQL se refiere a un subconjunto de filas en una consulta que se agrupan de acuerdo con una columna o conjunto de columnas. Las particiones son muy útiles cuando utilizas **window functions**, ya que te permiten dividir los datos en grupos para que las funciones se apliquen solo dentro de esos grupos.
+
+#### Particionando con `PARTITION BY`
+Cuando utilizas una función de ventana, puedes dividir el conjunto de datos en particiones usando la cláusula `PARTITION BY`. Esto es similar a hacer una agrupación, pero sin perder la granularidad de las filas.
+
+**Sintaxis de `PARTITION BY`:**
+
+```sql
+SELECT columna1, columna2, 
+       función_ventana(columna) OVER (PARTITION BY columna1 ORDER BY columna2)
+FROM tabla;
+```
+
+**Ejemplo con `PARTITION BY`:**
+
+Supongamos que tienes una tabla de empleados y quieres calcular el salario promedio de cada departamento, pero sin perder la lista de empleados. Puedes particionar los datos por `departamento` y calcular el promedio dentro de cada partición.
+
+```sql
+SELECT nombre, departamento, salario, 
+       AVG(salario) OVER (PARTITION BY departamento) AS promedio_salario
+FROM empleados;
+```
+
+En este ejemplo:
+- Los empleados se agrupan por `departamento`.
+- La función `AVG(salario)` calcula el salario promedio dentro de cada departamento.
+- La información de cada empleado sigue estando disponible, aunque se haya calculado el promedio para su departamento.
+
+### 2. **Agregación**
+
+La **agregación** se refiere al proceso de realizar cálculos sobre un conjunto de datos. Esto se puede hacer con funciones como `SUM()`, `AVG()`, `COUNT()`, `MAX()`, y `MIN()`. Normalmente, se utiliza en combinación con la cláusula `GROUP BY` para agrupar los datos antes de realizar el cálculo.
+
+#### Agregación con `GROUP BY`
+
+Cuando usas `GROUP BY`, los datos se agrupan por una o más columnas, y luego se aplica una función de agregación a cada grupo.
+
+**Sintaxis de `GROUP BY`:**
+
+```sql
+SELECT columna1, función_agregada(columna2)
+FROM tabla
+GROUP BY columna1;
+```
+
+**Ejemplo de agregación con `GROUP BY`:**
+
+Supongamos que tienes una tabla de ventas y quieres obtener el total de ventas por cada producto. Podrías usar el siguiente código:
+
+```sql
+SELECT producto, SUM(venta_monto) AS total_ventas
+FROM ventas
+GROUP BY producto;
+```
+
+En este caso:
+- Los datos se agrupan por `producto`.
+- La función `SUM(venta_monto)` calcula el total de ventas para cada producto.
+- La salida es una lista de productos con su respectivo total de ventas.
+
+### 3. **Diferencias entre Partición y Agregación**
+
+La diferencia principal entre **partición** y **agregación** es que:
+
+- **`PARTITION BY`** permite realizar cálculos dentro de particiones sin perder la granularidad de los datos. En otras palabras, calculas un valor por grupo (como el promedio o el número de filas) y lo asignas a cada fila dentro de ese grupo, sin modificar la estructura de los datos.
+  
+- **`GROUP BY`** agrupa los datos y genera un solo valor agregado para cada grupo. La salida de un `GROUP BY` generalmente tiene menos filas que la entrada, ya que los datos se combinan en función de las columnas por las que se agrupan.
+
+### Ejemplo Comparativo
+
+Vamos a comparar cómo se usan las particiones y la agregación en SQL:
+
+#### Con **`GROUP BY`** (Agregación):
+```sql
+SELECT departamento, AVG(salario) AS promedio_salario
+FROM empleados
+GROUP BY departamento;
+```
+Esto devolverá el salario promedio para cada departamento, pero solo muestra un valor por cada departamento. La granularidad de los empleados se pierde.
+
+#### Con **`PARTITION BY`** (Partición):
+```sql
+SELECT nombre, departamento, salario, 
+       AVG(salario) OVER (PARTITION BY departamento) AS promedio_salario
+FROM empleados;
+```
+En este caso, cada fila (empleado) sigue siendo visible, pero además se calcula el salario promedio por departamento. Aquí no se pierde la granularidad de los empleados, y puedes ver el salario de cada uno junto con el promedio de su departamento.
+
+### 4. **Combinando Partición y Agregación**
+
+Puedes usar las funciones de ventana con partición y agregación para realizar cálculos complejos.
+
+**Ejemplo combinado:**
+
+Supón que tienes una tabla de empleados y quieres asignar un número de fila (rank) por salario dentro de cada departamento y, al mismo tiempo, obtener el salario promedio de cada departamento. Usas `ROW_NUMBER()` para el ranking y `AVG()` para el promedio, con partición por `departamento`.
+
+```sql
+SELECT nombre, departamento, salario,
+       ROW_NUMBER() OVER (PARTITION BY departamento ORDER BY salario DESC) AS ranking,
+       AVG(salario) OVER (PARTITION BY departamento) AS promedio_salario
+FROM empleados;
+```
+
+Aquí:
+- **`ROW_NUMBER()`** asigna un número de fila a cada empleado dentro de su departamento, ordenado por salario.
+- **`AVG(salario)`** calcula el salario promedio dentro de cada departamento.
+
+### Conclusión
+
+- **Particiones** permiten realizar cálculos dentro de grupos sin eliminar la granularidad de los datos, y se usan en conjunto con funciones de ventana.
+- **Agregación** con `GROUP BY` combina las filas de cada grupo y devuelve un solo valor por grupo, perdiendo la granularidad de los datos.
+  
+Ambos son conceptos importantes y se pueden usar según lo que necesites hacer: si deseas mantener todos los detalles de las filas o si solo te interesa un valor por grupo.
