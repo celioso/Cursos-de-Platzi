@@ -1945,3 +1945,120 @@ A continuación, una estructura simplificada de base de datos:
 - **Escalabilidad:** Es fácil añadir más tablas o columnas si el sistema crece.
 - **Consistencia:** Uso de claves primarias y foráneas para mantener integridad referencial.
 
+## Agregación de datos
+
+La **agregación de datos** es el proceso de resumir, combinar o transformar conjuntos de datos para obtener información más relevante o simplificada. En bases de datos, se realiza comúnmente con funciones que operan sobre un conjunto de registros y devuelven un único resultado.
+
+### **Funciones de Agregación Principales en SQL**
+
+1. **`COUNT`**
+   - Devuelve el número de filas en un conjunto de datos.
+   - Ejemplo:
+     ```sql
+     SELECT COUNT(*) AS total_peliculas FROM peliculas;
+     ```
+
+2. **`SUM`**
+   - Suma los valores numéricos de una columna.
+   - Ejemplo:
+     ```sql
+     SELECT SUM(precio_renta) AS total_ingresos FROM rentas;
+     ```
+
+3. **`AVG`**
+   - Calcula el promedio de los valores numéricos de una columna.
+   - Ejemplo:
+     ```sql
+     SELECT AVG(duracion) AS duracion_promedio FROM peliculas;
+     ```
+
+4. **`MIN`**
+   - Encuentra el valor mínimo de una columna.
+   - Ejemplo:
+     ```sql
+     SELECT MIN(precio_renta) AS menor_precio FROM peliculas;
+     ```
+
+5. **`MAX`**
+   - Encuentra el valor máximo de una columna.
+   - Ejemplo:
+     ```sql
+     SELECT MAX(duracion) AS mayor_duracion FROM peliculas;
+     ```
+
+### **Uso con `GROUP BY`**
+
+El **`GROUP BY`** permite realizar agregaciones por categorías, dividiendo los datos en grupos antes de aplicar una función de agregación.
+
+#### Ejemplo:
+Obtener el número de películas por clasificación:
+```sql
+SELECT clasificacion, COUNT(*) AS total
+FROM peliculas
+GROUP BY clasificacion;
+```
+
+Resultado esperado:
+| Clasificación | Total |
+|---------------|-------|
+| R             | 10    |
+| PG-13         | 15    |
+| G             | 5     |
+
+---
+
+### **Uso con `HAVING`**
+
+El **`HAVING`** filtra los resultados de una agrupación después de aplicar las funciones de agregación.
+
+#### Ejemplo:
+Mostrar las clasificaciones con más de 10 películas:
+```sql
+SELECT clasificacion, COUNT(*) AS total
+FROM peliculas
+GROUP BY clasificacion
+HAVING COUNT(*) > 10;
+```
+
+### **Subconsultas para Agregación**
+
+Las subconsultas pueden combinarse con funciones de agregación para crear análisis más complejos.
+
+#### Ejemplo:
+Obtener las películas con una duración mayor al promedio:
+```sql
+SELECT titulo, duracion
+FROM peliculas
+WHERE duracion > (SELECT AVG(duracion) FROM peliculas);
+```
+
+### **Agregación en Data Science**
+
+En análisis de datos, la agregación se usa para:
+
+1. **Resumen estadístico:**
+   - Promedio, mediana, suma, etc.
+2. **Análisis por categorías:**
+   - Dividir datos en grupos (p. ej., ventas por región).
+3. **Reducción de granularidad:**
+   - Simplificar grandes volúmenes de datos para obtener una visión general.
+
+Herramientas como **Pandas** (en Python) también ofrecen funciones de agregación similares:
+```python
+import pandas as pd
+
+# DataFrame de ejemplo
+df = pd.DataFrame({
+    'Clasificación': ['R', 'PG-13', 'G', 'R', 'PG-13'],
+    'Duración': [120, 90, 80, 150, 110]
+})
+
+# Agregación: promedio de duración por clasificación
+result = df.groupby('Clasificación')['Duración'].mean()
+print(result)
+```
+
+### **Ventajas de la Agregación de Datos**
+- **Resúmenes claros:** Reduce la complejidad de los datos.
+- **Facilita decisiones:** Proporciona métricas clave para análisis.
+- **Eficiencia:** Menos datos procesados en reportes o visualizaciones.
