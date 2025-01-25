@@ -2062,3 +2062,198 @@ print(result)
 - **Resúmenes claros:** Reduce la complejidad de los datos.
 - **Facilita decisiones:** Proporciona métricas clave para análisis.
 - **Eficiencia:** Menos datos procesados en reportes o visualizaciones.
+
+## Trabajando con objetos
+
+### **Trabajando con Objetos JSON en PostgreSQL**
+
+PostgreSQL es una base de datos potente que ofrece soporte nativo para datos en formato JSON y JSONB (una versión optimizada de JSON). Esto permite almacenar y manipular datos semi-estructurados de manera eficiente.
+
+### **1. JSON vs JSONB en PostgreSQL**
+
+- **JSON:** 
+  - Almacena los datos en texto plano.
+  - Conserva el orden de las claves y el formato original.
+  - Menor rendimiento en consultas o manipulaciones.
+
+- **JSONB:**
+  - Almacena los datos en un formato binario optimizado.
+  - No conserva el orden de las claves.
+  - Más rápido para búsquedas, índices y operaciones.
+
+### **2. Creación de Tablas con Columnas JSON/JSONB**
+
+- **Definir una columna JSON:**
+   ```sql
+   CREATE TABLE peliculas (
+       id SERIAL PRIMARY KEY,
+       titulo VARCHAR(255) NOT NULL,
+       datos JSON
+   );
+   ```
+
+- **Definir una columna JSONB:**
+   ```sql
+   CREATE TABLE peliculas_jsonb (
+       id SERIAL PRIMARY KEY,
+       titulo VARCHAR(255) NOT NULL,
+       detalles JSONB
+   );
+   ```
+
+### **3. Insertar Datos en Columnas JSON**
+
+- **Insertar datos en formato JSON:**
+   ```sql
+   INSERT INTO peliculas (titulo, datos)
+   VALUES ('Inception', '{"director": "Christopher Nolan", "anio": 2010, "genero": "Sci-Fi"}');
+   ```
+
+- **Insertar datos en formato JSONB:**
+   ```sql
+   INSERT INTO peliculas_jsonb (titulo, detalles)
+   VALUES ('The Matrix', '{"director": "The Wachowskis", "anio": 1999, "genero": "Action"}');
+   ```
+
+### **4. Consultas con JSON**
+
+#### **4.1 Acceso a Elementos del JSON**
+
+- **Acceder a un valor específico:**
+   ```sql
+   SELECT datos->'director' AS director
+   FROM peliculas
+   WHERE titulo = 'Inception';
+   ```
+
+- **Acceder al valor como texto:**
+   ```sql
+   SELECT datos->>'director' AS director
+   FROM peliculas
+   WHERE titulo = 'Inception';
+   ```
+
+#### **4.2 Filtrar usando JSON**
+
+- **Filtrar por un campo dentro del JSON:**
+   ```sql
+   SELECT *
+   FROM peliculas
+   WHERE datos->>'genero' = 'Sci-Fi';
+   ```
+
+- **Filtrar en JSONB:**
+   ```sql
+   SELECT *
+   FROM peliculas_jsonb
+   WHERE detalles->>'anio' = '1999';
+   ```
+
+#### **4.3 Extraer Objetos Complejos**
+
+- **Obtener un campo como JSON:**
+   ```sql
+   SELECT datos->'director'
+   FROM peliculas;
+   ```
+
+- **Obtener todas las claves del JSON:**
+   ```sql
+   SELECT json_object_keys(datos)
+   FROM peliculas
+   WHERE titulo = 'Inception';
+   ```
+
+### **5. Actualización de Datos JSON**
+
+#### **Actualizar Valores**
+- **Actualizar un valor dentro del JSON:**
+   ```sql
+   UPDATE peliculas_jsonb
+   SET detalles = jsonb_set(detalles, '{anio}', '2023'::jsonb)
+   WHERE titulo = 'The Matrix';
+   ```
+
+#### **Agregar Nuevos Elementos**
+- **Agregar una nueva clave-valor:**
+   ```sql
+   UPDATE peliculas_jsonb
+   SET detalles = jsonb_set(detalles, '{productora}', '"Warner Bros"'::jsonb)
+   WHERE titulo = 'The Matrix';
+   ```
+
+#### **Eliminar Claves**
+- **Eliminar una clave del JSONB:**
+   ```sql
+   UPDATE peliculas_jsonb
+   SET detalles = detalles - 'genero'
+   WHERE titulo = 'The Matrix';
+   ```
+
+### **6. Indexación para JSONB**
+
+Para mejorar el rendimiento en consultas sobre columnas JSONB, se recomienda crear índices.
+
+- **Crear un índice GIN en JSONB:**
+   ```sql
+   CREATE INDEX idx_detalles_genero
+   ON peliculas_jsonb USING gin (detalles);
+   ```
+
+- **Consulta eficiente con el índice:**
+   ```sql
+   SELECT *
+   FROM peliculas_jsonb
+   WHERE detalles @> '{"genero": "Action"}';
+   ```
+
+### **7. Funciones Avanzadas con JSON**
+
+#### **Agregar y Combinar Datos**
+- **Concatenar objetos JSONB:**
+   ```sql
+   SELECT '{"director": "Christopher Nolan"}'::jsonb || '{"anio": 2010}'::jsonb;
+   ```
+
+#### **Descomponer JSON a Filas**
+- **Expandir un array JSON a filas:**
+   ```sql
+   SELECT *
+   FROM jsonb_array_elements('[1, 2, 3]'::jsonb);
+   ```
+
+#### **Consultar Elementos de un Array JSON**
+- **Obtener elementos de un array JSONB:**
+   ```sql
+   SELECT detalles->'actores'->>0 AS primer_actor
+   FROM peliculas_jsonb
+   WHERE titulo = 'The Matrix';
+   ```
+
+### **8. Ejemplo Práctico**
+
+Supongamos que tenemos una tabla con datos sobre películas:
+
+```sql
+CREATE TABLE peliculas_jsonb (
+    id SERIAL PRIMARY KEY,
+    titulo VARCHAR(255) NOT NULL,
+    detalles JSONB
+);
+
+INSERT INTO peliculas_jsonb (titulo, detalles)
+VALUES
+('Inception', '{"director": "Christopher Nolan", "anio": 2010, "genero": "Sci-Fi"}'),
+('The Matrix', '{"director": "The Wachowskis", "anio": 1999, "genero": "Action"}');
+```
+
+**Consulta: ¿Cuáles son las películas de género "Sci-Fi" publicadas después del 2000?**
+```sql
+SELECT titulo, detalles->>'anio' AS anio
+FROM peliculas_jsonb
+WHERE detalles->>'genero' = 'Sci-Fi' AND (detalles->>'anio')::INT > 2000;
+```
+
+### **Conclusión**
+
+El soporte de PostgreSQL para JSON y JSONB permite almacenar y manipular datos semi-estructurados con flexibilidad y rendimiento. Esto lo hace ideal para trabajar con datos provenientes de APIs, logs o estructuras heterogéneas. Si necesitas optimizar el acceso y las búsquedas, considera usar JSONB junto con índices GIN.
