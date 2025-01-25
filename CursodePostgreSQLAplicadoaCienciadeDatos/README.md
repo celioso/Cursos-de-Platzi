@@ -1202,4 +1202,746 @@ CALL ejemplo_error();
 3. **Seguridad:** Ocultan detalles de las tablas y columnas.
 4. **Flexibilidad:** Perfectas para operaciones administrativas complejas y tareas repetitivas.
 
-Los stored procedures en PL/pgSQL son herramientas poderosas que facilitan la creación de sistemas robustos, eficientes y fáciles de mantener. 
+Los stored procedures en PL/pgSQL son herramientas poderosas que facilitan la creación de sistemas robustos, eficientes y fáciles de mantener.
+
+## PLPGSQL: conteo, registro y triggers
+
+En **PL/pgSQL**, los conceptos de **conteo**, **registro** y **triggers** son fundamentales para automatizar y optimizar la gestión de datos en una base de datos. A continuación, exploramos cada uno con ejemplos prácticos:
+
+## **1. Conteo en PL/pgSQL**
+El conteo se utiliza para obtener el número de registros en una tabla o como resultado de una consulta específica. 
+
+### **Ejemplo 1: Conteo básico en un procedimiento**
+Un procedimiento que devuelve la cantidad de usuarios en una tabla:
+
+```sql
+CREATE PROCEDURE contar_usuarios()
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    total_usuarios INT;
+BEGIN
+    SELECT COUNT(*) INTO total_usuarios FROM usuarios;
+    RAISE NOTICE 'Total de usuarios: %', total_usuarios;
+END;
+$$;
+```
+
+**Uso:**
+```sql
+CALL contar_usuarios();
+```
+
+### **Ejemplo 2: Conteo condicional**
+Un procedimiento que cuenta usuarios por un rango de edad:
+
+```sql
+CREATE PROCEDURE contar_usuarios_por_edad(edad_min INT, edad_max INT)
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    total INT;
+BEGIN
+    SELECT COUNT(*) INTO total 
+    FROM usuarios 
+    WHERE edad BETWEEN edad_min AND edad_max;
+
+    RAISE NOTICE 'Usuarios entre % y % años: %', edad_min, edad_max, total;
+END;
+$$;
+```
+
+**Uso:**
+```sql
+CALL contar_usuarios_por_edad(18, 30);
+```
+
+## **2. Registro en PL/pgSQL**
+Registrar eventos, cambios o errores en tablas de auditoría es una práctica común en bases de datos.
+
+### **Ejemplo: Procedimiento de registro**
+Este procedimiento registra operaciones realizadas por los usuarios en una tabla de auditoría.
+
+```sql
+CREATE TABLE auditoria (
+    id SERIAL PRIMARY KEY,
+    usuario TEXT,
+    operacion TEXT,
+    fecha TIMESTAMP DEFAULT NOW()
+);
+
+CREATE PROCEDURE registrar_operacion(usuario TEXT, operacion TEXT)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    INSERT INTO auditoria (usuario, operacion) VALUES (usuario, operacion);
+    RAISE NOTICE 'Operación registrada: Usuario % realizó %', usuario, operacion;
+END;
+$$;
+```
+
+**Uso:**
+```sql
+CALL registrar_operacion('admin', 'inserción de datos');
+```
+
+## **3. Triggers en PL/pgSQL**
+Los triggers (disparadores) son funciones que se ejecutan automáticamente en respuesta a eventos (`INSERT`, `UPDATE`, `DELETE`) en una tabla.
+
+### **Sintaxis básica para un trigger**
+Un trigger necesita una función asociada:
+
+1. Crear la función del trigger.
+2. Asociar la función al evento mediante `CREATE TRIGGER`.
+
+### **Ejemplo 1: Trigger de registro de cambios**
+Registrar automáticamente cada actualización de una tabla `usuarios` en la tabla `auditoria`.
+
+#### Crear la función del trigger:
+```sql
+CREATE OR REPLACE FUNCTION registrar_cambio()
+RETURNS TRIGGER
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    INSERT INTO auditoria (usuario, operacion) 
+    VALUES (OLD.nombre, 'Actualización');
+    RETURN NEW;
+END;
+$$;
+```
+
+#### Asociar el trigger:
+```sql
+CREATE TRIGGER trigger_registro_cambios
+AFTER UPDATE ON usuarios
+FOR EACH ROW
+EXECUTE FUNCTION registrar_cambio();
+```
+
+**Efecto:**
+Cada vez que se actualice un registro en `usuarios`, se añadirá una entrada en `auditoria`.
+
+### **Ejemplo 2: Evitar bajas de usuarios con permisos especiales**
+Prevenir la eliminación de usuarios con el rol `admin`.
+
+#### Crear la función del trigger:
+```sql
+CREATE OR REPLACE FUNCTION evitar_eliminar_admin()
+RETURNS TRIGGER
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    IF OLD.rol = 'admin' THEN
+        RAISE EXCEPTION 'No se puede eliminar un administrador.';
+    END IF;
+    RETURN OLD;
+END;
+$$;
+```
+
+#### Asociar el trigger:
+```sql
+CREATE TRIGGER trigger_prevenir_eliminacion
+BEFORE DELETE ON usuarios
+FOR EACH ROW
+EXECUTE FUNCTION evitar_eliminar_admin();
+```
+
+### **Ejemplo 3: Actualización automática de conteos**
+Actualizar el conteo total de usuarios activos en una tabla `estadisticas` tras cada inserción en la tabla `usuarios`.
+
+#### Tabla de estadísticas:
+```sql
+CREATE TABLE estadisticas (
+    id SERIAL PRIMARY KEY,
+    total_usuarios INT DEFAULT 0
+);
+```
+
+#### Crear la función del trigger:
+```sql
+CREATE OR REPLACE FUNCTION actualizar_conteo()
+RETURNS TRIGGER
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    UPDATE estadisticas
+    SET total_usuarios = total_usuarios + 1
+    WHERE id = 1;
+
+    RETURN NEW;
+END;
+$$;
+```
+
+#### Asociar el trigger:
+```sql
+CREATE TRIGGER trigger_actualizar_conteo
+AFTER INSERT ON usuarios
+FOR EACH ROW
+EXECUTE FUNCTION actualizar_conteo();
+```
+
+**Efecto:** Cada vez que se agregue un usuario, se incrementará automáticamente el conteo en `estadisticas`.
+
+## **Ventajas del uso de Triggers en PL/pgSQL**
+1. **Automatización:** Ejecución de procesos automáticos ante eventos en la base de datos.
+2. **Integridad:** Garantizan consistencia en los datos.
+3. **Auditoría:** Facilitan el registro de cambios en las tablas.
+4. **Reducción de lógica en la aplicación:** Centralizan las reglas de negocio en la base de datos.
+
+PL/pgSQL ofrece herramientas poderosas como triggers, funciones y procedimientos para manejar conteos, auditoría y automatización de tareas, optimizando así el flujo de datos y mejorando la confiabilidad del sistema.
+
+## PLPGSQL: Aplicado a data science
+
+**PL/pgSQL** es un lenguaje de programación utilizado en **PostgreSQL** que permite crear funciones, procedimientos almacenados, triggers, y automatizar tareas directamente en la base de datos. Aunque su propósito principal está orientado a la administración y optimización de bases de datos, tiene un **gran potencial en proyectos de Data Science**. Aquí te explico cómo puede ser aplicado en este campo:
+
+## **1. Limpieza y preprocesamiento de datos**
+El preprocesamiento es un paso crucial en la ciencia de datos. PL/pgSQL puede ser usado para realizar estas tareas directamente en la base de datos antes de extraer los datos para análisis.
+
+### **Ejemplo: Manejo de valores faltantes**
+Reemplazar valores nulos en una tabla con la media de una columna.
+
+```sql
+CREATE OR REPLACE PROCEDURE reemplazar_nulos_con_media(tabla TEXT, columna TEXT)
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    media NUMERIC;
+BEGIN
+    EXECUTE format('SELECT AVG(%I) INTO media FROM %I WHERE %I IS NOT NULL;', columna, tabla, columna);
+    EXECUTE format('UPDATE %I SET %I = $1 WHERE %I IS NULL;', tabla, columna, columna)
+    USING media;
+    RAISE NOTICE 'Se reemplazaron los valores nulos con la media: %', media;
+END;
+$$;
+```
+
+**Uso:**
+```sql
+CALL reemplazar_nulos_con_media('ventas', 'precio');
+```
+
+## **2. Generación de estadísticas descriptivas**
+Calcular métricas como media, mediana, moda, desviación estándar, etc., directamente en PL/pgSQL.
+
+### **Ejemplo: Estadísticas básicas**
+Una función que retorna estadísticas básicas de una columna:
+
+```sql
+CREATE OR REPLACE FUNCTION estadisticas_basicas(tabla TEXT, columna TEXT)
+RETURNS TABLE(media NUMERIC, mediana NUMERIC, moda NUMERIC, desviacion NUMERIC)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    RETURN QUERY EXECUTE format(
+        $f$
+        SELECT 
+            AVG(%I) AS media,
+            PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY %I) AS mediana,
+            MODE() WITHIN GROUP (ORDER BY %I) AS moda,
+            STDDEV(%I) AS desviacion
+        FROM %I;
+        $f$, columna, columna, columna, columna, tabla
+    );
+END;
+$$;
+```
+
+**Uso:**
+```sql
+SELECT * FROM estadisticas_basicas('ventas', 'precio');
+```
+
+## **3. Automatización de pipelines de ETL**
+Con PL/pgSQL puedes diseñar pipelines de extracción, transformación y carga (ETL) directamente en PostgreSQL para gestionar flujos de datos.
+
+### **Ejemplo: Pipeline básico de ETL**
+Un procedimiento para extraer datos, transformarlos y cargarlos en otra tabla:
+
+```sql
+CREATE OR REPLACE PROCEDURE pipeline_etl()
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    -- Extracción
+    CREATE TEMP TABLE temp_ventas AS
+    SELECT * FROM raw_ventas WHERE fecha >= '2025-01-01';
+
+    -- Transformación
+    UPDATE temp_ventas
+    SET precio = precio * 1.1  -- Aplicar aumento de precio
+    WHERE categoria = 'electrónica';
+
+    -- Carga
+    INSERT INTO clean_ventas (id, fecha, precio, categoria)
+    SELECT id, fecha, precio, categoria FROM temp_ventas;
+
+    RAISE NOTICE 'ETL completado exitosamente.';
+END;
+$$;
+```
+
+**Uso:**
+```sql
+CALL pipeline_etl();
+```
+
+## **4. Cálculo de cohortes y análisis de retención**
+El análisis de cohortes es útil en Data Science para estudiar el comportamiento de grupos de usuarios. Con PL/pgSQL, puedes automatizar este cálculo.
+
+### **Ejemplo: Análisis de cohortes**
+Crear una tabla que analice la retención de usuarios por mes:
+
+```sql
+CREATE OR REPLACE FUNCTION calcular_cohortes()
+RETURNS TABLE(cohorte DATE, mes_retencion INT, usuarios INT)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    RETURN QUERY
+    SELECT 
+        DATE_TRUNC('month', fecha_registro) AS cohorte,
+        EXTRACT(MONTH FROM AGE(fecha_actividad, fecha_registro)) AS mes_retencion,
+        COUNT(DISTINCT usuario_id) AS usuarios
+    FROM usuarios
+    GROUP BY 1, 2
+    ORDER BY 1, 2;
+END;
+$$;
+```
+
+**Uso:**
+```sql
+SELECT * FROM calcular_cohortes();
+```
+
+## **5. Implementación de modelos estadísticos simples**
+Aunque no es un reemplazo de herramientas avanzadas como Python o R, PL/pgSQL puede calcular modelos simples, como regresiones lineales.
+
+### **Ejemplo: Regresión lineal**
+Un procedimiento para calcular los coeficientes de una regresión lineal simple.
+
+```sql
+CREATE OR REPLACE FUNCTION regresion_lineal(tabla TEXT, x_col TEXT, y_col TEXT)
+RETURNS TABLE(intercepto NUMERIC, pendiente NUMERIC)
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    sum_x NUMERIC;
+    sum_y NUMERIC;
+    sum_xy NUMERIC;
+    sum_x2 NUMERIC;
+    n INT;
+BEGIN
+    EXECUTE format(
+        'SELECT SUM(%I), SUM(%I), SUM(%I * %I), SUM(%I * %I), COUNT(*)
+        INTO sum_x, sum_y, sum_xy, sum_x2, n
+        FROM %I;', x_col, y_col, x_col, y_col, x_col, x_col, tabla
+    );
+
+    pendiente := (n * sum_xy - sum_x * sum_y) / (n * sum_x2 - sum_x^2);
+    intercepto := (sum_y - pendiente * sum_x) / n;
+
+    RETURN QUERY SELECT intercepto, pendiente;
+END;
+$$;
+```
+
+**Uso:**
+```sql
+SELECT * FROM regresion_lineal('ventas', 'cantidad', 'precio');
+```
+
+## **6. Optimización del almacenamiento y consultas**
+En Data Science, optimizar consultas y almacenamiento de grandes volúmenes de datos es clave. PL/pgSQL facilita:
+- Creación de índices.
+- Particionamiento de tablas.
+- Compresión de datos.
+
+## **Ventajas de usar PL/pgSQL en Data Science**
+- **Procesamiento en la base de datos:** Reduce la necesidad de mover grandes volúmenes de datos.
+- **Automatización:** Ideal para tareas repetitivas como limpieza y transformación de datos.
+- **Escalabilidad:** PostgreSQL puede manejar grandes volúmenes de datos y trabajar en paralelo.
+- **Integración:** Puede complementarse con herramientas como Python o R para análisis más avanzados.
+
+PL/pgSQL puede ser una herramienta poderosa en proyectos de ciencia de datos, especialmente cuando se busca optimizar procesos de preprocesamiento, cálculo y extracción de datos directamente en la base de datos.
+
+![Esquema de declaración de variables](images/Esquedeclvar.png)
+
+## Integración con otros lenguajes
+
+Como la mayoría de las bases de datos, PostgreSQL cuenta con conectores para diferentes lenguajes de programación, de tal forma que si trabajas con Python, PHP, Java, JavaScript y todos sus frameworks, exista una forma de extraer datos de PostgreSQL y posteriormente utilizar las propiedades de los lenguajes procedurales para transformar y utilizar los datos.
+
+El lenguaje estándar utilizado en bases de datos relacionales es SQL (Structured Query Language), un lenguaje que tiene una estructura sumamente útil para hacer solicitudes de datos, en especial tomando como abstracción un diseño tabular de datos. Sin embargo, carece de estructuras de control y otras abstracciones que hacen poderosos a los lenguajes procedurales de programación.
+
+### PL/pgSQL
+
+Como respuesta a los puntos débiles de SQL como estándar, PostgreSQL respondió originalmente creando un lenguaje propio llamado PL/pgSQL (Procedural Language/PostgreSQL Structured Query Language) que es literalmente un superset de SQL que incluye propiedades de un lenguaje estructurado que, por un lado, nos permite crear funciones complejas y triggers; y, por el otro lado, agrega estructuras de control, cursores, manejo de errores, etc.
+
+### Otros lenguajes
+
+Sin embargo, en muchos sentidos, aunque PL/pgSQL ayuda en los casos más genéricos para generar estructuras y funcionalidades más complejas, no se compara con lenguajes completamente independientes y no ligados directamente a una base de datos.
+
+La respuesta sin embargo tampoco es los conectores normales que, si bien resuelven la parte de un lenguaje más complejo, añaden por otro lado una separación de la base de datos, ya que debe correr en un servidor separado y hacer llamadas entre ellos con la latencia como un colateral.
+
+Para mitigar estos problemas tomando lo mejor de ambos mundos, los desarrolladores de PostgreSQL se dedicaron a hacer implementaciones de diversos lenguajes a manera de plugin.
+
+### C
+
+La biblioteca que permite al lenguaje C ejecutarse en PostgreSQL es llamada libpq y es una interfaz de programación que permite extender y hacer de interfaz para permitir a otros lenguajes ejecutarse en esta base de datos.
+
+Puedes encontrar más información de esta interfaz en el siguiente link:
+
+[https://www.postgresql.org/docs/11/libpq.html](https://www.postgresql.org/docs/11/libpq.html "https://www.postgresql.org/docs/11/libpq.html").
+
+### PL/Tcl
+
+Tcl (Tool Command Language) es un lenguaje diseñado con la simpleza en mente y su paradigma consiste en que todo en él es un comando, incluyendo la estructura del lenguaje que, sin embargo, son suficientemente flexibles para poderse sobreescribir, haciéndolo un lenguaje sumamente extensible.
+
+Todo lo anterior es ideal para la integración con el manejador de PostgreSQL ya que permite elaborar comandos para ejecutar las sentencias SQL y extenderlas facilmente.
+
+Si quieres leer más del tema, puedes hacerlo en el siguiente link:
+
+[https://www.postgresql.org/docs/11/pltcl.html](https://www.postgresql.org/docs/11/pltcl.html "https://www.postgresql.org/docs/11/pltcl.html").
+
+### PL/Perl
+
+Perl es un lenguaje de programación que implementa una estructura de bloques de código y que toma inspiración de programas como C, sh, AWK, entre otros. Y es especialmente bueno para el tratamiento de cadenas de texto. Sin embargo, no se encuentra limitado como un lenguaje de script.
+
+Dada la propiedad de englobar funcionalidad en forma de bloque y de la rapidez y facilidad con la que trabaja con datos tipo cadena, este lenguaje es ideal para el tratamiento de información de una base de datos relacional.
+
+Para conocer más de la implementación de este lenguaje con PostgreSQL puedes leer el siguiente link:
+
+[https://www.postgresql.org/docs/11/plperl.html](https://www.postgresql.org/docs/11/plperl.html "https://www.postgresql.org/docs/11/plperl.html").
+
+### PL/Python
+
+Python, al ser de los lenguajes de programación más extendidos entre programadores de servicios Backend, es una implementación particularmente interesante para PostgreSQL.
+
+Python es un lenguaje de programación fuerte en tratamiento de estructura de datos y tiene un paradigma múltiple con fuertes componentes orientados a objetos, estructurados y una fuerte influencia del paradigma funcional.
+
+Parte de sus fortalezas son sus implementaciones de funciones map, reduce y filter en conjunto con list comprehensions, sets, diccionarios y generadores.
+
+Dadas las propiedades nativas para manejar estructuras de datos complejas, es un lenguaje ideal para manejar la salida de un query SQL.
+
+La implementación de Python para PostgreSQL te permite crear funciones complejas en un lenguaje completo y popular sin tener que utilizar PL/pgSQL. Puedes ver un ejemplo a continuación de la misma función en PL/pgSQL y PL/Python.
+
+### PL/pgSQL
+
+```sql
+CREATE FUNCTION pgmax (a integer, b integer)
+RETURNS integer
+AS $$
+BEGIN
+   IF a > b THEN
+       RETURN a;
+   ELSE
+       RETURN b;
+   END IF;
+END
+$$ LANGUAGE plpgsql;
+```
+
+### PL/Python
+
+```python
+CREATE FUNCTION pymax (a integer, b integer)
+RETURNS integer
+AS $$
+   if a > b:
+       return a
+   return b
+$$ LANGUAGE plpythonu;
+ 
+CREATE EXTENSION plpythonu;
+SELECT pgmax(200,9);
+```
+
+Para instalar el lenguaje Python en PostgreSQL, una vez instaladas las bibliotecas apropiadas para cada Sistema Operativo, es necesario ejecutar el siguiente query:
+
+`CREATE EXTENSION plpythonu`
+
+Si quieres profundizar más en esta implementación puedes encontrar más información aquí:
+
+[https://www.postgresql.org/docs/11/plpython.html](https://www.postgresql.org/docs/11/plpython.html "https://www.postgresql.org/docs/11/plpython.html").
+
+## Tipos de Datos Personalizados
+
+En PostgreSQL, los **tipos de datos personalizados** son una poderosa característica que permite definir nuevos tipos de datos específicos para tus necesidades, lo que puede facilitar la modelización y el manejo de datos complejos. Aquí tienes una explicación detallada:
+
+
+### **¿Qué son los tipos de datos personalizados?**
+Son tipos de datos definidos por el usuario que amplían las capacidades de PostgreSQL más allá de los tipos predefinidos (como `INTEGER`, `TEXT`, `BOOLEAN`, etc.). Puedes crear tipos para representar estructuras, conjuntos de valores finitos, o cualquier entidad específica de tu aplicación.
+
+### **Tipos de datos personalizados más comunes**
+
+### 1. **Tipos Enumerados (`ENUM`)**
+   - Se utilizan para representar un conjunto finito de valores.
+   - Útil para datos como estados, categorías, niveles, etc.
+
+   **Ejemplo:**
+   ```sql
+   CREATE TYPE nivel_educativo AS ENUM ('Primaria', 'Secundaria', 'Universidad', 'Maestría', 'Doctorado');
+
+   -- Usando el tipo ENUM en una tabla
+   CREATE TABLE estudiantes (
+       id SERIAL PRIMARY KEY,
+       nombre TEXT,
+       nivel nivel_educativo
+   );
+   ```
+
+### 2. **Tipos Compuestos**
+   - Agrupan múltiples campos en un solo tipo, similar a una estructura o un objeto.
+   - Útil para almacenar datos complejos en un solo campo.
+
+   **Ejemplo:**
+   ```sql
+   CREATE TYPE direccion AS (
+       calle TEXT,
+       ciudad TEXT,
+       codigo_postal TEXT
+   );
+
+   -- Usando el tipo compuesto en una tabla
+   CREATE TABLE empleados (
+       id SERIAL PRIMARY KEY,
+       nombre TEXT,
+       domicilio direccion
+   );
+
+   -- Insertar datos
+   INSERT INTO empleados (nombre, domicilio)
+   VALUES ('Juan Pérez', ROW('Calle 123', 'Bogotá', '110111'));
+   ```
+
+   Para acceder a los campos del tipo compuesto:
+   ```sql
+   SELECT (domicilio).calle, (domicilio).ciudad FROM empleados;
+   ```
+
+### 3. **Tipos Basados en Rangos**
+   - Representan un rango continuo de valores (como fechas, números, etc.).
+   - PostgreSQL ya incluye tipos de rango predefinidos (`int4range`, `numrange`, `tsrange`, etc.), pero puedes definir los tuyos.
+
+   **Ejemplo:**
+   ```sql
+   CREATE TYPE salario_range AS RANGE (
+       subtype = NUMERIC,
+       subtype_diff = float8mi
+   );
+
+   -- Usar el tipo de rango en una tabla
+   CREATE TABLE trabajos (
+       id SERIAL PRIMARY KEY,
+       titulo TEXT,
+       rango_salario salario_range
+   );
+
+   -- Insertar un rango
+   INSERT INTO trabajos (titulo, rango_salario)
+   VALUES ('Desarrollador', '[3000,6000]');
+   ```
+
+### 4. **Tipos Basados en Tablas**
+   - Puedes definir tipos basados en la estructura de una tabla.
+   - Útil para reutilizar la estructura de datos en procedimientos almacenados o funciones.
+
+   **Ejemplo:**
+   ```sql
+   CREATE TABLE productos (
+       id SERIAL PRIMARY KEY,
+       nombre TEXT,
+       precio NUMERIC
+   );
+
+   CREATE TYPE producto_tipo AS TABLE (
+       id SERIAL,
+       nombre TEXT,
+       precio NUMERIC
+   );
+   ```
+
+### 5. **Tipos Definidos en Extensiones**
+   - Algunas extensiones de PostgreSQL incluyen sus propios tipos de datos personalizados, como:
+     - `hstore` para pares clave-valor.
+     - `jsonb` para datos JSON.
+     - `citext` para texto insensible a mayúsculas.
+
+## **Ventajas de los Tipos de Datos Personalizados**
+1. **Claridad:** Hacen que el modelo de datos sea más expresivo y fácil de entender.
+2. **Reutilización:** Facilitan la reutilización de estructuras de datos en múltiples tablas y funciones.
+3. **Validación de Datos:** Restringen los valores permitidos en un campo.
+4. **Optimización:** Reducen la redundancia y errores en la definición de esquemas.
+
+## **¿Cuándo usarlos?**
+- Cuando necesitas modelar datos específicos o estructurados que no encajan bien en los tipos predefinidos.
+- Para garantizar consistencia en los datos a través de tu esquema.
+- En sistemas que trabajan con datos jerárquicos, categóricos o complejos.
+
+## Explicación de la estructura de la base de datos de ejemplo
+
+Cuando se diseña una base de datos de ejemplo, generalmente se busca representar un escenario realista que permita a los usuarios aprender o trabajar con conceptos clave. Aquí te presento una descripción común de cómo estructurar una base de datos de ejemplo, junto con un ejemplo basado en un sistema de gestión de películas.
+
+![Explicación de la estructura de la base de datos de ejemplo](images/platzi-movies.png)
+
+### **Componentes principales de la estructura**
+
+1. **Tablas**  
+   - Representan entidades o conceptos del sistema.
+   - Cada tabla contiene filas (registros) y columnas (atributos).
+
+2. **Llaves primarias y foráneas**  
+   - **Llave primaria (Primary Key):** Identifica de manera única cada fila en una tabla.  
+   - **Llave foránea (Foreign Key):** Representa relaciones entre tablas.
+
+3. **Relaciones**  
+   - **Uno a uno (1:1):** Cada registro de una tabla está asociado con un único registro de otra tabla.  
+   - **Uno a muchos (1:N):** Un registro de una tabla está relacionado con varios registros de otra.  
+   - **Muchos a muchos (N:M):** Una relación compleja entre dos tablas, que generalmente se maneja con una tabla intermedia.
+
+4. **Índices**  
+   - Mejoran el rendimiento de las consultas al optimizar la búsqueda de datos.
+
+5. **Vistas**  
+   - Consultas predefinidas que actúan como tablas virtuales para facilitar la consulta de datos complejos.
+
+6. **Procedimientos almacenados**  
+   - Fragmentos de lógica SQL que se pueden reutilizar.
+
+### **Ejemplo: Sistema de Gestión de Películas**
+
+A continuación, una estructura simplificada de base de datos:
+
+#### **Tablas principales**
+
+1. **Películas (`peliculas`)**
+   - Representa las películas disponibles en el sistema.
+   ```sql
+   CREATE TABLE peliculas (
+       id SERIAL PRIMARY KEY,
+       titulo TEXT NOT NULL,
+       clasificacion VARCHAR(5),
+       duracion INTEGER, -- En minutos
+       anio_publicacion INTEGER,
+       precio_renta NUMERIC(5,2)
+   );
+   ```
+
+2. **Actores (`actores`)**
+   - Contiene información de los actores.
+   ```sql
+   CREATE TABLE actores (
+       id SERIAL PRIMARY KEY,
+       nombre_completo TEXT NOT NULL,
+       fecha_nacimiento DATE,
+       nacionalidad TEXT
+   );
+   ```
+
+3. **Géneros (`generos`)**
+   - Define los géneros de las películas.
+   ```sql
+   CREATE TABLE generos (
+       id SERIAL PRIMARY KEY,
+       nombre TEXT NOT NULL UNIQUE
+   );
+   ```
+
+4. **Relación Películas-Actores (`peliculas_actores`)**
+   - Representa la relación "Muchos a Muchos" entre películas y actores.
+   ```sql
+   CREATE TABLE peliculas_actores (
+       pelicula_id INTEGER REFERENCES peliculas(id) ON DELETE CASCADE,
+       actor_id INTEGER REFERENCES actores(id) ON DELETE CASCADE,
+       PRIMARY KEY (pelicula_id, actor_id)
+   );
+   ```
+
+5. **Relación Películas-Géneros (`peliculas_generos`)**
+   - Relación "Muchos a Muchos" para asociar géneros con películas.
+   ```sql
+   CREATE TABLE peliculas_generos (
+       pelicula_id INTEGER REFERENCES peliculas(id) ON DELETE CASCADE,
+       genero_id INTEGER REFERENCES generos(id) ON DELETE CASCADE,
+       PRIMARY KEY (pelicula_id, genero_id)
+   );
+   ```
+
+6. **Usuarios (`usuarios`)**
+   - Representa a los usuarios que alquilan las películas.
+   ```sql
+   CREATE TABLE usuarios (
+       id SERIAL PRIMARY KEY,
+       nombre TEXT NOT NULL,
+       correo TEXT UNIQUE NOT NULL,
+       fecha_registro DATE DEFAULT CURRENT_DATE
+   );
+   ```
+
+7. **Rentas (`rentas`)**
+   - Registra las películas rentadas por los usuarios.
+   ```sql
+   CREATE TABLE rentas (
+       id SERIAL PRIMARY KEY,
+       usuario_id INTEGER REFERENCES usuarios(id),
+       pelicula_id INTEGER REFERENCES peliculas(id),
+       fecha_renta DATE DEFAULT CURRENT_DATE,
+       fecha_devolucion DATE
+   );
+   ```
+
+### **Relaciones del modelo**
+
+1. **Películas y Actores:**
+   Relación **Muchos a Muchos**, gestionada por `peliculas_actores`.
+
+2. **Películas y Géneros:**
+   Relación **Muchos a Muchos**, gestionada por `peliculas_generos`.
+
+3. **Usuarios y Rentas:**
+   Relación **Uno a Muchos**, donde un usuario puede tener varias rentas.
+
+4. **Películas y Rentas:**
+   Relación **Uno a Muchos**, donde cada renta está asociada a una película.
+
+### **Ejemplo de consultas comunes**
+
+1. **Obtener todas las películas de un género específico:**
+   ```sql
+   SELECT p.titulo 
+   FROM peliculas p
+   JOIN peliculas_generos pg ON p.id = pg.pelicula_id
+   JOIN generos g ON g.id = pg.genero_id
+   WHERE g.nombre = 'Acción';
+   ```
+
+2. **Listar los actores de una película:**
+   ```sql
+   SELECT a.nombre_completo
+   FROM actores a
+   JOIN peliculas_actores pa ON a.id = pa.actor_id
+   WHERE pa.pelicula_id = 1; -- ID de la película
+   ```
+
+3. **Películas rentadas por un usuario específico:**
+   ```sql
+   SELECT p.titulo, r.fecha_renta
+   FROM rentas r
+   JOIN peliculas p ON r.pelicula_id = p.id
+   WHERE r.usuario_id = 5; -- ID del usuario
+   ```
+
+4. **Insertar una nueva renta:**
+   ```sql
+   INSERT INTO rentas (usuario_id, pelicula_id)
+   VALUES (5, 2); -- Usuario 5 renta la película 2
+   ```
+
+### **Ventajas de esta estructura**
+- **Modularidad:** Las tablas se dividen en entidades específicas, lo que facilita el mantenimiento.
+- **Escalabilidad:** Es fácil añadir más tablas o columnas si el sistema crece.
+- **Consistencia:** Uso de claves primarias y foráneas para mantener integridad referencial.
+
