@@ -2257,3 +2257,465 @@ WHERE detalles->>'genero' = 'Sci-Fi' AND (detalles->>'anio')::INT > 2000;
 ### **Conclusión**
 
 El soporte de PostgreSQL para JSON y JSONB permite almacenar y manipular datos semi-estructurados con flexibilidad y rendimiento. Esto lo hace ideal para trabajar con datos provenientes de APIs, logs o estructuras heterogéneas. Si necesitas optimizar el acceso y las búsquedas, considera usar JSONB junto con índices GIN.
+
+## Agregando objetos
+
+¡Claro! En el contexto de PostgreSQL, **agregar objetos** se refiere a trabajar con tipos de datos complejos, como JSON, JSONB, arreglos, o tipos definidos por el usuario para estructurar mejor los datos.
+
+Aquí hay un desglose sobre cómo trabajar con **objetos** en PostgreSQL:
+
+### 1. **Creación de Objetos con JSON/JSONB**
+PostgreSQL soporta nativamente tipos JSON y JSONB para trabajar con datos en formato JSON. Puedes agregar datos estructurados como objetos dentro de tablas.
+
+#### Ejemplo: Creación de una tabla con JSONB
+```sql
+CREATE TABLE productos (
+    id SERIAL PRIMARY KEY,
+    nombre VARCHAR(100),
+    detalles JSONB
+);
+```
+
+#### Inserción de un objeto JSON
+```sql
+INSERT INTO productos (nombre, detalles)
+VALUES ('Laptop', '{"marca": "Dell", "especificaciones": {"ram": "16GB", "procesador": "i7"}}');
+```
+
+### 2. **Acceso y Consulta de Objetos JSON**
+PostgreSQL permite trabajar con funciones específicas para manipular JSON.
+
+#### Ejemplo: Acceso a campos dentro de JSON
+```sql
+SELECT detalles->'marca' AS marca FROM productos;
+```
+
+#### Ejemplo: Acceso a valores anidados
+```sql
+SELECT detalles#>>'{especificaciones, ram}' AS memoria_ram FROM productos;
+```
+
+### 3. **Actualización de Objetos JSON**
+Puedes modificar partes del JSON utilizando funciones como `jsonb_set`.
+
+#### Ejemplo: Actualizar un valor
+```sql
+UPDATE productos
+SET detalles = jsonb_set(detalles, '{especificaciones, ram}', '"32GB"')
+WHERE nombre = 'Laptop';
+```
+
+### 4. **Creación de Tipos de Datos Personalizados**
+Puedes definir tus propios tipos de datos en PostgreSQL para representar objetos más complejos.
+
+#### Ejemplo: Tipo personalizado para direcciones
+```sql
+CREATE TYPE direccion AS (
+    calle VARCHAR,
+    ciudad VARCHAR,
+    codigo_postal VARCHAR
+);
+```
+
+#### Uso del tipo personalizado en una tabla
+```sql
+CREATE TABLE usuarios (
+    id SERIAL PRIMARY KEY,
+    nombre VARCHAR(50),
+    direccion direccion
+);
+
+INSERT INTO usuarios (nombre, direccion)
+VALUES ('Juan', ROW('Calle 123', 'Bogotá', '110111')::direccion);
+```
+
+### 5. **Agregando Arreglos como Objetos**
+Puedes utilizar arreglos para almacenar listas como objetos.
+
+#### Ejemplo: Tabla con arreglos
+```sql
+CREATE TABLE pedidos (
+    id SERIAL PRIMARY KEY,
+    cliente VARCHAR,
+    productos TEXT[]
+);
+
+INSERT INTO pedidos (cliente, productos)
+VALUES ('Ana', ARRAY['Producto1', 'Producto2', 'Producto3']);
+```
+
+#### Consulta de arreglos
+```sql
+SELECT productos[1] AS primer_producto FROM pedidos;
+```
+
+## Common table expressions
+
+Las **Common Table Expressions (CTEs)** en PostgreSQL son una poderosa característica que permite estructurar consultas complejas en partes más manejables. Se utilizan principalmente con la palabra clave `WITH` y son especialmente útiles para mejorar la legibilidad y reutilización de consultas.
+
+---
+
+## **Características principales de las CTEs**
+1. Se definen con `WITH` antes de la consulta principal.
+2. Son como tablas temporales que existen solo durante la ejecución de la consulta.
+3. Pueden ser **recursivas** o **no recursivas**.
+
+---
+
+### **1. Sintaxis básica de una CTE**
+```sql
+WITH cte_name AS (
+    SELECT column1, column2
+    FROM table_name
+    WHERE condition
+)
+SELECT *
+FROM cte_name;
+```
+
+---
+
+### **2. Ejemplo práctico: Simplificar una consulta**
+Supongamos que tienes una base de datos de empleados con sus departamentos y salarios, y deseas calcular el salario promedio por departamento y listar a los empleados cuyo salario está por encima del promedio de su departamento.
+
+#### Sin CTE (menos legible):
+```sql
+SELECT e.nombre, e.salario, e.departamento_id
+FROM empleados e
+JOIN (
+    SELECT departamento_id, AVG(salario) AS salario_promedio
+    FROM empleados
+    GROUP BY departamento_id
+) promedio_salarios
+ON e.departamento_id = promedio_salarios.departamento_id
+WHERE e.salario > promedio_salarios.salario_promedio;
+```
+
+#### Con CTE (más legible):
+```sql
+WITH promedio_salarios AS (
+    SELECT departamento_id, AVG(salario) AS salario_promedio
+    FROM empleados
+    GROUP BY departamento_id
+)
+SELECT e.nombre, e.salario, e.departamento_id
+FROM empleados e
+JOIN promedio_salarios ps
+ON e.departamento_id = ps.departamento_id
+WHERE e.salario > ps.salario_promedio;
+```
+
+---
+
+### **3. Recursividad con CTEs**
+Las CTEs **recursivas** permiten realizar consultas que dependen de sí mismas, como recorrer jerarquías o realizar cálculos iterativos.
+
+#### Ejemplo: Recorrer una jerarquía de empleados
+Si tienes una tabla `empleados` con una jerarquía donde cada empleado tiene un `id_jefe`, puedes usar una CTE recursiva para listar todos los empleados bajo un jefe.
+
+```sql
+WITH RECURSIVE jerarquia AS (
+    SELECT id, nombre, id_jefe
+    FROM empleados
+    WHERE id_jefe IS NULL -- El jefe principal
+
+    UNION ALL
+
+    SELECT e.id, e.nombre, e.id_jefe
+    FROM empleados e
+    INNER JOIN jerarquia j
+    ON e.id_jefe = j.id
+)
+SELECT *
+FROM jerarquia;
+```
+
+---
+
+### **4. Uso de múltiples CTEs**
+Puedes definir varias CTEs en una sola consulta.
+
+#### Ejemplo: Análisis de ventas
+Supongamos que tienes tablas de `ventas` y `productos` y deseas:
+1. Calcular el total vendido por producto.
+2. Calcular el top 3 productos con más ventas.
+
+```sql
+WITH ventas_totales AS (
+    SELECT producto_id, SUM(cantidad) AS total_vendido
+    FROM ventas
+    GROUP BY producto_id
+),
+top_productos AS (
+    SELECT p.nombre, vt.total_vendido
+    FROM productos p
+    JOIN ventas_totales vt
+    ON p.id = vt.producto_id
+    ORDER BY vt.total_vendido DESC
+    LIMIT 3
+)
+SELECT *
+FROM top_productos;
+```
+
+---
+
+### **5. Ventajas de las CTEs**
+- **Legibilidad:** Dividen consultas complejas en partes lógicas.
+- **Reutilización:** Una CTE puede ser referenciada varias veces en la misma consulta.
+- **Recursividad:** Permiten trabajar con datos jerárquicos o realizar cálculos iterativos.
+- **Mantenimiento:** Facilitan la modificación y depuración de consultas.
+
+---
+
+### **6. Limitaciones de las CTEs**
+- Las CTEs no son indexadas, por lo que su rendimiento puede ser inferior si se reutilizan en grandes volúmenes de datos.
+- En algunos casos, las subconsultas dentro de `FROM` pueden ser más eficientes.
+
+## Window functions
+
+Las **window functions** en SQL son una herramienta poderosa que permite realizar cálculos sobre un conjunto de filas relacionadas con la fila actual. A diferencia de las funciones de agregación tradicionales, **no agrupan los resultados** en una sola fila; en su lugar, cada fila conserva su identidad y el resultado del cálculo se agrega como una nueva columna.
+
+---
+
+## **Características principales de las window functions**
+1. Se calculan sobre un conjunto definido de filas, conocido como la *ventana*.
+2. No reducen el número de filas del resultado.
+3. Utilizan la cláusula `OVER` para definir la ventana.
+4. Son ideales para cálculos como promedios móviles, rankings, y acumulativos.
+
+---
+
+### **1. Sintaxis general**
+```sql
+función([parámetros]) OVER (
+    [PARTITION BY columna1, columna2]
+    [ORDER BY columna3 ASC|DESC]
+    [ROWS | RANGE especificación]
+)
+```
+
+#### Componentes:
+- **`función`**: Es la función que se aplicará, como `SUM`, `AVG`, `ROW_NUMBER`, etc.
+- **`PARTITION BY`** *(opcional)*: Divide las filas en subconjuntos dentro de la ventana.
+- **`ORDER BY`** *(opcional)*: Ordena las filas dentro de cada partición antes de aplicar la función.
+- **`ROWS | RANGE`** *(opcional)*: Especifica el marco de filas dentro de la ventana, como un rango o un número fijo de filas.
+
+---
+
+### **2. Ejemplos comunes de funciones de ventana**
+
+#### **a) ROW_NUMBER**: Enumerar filas
+Genera un número secuencial para cada fila en una partición.
+```sql
+SELECT nombre, salario,
+       ROW_NUMBER() OVER (PARTITION BY departamento ORDER BY salario DESC) AS ranking
+FROM empleados;
+```
+**Resultado**: Enumera los empleados dentro de cada departamento según su salario.
+
+---
+
+#### **b) RANK y DENSE_RANK**: Rankings con manejo de empates
+- `RANK`: Asigna el mismo rango a valores empatados y deja un "salto" en el siguiente rango.
+- `DENSE_RANK`: No deja saltos en el rango.
+```sql
+SELECT nombre, salario,
+       RANK() OVER (ORDER BY salario DESC) AS rank,
+       DENSE_RANK() OVER (ORDER BY salario DESC) AS dense_rank
+FROM empleados;
+```
+
+---
+
+#### **c) SUM y AVG**: Totales y promedios acumulativos
+Se calculan acumulativos o por ventana definida.
+```sql
+SELECT nombre, departamento, salario,
+       SUM(salario) OVER (PARTITION BY departamento) AS total_departamento,
+       AVG(salario) OVER (PARTITION BY departamento) AS promedio_departamento
+FROM empleados;
+```
+**Resultado**: Calcula el total y el promedio de salarios por departamento.
+
+---
+
+#### **d) LAG y LEAD**: Acceder a filas previas o siguientes
+Permite acceder a los valores de otras filas relacionadas.
+```sql
+SELECT nombre, salario,
+       LAG(salario) OVER (ORDER BY salario) AS salario_anterior,
+       LEAD(salario) OVER (ORDER BY salario) AS salario_siguiente
+FROM empleados;
+```
+
+---
+
+#### **e) NTILE**: Dividir datos en grupos
+Divide las filas en un número especificado de grupos aproximadamente iguales.
+```sql
+SELECT nombre, salario,
+       NTILE(4) OVER (ORDER BY salario DESC) AS grupo
+FROM empleados;
+```
+**Resultado**: Divide los empleados en 4 grupos según su salario.
+
+---
+
+### **3. Especificar marcos con ROWS y RANGE**
+
+Puedes usar `ROWS` o `RANGE` para definir marcos de filas más precisos.
+
+#### **a) Calcular un promedio móvil de 3 filas anteriores**
+```sql
+SELECT nombre, salario,
+       AVG(salario) OVER (ORDER BY salario ROWS BETWEEN 3 PRECEDING AND CURRENT ROW) AS promedio_movil
+FROM empleados;
+```
+
+#### **b) Usar RANGE para definir un rango basado en valores**
+```sql
+SELECT nombre, salario,
+       SUM(salario) OVER (ORDER BY salario RANGE BETWEEN 5000 PRECEDING AND CURRENT ROW) AS total_rango
+FROM empleados;
+```
+
+---
+
+### **4. Ejemplo práctico: Ventas acumuladas**
+Supongamos que tienes una tabla de `ventas` y quieres calcular las ventas acumulativas por región y mes.
+
+```sql
+WITH datos_ventas AS (
+    SELECT region, mes, SUM(total) AS total_mensual
+    FROM ventas
+    GROUP BY region, mes
+)
+SELECT region, mes, total_mensual,
+       SUM(total_mensual) OVER (PARTITION BY region ORDER BY mes) AS ventas_acumuladas
+FROM datos_ventas;
+```
+
+---
+
+### **5. Ventajas de las window functions**
+1. **Flexibilidad**: Puedes realizar cálculos avanzados sin perder el detalle de las filas.
+2. **Legibilidad**: Hacen que las consultas sean más limpias y fáciles de entender.
+3. **Potencia**: Ideal para rankings, promedios móviles, y cálculos acumulativos.
+
+---
+
+### **6. Limitaciones**
+- Las funciones de ventana pueden ser intensivas en recursos, especialmente en tablas grandes con muchas particiones.
+- Su rendimiento puede depender del diseño de los índices y del tamaño de los datos.
+
+**PostgreSQL window function List**
+
+![PostgreSQL window function List](images/PostgreSQLwindowfunctionList.png)
+
+## Particiones
+
+Las **particiones** en el contexto de bases de datos y funciones de ventana (window functions) son una manera de dividir un conjunto de datos en subgrupos (particiones más pequeñas) para realizar cálculos independientemente dentro de cada grupo. Esto permite que las operaciones de las funciones se apliquen de forma aislada en cada partición en lugar de en todo el conjunto de datos.
+
+## **¿Qué es una partición?**
+- Es un subgrupo de filas dentro de una consulta que se define usando la cláusula `PARTITION BY`.
+- Cada partición actúa como un espacio independiente donde las funciones de ventana realizan sus cálculos.
+- Las filas de una partición comparten un criterio en común (por ejemplo, todas las filas del mismo departamento o región).
+
+## **Sintaxis general**
+```sql
+función([parámetros]) OVER (
+    PARTITION BY columna1, columna2
+    [ORDER BY columna3 ASC|DESC]
+)
+```
+
+- **`PARTITION BY`**: Define cómo dividir las filas en particiones (grupos).
+- **`ORDER BY`**: Dentro de cada partición, define el orden de las filas (opcional).
+- **`función`**: Cualquier función de ventana que se quiera aplicar (por ejemplo, `SUM`, `ROW_NUMBER`, `AVG`, etc.).
+
+## **Ejemplo básico: Sin partición**
+Sin partición, una función de ventana opera sobre todo el conjunto de datos. 
+
+### **Caso: Calcular una suma acumulativa**
+```sql
+SELECT nombre, departamento, salario,
+       SUM(salario) OVER (ORDER BY salario ASC) AS suma_acumulativa
+FROM empleados;
+```
+
+- **Resultado**: Se calcula una suma acumulativa para todos los empleados, independientemente del departamento.
+
+## **Ejemplo: Con partición**
+Cuando usas `PARTITION BY`, las funciones de ventana calculan los valores **independientemente para cada grupo**.
+
+### **Caso: Suma acumulativa por departamento**
+```sql
+SELECT nombre, departamento, salario,
+       SUM(salario) OVER (PARTITION BY departamento ORDER BY salario ASC) AS suma_acumulativa
+FROM empleados;
+```
+
+- **PARTITION BY departamento**: Divide las filas por departamento.
+- **ORDER BY salario**: Calcula la suma acumulativa dentro de cada departamento, ordenando por salario.
+
+**Resultado**: La suma acumulativa se reinicia para cada departamento.
+
+## **Ventajas de particionar los datos**
+1. **Aislamiento de cálculos**: Cada partición es independiente, lo que permite realizar cálculos específicos para cada grupo.
+2. **Mayor granularidad**: Permite analizar datos de manera más detallada.
+3. **Flexibilidad**: Puedes combinar particiones con órdenes para realizar cálculos complejos, como promedios móviles o rankings dentro de subgrupos.
+
+## **Funciones que soportan particiones**
+Las particiones son comunes en muchas funciones de ventana como:
+
+1. **Agregaciones acumulativas:**
+   - `SUM`, `AVG`, `COUNT`, `MAX`, `MIN`
+2. **Rankings:**
+   - `ROW_NUMBER`, `RANK`, `DENSE_RANK`, `NTILE`
+3. **Acceso a filas:**
+   - `LAG`, `LEAD`, `FIRST_VALUE`, `LAST_VALUE`
+4. **Porcentajes:**
+   - `PERCENT_RANK`, `CUME_DIST`
+
+## **Ejemplo práctico**
+Supongamos que tienes una tabla de ventas (`ventas`) con las columnas `region`, `mes` y `total_venta`. Quieres calcular las ventas acumulativas por región.
+
+```sql
+SELECT region, mes, total_venta,
+       SUM(total_venta) OVER (PARTITION BY region ORDER BY mes) AS ventas_acumuladas
+FROM ventas;
+```
+
+- **PARTITION BY region**: Divide las filas por región.
+- **ORDER BY mes**: Calcula las ventas acumulativas de forma cronológica dentro de cada región.
+
+**Resultado:**
+| Región   | Mes   | Total Venta | Ventas Acumuladas |
+|----------|-------|-------------|--------------------|
+| Norte    | Enero | 10,000      | 10,000             |
+| Norte    | Febrero | 15,000    | 25,000             |
+| Sur      | Enero | 8,000       | 8,000              |
+| Sur      | Febrero | 12,000    | 20,000             |
+
+---
+
+## **¿Qué sucede si no se especifica `PARTITION BY`?**
+- Si no se usa `PARTITION BY`, las funciones de ventana operan sobre todas las filas de la tabla como una sola partición.
+- Esto es útil si quieres un cálculo global en lugar de uno segmentado.
+
+## **Combinando particiones y ranking**
+Puedes usar `PARTITION BY` junto con rankings para enumerar filas dentro de particiones.
+
+```sql
+SELECT nombre, departamento, salario,
+       ROW_NUMBER() OVER (PARTITION BY departamento ORDER BY salario DESC) AS ranking
+FROM empleados;
+```
+
+**Resultado:** Enumera los empleados en cada departamento, ordenados por salario de mayor a menor.
+
+## **Consideraciones al usar particiones**
+1. **Rendimiento:** Las particiones pueden ser costosas en tablas grandes. Asegúrate de tener índices adecuados en las columnas utilizadas.
+2. **Criterios lógicos:** Usa columnas significativas para las particiones, como categorías, regiones o períodos.
+3. **Flexibilidad:** Puedes usar múltiples columnas en `PARTITION BY` para definir particiones más específicas.
