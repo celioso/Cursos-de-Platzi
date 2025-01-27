@@ -2719,3 +2719,397 @@ FROM empleados;
 1. **Rendimiento:** Las particiones pueden ser costosas en tablas grandes. Asegúrate de tener índices adecuados en las columnas utilizadas.
 2. **Criterios lógicos:** Usa columnas significativas para las particiones, como categorías, regiones o períodos.
 3. **Flexibilidad:** Puedes usar múltiples columnas en `PARTITION BY` para definir particiones más específicas.
+
+## Ordenando datos geográficos
+
+Cuando se trabaja con datos geográficos en una base de datos como **PostgreSQL** (especialmente con su extensión **PostGIS**), ordenar los datos geográficos depende del contexto y del tipo de análisis que se esté realizando. Aquí te dejo una guía para ordenar datos geográficos utilizando PostgreSQL y PostGIS:
+
+## **1. Ordenar por distancias**
+Uno de los casos más comunes es ordenar datos en función de su proximidad a un punto de referencia. Esto es útil, por ejemplo, para encontrar las ubicaciones más cercanas a un cliente.
+
+### **Ejemplo**
+Supongamos que tienes una tabla `lugares` con una columna `geom` (de tipo `GEOMETRY` o `GEOGRAPHY`), y quieres encontrar los lugares más cercanos a un punto específico (por ejemplo, un cliente).
+
+```sql
+SELECT id, nombre, ST_Distance(geom, ST_SetSRID(ST_Point(-74.08175, 4.60971), 4326)) AS distancia
+FROM lugares
+ORDER BY distancia ASC;
+```
+
+- **`ST_Distance`**: Calcula la distancia entre dos geometrías.
+- **`ST_Point`**: Define el punto de referencia (en este caso, -74.08175, 4.60971, las coordenadas de Bogotá).
+- **`ST_SetSRID`**: Establece el sistema de referencia espacial (SRID), como el **EPSG:4326**.
+
+**Resultado**: Los lugares estarán ordenados del más cercano al más lejano respecto al punto de referencia.
+
+## **2. Ordenar por área**
+Si estás trabajando con polígonos (por ejemplo, zonas, barrios o regiones), puedes ordenarlos por su tamaño (área).
+
+### **Ejemplo**
+Supongamos que tienes una tabla `zonas` con una columna `geom` que almacena polígonos.
+
+```sql
+SELECT id, nombre, ST_Area(geom::GEOGRAPHY) AS area
+FROM zonas
+ORDER BY area DESC;
+```
+
+- **`ST_Area`**: Calcula el área de un polígono.
+- **`geom::GEOGRAPHY`**: Convierte la geometría a un tipo geográfico para obtener áreas en unidades reales (como metros cuadrados).
+
+**Resultado**: Las zonas estarán ordenadas de la más grande a la más pequeña.
+
+## **3. Ordenar por longitud de líneas**
+Si trabajas con líneas (por ejemplo, rutas o calles), puedes ordenarlas por su longitud.
+
+### **Ejemplo**
+```sql
+SELECT id, nombre, ST_Length(geom::GEOGRAPHY) AS longitud
+FROM rutas
+ORDER BY longitud DESC;
+```
+
+- **`ST_Length`**: Calcula la longitud de una línea.
+- **`geom::GEOGRAPHY`**: Convierte la geometría a un tipo geográfico para obtener longitudes reales.
+
+**Resultado**: Las rutas estarán ordenadas de la más larga a la más corta.
+
+## **4. Ordenar por atributos geográficos**
+También puedes ordenar datos geográficos en función de sus atributos espaciales, como latitud o longitud.
+
+### **Ejemplo**
+Ordenar ubicaciones de norte a sur (latitud descendente):
+
+```sql
+SELECT id, nombre, ST_Y(geom) AS latitud
+FROM lugares
+ORDER BY latitud DESC;
+```
+
+Ordenar ubicaciones de oeste a este (longitud ascendente):
+
+```sql
+SELECT id, nombre, ST_X(geom) AS longitud
+FROM lugares
+ORDER BY longitud ASC;
+```
+
+- **`ST_X`** y **`ST_Y`**: Devuelven la coordenada X (longitud) y la coordenada Y (latitud) de un punto.
+
+## **5. Ordenar por intersección**
+Si necesitas ordenar objetos geográficos según su relación espacial con otro objeto, puedes usar funciones como `ST_Intersects` o `ST_Contains`.
+
+### **Ejemplo**
+Ordenar polígonos según si contienen o no un punto específico:
+
+```sql
+SELECT id, nombre
+FROM zonas
+WHERE ST_Contains(geom, ST_SetSRID(ST_Point(-74.08175, 4.60971), 4326))
+ORDER BY nombre ASC;
+```
+
+## **6. Casos prácticos avanzados**
+### **Calcular y ordenar la cercanía entre varios puntos**
+Supongamos que tienes una tabla de clientes y otra de tiendas, y quieres ordenar las tiendas para cada cliente en función de la distancia:
+
+```sql
+SELECT c.id_cliente, t.id_tienda, t.nombre,
+       ST_Distance(c.geom, t.geom) AS distancia
+FROM clientes c
+CROSS JOIN tiendas t
+ORDER BY c.id_cliente, distancia ASC;
+```
+
+- **`CROSS JOIN`**: Permite comparar cada cliente con todas las tiendas.
+- **`ST_Distance`**: Calcula la distancia entre los puntos de cada cliente y tienda.
+
+## **Optimización para consultas geográficas**
+Al trabajar con datos geográficos, es importante optimizar las consultas:
+1. **Crear índices espaciales**:
+   ```sql
+   CREATE INDEX idx_geom ON lugares USING GIST (geom);
+   ```
+   Esto mejora el rendimiento de consultas espaciales como `ST_Distance` o `ST_Intersects`.
+
+2. **Usar el tipo `GEOGRAPHY` cuando trabajes con datos en coordenadas geográficas (longitud/latitud)**, ya que permite cálculos más precisos en unidades reales (metros, kilómetros).
+
+3. **Simplificar geometrías complejas** con `ST_Simplify` para cálculos rápidos si no necesitas precisión total.
+
+## Datos en el tiempo
+
+Trabajar con **datos en el tiempo** en bases de datos relacionales, como PostgreSQL, implica la gestión y análisis de valores que cambian o están asociados con una dimensión temporal. Esto es esencial para analizar tendencias, calcular valores históricos, realizar predicciones o comparar periodos.
+
+A continuación, te explico cómo gestionar y analizar datos temporales, con ejemplos prácticos en PostgreSQL:
+
+## **1. Tipos de datos temporales**
+En PostgreSQL, los principales tipos de datos para manejar tiempo son:
+
+- **DATE**: Solo almacena la fecha (ej. `2025-01-24`).
+- **TIME**: Solo almacena la hora (ej. `14:30:00`).
+- **TIMESTAMP**: Fecha y hora sin zona horaria (ej. `2025-01-24 14:30:00`).
+- **TIMESTAMPTZ**: Fecha y hora con zona horaria (ej. `2025-01-24 14:30:00+00`).
+- **INTERVAL**: Representa una duración (ej. `2 days 3 hours`).
+
+## **2. Insertar y almacenar datos temporales**
+### **Ejemplo**
+Supongamos que tienes una tabla `ventas` para almacenar transacciones con una marca temporal:
+
+```sql
+CREATE TABLE ventas (
+    id SERIAL PRIMARY KEY,
+    producto VARCHAR(100),
+    cantidad INT,
+    precio DECIMAL(10, 2),
+    fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+```
+
+- La columna `fecha` almacena el momento en que se realiza la venta.
+
+**Insertar un registro**:
+```sql
+INSERT INTO ventas (producto, cantidad, precio) 
+VALUES ('Laptop', 1, 2500.00);
+```
+
+## **3. Consultas temporales comunes**
+### **a) Filtrar por rango de fechas**
+Para encontrar ventas realizadas en un rango de fechas:
+
+```sql
+SELECT * 
+FROM ventas
+WHERE fecha BETWEEN '2025-01-01' AND '2025-01-24';
+```
+
+### **b) Filtrar por periodos específicos**
+Ventas realizadas en un mes en particular:
+
+```sql
+SELECT * 
+FROM ventas
+WHERE EXTRACT(MONTH FROM fecha) = 1 AND EXTRACT(YEAR FROM fecha) = 2025;
+```
+
+## **4. Agregaciones temporales**
+### **a) Agrupar por día**
+Sumar ventas por día:
+
+```sql
+SELECT DATE(fecha) AS dia, SUM(precio * cantidad) AS total_ventas
+FROM ventas
+GROUP BY DATE(fecha)
+ORDER BY dia;
+```
+
+### **b) Agrupar por mes**
+```sql
+SELECT DATE_TRUNC('month', fecha) AS mes, SUM(precio * cantidad) AS total_ventas
+FROM ventas
+GROUP BY DATE_TRUNC('month', fecha)
+ORDER BY mes;
+```
+
+- **`DATE_TRUNC`**: Trunca la fecha al inicio del mes, año, día, etc.
+
+
+## **5. Calcular diferencias en el tiempo**
+### **a) Tiempo transcurrido entre eventos**
+Si necesitas calcular la diferencia entre fechas (por ejemplo, entre ventas):
+
+```sql
+SELECT id, producto, fecha, 
+       fecha - LAG(fecha) OVER (ORDER BY fecha) AS tiempo_desde_ultima_venta
+FROM ventas;
+```
+
+- **`LAG`**: Devuelve el valor de la fila anterior dentro de la ventana.
+
+### **b) Diferencias absolutas**
+Duración total entre dos fechas específicas:
+
+```sql
+SELECT '2025-01-24'::DATE - '2025-01-01'::DATE AS dias_transcurridos;
+```
+
+## **6. Funciones temporales útiles**
+### **a) Fecha actual**
+```sql
+SELECT CURRENT_DATE; -- Solo la fecha actual
+SELECT CURRENT_TIMESTAMP; -- Fecha y hora actual
+```
+
+### **b) Extraer partes de la fecha**
+```sql
+SELECT EXTRACT(YEAR FROM fecha) AS anio,
+       EXTRACT(MONTH FROM fecha) AS mes,
+       EXTRACT(DAY FROM fecha) AS dia
+FROM ventas;
+```
+
+### **c) Agregar o restar tiempo**
+Sumar o restar intervalos a una fecha:
+
+```sql
+SELECT fecha + INTERVAL '1 day' AS manana,
+       fecha - INTERVAL '7 days' AS semana_pasada
+FROM ventas;
+```
+
+## **7. Consultas avanzadas**
+### **a) Ventas acumuladas**
+Para calcular el total acumulado de ventas a lo largo del tiempo:
+
+```sql
+SELECT fecha, 
+       SUM(precio * cantidad) OVER (ORDER BY fecha) AS ventas_acumuladas
+FROM ventas;
+```
+
+### **b) Ventas promedio móviles**
+Para calcular un promedio móvil de 7 días:
+
+```sql
+SELECT fecha, 
+       AVG(precio * cantidad) OVER (ORDER BY fecha ROWS BETWEEN 6 PRECEDING AND CURRENT ROW) AS promedio_movil
+FROM ventas;
+```
+
+## **8. Indexación temporal**
+Para mejorar el rendimiento de consultas basadas en fechas, puedes crear índices:
+
+```sql
+CREATE INDEX idx_fecha ON ventas (fecha);
+```
+
+## **9. Aplicaciones comunes de datos temporales**
+- **Análisis de tendencias**: Identificar patrones de venta por días, semanas o meses.
+- **Predicciones**: Basadas en datos históricos para anticipar futuras ventas o eventos.
+- **Alertas**: Detectar retrasos o anomalías al monitorear eventos en tiempo real.
+
+## Visualizando datos con Tableau
+
+**Visualizar datos con Tableau** es una de las formas más efectivas de analizar y comunicar información compleja de manera intuitiva. Tableau es una herramienta de visualización de datos que permite crear dashboards interactivos y atractivos que facilitan la toma de decisiones basada en datos. A continuación, te explico los aspectos clave y un paso a paso para empezar a usar Tableau.
+
+
+## **1. ¿Qué es Tableau?**
+Tableau es un software de inteligencia empresarial (BI) que permite:
+- **Conectar fuentes de datos**: Bases de datos, hojas de cálculo, APIs, y más.
+- **Transformar datos**: Crear cálculos y modificar estructuras.
+- **Visualizar información**: Mediante gráficos interactivos, mapas y dashboards.
+- **Compartir resultados**: A través de Tableau Online, Tableau Server o exportando dashboards.
+
+## **2. Principales características**
+- **Interactividad**: Los gráficos y dashboards permiten filtrar, resaltar y explorar datos.
+- **Flexibilidad**: Soporta diversas fuentes de datos como PostgreSQL, MySQL, Excel, Google Sheets y más.
+- **Mapas avanzados**: Ideal para datos geográficos.
+- **Funciones analíticas**: Tendencias, clustering, regresiones y más.
+
+
+## **3. Cómo empezar con Tableau**
+### **Paso 1: Descarga e instalación**
+1. Descarga Tableau Desktop desde [la página oficial de Tableau](https://www.tableau.com/).
+2. Regístrate para obtener una versión de prueba gratuita si no tienes licencia.
+
+### **Paso 2: Conecta tus datos**
+1. Abre Tableau y selecciona una fuente de datos:
+   - Archivos: Excel, CSV, JSON, etc.
+   - Bases de datos: PostgreSQL, SQL Server, MySQL.
+   - Online: Google Sheets, Tableau Online, APIs.
+
+2. Configura la conexión:
+   - Para bases de datos, proporciona credenciales y selecciona la tabla o consulta.
+
+### **Paso 3: Prepara tus datos**
+1. **Limpieza y transformación**:
+   - Renombra columnas y tablas.
+   - Filtra datos irrelevantes.
+   - Combina datos con uniones o uniones lógicas (joins).
+   - Crea campos calculados si necesitas nuevos valores.
+
+2. **Ejemplo de un campo calculado**: 
+   Si quieres calcular el margen de ganancia:
+   ```plaintext
+   [Ganancia] / [Ingresos]
+   ```
+
+### **Paso 4: Crea visualizaciones**
+1. **Selecciona una hoja (Sheet)**:
+   - Arrastra campos al área de filas (Rows) y columnas (Columns).
+   - Usa dimensiones (categorías) y medidas (números) para crear gráficos.
+
+2. **Elige un gráfico**:
+   - Tableau selecciona automáticamente un gráfico basado en los datos.
+   - Puedes cambiarlo manualmente en el menú **Show Me**.
+
+**Ejemplo: Ventas por región**
+   - Coloca "Región" en **Columns** y "Ventas" en **Rows**.
+   - Cambia a un gráfico de barras en **Show Me**.
+
+### **Paso 5: Personaliza tu gráfico**
+- **Filtros**: Agrega filtros interactivos para explorar los datos.
+- **Colores y tamaños**: Asocia colores y tamaños con valores numéricos o categorías.
+- **Etiquetas**: Muestra valores directamente en el gráfico.
+- **Herramientas analíticas**: Agrega líneas de tendencia, promedios o predicciones.
+
+### **Paso 6: Crea dashboards**
+1. Abre un nuevo Dashboard.
+2. Arrastra tus hojas al área de trabajo.
+3. Ajusta el diseño:
+   - Organiza gráficos, filtros y leyendas.
+   - Usa acciones para que los gráficos interactúen entre sí.
+
+**Ejemplo: Dashboard de ventas**
+- Hoja 1: Ventas por región.
+- Hoja 2: Ventas por categoría de producto.
+- Filtro: Año de la venta.
+
+## **4. Visualizaciones comunes en Tableau**
+1. **Gráficos de barras**: Comparaciones simples entre categorías.
+2. **Gráficos de líneas**: Tendencias a lo largo del tiempo.
+3. **Mapas**: Para datos geográficos (ej., ventas por país).
+4. **Gráficos de dispersión**: Relaciones entre dos variables.
+5. **Diagramas de árbol (Tree maps)**: Para jerarquías o proporciones.
+6. **Histogramas**: Distribución de valores.
+7. **Gráficos circulares (Pie charts)**: Comparaciones simples (aunque se prefieren alternativas como barras apiladas).
+
+## **5. Compartir y publicar**
+1. **Exportar**:
+   - Exporta como PDF o imagen para informes estáticos.
+   - Exporta como archivo de Tableau (.twbx) para compartir dinámicamente.
+
+2. **Publicar en línea**:
+   - Usa Tableau Online o Tableau Server para compartir dashboards interactivos.
+
+## **6. Consejos para un análisis efectivo**
+- **Mantén gráficos claros y simples**: Evita sobrecargar visualizaciones.
+- **Usa colores estratégicamente**: Destaca datos importantes.
+- **Incluye contexto**: Agrega títulos, etiquetas y descripciones.
+- **Prueba interactividad**: Agrega filtros y acciones para que los usuarios exploren datos.
+
+## **7. Caso práctico**
+Supongamos que estás analizando datos de ventas de una tienda.
+
+### **Fuente de datos**:
+Un archivo Excel con las siguientes columnas:
+- **Fecha**: Fecha de la venta.
+- **Producto**: Nombre del producto.
+- **Región**: Ubicación de la venta.
+- **Ventas**: Monto total.
+
+**Pasos**:
+1. Carga el archivo en Tableau.
+2. Crea un gráfico de barras para mostrar las ventas por región.
+3. Agrega un gráfico de líneas para ver la tendencia de ventas mensuales.
+4. Crea un dashboard con ambos gráficos y un filtro por región.
+
+Tableau es una herramienta poderosa, y practicar con datos reales te ayudará a dominarla rápidamente.
+
+**Lecturas recomendadas**
+
+[Business Intelligence and Analytics Software](https://www.tableau.com/)
+
+[Data Studio Product Overview](https://datastudio.google.com/)
+
+[Curso de Business Intelligence para Empresas](https://platzi.com/clases/business-intelligence/)

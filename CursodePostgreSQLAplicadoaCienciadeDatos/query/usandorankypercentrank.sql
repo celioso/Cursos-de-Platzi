@@ -18,7 +18,7 @@ SELECT
 	peliculas.titulo,
 	COUNT(*) AS numero_rentas,
 	DENSE_RANK () OVER (
-		ORDER BY COUNT(*) ASC
+		ORDER BY COUNT(*) DESC
 	) AS lugar
 FROM rentas
 	INNER JOIN inventarios ON rentas.inventario_id = inventarios.inventario_id
