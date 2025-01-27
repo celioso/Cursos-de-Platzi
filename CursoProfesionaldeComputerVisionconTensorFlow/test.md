@@ -16,7 +16,7 @@
    
 **R//=** Es el área de la intersección de los dos bounding box (predecir y verdadero), dividida por el área total de unión de los dos bounding box.
 
-5. **¿Qué tipo de formato de base de datos necesita TesorFlow para poder entrenar un modelo de detección de objetos??**
+5. **¿Qué tipo de formato de base de datos necesita TesorFlow para poder entrenar un modelo de detección de objetos?**
     
 **R//=** TFrecord
 
