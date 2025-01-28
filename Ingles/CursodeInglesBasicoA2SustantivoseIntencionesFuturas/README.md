@@ -648,3 +648,331 @@ Los **adverbios de movimiento y dirección** en inglés indican la dirección o 
 ### Ejemplo de uso:
 - "She went **up** the stairs, then walked **down** the hall and entered the room."  
 (Ella subió las escaleras, luego caminó hacia abajo por el pasillo y entró en la habitación.)
+
+## Indica órdenes y ofertas usando "would like to" en inglés
+
+El uso de **"would like to"** en inglés es una forma educada de hacer **ofertas** o dar **órdenes**. A continuación te explico cómo se usa en cada caso:
+
+### 1. **Ofertas con "would like to"**
+Se utiliza para hacer ofertas educadas o invitaciones. Aquí se expresa el deseo de hacer algo para otra persona.
+
+- **Estructura**:  
+  **Sujeto + would like to + verbo en infinitivo.**
+
+#### Ejemplos de ofertas:
+- "Would you like to have some coffee?"  
+  (¿Te gustaría tomar un poco de café?)
+- "I would like to help you with that."  
+  (Me gustaría ayudarte con eso.)
+- "Would you like to join us for dinner?"  
+  (¿Te gustaría acompañarnos a cenar?)
+
+### 2. **Órdenes con "would like to"**
+Aunque "would like to" se usa principalmente para ser educado, en ciertos contextos, puede expresar órdenes de manera indirecta o más suave. Sin embargo, es importante recordar que "would like to" no se usa típicamente para dar órdenes directas.
+
+#### Ejemplos de órdenes suavizadas:
+- "I would like you to finish the report by tomorrow."  
+  (Me gustaría que termines el informe para mañana.)
+- "We would like you to follow the instructions carefully."  
+  (Nos gustaría que sigas las instrucciones cuidadosamente.)
+
+### Resumen:
+- **Ofertas**: Se usan para hacer sugerencias amables.
+- **Órdenes suaves**: Se usan para pedir algo de manera más educada o indirecta.
+
+## ¿Cómo dar ordenes y hacer peticiones usando "'please" en inglés?
+
+El uso de **"please"** en inglés es muy común para hacer **peticiones** y **órdenes** de manera educada. Se coloca al final de la frase o antes del verbo para suavizar el tono, lo que lo hace más respetuoso y cortés. A continuación, te explico cómo usarlo en ambos casos:
+
+### 1. **Dar órdenes con "please"**
+
+Cuando das una **orden** o **instrucción**, el uso de "please" suaviza el tono de la frase, haciéndola más educada.
+
+- **Estructura**:  
+  **Verbo en imperativo + please**.
+
+#### Ejemplos de órdenes con "please":
+- "Close the door, please."  
+  (Cierra la puerta, por favor.)
+- "Give me the book, please."  
+  (Dame el libro, por favor.)
+- "Sit down, please."  
+  (Siéntate, por favor.)
+
+### 2. **Hacer peticiones con "please"**
+
+Cuando haces una **petición**, también se puede colocar "please" para hacerlo más cortés. 
+
+- **Estructura**:  
+  **Can/could + sujeto + verbo + please**.
+
+#### Ejemplos de peticiones con "please":
+- "Can you help me, please?"  
+  (¿Puedes ayudarme, por favor?)
+- "Could you pass the salt, please?"  
+  (¿Podrías pasarme la sal, por favor?)
+- "Please, tell me your name."  
+  (Por favor, dime tu nombre.)
+
+### Resumen:
+- **Órdenes**: Se coloca "please" al final de la orden para hacerla más cortés.
+- **Peticiones**: "Please" se coloca al final o al principio de la frase para suavizar el tono de la solicitud.
+
+### Consejos:
+- **"Please"** nunca se coloca entre el verbo y el objeto. Por ejemplo, no se dice "*Close please the door*," sino "*Close the door, please.*"
+- También puedes usar **"please"** al principio de una petición para hacerla más suave y educada:  
+  "Please, can you help me?"
+
+Aquí tienes más ejemplos y explicaciones sobre cómo usar "please" en diferentes contextos:
+
+### 1. **Ofrecer algo cortésmente usando "please"**
+
+Cuando quieres hacer una **oferta**, el uso de "please" también hace la propuesta más educada y formal.
+
+- **Estructura**:  
+  **Would + sujeto + verbo + please**.
+
+#### Ejemplos de ofertas con "please":
+- "Would you like some coffee, please?"  
+  (¿Te gustaría un poco de café, por favor?)
+- "Would you like to join us, please?"  
+  (¿Te gustaría unirte a nosotros, por favor?)
+
+### 2. **Solicitudes formales usando "please"**
+
+En un contexto más formal o profesional, "please" se usa para hacer solicitudes respetuosas.
+
+- **Estructura**:  
+  **Please + verbo en infinitivo**.
+
+#### Ejemplos de solicitudes formales:
+- "Please provide the necessary documents."  
+  (Por favor, proporcione los documentos necesarios.)
+- "Please fill out the form."  
+  (Por favor, complete el formulario.)
+  
+### 3. **Usar "please" para hacer preguntas educadas**
+
+También puedes usar "please" al hacer preguntas para sonar más educado y formal.
+
+- **Estructura**:  
+  **Pregunta + please**.
+
+#### Ejemplos de preguntas con "please":
+- "Can you tell me the time, please?"  
+  (¿Puedes decirme la hora, por favor?)
+- "Could you help me with this problem, please?"  
+  (¿Podrías ayudarme con este problema, por favor?)
+
+### 4. **"Please" en respuestas afirmativas**
+
+Aunque no es muy común en respuestas cortas, a veces se puede usar **"please"** para confirmar o afirmar algo de manera educada.
+
+#### Ejemplo:
+- "Yes, please."  
+  (Sí, por favor.)
+- "No, thank you, please."  
+  (No, gracias.)
+
+### 5. **Usar "please" en preguntas de favor**
+
+Cuando preguntas por un favor, **"please"** se coloca para hacer la solicitud más cortés.
+
+#### Ejemplo:
+- "Could you please help me with this task?"  
+  (¿Podrías ayudarme con esta tarea, por favor?)
+
+### Resumen:
+- **Órdenes**: "Please" al final de la frase (ej. "Sit down, please.").
+- **Peticiones**: "Please" al principio o final de la frase (ej. "Please pass the salt.").
+- **Ofertas**: "Would you like + please?" (ej. "Would you like some tea, please?").
+- **Solicitudes formales**: "Please" al principio (ej. "Please complete the form.").
+
+### Nota adicional:
+Recuerda que "please" es una herramienta poderosa para ser cortés, y se usa tanto en situaciones formales como informales. Sin embargo, en situaciones informales, también puedes omitirlo, ya que no es obligatorio si la relación es cercana.
+
+## Expresa motivos y razones usando '"because" en inglés
+
+Usar **"because"** en inglés es muy común para **expresar motivos o razones**. Aquí te muestro cómo usarlo correctamente en oraciones.
+
+### 1. **Estructura básica con "because"**
+
+La estructura más común es:
+
+**Sujeto + verbo + complemento + because + razón.**
+
+#### Ejemplos:
+- "I am tired **because** I didn't sleep well last night."
+  (Estoy cansado porque no dormí bien anoche.)
+- "She is studying hard **because** she wants to pass the exam."
+  (Ella está estudiando mucho porque quiere aprobar el examen.)
+- "We stayed home **because** it was raining."
+  (Nos quedamos en casa porque estaba lloviendo.)
+
+### 2. **Usando "because" para respuestas cortas**
+
+También puedes usar **"because"** en respuestas más cortas, especialmente cuando te preguntan el motivo de algo.
+
+#### Ejemplos:
+- "Why are you late?"  
+  "Because I missed the bus."
+  (¿Por qué llegaste tarde? Porque perdí el bus.)
+- "Why did you choose this restaurant?"  
+  "Because it has great reviews."
+  (¿Por qué elegiste este restaurante? Porque tiene buenas reseñas.)
+
+### 3. **Usando "because" con adjetivos**
+
+Puedes usar **"because"** para explicar por qué algo es de una determinada manera. Después del adjetivo, se agrega la razón.
+
+#### Ejemplos:
+- "She is happy **because** she got a promotion."
+  (Ella está feliz porque consiguió un ascenso.)
+- "I'm sad **because** I lost my keys."
+  (Estoy triste porque perdí mis llaves.)
+
+### 4. **Usando "because" con sustantivos**
+
+A veces puedes usar **"because"** para dar razones relacionadas con un sustantivo.
+
+#### Ejemplo:
+- "He was excited **because** of the new job offer."
+  (Estaba emocionado por la oferta de trabajo.)
+
+### 5. **Usando "because" en preguntas indirectas**
+
+En preguntas indirectas también puedes usar "because" para explicar la razón.
+
+#### Ejemplo:
+- "I don't understand why she is upset, because she didn’t explain it."
+  (No entiendo por qué está molesta, porque no lo explicó.)
+
+### Resumen:
+- **"Because"** conecta una causa con su efecto o explicación.
+- Se puede usar con verbos, adjetivos o sustantivos.
+- Es una manera efectiva y sencilla de explicar motivos o razones.
+
+## Expresiones de tiempo comunes en inglés
+
+Aquí te dejo algunas **expresiones de tiempo comunes en inglés** que son muy útiles para hablar de acciones en el presente, pasado y futuro:
+
+### 1. **Expresiones de tiempo en el presente:**
+
+- **Right now** – Ahora mismo
+  - *I am reading a book right now.*
+  (Estoy leyendo un libro ahora mismo.)
+  
+- **At the moment** – En este momento
+  - *She is at the meeting at the moment.*
+  (Ella está en la reunión en este momento.)
+
+- **Today** – Hoy
+  - *I have a lot of work today.*
+  (Tengo mucho trabajo hoy.)
+
+- **This week/month/year** – Esta semana/mes/año
+  - *We’re going on vacation this month.*
+  (Nos vamos de vacaciones este mes.)
+
+- **These days** – Estos días
+  - *I’ve been busy these days.*
+  (He estado ocupado estos días.)
+
+- **Lately** – Últimamente
+  - *I haven’t seen her lately.*
+  (No la he visto últimamente.)
+
+### 2. **Expresiones de tiempo en el pasado:**
+
+- **Yesterday** – Ayer
+  - *I went to the cinema yesterday.*
+  (Fui al cine ayer.)
+
+- **The other day** – El otro día
+  - *I saw Tom the other day.*
+  (Vi a Tom el otro día.)
+
+- **Last week/month/year** – La semana/mes/año pasado
+  - *We traveled to Paris last year.*
+  (Viajamos a París el año pasado.)
+
+- **In the past** – En el pasado
+  - *I used to play soccer in the past.*
+  (Solía jugar fútbol en el pasado.)
+
+- **A long time ago** – Hace mucho tiempo
+  - *I visited that museum a long time ago.*
+  (Visité ese museo hace mucho tiempo.)
+
+- **Once upon a time** – Érase una vez (expresión de cuento)
+  - *Once upon a time, there was a beautiful princess.*
+  (Érase una vez, había una hermosa princesa.)
+
+### 3. **Expresiones de tiempo en el futuro:**
+
+- **Tomorrow** – Mañana
+  - *We are going to the beach tomorrow.*
+  (Vamos a la playa mañana.)
+
+- **Next week/month/year** – La próxima semana/mes/año
+  - *I’ll visit you next month.*
+  (Te visitaré el mes próximo.)
+
+- **Soon** – Pronto
+  - *I’ll call you soon.*
+  (Te llamaré pronto.)
+
+- **In the near future** – En el futuro cercano
+  - *We plan to launch the product in the near future.*
+  (Planeamos lanzar el producto en el futuro cercano.)
+
+- **Eventually** – Eventualmente
+  - *Eventually, he’ll understand the situation.*
+  (Eventualmente, él entenderá la situación.)
+
+- **In a while** – En un rato
+  - *I’ll be ready in a while.*
+  (Estaré listo en un rato.)
+
+### 4. **Expresiones de tiempo generales:**
+
+- **For now** – Por ahora
+  - *Let’s do it for now and talk later.*
+  (Hagámoslo por ahora y hablamos después.)
+
+- **At times** – A veces
+  - *At times, I feel like giving up.*
+  (A veces siento que quiero rendirme.)
+
+- **As soon as possible (ASAP)** – Tan pronto como sea posible
+  - *Please respond as soon as possible.*
+  (Por favor, responde tan pronto como sea posible.)
+
+- **Every now and then** – De vez en cuando
+  - *I go for a run every now and then.*
+  (De vez en cuando salgo a correr.)
+
+- **In the meantime** – Mientras tanto
+  - *I’ll be working on this, and in the meantime, you can take a break.*
+  (Estaré trabajando en esto, y mientras tanto, puedes descansar.)
+
+### 5. **Otras expresiones de tiempo frecuentes:**
+
+- **Once** – Una vez
+  - *I have been to New York once.*
+  (He estado en Nueva York una vez.)
+
+- **Twice** – Dos veces
+  - *I have visited that restaurant twice.*
+  (He visitado ese restaurante dos veces.)
+
+- **Before** – Antes
+  - *I have seen that movie before.*
+  (He visto esa película antes.)
+
+- **After** – Después
+  - *We’ll talk after the meeting.*
+  (Hablaremos después de la reunión.)
+
+### Resumen:
+Estas expresiones son muy útiles para indicar cuándo suceden las acciones. Además, son esenciales tanto en conversaciones cotidianas como en situaciones formales.
