@@ -206,4 +206,185 @@ Git incluye un recurso rápido y útil para recordar la sintaxis de comandos:
 
 [GitHub · Build and ship software on a single, collaborative platform · GitHub](https://github.com/)
 
-5972
+## Comandos Básicos de Git: add, commit y log
+
+## **Comandos Básicos de Git: `add`, `commit` y `log`**  
+
+Una vez que tienes Git configurado e inicializado, puedes comenzar a gestionar cambios en tu código. Tres de los comandos más importantes son `git add`, `git commit` y `git log`.
+
+---
+
+## **1. Agregar Archivos al Área de Preparación: `git add`**  
+Antes de confirmar los cambios en el historial de Git, debes agregarlos al **staging area** (área de preparación).
+
+### **Sintaxis:**
+```bash
+git add <archivo>       # Agrega un archivo específico
+git add .               # Agrega todos los archivos modificados
+git add *.txt           # Agrega solo archivos con cierta extensión
+```
+
+🔹 **Ejemplo:**  
+Si creas un archivo `index.html` y lo modificas, puedes agregarlo al área de preparación con:
+```bash
+git add index.html
+```
+Esto indica a Git que este archivo será parte del próximo commit.
+
+---
+
+## **2. Confirmar Cambios: `git commit`**  
+El comando `git commit` guarda una **instantánea permanente** de los archivos en el historial de versiones.
+
+### **Sintaxis:**
+```bash
+git commit -m "Mensaje descriptivo"
+```
+🔹 **Ejemplo:**  
+```bash
+git commit -m "Agregada la estructura inicial del proyecto"
+```
+Después de este comando, los cambios se guardan en el historial de Git, pero aún no se han enviado a un repositorio remoto.
+
+**Opción avanzada:** Si quieres escribir un mensaje más detallado en varias líneas, usa:
+```bash
+git commit
+```
+Esto abrirá el editor de texto configurado (como `nano` o `vim`), donde puedes escribir una descripción más extensa del commit.
+
+---
+
+## **3. Ver el Historial de Commits: `git log`**  
+Para ver el historial de confirmaciones en el repositorio, usa `git log`.
+
+### **Sintaxis básica:**
+```bash
+git log
+```
+🔹 **Ejemplo de salida:**
+```
+commit 1a2b3c4d5e6f7g8h9i (HEAD -> main)
+Author: Mario Alexander Vargas Celis <mario@example.com>
+Date:   Wed Jan 30 12:00:00 2025 -0500
+
+    Agregada la estructura inicial del proyecto
+```
+
+### **Opciones útiles:**
+- **Mostrar commits en una línea resumida:**
+  ```bash
+  git log --oneline
+  ```
+  🔹 **Ejemplo de salida:**  
+  ```
+  1a2b3c4 Agregada la estructura inicial del proyecto
+  ```
+
+- **Ver cambios en cada commit:**  
+  ```bash
+  git log -p
+  ```
+- **Filtrar por autor:**  
+  ```bash
+  git log --author="Mario"
+  ```
+- **Ver commits de los últimos 7 días:**  
+  ```bash
+  git log --since="7 days ago"
+  ```
+
+---
+
+## **Flujo de Trabajo Básico con Git**
+1️⃣ **Crear o modificar archivos:**  
+   ```bash
+   echo "Hola Mundo" > archivo.txt
+   ```
+
+2️⃣ **Agregar cambios al área de preparación:**  
+   ```bash
+   git add archivo.txt
+   ```
+
+3️⃣ **Confirmar los cambios con un mensaje:**  
+   ```bash
+   git commit -m "Primer archivo agregado"
+   ```
+
+4️⃣ **Ver el historial de commits:**  
+   ```bash
+   git log --oneline
+   ```
+
+Con estos comandos, ya puedes comenzar a gestionar versiones en Git.
+
+## Resumen
+
+Aprender a utilizar Git desde los primeros pasos puede parecer desafiante, pero es esencial para registrar cambios y manejar versiones de cualquier proyecto. Siguiendo un flujo de trabajo sencillo y utilizando los comandos adecuados, puedes dominar el control de versiones y llevar un seguimiento preciso de tus archivos.
+
+### ¿Cómo inicia el control de versiones con Git?
+
+El primer paso es iniciar un repositorio con el comando `git init`, que crea una carpeta oculta llamada `.git` en el directorio de trabajo. Esta carpeta actúa como una bitácora, almacenando cada cambio y movimiento de los archivos que se manejan en el proyecto.
+
+### ¿Cómo se crean y agregan archivos a Git?
+
+Para crear un archivo desde la terminal, utiliza un editor como `nano`. Una vez creado, puedes verificar su existencia y estado con `git status`, que te mostrará el archivo como no registrado. Para incluirlo en el área de staging, donde estará listo para el commit, usa `git add nombre_del_archivo.txt`. Esta área de staging es un “limbo” donde decides qué archivos entrarán en el control de versiones.
+
+- **Ejemplo de comandos:**
+ - nano testing.txt para crear el archivo.
+ - git add testing.txt para agregarlo al área de staging.
+ 
+### ¿Qué es el área de staging y cómo funciona?
+
+El área de staging permite revisar los cambios antes de que se registren oficialmente en el repositorio. Los archivos en staging aún no forman parte del historial de versiones; están en espera de que se realice un commit o de ser devueltos a su estado original con `git rm --cached nombre_del_archivo.txt`.
+
+### ¿Cómo realizar el commit de los archivos en Git?
+
+Una vez en staging, se ejecuta git commit -m "mensaje descriptivo" para registrar los cambios en el repositorio. El mensaje en el commit es crucial porque indica la acción realizada, como “nuevo archivo de testing”. Este mensaje permite identificar los cambios de forma clara y ordenada en el historial del proyecto.
+
+- **Ejemplo de commit:**
+ - `git commit -m "nuevo archivo de testing"`
+ 
+### ¿Cómo gestionar múltiples archivos en Git?
+
+Para trabajar con varios archivos a la vez, utiliza `git add .` que agrega todos los archivos sin registrar en el área de staging. Puedes decidir entre realizar commits individuales o múltiples en función de la cantidad de archivos y los cambios realizados en cada uno.
+
+### ¿Cómo visualizar el historial de cambios en Git?
+
+El comando `git log` muestra el historial de commits, proporcionando una vista completa de cada cambio realizado en el proyecto. Esta bitácora permite ver el estado de cada archivo y la información de cada commit.
+
+### ¿Qué sucede al modificar un archivo en Git?
+
+Cuando un archivo se edita, Git lo detecta como “modificado”. El flujo de trabajo para registrar este cambio es el mismo que para un archivo nuevo: `git add` para llevarlo a staging y `git commit` para guardar la modificación. Esto asegura que Git mantenga un registro detallado de cada cambio, actualización o eliminación en el proyecto.
+
+### ¿Cómo maneja Git diferentes tipos de archivos?
+
+Git trata cualquier archivo de igual manera, sin importar su extensión o tipo, ya sea de texto, código o imagen. Con `git add` y `git commit`, cualquier cambio en estos archivos se registra, facilitando el control de versiones sin importar el tipo de contenido.
+
+![comandos Basicos de git](images/comandosBasicosdegit.png)
+
+**Terminos basicos**
+
+- cd → cambiar directorio y/o regresar al directorio raiz
+- cd .. → retroceder 1 carpeta dentro del directorio
+- mkdir → crear directorio
+- rmdir → remover directorio
+- ls → contenido de un directorio
+- .. → volver 1 carpeta atrás
+- mkdir repo → crear repo
+- rmdir repo → eliminar repo
+- git init → iniciar repositorio
+- git add → añadir archivos
+- git status → estado del repo
+- git rm —cached → eliminar archivo añadido al repositorio
+- git commit → subir todo al repositorio
+
+**Lecturas recomendadas**
+
+[Git - git-add Documentation](https://git-scm.com/docs/git-add)
+
+[Git - git-commit Documentation](https://git-scm.com/docs/git-commit)
+
+[Git - git-log Documentation](https://git-scm.com/docs/git-log)
+
+[Póngase en marcha - Documentación de GitHub](https://docs.github.com/es/get-started/start-your-journey)
