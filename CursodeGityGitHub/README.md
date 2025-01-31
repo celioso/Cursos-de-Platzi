@@ -391,7 +391,7 @@ Git trata cualquier archivo de igual manera, sin importar su extensión o tipo, 
 
 ## Ramas y Fusión de Cambios: branch, merge, switch y checkout
 
-## **Ramas y Fusión de Cambios en Git**  
+### **Ramas y Fusión de Cambios en Git**  
 Las **ramas** en Git permiten trabajar en diferentes versiones de un proyecto sin afectar la rama principal. Esto es útil para desarrollar nuevas funcionalidades o corregir errores sin modificar el código estable.  
 
 Los comandos más importantes para manejar ramas son:  
@@ -399,7 +399,7 @@ Los comandos más importantes para manejar ramas son:
 - `git switch` y `git checkout` → Cambiar entre ramas.  
 - `git merge` → Fusionar cambios entre ramas.  
 
-## **1. Listar y Crear Ramas: `git branch`**  
+### **1. Listar y Crear Ramas: `git branch`**  
 ### **Ver ramas existentes:**  
 ```bash
 git branch
@@ -421,7 +421,7 @@ git branch nueva_funcionalidad
 ```
 Esto crea la rama `nueva_funcionalidad`, pero **no cambia a ella**.
 
-## **2. Cambiar de Rama: `git switch` y `git checkout`**  
+### **2. Cambiar de Rama: `git switch` y `git checkout`**  
 Para cambiar de rama, puedes usar:  
 
 ### **Usando `git switch` (Recomendado desde Git 2.23)**  
@@ -447,7 +447,7 @@ O con `checkout` (versión antigua):
 git checkout -b nueva_rama
 ```
 
-## **3. Fusionar Cambios entre Ramas: `git merge`**  
+### **3. Fusionar Cambios entre Ramas: `git merge`**  
 Cuando terminas de trabajar en una rama, puedes fusionar sus cambios en la rama principal.
 
 ### **Pasos para fusionar ramas:**  
@@ -488,7 +488,7 @@ git add archivo_con_conflicto
 git commit -m "Resuelto conflicto en archivo.txt"
 ```
 
-## **Resumen de Comandos**
+### **Resumen de Comandos**
 | Comando | Descripción |
 |---------|------------|
 | `git branch` | Muestra todas las ramas |
@@ -525,7 +525,7 @@ git commit -m "Resuelto conflicto en archivo.txt"
 Con este flujo, puedes trabajar en diferentes funcionalidades sin afectar la rama principal. 🎯  
 ¿Quieres aprender a **eliminar ramas** o **resolver conflictos** en Git?
 
-## Resumen
+### Resumen
 El uso de ramas en Git permite trabajar en un entorno aislado sin interferir con otros, facilitando la organización y el control del proyecto. Aprender a crear, gestionar y fusionar ramas optimiza la colaboración y ayuda a mantener la limpieza en el historial de cambios.
 
 ### ¿Por qué son útiles las ramas en Git?
@@ -591,6 +591,33 @@ Una vez fusionada una rama, es buena práctica eliminarla para evitar desorden. 
 
 Eliminar ramas que ya cumplieron su propósito previene conflictos y mantiene el entorno de trabajo limpio y organizado.
 
+- git reset: Este comando devuelve a un commit anterior, eliminando los cambios en el historial como si nunca hubieran ocurrido.
+- Permite deshacer cambios y mover el puntero HEAD a un commit específico. Hay tres modos principales:
+- git reset --soft: Mueve HEAD al commit especificado, pero mantiene los cambios en el área de preparación.
+- git reset --mixed: (Por defecto) Mueve HEAD y deshace los cambios en el área de preparación, pero mantiene los cambios en el directorio de trabajo.
+- git reset --hard: Mueve HEAD y descarta todos los cambios, tanto en el área de preparación como en el directorio de trabajo.
+- git revert: Crea un nuevo commit que deshace los cambios de un commit específico. Es útil para deshacer cambios de forma segura en repositorios compartidos.
+
+Estos comandos son útiles para corregir errores o volver a estados anteriores del proyecto de manera controlada, limpieza de historial y manejo de conflictos.
+
+nano error.txt clear ls git add . git commit -m "nuevo archivo especial creado" git log clear
+
+**git revert**
+
+git revert"hash commit"
+
+**Crea un nuevo commit que deshace los cambios del último commit**
+
+"Revert "nuevo archivo especial creado" por "autor revert""
+
+git log clear ls
+
+nano reset.txt git add . git commit -m "nuevo archivo para reiniciar" git log clear ls
+
+**git reset**
+
+git reset --hard "hash"
+
 **Lecturas recomendadas**
 
 [Git - git-branch Documentation](https://git-scm.com/docs/git-branch)
@@ -600,3 +627,345 @@ Eliminar ramas que ya cumplieron su propósito previene conflictos y mantiene el
 [Git - git-switch Documentation](https://git-scm.com/docs/git-switch)
 
 [Git - git-checkout Documentation](https://git-scm.com/docs/git-checkout)
+
+## Volviendo en el Tiempo en Git: reset y revert
+
+En Git, puedes **deshacer cambios** y regresar a estados anteriores usando los comandos `reset` y `revert`. Sin embargo, tienen diferencias clave:
+
+| Comando | Descripción | Afecta historial? | Se recomienda en remoto? |
+|---------|------------|-------------------|--------------------------|
+| `git reset` | Mueve la referencia del commit actual a otro punto, eliminando o manteniendo cambios en `working directory`. | ❌ Sí, reescribe historial. | 🚫 No recomendado. |
+| `git revert` | Crea un nuevo commit que revierte los cambios de un commit anterior. | ✅ No reescribe historial. | ✅ Seguro para repositorios remotos. |
+
+### **1. Deshacer Commits con `git reset`**  
+
+El comando `git reset` mueve la referencia de la rama a un commit anterior. Puede afectar los cambios en **tres niveles** según la opción que elijas:  
+
+### **Modos de `git reset`:**
+1️⃣ **`--soft`**: Mantiene los cambios en el área de preparación (staging).  
+2️⃣ **`--mixed` (por defecto)**: Mantiene los cambios en el directorio de trabajo pero los saca del área de preparación.  
+3️⃣ **`--hard`**: **Elimina completamente** los cambios, sin posibilidad de recuperarlos.
+
+### **Ejemplos:**
+- **Volver al commit anterior pero mantener los cambios en staging (`--soft`)**  
+  ```bash
+  git reset --soft HEAD~1
+  ```
+  🔹 Esto mueve la rama un commit atrás, pero los cambios siguen en el área de preparación.  
+
+- **Volver al commit anterior y sacar los cambios de staging (`--mixed`, por defecto)**  
+  ```bash
+  git reset HEAD~1
+  ```
+  🔹 La rama retrocede, y los cambios quedan en el directorio de trabajo (sin agregar).  
+
+- **Eliminar completamente el último commit y los cambios (`--hard`)**  
+  ```bash
+  git reset --hard HEAD~1
+  ```
+  ⚠️ **¡Cuidado! Esto borra los cambios sin opción de recuperación.**  
+
+### **Volver a un commit específico:**
+Si quieres regresar a un commit en particular, usa su **hash**:
+```bash
+git reset --hard <ID_DEL_COMMIT>
+```
+Para ver los commits anteriores y obtener el hash:
+```bash
+git log --oneline
+```
+
+---
+
+### **2. Deshacer Cambios con `git revert` (Recomendado para repositorios remotos)**  
+El comando `git revert` crea un **nuevo commit** que deshace los cambios de un commit específico, sin eliminar el historial.  
+
+🔹 **Ejemplo:**  
+```bash
+git revert HEAD
+```
+Esto deshace el último commit y crea un nuevo commit con la reversión.
+
+### **Revertir un commit específico:**
+```bash
+git revert <ID_DEL_COMMIT>
+```
+Esto aplicará los cambios inversos de ese commit en la rama actual.
+
+Si quieres revertir varios commits:  
+```bash
+git revert HEAD~2..HEAD
+```
+Este comando revierte los últimos **dos commits**.
+
+---
+
+### **3. Comparación entre `reset` y `revert`**
+| Acción | `git reset` | `git revert` |
+|--------|------------|-------------|
+| Deshace commits | ✅ Sí | ✅ Sí |
+| Mantiene historial | ❌ No (lo reescribe) | ✅ Sí (agrega un nuevo commit) |
+| Seguro para repositorios remotos | 🚫 No | ✅ Sí |
+| Permite eliminar cambios en archivos | ✅ Sí (con `--hard`) | ❌ No |
+
+---
+
+### **Casos de Uso**
+1️⃣ **Si ya subiste un commit a un repositorio remoto y quieres deshacerlo:**  
+   → Usa `git revert` para evitar problemas con otros colaboradores.  
+   ```bash
+   git revert HEAD
+   git push origin main
+   ```
+
+2️⃣ **Si hiciste un commit por error y aún no lo subiste a GitHub:**  
+   → Usa `git reset` para deshacerlo.  
+   ```bash
+   git reset --soft HEAD~1
+   ```
+
+3️⃣ **Si quieres descartar completamente los últimos cambios:**  
+   → Usa `git reset --hard`.  
+   ```bash
+   git reset --hard HEAD~1
+   ```
+
+---
+
+### **Resumen de Comandos**
+| Comando | Acción |
+|---------|--------|
+| `git reset --soft HEAD~1` | Mueve el commit atrás, pero mantiene los cambios en staging. |
+| `git reset --mixed HEAD~1` | Mueve el commit atrás y deja los cambios en el directorio de trabajo. |
+| `git reset --hard HEAD~1` | Borra el último commit y los cambios (¡Irreversible!). |
+| `git revert HEAD` | Crea un nuevo commit que revierte el último commit. |
+| `git revert <ID_DEL_COMMIT>` | Revierte un commit específico sin modificar el historial. |
+
+### Resumen
+
+Para quienes se inician en el manejo de versiones con Git, comandos como `git reset` y `git revert` se vuelven herramientas indispensables, ya que permiten deshacer errores y ajustar el historial de cambios sin complicaciones. Aunque al avanzar en la experiencia puedan dejarse de lado, dominar su uso resulta clave para un control de versiones eficiente.
+
+### ¿Cuál es la diferencia entre Git Reset y Git Revert?
+
+- **Git Reset:** mueve el puntero de los commits a uno anterior, permitiendo “volver en el tiempo” y explorar el historial de cambios. Es útil para deshacer actualizaciones recientes o revisar lo que se hizo en cada commit.
+- **Git Revert**: crea un nuevo commit que revierte los cambios de un commit específico, permitiendo conservar el historial original sin eliminaciones. Es ideal para regresar a un estado anterior sin afectar los commits de otros usuarios.
+
+### ¿Cómo se utiliza Git Reset?
+
+1. Ejecuta git log para identificar el historial de commits. El commit actual se marca con `HEAD` apuntando a `main`.
+2. Si quieres eliminar cambios recientes:
+ - Crea un archivo temporal (ejemplo: `error.txt`) y realiza un commit.
+ - Verifica el historial con git log y localiza el hash del commit que deseas restablecer.
+ 
+3. Para revertir a un estado anterior:
+- Usa git reset con parámetros:
+ - --soft: solo elimina el archivo del área de staging.
+ - --mixed: remueve los archivos de staging, manteniendo el historial de commits.
+ - --hard: elimina los archivos y el historial hasta el commit seleccionado.
+- Este último parámetro debe ser una última opción debido a su impacto irreversible en el historial.
+
+### ¿Cómo funciona Git Revert?
+
+Identificación del commit: usa git log para encontrar el commit a revertir.
+Ejecuta git revert seguido del hash del commit: crea un nuevo commit inverso, preservando el historial.
+Editar el mensaje de commit: permite dejar claro el motivo de la reversión, ideal en equipos colaborativos para mantener claridad.
+
+### ¿Cuándo es recomendable utilizar Git Reset o Git Revert?
+
+Ambos comandos resultan útiles en diversas situaciones:
+
+- **Corrección de errores**: si has subido un archivo incorrecto, git revert es rápido y seguro para deshacer el cambio sin afectar el historial.
+- **Limpieza del historial**: en proyectos sólidos, puede que quieras simplificar el historial de commits; git reset ayuda a limpiar entradas innecesarias.
+- **Manejo de conflictos**: en casos extremos de conflicto de archivos, git reset es útil, aunque puede ser mejor optar por resolver conflictos manualmente.
+
+### ¿Cómo aseguras una correcta comunicación en el uso de estos comandos?
+
+- Utiliza estos comandos en sincronización con el equipo.
+- Evita el uso de git reset --hard sin coordinación para prevenir la pérdida de trabajo ajeno.
+- Documenta cada reversión con un mensaje claro para asegurar el seguimiento de cambios.
+
+- git reset: Este comando devuelve a un commit anterior, eliminando los cambios en el historial como si nunca hubieran ocurrido.
+- Permite deshacer cambios y mover el puntero HEAD a un commit específico. Hay tres modos principales:
+- git reset --soft: Mueve HEAD al commit especificado, pero mantiene los cambios en el área de preparación.
+- git reset --mixed: (Por defecto) Mueve HEAD y deshace los cambios en el área de preparación, pero mantiene los cambios en el directorio de trabajo.
+- git reset --hard: Mueve HEAD y descarta todos los cambios, tanto en el área de preparación como en el directorio de trabajo.
+- git revert: Crea un nuevo commit que deshace los cambios de un commit específico. Es útil para deshacer cambios de forma segura en repositorios compartidos.
+
+Estos comandos son útiles para corregir errores o volver a estados anteriores del proyecto de manera controlada, limpieza de historial y manejo de conflictos.
+
+nano error.txt clear ls git add . git commit -m "nuevo archivo especial creado" git log clear
+
+**git revert**
+
+git revert"hash commit"
+
+Crea un nuevo commit que deshace los cambios del último commit
+"Revert "nuevo archivo especial creado" por "autor revert""
+
+git log clear ls
+
+nano reset.txt git add . git commit -m "nuevo archivo para reiniciar" git log clear ls
+
+**git reset**
+
+git reset --hard "hash"
+
+**Lecturas recomendadas**
+
+[Git - git-reset Documentation](https://git-scm.com/docs/git-reset)
+
+[Git - git-revert Documentation](https://git-scm.com/docs/git-revert)
+
+## Gestión de versiones: tag y checkout
+
+En Git, los **tags** (etiquetas) se usan para marcar versiones específicas del código, por ejemplo, cuando se lanza una nueva versión de un software (`v1.0`, `v2.0.1`). Además, puedes utilizar `checkout` (o `switch` en versiones recientes de Git) para navegar entre diferentes versiones del código.
+
+### **1. Crear y Listar Etiquetas (`git tag`)**  
+
+Las etiquetas son snapshots (instantáneas) de un commit específico y se dividen en dos tipos:  
+- **Anotadas** (`-a`): Guardan información adicional como autor, fecha y mensaje.  
+- **Ligeras** (Lightweight): Son solo un alias del commit, sin información extra.
+
+### **Listar todas las etiquetas disponibles:**  
+```bash
+git tag
+```
+🔹 **Ejemplo de salida:**  
+```
+v1.0
+v1.1
+v2.0-beta
+```
+
+### **Crear una Etiqueta Ligera**
+```bash
+git tag v1.0
+```
+Esto etiqueta el commit actual con `v1.0`, pero sin información adicional.
+
+### **Crear una Etiqueta Anotada**
+```bash
+git tag -a v1.0 -m "Versión estable 1.0"
+```
+🔹 Esto crea una etiqueta con un mensaje y metadatos.
+
+### **Etiquetar un Commit Anterior**  
+Si necesitas etiquetar un commit específico, usa su hash:
+```bash
+git tag -a v1.1 123abc -m "Versión 1.1 con correcciones"
+```
+(El `123abc` es el ID del commit, obtenido con `git log --oneline`).
+
+### **2. Compartir Etiquetas en un Repositorio Remoto**  
+
+Las etiquetas **no** se suben automáticamente a GitHub. Para enviarlas, usa:
+```bash
+git push origin v1.0
+```
+Si quieres subir **todas las etiquetas** de una vez:
+```bash
+git push --tags
+```
+
+### **3. Eliminar Etiquetas**
+- **Eliminar una etiqueta localmente:**
+  ```bash
+  git tag -d v1.0
+  ```
+- **Eliminar una etiqueta en el repositorio remoto:**
+  ```bash
+  git push --delete origin v1.0
+  ```
+
+### **4. Cambiar a una Versión Etiquetada (`git checkout`)**  
+Si quieres ver el código de una versión específica, puedes "viajar en el tiempo" con:
+
+```bash
+git checkout v1.0
+```
+🔹 Esto coloca el código en un estado de solo lectura (`HEAD detached`). Para volver a la rama principal:  
+```bash
+git switch main
+```
+
+### **5. Crear una Rama desde una Etiqueta**
+Si necesitas hacer cambios en una versión etiquetada:
+```bash
+git checkout -b fix-v1.0 v1.0
+```
+Esto crea una rama `fix-v1.0` basada en la versión `v1.0`.
+
+### **Resumen de Comandos**
+| Comando | Acción |
+|---------|--------|
+| `git tag` | Lista todas las etiquetas. |
+| `git tag v1.0` | Crea una etiqueta ligera. |
+| `git tag -a v1.0 -m "Mensaje"` | Crea una etiqueta anotada. |
+| `git tag -a v1.1 <commit_id> -m "Mensaje"` | Etiqueta un commit específico. |
+| `git push --tags` | Envía todas las etiquetas al repositorio remoto. |
+| `git tag -d v1.0` | Elimina una etiqueta localmente. |
+| `git push --delete origin v1.0` | Elimina una etiqueta en GitHub. |
+| `git checkout v1.0` | Cambia a una versión específica. |
+| `git checkout -b rama_nueva v1.0` | Crea una nueva rama desde una etiqueta. |
+
+¿Quieres aprender más sobre versionado semántico (`v1.0.0`, `v2.1.3`)?
+
+### **Versionado Semántico en Git (`vX.Y.Z`)**  
+
+El **Versionado Semántico (SemVer)** es una convención usada en software para nombrar versiones de manera clara y predecible. Se usa el formato:  
+
+```
+MAJOR.MINOR.PATCH
+```
+Ejemplo: **`v2.1.3`**  
+- **MAJOR (`2`)** → Cambios incompatibles o grandes reestructuraciones.  
+- **MINOR (`1`)** → Nuevas funcionalidades sin romper compatibilidad.  
+- **PATCH (`3`)** → Correcciones de errores sin agregar nuevas funciones.  
+
+### **1. Ejemplo de Uso en Git**  
+### **Crear una Etiqueta con Versionado Semántico**
+```bash
+git tag -a v1.0.0 -m "Primera versión estable"
+```
+
+### **Lanzar una Nueva Versión con Cambios Menores**
+```bash
+git tag -a v1.1.0 -m "Agregada nueva funcionalidad X"
+```
+
+### **Lanzar un Parche para una Corrección de Bug**
+```bash
+git tag -a v1.1.1 -m "Corrección de bug en la funcionalidad X"
+```
+
+### **2. Comparar Versiones**
+Puedes comparar dos versiones para ver qué cambió entre ellas:
+```bash
+git diff v1.0.0 v1.1.0
+```
+También puedes ver qué commits hay entre dos versiones:
+```bash
+git log v1.0.0..v1.1.0 --oneline
+```
+
+### **3. Automatizar Versionado con Git y Tags**
+Si quieres lanzar una nueva versión de forma automática, puedes usar:
+```bash
+git tag -a v$(date +%Y.%m.%d) -m "Versión automática con fecha"
+```
+Esto generará etiquetas como `v2025.01.30` (formato `AÑO.MES.DÍA`).
+
+### **4. Eliminar o Reemplazar una Versión**
+Si necesitas cambiar una versión mal etiquetada:
+```bash
+git tag -d v1.0.0  # Borra la etiqueta local
+git push --delete origin v1.0.0  # Borra en GitHub
+```
+Y luego la vuelves a crear correctamente:
+```bash
+git tag -a v1.0.0 -m "Versión corregida"
+git push origin v1.0.0
+```
+
+### **Conclusión**
+El versionado semántico ayuda a organizar versiones en proyectos y facilita la colaboración en equipos. **Git y los tags hacen que la gestión de versiones sea fácil y estructurada.**  
