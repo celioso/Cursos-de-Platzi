@@ -969,3 +969,236 @@ git push origin v1.0.0
 
 ### **Conclusión**
 El versionado semántico ayuda a organizar versiones en proyectos y facilita la colaboración en equipos. **Git y los tags hacen que la gestión de versiones sea fácil y estructurada.**  
+
+### Resumen
+
+Git facilita el control de versiones y organización de proyectos, y los comandos `git tag` y `git checkout` son piezas clave para una gestión eficiente y ordenada de los cambios en el código. Ambos comandos ayudan a crear puntos de referencia y explorar cambios sin afectar el desarrollo principal, ofreciendo opciones robustas para pruebas y organización.
+
+### ¿Cómo se utiliza `git tag` para organizar versiones?
+
+El comando `git tag` permite marcar un commit con una etiqueta descriptiva, ideal para señalar versiones estables o hitos importantes en el proyecto. Esto resulta útil en proyectos donde el equipo necesita identificar fácilmente puntos clave de avance. Al etiquetar, se añade una nota visible en el historial, lo cual facilita encontrar versiones específicas en un flujo de trabajo con muchos commits.
+
+Para crear un tag:
+
+- Escribe `git tag -a v1.0 -m "primera versión estable"` y presiona Enter.
+- Al consultar `git log`, se verá el tag junto al commit en el historial.
+
+Además, `git show` muestra detalles de la etiqueta, quién la creó, el mensaje de la versión y los cambios asociados a ese commit. Esto es especialmente útil cuando el historial es extenso, ya que permite regresar a puntos específicos sin necesidad de revisar cada commit en el log completo.
+
+Para eliminar un tag:
+
+- Usa `git tag -d v1.0` para remover el tag sin afectar el historial ni los archivos. Esto es conveniente si el nombre del tag necesita ser corregido o ajustado.
+
+### ¿Qué permite `git checkout` al explorar el historial?
+
+El comando `git checkout` tiene usos más amplios que solo cambiar entre ramas. También permite revisar commits previos para explorar o probar cambios sin alterar la rama principal. Al usar `git checkout` , puedes regresar a un punto específico en el historial y evaluar cómo afectaban los cambios al proyecto en ese momento.
+
+Por ejemplo:
+
+1. Cambia a un commit específico con `git checkout` 
+2. Realiza pruebas o modificaciones. Esto te permite simular cambios o ver el estado del proyecto en esa versión. 
+3. Para regresar a la rama principal, escribe `git checkout main`. Esto restaura el proyecto al estado actual y evita que los cambios temporales afecten el historial o la estructura del proyecto. 
+
+Al navegar entre commits y regresar a `main`, es importante notar que no se crean ramas adicionales, ni se modifican commits previos, lo cual asegura la integridad del historial y la rama principal.
+
+### ¿Cómo integran `git tag` y `git checkout` una experiencia de desarrollo ordenada?
+
+Ambos comandos permiten explorar y organizar sin interferir en el flujo principal del trabajo. `git tag` marca versiones y puntos importantes, actuando como separadores en el historial, mientras que `git checkout` permite regresar a esos puntos y probar sin comprometer la rama actual. Esto proporciona una estructura en la que el equipo puede trabajar con libertad para realizar pruebas, versionar cambios y retornar al estado actual en cualquier momento sin temor a alterar el trabajo original.
+
+### COMO AGREGARLE ETIQUETAS A LOS COMMITS
+
+- `git tag` > Es como una etiqueta que le puedes aplicar a un commit que ayuda a identificar en un futuro, al aplicar este comando me lista todos los tag creados en la actualidad
+- `-a` > El flag `-a` indica que el tag será anotado
+- `-m` > El flag `-m` permite añadir un mensaje descriptivo al tag.
+- `-d` > El flag `-d` Permite borrar el tag escrito. Esto no altera los archivos solo etiqueta
+
+Un **flag** es una opción o parámetro que modifica el comportamiento de un comando
+
+### COMO PODER MOSTRAR LOS DETALLES DE UN TAG
+
+- `git show` > ayuda a mostrar el detalle de un commit o una etiqueta tag y a su vez combinaciones de ramas y archivos.
+
+### COMO ALTERTAR Y CHEQUIAR CAMBIOS ANTES DE INTEGRARLOS EN EL MAIN
+
+- `git checkout` > cambiar de una rama o un commit especifico
+
+**Lecturas recomendadas**
+
+[Git - git-tag Documentation](https://git-scm.com/docs/git-tag)
+
+[Git - git-checkout Documentation](https://git-scm.com/docs/git-checkout)
+
+## Cómo Resolver Conflictos de Ramas en Git
+
+Cuando trabajas con Git, los conflictos de fusión ocurren cuando dos ramas modifican la misma parte de un archivo y Git no sabe cuál versión mantener.  
+
+🚀 **¿Cómo se resuelven estos conflictos?** Vamos paso a paso.
+
+## **1. Detectar un Conflicto**  
+Si intentas hacer un `merge` y Git detecta un conflicto, verás un mensaje como este:
+
+```bash
+git merge feature-branch
+```
+🔴 **Salida:**  
+```
+Auto-merging archivo.txt
+CONFLICT (content): Merge conflict in archivo.txt
+Automatic merge failed; fix conflicts and then commit the result.
+```
+📌 Esto significa que el archivo `archivo.txt` tiene cambios en ambas ramas que entran en conflicto.
+
+## **2. Ver los Archivos con Conflicto**  
+Ejecuta:
+```bash
+git status
+```
+🔹 Verás algo como:
+```
+both modified: archivo.txt
+```
+Esto indica que `archivo.txt` tiene conflictos.
+
+### **3. Editar el Archivo para Resolver el Conflicto**  
+Abre el archivo en conflicto (`archivo.txt`). Git lo marcará así:
+
+```
+<<<<<<< HEAD
+Esta es la versión en la rama actual.
+=======
+Esta es la versión en la rama "feature-branch".
+>>>>>>> feature-branch
+```
+
+### **Opciones para Resolverlo:**
+1️⃣ **Mantener la versión de `HEAD` (rama actual)**  
+2️⃣ **Mantener la versión de `feature-branch`**  
+3️⃣ **Fusionar ambas versiones manualmente**  
+
+Ejemplo de **solución manual**:
+```
+Esta es la versión final combinada de ambas ramas.
+```
+
+Guarda el archivo después de editarlo.
+
+### **4. Marcar el Conflicto como Resuelto**
+Después de editar el archivo, agrégalo a staging:
+```bash
+git add archivo.txt
+```
+
+Luego, finaliza el merge con:
+```bash
+git commit -m "Resolviendo conflicto en archivo.txt"
+```
+
+### **5. Continuar con la Fusión**
+Si estás haciendo un `rebase`, después de resolver el conflicto usa:
+```bash
+git rebase --continue
+```
+Si decides abortar el merge y deshacer los cambios:
+```bash
+git merge --abort
+```
+
+## **Evitar Conflictos en el Futuro**
+✔ **Sincroniza tu rama antes de hacer cambios**  
+```bash
+git pull origin main
+```
+✔ **Haz commits pequeños y frecuentes**  
+✔ **Comunica los cambios con tu equipo**  
+
+
+### **Conclusión**  
+Resolver conflictos en Git requiere revisar el código con cuidado y elegir qué cambios mantener.  
+
+## Resumen
+
+Cuando trabajamos en equipo, el manejo de conflictos de ramas en Git es esencial para evitar problemas y asegurar una integración fluida de cambios en los archivos compartidos. Aquí te mostramos cómo se genera un conflicto de ramas y la forma efectiva de resolverlo paso a paso.
+
+### ¿Qué es un conflicto de ramas en Git?
+
+En un entorno colaborativo, es común que varias personas realicen modificaciones en archivos compartidos. Esto puede llevar a conflictos de ramas cuando intentamos fusionar cambios y estos alteran las modificaciones previas realizadas por otro colaborador. En estos casos, se debe elegir qué cambios se mantendrán en la rama principal.
+
+### ¿Cómo crear un conflicto de ramas para aprender a resolverlo?
+
+Para experimentar y entender cómo resolver un conflicto, podemos crear uno intencionalmente. Aquí están los pasos básicos:
+
+- Verifica tu rama actual con `git branch`. Si solo tienes la rama `main`, estás listo para iniciar.
+- Crea un archivo, por ejemplo, `conflict.txt`, añade contenido inicial (e.g., “línea original”) y realiza un commit:
+
+```shell
+git add conflict.txt
+git commit -m "Archivo de conflicto creado"
+```
+
+- Crea una nueva rama con `git checkout -b developer` y modifica el archivo con nuevos cambios, como “cambios desde la rama dev”, realiza un commit.
+- Vuelve a la rama `main` con `git checkout main` y modifica el mismo archivo en esta rama, por ejemplo, añadiendo “segundo cambio desde main”, y realiza otro commit.
+
+Al regresar a `main` y realizar la fusión de `developer`, verás el conflicto.
+
+### ¿Cómo resolver un conflicto de ramas en Git?
+
+Cuando Git detecta un conflicto, te indicará las diferencias entre las ramas con etiquetas que facilitan la identificación de cambios:
+
+- Abre el archivo en conflicto. Verás secciones como `<<<<< HEAD` y `>>>>>`, que marcan los cambios en `main` y en la rama que intentas fusionar (`developer`).
+- Edita el archivo eliminando las líneas de marcación y decide cuáles cambios deseas conservar, combinar o incluso reescribir.
+- Guarda el archivo sin las señalizaciones de conflicto y realiza un commit para registrar la resolución:
+
+```shell
+git add conflict.txt
+git commit -m "Conflicto resuelto"
+```
+
+### ¿Qué hacer después de resolver un conflicto?
+
+Una vez resuelto el conflicto y unificada la versión final en `main`, considera eliminar la rama `developer` para evitar conflictos futuros. Esto ayuda a mantener el historial de cambios limpio y reduce la posibilidad de cometer errores en el futuro.
+
+Aquí voy con un step-by-step porque así lo entendí (espero les sirva y agradezco algún tip u observación):
+
+1. Creo archivo propenso a conflictos y lo edito.
+
+-----
+
+2.Se crea una nueva rama donde:
+
+2.1 Se edita archivo de conflicto.
+
+2.2 git status, git add . , git commit -m "mensaje".
+
+2.3 Cambiamos la rama a main.
+
+-----
+
+3.En rama main se modificó una vez más el archivo de conflicto y se le aplicó:
+
+3.1 git status, git add . , git commit -m "mensaje".
+
+-----
+
+4.Fusionamos la rama de cambios local con la rama main -> git merge [2nd branch].
+
+-----
+
+5.Obtenemos mensaje de conflicto/error en las ramas por parte de Git al fusionar.
+
+5.1Abrimos archivo de conflicto y se decide que se conserva/descarta.
+
+5.2 git status, git add . , git commit -m "mensaje" -> commit de cambios "aprobados" donde ya no hay conflictos <3
+
+-----
+
+6.De nuevo hacemos el merge/fusionamos la rama de cambios local/alterna con la rama main.
+
+-----
+
+7.Por buena practica eliminamos la rama donde se hicieron los cambios inicialmente. -> git branch -D [branch]
+
+**Lecturas recomendadas**
+
+[Git - git-branch Documentation](https://git-scm.com/docs/git-branch)
+
+[Git - git-merge Documentation](https://git-scm.com/docs/git-merge)
