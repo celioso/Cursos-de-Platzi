@@ -388,3 +388,215 @@ Git trata cualquier archivo de igual manera, sin importar su extensión o tipo, 
 [Git - git-log Documentation](https://git-scm.com/docs/git-log)
 
 [Póngase en marcha - Documentación de GitHub](https://docs.github.com/es/get-started/start-your-journey)
+
+## Ramas y Fusión de Cambios: branch, merge, switch y checkout
+
+## **Ramas y Fusión de Cambios en Git**  
+Las **ramas** en Git permiten trabajar en diferentes versiones de un proyecto sin afectar la rama principal. Esto es útil para desarrollar nuevas funcionalidades o corregir errores sin modificar el código estable.  
+
+Los comandos más importantes para manejar ramas son:  
+- `git branch` → Crear y listar ramas.  
+- `git switch` y `git checkout` → Cambiar entre ramas.  
+- `git merge` → Fusionar cambios entre ramas.  
+
+## **1. Listar y Crear Ramas: `git branch`**  
+### **Ver ramas existentes:**  
+```bash
+git branch
+```
+🔹 **Ejemplo de salida:**
+```
+* main
+  nueva_funcionalidad
+```
+El asterisco (*) indica la rama en la que estás trabajando.
+
+### **Crear una nueva rama:**  
+```bash
+git branch nombre_rama
+```
+🔹 **Ejemplo:**  
+```bash
+git branch nueva_funcionalidad
+```
+Esto crea la rama `nueva_funcionalidad`, pero **no cambia a ella**.
+
+## **2. Cambiar de Rama: `git switch` y `git checkout`**  
+Para cambiar de rama, puedes usar:  
+
+### **Usando `git switch` (Recomendado desde Git 2.23)**  
+```bash
+git switch nombre_rama
+```
+🔹 **Ejemplo:**  
+```bash
+git switch nueva_funcionalidad
+```
+
+### **Usando `git checkout` (Método antiguo, aún válido)**  
+```bash
+git checkout nombre_rama
+```
+
+### **Crear y cambiar a una nueva rama en un solo paso:**  
+```bash
+git switch -c nueva_rama
+```
+O con `checkout` (versión antigua):  
+```bash
+git checkout -b nueva_rama
+```
+
+## **3. Fusionar Cambios entre Ramas: `git merge`**  
+Cuando terminas de trabajar en una rama, puedes fusionar sus cambios en la rama principal.
+
+### **Pasos para fusionar ramas:**  
+1️⃣ Cambiar a la rama donde se quiere fusionar (por ejemplo, `main`):  
+   ```bash
+   git switch main
+   ```
+
+2️⃣ Ejecutar el merge:  
+   ```bash
+   git merge nueva_funcionalidad
+   ```
+
+🔹 **Ejemplo:**  
+Si trabajaste en `nueva_funcionalidad` y quieres fusionarla en `main`:  
+```bash
+git switch main
+git merge nueva_funcionalidad
+```
+
+### **Posibles resultados al hacer `merge`:**
+✅ **Fusión rápida (`Fast-forward`)**  
+Si no hubo otros cambios en `main`, Git moverá directamente la referencia:  
+```
+  main --> nueva_funcionalidad
+```
+✅ **Fusión con commit de merge**  
+Si hay cambios en ambas ramas, Git creará un **nuevo commit de merge**.  
+
+⚠️ **Si hay conflictos, Git pedirá resolverlos manualmente.**  
+Para ver los archivos en conflicto:  
+```bash
+git status
+```
+Después de resolverlos, hacer:
+```bash
+git add archivo_con_conflicto
+git commit -m "Resuelto conflicto en archivo.txt"
+```
+
+## **Resumen de Comandos**
+| Comando | Descripción |
+|---------|------------|
+| `git branch` | Muestra todas las ramas |
+| `git branch nueva_rama` | Crea una nueva rama |
+| `git switch nueva_rama` | Cambia a otra rama (nuevo método) |
+| `git checkout nueva_rama` | Cambia a otra rama (método antiguo) |
+| `git switch -c nueva_rama` | Crea y cambia a una nueva rama |
+| `git checkout -b nueva_rama` | Crea y cambia a una nueva rama (método antiguo) |
+| `git merge nombre_rama` | Fusiona una rama en la actual |
+| `git status` | Muestra el estado del repositorio |
+
+---
+
+### 🚀 **Flujo de Trabajo con Ramas**
+1️⃣ Crear una nueva rama:  
+   ```bash
+   git branch feature_x
+   ```
+2️⃣ Cambiar a la nueva rama:  
+   ```bash
+   git switch feature_x
+   ```
+3️⃣ Hacer cambios y confirmarlos:  
+   ```bash
+   git add .
+   git commit -m "Agregada nueva funcionalidad"
+   ```
+4️⃣ Volver a `main` y fusionar los cambios:  
+   ```bash
+   git switch main
+   git merge feature_x
+   ```
+
+Con este flujo, puedes trabajar en diferentes funcionalidades sin afectar la rama principal. 🎯  
+¿Quieres aprender a **eliminar ramas** o **resolver conflictos** en Git?
+
+## Resumen
+El uso de ramas en Git permite trabajar en un entorno aislado sin interferir con otros, facilitando la organización y el control del proyecto. Aprender a crear, gestionar y fusionar ramas optimiza la colaboración y ayuda a mantener la limpieza en el historial de cambios.
+
+### ¿Por qué son útiles las ramas en Git?
+
+Las ramas son una herramienta que permite trabajar en tareas específicas sin alterar la rama principal. Entre sus ventajas se encuentran:
+
+- Aislamiento de cambios individuales.
+- Posibilidad de desechar una rama sin afectar la principal.
+- Organización de actividades múltiples en diferentes ramas.
+
+### ¿Cómo verificar la rama actual?
+
+Para saber en qué rama estás trabajando, ejecuta:
+
+`git branch`
+
+El asterisco (`*`) indica la rama activa. Inicialmente, suele ser `main`, pero al crear más ramas, la lista crecerá, permitiéndote ver todas las disponibles y cuál es la actual.
+
+### ¿Cómo crear una nueva rama en Git?
+
+La creación de ramas permite desarrollar sin riesgo en paralelo. Para crear y moverte a una nueva rama, usa:
+
+`git checkout -b` 
+
+Por ejemplo, `git checkout -b Amin` crea y mueve a la rama `Amin`. Puedes verificar que estás en esta rama ejecutando git branch.
+
+### ¿Cómo agregar y confirmar cambios en una rama?
+
+Dentro de una nueva rama, los archivos se editan y confirman sin que impacten otras ramas. Sigue estos pasos para agregar y confirmar:
+
+1. Crea o edita un archivo.
+2. Añádelo con:
+
+`git add .`
+
+3. Confirma el cambio:
+
+`git commit -m "mensaje de confirmación"`
+
+Los cambios ahora son parte de la rama en la que trabajas y no afectan la principal.
+
+### ¿Cómo fusionar cambios de una rama secundaria a la principal?
+
+Para unificar el trabajo en la rama principal:
+
+1. Cambia a la rama principal:
+
+`git switch main`
+
+**Nota**: Puedes usar también git checkout main.
+
+2. Fusiona la rama secundaria:
+
+`git merge`
+
+Git indicará que el proceso fue exitoso y actualizará el contenido en la rama `main` con los cambios de la rama secundaria.
+
+### ¿Por qué es importante eliminar ramas que ya no se usan?
+
+Una vez fusionada una rama, es buena práctica eliminarla para evitar desorden. Hazlo con:
+
+`git branch -d`
+
+Eliminar ramas que ya cumplieron su propósito previene conflictos y mantiene el entorno de trabajo limpio y organizado.
+
+**Lecturas recomendadas**
+
+[Git - git-branch Documentation](https://git-scm.com/docs/git-branch)
+
+[Git - git-merge Documentation](https://git-scm.com/docs/git-merge)
+
+[Git - git-switch Documentation](https://git-scm.com/docs/git-switch)
+
+[Git - git-checkout Documentation](https://git-scm.com/docs/git-checkout)
