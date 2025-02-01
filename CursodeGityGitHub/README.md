@@ -1432,3 +1432,575 @@ Además de ser una herramienta de colaboración y desarrollo, GitHub ofrece la G
 **Lecturas recomendadas**
 
 [GitHub: Let’s build from here · GitHub](https://github.com/)
+
+## Creación y configuración de cuenta de GitHub
+
+GitHub es una plataforma clave para gestionar proyectos y colaborar con otros desarrolladores. Aquí tienes una guía paso a paso para crear y configurar tu cuenta correctamente.  
+
+### **1️⃣ Crear una cuenta en GitHub**
+### 📌 Pasos:
+1. **Ir a la página oficial:** [GitHub](https://github.com/)  
+2. **Haz clic en "Sign up" (Registrarse).**  
+3. **Ingresa tus datos:**
+   - Nombre de usuario (único y profesional).
+   - Correo electrónico.
+   - Contraseña segura.  
+4. **Verificación de cuenta:**  
+   - GitHub puede pedirte resolver un captcha para confirmar que no eres un bot.  
+5. **Escoge un plan:**  
+   - **Gratis** (suficiente para la mayoría de los desarrolladores).  
+   - Planes pagos con funciones avanzadas (opcional).  
+6. **Confirma tu correo electrónico:**  
+   - Revisa tu bandeja de entrada y haz clic en el enlace de verificación.  
+
+### **2️⃣ Configurar Git en tu PC**
+Antes de usar GitHub, necesitas configurar Git en tu computadora.  
+
+### 📌 **Instalar Git**
+Si no lo tienes instalado, descárgalo desde:  
+🔗 [https://git-scm.com/downloads](https://git-scm.com/downloads)  
+
+Después de instalarlo, verifica que está funcionando:  
+```bash
+git --version
+```
+Debe mostrar una versión como `git version 2.x.x`.
+
+## **3️⃣ Configurar Git con GitHub**
+Para enlazar Git con GitHub, sigue estos pasos:  
+
+### 📌 **Configurar tu nombre y correo en Git**  
+```bash
+git config --global user.name "Tu Nombre"
+git config --global user.email "tuemail@example.com"
+```
+👉 Usa el **mismo correo** con el que te registraste en GitHub.  
+
+Verifica la configuración con:  
+```bash
+git config --list
+```
+
+### **4️⃣ Generar y añadir una clave SSH a GitHub (Opcional pero recomendado)**  
+Esto evita que ingreses tu usuario y contraseña cada vez que uses GitHub.  
+
+### 📌 **Generar una clave SSH**  
+Ejecuta este comando en tu terminal (Git Bash en Windows):  
+```bash
+ssh-keygen -t rsa -b 4096 -C "tuemail@example.com"
+```
+Presiona **Enter** para aceptar la ubicación predeterminada y no pongas contraseña (opcional).  
+
+### 📌 **Agregar la clave SSH a GitHub**  
+1. Copia la clave SSH con:  
+   ```bash
+   cat ~/.ssh/id_rsa.pub
+   ```
+2. Ve a **GitHub > Settings > SSH and GPG keys**.  
+3. Haz clic en **New SSH Key**, ponle un nombre y pega la clave.  
+4. Guarda y verifica con:  
+   ```bash
+   ssh -T git@github.com
+   ```
+   Si ves el mensaje `Hi <usuario>! You've successfully authenticated`, todo está listo. 🎉  
+
+### **5️⃣ Crear y subir tu primer repositorio**  
+1. En GitHub, ve a **"Repositories" > "New"**.  
+2. Asigna un nombre, descripción y selecciona si será público o privado.  
+3. Copia la URL del repositorio y en la terminal escribe:  
+   ```bash
+   git init
+   git add .
+   git commit -m "Primer commit"
+   git branch -M main
+   git remote add origin <URL_DEL_REPOSITORIO>
+   git push -u origin main
+   ```
+
+### 🎯 **¡Listo! Ya tienes tu cuenta y Git configurado con GitHub.**  
+Ahora puedes comenzar a trabajar en proyectos y colaborar con otros desarrolladores.
+
+**Lecturas recomendadas**
+
+[GitHub · Build and ship software on a single, collaborative platform · GitHub](https://github.com/)
+
+## ¿Cómo integrar Git y GitHub en un flujo de trabajo profesional?
+
+En un entorno profesional, Git y GitHub se utilizan para gestionar código de manera eficiente, asegurando **colaboración, control de versiones y despliegue continuo**. A continuación, te explico cómo estructurar un flujo de trabajo profesional utilizando Git y GitHub.  
+
+### **1️⃣ Configuración Inicial del Proyecto**  
+Antes de comenzar a trabajar en un proyecto, sigue estos pasos:  
+
+### 📌 **Crear un repositorio en GitHub**  
+1. Ve a [GitHub](https://github.com/).  
+2. Haz clic en **"New Repository"**.  
+3. Asigna un nombre y elige si será **público o privado**.  
+4. Inicializa el repositorio con un **README.md** y un archivo **.gitignore** según el lenguaje del proyecto.  
+5. Copia la URL del repositorio.  
+
+### 📌 **Clonar el repositorio en tu máquina local**  
+```bash
+git clone <URL_DEL_REPOSITORIO>
+cd nombre-del-repositorio
+```
+
+### **2️⃣ Trabajar con Ramas (Branching Model)**  
+Para evitar conflictos en el código, usa ramas correctamente. Un flujo profesional sigue la estrategia **Git Flow o GitHub Flow**.  
+
+### 📌 **Estructura de ramas recomendada:**  
+✅ `main` → Contiene la versión estable en producción.  
+✅ `develop` → Rama de integración donde se prueban nuevas funcionalidades.  
+✅ `feature/nueva-funcionalidad` → Para cada nueva característica o mejora.  
+✅ `hotfix/fix-bug` → Para corrección de errores críticos en producción.  
+
+### 📌 **Crear una nueva rama de trabajo**  
+```bash
+git checkout -b feature/nueva-funcionalidad
+```
+🚀 **Trabaja en la rama sin afectar `main` ni `develop`.**  
+
+### **3️⃣ Realizar Cambios y Guardarlos en Git**  
+Cada cambio en el código debe ser registrado con **commits claros y descriptivos**.  
+
+### 📌 **Buenas prácticas al hacer commits:**  
+- **Mensajes cortos y descriptivos** (`feat: agrega autenticación con JWT`).  
+- **Commits atómicos** (un solo cambio por commit).  
+
+### 📌 **Añadir y confirmar cambios**  
+```bash
+git add .
+git commit -m "feat: agrega autenticación con JWT"
+```
+
+### **4️⃣ Subir Cambios a GitHub y Crear un Pull Request**  
+Para integrar la nueva funcionalidad, **sube los cambios y crea un Pull Request (PR)**.  
+
+### 📌 **Subir la rama al repositorio remoto**  
+```bash
+git push origin feature/nueva-funcionalidad
+```
+### 📌 **Crear un Pull Request en GitHub**  
+1. Ve a **GitHub > Pull Requests**.  
+2. Selecciona la rama `feature/nueva-funcionalidad` y compárala con `develop`.  
+3. Agrega una descripción clara y solicita revisión del equipo.  
+4. Una vez aprobado, haz **merge** de la rama a `develop`.  
+
+### **5️⃣ Fusionar y Eliminar la Rama**  
+Si los cambios son aprobados y fusionados correctamente, elimina la rama para mantener el repositorio limpio.  
+
+### 📌 **Fusionar en `develop` y eliminar la rama**  
+```bash
+git checkout develop
+git merge feature/nueva-funcionalidad
+git branch -d feature/nueva-funcionalidad
+git push origin develop
+```
+
+### **6️⃣ Implementación y Despliegue (CI/CD)**  
+Un flujo profesional suele incluir **Integración y Despliegue Continuo (CI/CD)** con herramientas como:  
+
+✅ **GitHub Actions**  
+✅ **Jenkins, Travis CI, CircleCI**  
+✅ **Docker y Kubernetes**  
+
+Esto permite **automatizar pruebas y despliegues**, asegurando que solo código estable llegue a producción.  
+
+### 🎯 **Conclusión:**  
+Este flujo de trabajo con Git y GitHub permite:  
+✅ **Colaboración organizada** entre desarrolladores.  
+✅ **Manejo eficiente de versiones** con ramas estructuradas.  
+✅ **Automatización con CI/CD** para mayor eficiencia.  
+
+### Resumen
+Para entender cómo Git y GitHub funcionan en conjunto en un flujo de trabajo profesional, debemos recordar que Git es una herramienta de control de versiones basada en comandos, mientras que GitHub facilita su implementación al ofrecer una plataforma que permite manejar proyectos de Git de forma colaborativa y accesible en la nube.
+
+### ¿Cuál es la relación entre Git y GitHub?
+
+Aunque Git y GitHub son complementarios, no fueron creados por los mismos desarrolladores ni comparten una dependencia directa. Git es el sistema de control de versiones en sí mismo, mientras que GitHub es un servicio que permite alojar repositorios Git en la nube, facilitando el trabajo colaborativo. La única conexión entre ambos es que GitHub permite gestionar proyectos que usan Git para el control de versiones.
+
+### ¿Cómo se inicia el flujo de trabajo en GitHub?
+
+Para trabajar en un proyecto en GitHub, en lugar de comenzar con `git init` en tu máquina local, creas un repositorio en GitHub. Este repositorio vacío se descarga al equipo y, desde ahí, se pueden hacer cambios locales. La estructura básica del flujo de trabajo incluye los siguientes pasos:
+
+- **Crear un commit**: Guardar los cambios realizados localmente.
+- **Subir cambios a GitHub**: Una vez los cambios estén listos, se suben a una rama separada en el repositorio remoto.
+
+### ¿Por qué es importante trabajar en ramas?
+
+Trabajar en una rama separada permite mantener el código principal estable mientras trabajas en nuevas características. Al subir la rama a GitHub, el proceso de **Code Review** comienza. Otros compañeros revisarán y aprobarán los cambios antes de integrarlos en la rama principal.
+
+### ¿Qué reglas se pueden seguir para crear tareas?
+
+Para facilitar la revisión de código y evitar conflictos, es ideal mantener las tareas pequeñas y con un solo objetivo. Esto hace que:
+
+- El proceso de revisión sea sencillo.
+- Los cambios sean menos propensos a conflictos al integrarse al proyecto principal.
+
+Algunos equipos imponen reglas como limitar el número de archivos modificados o la cantidad de líneas de código en una tarea, aunque una recomendación básica es “una tarea, un objetivo”.
+
+**Lecturas recomendadas**
+
+[Póngase en marcha - Documentación de GitHub](https://docs.github.com/es/get-started/start-your-journey)
+
+## Gestión de Repositorios en GitHub
+
+Un **repositorio en GitHub** es donde se almacena y gestiona el código de un proyecto, permitiendo colaborar con otros desarrolladores. A continuación, te explico cómo gestionar eficazmente un repositorio en GitHub.  
+
+### **1️⃣ Crear y Configurar un Repositorio en GitHub**  
+
+### 📌 **Crear un nuevo repositorio**  
+1. Inicia sesión en [GitHub](https://github.com/).  
+2. Ve a **"Repositories" > "New"**.  
+3. Ingresa:  
+   - **Nombre del repositorio** (único y descriptivo).  
+   - **Descripción** (opcional pero recomendada).  
+   - **Visibilidad**:  
+     - **Público**: Cualquier persona puede verlo.  
+     - **Privado**: Solo tú y los colaboradores autorizados.  
+   - Opcionalmente, inicializa con:  
+     - **README.md** (Descripción del proyecto).  
+     - **.gitignore** (Para ignorar archivos innecesarios).  
+     - **Licencia** (Ejemplo: MIT, Apache, GPL).  
+4. Haz clic en **"Create repository"**.  
+
+### **2️⃣ Clonar un Repositorio**  
+Para trabajar en el código localmente, clónalo con:  
+```bash
+git clone <URL_DEL_REPOSITORIO>
+cd nombre-del-repositorio
+```
+
+Verifica la conexión con:  
+```bash
+git remote -v
+```
+
+### **3️⃣ Administración de Ramas**  
+Un repositorio bien gestionado usa ramas (`branches`) para organizar el desarrollo.  
+
+### 📌 **Ver ramas disponibles**  
+```bash
+git branch -a
+```
+
+### 📌 **Crear una nueva rama y cambiar a ella**  
+```bash
+git checkout -b feature/nueva-funcionalidad
+```
+
+### 📌 **Subir una rama al repositorio remoto**  
+```bash
+git push origin feature/nueva-funcionalidad
+```
+
+### **4️⃣ Gestión de Colaboradores y Permisos**  
+Para trabajar en equipo, es importante gestionar accesos.  
+
+### 📌 **Agregar colaboradores**  
+1. Ve a **Settings > Collaborators**.  
+2. Agrega el usuario de GitHub del colaborador.  
+3. Define el rol:  
+   - **Admin**: Control total.  
+   - **Maintainer**: Puede gestionar ramas y PRs.  
+   - **Write**: Puede subir código y hacer PRs.  
+   - **Read**: Solo puede ver el repositorio.  
+
+### 📌 **Trabajar con Forks y Pull Requests**  
+Si no eres colaborador directo, puedes:  
+1. **Hacer un Fork** (crear una copia del repositorio en tu cuenta).  
+2. **Realizar cambios en tu Fork**.  
+3. **Crear un Pull Request (PR)** para sugerir cambios al repositorio original.  
+
+### **5️⃣ Gestionar Versiones y Releases**  
+Para marcar hitos en el desarrollo, se pueden crear **tags y releases**.  
+
+### 📌 **Crear un tag para una versión**  
+```bash
+git tag -a v1.0 -m "Versión estable 1.0"
+git push origin v1.0
+```
+
+### 📌 **Publicar una Release en GitHub**  
+1. Ve a **"Releases" > "Create a new release"**.  
+2. Selecciona un tag (o crea uno nuevo).  
+3. Escribe una descripción y sube archivos adicionales si es necesario.  
+4. Publica la versión.  
+
+### **6️⃣ Mantenimiento y Seguridad del Repositorio**  
+Un buen mantenimiento del repositorio mejora la calidad del código.  
+
+### 📌 **Actualizar el código del repositorio local**  
+```bash
+git pull origin main
+```
+
+### 📌 **Eliminar ramas obsoletas**  
+```bash
+git branch -d feature/antigua
+git push origin --delete feature/antigua
+```
+
+### 📌 **Configurar GitHub Actions para Automatización**  
+- Usa **GitHub Actions** para pruebas, despliegues y automatización.  
+- Configura un flujo de trabajo en `.github/workflows/ci.yml`.  
+
+### 🎯 **Conclusión:**  
+🔹 **GitHub permite gestionar proyectos de manera eficiente** mediante ramas, colaboraciones, versiones y automatización.  
+🔹 **Una buena estructura de repositorio facilita la colaboración y el mantenimiento del código.** 
+
+### Resumen
+
+Crear y gestionar un repositorio en GitHub es una habilidad esencial para colaborar y mantener proyectos de software de forma ordenada. Aquí aprenderás cómo crear, configurar, invitar colaboradores y clonar un repositorio de manera efectiva.
+
+### ¿Cómo crear un repositorio en GitHub?
+
+Para empezar, accede a la pantalla principal de tu perfil en GitHub y selecciona el símbolo de “+”. Aquí, selecciona la opción “Nuevo repositorio”, lo que abrirá un formulario para configurarlo:
+
+- **Propietario**: Elige tu usuario actual como propietario del repositorio.
+- **Nombre del repositorio**: Puedes asignarle un nombre como “mi-primer-repo”. Este nombre puede adaptarse a tu usuario, permitiendo reutilizar nombres similares.
+- **Descripción**: Añade una breve descripción del proyecto para facilitar su identificación.
+- **Visibilidad**: Decide si el repositorio será público o privado según las necesidades del proyecto.
+- **Inicialización**: Puedes agregar un archivo README para documentar el repositorio desde el inicio. Aunque opcional, es una buena práctica.
+
+Finalmente, selecciona el botón verde de “Crear repositorio” para completar este proceso. Al hacerlo, tendrás acceso directo a tu repositorio con el archivo README visible.
+
+### ¿Cómo agregar un colaborador a un repositorio en GitHub?
+
+Para trabajar en equipo, es fundamental añadir colaboradores. Esto se hace desde la sección de “Settings” del repositorio:
+
+- Dirígete a “Colaboradores” en la configuración.
+- Asegúrate de que el colaborador tenga una cuenta de GitHub.
+- Selecciona la opción de agregar usuarios y elige a quien quieras invitar.
+
+Una vez enviada la invitación, deberás esperar que el colaborador la acepte para que pueda acceder al repositorio y trabajar en él.
+
+### ¿Cómo clonar un repositorio en tu máquina local?
+
+Clonar el repositorio te permite trabajar desde tu entorno local y sincronizar cambios con GitHub. Para ello:
+
+1. Ve a la sección de “Code” dentro de tu repositorio.
+2. Selecciona la opción HTTPS y copia la URL del repositorio.
+3. En tu terminal, escribe git clone seguido de la URL copiada y presiona “enter”.
+
+Este comando descargará el repositorio en tu máquina. Podrás ver todos los archivos en una carpeta con el nombre del repositorio y comenzar a trabajar de manera local.
+
+### ¿Cómo integrar Git y GitHub para un flujo de trabajo colaborativo?
+
+Una vez que el repositorio está clonado en tu entorno local, puedes editar archivos, guardar cambios y subirlos de nuevo a GitHub mediante Git. Al hacer esto, permites que todos los colaboradores se mantengan sincronizados y al día con el desarrollo del proyecto.
+
+**Lecturas recomendadas**
+
+[GitHub - platzi/git-github: Repositorio del Curso de Git y GitHub](https://github.com/platzi/git-github "GitHub - platzi/git-github: Repositorio del Curso de Git y GitHub")
+
+## Productos de GitHub: precios, planes y apps
+
+Ahora que ya vimos como poder crear un repositorio en Github y usar sus repositorios, es momento de hablar acerca de los diferentes productos que veremos durante todo el curso y sus consideraciones, principalmente los costos de cada uno de los servicios que vamos a utilizar.
+
+Recuerda que esta sección es de gran importancia porque como programadores podemos ver todos estos servicios como una variedad de opciones en donde podemos jugar como niños chiquitos en la arena; sin embargo, como parte de alguna organización debemos tener presente que los costos derivados de ello pueden jugar en nuestra contra si no sabemos como hacer para obtener un beneficio de todo esto, ten siempre presente la regla más importante de cualquier servicio que contrates.
+
+### Si un servicio o herramienta que estás utilizando no está ayudando a tu organización, entonces la está perjudicando
+
+Bueno, hora de dejar la clase de negocio y comenzar a ver el costo de los diferentes productos.
+
+### Repositorios
+
+Los repositorios de Github ya sean públicos o privados son gratuitos y sin un límite en específico en la cantidad de cuántos puedes tener, es decir, sin importar si se trata de una cuenta de pago o gratuita podrás crear tantos repositorios como gustes, así que por este tema no es necesario preocuparte, esta no es una diferencia entre todos los planes, tanto gratuitos como de pago.
+
+### Codespaces
+
+¡Huy! Aquí la cosa se pone buena. Codespaces es una herramienta que vamos a utilizar muchísimo en este curso y que es muy importante tener presente que es de costo. ¿Quieres un adelanto? Te recordaré todo el tiempo jugar con esta herramienta y luego apagarla, pero bueno, es momento de ver los costos.
+
+Núcleos | Costo por hora | Tiempo de uso gratuito
+---|---|
+2 núcleos | $0.18 USD por hora | 60 horas gratuitas
+4 núcleos | $0.36 USD por hora | 30 horas gratuitas
+8 núcleos | $0.72 USD por hora | 15 horas gratuitas
+16 núcleos | $1.44 USD por hora | No aplica
+32 núcleos | $2.88 USD por hora | No aplica
+
+En cuánto a almacenamiento también hay un costo asociado a ello.
+
+Categoría | Costo | Datos gratuitos
+---|---|---
+Almacenamiento | $0.07 USD por mes | 15 GB gratuitos mensuales
+
+Lo único que te puedo decir en esta categoría es que esas 30 horas de uso con 4 núcleos van a ser mucho más que suficientes para este curso y jugar un rato más, además, recuerda que cada mes se renuevan estos datos, así que si algo sucede simplemente tocará esperar.
+
+### Github web editor
+
+¡Buenas noticias aquí! Al igual que los repositorios, esta característica está presente en todos los planes de todos los niveles, sin costo en ningún escenario y sin límite de uso, esencialmente se trata de una característica que podemos aprovechar y aprender a utilizar mucho si preocuparnos por el costo.
+
+### Github Actions
+
+Github Actions es un tema de lo más complicado, el costo de las Actions depende mucho del sistema operativo, la capacidad del agente, obviamente el hardware y muchas cosas más; sin embargo, para los principiantes (y me incluyo en esta categoría porque ni de broma recuerdo todas las configuraciones) la mejor manera de evaluar y de guiarte es por medio del consumo por minutos, en la siguiente tabla podrás ver una buena referencia de los planes.
+
+Plan | Consumo de minutos
+---|--
+Gratuito | 2,000 minutos de ejecución
+Team | 3,000 minutos de ejecución
+Enterprise | 50,000 minutos de ejecución
+
+La verdad es que hay mucho que considerar en el tema de costos y beneficios de todas las herramientas y lo mejor es que dediques un tiempo a esto para saber como aprovechar al máximo los beneficios aquí solo mencionamos los productos que usaremos en el curso, sin embargo, hay muchas más consideraciones, lo ideal es que comiences por la página de referencia por excelencia para aprender de todo lo necesario acerca de esto, la puedes visitar [aquí](https://github.com/pricing "aquí").
+
+## Cómo configurar SSH para GitHub: Guía paso a paso 
+
+Configurar una clave **SSH** en GitHub permite autenticarse de forma segura sin necesidad de ingresar usuario y contraseña en cada operación con Git.  
+
+### **1️⃣ Verificar si ya tienes una clave SSH**  
+Antes de generar una nueva clave, revisa si ya tienes una en tu sistema.  
+
+🔹 Abre una terminal y ejecuta:  
+```bash
+ls -al ~/.ssh
+```
+Si ves archivos como `id_rsa` y `id_rsa.pub`, significa que ya tienes una clave.  
+
+Si ya tienes una, **puedes usarla** en GitHub o crear una nueva.  
+
+### **2️⃣ Generar una Nueva Clave SSH**  
+Si no tienes una clave SSH o quieres generar una nueva, sigue estos pasos.  
+
+🔹 Ejecuta el siguiente comando en la terminal:  
+```bash
+ssh-keygen -t rsa -b 4096 -C "tuemail@example.com"
+```
+📌 **Explicación:**  
+- `-t rsa`: Algoritmo RSA (recomendado).  
+- `-b 4096`: Tamaño de la clave para mayor seguridad.  
+- `-C "tuemail@example.com"`: Asocia la clave a tu correo de GitHub.  
+
+🔹 **Presiona ENTER** para aceptar la ubicación predeterminada:  
+```
+Enter file in which to save the key (/home/tuusuario/.ssh/id_rsa):
+```
+🔹 **Opcionalmente, asigna una contraseña** para mayor seguridad.  
+
+### **3️⃣ Agregar la Clave SSH al Agente SSH**  
+Para que Git use la clave correctamente, agrégala al **agente SSH**.  
+
+🔹 Inicia el agente SSH:  
+```bash
+eval "$(ssh-agent -s)"
+```
+🔹 Agrega la clave generada al agente:  
+```bash
+ssh-add ~/.ssh/id_rsa
+```
+
+### **4️⃣ Copiar la Clave SSH Pública**  
+Ahora, copia la clave SSH para agregarla en GitHub.  
+
+🔹 Ejecuta:  
+```bash
+cat ~/.ssh/id_rsa.pub
+```
+🔹 Copia la clave completa que se muestra en pantalla.  
+
+### **5️⃣ Agregar la Clave SSH en GitHub**  
+1. Ve a **GitHub** y accede a [Configuración SSH](https://github.com/settings/keys).  
+2. Haz clic en **"New SSH Key"**.  
+3. Ingresa un **nombre** para identificar la clave (Ejemplo: "Mi PC personal").  
+4. **Pega la clave SSH copiada** en el campo correspondiente.  
+5. Haz clic en **"Add SSH Key"**.  
+
+### **6️⃣ Verificar la Conexión con GitHub**  
+🔹 Para comprobar que todo está funcionando, ejecuta:  
+```bash
+ssh -T git@github.com
+```
+Si todo está correcto, deberías ver un mensaje como:  
+```
+Hi <tu-usuario>! You've successfully authenticated, but GitHub does not provide shell access.
+```
+
+### **7️⃣ Configurar Git para Usar SSH**  
+Si quieres que Git use SSH en lugar de HTTPS, cambia la URL del repositorio.  
+
+🔹 Para un repositorio existente, ejecuta:  
+```bash
+git remote set-url origin git@github.com:usuario/repositorio.git
+```
+
+🔹 Para clonar un nuevo repositorio con SSH:  
+```bash
+git clone git@github.com:usuario/repositorio.git
+```
+
+### 🎯 **Conclusión**  
+✅ Ahora puedes trabajar con GitHub de manera segura sin ingresar tu usuario y contraseña en cada `push` o `pull`.  
+✅ La autenticación SSH es **más rápida y segura** que HTTPS.  
+
+### Resumen
+
+Usar SSH para interactuar con GitHub es una excelente forma de aumentar la seguridad y mejorar la comodidad en el manejo de repositorios. A continuación, te explicamos el paso a paso para generar y configurar tus llaves SSH en distintos sistemas operativos y cómo integrarlas en tu perfil de GitHub para mejorar la experiencia de clonación y autenticación.
+
+### ¿Por qué es mejor usar SSH en lugar de HTTPS para GitHub?
+
+- **Seguridad adicional:** SSH permite autenticar la computadora específica que accede a los repositorios sin necesidad de ingresar una contraseña cada vez.
+- **Comodidad**: Evita la necesidad de escribir tu contraseña en cada operación con GitHub, agilizando el flujo de trabajo.
+
+### ¿Cómo generar una llave SSH en Windows y Linux?
+
+1. **Instalar WSL** si estás en Windows (opcional si usas Linux nativo).
+2. **Verificar que no tienes llaves previas**: Ve al menú de “Code” en GitHub y verifica que la opción de SSH no tenga llaves configuradas.
+3. **Generar la llave SSH**: En la terminal, usa el comando:
+`ssh-keygen -t ed25519 -C "tu_correo@example.com"`
+
+ - -t ed25519 establece el nivel de encriptación.
+ - -C añade un comentario con tu correo, útil para identificar la llave en GitHub.
+ 
+4. **Guardar y proteger la llave**:
+
+ - Usa el nombre por defecto y añade una contraseña segura.
+ - La llave pública se guarda en el directorio `.ssh`, generalmente nombrada `id_ed25519.pub`.
+ 
+5. Configurar el agente SSH: Activa el agente de SSH y añade la llave privada:
+
+    eval "$(ssh-agent -s)"
+    ssh-add ~/.ssh/id_ed25519
+
+### ¿Cómo añadir la llave SSH a GitHub?
+
+1. **Abrir el archivo de la llave pública** (id_ed25519.pub) y copia el contenido.
+2. En GitHub, ve a **Settings** > **SSH and GPG keys** > **New SSH key** y pega la llave.
+3. Nombra la llave de acuerdo a la computadora en la que estás configurándola.
+
+### ¿Qué pasos adicionales seguir en Mac?
+
+1. **Crear el archivo de configuración SSH**: Abre o crea el archivo `config` dentro del directorio `.ssh`.
+
+2. **Agregar parámetros específicos de Mac:** Añade la configuración para integrar SSH con el sistema Keychain:
+
+```shell
+Host github.com
+   AddKeysToAgent yes
+   UseKeychain yes
+   IdentityFile ~/.ssh/id_ed25519
+```
+
+3. Añadir la llave al agente SSH con Keychain: Usa el comando:
+
+`ssh-add --apple-use-keychain ~/.ssh/id_ed25519`
+
+### ¿Cómo verificar la conexión con GitHub?
+
+1. Comprobar autenticación: En la terminal, ejecuta el comando:
+
+`ssh -T git@github.com`
+
+ - Escribe “yes” para confirmar la conexión.
+ - Aparecerá un mensaje de GitHub que confirma la autenticidad.
+ 
+### ¿Cómo clonar un repositorio usando SSH?
+
+1. En GitHub, selecciona el repositorio deseado, elige la opción de clonación por SSH y copia la URL.
+2. En la terminal, ejecuta:
+`git clone git@github.com:usuario/repositorio.git`
+
+3. Esto clona el repositorio sin solicitar contraseña, aprovechando la autenticación SSH.
+
+**Lecturas recomendadas**
+
+[Conectar a GitHub con SSH - Documentación de GitHub](https://docs.github.com/es/authentication/connecting-to-github-with-ssh)
+
+[GitHub - platzi/git-github: Repositorio del Curso de Git y GitHub](https://github.com/platzi/git-github)
