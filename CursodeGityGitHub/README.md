@@ -1202,3 +1202,148 @@ Aquí voy con un step-by-step porque así lo entendí (espero les sirva y agrade
 [Git - git-branch Documentation](https://git-scm.com/docs/git-branch)
 
 [Git - git-merge Documentation](https://git-scm.com/docs/git-merge)
+
+## Usando Git desde Visual Studio Code
+
+Visual Studio Code (VS Code) tiene integración nativa con Git, lo que facilita el control de versiones sin necesidad de usar la terminal. Aquí te muestro cómo trabajar con Git en VS Code paso a paso. 🚀  
+
+### **1. Configurar Git en VS Code**  
+
+### **Verificar si Git está instalado**  
+Abre VS Code y presiona `Ctrl + ñ` para abrir la terminal integrada. Luego, escribe:  
+```bash
+git --version
+```
+🔹 Si Git no está instalado, descárgalo desde [git-scm.com](https://git-scm.com/).  
+
+### **Configurar tu usuario y correo**  
+Si es la primera vez que usas Git, configura tu nombre y correo:  
+```bash
+git config --global user.name "Tu Nombre"
+git config --global user.email "tuemail@example.com"
+```
+
+### **2. Inicializar un Repositorio en VS Code**  
+
+Si estás en un proyecto nuevo y quieres iniciar Git:  
+1️⃣ Abre VS Code y carga tu proyecto.  
+2️⃣ Abre la terminal (`Ctrl + ñ`) y ejecuta:  
+   ```bash
+   git init
+   ```
+3️⃣ Verás una nueva sección en el panel de control con el icono de **Git**.
+
+### **3. Clonar un Repositorio desde GitHub**  
+Si el proyecto ya está en GitHub:  
+1️⃣ Copia la URL del repositorio desde GitHub.  
+2️⃣ En VS Code, abre la terminal y escribe:  
+   ```bash
+   git clone <URL_DEL_REPOSITORIO>
+   ```
+3️⃣ Abre la carpeta del proyecto en VS Code (`File > Open Folder`).
+
+### **4. Realizar Commits desde VS Code**  
+
+### **Agregar archivos al control de versiones**  
+1️⃣ En el menú de Git (`Ctrl + Shift + G`), verás una lista de archivos modificados.  
+2️⃣ Haz clic en `+` junto a cada archivo para agregarlo a staging (equivalente a `git add`).  
+3️⃣ Escribe un mensaje de commit en la caja de texto y presiona `Ctrl + Enter` o haz clic en ✅ (equivalente a `git commit -m "mensaje"`).
+
+### **5. Subir Cambios a GitHub**  
+
+### **Conectar el repositorio a GitHub**  
+Si el repositorio no está vinculado a GitHub, usa:  
+```bash
+git remote add origin <URL_DEL_REPOSITORIO>
+git branch -M main  # Asegura que la rama principal sea "main"
+git push -u origin main
+```
+
+### **Enviar cambios a GitHub**  
+Cada vez que hagas cambios:  
+1️⃣ Realiza `commit` como en el paso anterior.  
+2️⃣ Haz clic en el botón `Sync Changes` en la barra de Git.  
+3️⃣ O usa la terminal:  
+   ```bash
+   git push origin main
+   ```
+
+### **6. Descargar Cambios desde GitHub**  
+
+Para actualizar tu código con la última versión del repositorio remoto:  
+1️⃣ Ve a la sección de Git en VS Code.  
+2️⃣ Haz clic en el botón `Pull` para traer cambios del repositorio.  
+3️⃣ O usa la terminal:  
+   ```bash
+   git pull origin main
+   ```
+
+### **7. Crear y Cambiar de Ramas en VS Code**  
+
+### **Crear una nueva rama**
+1️⃣ Abre la barra de comandos (`Ctrl + Shift + P`).  
+2️⃣ Escribe **"Git: Create Branch"** y selecciona la opción.  
+3️⃣ Ingresa el nombre de la nueva rama y presiona Enter.  
+
+📌 También puedes usar la terminal:  
+```bash
+git branch nueva-rama
+git switch nueva-rama  # Para cambiar de rama
+```
+
+### **Cambiar entre ramas**  
+1️⃣ Haz clic en el nombre de la rama en la esquina inferior izquierda.  
+2️⃣ Selecciona la rama a la que quieres cambiar.  
+
+### **8. Resolver Conflictos de Fusión en VS Code**  
+Si hay un conflicto, VS Code te mostrará opciones en el archivo afectado:  
+✅ **Accept Current Change** → Mantener la versión de tu rama actual.  
+✅ **Accept Incoming Change** → Mantener la versión de la otra rama.  
+✅ **Accept Both Changes** → Combinar ambas versiones manualmente.  
+
+📌 Luego, guarda el archivo y haz `commit` para finalizar.
+
+### **Conclusión**  
+VS Code hace que trabajar con Git sea mucho más intuitivo. Puedes hacer **commits, push, pull, trabajar con ramas y resolver conflictos** sin salir del editor.  
+
+## Resumen
+
+Visual Studio Code ofrece una interfaz visual y eficiente para gestionar versiones con Git, simplificando muchas tareas complejas y ahorrando tiempo a los desarrolladores. Integrar VS Code en nuestro flujo de trabajo diario puede facilitar considerablemente el manejo de ramas, commits y conflictos sin depender tanto de comandos en la terminal.
+
+### ¿Cómo abrir VS Code desde la terminal?
+
+- Inicia VS Code en la ubicación del proyecto con `code .`.
+- Esto abre una instancia de VS Code en el directorio actual, incluyendo todos los archivos versionados con Git.
+
+### ¿Cómo visualizar y gestionar ramas en VS Code?
+
+- Dentro de VS Code, identifica tu rama activa en la sección de control de versiones.
+- Selecciona la rama para ver las opciones de cambio, como alternar entre ramas o crear nuevas.
+- Los cambios en las ramas se presentan en una gráfica visual, diferenciando fusiones y ramas en colores, una ventaja significativa sobre `git log`.
+
+### ¿Cómo hacer un commit de cambios en VS Code?
+
+- Al editar un archivo, el ícono de control de versiones muestra un indicador de cambio.
+- En lugar de usar `git commit -m "mensaje"`, puedes simplemente añadir un mensaje y presionar commit en la interfaz de VS Code.
+
+### ¿Cómo crear y alternar entre ramas en VS Code?
+
+1. Haz clic en “Create New Branch” y nómbrala, por ejemplo, “VS Code Dev”.
+2. VS Code marca esta nueva rama como activa, heredando los cambios de la rama principal.
+3. Al editar archivos en esta rama, puedes realizar commits directamente en la interfaz.
+
+### ¿Cómo resolver conflictos de fusión en VS Code?
+
+- Selecciona la rama con la que deseas fusionar (por ejemplo, VS Code Dev con Main) usando el menú de Branch > Merge.
+- Cuando ocurre un conflicto, VS Code despliega opciones de resolución con colores para cada cambio, simplificando la selección entre el cambio actual, el entrante o ambos.
+- Puedes optar por “Merge Editor” para una vista más visual y confirmar la fusión con un “Complete Merge” al finalizar.
+
+### ¿Cómo iniciar un nuevo repositorio en VS Code?
+
+1. Crea un nuevo directorio y abre VS Code en esa ubicación.
+2. Al no haber archivos, selecciona “Inicializar repositorio” para configurar un nuevo repositorio.
+3. Esto ejecuta `git init`, crea la rama principal (main) y permite añadir nuevas ramas y hacer commits sin usar comandos.
+
+**Lecturas recomendadas**
+
+[Visual Studio Code - Code Editing. Redefined](https://code.visualstudio.com/)
