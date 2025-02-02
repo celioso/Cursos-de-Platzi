@@ -2725,3 +2725,210 @@ Con esta automatización:
 [Planning and tracking with Projects - GitHub Docs](https://docs.github.com/en/issues/planning-and-tracking-with-projects)
 
 [GitHub Issues · Project planning for developers · GitHub](https://github.com/features/issues)
+
+## Documentación en GitHub con Markdown
+
+### Herramientas útiles para documentación con Markdown
+
+En las clases anteriores has visto la relevancia de trabajar con Markdown y lo mucho que este lenguaje te puede ayudar para crear una gran documentación. En esta clase lo que veremos son algunos de los muchísimos recursos que puedes utilizar para poder escribir de una gran manera utilizando Markdown de la mejor manera posible. ¡Comencemos!
+
+### [Documentación de Markdown](https://www.markdownguide.org/ "Documentación de Markdown")
+
+Simplemente, la mejor referencia para conocer todo lo que se puede hacer con Markdown dentro de los documentos, aquí puedes comenzar a leer mucho.
+
+![Markdown page](images/Markdownpage.png)
+
+Mi primera sugerencia es irte a la opción de Cheat Sheet, en esta sección podrás encontrar todo lo que puedes hacer, desde la sintaxis básica hasta la extendida. Lo mejor que puedes hacer comenzar a practicar aquí con esto, la verdad es que si sabes usar estas características ya estás dominando el 90% de todo el trabajo.
+
+También considera que Markdown es compatible con algunas funciones de html como , lo que te permitiría jugar un poco más con el diseño de tu documento.
+
+Si tienes un poco más de tiempo libre estaría fenomenal visitar la sección de Get Started en donde el sitio explica como funciona Markdown lo que es una lectura muy buena para aprender un poco más. ¡Dale un vistazo!
+
+### Extensión de Markdown para VS Code
+
+Ya que conoces lo que Markdown puede hacer y su sintaxis lo mejor que puedes hacer es instalar la extensión de Markdown dentro de VS Code, esto te puede llevar a un nivel mucho más avanzado de documentación porque te puede ayudar con la estructura del proyecto mostrándote las reglas que es recomendable no dejar en el documento.
+
+Puedes encontrar el enlace de la extensión [aquí](https://marketplace.visualstudio.com/items?itemName=DavidAnson.vscode-markdownlint "aquí").
+
+Dentro de VS Code la imagen es como la siguiente:
+
+![Markdownlint](images/Markdownlint.png)
+
+Una vez que lo hayas instalado entonces es momento de ponerla en prueba y para ello debes simplemente cometer un par de errores al momento de escribir tu documento. Yo lo hice con este que ahora estás leyendo. Podrás ver las líneas amarillas en cada línea por corregir.
+
+![Markdownlint](images/Markdownlint1.png)
+
+¿Quieres lo mejor? Solo basta que te coloques encima de las líneas para que puedas conocer el error que puedes corregir.
+
+![Markdownlint1](images/Markdownlint2.png)
+
+Solo es cosa de que veas la regla y la modifiques, te debo confesar que esta extensión me ha hecho aprender a redactar de manera más eficiente mis documentos. ¡Me encantaría recordar quién me la enseñó para poder agradecerle por el gran tip!
+
+### Previsualización de Markdown
+
+Dentro de VS Code puedes previsualizar todos los documentos markdown antes de colocarlos en un control de versiones, solo es necesario que te ubiques en la esquina superior derecha para encontrar un ícono con una lupa y que te permite previsualizar el documento.
+
+![VS Code](images/VS_Code.png)
+
+Al hacerlo podrás ver una división entre el documento que estás editando y su presentación final dándote no solo una vista previa, sino que también podrá mostrar cualquier error como una ruta de imágenes mal direccionada o cosas por el estilo.
+
+![VS Code](images/VS_Code1.png)
+
+Usar esta vista es un recurso que puedes utilizar para muchas opciones, como evitar un commit que repare los errores de uno anterior. Lo importante es que si usas el monitor de una laptop podrá ser un poco complicado y es aquí donde podrás ansiar tener un monitor ultra wide para trabajar con total felicidad (¡yo quiero uno de esos!).
+
+### Diagramas Mermaid
+
+Dejando de lado la funcionalidad básica de lo que puedes hacer con los markdown y VS Code podemos dar un paso adelante y utilizar una herramienta que te hará hacer documentos de otro nivel con los diagramas mermaid.
+
+Estos diagramas te permiten diseñar gráficas de muchos niveles y personalizarlas con la complejidad que deseas.
+
+Por ejemplo, gracias a un código similar al siguiente podrás representar el flujo de interacción entre diferentes ramas, muy acorde a nuestro curso ¿no?
+
+```shell
+gitGraph
+    commit
+    commit
+    branch develop
+    checkout develop
+    commit
+    commit
+    checkout main
+    merge develop
+    commit
+    commit
+```
+
+Al insertar el código en tu documento podrás ver el resultado luciendo como esta imagen.
+
+![VS Code](images/VS_Code2.png)
+
+Hacer diagramas así es muy útil para representar flujos de trabajo de una manera visual y mucho más cómodos de entender, además, una ventaja adicional, es que no se requiere ninguna instalación o configuración adicional, simplemente agregas el diagrama y todo aparece de maravilla.
+
+Para poder jugar más con el código mermaid en tus documentos, lo mejor es [visitar el visualizador de diagramas de mermaid aquí](https://mermaid.live/edit "visitar el visualizador de diagramas de mermaid aquí").
+
+Ojalá te animes a usar todas estas herramientas para hacer lo que todo desarrollador de software debe hacer ¡Una gran documentación!
+
+## Personaliza tu Perfil de GitHub con Markdown
+
+
+En **GitHub**, puedes crear un perfil atractivo y profesional utilizando **Markdown**. Un perfil bien diseñado ayuda a destacar tu trabajo, proyectos y habilidades.  
+
+### **1️⃣ ¿Cómo crear un perfil personalizado en GitHub?**  
+
+### 📌 **Paso 1: Crear un Repositorio Especial**  
+1️⃣ Ve a [GitHub](https://github.com/) y haz clic en **"New Repository"**.  
+2️⃣ Nombra el repositorio **exactamente igual** a tu usuario de GitHub (Ejemplo: `MarioVargasCelis`).  
+3️⃣ Marca la opción **"Public repository"**.  
+4️⃣ Activa **"Add a README file"** y haz clic en **"Create repository"**.  
+
+GitHub reconocerá este repositorio como tu perfil personal y mostrará el contenido del `README.md` en tu perfil.  
+
+### **2️⃣ Personaliza tu README con Markdown**  
+
+Tu `README.md` es la base de tu perfil. Aquí tienes algunos elementos clave para mejorar su presentación:  
+
+### **📌 Encabezado con una Bienvenida**
+```md
+# ¡Hola, soy Mario Vargas Celis! 👋
+🚀 Ingeniero Mecatrónico | 🤖 IA & Data Science | 💻 Desarrollo Web  
+```
+
+### **📌 Agregar una Imagen o GIF**
+```md
+![Mi Banner](https://mi-imagen.com/banner.png)
+```
+
+💡 **Tip:** Puedes subir imágenes a un Issue en GitHub y usar su URL.
+
+### **3️⃣ Agrega Secciones Claves**  
+
+### **📌 Sobre Mí**
+```md
+### 📌 Sobre mí  
+Soy un apasionado de la tecnología, la inteligencia artificial y el desarrollo de software. Me encanta trabajar con **Python, Machine Learning y GitHub Actions**.
+```
+
+### **📌 Habilidades Técnicas**
+```md
+### 🚀 Habilidades  
+- 🔹 **Lenguajes:** Python, JavaScript, C++  
+- 🔹 **Frameworks:** Django, React, PyTorch  
+- 🔹 **Herramientas:** Git, Docker, VS Code  
+```
+
+### **📌 Proyectos Destacados**
+```md
+### 📂 Proyectos Destacados  
+🌟 [Mi Portafolio Web](https://miportafolio.com) - Hecho con React y TailwindCSS  
+🌟 [Análisis de Datos con Pandas](https://github.com/usuario/proyecto)  
+🌟 [Modelo de IA para clasificación](https://github.com/usuario/ia-clasificacion)  
+```
+
+### **📌 Estadísticas de GitHub**
+Puedes usar widgets dinámicos como **GitHub Stats**:
+```md
+![Estadísticas de GitHub](https://github-readme-stats.vercel.app/api?username=tu-usuario&show_icons=true&theme=dark)
+```
+
+### **4️⃣ Agrega Contacto y Redes Sociales**
+```md
+## 📫 Contáctame  
+💼 [LinkedIn](https://www.linkedin.com/in/mi-perfil/)  
+📧 **Correo:** mario@ejemplo.com  
+🌐 [Mi Portafolio](https://miportafolio.com)  
+```
+
+💡 **Tip:** Usa **badges** con Shields.io:
+```md
+![LinkedIn](https://img.shields.io/badge/LinkedIn-Perfil-blue?logo=linkedin)
+```
+
+### **🎯 Conclusión**  
+✅ **Personalizar tu perfil de GitHub** con Markdown lo hace más profesional.  
+✅ Puedes agregar **imágenes, estadísticas y enlaces** para destacar.  
+✅ Un perfil bien diseñado te ayuda a **conseguir oportunidades laborales**.  
+
+### Resumen
+
+Aprender a crear una portada atractiva y funcional en GitHub usando Markdown no solo mejora la presentación profesional de un perfil, sino que también permite personalizarlo con elementos visuales, enlaces y badges que muestran actividad e información de contacto. Aquí encontrarás un paso a paso para utilizar Markdown y hacer que tu perfil destaque.
+
+### ¿Cómo iniciar el repositorio especial en GitHub?
+
+- **Crear un repositorio**: Ve a la sección de repositorios y crea uno nuevo usando el mismo nombre que tu nombre de usuario en GitHub; esto permite que el repositorio funcione como portada.
+- **Descripción y visibilidad**: Añade una descripción breve (ej. “Portada de perfil”), hazlo público y agrega un archivo README.md. Esto es esencial para que el contenido sea visible en tu perfil.
+- **Clonación del repositorio**: Clona el repositorio usando git clone en la terminal. La opción HTTPS es conveniente para nuevos perfiles, aunque SSH es más seguro.
+
+### ¿Cómo personalizar el README con Markdown?
+
+Markdown facilita la creación de secciones y elementos visuales. Puedes agregar:
+
+- **Títulos y subtítulos**: Usa `#`, `##` o `###` según la jerarquía. Por ejemplo, `## Contacto`.
+- **Enlaces y badges**: Incluye enlaces usando `[Texto](URL)`. Para badges, visita [shields.io](https://shields.io/ "shields.io") donde encontrarás diferentes opciones (ej. actividad de commits, sitios web).
+- **Iconos y emojis**: Puedes agregar emojis como `:computer:` o `:pencil:` para destacar roles o actividades.
+
+### ¿Cómo previsualizar y ajustar el archivo en Visual Studio Code?
+
+- **Vista previa de Markdown**: Selecciona Open Preview en la esquina superior derecha para ver cómo se verán los cambios en GitHub.
+- **Extensiones recomendadas**: Markdown Lint ayuda a mejorar el estilo al sugerir tips sobre el formato, como evitar espacios en blanco innecesarios.
+- **Limpieza del código**: Markdown Lint también ayuda a mantener el archivo ordenado eliminando líneas en blanco que no son necesarias.
+
+### ¿Cómo añadir y ajustar badges en el perfil de GitHub?
+
+1. Visita shields.io y busca categorías de badges como:
+ - **Website**: Permite agregar un enlace a tu sitio web.
+ - **Actividad de Commits**: Muestra la frecuencia de tus commits en GitHub. Puedes seleccionar el intervalo: `weekly`, `monthly`, `yearly`, o `total`.
+2. **Insertar badges en Markdown**: Selecciona “Markdown” en [shields.io](http://shields.io/ "shields.io") para obtener el código y pégalo en el `README.md`.
+3. **Prueba de visualización**: Asegúrate de que los badges se muestren correctamente en Visual Studio Code.
+
+### ¿Qué estrategias aplicar para mejorar la portada en GitHub?
+
+- **Referencias a otros repositorios**: Examina perfiles de otros usuarios o proyectos con buena documentación. Visualiza su archivo README.md en modo “RAW” para ver el código en Markdown.
+- **Explora y adapta**: La práctica es clave; revisa diferentes perfiles para encontrar ideas y técnicas que puedas adaptar.
+
+**Lecturas recomendadas**
+
+[Sintaxis de escritura y formato básicos - Documentación de GitHub](https://docs.github.com/es/get-started/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax)
+
+[Static Badge | Shields.io](https://shields.io/badges)
+
+[GitHub - platzi/git-github: Repositorio del Curso de Git y GitHub](https://github.com/platzi/git-github)
