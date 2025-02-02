@@ -2004,3 +2004,352 @@ Host github.com
 [Conectar a GitHub con SSH - Documentación de GitHub](https://docs.github.com/es/authentication/connecting-to-github-with-ssh)
 
 [GitHub - platzi/git-github: Repositorio del Curso de Git y GitHub](https://github.com/platzi/git-github)
+
+## Clone, fork y estrellas a repositorios 
+
+Cuando trabajas con GitHub, hay tres acciones clave que te permiten interactuar con repositorios: **clonar (clone), bifurcar (fork) y marcar con estrella (star)**. Cada una tiene un propósito específico.  
+
+### **1️⃣ Clonar un Repositorio (`git clone`)**  
+**Clonar un repositorio** significa descargar una copia completa del código fuente en tu computadora. Esto te permite trabajar en él localmente.  
+
+### 📌 **Clonar un repositorio público**  
+```bash
+git clone <URL_DEL_REPOSITORIO>
+```
+🔹 La URL se obtiene en GitHub desde el botón **"Code" > SSH o HTTPS**.  
+
+Ejemplo:  
+```bash
+git clone https://github.com/octocat/Hello-World.git
+```
+
+### 📌 **Clonar un repositorio privado**  
+Si el repositorio es privado, necesitas permisos y autenticación con SSH o un token de acceso.  
+
+### 📌 **Trabajar en un repositorio clonado**  
+Una vez clonado, entra al directorio del proyecto:  
+```bash
+cd Hello-World
+```
+Puedes trabajar en el código, hacer commits y subir cambios si tienes permisos.  
+
+### **2️⃣ Fork: Bifurcar un Repositorio**  
+**Hacer un fork** significa crear una copia del repositorio en tu cuenta de GitHub. Esto es útil cuando quieres contribuir a un proyecto en el que no tienes acceso directo.  
+
+### 📌 **Pasos para hacer un fork**  
+1. Ve al repositorio en GitHub.  
+2. Haz clic en **"Fork"** (en la parte superior derecha).  
+3. Ahora el repositorio aparece en tu cuenta con la URL:  
+   ```
+   https://github.com/tu-usuario/Hello-World
+   ```
+4. Clona el repositorio bifurcado en tu PC:  
+   ```bash
+   git clone https://github.com/tu-usuario/Hello-World.git
+   ```
+
+### 📌 **Cómo sincronizar cambios del repositorio original**  
+Si el repositorio original cambia y quieres actualizar tu fork:  
+```bash
+git remote add upstream https://github.com/original-usuario/Hello-World.git
+git fetch upstream
+git merge upstream/main
+```
+Esto traerá los últimos cambios al fork.  
+
+### 📌 **Enviar cambios al proyecto original**  
+Si mejoras el código en tu fork y quieres que el dueño del repositorio original lo incluya, envía un **Pull Request (PR)** desde GitHub.  
+
+### **3️⃣ Estrellas en un Repositorio (`⭐ Star`)**  
+Las **estrellas (stars)** en GitHub sirven para:  
+✅ **Marcar repositorios interesantes**.  
+✅ **Apoyar proyectos que te gustan**.  
+✅ **Guardar repositorios para acceder fácilmente después**.  
+
+Para dar una estrella:  
+1. Ve al repositorio en GitHub.  
+2. Haz clic en el botón **"Star"** en la parte superior derecha.  
+
+Puedes ver tus repositorios marcados con estrella en:  
+```
+https://github.com/stars
+```
+
+### 🎯 **Conclusión**  
+🔹 **`git clone`** → Descarga una copia del repositorio en tu computadora.  
+🔹 **Fork** → Crea una copia en tu cuenta para contribuir sin permisos directos.  
+🔹 **Star ⭐** → Marca repositorios interesantes para guardarlos y apoyarlos.  
+
+### Resumen
+
+Entender el uso de forks y estrellas en GitHub optimiza la gestión de proyectos y recursos al trabajar en esta plataforma. Aquí exploraremos cómo funcionan estos elementos y cómo pueden ayudarte a organizar tus repositorios en función de tus necesidades.
+
+### ¿Qué es un fork y cómo se utiliza?
+
+Un fork en GitHub es una copia de un repositorio alojado en la cuenta de otra persona y que puedes transferir a tu propia cuenta. Este proceso crea una réplica del repositorio en su estado actual, sin reflejar futuros cambios del original a menos que se sincronice manualmente. Esto permite:
+
+- Trabajar de manera independiente en un proyecto sin afectar el repositorio original.
+- Personalizar el contenido según tus necesidades sin modificar el repositorio fuente.
+- Crear una base para hacer contribuciones posteriores al repositorio original.
+
+Para crear un fork, debes abrir el repositorio, seleccionar el botón de Fork y seguir los pasos para copiarlo en tu cuenta. Así, GitHub duplicará el repositorio, manteniendo el nombre y descripción del original. Puedes optar por copiar solo la rama principal (main) o todo el proyecto. Luego, desde tu cuenta, podrás modificar el contenido sin interferir con el repositorio original.
+
+### ¿Qué beneficios aporta usar estrellas en GitHub?
+
+Las *estrellas* en GitHub funcionan como un sistema de marcado para resaltar los repositorios que deseas tener a mano como referencia o favoritos. Son útiles para:
+
+- Crear un índice de repositorios de referencia o inspiración.
+- Acceder rápidamente a recursos clave desde tu perfil.
+- Seguir el desarrollo de proyectos importantes para tus intereses.
+
+Al seleccionar la estrella en un repositorio, ésta se ilumina para indicar que has marcado este recurso. Puedes acceder a todos tus repositorios marcados desde la sección de “tus estrellas” en tu perfil. Aquí se listan los proyectos que has destacado, ayudándote a centralizar tus fuentes de consulta.
+
+### ¿Cómo clonar un repositorio forkeado?
+
+Después de realizar un fork, puedes clonar este repositorio a tu entorno local para trabajar de forma directa en tu equipo. Para hacerlo:
+
+1. Ve a tu repositorio forkeado.
+2. Selecciona el botón **Code** y copia la URL del proyecto en formato SSH.
+3. Abre la terminal y usa el comando `git clone`.
+
+De esta manera, tendrás una versión local del repositorio en la que podrás modificar y gestionar el código. Esta técnica de fork y clonación es útil para personalizar proyectos o experimentar sin afectar el original, ofreciendo flexibilidad para hacer cambios sin alterar el repositorio fuente.
+
+### ¿Por qué usar forks en lugar de clonar directamente el repositorio original?
+
+Hacer un fork en lugar de una clonación directa del repositorio original permite que trabajes de manera independiente. Puedes hacer ajustes sin el riesgo de cambiar el repositorio base, especialmente útil cuando el original es de terceros o si planeas realizar cambios extensivos. Además, el fork es una base ideal para hacer contribuciones futuras, ya que se puede sincronizar y enviar cambios al proyecto original a través de un proceso estructurado.
+
+**Lecturas recomendadas**
+
+[Conectar a GitHub con SSH - Documentación de GitHub](https://docs.github.com/es/authentication/connecting-to-github-with-ssh)
+
+[GitHub - platzi/git-github: Repositorio del Curso de Git y GitHub](https://github.com/platzi/git-github)
+
+## Trabajo con repositorios remotos: push, pull y fetch
+
+Cuando trabajas con **Git y GitHub**, necesitas sincronizar tu código local con un repositorio remoto. Los comandos clave para hacerlo son:  
+
+- **`git push`** → Envía cambios al repositorio remoto.  
+- **`git pull`** → Descarga y fusiona cambios desde el repositorio remoto.  
+- **`git fetch`** → Obtiene cambios remotos sin fusionarlos automáticamente.  
+
+### **1️⃣ Enviar Cambios con `git push`**  
+Una vez que has hecho cambios en tu código y creado un commit, necesitas enviarlos al repositorio remoto.  
+
+### 📌 **Pasos para hacer un `push`**  
+1. Asegúrate de estar en la rama correcta:  
+   ```bash
+   git branch
+   ```
+2. Verifica los cambios que se enviarán:  
+   ```bash
+   git status
+   ```
+3. Agrega los archivos al área de staging (si no lo hiciste antes):  
+   ```bash
+   git add .
+   ```
+4. Crea un commit con un mensaje descriptivo:  
+   ```bash
+   git commit -m "Descripción de los cambios"
+   ```
+5. **Envía los cambios al repositorio remoto:**  
+   ```bash
+   git push origin main
+   ```
+   📌 **`origin`** → Nombre del repositorio remoto.  
+   📌 **`main`** → Nombre de la rama donde se subirán los cambios.  
+
+✅ **Si es la primera vez que subes una rama nueva**, usa:  
+```bash
+git push -u origin nueva-rama
+```
+
+### **2️⃣ Obtener Cambios con `git pull`**  
+Si otras personas han hecho cambios en el repositorio remoto, debes actualizar tu código local antes de seguir trabajando.  
+
+### 📌 **Ejecutar `git pull` para actualizar tu código local**  
+```bash
+git pull origin main
+```
+Esto descarga y fusiona automáticamente los cambios de la rama `main` en tu código local.  
+
+### 📌 **Cuando usar `git pull`?**  
+✅ Antes de comenzar a trabajar en nuevas características.  
+✅ Para mantener tu código actualizado con el equipo.  
+
+Si hay **conflictos de fusión**, Git te pedirá que los resuelvas manualmente antes de continuar.  
+
+### **3️⃣ Obtener Cambios sin Fusionar con `git fetch`**  
+A veces, solo quieres ver si hay actualizaciones sin aplicarlas todavía. Para eso, usa `git fetch`.  
+
+### 📌 **Descargar cambios sin fusionarlos automáticamente**  
+```bash
+git fetch origin
+```
+Esto descarga las actualizaciones desde el repositorio remoto, pero **no modifica** tu código local.  
+
+### 📌 **Ver los cambios antes de fusionarlos**  
+```bash
+git diff main origin/main
+```
+Si decides traer los cambios después de revisar, usa:  
+```bash
+git merge origin/main
+```
+
+### **📌 Diferencias Clave entre `git pull` y `git fetch`**  
+
+| Comando    | ¿Qué hace? |
+|------------|-----------|
+| `git fetch` | Descarga cambios remotos sin aplicarlos. |
+| `git pull`  | Descarga y aplica cambios automáticamente. |
+
+Si no quieres que Git **modifique automáticamente** tu código, usa `fetch` en lugar de `pull`.  
+
+### 🎯 **Conclusión**  
+🔹 **`git push`** → Sube tus cambios al repositorio remoto.  
+🔹 **`git pull`** → Descarga y fusiona cambios del repositorio remoto.  
+🔹 **`git fetch`** → Obtiene actualizaciones sin fusionarlas automáticamente.  
+
+**Lecturas recomendadas**
+
+[Git - git-fetch Documentation](https://git-scm.com/docs/git-fetch)
+
+[Git - git-push Documentation](https://git-scm.com/docs/git-push)
+
+[Git - git-pull Documentation](https://git-scm.com/docs/git-pull)
+
+[GitHub - platzi/git-github: Repositorio del Curso de Git y GitHub](https://github.com/platzi/git-github)
+
+## Gestión de Issues y Discussions en GitHub
+
+Cuando trabajas en un proyecto en **GitHub**, es importante mantener un buen flujo de comunicación y seguimiento de tareas. Para esto, GitHub ofrece dos herramientas clave:  
+
+- **Issues** → Para reportar errores, sugerir mejoras o gestionar tareas.  
+- **Discussions** → Para debatir ideas, recibir retroalimentación y compartir conocimientos.  
+
+
+### **1️⃣ Issues: Reportar Errores y Gestionar Tareas**  
+Los **Issues** (incidencias) son la mejor forma de **documentar problemas, sugerencias y tareas pendientes** en un repositorio.  
+
+### 📌 **Cómo Crear un Issue**  
+1. Ve al repositorio en GitHub.  
+2. Haz clic en la pestaña **"Issues"**.  
+3. Presiona **"New Issue"**.  
+4. Agrega un **título claro** y una descripción detallada.  
+5. Puedes asignar etiquetas (*labels*) para clasificar el Issue.  
+6. Asigna responsables si es necesario.  
+7. Presiona **"Submit new issue"**.  
+
+### 📌 **Ejemplo de Issue Bien Escrito**  
+**Título:** Bug: Error al autenticar usuario con Google  
+
+**Descripción:**  
+- **Pasos para reproducir:**  
+  1. Ir a la pantalla de inicio de sesión.  
+  2. Hacer clic en "Iniciar sesión con Google".  
+  3. Aparece un error "500 Internal Server Error".  
+- **Comportamiento esperado:** El usuario debería autenticarse correctamente.  
+- **Dispositivo y entorno:** Windows 10, navegador Chrome 114.  
+- **Posible solución:** Revisar la configuración de la API de Google.  
+
+✅ **Beneficio:** Un issue bien descrito facilita su solución.  
+
+### **2️⃣ Discussions: Espacio para Debatir y Compartir Ideas**  
+Las **Discussions** permiten a los desarrolladores, colaboradores y la comunidad hablar sobre el proyecto sin necesidad de abrir un Issue.  
+
+### 📌 **Cuándo usar Discussions en lugar de Issues**  
+✅ Para debatir **nuevas funcionalidades** antes de implementarlas.  
+✅ Para **preguntas generales** o ayuda técnica.  
+✅ Para recibir **sugerencias** de la comunidad.  
+
+### 📌 **Cómo Crear una Discussion**  
+1. Ve a la pestaña **"Discussions"** del repositorio.  
+2. Haz clic en **"New Discussion"**.  
+3. Elige una categoría (idea, pregunta, anuncio, etc.).  
+4. Agrega un título y redacta tu mensaje.  
+5. Presiona **"Start discussion"**.  
+
+💬 **Ejemplo de Discussion:**  
+> 🎯 **Propuesta: Agregar soporte para idioma español**  
+> ¡Hola equipo! ¿Qué opinan sobre traducir la aplicación al español?  
+> Creo que podríamos empezar agregando un archivo `locales/es.json`.  
+
+
+### **3️⃣ Mejoras con Etiquetas (`Labels`) y Asignaciones (`Assignees`)**  
+- **Etiquetas (`labels`)** → Para clasificar los Issues (Ej: `bug`, `feature request`, `documentation`).  
+- **Asignaciones (`assignees`)** → Para designar a la persona encargada de resolver el Issue.  
+- **Milestones** → Para agrupar Issues en objetivos o versiones específicas.  
+
+### 📌 **Ejemplo de Etiquetas en un Issue**  
+| Etiqueta | Descripción |
+|----------|------------|
+| `bug` | Un error en la aplicación. |
+| `enhancement` | Una mejora o nueva funcionalidad. |
+| `documentation` | Problemas o mejoras en la documentación. |
+| `good first issue` | Ideal para nuevos colaboradores. |
+
+### 🎯 **Conclusión**  
+🔹 **Issues** → Para reportar errores y gestionar tareas en el proyecto.  
+🔹 **Discussions** → Para debatir ideas y recibir retroalimentación.  
+🔹 **Etiquetas y asignaciones** → Facilitan la organización del trabajo en equipo.  
+
+### Resumen
+
+Usar los Issues de GitHub permite gestionar y documentar problemas en un repositorio, desde errores simples en la redacción hasta defectos complejos en la funcionalidad. Con una interfaz intuitiva, permite que cualquier usuario señale y describa aspectos mejorables, y con plantillas de Issues, mejora la claridad y colaboración en el proceso.
+
+### ¿Qué es un Issue en GitHub?
+
+Un Issue es una forma de señalar problemas o sugerencias dentro de un repositorio. Puede ser usado para:
+
+- Notificar errores en la documentación, como faltas de ortografía.
+- Reportar problemas en el funcionamiento esperado del código.
+- Informar mejoras o cambios necesarios.
+
+Los Issues permiten una comunicación bidireccional entre los colaboradores y el creador del repositorio, lo que facilita la resolución de problemas.
+
+### ¿Cómo crear un nuevo Issue?
+
+1. En el repositorio de GitHub, selecciona la pestaña Issues.
+2. Haz clic en **New Issue** y describe el problema en dos campos principales:
+ - Título: Una breve descripción.
+ - Descripción: Detalles del problema, pasos para reproducirlo, etc.
+ 
+Es posible agregar elementos adicionales, como asignar el Issue a otra persona o etiquetarlo.
+
+### ¿Cómo crear una plantilla de Issues?
+
+Para facilitar el proceso a otros colaboradores, es útil crear plantillas de Issues. Para hacerlo:
+
+1. Desde el repositorio, abre Visual Studio Code con el comando `code .`.
+2. Crea una carpeta llamada `.github` y dentro otra carpeta llamada `ISSUE_TEMPLATE`.
+3. Dentro de `ISSUE_TEMPLATE`, crea un archivo Markdown (por ejemplo, `bug_report.md`).
+4. Copia la estructura de la plantilla, que usualmente incluye secciones como descripción, pasos para reproducir el error y detalles adicionales.
+
+Con esta plantilla, los colaboradores tendrán un formato estándar para reportar problemas, lo que ayuda a una mejor gestión y resolución.
+
+### ¿Cómo sincronizar los cambios en GitHub?
+
+1. Una vez creada la plantilla, verifica que los archivos cambiados estén marcados en verde en Visual Studio Code.
+2. Realiza un commit (por ejemplo, “Bug Report agregado”).
+3. Sincroniza con el repositorio de GitHub mediante el botón de flecha hacia arriba (push).
+4. En GitHub, verifica que la plantilla esté disponible en la sección de Issues.
+
+### ¿Qué ventajas tiene una plantilla de Issues?
+
+Las plantillas simplifican el proceso de documentación de problemas y mejoran la comunicación al estandarizar la información que se solicita a los colaboradores. Esto ayuda a identificar los problemas de forma precisa y rápida.
+
+### ¿Cómo personalizar las plantillas de Issues para casos específicos?
+
+Además de la plantilla básica para bugs, puedes crear plantillas personalizadas como:
+
+- **Document Report**: Para señalar errores en la documentación.
+- **Mejores prácticas**: Para sugerir mejoras en la estructura del código.
+
+Estas plantillas permiten a los colaboradores elegir el tipo de Issue que mejor se adapta al problema y agilizan la gestión del repositorio.
+
+**Lecturas recomendadas**
+
+[Acerca de las propuestas - Documentación de GitHub](https://docs.github.com/es/issues/tracking-your-work-with-issues/about-issues)
+
+[GitHub - platzi/git-github: Repositorio del Curso de Git y GitHub](https://github.com/platzi/git-github)
