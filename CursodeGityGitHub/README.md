@@ -2353,3 +2353,137 @@ Estas plantillas permiten a los colaboradores elegir el tipo de Issue que mejor 
 [Acerca de las propuestas - Documentación de GitHub](https://docs.github.com/es/issues/tracking-your-work-with-issues/about-issues)
 
 [GitHub - platzi/git-github: Repositorio del Curso de Git y GitHub](https://github.com/platzi/git-github)
+
+## Colaboración sin errores: Pull Requests en GitHub
+
+Cuando trabajas en equipo en **GitHub**, necesitas una forma organizada de proponer cambios en el código sin afectar directamente la versión principal. Aquí es donde entran en juego los **Pull Requests (PRs)**.  
+
+Un **Pull Request (PR)** permite:  
+✅ Sugerir cambios en un repositorio antes de fusionarlos (**merge**).  
+✅ Revisar código en equipo para evitar errores.  
+✅ Mantener un historial claro de contribuciones.  
+
+### **1️⃣ ¿Cómo Crear un Pull Request en GitHub?**  
+Sigue estos pasos para proponer cambios a un repositorio:  
+
+### 📌 **1. Crear una Rama Nueva**  
+Antes de hacer cambios, crea una rama separada:  
+```bash
+git checkout -b feature-nueva-funcionalidad
+```
+✅ Usar nombres descriptivos para las ramas ayuda a la organización.  
+
+### 📌 **2. Hacer Cambios y Confirmarlos (`commit`)**  
+Modifica los archivos y guarda los cambios:  
+```bash
+git add .
+git commit -m "Añadida nueva funcionalidad X"
+```
+
+### 📌 **3. Subir los Cambios a GitHub (`push`)**  
+```bash
+git push origin feature-nueva-funcionalidad
+```
+
+### 📌 **4. Crear el Pull Request en GitHub**  
+1. Ve al repositorio en GitHub.  
+2. Haz clic en **"Pull Requests" > "New Pull Request"**.  
+3. Selecciona la rama **feature-nueva-funcionalidad** y compárala con **main**.  
+4. Agrega un **título claro** y una **descripción detallada**.  
+5. Presiona **"Create Pull Request"**.  
+
+### **2️⃣ ¿Cómo Revisar y Aprobar un Pull Request?**  
+Después de crear un PR, otros desarrolladores pueden **revisarlo** antes de aprobarlo.  
+
+### 📌 **Revisión de Código en un PR**  
+1. Ve al PR en GitHub.  
+2. Revisa los cambios en la pestaña **"Files changed"**.  
+3. Agrega comentarios en líneas específicas si es necesario.  
+4. Aprueba el PR con **"Approve"** o solicita cambios con **"Request changes"**.  
+
+### 📌 **Fusionar (`merge`) un Pull Request**  
+Si el código está listo, puedes **fusionarlo** con la rama principal:  
+1. En el PR, haz clic en **"Merge pull request"**.  
+2. Confirma con **"Confirm merge"**.  
+3. (Opcional) Borra la rama después de fusionar.  
+
+### **3️⃣ Diferencias entre `merge` y `rebase` en PRs**  
+- **Merge** → Mantiene el historial de commits.  
+- **Rebase** → Integra los cambios en una línea más limpia, sin historial de fusión.  
+
+Si prefieres un historial más ordenado, puedes hacer:  
+```bash
+git rebase main
+```
+
+### **4️⃣ Resolver Conflictos en un Pull Request**  
+Si GitHub detecta que hay cambios en la rama `main` que chocan con los de tu PR, verás un mensaje de **"This branch has conflicts that must be resolved"**.  
+
+### 📌 **Cómo Resolver Conflictos en Git**  
+1. Descarga los cambios más recientes:  
+   ```bash
+   git fetch origin
+   git checkout feature-nueva-funcionalidad
+   git merge main
+   ```
+2. Edita los archivos en conflicto (verás marcas como `<<<<<<<` en el código).  
+3. Guarda los cambios y haz un nuevo commit:  
+   ```bash
+   git add .
+   git commit -m "Resueltos conflictos de fusión"
+   ```
+4. Sube los cambios:  
+   ```bash
+   git push origin feature-nueva-funcionalidad
+   ```
+
+Ahora el PR estará listo para ser fusionado.  
+
+### 🎯 **Conclusión**  
+🔹 **Pull Requests** permiten colaborar sin afectar directamente la rama principal.  
+🔹 **Revisión de código** mejora la calidad y seguridad del proyecto.  
+🔹 **Resolver conflictos** es clave para mantener el código limpio.
+
+### Resumen
+
+Colaborar en GitHub requiere evitar modificar directamente la rama principal, lo que podría causar conflictos con el trabajo de otros compañeros. En su lugar, trabajar en ramas individuales y fusionarlas mediante *Pull Requests (PR)* es clave para un flujo de trabajo colaborativo y seguro.
+
+### ¿Por qué evitar cambios directos en la rama principal?
+
+Realizar cambios directamente en la rama principal (main) puede sobrescribir el trabajo no sincronizado de otros colaboradores. Este error común se evita al:
+
+- Crear una rama separada para cada contribuyente.
+- Fusionar cambios mediante una revisión en el Pull Request, antes de unirlos a la rama principal.
+
+### ¿Cómo funciona un Pull Request?
+
+1. **Crear una Rama Nueva**: Al iniciar cambios, crea una rama local específica. Por ejemplo, `developer01`.
+2. **Subir la Rama a GitHub**: Usa `git push -u origin` para subir tu rama.
+3. **Notificar al Equipo**: Al crear un Pull Request, notificas al equipo sobre tus cambios, lo que permite una revisión colaborativa (*Code Review*).
+
+### ¿Qué papel juega la revisión de código?
+
+El Code Review en los Pull Requests permite:
+
+- Evaluar y comentar los cambios antes de fusionarlos.
+- Aumentar la calidad y la visibilidad de los cambios propuestos.
+
+Aunque puede ser intimidante al principio, esta práctica asegura transparencia y mejora continua en el equipo.
+
+### ¿Cómo se fusiona un Pull Request?
+
+- **Comparación y Revisión**: Una vez que el equipo revisa los cambios y los aprueba, GitHub facilita la fusión con la rama principal.
+- **Resolver Conflictos**: GitHub verifica automáticamente conflictos potenciales, mostrando una marca verde si está listo para fusionarse sin problemas.
+- **Eliminar la Rama**: Tras la fusión, se elimina la rama para mantener el repositorio ordenado y listo para nuevas tareas.
+
+### ¿Cómo puedo practicar Pull Requests de forma efectiva?
+
+Para mejorar, colabora con un amigo o colega, practicando la creación y revisión de Pull Requests. Esta interacción entre ramas te ayudará a familiarizarte y a fluir con confianza en el proceso de colaboración en GitHub.
+
+**Lecturas recomendadas**
+
+[Acerca de las solicitudes de incorporación de cambios - Documentación de GitHub](https://docs.github.com/es/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/about-pull-requests)
+
+[Documentación de solicitudes de incorporación de cambios - Documentación de GitHub](https://docs.github.com/es/pull-requests)
+
+[GitHub - platzi/git-github: Repositorio del Curso de Git y GitHub](https://github.com/platzi/git-github)
