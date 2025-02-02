@@ -2487,3 +2487,241 @@ Para mejorar, colabora con un amigo o colega, practicando la creación y revisi�
 [Documentación de solicitudes de incorporación de cambios - Documentación de GitHub](https://docs.github.com/es/pull-requests)
 
 [GitHub - platzi/git-github: Repositorio del Curso de Git y GitHub](https://github.com/platzi/git-github)
+
+## Introducción a GitHub Projects
+
+**GitHub Projects** es una herramienta integrada en **GitHub** que permite gestionar proyectos de forma visual y organizada, combinando **issues, pull requests y notas** en tableros personalizables.  
+
+### 🎯 **¿Por qué usar GitHub Projects?**  
+✅ Facilita la planificación y seguimiento del trabajo.  
+✅ Se integra con Issues y Pull Requests automáticamente.  
+✅ Permite organizar tareas en tableros estilo **Kanban** o listas.  
+✅ Soporta automatización con GitHub Actions.  
+✅ Ideal para **equipos** y **proyectos individuales**.
+
+### **1️⃣ Cómo Crear un GitHub Project**  
+Sigue estos pasos para iniciar un **Project** en GitHub:  
+
+### 📌 **1. Acceder a GitHub Projects**  
+1. Ve al repositorio donde quieres gestionar el proyecto.  
+2. Haz clic en la pestaña **"Projects"**.  
+3. Presiona **"New project"**.  
+
+### 📌 **2. Elegir el Tipo de Proyecto**  
+Puedes elegir entre:  
+- **Table** (tablas personalizadas con filtros avanzados).  
+- **Board** (tablero estilo **Kanban**, similar a Trello).  
+
+Elige el que mejor se adapte a tu flujo de trabajo.  
+
+### 📌 **3. Configurar el Proyecto**  
+1. Asigna un **nombre y descripción**.  
+2. Agrega **columnas o estados** (Ej: "To Do", "In Progress", "Done").  
+3. Agrega **Issues o Pull Requests** arrastrándolos al tablero.  
+
+### **2️⃣ Uso Básico de GitHub Projects**  
+Una vez creado, puedes gestionar el trabajo de manera eficiente:  
+
+### 📌 **1. Agregar Tareas (Items)**  
+- Puedes **añadir Issues o PRs** existentes al proyecto.  
+- También puedes **crear notas personalizadas** para otras tareas.  
+
+### 📌 **2. Organizar el Trabajo con Columnas**  
+- **To Do** → Tareas pendientes.  
+- **In Progress** → Tareas en desarrollo.  
+- **Done** → Tareas completadas.  
+
+Puedes **personalizar columnas** según tu flujo de trabajo.  
+
+### 📌 **3. Automatizar con GitHub Actions**  
+Puedes configurar **automatizaciones** como:  
+✅ Mover un Issue a **"In Progress"** cuando se asigne.  
+✅ Marcar como **"Done"** cuando se cierre un Pull Request.
+
+### **3️⃣ Ejemplo de Flujo de Trabajo con GitHub Projects**  
+🔹 **1. Crear un Issue** → Se registra una tarea o bug.  
+🔹 **2. Mover a "In Progress"** → Se asigna a un desarrollador.  
+🔹 **3. Crear un Pull Request** → Se suben los cambios.  
+🔹 **4. Revisar el Código** → Se aprueba el PR.  
+🔹 **5. Fusionar y Cerrar el Issue** → Se mueve a "Done".  
+
+🚀 **Resultado:** Un equipo bien organizado y un código de mejor calidad.  
+
+### 🎯 **Conclusión**  
+✅ **GitHub Projects** ayuda a organizar y visualizar tareas en un proyecto.  
+✅ Se integra con **Issues, Pull Requests y GitHub Actions**.  
+✅ Es una herramienta poderosa para **equipos y desarrolladores individuales**.  
+
+### Resumen
+
+Las herramientas colaborativas en GitHub han evolucionado, haciendo posible una organización eficaz y centralizada del trabajo en equipo sin la necesidad de mensajes o correos constantes. GitHub Projects destaca como una herramienta clave que permite gestionar tareas, fechas y recursos dentro de un solo espacio.
+
+### ¿Cómo ayuda GitHub Projects en la organización de proyectos?
+
+GitHub Projects facilita la organización de actividades dentro de equipos, permitiendo asignar tareas y priorizarlas según su urgencia. La herramienta cuenta con plantillas para diferentes tipos de proyectos, como la de **Team Planning** (planificación en equipo), que organiza tareas en un tablero Kanban con tres columnas: “Por hacer”, “En progreso” y “Hechas”.
+
+### ¿Cómo crear y gestionar tareas en GitHub Projects?
+
+Para crear una tarea en un proyecto de GitHub:
+
+- Accede a “Projects” en tu perfil y selecciona **New Project**.
+- Elige la plantilla que mejor se adapte al tipo de proyecto.
+- Crea una nueva actividad, por ejemplo, “Actualizar proyecto HTML”. Esto permitirá que todos en el equipo sepan qué tareas están pendientes.
+
+Además, puedes definir prioridades, tamaños y tiempos estimados para cada tarea, basándote en metodologías ágiles, lo cual ayuda a coordinar el esfuerzo del equipo y optimizar el rendimiento en cada iteración.
+
+### ¿Cómo asignar tareas y gestionar las responsabilidades del equipo?
+
+Dentro de GitHub Projects, es posible asignar tareas a miembros del equipo, mostrando claramente las responsabilidades de cada persona. Cada tarea puede vincularse a un repositorio específico seleccionando la opción **Convertir a un issue**, lo que permite una relación directa entre la actividad y el código. Esta vinculación muestra un número identificador, útil para nombrar ramas en el repositorio y facilitar la organización.
+
+### ¿Cómo gestionar múltiples proyectos y tareas personales?
+
+Para aquellos que participan en varios proyectos o trabajan como freelancers, GitHub Projects es una solución que permite centralizar actividades y manejar múltiples repositorios. Al seleccionar la pestaña **My Items**, se filtran todas las tareas asignadas a ti, ayudándote a enfocarte sin distracciones.
+
+### ¿Cuál es la importancia de estimar tiempos en GitHub Projects?
+
+Aprender a estimar tiempos de manera precisa es esencial para el trabajo en equipo. GitHub Projects permite practicar la estimación del tiempo y la carga de trabajo en cada tarea, lo que ayuda a los desarrolladores a mejorar en la gestión de su propio tiempo y a contribuir de manera eficiente al equipo, evitando interrupciones.
+
+**Lecturas recomendadas**
+[Acerca de Projects - Documentación de GitHub](https://docs.github.com/es/issues/planning-and-tracking-with-projects/learning-about-projects/about-projects)
+
+[GitHub - platzi/git-github: Repositorio del Curso de Git y GitHub](https://github.com/platzi/git-github)
+
+## Automatización y Gestión de Proyectos en GitHub
+
+**GitHub Projects** permite no solo gestionar tareas de manera visual, sino también automatizar procesos para mejorar la eficiencia del equipo. A través de **GitHub Actions** y reglas personalizadas, puedes automatizar la gestión de issues, pull requests y cambios en el tablero del proyecto.  
+
+### **1️⃣ Beneficios de Automatizar GitHub Projects**  
+✅ Reduce tareas manuales repetitivas.  
+✅ Mantiene el tablero actualizado automáticamente.  
+✅ Facilita el seguimiento del progreso del proyecto.  
+✅ Mejora la colaboración dentro del equipo.  
+
+### **2️⃣ Métodos de Automatización en GitHub Projects**  
+
+### 📌 **1. Reglas de Automatización (Built-in Automation)**  
+GitHub Projects ofrece automatizaciones predefinidas que puedes activar sin necesidad de código.  
+
+Ejemplo de automatización en un **tablero Kanban**:  
+- Cuando se **abre un Issue**, se mueve automáticamente a la columna "To Do".  
+- Cuando un **Pull Request se vincula a un Issue**, el Issue se mueve a "In Progress".  
+- Cuando un **Pull Request se fusiona**, el Issue se cierra y se mueve a "Done".  
+
+💡 **Cómo configurarlas:**  
+1. Ve a **Projects** en tu repositorio.  
+2. Abre tu proyecto y haz clic en **"Automate"**.  
+3. Selecciona las reglas que deseas activar.  
+
+### 📌 **2. Automatización con GitHub Actions**  
+Si necesitas personalización avanzada, puedes usar **GitHub Actions** para ejecutar flujos de trabajo automáticos.  
+
+Ejemplo: **Mover un Issue cuando se le asigne un responsable**  
+```yaml
+name: Move Issue to In Progress
+
+on:
+  issues:
+    types: [assigned]
+
+jobs:
+  move_issue:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Move Issue to In Progress
+        uses: actions/add-to-project@v1
+        with:
+          project-url: https://github.com/orgs/MiOrganizacion/projects/1
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          column-name: "In Progress"
+```
+✅ **Explicación:**  
+- **`on: issues`** → Se ejecuta cuando se asigna un Issue.  
+- **`actions/add-to-project@v1`** → Mueve el Issue al tablero de proyectos.  
+- **`column-name: "In Progress"`** → Especifica a qué columna moverlo.  
+
+💡 **Cómo implementarlo:**  
+1. Crea un archivo en `.github/workflows/move-issue.yml`.  
+2. Copia y pega el código anterior.  
+3. Guarda y haz un `commit`.  
+
+### 📌 **3. Integración con Pull Requests**  
+Puedes automatizar cambios en el proyecto cuando un **Pull Request** es aprobado o fusionado.  
+
+Ejemplo: **Cerrar un Issue automáticamente cuando se fusiona un Pull Request**  
+```yaml
+name: Close Issue on PR Merge
+
+on:
+  pull_request:
+    types: [closed]
+
+jobs:
+  close_issue:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Close linked Issue
+        uses: peter-evans/close-issue@v2
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          comment: "Este issue ha sido resuelto en el PR #${{ github.event.pull_request.number }}"
+```
+✅ **Explicación:**  
+- **`on: pull_request: types: [closed]`** → Se ejecuta cuando se fusiona un PR.  
+- **`peter-evans/close-issue@v2`** → Cierra automáticamente los Issues vinculados.  
+- **Agrega un comentario** informando que el PR resolvió el Issue.  
+
+### **3️⃣ Casos de Uso Comunes**  
+🔹 **Asignar automáticamente Issues a un usuario específico.**  
+🔹 **Etiquetar Issues basados en palabras clave.**  
+🔹 **Publicar notificaciones en Slack cuando se cierre un Issue.**  
+🔹 **Reabrir Issues si el bug no se resolvió correctamente.**  
+
+### 🎯 **Conclusión**  
+✅ **Automatizar GitHub Projects** ahorra tiempo y mejora la organización.  
+✅ Las **reglas predefinidas** son ideales para configuraciones rápidas.  
+✅ **GitHub Actions** permite personalizaciones avanzadas con código.
+
+### Resumen
+
+Automatizar tareas en proyectos de software es esencial para ahorrar tiempo y mejorar la productividad. Con GitHub Projects, puedes configurar flujos de trabajo automáticos que simplifican la gestión y seguimiento de actividades, permitiendo un enfoque directo en el código.
+
+### ¿Cómo vincular y personalizar un proyecto en GitHub?
+
+1. Accede a tu repositorio en GitHub y selecciona la categoría de “Projects.”
+2. Si no tienes un proyecto vinculado, selecciona la opción “Enlazar a un proyecto.”
+3. Edita el proyecto sin título agregando un nombre relevante, como “Mi proyecto individual,” y, opcionalmente, una descripción y un README.
+4. Guarda los cambios y regresa al repositorio para enlazar este proyecto.
+
+### ¿Cómo gestionar y actualizar actividades dentro del proyecto?
+
+- Dentro de tu proyecto vinculado, crea actividades como “Actualizar archivo HTML,” “Actualizar archivo CSS,” o “Actualizar archivo JavaScript.”
+- Marca el estado de cada tarea: en progreso, pendiente o completada.
+- Usa la sección “Insights” para ver un gráfico del estado de las actividades y medir la eficacia del equipo.
+
+### ¿Cómo automatizar los cambios de estado en actividades?
+
+- Entra en los flujos de trabajo (Workflows) seleccionando los tres puntos en la esquina superior de tu proyecto.
+- Configura las reglas, por ejemplo, para que un issue o pull request cerrado cambie automáticamente el estado de la actividad a “Hecho.”
+- Personaliza otros workflows como el cambio de estado cuando un pull request es aprobado, asegurando que la automatización se adapte a tus necesidades.
+
+### ¿Cómo crear y enlazar un issue desde una actividad?
+
+1. Selecciona una actividad como “Actualizar archivo CSS,” presiona los tres puntos y conviértela en un issue en el repositorio.
+2. Crea una nueva rama desde la sección de ramas, nómbrala de forma clara, y agrega los cambios necesarios en el archivo, por ejemplo, un nuevo archivo style.css.
+3. Guarda los cambios, crea un pull request y describe los cambios. Usa la palabra clave closes seguido del número de issue para que GitHub lo cierre automáticamente cuando se apruebe el pull request.
+
+### ¿Qué ventajas ofrece el flujo automatizado en GitHub?
+
+Con esta automatización:
+
+- El estado de las tareas se actualiza solo, sin necesidad de hacerlo manualmente.
+- Los workflows pueden expandirse para notificar por Slack, Teams o correo electrónico cada vez que un pull request se cierra, facilitando la comunicación y el seguimiento en equipo.
+- GitHub Projects, junto con estas integraciones, permite un flujo de trabajo robusto y ágil.
+
+**Lecturas recomendadas**
+
+[GitHub - platzi/git-github: Repositorio del Curso de Git y GitHub](https://github.com/platzi/git-github)
+
+[Planning and tracking with Projects - GitHub Docs](https://docs.github.com/en/issues/planning-and-tracking-with-projects)
+
+[GitHub Issues · Project planning for developers · GitHub](https://github.com/features/issues)
