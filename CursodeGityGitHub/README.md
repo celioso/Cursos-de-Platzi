@@ -3279,3 +3279,5 @@ Este proceso garantiza que solo uses el tiempo necesario y no excedas el límite
 [Codespaces · GitHub](https://github.com/codespaces)
 
 [GitHub - platzi/git-github: Repositorio del Curso de Git y GitHub](https://github.com/platzi/git-github)
+
+---------
