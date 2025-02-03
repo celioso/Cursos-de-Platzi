@@ -2932,3 +2932,350 @@ Markdown facilita la creación de secciones y elementos visuales. Puedes agregar
 [Static Badge | Shields.io](https://shields.io/badges)
 
 [GitHub - platzi/git-github: Repositorio del Curso de Git y GitHub](https://github.com/platzi/git-github)
+
+## Uso de Wikis
+
+En las clases hemos visto como utilizar el archivo [README.md](http://readme.md/ "README.md") para mostrar la documentación del proyecto, con el tiempo esta práctica ha ganado cada vez más adopción por su sencillez, pero eso no es la única manera de crear documentación.
+
+Para ello existe dentro de Github la opción de crear una Wiki en donde puedes generar un nivel más estructurado de documentación. Puedes ver la sección de Wiki en tus proyectos en la sección superior del portal de Github.
+
+![Wiki](images/Wiki.png)
+
+Si seleccionas esta opción entonces podrás ver un botón que te invita a crear tu primera página, hazlo presiónalo.
+
+![Primera página](images/Primera_pagina.png)
+
+El formulario te da la opción de crear una nueva página a la que llama Home lo que es una gran opción, puedes usar esta página para mostrar la documentación inicial, pero también la puedes usar como un índice para poder llevar a tu lector a diferentes secciones y eso es lo que vamos a hacer. Escribe lo siguiente en tu formulario.
+
+```rst
+# ¡Bienvenido a la wiki!
+
+Aquí podrás encontrar todas las secciones para poder implementar tu proyecto de manera rápida y simple.
+
+## Índice de navegación
+
+[Explicación del proyecto](/proyecto.md)
+```
+
+Si presionas el botón de guardar los cambios, el resultado de esta primera edición es igual al de esta imagen.
+
+![Home](images/Home.png)
+
+Repite la misma operación, ahora con una nueva página llamada Proyecto, en su descripción puedes agregar cualquier contenido, en la imagen que sigue puedes ver un ejemplo de como debe lucir tu nueva página.
+
+![Proyecto](images/Proyecto.png)
+
+Si guardas los cambios, entonces el resultado de la estructura de tu wiki lucirá de la siguiente manera.
+
+![Páginas](images/Paginas.png)
+
+Comienza a crear algunas páginas, no te diré cuantas ni con qué nombres para que te diviertas, lo que sí haré es mostrarte como luce mi wiki al final.
+
+![Páginas 2](images/Paginas1.png)
+
+Ahora vuelve a tu página Home en donde agregaste un poco de texto y además un enlace, en la esquina superior derecha hay un botón con el que puedes editarla. En el código markdown de aquí abajo podrás ver una manera fácil en la que puedes navegar entre secciones.
+
+```rst
+# ¡Bienvenido a la wiki!
+
+Aquí podrás encontrar todas las secciones para poder implementar tu proyecto de manera rápida y simple.
+
+## Índice de navegación
+
+[Explicación del proyecto](./Proyecto)
+
+[Arquitectura](./Arquitectura)
+
+[Documentación](./Documentación)
+```
+
+Con este índice es fácil que tus usuarios puedan navegar entre las secciones de una manera cómoda, lo que estaría fenomenal es que ahora les facilites a tus usuarios volver a la sección principal en cada una de tus secciones para que la navegación se vuelva cíclica y así les sea muy fácil moverse entre todas las secciones. ¿Cómo harías eso?
+
+Volvamos a la pantalla principal de la wiki y observa que debajo del menú de páginas está una sección que te permite crear una barra lateral personalizada, selecciona esta opción.
+
+![Sidebar](images/Sidebar.png)
+
+Al hacerlo notarás un formulario idéntico a los anteriores, solo que con un título diferente en donde podrás personalizar todos los detalles de la barra lateral, intenta copiar y pegar aquí el mismo markdown que acabamos de usar en la página Home. ¡Oh! Cierto, no cambies el título, la palabra _Sidebar es lo que permite que Github sepa que estamos hablando de una barra lateral y no de otra sección más.
+
+![Custom Sidebar](images/Custom_Sidebar.png)
+
+Guarda tus cambios y disfruta de tu nueva barra de navegación.
+
+![Custom Sidebar 1](images/Custom_Sidebar1.png)
+
+Una característica superinteresante es que puedes clonar esta wiki dentro de tu entorno local sin mayor problema, observa que hacer esto significa que solo vas a clonar todos estos documentos y no vas a hacer lo mismo con el repositorio lo que se me hace superinteresante porque puede ser que el portal de Github sea fantástico, pero no tanto como para pasar ahí horas leyendo documentos por lo que de esta manera puedes hacerlo desde tu lector de documentos Markdown favorito.
+
+¡Invierte tiempo en tus wikis! Visita las de otros proyectos y toma muchas ideas de ahí, practica mucho con tu documentación aprendiendo a usar el lenguaje Markdown y cuando tengas una wiki fantástica no olvides compartirla con todos nosotros.
+
+## Cómo usar GitHub Gist
+
+**GitHub Gist** es una herramienta de GitHub que permite crear y compartir fragmentos de código, notas y documentos en formato **Markdown**. Es ideal para almacenar pequeñas piezas de código reutilizable, documentar ideas y compartir con otros desarrolladores.  
+
+### **1️⃣ ¿Qué es GitHub Gist y para qué sirve?**  
+
+✅ Guardar y compartir fragmentos de código.  
+✅ Crear notas en **Markdown** con documentación técnica.  
+✅ Publicar snippets de código accesibles desde cualquier lugar.  
+✅ Colaborar con otros a través de comentarios en los Gists.  
+
+### **2️⃣ Crear un Gist en GitHub**  
+
+### 📌 **Paso 1: Acceder a GitHub Gist**  
+🔹 Ve a [GitHub Gist](https://gist.github.com/).  
+🔹 Inicia sesión con tu cuenta de GitHub.  
+
+### 📌 **Paso 2: Crear un Nuevo Gist**  
+1️⃣ Haz clic en **"New Gist"**.  
+2️⃣ Escribe un **nombre de archivo** con su extensión (ejemplo: `script.py`).  
+3️⃣ Agrega el **código o texto** dentro del editor.  
+4️⃣ Opcionalmente, agrega una **descripción** para explicar el contenido.  
+
+### 📌 **Paso 3: Elegir la Privacidad**  
+🔹 **Público:** Visible para todos.  
+🔹 **Secreto:** Solo accesible con el enlace directo.  
+
+5️⃣ Haz clic en **"Create secret gist"** o **"Create public gist"**.  
+
+### **3️⃣ Administrar y Compartir un Gist**  
+
+### **📌 Compartir un Gist**  
+✅ Cada Gist tiene una **URL única** para compartir fácilmente.  
+✅ Puedes incrustarlo en blogs o foros con:  
+```md
+<script src="https://gist.github.com/tu-usuario/gist-ID.js"></script>
+```
+
+### **📌 Editar y Eliminar un Gist**  
+🔹 Para editarlo, abre el Gist y haz clic en **"Edit"**.  
+🔹 Para eliminarlo, haz clic en **"Delete"** (⚠️ No se puede recuperar después).  
+
+### **4️⃣ Usar GitHub Gist con Git**  
+
+Puedes clonar un Gist en tu computadora como un repositorio Git:  
+```sh
+git clone https://gist.github.com/tu-usuario/gist-ID.git
+```
+Luego puedes editar archivos, hacer commits y subir cambios:  
+```sh
+git add .
+git commit -m "Actualización del Gist"
+git push origin main
+```
+
+### **🎯 Conclusión**  
+✅ **GitHub Gist** es una excelente herramienta para compartir código y notas.  
+✅ Soporta **Markdown**, código de múltiples lenguajes y control de versiones.  
+✅ Se puede **clonar, editar y actualizar** con Git.  
+
+### Resumen
+
+GitHub Gist permite compartir y discutir fragmentos de código de forma sencilla, sin necesidad de crear un repositorio completo. Esta herramienta es ideal para obtener retroalimentación rápida y colaborativa sin comprometer los cambios en un proyecto principal.
+
+### ¿Qué es GitHub Gist y cómo se utiliza?
+GitHub Gist es una funcionalidad de GitHub diseñada para almacenar y compartir pequeños fragmentos de código. A diferencia de un repositorio tradicional, un Gist no se vincula a un proyecto completo, sino que permite discutir una pieza de código de manera aislada, ideal para colaboración rápida.
+
+- **Crear un Gist**: Ingresa a gist.github.com, pega el fragmento de código y añade una descripción breve.
+- **Compartir el enlace**: Copia la URL generada y compártela con tus colaboradores para abrir la discusión.
+- **Feedback en tiempo real**: Los colaboradores pueden comentar directamente en el Gist, permitiendo iteraciones y mejoras rápidas.
+
+### ¿Cómo se usa GitHub Gist para colaboración?
+La simplicidad de los Gists facilita el trabajo en equipo al ofrecer un espacio directo de intercambio de ideas y mejoras sin alterar el proyecto base.
+
+- **Conversación activa**: Puedes recibir y responder comentarios sobre el fragmento de código.
+- **Actualización en tiempo real**: Si el colaborador sugiere cambios, puedes editar el Gist y mejorar el código sin necesidad de crear nuevas ramas.
+- **Ventajas en pair programming**: Un Gist puede ser usado como base en sesiones de pair programming, manteniendo el enfoque en mejoras puntuales y rápidas.
+
+### ¿Cómo se gestionan los Gists en GitHub?
+
+GitHub permite gestionar y organizar fácilmente los Gists en tu perfil, lo que facilita tener una colección de snippets reutilizables.
+
+- **Acceso rápido**: Los Gists se encuentran en tu perfil y pueden organizarse en una colección para referencias futuras.
+- **Eliminar Gists innecesarios:** Si un Gist ya no es útil, puede eliminarse sin afectar otros proyectos.
+- **Edición y actualización**: Los Gists pueden editarse directamente para mantener el código actualizado según las necesidades del proyecto.
+
+### ¿Qué beneficios adicionales ofrece GitHub Gist?
+
+Además de la colaboración, los Gists son útiles para mantener una biblioteca personal de snippets de código, mejorando la eficiencia en nuevos proyectos.
+
+- **Biblioteca personal**: Guarda configuraciones iniciales o fragmentos reutilizables para evitar escribir código repetitivo.
+- **Probar ideas antes de integrarlas**: Permite experimentar con variantes de código antes de incorporarlas oficialmente.
+- **Ahorro de tiempo**: Facilita el acceso y reutilización de código en proyectos similares, optimizando el flujo de trabajo.
+
+**Lecturas recomendadas**
+
+[Discover gists · GitHub](https://gist.github.com/)
+
+[Crear gists - Documentación de GitHub](https://docs.github.com/es/get-started/writing-on-github/editing-and-sharing-content-with-gists/creating-gists)
+
+[GitHub - platzi/git-github: Repositorio del Curso de Git y GitHub](https://github.com/platzi/git-github)
+
+## Cómo usar GitHub Pages
+
+**GitHub Pages** es una herramienta gratuita de GitHub que permite **hospedar sitios web estáticos** directamente desde un repositorio de GitHub. Es ideal para mostrar proyectos, crear blogs o publicar portafolios personales.  
+
+### **1️⃣ Configurar GitHub Pages en un Repositorio**  
+
+### **📌 Paso 1: Crear o Usar un Repositorio**  
+1️⃣ Ve a [GitHub](https://github.com/) y crea un nuevo repositorio o usa uno existente.  
+2️⃣ Sube los archivos de tu sitio web (**HTML, CSS, JavaScript, etc.**).  
+
+### **📌 Paso 2: Activar GitHub Pages**  
+1️⃣ Ve a la pestaña **Settings** del repositorio.  
+2️⃣ Desplázate hasta **Pages** en la barra lateral izquierda.  
+3️⃣ En la sección **"Source"**, selecciona la rama donde está tu código (`main` o `gh-pages`).  
+4️⃣ Haz clic en **Save**.  
+
+✅ **¡Listo!** Tu sitio estará disponible en `https://tu-usuario.github.io/nombre-del-repositorio/` después de unos minutos.  
+
+### **2️⃣ Usar GitHub Pages con Jekyll (Opcional para Blogs)**  
+Si quieres un blog sin programar demasiado, GitHub Pages soporta **Jekyll**, un generador de sitios estáticos basado en Markdown.  
+
+1️⃣ Crea un repositorio con un archivo `_config.yml`.  
+2️⃣ Usa un tema de Jekyll agregando esto a `config.yml`:  
+   ```yaml
+   theme: minima
+   ```  
+3️⃣ Sube archivos `.md` y GitHub Pages generará tu blog automáticamente.  
+
+### **3️⃣ Personalizar tu Dominio con GitHub Pages**  
+Si tienes un dominio propio, puedes vincularlo a tu sitio:  
+
+1️⃣ Ve a **Settings > Pages** y agrega tu dominio en **Custom Domain**.  
+2️⃣ Configura los registros `CNAME` en tu proveedor de dominio.  
+
+### **🎯 Conclusión**  
+✅ **GitHub Pages** es una forma fácil y gratuita de hospedar sitios web.  
+✅ Puedes usarlo con **HTML puro, frameworks o Jekyll**.  
+✅ Se integra perfectamente con repositorios y control de versiones.  
+
+**Lecturas recomendadas**
+
+[GitHub Pages | Websites for you and your projects, hosted directly from your GitHub repository. Just edit, push, and your changes are live.](https://pages.github.com/)
+
+[Guía de inicio rápido para GitHub Pages - Documentación de GitHub](https://docs.github.com/es/pages/quickstart)
+
+[GitHub - platzi/git-github: Repositorio del Curso de Git y GitHub](https://github.com/platzi/git-github)
+
+## Cómo usar GitHub Codespaces: Configuración y Desarrollo en la Nube
+
+**GitHub Codespaces** es un entorno de desarrollo en la nube basado en **Visual Studio Code**, que te permite escribir, compilar y ejecutar código directamente desde el navegador sin necesidad de configuraciones locales.  
+
+### **1️⃣ Habilitar GitHub Codespaces**  
+
+### 📌 **Requisitos**  
+✅ Tener una cuenta en [GitHub](https://github.com/).  
+✅ Ser parte de un plan que incluya Codespaces (usuarios gratuitos tienen horas limitadas).  
+✅ Usar un repositorio donde quieras trabajar.  
+
+### 📌 **Cómo crear un Codespace**  
+1️⃣ Ve al repositorio en GitHub.  
+2️⃣ Haz clic en el botón **"Code"** (verde).  
+3️⃣ Selecciona la pestaña **"Codespaces"**.  
+4️⃣ Haz clic en **"Create codespace on main"**.  
+5️⃣ Espera unos segundos y tendrás un entorno **VS Code en el navegador** listo para programar.
+
+### **2️⃣ Personalizar el Entorno de Desarrollo**  
+
+GitHub Codespaces permite personalizar el entorno con archivos de configuración:  
+
+### 📌 **Instalar Extensiones**  
+Puedes agregar extensiones de **VS Code** desde la barra lateral.  
+
+### 📌 **Configurar con un Devcontainer**  
+Puedes definir un entorno específico agregando un archivo `.devcontainer/devcontainer.json`:  
+```json
+{
+  "name": "Mi Codespace",
+  "image": "mcr.microsoft.com/devcontainers/python:3.9",
+  "extensions": ["ms-python.python"]
+}
+```
+Esto configura un entorno de desarrollo con Python 3.9 y extensiones preinstaladas.  
+
+### **3️⃣ Trabajar con Git y GitHub**  
+
+### **📌 Clonar un Repositorio**  
+Si creaste un Codespace vacío, puedes clonar un repositorio con:  
+```sh
+git clone https://github.com/usuario/repositorio.git
+```
+
+### **📌 Subir Cambios**  
+Después de hacer modificaciones, usa:  
+```sh
+git add .
+git commit -m "Actualización del código"
+git push origin main
+```
+
+## **4️⃣ Ejecutar y Depurar Código**  
+
+✅ Puedes ejecutar código desde la terminal integrada (`Ctrl + ` `)  
+✅ Puedes usar **depuración interactiva** con `F5` en VS Code  
+✅ Soporta múltiples lenguajes como **Python, JavaScript, C++ y más**  
+
+### **🎯 Conclusión**  
+✅ **GitHub Codespaces** te permite **desarrollar sin instalar nada localmente**.  
+✅ Es una opción ideal para **colaborar en proyectos sin problemas de configuración**.  
+✅ Puedes personalizar el entorno con **devcontainers** y usar **VS Code en la nube**.
+
+### Resumen
+
+GitHub Codespaces es una herramienta poderosa que permite crear y gestionar entornos de desarrollo en la nube, aumentando la flexibilidad y productividad para desarrolladores en cualquier lugar. Con una interfaz similar a Visual Studio Code, Codespaces permite desarrollar proyectos desde cualquier dispositivo, sin importar si está instalado el entorno completo en la máquina local.
+
+### ¿Qué es GitHub Codespaces y cómo funciona?
+
+GitHub Codespaces ofrece entornos de desarrollo alojados en máquinas virtuales en la nube. Esto permite a los desarrolladores trabajar desde cualquier dispositivo, como una tableta o teléfono, en proyectos alojados en repositorios de GitHub. Con acceso a herramientas de compilación y despliegue, se puede trabajar con múltiples lenguajes de programación sin necesidad de instalarlos localmente.
+
+### ¿Cómo se crea un Codespace?
+
+Para iniciar un Codespace:
+
+- Selecciona “New Codespace” en el menú.
+- Escoge el repositorio en el que vas a trabajar.
+- Elige la rama y región que prefieras.
+- Configura el tipo de máquina virtual, seleccionando entre diferentes núcleos y memoria RAM según la necesidad del proyecto.
+
+Una vez creado, se abre una interfaz de desarrollo completa, que incluye explorador de archivos, terminal integrada y control de versiones.
+
+### ¿Cuáles son las características clave de Codespaces?
+
+Algunas funcionalidades destacadas incluyen:
+
+- **Explorador de archivos y extensiones**: permite administrar archivos y añadir extensiones, igual que en VS Code.
+- **Terminal integrada**: facilita ejecutar comandos sin salir del entorno.
+- **Preconfiguración de entornos**: lenguajes como Node, Python y .NET ya están instalados, permitiendo trabajar sin configurarlos en la máquina local.
+
+### ¿Cómo se gestiona un proyecto en Codespaces?
+
+Puedes crear y gestionar proyectos en múltiples lenguajes. Por ejemplo, para un proyecto en .NET:
+
+- Crea una carpeta para el proyecto en la rama del repositorio.
+- Usa comandos como `.NET new console` para iniciar el proyecto, sin preocuparte por tener .NET instalado localmente.
+- La terminal permite ejecutar el proyecto con `.NET run` y hacer ajustes sobre la marcha.
+
+### ¿Cómo hacer commit y sincronizar cambios?
+
+Al realizar cambios en el proyecto, estos se pueden ver en la sección de control de versiones:
+
+1. Añade un mensaje de commit que describa los cambios.
+2. Sincroniza los cambios para reflejarlos en el repositorio de GitHub.
+
+Esta integración asegura que cada modificación quede guardada y reflejada en GitHub, como si se hubiese hecho en un entorno local.
+
+### ¿Por qué es importante eliminar Codespaces al terminar?
+
+Cada Codespace utiliza recursos de GitHub y, en cuentas gratuitas, existe un límite de 120 horas de uso al mes. Al completar una tarea:
+
+- Elimina el Codespace para evitar cargos adicionales.
+- Desde “My Codespaces”, selecciona el Codespace y elige “delete” para confirmar la eliminación.
+
+Este proceso garantiza que solo uses el tiempo necesario y no excedas el límite de la cuenta gratuita.
+
+**Lecturas recomendadas**
+
+[Codespaces documentation - GitHub Docs](https://docs.github.com/en/codespaces)
+
+[Codespaces · GitHub](https://github.com/codespaces)
+
+[GitHub - platzi/git-github: Repositorio del Curso de Git y GitHub](https://github.com/platzi/git-github)
