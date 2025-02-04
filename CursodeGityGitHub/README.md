@@ -3599,3 +3599,211 @@ Sin embargo, hay un costo asociado a su uso cuando se superan las horas gratuita
 [El editor basado en web de github.dev - Documentación de GitHub](https://docs.github.com/es/codespaces/the-githubdev-web-based-editor)
 
 [GitHub - platzi/git-github: Repositorio del Curso de Git y GitHub](https://github.com/platzi/git-github)
+
+## Cómo Usar Tokens en GitHub para Acceso Seguro a Repositorios Privados
+
+Los **tokens de acceso personal (PAT - Personal Access Tokens)** en GitHub permiten autenticarse de manera segura sin necesidad de usar contraseñas. Son esenciales para interactuar con repositorios privados desde la terminal, Git, API o herramientas externas.  
+
+### **1️⃣ Generar un Token de Acceso Personal en GitHub**  
+1. Ve a [GitHub → Settings](https://github.com/settings/tokens).  
+2. Haz clic en **"Generate new token (classic)"**.  
+3. Asigna un **nombre descriptivo** al token.  
+4. Define la **fecha de expiración** (opcional, pero recomendable).  
+5. Selecciona los permisos necesarios:  
+   - `repo`: Acceder a repositorios privados.  
+   - `workflow`: Administrar GitHub Actions.  
+   - `admin:repo_hook`: Gestionar webhooks del repositorio.  
+6. Haz clic en **"Generate token"** y **guárdalo en un lugar seguro**.  
+
+⚠️ **Importante**: No podrás ver el token después de salir de la página.  
+
+### **2️⃣ Usar el Token en Git**  
+### 📌 **Autenticación con HTTPS**  
+Si tu repositorio es privado y quieres hacer `git push` o `git pull`, usa este formato:  
+```sh
+git clone https://<TOKEN>@github.com/usuario/repositorio.git
+```
+Ejemplo:  
+```sh
+git clone https://ghp_xxxxxxx@github.com/miusuario/mirepo.git
+```
+Luego, puedes usar `git pull`, `git push`, etc., sin necesidad de ingresar credenciales.  
+
+### **3️⃣ Configurar el Token en Git (Credenciales Guardadas)**
+Si quieres evitar ingresar el token cada vez que interactúas con GitHub, usa el **credential helper**:  
+```sh
+git config --global credential.helper store
+```
+Luego, la primera vez que hagas `git push`, Git te pedirá el usuario y el token como contraseña.  
+
+### **4️⃣ Usar el Token con la API de GitHub**
+Si necesitas interactuar con la API de GitHub, puedes hacer una solicitud con `curl`:  
+```sh
+curl -H "Authorization: token <TOKEN>" https://api.github.com/user/repos
+```
+
+### **5️⃣ Revocar o Regenerar un Token**
+Si pierdes un token o ya no lo necesitas:  
+🔹 Ve a [GitHub → Settings → Tokens](https://github.com/settings/tokens).  
+🔹 Selecciona el token y haz clic en **"Revoke"** o **"Regenerate"**.  
+
+### **🎯 Conclusión**
+✅ **Los tokens de GitHub son más seguros que las contraseñas**.  
+✅ **Permiten interactuar con GitHub desde Git, API o herramientas externas**.  
+✅ **Es importante administrar y revocar tokens cuando ya no se necesiten**.  
+
+### Resumen
+Para quienes buscan facilitar el trabajo colaborativo sin comprometer la seguridad de su repositorio privado, GitHub ofrece una solución eficaz a través de los tokens de acceso personal (PAT, por sus siglas en inglés). Estas llaves temporales otorgan acceso controlado a usuarios o aplicaciones, asegurando que solo puedan realizar acciones específicas y por el tiempo necesario. En este artículo, exploramos cómo crear y gestionar tokens en GitHub para maximizar la seguridad y funcionalidad en distintos entornos.
+
+### ¿Cómo invitar a otros sin hacerlos colaboradores permanentes?
+
+- **Escenarios comunes**: Cuando deseas que alguien contribuya de forma temporal, pero sin añadirlo como colaborador permanente.
+- **Solución con tokens**: En lugar de agregarlo como colaborador, puedes crear un token con permisos limitados para que acceda al repositorio solo en el tiempo y con las acciones necesarias.
+
+### ¿Qué tipos de tokens existen en GitHub?
+
+GitHub ofrece dos tipos de tokens:
+
+- **Tokens Clásicos**: Permiten seleccionar permisos básicos y pueden tener duración indefinida (aunque no es recomendable).
+- **Tokens Detallados**: Versiones más nuevas que permiten control granular y una duración máxima de 90 días. Ideal para asegurar un acceso mucho más restringido.
+
+### ¿Cómo se crea un token clásico?
+
+1. **Acceso a Configuración**: Ve a “Settings” en tu perfil y selecciona “Developer Settings”.
+2. **Generar Token**: Elige “Generate New Token” y configura:
+ - Nombre: Ayuda a identificar el propósito del token.
+ - Expiración: Ajusta a la duración esperada del proyecto.
+ - Permisos: Elige los accesos que consideres necesarios (repos, paquetes, notificaciones, etc.).
+ 
+3. Guardar Token: Copia el token en un lugar seguro, ya que no será visible nuevamente después de cerrar la página.
+
+### ¿Cómo funcionan los tokens detallados?
+
+A diferencia de los tokens clásicos, los detallados permiten:
+
+- **Duración Máxima de 90 Días**: Ofrece seguridad adicional al limitar el tiempo de acceso.
+- **Control de Repositorio Específico**: Puedes configurar que el token tenga acceso solo a repositorios específicos, incluso privados o públicos.
+- **Permisos Granulares**: Permiten ajustar más a detalle el alcance y las acciones que el token puede realizar.
+
+### ¿Cómo utilizar el token en un entorno externo?
+
+Al clonar un repositorio en un equipo sin credenciales de GitHub, el sistema pedirá el nombre de usuario y, en lugar de la contraseña de la cuenta, el token de acceso personal. Al ingresar el token en la terminal, podrás acceder al repositorio de forma segura, replicando el proceso de clonación estándar sin exponer tus credenciales personales.
+
+### ¿Para qué otras tareas se pueden utilizar los tokens?
+
+Los tokens no solo sirven para acceder desde equipos remotos; su funcionalidad se extiende a:
+
+- **Automatización con GitHub Actions**: Automatiza flujos de trabajo en tu repositorio.
+- **Scripts Personalizados**: Ideal para automatizar tareas repetitivas como commits periódicos o sincronización de proyectos.
+- **Integración con Terceros**: Configura accesos específicos para aplicaciones que interactúan con tu repositorio.
+
+### ¿Qué medidas de seguridad deben tomarse con los tokens?
+
+- **Configurar expiración**: Limita la duración del token según las necesidades.
+- **Reducir permisos**: Otorga solo los permisos mínimos necesarios.
+- **Revisión y eliminación**: Revisa periódicamente los tokens en uso y elimina aquellos que ya no sean necesarios para evitar riesgos de acceso no autorizado.
+
+**Lecturas recomendadas**
+
+[GitHub - platzi/git-github: Repositorio del Curso de Git y GitHub](https://github.com/platzi/git-github)
+
+[Sign in to GitHub · GitHub](https://github.com/settings/tokens)
+
+## Gestión de Dependencias y Seguridad con Dependabot en GitHub
+
+**Dependabot** es una herramienta integrada en GitHub que ayuda a mantener actualizadas las dependencias de tu proyecto y a detectar vulnerabilidades de seguridad en paquetes desactualizados.  
+
+### **📌 1️⃣ ¿Qué es Dependabot y cómo funciona?**  
+**Dependabot** automatiza la actualización de dependencias en proyectos gestionados con **npm, pip, Maven, Gradle, Composer, Cargo**, entre otros.  
+
+🛠️ **Funciones principales:**  
+✔ **Actualización automática de dependencias.**  
+✔ **Alertas de seguridad sobre paquetes vulnerables.**  
+✔ **Creación de Pull Requests para solucionar problemas detectados.**  
+
+### **🔄 2️⃣ Activar Dependabot en un Repositorio**  
+1️⃣ Ve a tu repositorio en GitHub.  
+2️⃣ Accede a **"Settings" → "Security & analysis"**.  
+3️⃣ Habilita **Dependabot alerts** y **Dependabot security updates**.  
+
+### **📥 3️⃣ Configurar Actualizaciones Automáticas de Dependencias**  
+Para activar Dependabot en la actualización de paquetes, crea un archivo de configuración en `.github/dependabot.yml`:  
+
+```yaml
+version: 2
+updates:
+  - package-ecosystem: "npm" # Reemplázalo según tu gestor (pip, maven, etc.)
+    directory: "/" # Ruta del archivo de dependencias
+    schedule:
+      interval: "daily" # Opciones: daily, weekly, monthly
+    open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
+    ignore:
+      - dependency-name: "lodash" # Puedes excluir paquetes específicos
+```
+
+📌 **Personalización:**  
+- **`package-ecosystem`**: Define el gestor de dependencias (npm, pip, composer, etc.).  
+- **`directory`**: Ubicación del archivo de dependencias.  
+- **`schedule`**: Frecuencia de actualización.  
+- **`ignore`**: Evita actualizaciones de paquetes específicos.  
+
+### **⚠ 4️⃣ Seguridad: Alertas y Parches Automáticos**  
+Cuando GitHub detecta una vulnerabilidad en una dependencia:  
+🔴 Se muestra una alerta en la pestaña **"Security" → "Dependabot alerts"**.  
+🟢 Dependabot puede generar automáticamente un **Pull Request** con una versión segura del paquete afectado.  
+
+### **🎯 Conclusión**  
+✅ **Mejora la seguridad** al detectar y corregir vulnerabilidades automáticamente.  
+✅ **Mantiene las dependencias actualizadas** con mínimo esfuerzo.  
+✅ **Facilita la gestión de proyectos** al automatizar actualizaciones en múltiples entornos. 
+
+### Resumen
+
+La gestión de dependencias es esencial para mantener la seguridad y estabilidad de las aplicaciones. Dependabot es una herramienta eficaz que, al integrarse en el flujo de trabajo, identifica y soluciona problemas en las versiones de paquetes de terceros, minimizando vulnerabilidades. Aquí exploramos cómo configurar y aprovechar al máximo Dependabot.
+
+### ¿Por qué es importante mantener actualizados los paquetes de terceros?
+
+Los paquetes de terceros son un recurso común en el desarrollo para simplificar tareas como la lectura de archivos JSON o la creación de APIs. Sin embargo, estas dependencias pueden convertirse en un riesgo si no se actualizan, ya que las versiones desactualizadas pueden contener vulnerabilidades que comprometan la seguridad de la aplicación.
+
+### ¿Cómo activar Dependabot en un repositorio?
+
+Para activar Dependabot:
+
+1. Accede a Settings o Security dentro del repositorio.
+2. Ve a Code Security and Analysis y selecciona la categoría de Dependabot.
+3. Activa las alertas de seguridad y actualizaciones de versión.
+4. Dependabot generará un archivo dependabot.yml, donde puedes ajustar la frecuencia de las revisiones, como cambiar de semanal a diaria para detectar actualizaciones con mayor regularidad.
+
+### ¿Cómo utilizar Dependabot para gestionar versiones específicas?
+
+En el caso de proyectos .NET, se pueden elegir versiones específicas de paquetes:
+
+1. Navega a la pestaña del paquete deseado (por ejemplo, **Newtonsoft.Json**).
+2. Escoge una versión con vulnerabilidades conocidas (como 12.0.3 en este ejemplo) para ver cómo Dependabot detecta y notifica el problema.
+3. Dependabot genera un pull request automáticamente para actualizar la versión del paquete y solucionar la vulnerabilidad detectada.
+
+### ¿Qué sucede cuando Dependabot detecta una vulnerabilidad?
+
+Cuando Dependabot encuentra una vulnerabilidad:
+
+- Notifica con prioridad la versión insegura del paquete.
+- Crea un pull request para actualizar el paquete a una versión segura.
+- Permite revisar y aceptar la actualización directamente desde la sección de **Security** o en **Pull Requests**.
+
+Dependabot analiza la compatibilidad de versiones para asegurar que la actualización sea estable y, en algunos casos, puede incluso eliminar la rama creada una vez fusionada la actualización.
+
+### ¿Por qué integrar Dependabot en el flujo de trabajo?
+
+Dependabot simplifica la gestión de actualizaciones:
+
+- Detecta y repara vulnerabilidades sin intervención manual.
+- Mantiene el proyecto actualizado con las versiones estables más recientes de cada dependencia.
+- Agiliza la revisión y aplicación de actualizaciones, evitando que el equipo trabaje con versiones obsoletas.
+
+**Lecturas recomendadas**
+
+[GitHub - platzi/git-github: Repositorio del Curso de Git y GitHub](https://github.com/platzi/git-github)
+
+[Dependabot · GitHub](https://github.com/dependabot)
