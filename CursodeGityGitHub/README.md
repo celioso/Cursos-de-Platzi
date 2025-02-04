@@ -3280,4 +3280,322 @@ Este proceso garantiza que solo uses el tiempo necesario y no excedas el límite
 
 [GitHub - platzi/git-github: Repositorio del Curso de Git y GitHub](https://github.com/platzi/git-github)
 
----------
+## Cómo configurar entornos de desarrollo avanzados en GitHub Codespaces
+
+**GitHub Codespaces** permite personalizar el entorno de desarrollo utilizando **containers de desarrollo (Dev Containers)**. Esto es útil para proyectos complejos que requieren herramientas específicas, dependencias o configuraciones avanzadas.  
+
+### **1️⃣ Habilitar GitHub Codespaces en un Proyecto**  
+Antes de personalizar el entorno, asegúrate de que GitHub Codespaces está habilitado en tu repositorio:  
+1. Ve a tu repositorio en GitHub.  
+2. Haz clic en el botón **"Code"** y selecciona la pestaña **"Codespaces"**.  
+3. Crea un nuevo Codespace en la rama principal (`main`).  
+
+### **2️⃣ Personalizar el Entorno con un Dev Container**  
+Para configurar un entorno avanzado, debes agregar un **devcontainer** a tu repositorio.  
+
+### 📌 **Paso 1: Crear la Carpeta de Configuración**  
+En la raíz del repositorio, crea una carpeta llamada **`.devcontainer/`** y dentro de ella, un archivo llamado **`devcontainer.json`**.  
+
+### 📌 **Paso 2: Definir la Configuración del Contenedor**  
+Aquí tienes un ejemplo de `devcontainer.json` para un entorno de desarrollo con **Python 3.9 y Node.js**:  
+```json
+{
+  "name": "Mi Entorno de Desarrollo",
+  "image": "mcr.microsoft.com/devcontainers/python:3.9",
+  "features": {
+    "ghcr.io/devcontainers/features/node:1": {}
+  },
+  "extensions": [
+    "ms-python.python",
+    "ms-vscode.vscode-typescript-tslint-plugin"
+  ],
+  "postCreateCommand": "pip install -r requirements.txt"
+}
+```
+🔹 **Explicación:**  
+✅ Usa una imagen de contenedor con **Python 3.9**.  
+✅ Agrega soporte para **Node.js**.  
+✅ Instala extensiones de VS Code.  
+✅ Ejecuta `pip install -r requirements.txt` después de crear el Codespace.  
+
+### **3️⃣ Configurar Variables de Entorno**  
+Si tu proyecto necesita credenciales o claves API, puedes agregarlas en `devcontainer.json`:  
+```json
+"remoteEnv": {
+  "API_KEY": "tu_clave_aqui"
+}
+```
+También puedes definirlas en **GitHub Secrets** para mayor seguridad.  
+
+### **4️⃣ Instalar Dependencias Automáticamente**  
+Puedes agregar un script de configuración en `.devcontainer/postCreateCommand.sh` para instalar dependencias automáticamente:  
+```sh
+#!/bin/bash
+echo "Instalando dependencias..."
+pip install -r requirements.txt
+npm install
+```
+Luego, agrégalo en `devcontainer.json`:  
+```json
+"postCreateCommand": "./.devcontainer/postCreateCommand.sh"
+```
+
+### **5️⃣ Trabajar con Bases de Datos y Servicios**  
+Si tu proyecto necesita **MySQL, PostgreSQL o Redis**, puedes definirlos en `.devcontainer/docker-compose.yml`:  
+```yaml
+version: '3'
+services:
+  db:
+    image: postgres:13
+    restart: always
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: mydatabase
+```
+Y en `devcontainer.json`:  
+```json
+"dockerComposeFile": ".devcontainer/docker-compose.yml",
+"service": "app"
+```
+
+### **🎯 Conclusión**  
+✅ **GitHub Codespaces** permite configurar entornos avanzados sin necesidad de instalar nada localmente.  
+✅ Puedes personalizar el entorno con **Dev Containers**, instalar dependencias automáticamente y conectar servicios externos.  
+✅ Esto es ideal para proyectos complejos, colaborativos y con necesidades específicas de configuración.  
+
+### Resumen
+
+Los Codespaces de GitHub permiten una experiencia de desarrollo altamente personalizable sin necesidad de configurar entornos locales, gracias a su integración de plantillas y configuraciones específicas. Aquí exploramos cómo aprovechar al máximo estas plantillas, como una basada en Django con Python, y cómo ajustar la configuración para mejorar la experiencia en proyectos colaborativos o personales.
+
+### ¿Cómo encontrar y utilizar plantillas de Codespaces?
+
+1. Accede a tus Codespaces en [github.com/codespaces](github.com/codespaces "github.com/codespaces") para ver todos los entornos que has creado.
+2. En lugar de crear un Codespace desde cero, selecciona una plantilla. Por ejemplo, puedes usar una con Django, lo cual permite omitir configuraciones iniciales, ya que la plantilla incluye todo lo necesario.
+3. Las plantillas permiten crear un entorno en blanco o preconfigurado para un lenguaje o framework específico, sin necesidad de cuestionarios de configuración.
+
+### ¿Cómo configurar y editar un Codespace en tiempo real?
+
+- Al crear un proyecto con una plantilla, como Django, puedes modificar el código en tiempo real. Los cambios, como actualizar el texto en un archivo HTML, se reflejan sin necesidad de compilar, como sería el caso en entornos .NET.
+- Para probar la visibilidad de tu proyecto, puedes copiar la URL pública que se genera para compartir avances en tiempo real.
+
+### ¿Qué configuraciones están disponibles en el archivo devcontainer.json?
+
+Dentro de cada plantilla, encontrarás una carpeta `.devcontainer` que contiene el archivo `devcontainer.json`. Este archivo:
+
+- Define el entorno que tu Codespace utilizará, configurando lenguajes y herramientas específicos, como Python en el caso de un proyecto Django.
+- Permite agregar extensiones de Visual Studio Code necesarias para el proyecto. Por ejemplo, al agregar la extensión “Live Share”, puedes activarla en el archivo `devcontainer.json` para que esté disponible en futuras sesiones.
+
+### ¿Cómo optimizar el desarrollo remoto en Visual Studio Code Desktop?
+
+1. Usa la opción “Abrir en Visual Studio Code Desktop” para una experiencia completa de edición fuera del navegador.
+2. Instala la extensión de GitHub Codespaces en Visual Studio si es la primera vez que usas este entorno.
+3. Asegúrate de que tu Codespace solo se ejecute en un entorno a la vez (navegador o desktop), para evitar conflictos de puerto.
+4. Puedes controlar el estado del servidor desde la terminal en cualquiera de los entornos, y detener la aplicación con `Control-C` para reiniciar el servidor cuando sea necesario.
+
+### ¿Por qué utilizar plantillas preconfiguradas en Codespaces?
+
+- Las plantillas permiten explorar nuevas tecnologías sin necesidad de configurarlas en tu equipo local. Esto es útil para probar frameworks o lenguajes sin modificar entornos personales.
+- Ejemplos de plantillas populares incluyen Jupyter para análisis de datos, Node para desarrollo de aplicaciones web, y Django para aplicaciones con Python.
+
+Usando estas plantillas, puedes acelerar la curva de aprendizaje y concentrarte en el desarrollo sin preocuparte por la configuración inicial.
+
+**Lecturas recomendadas**
+
+[Ciclo de vida de un codespace - Documentación de GitHub](https://docs.github.com/es/codespaces/getting-started/understanding-the-codespace-lifecycle)
+
+[Codespaces · GitHub](https://github.com/codespaces)
+
+[GitHub - platzi/git-github: Repositorio del Curso de Git y GitHub](https://github.com/platzi/git-github)
+
+## Pair Programming con Codespaces y Visual Studio Code
+
+**Pair Programming** (Programación en Pareja) con **GitHub Codespaces y Visual Studio Code** permite colaborar en tiempo real en un mismo entorno de desarrollo, sin necesidad de configurar nada localmente.  
+
+### **🚀 Beneficios de Pair Programming con Codespaces**
+✅ **Entorno en la nube:** No es necesario instalar dependencias en cada equipo.  
+✅ **Colaboración en tiempo real:** Puedes escribir y editar código con otras personas simultáneamente.  
+✅ **Seguridad y control:** Puedes administrar permisos de acceso fácilmente.  
+
+### **1️⃣ Habilitar Codespaces en el Proyecto**  
+Antes de colaborar, asegúrate de que **Codespaces está habilitado** en el repositorio.  
+1️⃣ Ve a tu repositorio en GitHub.  
+2️⃣ Haz clic en el botón **"Code"** y selecciona **"Codespaces"**.  
+3️⃣ Crea un nuevo Codespace en la rama principal (`main`).  
+
+### **2️⃣ Compartir el Codespace con Live Share**  
+**Visual Studio Code** tiene una extensión llamada **Live Share**, que permite la colaboración en tiempo real.  
+
+### 📌 **Paso 1: Instalar Live Share**  
+Dentro de tu Codespace en VS Code, abre la pestaña de **Extensiones (`Ctrl + Shift + X`)** y busca:  
+🔍 **"Live Share"** ➝ Instálala.  
+
+### 📌 **Paso 2: Iniciar una Sesión de Live Share**  
+1️⃣ Haz clic en el icono de **Live Share** en la barra lateral de VS Code.  
+2️⃣ Presiona el botón **"Start collaboration session"**.  
+3️⃣ Copia el enlace generado y compártelo con tu compañero.  
+
+### 📌 **Paso 3: Unirse a la Sesión**  
+Tu compañero solo necesita:  
+✅ Abrir **VS Code** (puede ser en local o en otro Codespace).  
+✅ Instalar **Live Share**.  
+✅ Abrir el enlace de la sesión en su navegador.  
+
+📌 **Ambos pueden editar el código en tiempo real** y compartir la terminal.  
+
+### **3️⃣ Colaborar con Git y Codespaces**  
+Mientras trabajan juntos, pueden sincronizar los cambios con GitHub:  
+
+### 📌 **Subir Cambios**  
+```sh
+git add .
+git commit -m "Mejoras en el código"
+git push origin main
+```
+
+### 📌 **Obtener Últimos Cambios**  
+```sh
+git pull origin main
+```
+
+⚠️ **Si hay conflictos**, GitHub te avisará para que los resuelvas antes de continuar.  
+
+### **🎯 Conclusión**  
+✅ **GitHub Codespaces + Live Share** permiten Pair Programming de manera sencilla y sin instalaciones locales.  
+✅ Puedes compartir código, depurar errores y escribir en tiempo real con otros desarrolladores.  
+✅ Todo se sincroniza automáticamente con **GitHub**.  
+
+### Resumen
+
+Trabajar en equipo y en tiempo real desde la nube se ha vuelto esencial, y GitHub Codespaces junto con la extensión de Live Share de Visual Studio Code permite precisamente eso: una colaboración dinámica y segura. Aquí te explicamos cómo puedes usar estas herramientas para hacer pair programming y trabajar en equipo sin comprometer tu espacio de desarrollo.
+
+### ¿Cómo iniciar una sesión de colaboración en Codespaces?
+
+Para compartir tu Codespace con otra persona, asegúrate de que la extensión de Live Share esté instalada en tu entorno de Visual Studio Code. Luego:
+
+- Detén la ejecución de cualquier aplicación en el Codespace.
+- Accede a la sección de Live Share en VS Code y selecciona “Iniciar sesión compartida”.
+- Copia el enlace de invitación y compártelo con tu colaborador. Al ingresar, podrá editar y sugerir cambios en tiempo real.
+
+Tu invitado puede unirse desde VS Code o, de preferencia, a través del navegador usando la opción “Continuar en web” si busca un acceso más rápido y liviano.
+
+### ¿Qué visualiza el colaborador en la sesión?
+
+El colaborador que accede mediante el enlace ve tu código en tiempo real y puede realizar modificaciones que se reflejan en tu Codespace. Puedes observar sus movimientos, las ediciones sugeridas y trabajar en conjunto sin perder control sobre el entorno, ya que todos los cambios quedan bajo tu responsabilidad en el commit.
+
+### ¿Qué ventajas tiene trabajar en la nube con Codespaces y Live Share?
+
+- **Colaboración segura**: Permites acceso solo al entorno de Codespaces en la nube, manteniendo tu espacio local aislado.
+- **Facilidad para múltiples colaboradores**: Puedes compartir el enlace con más de un participante, y al terminar la sesión todos los cambios pueden unificarse en un solo commit.
+- **Entorno unificado**: Todos los participantes trabajan con el mismo set de extensiones y configuración, lo que facilita la integración y el seguimiento del proyecto.
+
+### ¿Cómo finalizar la sesión de colaboración?
+
+Para detener la colaboración, ve a la sección de Live Share en tu Codespace y selecciona “Detener sesión de colaboración”. Esto retirará el acceso de los invitados y volverás a un modo de trabajo individual. Además, para cerrar por completo, regresa a GitHub Codespaces, revisa tu plantilla y elige la opción de eliminarla para liberar recursos.
+
+### ¿Qué configuraciones adicionales puedes incluir en Codespaces?
+
+Puedes personalizar tu Codespace añadiendo extensiones de lenguaje y herramientas de trabajo (como Markdown o Python) que optimicen tu flujo de trabajo. Estas configuraciones aseguran que, al reabrir tu Codespace, esté listo con las herramientas necesarias, siempre que las hayas especificado en el archivo `devcontainer.json`.
+
+**Lecturas recomendadas**
+
+[GitHub - platzi/git-github: Repositorio del Curso de Git y GitHub](https://github.com/platzi/git-github)
+
+[Live Share - Visual Studio](https://code.visualstudio.com/blogs/2017/11/15/live-share)
+
+## Cómo usar GitHub.dev Editor 
+
+**GitHub.dev** es un editor basado en la web que te permite modificar y visualizar archivos en repositorios de GitHub sin necesidad de clonar el proyecto ni instalar software adicional. Es una versión ligera de **Visual Studio Code** en el navegador, ideal para ediciones rápidas y colaboración en proyectos.
+
+### **🚀 1️⃣ Acceder a GitHub.dev**
+### 📌 **Método 1: Atajo de Teclado**
+1. Abre un repositorio en GitHub.  
+2. Presiona `.` (punto) en tu teclado.  
+3. Se abrirá **GitHub.dev** en una nueva pestaña.  
+
+### 📌 **Método 2: URL Manual**
+1. Abre un repositorio en GitHub.  
+2. Cambia `github.com` por `github.dev` en la barra de direcciones.  
+   - Ejemplo:  
+     ```
+     https://github.com/usuario/repositorio
+     ```
+     ➝ Cambiar a:  
+     ```
+     https://github.dev/usuario/repositorio
+     ```
+
+### **⚙️ 2️⃣ Funcionalidades de GitHub.dev**
+### **📂 Navegación y Edición**
+- Puedes explorar archivos y carpetas del repositorio.  
+- Hacer cambios en los archivos como en **Visual Studio Code**.  
+- Compatible con resaltado de sintaxis y autocompletado.  
+
+### **📌 3️⃣ Commit y Gestión de Archivos**
+1. **Modificar archivos**: Edita cualquier archivo en el repositorio.  
+2. **Hacer un commit**:  
+   - Abre el **panel de control de Git** en la barra lateral izquierda.  
+   - Escribe un mensaje de commit.  
+   - Haz clic en **"Commit changes"**.  
+3. **Trabajar en ramas**: Puedes cambiar de rama o crear una nueva desde el editor.  
+
+### **🔄 4️⃣ Diferencias entre GitHub.dev y Codespaces**
+| Característica       | **GitHub.dev** | **GitHub Codespaces** |
+|----------------------|---------------|----------------------|
+| **Editor**          | Basado en navegador (VS Code) | Entorno en la nube completo |
+| **Ejecución de código** | ❌ No permite ejecutar código | ✅ Sí, permite correr código |
+| **Acceso a terminal** | ❌ No disponible | ✅ Disponible |
+| **Uso de extensiones** | Limitado | Completo |
+| **Configuración avanzada** | ❌ No soporta `devcontainer.json` | ✅ Soporta `devcontainer.json` |
+
+**¿Cuándo usar GitHub.dev?**  
+✅ Para ediciones rápidas de código.  
+✅ Cuando no necesitas ejecutar programas.  
+✅ Si no quieres configurar un entorno local.  
+
+### **🎯 Conclusión**
+**GitHub.dev** es una excelente opción para editar código desde el navegador sin instalar herramientas adicionales. Sin embargo, si necesitas ejecutar código o configurar un entorno completo, **GitHub Codespaces** es la mejor alternativa.  
+
+### Resumen
+
+GitHub ha incorporado una herramienta que, aunque pasa desapercibida, puede hacer que editar archivos sea rápido y sencillo sin necesidad de un entorno completo como Codespaces. Este pequeño editor de código integrado en el navegador se activa al presionar Enter en la página de un repositorio, llevando al usuario a una experiencia muy similar a Visual Studio Code para ediciones rápidas y precisas.
+
+### ¿Cómo funciona el GitHub Dev Editor?
+
+El GitHub Dev Editor se activa al presionar Enter dentro de cualquier repositorio en GitHub. Esta acción abre un editor web donde puedes:
+
+- Visualizar y editar archivos de texto de inmediato.
+- Realizar cambios rápidos en archivos como README o en cualquier otro documento de texto dentro del repositorio.
+- Guardar automáticamente los cambios al cerrar la pestaña o realizar un “commit” y “push” de forma directa.
+
+Este editor no cuenta con terminal ni opciones avanzadas de desarrollo; está diseñado únicamente para realizar ediciones en texto.
+
+### ¿Qué ventajas ofrece frente a otros entornos de desarrollo?
+
+GitHub Dev Editor es ideal para tareas de edición de texto simples. Aquí algunos beneficios:
+
+- **Sin costo adicional**: A diferencia de Codespaces, el uso del Dev Editor no genera cargos.
+- **Accesibilidad**: Disponible en cualquier navegador, sin requerir configuraciones complejas.
+- **Rapidez**: Acceso rápido para editar y confirmar cambios de inmediato, útil para pequeñas modificaciones o correcciones ortográficas.
+
+### ¿Cuándo deberías utilizar Codespaces en lugar de GitHub Dev Editor?
+
+El uso de Codespaces es recomendable cuando el proyecto requiere un entorno completo de desarrollo. Algunas de las principales razones para elegir Codespaces son:
+
+- **Compilación y ejecución**: Codespaces permite compilar y probar código, algo que no es posible en el Dev Editor.
+- **Terminal y depuración**: Incluye terminal y herramientas avanzadas para ejecutar comandos, ideal para proyectos complejos.
+- **Colaboración avanzada**: Permite trabajar con equipos en un entorno en la nube, manteniendo sincronización en tiempo real.
+
+Sin embargo, hay un costo asociado a su uso cuando se superan las horas gratuitas mensuales, por lo que es importante considerar esta opción solo cuando el proyecto lo requiera.
+
+### ¿Qué debes considerar al escoger entre GitHub Dev Editor y Codespaces?
+
+- **Frecuencia y tipo de cambios**: Si solo necesitas editar unas pocas líneas, GitHub Dev Editor es suficiente.
+- **Costo**: Codespaces tiene un costo en la nube, mientras que el Dev Editor es gratuito.
+- **Necesidades de desarrollo**: Para compilaciones y pruebas de código, Codespaces es indispensable; para correcciones menores, el Dev Editor es más práctico.
+
+**Lecturas recomendadas**
+
+[El editor basado en web de github.dev - Documentación de GitHub](https://docs.github.com/es/codespaces/the-githubdev-web-based-editor)
+
+[GitHub - platzi/git-github: Repositorio del Curso de Git y GitHub](https://github.com/platzi/git-github)
