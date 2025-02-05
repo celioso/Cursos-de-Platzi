@@ -3807,3 +3807,238 @@ Dependabot simplifica la gestión de actualizaciones:
 [GitHub - platzi/git-github: Repositorio del Curso de Git y GitHub](https://github.com/platzi/git-github)
 
 [Dependabot · GitHub](https://github.com/dependabot)
+
+## Mantenimiento de repositorios seguros
+
+Mantener un repositorio seguro en GitHub es fundamental para proteger el código y la información sensible de un proyecto. A continuación, te presento **buenas prácticas y herramientas** que te ayudarán a garantizar la seguridad en tus repositorios.  
+
+### **1️⃣ Configuración de Seguridad en GitHub**  
+
+### 📌 **Habilita la autenticación en dos pasos (2FA)**  
+- Ve a **Settings → Password and authentication**.  
+- Activa **2FA** para proteger tu cuenta contra accesos no autorizados.  
+
+### 📌 **Usa claves SSH o Tokens de Acceso Personal (PAT)**  
+- **Claves SSH**: Autenticación segura para Git en lugar de contraseñas.  
+- **PAT (Personal Access Tokens)**: Se usan para acceso seguro a repositorios y API de GitHub.  
+
+### **2️⃣ Control de Accesos y Permisos**  
+
+### 👥 **Configura los roles de los colaboradores**  
+- **Admin**: Control total sobre el repositorio.  
+- **Maintainer**: Gestión de Issues y Pull Requests.  
+- **Developer**: Puede hacer commits y forks.  
+- **Read-only**: Solo lectura del código.  
+
+### 🔒 **Restringe los cambios en ramas protegidas**  
+- En **Settings → Branches**, activa **"Branch protection rules"**.  
+- Habilita **"Require pull request reviews"** para evitar cambios sin revisión.
+
+### **3️⃣ Protección contra Vulnerabilidades**  
+
+### ⚠ **Habilita Dependabot** para actualizar dependencias  
+- Activa **Dependabot alerts** en **Settings → Security & analysis**.  
+- Configura `.github/dependabot.yml` para actualizaciones automáticas.  
+
+### 🔎 **Habilita el análisis de código y escaneo de secretos**  
+- Usa **GitHub Advanced Security** para detectar credenciales filtradas.  
+- Configura **CodeQL** para análisis de seguridad del código fuente.  
+
+### **4️⃣ Buenas Prácticas para la Seguridad del Código**  
+
+### 🚫 **Evita subir archivos sensibles**  
+- Agrega un archivo `.gitignore` para excluir archivos como:  
+  ```plaintext
+  .env
+  config/secrets.yml
+  node_modules/
+  ```
+
+### 🔑 **Usa variables de entorno en lugar de credenciales en código**  
+- Almacena claves API en archivos `.env` y usa `dotenv` en tu código.  
+
+### 📜 **Firma tus commits para mayor autenticidad**  
+- Usa GPG para firmar commits y evitar alteraciones:  
+  ```sh
+  git config --global user.signingkey <GPG_KEY>
+  git commit -S -m "Commit firmado"
+  ```
+
+### **5️⃣ Monitoreo y Auditoría**  
+
+### 📊 **Revisa el historial de seguridad en GitHub**  
+- Ve a **Settings → Audit Log** para ver registros de cambios y accesos.  
+- Activa **notificaciones de seguridad** en la pestaña **"Security"** del repositorio.  
+
+### 🛠 **Automatiza revisiones de seguridad con GitHub Actions**  
+- Usa workflows de GitHub Actions para correr análisis de seguridad antes de cada `merge`.  
+
+### **🎯 Conclusión**  
+✅ **Usa autenticación segura** con 2FA y claves SSH.  
+✅ **Controla permisos y protege ramas críticas**.  
+✅ **Mantén dependencias seguras** con Dependabot.  
+✅ **Evita exponer información sensible** en los commits.  
+✅ **Monitorea accesos y cambios en el repositorio**.  
+
+**Lecturas recomendadas**
+
+[GitHub - github/gitignore: A collection of useful .gitignore templates](https://github.com/github/gitignore)
+
+[Ignoring files - GitHub Docs](https://docs.github.com/en/get-started/getting-started-with-git/ignoring-files)
+
+[Curso de GitHub Copilot - Platzi](https://platzi.com/cursos/github-copilot/)
+
+## Gestión de datos sensibles y políticas de seguridad
+
+La **seguridad de los datos sensibles** en GitHub es clave para evitar filtraciones de credenciales, claves API y otra información confidencial. Implementar **buenas prácticas y políticas de seguridad** ayuda a proteger tanto el código como la infraestructura del proyecto.  
+
+### **1️⃣ ¿Qué son los Datos Sensibles y por qué protegerlos?**  
+
+🔴 **Datos sensibles** son aquellos que pueden comprometer la seguridad si son expuestos, como:  
+- Claves de API y tokens de autenticación.  
+- Credenciales de bases de datos.  
+- Claves SSH y certificados.  
+- Información personal o financiera.  
+- Configuraciones privadas de servidores.  
+
+🛑 **Si se exponen estos datos en un repositorio público, podrían ser utilizados por atacantes para acceder a sistemas críticos.**  
+
+### **2️⃣ Evitar la Exposición de Datos Sensibles**  
+
+### 📌 **Usa un `.gitignore` adecuado**  
+Agrega archivos sensibles a `.gitignore` para que no sean rastreados por Git. Ejemplo:  
+
+```plaintext
+# Archivo de configuración y claves API
+.env
+config/secrets.yml
+*.pem
+*.key
+```
+
+### 📌 **Usa Variables de Entorno en Lugar de Datos en el Código**  
+En lugar de incrustar claves en el código, usa variables de entorno.  
+
+Ejemplo en **Python** con `dotenv`:  
+```python
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+API_KEY = os.getenv("API_KEY")
+```
+
+Ejemplo en **JavaScript** con `process.env`:  
+```javascript
+require('dotenv').config();
+const apiKey = process.env.API_KEY;
+```
+
+### **3️⃣ Políticas de Seguridad en GitHub**  
+
+### 🔑 **Configurar Accesos y Permisos**  
+- **Usa la autenticación en dos pasos (2FA)** para mejorar la seguridad.  
+- **Asigna roles adecuados** en equipos para evitar accesos innecesarios.  
+- **Restringe cambios en ramas protegidas** en **Settings → Branches**.  
+
+### 🛠 **Escaneo de Seguridad con GitHub Advanced Security**  
+- **Habilita el escaneo de secretos** para detectar credenciales filtradas en commits.  
+- **Activa Dependabot** para recibir alertas sobre vulnerabilidades en dependencias.  
+
+```yaml
+# Archivo .github/dependabot.yml
+version: 2
+updates:
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "daily"
+```
+
+### **4️⃣ Auditoría y Monitoreo**  
+
+### 📊 **Habilita el Registro de Actividad (Audit Log)**  
+- Ve a **Settings → Audit Log** para ver accesos, cambios y acciones sospechosas.  
+
+### ⚠ **Configura Alertas de Seguridad**  
+- Recibe notificaciones cuando GitHub detecte vulnerabilidades o accesos no autorizados.  
+- Usa **GitHub Actions** para automatizar auditorías de seguridad.  
+
+Ejemplo de **workflow en GitHub Actions** para escaneo de seguridad:  
+```yaml
+name: Security Check
+on: push
+jobs:
+  security:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Run TruffleHog
+        uses: edplato/trufflehog-actions-scan@main
+```
+
+### **5️⃣ ¿Qué Hacer si ya Cometiste un Error y Subiste Datos Sensibles?**  
+
+### 🚨 **1. Revocar credenciales comprometidas de inmediato**  
+Si subiste una clave API o token, revócalo y genera uno nuevo desde tu proveedor de servicios.  
+
+### 🧹 **2. Eliminar el archivo comprometido de Git**  
+Si subiste datos sensibles, elimínalos completamente del historial:  
+
+```sh
+git rm --cached archivo_sensible.txt
+git commit -m "Elimina archivo sensible"
+git push origin main
+```
+
+Si ya fue publicado en un commit, usa `filter-branch` o `BFG Repo-Cleaner`:  
+```sh
+git filter-branch --force --index-filter 'git rm --cached --ignore-unmatch archivo_sensible.txt' --prune-empty --tag-name-filter cat -- --all
+git push origin --force --all
+```
+
+### **🎯 Conclusión**  
+✅ **Usa `.gitignore` y variables de entorno** para evitar exponer datos sensibles.  
+✅ **Configura permisos y autenticación segura** en GitHub.  
+✅ **Activa Dependabot y escaneo de seguridad** para detectar vulnerabilidades.  
+✅ **Monitorea accesos y acciones sospechosas** con Audit Log.  
+✅ **Si cometes un error, revoca credenciales y limpia el historial de Git.**
+
+### Resumen
+
+Al configurar un proyecto en GitHub, es crucial proteger la información sensible, como llaves de API o datos de conexión, evitando que sean subidas por error al repositorio. Aunque el uso de archivos como .gitignore es clave para excluir información sensible, existen herramientas adicionales en GitHub para detectar y mitigar estos riesgos. Aquí te explico cómo activar y aprovechar al máximo CodeQL y Secret Scanning para mejorar la seguridad de tu código en repositorios públicos.
+
+### ¿Cómo activar CodeQL y Secret Scanning en GitHub?
+
+Para comenzar, es necesario hacer el repositorio público, ya que algunas de estas funciones no están disponibles en repositorios privados. Sigue estos pasos para activar la seguridad de tu código:
+
+1. Ve a **Settings** en el repositorio y desplázate a **Code Security and Analysis**.
+2. Activa **CodeQL Analysis** en la sección de Code Scanning. GitHub detectará el lenguaje de tu proyecto y comenzará a analizar el código en segundo plano.
+3. Luego, asegúrate de que **Secret Scanning** esté habilitado. Esta función, que viene activada por defecto, detecta automáticamente secretos o llaves sensibles en el código.
+
+### ¿Cómo probar si Secret Scanning detecta información sensible?
+
+Para verificar el funcionamiento de Secret Scanning, puedes añadir intencionadamente una clave sensible en el código. Por ejemplo:
+
+- Agrega una cadena como `string stripeApiKey = "clave_sensible"`; en tu archivo de código y sube el cambio.
+- GitHub realizará el análisis en segundo plano y, si detecta una llave API, emitirá una alerta en la sección de Security.
+
+En cambio, una cadena menos evidente, como `string connectionString = "cadena_sensible";`, podría pasar desapercibida. Este ejemplo muestra que, aunque Secret Scanning es útil, no es infalible y puede omitir cadenas sensibles si no siguen patrones comunes.
+
+### ¿Qué hacer si GitHub detecta una alerta de seguridad?
+
+Si GitHub te notifica sobre una alerta de secreto en el código, sigue estos pasos para mitigar el riesgo:
+
+- **Renueva las credenciales** en la cuenta del servicio de terceros para evitar accesos no autorizados.
+- **Elimina la clave del historial** de commits, ya que eliminarla solo del código actual no la quita de versiones anteriores.
+- **Modifica tu código** para utilizar archivos de configuración, como `.env` o `appsettings.json`, y exclúyelos con `.gitignore` para evitar futuras filtraciones.
+
+### ¿Por qué CodeQL y Secret Scanning no son suficientes?
+
+Aunque GitHub ofrece herramientas poderosas de análisis, no garantizan la detección de todas las cadenas sensibles. Por eso, la mejor práctica sigue siendo prevenir las filtraciones configurando correctamente `.gitignore` y almacenando secretos en archivos de entorno.
+
+Estas prácticas te ayudarán a evitar el riesgo de exponer información crítica, reduciendo los problemas de seguridad y permitiéndote mantener un código limpio y seguro.
+
+**Lecturas recomendadas**
+
+[Managing your personal access tokens - GitHub Docs](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens)
