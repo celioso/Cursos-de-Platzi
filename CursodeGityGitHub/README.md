@@ -4157,3 +4157,307 @@ jobs:
 **Lecturas recomendadas**
 
 [Comunidad Platzi · GitHub](https://github.com/platzi)
+
+## Cómo personalizar tu perfil de GitHub con GitHub Actions
+
+GitHub permite personalizar el perfil con un **README dinámico**, que se actualiza automáticamente usando **GitHub Actions**. Esto es útil para mostrar estadísticas, proyectos recientes o cualquier otro contenido en tiempo real.  
+
+### **1️⃣ ¿Qué es GitHub Actions?**  
+**GitHub Actions** es una herramienta de automatización en GitHub que permite ejecutar scripts en respuesta a eventos como commits, push o cron jobs (tareas programadas).  
+
+🔹 Se usa para:  
+✅ Actualizar automáticamente tu perfil.  
+✅ Mostrar estadísticas en tiempo real.  
+✅ Integrar APIs para obtener datos dinámicos.  
+
+### **2️⃣ Crear y Configurar el Perfil Personal**  
+
+📌 **Paso 1: Crear un Repositorio Especial**  
+1. Ve a [GitHub](https://github.com/) y haz clic en **"New Repository"**.  
+2. Nómbralo exactamente como tu usuario de GitHub. Ejemplo: `MarioVargasCelis`.  
+3. **Marcarlo como público**.  
+4. Selecciona **"Add a README file"** y crea el repositorio.  
+
+📌 **Paso 2: Editar el README.md**  
+Abre el archivo `README.md` y personalízalo con Markdown:  
+
+```md
+# ¡Hola! Soy Mario Alexander Vargas Celis 🚀
+
+💡 **Ingeniero Mecatrónico** apasionado por la **IA, el análisis de datos y la automatización**.  
+📈 Actualmente aprendiendo **PyTorch, Pandas y Machine Learning**.  
+🌎 Visitando Argentina, Uruguay y Brasil en mi próximo viaje.  
+🔗 [LinkedIn](https://linkedin.com/in/mariovargascelis) | [GitHub](https://github.com/MarioVargasCelis)
+```
+
+📌 **Paso 3: Confirmar y Subir Cambios**  
+
+```sh
+git add README.md
+git commit -m "Personalizando mi perfil"
+git push origin main
+```
+
+### **3️⃣ Personalización Dinámica con GitHub Actions**  
+
+📌 **Paso 4: Crear un Workflow Automático**  
+1. Dentro del repositorio, crea la carpeta **`.github/workflows/`**.  
+2. Dentro de esa carpeta, crea un archivo llamado `update-profile.yml`.  
+
+📌 **Paso 5: Escribir el Workflow**  
+Este workflow actualiza el perfil con la fecha y hora actual cada 24 horas.  
+
+```yaml
+name: Update README
+
+on:
+  schedule:
+    - cron: "0 0 * * *"  # Ejecutar todos los días a medianoche
+  push:
+    branches:
+      - main
+
+jobs:
+  update-readme:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Update README
+        run: |
+          echo "### Última actualización: $(date)" > README.md
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+          git add README.md
+          git commit -m "Actualización automática del README"
+          git push
+```
+
+📌 **Paso 6: Confirmar y Subir el Workflow**  
+
+```sh
+git add .github/workflows/update-profile.yml
+git commit -m "Agregando GitHub Actions para actualizar README"
+git push origin main
+```
+
+### **4️⃣ Agregar Contenido Dinámico al Perfil**  
+
+### **📊 Estadísticas del Perfil con GitHub Actions**  
+
+Para mostrar estadísticas de GitHub en el perfil, usa:  
+
+```md
+![GitHub Stats](https://github-readme-stats.vercel.app/api?username=MarioVargasCelis&show_icons=true&theme=tokyonight)
+```
+
+### **💻 Lenguajes Más Usados**  
+
+```md
+![Top Langs](https://github-readme-stats.vercel.app/api/top-langs/?username=MarioVargasCelis&layout=compact&theme=tokyonight)
+```
+
+## **🎯 Conclusión**  
+
+✅ **GitHub Actions permite actualizar automáticamente el README del perfil.**  
+✅ **Se pueden agregar datos dinámicos como la fecha de actualización o estadísticas.**  
+✅ **Con un workflow programado, puedes mantener tu perfil actualizado sin esfuerzo.**  
+
+### Resumen
+
+Optimizar tu perfil de GitHub puede marcar una gran diferencia al mostrar tus habilidades y actividad de desarrollo, y GitHub Actions es la herramienta ideal para automatizar tareas que mantengan tu perfil siempre actualizado. A continuación, te explicamos cómo crear una GitHub Action que muestre tu actividad reciente directamente en tu portada de perfil.
+
+### ¿Qué es GitHub Actions y cómo puede ayudarte?
+
+GitHub Actions permite automatizar diversos flujos de trabajo, desde revisiones de seguridad con Dependabot hasta integraciones continuas y despliegues (CI/CD). Con una GitHub Action, puedes extraer automáticamente tu actividad más reciente y mostrarla en tu perfil. Esto ayuda a que otros vean tu progreso y compromiso en tus repositorios.
+
+### ¿Cómo configurar tu repositorio de portada en GitHub?
+
+1. **Selecciona tu repositorio de perfil**: Este suele llevar el nombre de usuario como nombre de repositorio.
+2. **Edita el README**: Abre el archivo **README.md** en modo edición y asegúrate de contar con una sección específica para la actividad reciente.
+3. **Agrega un título personalizable**: Por ejemplo, “Actividad reciente” o “Últimos commits”, para que la sección tenga un toque personal.
+
+### ¿Cómo crear una GitHub Action para actualizar tu actividad?
+
+- **Accede a la sección de Actions** en el repositorio de tu perfil.
+- **Elige una plantilla básica** para crear un flujo de trabajo simple.
+- **Configura el archivo YAML**:
+ - **Ubicación**: Guarda el archivo como `.github/workflows/update-readme.yml`.
+ - **Cron Job**: Programa la frecuencia de actualización. Un formato común es `*/12 * * * *` para actualizar cada 12 horas.
+ - **Paso de checkout**: Este paso accede a tus archivos.
+ - **Recent Activity Workflow**: Incluye el paso para extraer tu actividad reciente desde un flujo preconstruido disponible en el Marketplace de GitHub Actions.
+ 
+### ¿Cómo asegurarte de que tu GitHub Action funcione correctamente?
+
+Guarda y ejecuta la acción: Haz un commit directo en la rama principal.
+Verifica el estado: Si ocurre algún error, GitHub Actions lo destacará en rojo, señalando el paso problemático.
+Ajustes finales: Corrige cualquier error en el archivo YAML o en los comentarios del `README`, y vuelve a ejecutar el flujo de trabajo.
+
+### ¿Qué opciones adicionales puedes explorar en GitHub Actions?
+
+- **Marketplace**: Encuentra acciones preconfiguradas para desplegar en Docker, compilar aplicaciones en Java, entre otras.
+- **Variables de ambiente:** Usa `GITHUB_TOKEN` para autenticar la Action y mantenerla segura.
+- **Contenido personalizado**: Puedes agregar secciones adicionales en tu perfil, como listas de videos de YouTube o portafolios enlazados.
+
+### ¿Cómo hacer que tu perfil destaque con otras personalizaciones?
+
+GitHub Actions ofrece un sinfín de posibilidades para personalizar tu perfil y mostrar contenido relevante. Explora perfiles inspiradores en los recursos de esta clase, descarga archivos YAML, y pruébalos en tu repositorio para continuar optimizando tu presencia profesional.
+
+**Lecturas recomendadas**
+
+[Curso de GitHub Actions - Platzi](https://platzi.com/cursos/github-actions/80449878)
+
+## GitHub CLI para administración
+
+La **GitHub CLI** (Interfaz de Línea de Comandos de GitHub) es una herramienta que permite interactuar con GitHub directamente desde la terminal, facilitando diversas tareas de administración de repositorios, gestión de issues, pull requests, y otras funcionalidades de GitHub sin necesidad de utilizar la interfaz web.
+
+### Instalación de GitHub CLI
+
+1. **Para macOS** (con Homebrew):
+   ```bash
+   brew install gh
+   ```
+
+2. **Para Windows** (con Chocolatey):
+   ```bash
+   choco install gh
+   ```
+
+3. **Para Linux** (usando APT en Debian/Ubuntu):
+   ```bash
+   sudo apt install gh
+   ```
+
+### Autenticación con GitHub
+
+Para autenticarte en GitHub desde la CLI, puedes usar el siguiente comando:
+
+```bash
+gh auth login
+```
+
+Esto abrirá una serie de pasos para elegir cómo deseas autenticarte (por ejemplo, mediante navegador o token de acceso personal).
+
+### Comandos Básicos de GitHub CLI
+
+1. **Clonar un repositorio:**
+   ```bash
+   gh repo clone <usuario>/<repositorio>
+   ```
+
+2. **Crear un nuevo repositorio:**
+   ```bash
+   gh repo create <nombre-del-repo> --private
+   ```
+
+3. **Ver repositorios de un usuario:**
+   ```bash
+   gh repo list <usuario>
+   ```
+
+4. **Gestionar Issues:**
+   - **Listar issues:** 
+     ```bash
+     gh issue list
+     ```
+   - **Crear un nuevo issue:** 
+     ```bash
+     gh issue create --title "Nuevo Issue" --body "Descripción del problema"
+     ```
+
+5. **Gestionar Pull Requests:**
+   - **Ver pull requests abiertos:**
+     ```bash
+     gh pr list
+     ```
+   - **Crear un pull request:**
+     ```bash
+     gh pr create --title "Nueva característica" --body "Descripción de la PR" --base main --head feature-branch
+     ```
+
+6. **Ver información del repositorio:**
+   ```bash
+   gh repo view <usuario>/<repositorio> --web
+   ```
+
+7. **Ver actividades recientes:**
+   ```bash
+   gh activity
+   ```
+
+8. **Ver eventos de un repositorio:**
+   ```bash
+   gh repo events
+   ```
+
+### Integración con Git
+
+GitHub CLI se puede usar junto con los comandos de Git. Puedes gestionar tus repositorios, ramas y cambios de manera integrada con Git. Además, puedes abrir Pull Requests y Issues desde la misma terminal sin necesidad de salir de la consola.
+
+### Más Comandos
+
+Puedes ver todos los comandos disponibles ejecutando:
+```bash
+gh help
+```
+
+La **GitHub CLI** es una herramienta poderosa para usuarios que prefieren trabajar directamente desde la terminal, optimizando su flujo de trabajo con GitHub.
+
+**Lecturas recomendadas**
+
+[GitHub CLI | Take GitHub to the command line](https://cli.github.com/)
+
+[gh - Manual GitHub CLI](https://cli.github.com/manual/gh)
+
+### Importancia de los Pull Requests y Ramas en GitHub
+
+Los **Pull Requests** y las **Ramas** son fundamentales para un flujo de trabajo eficiente y colaborativo en proyectos que utilizan GitHub. Estos elementos ayudan a gestionar cambios en el código, permitiendo trabajar de manera simultánea sin comprometer la integridad del código principal.
+
+### Importancia de las **Ramas** en GitHub:
+
+1. **Aislamiento de Características y Correcciones:**
+   - Las ramas permiten trabajar en nuevas características, correcciones de errores o mejoras sin afectar el código principal (usualmente en la rama `main` o `master`).
+   - Esto facilita el desarrollo paralelo por parte de varios desarrolladores en un mismo proyecto.
+
+2. **Trabajo en Equipo:**
+   - Cada miembro del equipo puede crear una rama para realizar sus cambios sin interferir con el trabajo de otros.
+   - Se pueden organizar ramas específicas para cada tarea o característica (por ejemplo, `feature/login`, `bugfix/fix-button`).
+
+3. **Manejo de Conflictos:**
+   - Trabajar en ramas separadas facilita la resolución de conflictos cuando varios desarrolladores modifican archivos similares.
+   - Los conflictos se pueden resolver dentro de la rama antes de realizar una fusión con la rama principal.
+
+### Importancia de los **Pull Requests (PR)** en GitHub:
+
+1. **Revisión de Código:**
+   - Un **Pull Request** es la solicitud para fusionar una rama con otra (por lo general, una rama de características o corrección de errores en la rama principal).
+   - Permite a otros miembros del equipo revisar el código antes de integrarlo, mejorando la calidad y reduciendo errores.
+   - Se pueden realizar comentarios en líneas específicas del código y sugerir cambios o mejoras.
+
+2. **Colaboración:**
+   - Los **PR** facilitan la colaboración entre diferentes miembros del equipo y permiten mantener un control sobre los cambios que se van integrando.
+   - Además, se pueden añadir **etiquetas** para clasificar PRs (por ejemplo, `bug`, `feature`, `enhancement`).
+
+3. **Automatización de Pruebas:**
+   - Muchas veces, al abrir un PR, se ejecutan **acciones de CI/CD (integración continua/despliegue continuo)** que automatizan pruebas, asegurándose de que los cambios no rompan el código existente.
+   - Esto ayuda a identificar problemas temprano en el proceso de desarrollo.
+
+4. **Historial Claro:**
+   - Los PRs proporcionan un registro claro y estructurado de los cambios realizados en el proyecto. El historial de PRs se puede consultar fácilmente para ver quién hizo qué y cuándo.
+
+5. **Documentación del Proceso:**
+   - Cada PR puede incluir una descripción detallada de lo que se está cambiando y por qué. Esto documenta el propósito de los cambios, facilitando la comprensión del código para los miembros del equipo y otros colaboradores.
+
+6. **Fusión Controlada:**
+   - Antes de fusionar el código en la rama principal, los PRs permiten realizar una revisión y asegurarse de que el código esté listo para ser integrado.
+   - Esto garantiza que los errores o problemas no se introduzcan directamente en el código de producción.
+
+### Resumen:
+
+- **Ramas**: Aislan los cambios, lo que permite un trabajo simultáneo y ordenado sin interferir con el código principal.
+- **Pull Requests**: Son solicitudes para fusionar esas ramas, permitiendo revisiones de código, colaboración, pruebas automatizadas y un historial claro de cambios.
+
+En conjunto, las ramas y los pull requests permiten un flujo de trabajo eficiente, organizado y controlado, lo cual es crucial para proyectos colaborativos, especialmente cuando múltiples desarrolladores trabajan simultáneamente en diferentes partes del código.
+
+**Lecturas recomendadas**
+
+[Creating a pull request - GitHub Docs](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request)
