@@ -4738,3 +4738,305 @@ GitHub Releases es una herramienta poderosa para gestionar versiones de software
 [Managing releases in a repository - GitHub Docs](https://docs.github.com/en/repositories/releasing-projects-on-github/managing-releases-in-a-repository)
 
 [git github archivos de prueba](https://github.com/platzi/git-github/tree/main/Paquete)
+
+## Publicación de paquetes en GitHub y PyPI
+
+### **📌 ¿Por qué publicar paquetes?**  
+Publicar un paquete en **GitHub** o **PyPI (Python Package Index)** permite compartir código reutilizable con la comunidad o facilitar su distribución dentro de un equipo de trabajo.  
+
+### **🔹 Publicación en GitHub Packages**  
+GitHub Packages permite almacenar y distribuir paquetes de software junto con el código fuente del proyecto.  
+
+### **1️⃣ Configurar el archivo `setup.py`**  
+```python
+from setuptools import setup, find_packages
+
+setup(
+    name="miproyecto",
+    version="0.1.0",
+    packages=find_packages(),
+    install_requires=[
+        "numpy",  # Dependencias del paquete
+    ],
+    author="Tu Nombre",
+    author_email="tuemail@example.com",
+    description="Descripción breve del paquete",
+    url="https://github.com/tuusuario/miproyecto",
+)
+```
+
+### **2️⃣ Crear un archivo `.pypirc`**  
+En la carpeta de usuario (`~/.pypirc` en Linux/Mac o `C:\Users\TU_USUARIO\.pypirc` en Windows), añade:  
+```ini
+[distutils]
+index-servers =
+    github
+
+[github]
+repository = https://upload.pypi.org/legacy/
+username = __token__
+password = TU_GITHUB_TOKEN
+```
+💡 **Importante**: Genera un token en **GitHub > Settings > Developer settings > Personal access tokens** con permisos de `write:packages`.
+
+### **3️⃣ Construir y subir el paquete a GitHub Packages**  
+```bash
+pip install build twine
+python -m build
+twine upload --repository github dist/*
+```
+
+### **🔹 Publicación en PyPI (Python Package Index)**  
+PyPI es el repositorio oficial de paquetes de Python.  
+
+### **1️⃣ Crear una cuenta en PyPI**  
+📌 Ve a [https://pypi.org/](https://pypi.org/) y crea una cuenta.  
+
+### **2️⃣ Configurar `setup.py` (igual que en GitHub)**  
+
+### **3️⃣ Crear el archivo `pyproject.toml`**  
+Añade el siguiente contenido para definir los requisitos de construcción:  
+```toml
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+```
+
+### **4️⃣ Construir el paquete**  
+```bash
+python -m build
+```
+
+### **5️⃣ Subir el paquete a PyPI**  
+```bash
+twine upload dist/*
+```
+Esto pedirá tus credenciales de PyPI (usuario y contraseña o token de acceso).  
+
+### **💡 Diferencias Clave entre GitHub Packages y PyPI**  
+
+| Característica        | GitHub Packages          | PyPI (Python Package Index) |
+|----------------------|-------------------------|-----------------------------|
+| **Público/Privado**  | Puede ser privado o público | Solo público |
+| **Integración**      | Directamente con GitHub | Independiente de GitHub |
+| **Distribución**     | Requiere autenticación para instalar paquetes privados | Accesible sin autenticación |
+
+### **📥 Instalación de paquetes desde GitHub y PyPI**  
+
+✅ **Desde PyPI:**  
+```bash
+pip install miproyecto
+```
+
+✅ **Desde GitHub (paquete público):**  
+```bash
+pip install git+https://github.com/tuusuario/miproyecto.git
+```
+
+✅ **Desde GitHub Packages (paquete privado):**  
+```bash
+pip install --index-url https://pypi.github.com/tuusuario miproyecto
+```
+
+💡 **Conclusión**:  
+Publicar paquetes en **GitHub Packages** es útil para proyectos privados, mientras que **PyPI** es ideal para compartir código con la comunidad de Python. 🚀
+
+### Resumen
+
+Publicar un paquete propio en PyPI para utilizarlo como dependencia es un hito emocionante en el desarrollo de software. En esta guía, veremos el paso a paso para lanzar un release en GitHub, crear una aplicación en Python que consuma este paquete, y los consejos para compartir tus desarrollos en plataformas como Nuget y NPM.
+
+### ¿Cómo crear un release en GitHub?
+
+1. **Navegar a Releases**: En tu repositorio, selecciona la opción de releases y elige crear un nuevo release.
+2. **Definir el tag**: Elige la versión adecuada, por ejemplo, v0.1.0 para versiones preliminares. Asegúrate de que el tag coincida con la rama desde la que quieres lanzar el release, generalmente main.
+3. **Completar título y descripción**: Utiliza el mismo tag en el título del release para mantener coherencia.
+4. **Subir binarios**: Agrega archivos binarios, como .tar.gz o .whl, ubicados en la carpeta dist de tu proyecto. Esto garantiza que los usuarios puedan instalar el paquete con facilidad.
+5. **Publicar release**: Una vez que hayas verificado los detalles, selecciona publicar release.
+
+### ¿Cómo instalar el paquete desde GitHub?
+
+Para instalar el paquete en un nuevo proyecto:
+
+1. **Copiar el link del archivo .whl**: Navega hasta el archivo `.whl` en GitHub, copia la URL.
+2. **Instalar el paquete**: En la terminal de tu proyecto, ejecuta `pip3 install <URL_del_archivo_whl>`. Esto descargará e instalará el paquete.
+3. **Verificar instalación**: Utiliza` pip3 list` para confirmar que el paquete aparece en la lista de dependencias instaladas.
+
+### ¿Cómo consumir el paquete en una aplicación de Python?
+
+1. **Preparar la estructura de carpetas**: Crea una carpeta `app` en la raíz de tu repositorio y dentro de ella un archivo `app.py`.
+2. **Importar y usar el paquete**: Dentro de `app.py`, usa from `<nombre_del_paquete> import <método>`, y escribe un código sencillo que ejecute este método, por ejemplo, `print(saludo("Platzi"))`.
+3. **Ejecutar la aplicación**: Desde la terminal, navega hasta la carpeta `app` y ejecuta `python3 app.py` para ver el resultado en consola.
+
+### ¿Cómo extender esta práctica a otros entornos?
+
+- **Paquetes NuGet en .NET**: Crea y distribuye librerías en .NET usando el sistema de paquetes NuGet.
+- **Paquetes NPM en Node.j**s: Desarrolla y distribuye paquetes reutilizables para Node.
+- **Contribución comunitaria**: Comparte tus paquetes y anima a otros a utilizarlos y mejorarlos.
+
+**Lecturas recomendadas**
+
+[Administrar lanzamientos en un repositorio - Documentación de GitHub](https://docs.github.com/es/repositories/releasing-projects-on-github/managing-releases-in-a-repository "Administrar lanzamientos en un repositorio - Documentación de GitHub")
+
+## ProTips: Mejora tu productividad diaria en GitHub
+
+GitHub es una herramienta poderosa, y con estos consejos podrás optimizar tu flujo de trabajo y trabajar de manera más eficiente.  
+
+### **🔹 1️⃣ Atajos de Teclado en GitHub**  
+Ahorra tiempo con estos atajos:  
+🔍 **Buscar en GitHub**: `/`  
+📄 **Abrir archivo en un repo**: `t`  
+📑 **Ver historial de commits**: `y` (cambia la URL a una versión permanente)  
+🛠 **Acceder a la configuración de un repo**: `g + s`  
+🔀 **Ir a Pull Requests**: `g + p`  
+📌 **Ir a Issues**: `g + i`
+
+### **🔹 2️⃣ Clonar un Repo con SSH (Más Rápido 🚀)**  
+Si clonas repositorios con HTTPS, GitHub te pedirá autenticación constantemente. Usa SSH para evitarlo:  
+```bash
+git clone git@github.com:usuario/repositorio.git
+```
+✅ **Ventaja**: No necesitas ingresar tu contraseña en cada `push` o `pull`.
+
+### **🔹 3️⃣ Aliases en Git para Comandos Rápidos**  
+Crea atajos para no escribir comandos largos:  
+```bash
+git config --global alias.st status
+git config --global alias.cm "commit -m"
+git config --global alias.co checkout
+git config --global alias.br branch
+```
+💡 Ahora puedes escribir `git st` en lugar de `git status`.
+
+### **🔹 4️⃣ Cambiar el Mensaje del Último Commit**  
+Si cometiste un error en el mensaje del último commit, puedes corregirlo fácilmente:  
+```bash
+git commit --amend -m "Nuevo mensaje corregido"
+```
+⚠️ **Ojo**: Solo úsalo si aún no has hecho `push`.
+
+### **🔹 5️⃣ Revertir Cambios de un Commit Anterior**  
+Si necesitas deshacer un commit pero mantener los cambios en tu espacio de trabajo:  
+```bash
+git reset HEAD~1
+```
+Si quieres deshacerlo completamente:  
+```bash
+git reset --hard HEAD~1
+```
+⚠️ **Precaución**: `--hard` borra los cambios definitivamente.
+
+### **🔹 6️⃣ Fusionar Ramas sin Fast-Forward (Mantén un Historial Claro 📜)**  
+Cuando fusionas una rama, usa la opción `--no-ff` para evitar que Git haga una fusión sin historial:  
+```bash
+git merge --no-ff feature-branch
+```
+✅ Esto ayuda a mantener un historial más estructurado.
+
+### **🔹 7️⃣ Ejecutar Acciones de GitHub desde la CLI**  
+Con GitHub CLI (`gh`), puedes trabajar sin abrir el navegador:  
+
+✅ **Autenticar GitHub CLI:**  
+```bash
+gh auth login
+```
+✅ **Crear un nuevo Issue:**  
+```bash
+gh issue create --title "Bug crítico" --body "Descripción del problema"
+```
+✅ **Listar Pull Requests:**  
+```bash
+gh pr list
+```
+
+### **🔹 8️⃣ Trabajar con Repositorios de GitHub en Visual Studio Code**  
+Si usas **VS Code**, instala la extensión **GitHub Pull Requests and Issues** para manejar Issues y Pull Requests sin salir del editor.  
+
+🛠 Abre un repo de GitHub en VS Code directamente:  
+```bash
+code .
+```
+
+### **🔹 9️⃣ Ignorar Archivos Temporalmente sin `.gitignore`**  
+Si no quieres hacer seguimiento de un archivo temporalmente pero no deseas modificar `.gitignore`:  
+```bash
+git update-index --assume-unchanged archivo.txt
+```
+Para volver a rastrear el archivo:  
+```bash
+git update-index --no-assume-unchanged archivo.txt
+```
+
+### **🔹 🔟 Automatizar Tareas con GitHub Actions**  
+Puedes automatizar pruebas, despliegues y más con GitHub Actions. Crea un archivo `.github/workflows/ci.yml` y define tareas automatizadas.  
+
+Ejemplo de un **workflow simple**:  
+```yaml
+name: CI
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Ejecutar Pruebas
+        run: python -m unittest discover tests
+```
+✅ Esto ejecutará pruebas cada vez que hagas un `push` o `pull request`.
+
+### **🎯 Conclusión**  
+Con estos **ProTips**, mejorarás tu flujo de trabajo y aprovecharás GitHub al máximo. 🔥💻  
+
+### Resumen
+
+GitHub ofrece una serie de herramientas y trucos para optimizar la productividad de desarrolladores y colaboradores. Estos tips, aunque no son esenciales, pueden hacer la experiencia de uso mucho más fluida y divertida. A continuación, exploramos cómo sacar provecho de algunas funciones útiles para el día a día.
+
+### ¿Cómo acceder rápidamente al editor de archivos en GitHub?
+
+Para abrir el editor de texto sin salir del navegador, simplemente presiona el punto (".") en la portada de cualquier repositorio. Esto te llevará directamente al editor, permitiéndote navegar y modificar archivos sin pasos intermedios.
+
+### ¿Cómo usar la vista en forma de árbol en GitHub?
+
+La vista en árbol facilita la navegación por carpetas de tu proyecto. Para activarla:
+
+- Selecciona el ícono de menú en la esquina superior izquierda de tu repositorio.
+- Expande las carpetas y selecciona el archivo deseado sin retroceder en la estructura de directorios.
+
+### ¿Cómo revisar el historial de commits y pull requests?
+
+En la sección de commits de tu repositorio, puedes ver el historial completo:
+
+- Al hacer clic en el contador de commits, verás todos los realizados, organizados por fecha.
+- Cada commit muestra los archivos modificados, facilitando el seguimiento de cambios específicos.
+
+Para los pull requests:
+
+- Selecciona uno de la lista, y en la URL agrega “.patch” o “.diff” al final.
+- Esto mostrará la información en texto plano, ideal para compartir el estado de cambios por correo o mensajería.
+
+### ¿Cómo compartir enlaces a líneas específicas de código?
+
+Para un acceso directo a una línea de código:
+
+- Haz clic en el número de línea deseado y selecciona “Copiar permalink” del menú.
+- El enlace generado llevará a otros usuarios directamente al punto exacto de interés en el archivo.
+
+### ¿Cómo mencionar a colaboradores en comentarios de commits y pull requests?
+
+Similar a las redes sociales, puedes mencionar a compañeros en comentarios:
+
+- Escribe <kbd>“@”</kbd> seguido del nombre de usuario para que la persona reciba una notificación.
+- Esto es útil para señalar comentarios importantes o solicitar revisiones específicas.
+
+### ¿Cómo usar botones en Markdown dentro de GitHub?
+
+Para destacar secuencias de teclas en Markdown:
+
+- Usa el formato `tecla` alrededor de la combinación deseada.
+- Esto simula la apariencia de un botón, útil para indicar atajos de teclado.
+<kbd>w</kbd>
+
+### ¿Cómo aprovechar los ProTips en GitHub?
+
+En cada sección de GitHub, hay tips o “ProTips” en la parte inferior. Estos ofrecen sugerencias relevantes para maximizar la eficiencia en el uso de cada herramienta. Navegar y explorar estos tips en diferentes secciones puede ofrecer mejoras inesperadas a tus flujos de trabajo.
