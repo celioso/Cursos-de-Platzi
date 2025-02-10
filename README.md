@@ -133,11 +133,13 @@
 - [Curso de PostgreSQL](CursodePostgreSQL)
 - [Curso Práctico de SQL](CursoPracticodeSQL)
 - [Curso de PostgreSQL Aplicado a Ciencia de Datos](CursodePostgreSQLAplicadoaCienciadeDatos)
-Curso de Base de Datos NoSQL
+- [Curso de Base de Datos NoSQL](CursodeBasedeDatosNoSQL)
+
 Curso de Introducción a AWS: Fundamentos de Cloud Computing
 Curso de Introducción a AWS: Cómputo, Almacenamiento y Bases de Datos
 Curso de Introducción a AWS: Redes, Gobernanza y Machine Learning
 Curso Práctico de AWS: Roles y Seguridad con IAM
+
 - [Curso de Data Warehousing y Modelado OLAP](CursodeDataWarehousingyModeladoOLAP)
 - [Curso de Databricks: Arquitectura Delta Lake](CursodeDatabricksArquitecturaDeltaLake)
 - [Curso de Fundamentos de Apache Airflow](CursodeFundamentosdeApacheAirflow)
