@@ -148,7 +148,7 @@ Curso Práctico de AWS: Roles y Seguridad con IAM
 ### Computación en la nube
 
 - [Curso de Introducción a la Administración de Servidores Linux](CursodeIntroducciónalaAdministracióndeServidoresLinux)
-Curso Práctico de AWS: Cómputo con EC2
+ Curso Práctico de AWS: Cómputo con EC2
 Curso Práctico de Storage en AWS
 Curso Práctico de Bases de Datos en AWS
 Curso de Big Data en AWS
