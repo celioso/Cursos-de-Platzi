@@ -134,8 +134,8 @@
 - [Curso Práctico de SQL](CursoPracticodeSQL)
 - [Curso de PostgreSQL Aplicado a Ciencia de Datos](CursodePostgreSQLAplicadoaCienciadeDatos)
 - [Curso de Base de Datos NoSQL](CursodeBasedeDatosNoSQL)
+- [Curso de Introducción a AWS: Fundamentos de Cloud Computing](CursodeIntroduccionaAWSFundamentosdeCloudComputing)
 
-Curso de Introducción a AWS: Fundamentos de Cloud Computing
 Curso de Introducción a AWS: Cómputo, Almacenamiento y Bases de Datos
 Curso de Introducción a AWS: Redes, Gobernanza y Machine Learning
 Curso Práctico de AWS: Roles y Seguridad con IAM
