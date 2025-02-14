@@ -561,3 +561,548 @@ Ahora es crucial determinar las responsabilidades de AWS y del cliente dentro de
 [Reconocimiento de objetos en JavaScript con Serverless Framework y AWS Rekognition](https://platzi.com/blog/serverless-framework-y-aws-rekognition/)
 
 [AWS Ping Test (Latency) | Cloud Ping Test](https://cloudpingtest.com/aws)
+
+## Laboratorio: crea tu cuenta en AWS
+
+Para crear tu cuenta en AWS, sigue estos pasos:  
+
+### **Paso 1: Accede al sitio web de AWS**  
+1. Ve a [AWS](https://aws.amazon.com/es/)  
+2. Haz clic en **"Crear una cuenta de AWS"**  
+
+### **Paso 2: Ingresa la información requerida**  
+1. **Correo electrónico** (se usará para iniciar sesión).  
+2. **Nombre de usuario** (para la cuenta de AWS).  
+3. **Contraseña segura** y confirmación.  
+
+### **Paso 3: Proporciona información de contacto**  
+1. Nombre, dirección y número de teléfono.  
+2. Selecciona si es una cuenta personal o empresarial.  
+
+### **Paso 4: Método de pago**  
+- Debes ingresar una tarjeta de crédito/débito válida.  
+- AWS hará un pequeño cargo de verificación que será reembolsado.  
+
+### **Paso 5: Verificación de identidad**  
+- AWS puede pedir un código enviado por SMS o llamada.  
+
+### **Paso 6: Selecciona un plan**  
+- **Recomendado**: Elige el plan **Gratis (Free Tier)** para acceder a servicios sin costo durante 12 meses.  
+
+### **Paso 7: Accede a la consola de AWS**  
+- Una vez creada, inicia sesión en la [Consola de AWS](https://aws.amazon.com/console/)  
+- Explora servicios como EC2, S3 o Lambda.  
+
+✅ ¡Listo! Ya tienes una cuenta en AWS.
+
+### Resumen
+
+Para crear tu cuenta de Amazon dirígete al portal de AWS y sigue estas instrucciones para crear tu cuenta.
+
+![registro amazon](images/registro-amazon.jpg)
+
+1. Entra al portal de Amazon y registra tus datos
+
+2. Introduce el número de tu tarjeta de crédito
+
+3. Completa el CAPTCHA para verificar tu identidad
+
+4. Verifica tu cuenta con un código de confirmación
+
+5. Selecciona el plan que más se adapte a tus necesidades
+
+**Lecturas recomendadas**
+
+[Cloud Services - Amazon Web Services (AWS)](https://aws.amazon.com/)
+
+[https://portal.aws.amazon.com/](https://portal.aws.amazon.com/)
+
+## Seguridad e identidad
+
+AWS ofrece múltiples servicios y herramientas para garantizar la seguridad y la gestión de identidades dentro de su plataforma. A continuación, te explico los conceptos clave:  
+
+### **1️⃣ AWS Identity and Access Management (IAM) 👤🔑**  
+AWS IAM permite gestionar usuarios y sus permisos de acceso a los recursos de AWS.  
+
+**Características principales:**  
+✅ **Usuarios y Grupos** – Crea usuarios con credenciales individuales y agrúpalos para gestionar permisos fácilmente.  
+✅ **Roles** – Otorga permisos temporales a servicios o aplicaciones sin necesidad de credenciales fijas.  
+✅ **Políticas** – Define reglas de acceso mediante JSON para limitar lo que los usuarios pueden hacer en AWS.  
+✅ **Autenticación Multifactor (MFA)** – Agrega una capa extra de seguridad con un código de verificación.  
+
+📌 **Ejemplo de política IAM para acceso a S3:**  
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": "s3:*",
+      "Resource": "arn:aws:s3:::mi-bucket/*"
+    }
+  ]
+}
+```
+
+### **2️⃣ AWS Organizations 🏢**  
+Si manejas múltiples cuentas en AWS, **Organizations** te ayuda a:  
+✅ Consolidar la facturación en una sola cuenta.  
+✅ Aplicar restricciones de seguridad a nivel organizacional.  
+✅ Usar **Service Control Policies (SCPs)** para limitar lo que las cuentas pueden hacer.  
+
+### **3️⃣ AWS Security Hub 🛡️**  
+AWS Security Hub centraliza y analiza alertas de seguridad, permitiéndote detectar y mitigar riesgos.  
+
+🔍 **Características:**  
+✔️ Evalúa la configuración de seguridad de tus servicios.  
+✔️ Detecta vulnerabilidades y recomienda correcciones.  
+✔️ Se integra con otros servicios como **GuardDuty, Inspector y Macie**.  
+
+### **4️⃣ AWS GuardDuty 🔍🚨**  
+Servicio de detección de amenazas que analiza registros de actividad de AWS para identificar comportamientos sospechosos.  
+
+📌 **Ejemplo de detección:**  
+🚨 Intentos de acceso no autorizados desde direcciones IP sospechosas.  
+🚨 Uso inusual de recursos (p. ej., minería de criptomonedas).
+
+### **5️⃣ AWS Key Management Service (KMS) 🔐**  
+Permite gestionar claves de cifrado para proteger datos en S3, RDS, EBS, entre otros.  
+
+✅ Soporta cifrado automático en servicios como S3 y RDS.  
+✅ Integración con CloudTrail para auditoría de uso de claves.  
+✅ Control de acceso basado en políticas de IAM.  
+
+### **6️⃣ AWS WAF y Shield 🏰⚔️**  
+**AWS WAF** protege tus aplicaciones web de ataques como **SQL Injection y Cross-Site Scripting (XSS)**.  
+**AWS Shield** ofrece protección contra ataques **DDoS** (versión estándar gratuita y avanzada con mitigación automática).  
+
+### **7️⃣ AWS CloudTrail 📜**  
+Monitorea y registra todas las acciones en tu cuenta de AWS.  
+✔️ Audita actividades de IAM, S3, EC2, etc.  
+✔️ Útil para cumplimiento de normativas (ISO, SOC, HIPAA).  
+
+📌 **Ejemplo de consulta en CloudTrail con AWS CLI:**  
+```bash
+aws cloudtrail lookup-events --lookup-attributes AttributeKey=EventName,AttributeValue=DeleteBucket
+```
+(Esto muestra quién eliminó un bucket en S3 y cuándo).  
+
+### **🚀 Buenas prácticas para mejorar la seguridad en AWS**  
+✅ **Habilita MFA** para todas las cuentas IAM y Root.  
+✅ **Usa IAM Roles** en lugar de credenciales estáticas en instancias EC2.
+✅ **Aplica el principio de privilegio mínimo** (solo otorga los permisos necesarios).
+✅ **Monitorea con CloudTrail y Security Hub** para detectar actividad sospechosa.
+✅ **Usa cifrado con KMS** para proteger datos sensibles.
+
+### Resumen
+
+Uno de los aspectos más importantes al trasladar aplicaciones en la nube es la **seguridad**. Es crucial que nuestros datos estén protegidos contra amenazas para así permitir que los usuarios accedan a nuestro sistema y encuentren solo los recursos que necesitan.
+
+### Servicios de protección de datos
+
+A continuación, conocerás algunos servicios de protección de AWS y sus funciones para mover nuestras plataformas en la nube:
+
+- **Amazon Macie**: descubre y protege datos sensibles
+- **AWS Key Management Service**: almacena y administra claves de cifrado
+- **AWS CloudHSM**: proporciona almacenamiento de claves basado en hardware
+- **AWS Certificate Manager**: provee, administra e implementa certificados SSL/TLS
+- **AWS Secrets Manager**: traslada, gestiona y recupera datos (contraseñas, por ejemplo)
+
+### Servicios de protección de la infraestructura
+
+Es fundamental que cuides de la infraestructura de tu sitio web y AWS ofrece los siguientes servicios de seguridad:
+
+- **AWS Shield**: protege contra ataques de Denegación de Servicio (DDOS)
+- **AWS Web Aplication Firewall (WAF)**: filtra el tráfico de sitios web maliciosos
+- **AWS Firewall Manager**: administra las reglas del firewall de forma centralizada
+
+### Servicios de detección de amenazas
+
+En todo momento nuestra plataforma está expuesta a grandes amenazas y por eso AWS desarrolló los siguientes servicios:
+
+- **Amazon GuarDuty**: detecta automáticamente las amenazas
+- **Amazon Inspector**: analiza la seguridad de la aplicación
+- **Amazon Config**: registra y evalúa configuraciones de nuestros recursos
+- **Amazon CloudTrail**: rastrea la actividad del usuario y el uso de las API que ocupamos en nuestra cuenta.
+
+### Servicios de gestión de identidad
+Por último, existen distintas herramientas de gestión de identidad que provee AWS:
+
+- **AWS Identity and Access Management (IAM)**: administra de forma segura el acceso a una cuenta, servicios y recursos
+- **AWS Inicio de sesión único**: implementa el inicio de sesión único (Single Sign On/SSO)
+- **Amazon Cognito**: permite a los usuarios administrar la identidad dentro de las aplicaciones
+- **AWS Servicio de Directorio**: implementa y administra un Active Directory service
+- **AWS Organizaciones**: funciona para gobernar y administrar de distintas cuentas de AWS de forma centralizada
+
+## IAM ilustrado
+
+**IAM (Identity and Access Management) en AWS** es el servicio que permite gestionar identidades y permisos dentro de AWS. Aquí tienes una ilustración conceptual de cómo funciona IAM:
+
+### **🔹 Componentes Clave de IAM**
+1. **Usuarios** 👤 → Representan personas o aplicaciones con acceso a AWS.  
+2. **Grupos** 👥 → Conjunto de usuarios con permisos comunes.  
+3. **Roles** 🎭 → Permiten a servicios o cuentas asumir permisos temporales.  
+4. **Políticas** 📜 → Documentos JSON que definen permisos (ej., acceso a S3, EC2, RDS).
+
+### **🔹 Esquema de Funcionamiento de IAM**
+📌 **Ejemplo práctico:**
+- Un usuario llamado *Mario* necesita acceso a un bucket S3.  
+- Se le asigna una política que permite `s3:ListBucket` y `s3:GetObject`.  
+- Si otro usuario, *Ana*, necesita lo mismo, en lugar de asignar permisos individuales, se coloca a *Mario* y *Ana* en un grupo con la política adecuada.
+
+### **🔹 Representación Gráfica de IAM**
+```
+[ Usuario: Mario ] --> [ Grupo: Desarrolladores ] --> [ Política: Acceso a S3 ]
+[ Usuario: Ana   ] ----^
+```
+  
+✔ **Beneficio**: Administración centralizada, menos errores, más seguridad.
+
+### **🔹 Buenas Prácticas de IAM**
+✅ Usar el principio de **menor privilegio**.  
+✅ Habilitar **MFA (Autenticación Multifactor)** para usuarios críticos.  
+✅ Usar **roles IAM** en lugar de credenciales estáticas para aplicaciones.
+
+### Resumen
+
+**Identity and Access Management (IAM)** es un servicio gratuito que nos ayuda a administrar los accesos a los servicios y recursos de tu cuenta en AWS. A su vez, puedes crear usuarios, grupos y establecer permisos de acceso a los recursos mediante el uso de políticas.
+
+### Usuarios y grupos de usuarios de IAM
+
+Los usuarios y grupos de usuarios son de los principales componentes de IAM. Al crear tu cuenta de AWS te proporcionan un usuario Root que tiene acceso a todos los recursos,
+
+Este usuario puede generar otros perfiles y cada uno con un acceso único a distintos recursos de AWS. Además, Root también puede configurar grupos de usuarios, donde cada miembro tiene y puede compartir permisos de acceso.
+
+### Ejemplos de políticas de IAM
+
+El acceso a recursos se otorga mediante políticas. Este es un ejemplo de una política que otorga acceso de administrador.
+
+```json
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": "*",
+            "Resource": "*"
+        }
+    ]
+}
+```
+
+También está este ejemplo de políticas de acceso a un bucket de S3 (almacenamiento)
+
+```json
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "s3:ListBucket"
+            ],
+            "Resource": "arn:aws:53 ::: bucket-name"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "s3: GetObject",
+                "s3: PutObject",
+            ],
+            "Resource": "arn:aws:53 ::: bucket-name /*"
+        }
+    ]
+}
+```
+
+### IAM Roles
+
+Además de todas estas funciones, **IAM de AWS** permite asumir roles y otorgar permisos a otras tecnologías. Por ejemplo, podemos conceder a una máquina virtual el acceso a una base de datos mediante un rol de IAM.
+
+## Secrets Manager
+
+AWS **Secrets Manager** es un servicio que permite almacenar, administrar y recuperar credenciales y secretos de manera segura. Se usa comúnmente para gestionar contraseñas, claves API y credenciales de bases de datos sin necesidad de almacenarlas en código.
+
+### **🔹 ¿Qué problemas resuelve?**  
+✅ **Elimina credenciales en código**: En lugar de almacenar contraseñas en archivos de configuración o código fuente, se accede a ellas de forma segura mediante API.  
+✅ **Rotación automática de secretos**: Permite configurar la renovación automática de credenciales sin intervención manual.  
+✅ **Integración con AWS Services**: Compatible con **RDS, Redshift, DocumentDB**, entre otros.  
+✅ **Control de acceso con IAM**: Define qué usuarios o servicios pueden acceder a los secretos.
+
+### **🔹 ¿Cómo funciona?**
+📌 **1. Creación del secreto:**  
+   - Puedes almacenar credenciales como usuario y contraseña de una base de datos.  
+   - Se cifran automáticamente con **AWS KMS (Key Management Service)**.  
+
+📌 **2. Acceso a un secreto:**  
+   - Puedes recuperar secretos usando la consola de AWS, **AWS CLI**, o **SDKs**.  
+   - Ejemplo con AWS CLI:  
+     ```sh
+     aws secretsmanager get-secret-value --secret-id MiSecreto
+     ```
+   - En código con Python (boto3):  
+     ```python
+     import boto3
+     client = boto3.client('secretsmanager')
+     response = client.get_secret_value(SecretId='MiSecreto')
+     print(response['SecretString'])
+     ```
+
+📌 **3. Rotación automática:**  
+   - Se pueden definir políticas para actualizar credenciales en intervalos regulares.
+
+### **🔹 Caso de uso práctico**
+Si una aplicación en **Lambda** necesita conectarse a una base de datos RDS sin exponer credenciales en el código, **Secrets Manager** almacena y proporciona estos valores bajo demanda.
+
+### **🔹 Precios y Alternativas**  
+💰 **AWS Secrets Manager** tiene costos basados en el número de secretos almacenados y solicitudes realizadas.  
+🔄 Alternativa gratuita: **AWS Systems Manager Parameter Store**, pero sin rotación automática.
+
+**Resumen**
+
+**Secrets Manager** es un servicio de AWS que nos ayuda a proteger los datos secretos (contraseñas, claves y tokens) necesarios para acceder a nuestras aplicaciones, servicios y recursos.
+
+También nos permite compartir automáticamente esta información cuando queramos. Además, este servicio evita que tengamos que copiar y pegar los secretos directamente en nuestro código.
+
+## Demostración del servicio de directorio
+
+AWS **Directory Service** permite administrar identidades y recursos mediante servicios de directorio compatibles con Microsoft Active Directory (AD) o LDAP. Es ideal para la autenticación de usuarios, integración con Microsoft AD on-premise y gestión de accesos en entornos empresariales.
+
+### **📌 Tipos de Servicios en AWS Directory Service**  
+
+1️⃣ **AWS Managed Microsoft AD** 🏢  
+   - Directorio totalmente administrado basado en Microsoft Active Directory.  
+   - Integración con aplicaciones Windows y cargas de trabajo en AWS.  
+   - Replica dominios en varias regiones y gestiona la sincronización con AD local.  
+
+2️⃣ **Simple AD** 📄  
+   - Alternativa ligera basada en Samba AD.  
+   - Útil para pequeñas y medianas empresas sin necesidad de todas las funciones de Microsoft AD.  
+
+3️⃣ **AD Connector** 🔗  
+   - Permite conectar un Active Directory on-premise con AWS sin migrar los datos.  
+   - Actúa como proxy para autenticar usuarios sin replicar credenciales.  
+
+4️⃣ **Cognito User Pools** 👤  
+   - Gestión de usuarios para aplicaciones web y móviles sin necesidad de un AD tradicional.
+
+### **🛠️ DEMOSTRACIÓN: Creación de un Directorio Administrado**  
+
+### **1️⃣ Acceder a AWS Directory Service**
+📌 Ve a la consola de AWS y busca **"Directory Service"**.  
+
+### **2️⃣ Crear un Directorio**
+1. Haz clic en **"Create Directory"**.  
+2. Selecciona el tipo de directorio (**AWS Managed Microsoft AD** recomendado).  
+3. Configura los siguientes datos:  
+   - **Nombre de dominio**: `example.com`  
+   - **Versión de AD**: Standard o Enterprise.  
+   - **VPC y subredes**: Selecciona la red donde estará disponible el servicio.  
+
+### **3️⃣ Configuración de Usuarios y Grupos**  
+📌 Una vez creado el directorio, accede a **Active Directory Users and Computers (ADUC)** desde una instancia Windows unida al dominio.  
+📌 Agrega usuarios y asigna permisos según las necesidades de la organización.  
+
+### **4️⃣ Integración con Servicios AWS**  
+- **EC2**: Permite autenticación con AD.  
+- **Amazon WorkSpaces**: Usa credenciales del Directorio para sesiones virtuales.  
+- **RDS**: Configura autenticación con Active Directory.
+
+### **💡 Beneficios de AWS Directory Service**
+✅ **Administración simplificada**: AWS gestiona la replicación, backups y monitoreo.  
+✅ **Alta disponibilidad**: Se replica automáticamente en múltiples AZs.  
+✅ **Escalabilidad**: Puede integrarse con miles de usuarios y grupos sin mantenimiento manual.  
+✅ **Seguridad**: Autenticación centralizada con IAM y políticas de acceso.  
+
+### **🚀 ¿Quieres probarlo?**
+Prueba configurando un **AWS Managed Microsoft AD** en tu cuenta de AWS y únete desde una instancia Windows. ¡Dime si necesitas más detalles! 🙌
+
+### Resumen
+
+Un **directorio** es una base de datos que contiene información de inicio de sesión de todos los usuarios de una red y puede implementar políticas de seguridad.
+
+Dado que Windows es el sistema operativo más usado a nivel mundial, Microsoft lanzó Active Directory. Este servicio permite que las empresas gestionen los inicios de sesión de sus empleados.
+
+### AWS Directory Service
+
+Es una oferta de servicio administrado de AWS que posibilita que sus recursos utilicen **Active Directory** y ofrecen:
+
+- Un directorio activo administrado sin tener que ejecutar servidores manualmente
+- La opción de directorio activo simple
+- El conector AD que brinda a usuarios inicio de sesión en aplicaciones de AWS con sus credenciales
+- Un Servicio distribuido con error automático que funciona si hay fallas en los servidores
+- El AWS Directory Service ss compatible con otros servicios de AWS
+
+Para más información de AWS Directory, visita la [documentación del servicio](https://aws.amazon.com/es/directoryservice/ "documentación del servicio")
+
+## Laboratorio: crea usuarios y grupos en AWS
+
+En este laboratorio, aprenderás a crear usuarios y grupos en **AWS Identity and Access Management (IAM)** para gestionar permisos y accesos de manera segura.
+
+### **1️⃣ Acceder a la Consola de AWS IAM**  
+📌 **Pasos:**  
+1. Inicia sesión en la **[Consola de AWS](https://aws.amazon.com/console/)**.  
+2. En el buscador de servicios, escribe **"IAM"** y selecciónalo.
+
+### **2️⃣ Crear un Grupo en IAM**  
+📌 **Pasos:**  
+1. En el panel izquierdo, haz clic en **"Groups" → "Create group"**.  
+2. Ingresa un **nombre del grupo** (Ejemplo: `Admins`, `Developers`, `ReadOnlyUsers`).  
+3. Asigna permisos al grupo:  
+   - **Administrador**: `AdministratorAccess`  
+   - **Solo lectura**: `ReadOnlyAccess`  
+   - **Desarrolladores**: `PowerUserAccess`  
+4. Haz clic en **"Create group"**.
+
+### **3️⃣ Crear Usuarios en IAM**  
+📌 **Pasos:**  
+1. En el panel izquierdo, selecciona **"Users" → "Add user"**.  
+2. Ingresa el **nombre del usuario** (Ejemplo: `jgarcia`, `mlopez`).  
+3. **Elige el tipo de acceso**:  
+   - **Acceso a la consola AWS** (para usar la interfaz web).  
+   - **Acceso programático** (para API y CLI).  
+4. **Selecciona un método de autenticación**:  
+   - Autogenerar contraseña o definir una manualmente.  
+   - Activar **cambio de contraseña obligatorio** en el primer inicio de sesión.  
+5. **Asigna el usuario a un grupo** (Ejemplo: `Admins`, `Developers`).  
+6. **Revisar y crear usuario**.  
+
+💡 **Nota:** Al finalizar, AWS generará credenciales de acceso. Descárgalas en formato `.csv` o copia las credenciales de inicio de sesión.
+
+### **4️⃣ Verificación y Pruebas**  
+✅ **Inicia sesión con un usuario IAM** en [AWS Console](https://aws.amazon.com/console/).  
+✅ Verifica los permisos asignados en **IAM → Usuarios → Permisos**.  
+✅ Intenta acceder a servicios según el rol asignado.
+
+## **🚀 Conclusión**  
+✔️ Ahora sabes cómo **crear grupos y usuarios IAM** en AWS de forma segura.  
+✔️ Puedes gestionar accesos y permisos de manera eficiente.  
+✔️ ¡Recuerda aplicar el **principio de privilegio mínimo** para mayor seguridad!
+
+### Resumen
+
+Para crear usuarios y grupos inicia sesión en la [consola de AWS](https://console.aws.amazon.com/console/home?nc2=h_ct&src=header-signin "consola de AWS"). En la barra de búsqueda, coloca “IAM” y haz clic en el primer resultado.
+
+### Crear un nuevo usuario
+
+A la izquierda verás el siguiente menú:
+
+![IAM Menu](images/IAM_Menu.png)
+
+1. Haz clic en “**Users**” (o Usuarios). Allí vas ver listados los usuarios.
+
+2. Luego haz clic en “**Add Users**” (o Agregar Usuarios) para añadir uno nuevo.
+
+3. A continuación, escribe el nombre de usuario y selecciona “**Password - AWS Management Console access**”, “**Autogenerated Password**” y “**Require password reset**”.
+
+4. Haz clic en “Next” hasta llegar al paso 4 - Review.
+
+5. Finalmente, haz clic en “Create user”. No olvides guardar la contraseña generada al final.
+
+![Creacion de usuario paso 1](images/Creacion_de_usuario paso_1.png)
+
+### Cómo crear un grupo de usuarios administradores
+
+1. En el menú de la primera imagen, dirígete a “**User groups**” y haz clic en “**Create group**”.
+
+2. Escribe el nombre del grupo, “**administrator**” en este caso. Mira que en este menú puedes añadir usuarios allí, pero en esta clase añadiremos el usuario al equipo después de su creación.
+
+![Menú para crear grupo](images/Menu_para_crear_grupo.png)
+
+
+3. Más abajo encontramos la parte de las políticas de permisos. Aquí buscamos “**administrator**” y revisamos el “**AdministratorAccess**” para asignarle permisos de administración al grupo. Hacemos clic en “**Create Group**” al finalizar.
+
+![Seleccionar políticas de acceso](images/Seleccionar_politicas_de_acceso.png)
+
+### Cómo añadir el usuario al grupo de administrador
+
+1. Para esto es necesario que vuelvas a la sección de “**Users**”, luego haces clic en nuestro usuario, clic en la pestaña de Groups y en el botón de “**Add user to groups**”.
+
+![Añadir usuario a grupos](images/Anadir_usuario_a_grupos.png)
+
+Al final, simplemente escogemos los grupos a los que queremos añadir el usuario y hacemos clic en “**Add to Groups**”.
+
+## Laboratorio: crea una alerta de facturación
+
+En este laboratorio, aprenderás a configurar una **alerta de facturación** en AWS utilizando **AWS CloudWatch** y **AWS Budgets** para monitorear tus gastos y evitar sorpresas en tu factura.
+
+### **1️⃣ Habilitar el Acceso a los Datos de Facturación**  
+Antes de crear una alerta, es necesario habilitar el acceso a los datos de facturación en **CloudWatch**.  
+
+📌 **Pasos:**  
+1. Inicia sesión en la **[Consola de AWS](https://aws.amazon.com/console/)**.  
+2. Ve a **"Billing" (Facturación)** en el menú superior derecho.  
+3. En el panel izquierdo, selecciona **"Billing Preferences" (Preferencias de Facturación)**.  
+4. Activa la opción **"Receive Billing Alerts" (Recibir alertas de facturación)**.  
+5. Haz clic en **"Save Preferences" (Guardar preferencias)**.
+
+### **2️⃣ Crear un Presupuesto de Facturación en AWS Budgets**  
+AWS Budgets te permite definir un presupuesto y recibir alertas cuando el gasto supere un límite definido.  
+
+📌 **Pasos:**  
+1. En la consola de AWS, busca y abre **AWS Budgets**.  
+2. Haz clic en **"Create a budget" (Crear un presupuesto)**.  
+3. **Selecciona el tipo de presupuesto**:  
+   - **Cost Budget** (Presupuesto de costos).  
+4. Asigna un **nombre al presupuesto** (Ejemplo: `AlertaPresupuestoMensual`).  
+5. **Define el monto del presupuesto** (Ejemplo: `$50 USD` mensuales).  
+6. **Selecciona un periodo de facturación**:  
+   - `Monthly` (Mensual)  
+   - `Quarterly` (Trimestral)  
+   - `Yearly` (Anual)  
+7. **Establece una alerta**:  
+   - Cuando el gasto supere un **80% del presupuesto**.  
+   - Opcional: Puedes agregar más alertas (Ejemplo: al 50% y 100%).  
+8. **Configurar notificaciones**:  
+   - Agrega un correo electrónico donde recibirás la alerta.  
+   - Opcional: Configurar una notificación en **SNS**.  
+9. **Revisar y crear el presupuesto**.
+
+### **3️⃣ Configurar una Alerta en CloudWatch**  
+Si quieres alertas más avanzadas, puedes configurar una en **CloudWatch** para monitorear el gasto en tiempo real.  
+
+📌 **Pasos:**  
+1. Ve a la consola de **Amazon CloudWatch**.  
+2. En el panel izquierdo, selecciona **"Alarms" → "Create Alarm"**.  
+3. Haz clic en **"Select Metric"** → **"Billing"**.  
+4. Selecciona **"Total Estimated Charge"** y haz clic en **"Select Metric"**.  
+5. Configura una condición:  
+   - **Mayor que** `$50 USD` (o el monto que prefieras).  
+6. **Configura la notificación**:  
+   - Enviar alerta a un tema **SNS** o un correo electrónico.  
+7. **Revisar y crear la alerta**.
+
+### **🚀 Conclusión**  
+✔️ Has configurado **alertas de facturación en AWS** para controlar tus gastos.  
+✔️ Puedes recibir notificaciones cuando tu uso de AWS supere un monto determinado.  
+✔️ AWS Budgets y CloudWatch te ayudan a evitar sobrecostos.
+
+### Resumen
+
+Para crear una alerta de facturación ve a tu nombre de usuario en la plataforma de AWS. Haz clic en la opcion “**Billing Dashboard**” > “**Budgets**” > “**Create a budget**”.
+
+Aquí veremos los Budget Types. Marca la opción por defecto “**Cost budget - Recommended**” y haz clic en el botón superior: “**Enable cost Explorer**” para habilitar el seguimiento de gastos.
+
+![Choose budget type](images/Choose_budget_type.png)
+
+### Sigue los pasos para crear una alerta de facturación
+
+#### Paso 1.
+
+De nuevo en la página de Budget Types, haz clic en “**Next**”. Verás la página **Set Your Budget**. Aquí oprime la opción “**budget**” y selecciona su frecuencia: **daily**, **monthly**, **etc**. Escoge desde cuando quieres empezar a hacer el monitoreo en “**Start Date**”.
+
+En Budgeting method escoge “**Fixed**”. Esta opción implica que se va a monitorear el presupuesto cuando se gasta más de la cantidad indicada. Después completa la casilla “**Enter your budgeted amount**” según el tiempo.
+
+![Set budget amount](images/Set_budget_amount.png)
+
+#### Paso 2 (opcional)
+
+Adicionalmente, en la sección “**Budget Scope**” podemos delimitar nuestro presupuesto con algún servicio específico u otras opciones. De momento, seleccionamos **All AWS Services** y hacemos clic en “**Next**”.
+
+#### Paso 3
+
+Oprimimos el botón “**Add an alert threshold**”. En la sección: Alert #1, configuramos cómo se debe ejecutar la alerta, si es por el valor absoluto o algún porcentaje, en ese caso seleccionamos valor absoluto o “**Absolute Value**” y colocamos la cifra que queremos que encienda la alerta.
+
+Luego en Email recipients indicamos el correo electrónico al que llegara la alerta. Finalmente, hacemos clic en “Next” y en “Create budget”.
+
+![Add alert](images/Add_alert.png)
