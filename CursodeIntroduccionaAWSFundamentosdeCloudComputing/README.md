@@ -1030,7 +1030,7 @@ En este laboratorio, aprenderás a configurar una **alerta de facturación** en 
 Antes de crear una alerta, es necesario habilitar el acceso a los datos de facturación en **CloudWatch**.  
 
 📌 **Pasos:**  
-1. Inicia sesión en la **[Consola de AWS](https://aws.amazon.com/console/)**.  
+1. Inicia sesión en la **[Consola de AWS](https://aws.amazon.com/console/)**.
 2. Ve a **"Billing" (Facturación)** en el menú superior derecho.  
 3. En el panel izquierdo, selecciona **"Billing Preferences" (Preferencias de Facturación)**.  
 4. Activa la opción **"Receive Billing Alerts" (Recibir alertas de facturación)**.  
@@ -1106,3 +1106,81 @@ Oprimimos el botón “**Add an alert threshold**”. En la sección: Alert #1, 
 Luego en Email recipients indicamos el correo electrónico al que llegara la alerta. Finalmente, hacemos clic en “Next” y en “Create budget”.
 
 ![Add alert](images/Add_alert.png)
+
+## Live: Crea tu primera web con AWS
+
+Crear tu primera web con AWS implica varios pasos, desde la elección de un servicio de hosting hasta la configuración de la infraestructura en la nube. Aquí tienes una guía básica para hacerlo:
+
+### **Paso 1: Configurar una cuenta en AWS**
+1. Ve a [AWS](https://aws.amazon.com/) y crea una cuenta si no tienes una.
+2. Configura la autenticación multifactor (MFA) para mayor seguridad.
+3. En la consola de AWS, busca "IAM" y crea un usuario con permisos adecuados.
+
+### **Paso 2: Elegir el servicio de hosting**
+AWS ofrece varias opciones para alojar una web, dependiendo de su complejidad:
+- **Amazon S3** (para sitios estáticos)
+- **Amazon Lightsail** (para hosting sencillo con WordPress u otros frameworks)
+- **AWS EC2** (para sitios más avanzados con mayor control)
+- **AWS Amplify** (para aplicaciones web y móviles modernas)
+
+Aquí te explico cómo hacerlo con **Amazon S3** para un sitio estático:
+
+### **Paso 3: Crear y configurar un bucket en S3**
+1. Ve a **S3** en la consola de AWS.
+2. Crea un nuevo **bucket** (elige un nombre único y selecciona una región).
+3. Sube los archivos de tu sitio web (HTML, CSS, JS).
+4. Configura las políticas de permisos:
+   - Ve a **Permisos** → **Configuración de Bloqueo de Acceso Público** y deshabilita el bloqueo de acceso público.
+   - En **Política del bucket**, agrega esta política para hacer público el acceso:
+     ```json
+     {
+       "Version": "2012-10-17",
+       "Statement": [
+         {
+           "Sid": "PublicReadGetObject",
+           "Effect": "Allow",
+           "Principal": "*",
+           "Action": "s3:GetObject",
+           "Resource": "arn:aws:s3:::tu-bucket/*"
+         }
+       ]
+     }
+     ```
+5. Habilita la opción de "Alojamiento de sitio web estático" en la pestaña **Propiedades**.
+
+### **Paso 4: Configurar un dominio (opcional)**
+Si deseas usar un dominio personalizado:
+1. Compra un dominio en **Route 53** (o usa otro proveedor y configura un CNAME apuntando a S3).
+2. Configura registros DNS en Route 53 para apuntar al bucket S3.
+
+### **Paso 5: Habilitar HTTPS con CloudFront**
+1. Ve a **CloudFront** en la consola de AWS.
+2. Crea una nueva distribución y selecciona tu bucket S3 como origen.
+3. Habilita **SSL/TLS** (elige un certificado gratuito con AWS Certificate Manager).
+4. Espera la propagación y usa la URL de CloudFront en lugar del bucket.
+
+### **Paso 6: Probar y desplegar**
+- Accede a la URL pública del bucket o la de CloudFront.
+- Si usaste un dominio, pruébalo en el navegador.
+- ¡Listo! Tu primera web en AWS está activa.
+
+**Resumen**
+
+¡Bienvenido a esta **Platzi Live Class!**
+
+En esta sesión Óscar Barajas, Frontend Developer, trae a un invitado muy especial que te enseñará a mezclar tecnologías interesantes que hoy en día son requeridas por varios profesionales que quieren **llevar al siguiente nivel** sus plataformas.
+
+Aquí aprenderás a implementar la nube en tu sitio web y recursos junto a Alexis Araujo, Product Engineer y profesor de Platzi.
+
+### 6 ventajas de utilizar computación en la nube
+
+Algunos de los beneficios de una herramienta de AWS son los siguientes:
+
+- Hay menor gasto de capital comercial sobre gastos operativos. Es decir, pagas sobre la demanda, no posees el hardware, reduces los costos totales de propiedad y operativos
+- Nos beneficiamos de las grandes economías de escala. (Los precios se reducen a medida que aumenta la demanda)
+- Dejas de adivinar la capacidad (no necesitamos saber cuál es la capacidad que necesitan nuestras aplicaciones, escalar basándonos en el uso en tiempo real)
+- Se incrementa la **velocidad** y **agilidad**
+- Se reduce el **gasto de dinero en la ejecución** y mantenimiento de centro de datos
+- Globalizas en minutos tu plataforma
+
+¡Disfruta la Live Class y cuéntanos cómo te fue con esta experiencia! Continúa con nuestros [cursos de AWS](https://platzi.com/ruta/aws/).
