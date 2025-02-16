@@ -1468,3 +1468,92 @@ Una **base de datos clave-valor** almacena datos en forma de claves y valores/at
 **Lecturas recomendadas**
 
 [Bases de datos de manera gratuita - AWS](https://aws.amazon.com/es/free/database/)
+
+## ¿Qué es ElastiCache?
+
+Amazon **ElastiCache** es un servicio totalmente administrado de AWS que **acelera aplicaciones web y bases de datos** al almacenar datos en memoria, reduciendo la latencia y mejorando el rendimiento.
+
+### **🔥 ¿Para qué sirve ElastiCache?**
+
+ElastiCache se usa para **optimizar el acceso a datos frecuentes** sin consultar bases de datos lentas. Es ideal para:  
+✅ **Acelerar aplicaciones web y móviles** (carga más rápida de contenido).  
+✅ **Optimizar bases de datos** (menos consultas y mayor rendimiento).  
+✅ **Soportar aplicaciones en tiempo real** (chat, juegos, análisis en vivo).  
+✅ **Reducir costos** (menos carga en bases de datos tradicionales).
+
+### **🛠️ Motores Compatibles**  
+Amazon ElastiCache ofrece dos motores populares:  
+
+### **1️⃣ Redis**  
+🔹 **Alta disponibilidad y persistencia** (replicación automática, snapshots).  
+🔹 **Soporta estructuras avanzadas** (listas, conjuntos, hashes, pub/sub).  
+🔹 **Escalabilidad horizontal** con sharding y clustering.  
+
+### **2️⃣ Memcached**  
+🔹 **Rápido y ligero**, ideal para almacenar datos temporales.  
+🔹 **Soporte para almacenamiento en memoria distribuido**.  
+🔹 **Fácil escalado horizontal** agregando nodos.  
+
+### **⚙️ ¿Cómo Funciona ElastiCache?**
+
+1️⃣ Una aplicación solicita datos.  
+2️⃣ **ElastiCache verifica** si los datos están almacenados en caché.  
+   - **SI están en caché** → Se devuelven de inmediato (rápido).  
+   - **NO están en caché** → Se consultan en la base de datos y se almacenan en caché para futuras solicitudes.
+
+### **🚀 Beneficios de Amazon ElastiCache** 
+
+✅ **Latencia de milisegundos** (almacenamiento en memoria en lugar de disco).  
+✅ **Altamente escalable** (agrega más nodos fácilmente).  
+✅ **Compatible con AWS Lambda, RDS, DynamoDB y más**.  
+✅ **Seguridad con cifrado en tránsito y en reposo**.  
+✅ **Menos carga en bases de datos relacionales y NoSQL**.
+
+### **📌 Ejemplo de Uso con Redis en AWS CLI**  
+
+### **1️⃣ Crear una instancia de ElastiCache Redis**  
+
+```bash
+aws elasticache create-cache-cluster \
+    --cache-cluster-id "mi-cluster-redis" \
+    --engine redis \
+    --cache-node-type cache.t3.micro \
+    --num-cache-nodes 1
+```
+
+### **2️⃣ Conectar desde una aplicación Python**  
+
+```python
+import redis
+
+client = redis.StrictRedis(
+    host="mi-cluster-redis.xxxxxx.use1.cache.amazonaws.com",
+    port=6379,
+    decode_responses=True
+)
+
+client.set("mensaje", "Hola desde ElastiCache!")
+print(client.get("mensaje"))
+```
+
+### **🎯 ¿Cuándo Usar ElastiCache?**
+
+🔹 Cuando necesitas **alta velocidad de acceso a datos**.  
+🔹 Para **reducir la carga de bases de datos**.  
+🔹 En aplicaciones **en tiempo real** como chats o juegos.  
+
+### **🔥 ¿Qué sigue?**
+
+🔹 Configurar **clusters con Redis o Memcached**.  
+🔹 Integrar ElastiCache con **DynamoDB, RDS o Lambda**.  
+🔹 Implementar **caché con TTL** para datos dinámicos.
+
+### Resumen
+
+**Amazon ElastiCache** es un servicio de almacenamiento en memoria 100% administrado que admite casos de uso flexibles y en tiempo real.
+
+Es una **base de datos en memoria que almacena datos a los que se ha accedido previamente en [memoria caché](https://aws.amazon.com/es/caching/?nc1=h_ls "memoria caché")**, para mejorar la rapidez de acceso a estos datos. Consultar datos en caché siempre es más rápido que consultar directamente la base de datos.
+
+Un ejemplo de uso es el de un sitio de noticias, al cual se accede miles de veces al día. Si los artículos se mantienen en una base de datos en memoria, se podrá acceder a estos mucho más rápido.
+
+ElastiCache posee dos motores, [Redis](https://redis.io/ "Redis") y [Memcached](https://memcached.org/ "Memcached"). Ambos se monitorean a sí mismos continuamente, y pueden ser escalados hacia arriba o abajo en función de la demanda de la aplicación.
