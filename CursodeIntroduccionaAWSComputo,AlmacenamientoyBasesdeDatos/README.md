@@ -729,3 +729,742 @@ Tenemos variedad de opciones para escoger la clase de almacenamiento S3 en funci
 **Lecturas recomendadas**
 
 [Tipos de almacenamiento en la nube | Amazon S3](https://aws.amazon.com/es/s3/storage-classes/)
+
+## Explicando el Amazon Elastic File System (EFS)
+
+### **🔹 ¿Qué es Amazon EFS?** 
+
+Amazon **Elastic File System (EFS)** es un sistema de archivos **compartido, escalable y administrado** en la nube de AWS. Está diseñado para permitir que múltiples instancias EC2, contenedores y otros servicios accedan a los mismos archivos de manera concurrente, con **baja latencia y alta disponibilidad**.
+
+### **🔹 Características Clave**
+
+✅ **Escalabilidad Automática** – Se expande y contrae sin necesidad de gestión manual.  
+✅ **Acceso Compartido** – Múltiples instancias EC2 pueden conectarse al mismo sistema de archivos.  
+✅ **Compatible con NFS** – Usa el protocolo **NFSv4** para la comunicación.  
+✅ **Alta Disponibilidad y Durabilidad** – Replicación automática en múltiples zonas de disponibilidad (AZ).  
+✅ **Pago por Uso** – Solo pagas por los datos almacenados y no por la capacidad provisionada.  
+✅ **Soporte para AWS Lambda y Fargate** – Permite acceso a datos desde servicios sin servidor.  
+✅ **Encriptación y Control de Acceso** – Integración con AWS IAM y KMS para seguridad.
+
+### **🔹 Casos de Uso**
+
+✔️ **Servidores Web** – Para sitios web y aplicaciones que requieren almacenamiento compartido.  
+✔️ **Big Data y Machine Learning** – Procesamiento de grandes volúmenes de datos con múltiples instancias.  
+✔️ **Contenedores y Kubernetes** – Permite el almacenamiento persistente para Amazon EKS y ECS.  
+✔️ **Ambientes de Desarrollo** – Para compartir código y configuraciones entre servidores.
+
+### **🔹 Comparación con Otros Almacenamientos AWS**  
+
+| **Característica** | **EFS** | **EBS** | **S3** |
+|--------------------|--------|--------|--------|
+| **Tipo de Almacenamiento** | Archivos (NFS) | Bloques | Objetos |
+| **Escalabilidad** | Automática | Manual | Automática |
+| **Acceso Concurrente** | Sí, varias instancias | No, solo 1 instancia | Sí, desde cualquier lugar |
+| **Latencia** | Baja | Muy baja | Alta (comparado con EFS/EBS) |
+| **Casos de Uso** | Aplicaciones compartidas, contenedores | Bases de datos, discos de EC2 | Almacenamiento de datos, backups |
+
+### **🔹 Configuración Básica de EFS en AWS**  
+
+### **1️⃣ Crear un Sistema de Archivos EFS**
+
+1. **Ve a la consola de AWS** → Amazon EFS.  
+2. **Haz clic en "Crear sistema de archivos"**.  
+3. **Selecciona la VPC y las subredes** donde se desplegará.  
+4. **Configura el tipo de rendimiento** (estándar o provisionado).  
+5. **Habilita cifrado y permisos de acceso**.  
+6. **Crea el sistema de archivos** y toma nota del **ID del sistema de archivos**.  
+
+### **2️⃣ Conectar EFS a una Instancia EC2**
+
+1. **Instala los paquetes necesarios en la instancia**:  
+   ```bash
+   sudo yum install -y amazon-efs-utils
+   ```
+2. **Crea un punto de montaje**:  
+   ```bash
+   mkdir /mnt/efs
+   ```
+3. **Monta el sistema de archivos**:  
+   ```bash
+   sudo mount -t efs fs-12345678 /mnt/efs
+   ```
+   Reemplaza `fs-12345678` con el ID de tu sistema EFS.  
+
+4. **Verifica que se haya montado correctamente**:  
+   ```bash
+   df -h
+   ```
+
+### **🔹 Configuración Avanzada**  
+
+### **✔️ Conectar EFS a Kubernetes (EKS)**
+
+1. **Instala el CSI de Amazon EFS** en EKS.  
+2. **Define un PersistentVolume (PV) y PersistentVolumeClaim (PVC)**.  
+3. **Asocia el PVC a un Pod** para que use EFS como almacenamiento.  
+
+### **🎯 ¿Qué Sigue?**
+🔹 **Optimizar costos con EFS Infrequent Access (IA).**  
+🔹 **Automatizar el montaje con fstab o CloudFormation.**  
+🔹 **Usar EFS con AWS Lambda para almacenamiento serverless.**
+
+### Resumen
+
+**Amazon Elastic File System (EFS)** brinda un sistema de archivos elástico, sencillo, sin servidor y práctico basado en **NFS** para las máquinas virtuales de EC2.
+
+[NFS](https://www.computerweekly.com/es/definicion/Sistema-de-archivos-de-red-NFS "NFS") es un **protocolo de archivos en red que permite acceder a archivos y directorios que no están en tu sistema**. Esto permite que miles de máquinas puedan conectarse a [EFS](https://aws.amazon.com/es/efs/ "EFS") y procesar los datos que allí se encuentran.
+
+**Características de EFS**
+
+EFS es altamente disponible y duradero. **Provee protección contra una interrupción de la zona de disponibilidad**, replicando los archivos en múltiples zonas dentro de una región.
+
+**Adicionalmente:**
+
+- EFS brinda dos clases de almacenamiento: Standar y Standar IA (para acceso poco frecuente). Puedes implementar políticas para que tus archivos se muevan de Standar a Standar IA después de cierto tiempo.
+- Los datos están **encriptados de manera automática**.
+
+## AWS Storage Gateway
+
+### **🔹 ¿Qué es AWS Storage Gateway?**
+
+AWS **Storage Gateway** es un servicio híbrido de almacenamiento que conecta tu centro de datos o infraestructura on-premises con la nube de **Amazon S3, S3 Glacier y EBS**. Permite extender el almacenamiento local con la escalabilidad y durabilidad de AWS, sin cambiar las aplicaciones existentes.  
+
+✅ **Casos de Uso**  
+✔ **Respaldo y recuperación ante desastres** – Guarda copias de seguridad en AWS.  
+✔ **Almacenamiento en la nube con acceso local** – Mantén archivos en AWS mientras los accedes localmente.  
+✔ **Integración con Amazon S3 y Glacier** – Para archivar datos y optimizar costos.
+
+### **🔹 Modos de Operación de Storage Gateway**  
+
+AWS Storage Gateway ofrece **tres tipos de gateways**, según el caso de uso:  
+
+| **Modo** | **Descripción** | **Casos de Uso** |
+|----------|---------------|------------------|
+| **File Gateway** | Almacena archivos en S3 con acceso vía NFS o SMB. | Backups, almacenamiento de datos en la nube. |
+| **Volume Gateway** | Presenta volúmenes iSCSI en modo cacheado o almacenado. | Aplicaciones empresariales, bases de datos. |
+| **Tape Gateway** | Simula librerías de cintas virtuales (VTL) en la nube. | Archivado y cumplimiento normativo. |
+
+### **🔹 Explicación de Cada Tipo de Storage Gateway**  
+
+### **📁 1️⃣ File Gateway (Acceso a S3 como un Servidor de Archivos)**
+
+- Presenta almacenamiento en **S3** como un sistema de archivos **NFS o SMB**.  
+- **Ideal para** servidores de archivos en la nube, archivos compartidos y backups.  
+- **Datos frecuentemente accedidos** se mantienen en caché localmente.  
+
+**Ejemplo de uso:**
+
+Una empresa que necesita compartir archivos entre varias oficinas, pero desea almacenarlos en S3 para reducir costos y mejorar la seguridad.
+
+### **💾 2️⃣ Volume Gateway (Almacenamiento en Bloques - iSCSI)**
+
+Se presenta como un volumen iSCSI que las aplicaciones pueden usar como si fuera un disco local. Tiene dos modos:  
+
+1. **Modo Cacheado** – Mantiene los datos en S3 con caché local para mejorar el rendimiento.  
+2. **Modo Almacenado** – Guarda los datos localmente y hace snapshots en AWS para respaldo.  
+
+**Ejemplo de uso:**  
+Una empresa con bases de datos on-premises que necesita respaldo automático en AWS sin cambiar su infraestructura.
+
+### **📼 3️⃣ Tape Gateway (Cintas Virtuales en la Nube)**
+
+- Reemplaza sistemas de **cintas físicas** por almacenamiento en AWS.  
+- Compatible con **S3 Glacier y S3 Glacier Deep Archive** para archivado de datos de bajo costo.  
+- Se usa con software de backup como **Veeam, Commvault y NetBackup**.  
+
+**Ejemplo de uso:**  
+Un banco que debe mantener copias de seguridad a largo plazo por normativas legales.
+
+### **🔹 Implementación Básica de AWS Storage Gateway**  
+
+### **1️⃣ Configurar un Gateway en AWS**
+
+1. **Accede a la consola de AWS** → Storage Gateway.  
+2. **Elige el tipo de Gateway** (File, Volume o Tape).  
+3. **Selecciona la ubicación** (on-premises o en EC2).  
+4. **Descarga e instala la máquina virtual** en VMware, Hyper-V o como instancia EC2.  
+5. **Conéctala a AWS y configura el acceso a S3, EBS o Glacier.**
+
+### **🔹 Comparación con Otros Servicios de Almacenamiento en AWS**  
+
+| **Servicio** | **Tipo de Almacenamiento** | **Casos de Uso** |
+|-------------|---------------------------|------------------|
+| **S3** | Objetos | Backups, almacenamiento de datos en la nube. |
+| **EFS** | Archivos | Sistemas de archivos compartidos en EC2 y contenedores. |
+| **EBS** | Bloques | Discos persistentes para EC2. |
+| **Storage Gateway** | Híbrido (archivos, bloques, cintas) | Extender almacenamiento local a AWS. |
+
+### **🎯 ¿Qué Sigue?**
+
+Si necesitas ayuda con la implementación de AWS Storage Gateway, dime el caso de uso y te guío paso a paso.
+
+### Resumen
+
+**AWS Storage Gateway nos brinda acceso a almacenamiento en la nube prácticamente ilimitado desde nuestra propia infraestructura**.
+
+Storage Gateway se compone de tres puertas de acceso diferentes:
+
+### File Gateway
+
+**File Gateway** provee interfaces [SMB](https://es.wikipedia.org/wiki/Server_Message_Block "SMB") y NFS para amazon S3, tanto en Windows como en Linux. Gracias a [File Gateway](https://aws.amazon.com/es/storagegateway/file/ "File Gateway"), en ambos sistemas operativos veremos un sistema de archivos tal cual como si fuera un disco montado en nuestros computadores, los cuales escriben archivos al sistema, y **File Gateway se encarga de guardarlos en S3**.
+
+Gracias a esto **podemos guardar archivos a S3 como si se tratara de guardar archivos locales**. Los archivos S3 luego pueden ser usados por cualquier servicio de AWS.
+
+### Tape Gateway
+
+Supón que tienes copias de seguridad en cintas físicas. **Tape Gateway te permite migrar copias de seguridad a una bibliteca de cintas virtuales en AWS**. Tape Gateway es compatible con los principales software de respaldo.
+
+Los contenidos de tus cintas se guardan en S3, lo que te permite implementar **S3 Glacier** y S**3 Glacier Deep Archive** para guardar tus copias de seguridad a largo plazo. Una vez que implementas [Tape Gateway](https://aws.amazon.com/es/storagegateway/vtl/ "Tape Gateway"), puedes olvidarte de los costos relacionados a mantener las cintas físicas.
+
+Volume Gateway
+Volume Gateway otorga almacenamiento en bloque con protocolo iSCSI, respaldado en la nube. Almacena datos en S3 de acuerdo a dos modos:
+
+- **Modo caché**: almacena los datos principales en S3, mientras que los datos de acceso frecuente se guardan localmente y en caché.
+- **Modo almacenado**: todos los datos se guardan localmente, mientras que se hace una copia de seguridad de manera asíncrona en S3.
+
+### Conclusión
+
+Vimos tres posibilidades de uso de [Amazon Storage Gateway](https://aws.amazon.com/es/storagegateway/ "Amazon Storage Gateway"). Para cada caso de uso, hay una puerta de acceso adecuada, ya sea **File**, **Tape** o **Volume Gateway**.
+
+## Laboratorio: crea tu primer bucket de S3 para guardar objetos 
+
+Si quieres crear un **bucket de S3** y guardar objetos, puedes hacerlo desde la consola de AWS o usando **AWS CLI**. Aquí te muestro cómo hacerlo usando la línea de comandos.
+
+### **1️⃣ Configurar AWS CLI**
+
+Si aún no tienes **AWS CLI** instalado, sigue estos pasos:  
+- Descarga e instala [AWS CLI](https://aws.amazon.com/cli/).  
+- Configura las credenciales con:  
+  ```bash
+  aws configure
+  ```
+  Ingresa:  
+  - **AWS Access Key ID**  
+  - **AWS Secret Access Key**  
+  - **Región por defecto** (ejemplo: `us-east-1`)  
+  - **Formato de salida** (`json`, `table`, `text`)
+
+### **2️⃣ Crear un Bucket de S3**
+
+Ejecuta el siguiente comando para crear un bucket en **us-east-1**:  
+
+```bash
+aws s3 mb s3://mi-primer-bucket-s3 --region us-east-1
+```
+
+📌 **Nota:** Cambia `mi-primer-bucket-s3` por un nombre único.
+
+Si la creación es exitosa, verás un mensaje como:  
+```
+make_bucket: s3://mi-primer-bucket-s3/
+```
+
+### **3️⃣ Subir un Archivo al Bucket**  
+Guarda un archivo en el bucket:  
+
+```bash
+aws s3 cp mi-archivo.txt s3://mi-primer-bucket-s3/
+```
+
+Para subir una carpeta completa:  
+
+```bash
+aws s3 cp mi-carpeta s3://mi-primer-bucket-s3/ --recursive
+```
+
+### **4️⃣ Listar Objetos en el Bucket**  
+Para ver los archivos almacenados en el bucket:  
+
+```bash
+aws s3 ls s3://mi-primer-bucket-s3/
+```
+
+### **5️⃣ Hacer un Archivo Público (Opcional)**  
+Si quieres que un archivo sea accesible públicamente:  
+
+```bash
+aws s3 cp mi-archivo.txt s3://mi-primer-bucket-s3/ --acl public-read
+```
+
+Luego, accede al archivo en:  
+```
+https://mi-primer-bucket-s3.s3.amazonaws.com/mi-archivo.txt
+```
+
+### Resumen
+
+Ya conoces las capacidades de AWS S3, ¡ahora ponte manos a la obra! **Vamos a crear nuestro primer bucket de S3 para guardar objetos**.
+
+Inicia sesión en AWS, ve al servicio de S3 y sigue las instrucciones.
+
+### Crea tu bucket
+Una vez en la página de S3, haz click en Crear Bucket. Te aparecerá un menú como el siguiente:
+
+![Menú creación de bucket](images/Menu_creacion_de_bucket.png)
+
+Deberás escoger un nombre único para el bucket. Por ejemplo, **test-[tu-numbre]-[números aleatorios]**. Puedes dejar la región por defecto. En la parte de propiedad de objetos, deja **ACL deshabilitadas (recomendado)**.
+
+Acto seguido, en la sección ““**Configuración de bloqueo de acceso público para este bucket”**”, desactiva la casilla de **Bloquear todo el acceso público**, y activa la de reconocimiento de configuración actual.
+
+![configuración de bloqueo de acceso público](images/configuracion_de_bloqueo_de_acceso_publico.png)
+
+Habilita el control de versiones de buckets (lo vamos a necesitar para el próximo laboratorio). Finalmente, haz click en **Crear Bucket**.
+
+### Sube tu primer objeto
+
+Una vez creado, **haz click en el nombre de tu bucket, y luego en Cargar**. Puedes hacer click en *Agregar archivos*, o arrastrar el archivo que quieres subir. Una vez subido, haz click en *Cargar*.
+
+![Cargar archivo](Cargar_archivo.png)
+
+Cuando termine de cargar, podrás hacer click en el nombre del objeto, lo cual te mostrará sus propiedades, entre ellas la URL del objeto. Si intentas acceder desde tu navegador, es posible que te salga una página de acceso denegado.
+
+Si bien cuando creamos el bucket desploqueamos el acceso público, esto es a nivel de bucket. A nivel de objeto, debemos permitir este acceso.
+
+Tenemos dos alternativas: permitirlo desde los permisos del objeto, o crear una política a nivel de bucket para permitir el acceso público a los archivos
+
+### Cambiar los permisos del objeto
+
+Si nos vamos al apartado de permisos, nos saldrá un recuadro indicando que como dejamos el **ACL** (lista de control de acceso) deshabilitado durante la creación del bucket, **debemos cambiar los permisos del objeto** mediante políticas a nivel de bucket. Podemos cambiar esto **habilitando el ACL en el apartado de permisos** del bucket, en la sección de “**“Propiedad de objetos”**”.
+
+Cuando habilitemos el **ACL**, simplemente **volvemos a la página del objeto, al apartado de permisos**. Hacemos click en **Editar, y habilitamos la lectura del objeto a todo el mundo**.
+
+![habilitar lectura pública](images/habilitar_lectura_publica.png)
+
+### Implementar política de acceso a nivel de bucket
+
+Para crear una política de acceso, podemos apoyarnos de [AWS Policy Generator](https://awspolicygen.s3.amazonaws.com/policygen.html "AWS Policy Generator"), una herramienta que nos permite generar políticas de acceso de AWS.
+
+Estando en la herramienta, en *Select Policy Type*, seleccionamos **S3 Bucket Policy. En Principal, escribimos un asterisco (`*`)**. En Actions, ubicamos la acción **getObject**. En **Amazon Resource Name (ARN)**, colocamos el `ARN` de nuestro bucket seguido de slash y asterisco (`/*`). El **ARN** lo podemos obtener en **bucket -> propiedades -> Información general sobre el bucket -> Nombre de recurso de Amazon (ARN)**.
+
+Entonces hacemos **click en Add Statement**, y luego en **Generate policy. Copiamos el JSON** que nos aparece en pantalla. Debería ser similar a esto.
+
+```json
+{
+  "Id": "Policy1649360676835",
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "Stmt1649360674639",
+      "Action": [
+        "s3:GetObject"
+      ],
+      "Effect": "Allow"",
+      "Resource": "arn:aws:s3:::ciro-platzi-123/*",
+      "Principal": "*"
+    }
+  ]
+}
+```
+
+Nos dirigimos a la parte de **Permisos del bucket -> Política del bucket**. Hacemos click en **editar, pegamos el código JSON** generado por la herramienta, y **guardamos cambios**.
+
+Si hiciste todo bien, te debería salir “**“Accesible públicamente”**” justo debajo del nombre de tu bucket.
+
+![Bucket accesible públicamente](images/Bucket_accesible_publicamente.png)
+
+¡Felicidades! Creaste tu primer bucket de S3, añadiste tu primer objeto y lo hiciste públicamente accesible.
+
+**Lecturas recomendadas**
+
+[AWS Policy Generator](https://awspolicygen.s3.amazonaws.com/policygen.html)
+
+## Laboratorio: versionamiento
+
+El **versionado** en **Amazon S3** permite mantener múltiples versiones de un mismo objeto en un bucket. Esto es útil para:  
+
+✅ **Recuperar versiones antiguas** si un archivo se sobrescribe accidentalmente.  
+✅ **Proteger contra eliminaciones accidentales**.  
+✅ **Seguir cambios en los archivos a lo largo del tiempo**.
+
+### **1️⃣ Habilitar el Versionado desde la Consola de AWS**  
+
+1. **Ir a la Consola de AWS** → **S3**.  
+2. **Seleccionar tu bucket**.  
+3. Ir a la pestaña **"Properties"**.  
+4. En la sección **"Bucket Versioning"**, haz clic en **"Edit"**.  
+5. Activa **"Enable"** y guarda los cambios.
+
+### **2️⃣ Habilitar Versionado con AWS CLI**  
+
+Si prefieres hacerlo desde la línea de comandos, usa:  
+
+```bash
+aws s3api put-bucket-versioning --bucket mi-primer-bucket-s3 --versioning-configuration Status=Enabled
+```
+
+Para verificar que el versionado está activado:  
+
+```bash
+aws s3api get-bucket-versioning --bucket mi-primer-bucket-s3
+```
+
+📌 **Si está habilitado**, verás:  
+```json
+{
+    "Status": "Enabled"
+}
+```
+
+### **3️⃣ Ver Versiones de Objetos**  
+
+Cuando subes un archivo con versionado activado, cada modificación genera una **nueva versión**. Puedes ver todas las versiones con:  
+
+```bash
+aws s3api list-object-versions --bucket mi-primer-bucket-s3
+```
+
+El resultado mostrará cada versión con su **ID único**.
+
+### **4️⃣ Restaurar una Versión Anterior**  
+
+Para descargar una versión específica de un archivo:  
+
+```bash
+aws s3api get-object --bucket mi-primer-bucket-s3 --key mi-archivo.txt --version-id ID_VERSION mi-archivo-antiguo.txt
+```
+
+Para restaurar una versión anterior, simplemente vuelves a subirla con la misma clave (`--key`).
+
+### **5️⃣ Eliminar Objetos con Versionado Activado**  
+
+Cuando intentas eliminar un objeto en un bucket con versionado habilitado, este **no se borra completamente**. En su lugar, AWS añade un **"delete marker"**.  
+
+Si quieres eliminar un archivo completamente, debes borrar la versión específica:  
+
+```bash
+aws s3api delete-object --bucket mi-primer-bucket-s3 --key mi-archivo.txt --version-id ID_VERSION
+```
+
+Para ver los "delete markers":  
+
+```bash
+aws s3api list-object-versions --bucket mi-primer-bucket-s3
+```
+
+### **🚀 ¿Qué Sigue?**
+
+🔹 **Configurar Reglas de Ciclo de Vida** para eliminar versiones antiguas automáticamente.  
+🔹 **Usar S3 Glacier** para almacenar versiones antiguas a menor costo.  
+🔹 **Integrar S3 con AWS Lambda** para auditorías automáticas.
+
+### Resumen
+
+Veamos **cómo funciona el versionamiento** de los archivos que guardamos en S3. Si nos dirigimos a la página de nuestro **bucket, en el apartado de objetos**, veremos un botón de “**Mostrar versiones**”, que nos permite ver los archivos junto con sus distintas versiones.
+
+### ¿Qué pasa si subo un archivo que ya existe?
+
+Cada vez que subimos un archivo con el mismo nombre a un bucket con versionamiento habilitado, se crea una nueva versión del mismo, y se le asigna un ID único de objeto.**Las versiones anteriores de los archivos también se almacenan, lo que puede suponer un mayor costo**.
+
+## Bases de datos en AWS
+
+AWS ofrece varias soluciones de bases de datos según el tipo de datos y caso de uso. Se dividen en **relacionales (SQL)** y **NoSQL**, además de opciones administradas y no administradas.
+
+### **🔹 Bases de Datos Relacionales (SQL) en AWS**  
+✅ Usan SQL para consultas y estructuras tabulares.  
+✅ Son ideales para transacciones y aplicaciones estructuradas.  
+
+### **1️⃣ Amazon RDS (Relational Database Service)**
+🔹 Base de datos administrada para **MySQL, PostgreSQL, MariaDB, SQL Server y Oracle**.  
+🔹 Se encarga de la configuración, parches, backups y escalado.  
+🔹 Compatible con **Multi-AZ** para alta disponibilidad.  
+
+📌 **Ejemplo de Creación con AWS CLI:**
+
+```bash
+aws rds create-db-instance \
+    --db-instance-identifier mi-bd-rds \
+    --engine mysql \
+    --allocated-storage 20 \
+    --db-instance-class db.t3.micro \
+    --master-username admin \
+    --master-user-password MiPasswordSegura
+```
+
+### **2️⃣ Amazon Aurora**
+
+🔹 Compatible con **MySQL y PostgreSQL**, pero 5 veces más rápido.  
+🔹 **Escalabilidad automática** y arquitectura distribuida.  
+🔹 Ideal para aplicaciones empresariales de alto rendimiento.  
+
+📌 **Ejemplo de uso:**  
+Un sistema financiero que requiere alta disponibilidad y replicación rápida.
+
+### **3️⃣ Amazon Redshift**
+
+🔹 Base de datos orientada a **Data Warehousing y Analítica**.  
+🔹 Procesa grandes volúmenes de datos (Big Data).  
+🔹 Compatible con consultas en **SQL estándar**.  
+
+📌 **Ejemplo de uso:**
+
+Empresas que necesitan análisis de datos en tiempo real y reportes complejos.
+
+## **🔹 Bases de Datos NoSQL en AWS**
+
+✅ Diseñadas para datos no estructurados o semi-estructurados.  
+✅ Optimizadas para velocidad y escalabilidad horizontal.  
+
+### **4️⃣ Amazon DynamoDB**
+
+🔹 Base de datos **NoSQL totalmente administrada**.  
+🔹 Alta escalabilidad y baja latencia (milisegundos).  
+🔹 Soporta modelos **clave-valor** y **documento JSON**.  
+
+📌 **Ejemplo de Creación de una Tabla:**
+
+```bash
+aws dynamodb create-table \
+    --table-name Clientes \
+    --attribute-definitions AttributeName=ID,AttributeType=S \
+    --key-schema AttributeName=ID,KeyType=HASH \
+    --provisioned-throughput ReadCapacityUnits=5,WriteCapacityUnits=5
+```
+
+📌 **Ejemplo de uso:**  
+Aplicaciones móviles y web que necesitan respuesta rápida y almacenamiento flexible.
+
+### **5️⃣ Amazon DocumentDB**  
+🔹 Base de datos administrada compatible con **MongoDB**.  
+🔹 Optimizada para aplicaciones JSON.  
+🔹 Seguridad con cifrado en tránsito y en reposo.  
+
+📌 **Ejemplo de uso:**  
+Aplicaciones que almacenan documentos JSON, como catálogos de productos o perfiles de usuarios.  
+
+### **6️⃣ Amazon ElastiCache (Memcached y Redis)**
+
+🔹 Base de datos **en memoria** para mejorar velocidad.  
+🔹 Compatible con **Redis y Memcached**.  
+🔹 Usada como caché para reducir la carga en bases de datos SQL o NoSQL.  
+
+📌 **Ejemplo de uso:**
+
+Un sistema de e-commerce que guarda los productos más visitados en caché para acelerar el acceso.
+
+### **7️⃣ Amazon Neptune**
+
+🔹 Base de datos **de grafos** administrada.  
+🔹 Compatible con **Gremlin y SPARQL**.  
+🔹 Ideal para aplicaciones de redes sociales, recomendaciones y detección de fraudes.  
+
+📌 **Ejemplo de uso:**
+
+Un sitio de citas que necesita analizar conexiones entre usuarios para sugerencias de compatibilidad.
+
+### **🚀 ¿Qué Base de Datos Usar en AWS?**  
+
+| **Base de Datos**  | **Tipo**  | **Casos de Uso** |
+|-------------------|---------|------------------|
+| **RDS** (MySQL, PostgreSQL, etc.) | Relacional | Aplicaciones transaccionales, ERP, CRM |
+| **Aurora** | Relacional | Aplicaciones críticas con alto rendimiento |
+| **Redshift** | Data Warehouse | Análisis de grandes volúmenes de datos |
+| **DynamoDB** | NoSQL (Clave-Valor) | Aplicaciones de alta escalabilidad y baja latencia |
+| **DocumentDB** | NoSQL (Documentos JSON) | Aplicaciones que usan MongoDB |
+| **ElastiCache** | Caché en memoria | Optimización del rendimiento en bases de datos |
+| **Neptune** | Base de datos de grafos | Redes sociales, detección de fraude |
+
+### **🎯 ¿Qué Sigue?**
+
+🔹 **Crear una base de datos en RDS o DynamoDB** y conectarla a una app.  
+🔹 **Configurar backups y replicación** para alta disponibilidad.  
+🔹 **Integrar AWS Lambda con DynamoDB** para procesamiento en tiempo real.
+
+### Resumen
+
+Las bases de datos son **colecciones estructuradas de datos**. Almacenan datos eletrónicamente, y se acceden a ellos desde un sistema informático. **AWS cuenta con más de quince motores de bases de datos** diferentes, seguros y altamente disponibles.
+
+### Bases de datos relacionales
+
+Los servicios de [bases de datos relacionales](https://ayudaleyprotecciondatos.es/bases-de-datos/relacional/ "bases de datos relacionales") en AWS son:
+
+- **Amazon Aurora**: base de datos relacional compatible con [MySQL](https://platzi.com/cursos/sql-mysql/ "MySQL") y [PostgreSQL](https://platzi.com/cursos/postgresql/ "PostgreSQL") creada para la nube.
+
+- **Amazon Relational Database Service (Amazon RDS)**: servicio de bases de datos relacionales administrado para MySQL, PostgreSQL, MariaDB, Oracle BYOL o SQL Server. Facilita la configuración, el uso y el escalado de varios motores de bases de datos.
+
+- **Amazon Redshift**: ideal para analítica. Usa SQL para analizar datos estructurados y semiestructurados en almacenamientos de datos, bases de datos operativas y lagos de datos, con hardware y machine learning diseñados por AWS para ofrecer rendimiento al mejor precio a cualquier escala. A propósito, Platzi tiene un curso de [Redshift](https://platzi.com/cursos/redshift-big-data/ "Redshift")
+
+### Bases de datos clave-valor
+
+**Amazon DynamoDB** es una base de datos de documentos y valores clave que ofrece un rendimiento de milisegundos de un solo dígito a cualquier escala. **Está dirigida a aplicaciones de web de alto tráfico, sistemas de comercio electrónico y aplicaciones de juego**.
+
+### Bases de datos en memoria
+
+**Amazon ElastiCache** es un servicio de [almacenamiento de caché en memoria](https://aws.amazon.com/es/caching/?nc1=h_ls "almacenamiento de caché en memoria") completamente administrado que admite casos de uso flexibles y en tiempo real. Se usa para almacenar en caché administración de sesiones, tablas de clasificación de juegos y aplicaciones Geo-Espaciales. En ElastiCache encontramos **ElastiCache para Memcached** y **ElastiCache para Redis**.
+
+### Bases de datos basadas en documentos
+
+**Amazon DocumentDB** es un servicio de base de datos de larga duración, de alta disponibilidad, rápida, escalable y completamente administrado para operar cargas de trabajo de [MongoDB](https://platzi.com/cursos/mongodb/ "MongoDB") esenciales. Entre sus casos de uso se encuentra la gestión de contenidos, catálogos y perfiles de usuario.
+
+**Conclusión**
+
+Definimos de manera breve algunos tipos de bases de datos en AWS. En las siguientes clases veremos un poco más en detalle estos servicios.
+
+## Ventajas de Amazon RDS
+
+Amazon RDS es un servicio administrado de bases de datos que simplifica la configuración, operación y escalabilidad de bases de datos en la nube. Soporta motores como **MySQL, PostgreSQL, MariaDB, SQL Server y Oracle**.  
+
+## **✅ Principales Ventajas de Amazon RDS**  
+
+### **1️⃣ Administración Automática**
+
+🔹 AWS maneja la instalación, configuración, parches y mantenimiento del sistema.  
+🔹 Reduce la carga operativa del equipo de TI.  
+
+### **2️⃣ Escalabilidad Flexible**
+
+🔹 **Escalado vertical**: Puedes aumentar o reducir la capacidad de la base de datos fácilmente.  
+🔹 **Escalado horizontal**: Mediante **Read Replicas**, puedes distribuir la carga de lectura.  
+
+### **3️⃣ Alta Disponibilidad y Recuperación Automática**
+
+🔹 **Multi-AZ (Alta Disponibilidad)**: Replica los datos en una zona diferente para evitar caídas del servicio.  
+🔹 **Backups automáticos**: Puedes restaurar la base de datos en un punto específico en el tiempo.  
+
+### **4️⃣ Seguridad Reforzada**
+
+🔹 **Cifrado de datos** en tránsito y en reposo con AWS KMS.  
+🔹 **Control de acceso con IAM** y grupos de seguridad de VPC.  
+🔹 **Autenticación con AWS Secrets Manager**.  
+
+### **5️⃣ Rendimiento Optimizado**
+
+🔹 **Almacenamiento SSD** para mayor velocidad.  
+🔹 Compatible con **Amazon Aurora**, que es hasta 5 veces más rápido que MySQL.  
+🔹 **Read Replicas** para mejorar la escalabilidad en lecturas.  
+
+### **6️⃣ Costos Controlados (Pay-as-you-go)**
+
+🔹 Pago solo por el almacenamiento y cómputo usado.  
+🔹 **Opciones de instancias reservadas** para reducir costos a largo plazo.  
+
+### **7️⃣ Fácil Integración con Otros Servicios de AWS**
+
+🔹 **Amazon Lambda** para ejecución sin servidores.  
+🔹 **Amazon CloudWatch** para monitoreo en tiempo real.  
+🔹 **Amazon S3** para respaldos y almacenamiento de datos.
+
+### **🎯 ¿Por qué Usar Amazon RDS?**
+
+✅ Empresas que quieren minimizar la gestión manual de bases de datos.  
+✅ Aplicaciones que requieren alta disponibilidad y escalabilidad.  
+✅ Negocios que buscan una solución segura y optimizada en la nube.
+
+### Resumen
+
+Amazon RDS permite crear, ejercutar y ejecutar **bases de datos relacionales** en la nube. Las **bases de datos relacionales** son **aquellas en las que los datos almacenados poseen una relación entre sí**. Los datos se pueden consultar con un lenguaje de consulta llamado SQL.
+
+En Amazon RDS puedes escoger entre 6 motores de bases de datos relacionales diferentes: MYSQL, MariaDB, PostgreSQL, Oracle, SQL Server y Amazon Aurora.
+
+### Ventajas de Amazon RDS
+
+Una de las ventajas de Amazon RDS es que facilita la configuración, siendo un servicio completamente administrando (PAAS). Además:
+
+- RDS es **altamente escalable**, y puede ser usado en múltiple zonas de disponibilidad.
+- **Permite crear réplicas de bases de datos** de solo lectura.
+- RDS realiza **copias de seguridad automática**, y es **tolerante a fallos**.
+- En RDS solo **pagas por lo que usas.**
+
+**Lecturas recomendadas**
+
+[AWS | Servicio de bases de datos relacionales (RDS)](https://aws.amazon.com/es/rds/?p=ft&amp;c=db&amp;z=3)
+
+## La base de datos DynamoDB
+
+Amazon **DynamoDB** es una base de datos **NoSQL totalmente administrada**, diseñada para aplicaciones que necesitan **alta disponibilidad, baja latencia y escalabilidad automática**.
+
+### **🔹 Características Clave de DynamoDB**  
+
+### ✅ **1️⃣ Escalabilidad Automática y Rápida**
+
+- Maneja **millones de solicitudes por segundo** sin afectar el rendimiento.  
+- Se ajusta automáticamente según la demanda (escalado horizontal).  
+
+### ✅ **2️⃣ Modelo de Datos NoSQL (Clave-Valor y Documentos JSON)**
+
+- Almacena datos en **tablas** sin esquema fijo.  
+- Soporta estructuras **JSON** para mayor flexibilidad.  
+
+### ✅ **3️⃣ Rendimiento de Milisegundos**
+
+- Ofrece latencias menores a **10 ms**.  
+- Usa almacenamiento en SSD para mayor velocidad.  
+
+### ✅ **4️⃣ Alta Disponibilidad y Replicación Multi-Región**
+
+- Replica automáticamente los datos en **3 zonas de disponibilidad** dentro de una región.  
+- Soporta **Global Tables** para replicación entre regiones.  
+
+### ✅ **5️⃣ Seguridad y Control de Acceso**
+
+- **Cifrado en reposo y en tránsito** con AWS KMS.  
+- Integración con **AWS IAM** para permisos de acceso granular.  
+
+### ✅ **6️⃣ Esquema Flexible**
+
+- No requiere esquema predefinido como en bases de datos relacionales.  
+- Permite agregar atributos dinámicamente.  
+
+### ✅ **7️⃣ Integración con Otros Servicios AWS**
+
+- **AWS Lambda**: Activación automática de funciones en eventos de la BD.  
+- **Amazon S3**: Almacenamiento de datos masivos.  
+- **Amazon CloudWatch**: Monitoreo en tiempo real.  
+
+### **🚀 Cómo Crear una Tabla en DynamoDB con AWS CLI**  
+
+### **🔹 1️⃣ Crear una Tabla "Clientes"**  
+
+```bash
+aws dynamodb create-table \
+    --table-name Clientes \
+    --attribute-definitions AttributeName=ID,AttributeType=S \
+    --key-schema AttributeName=ID,KeyType=HASH \
+    --billing-mode PAY_PER_REQUEST
+```
+
+📌 **Explicación:** 
+
+- `--attribute-definitions`: Define la clave primaria (ID, tipo **String**).  
+- `--key-schema`: Define que la clave **ID** será única.  
+- `--billing-mode PAY_PER_REQUEST`: Pago solo por las solicitudes realizadas.
+
+### **🔹 2️⃣ Insertar Datos en la Tabla**  
+
+```bash
+aws dynamodb put-item \
+    --table-name Clientes \
+    --item '{"ID": {"S": "123"}, "Nombre": {"S": "Mario Vargas"}, "Edad": {"N": "30"}}'
+```
+
+### **🔹 3️⃣ Leer Datos de la Tabla**  
+
+```bash
+aws dynamodb get-item \
+    --table-name Clientes \
+    --key '{"ID": {"S": "123"}}'
+```
+
+## **🎯 Casos de Uso de DynamoDB**  
+✅ **Aplicaciones Web y Móviles** (WhatsApp, TikTok, Instagram).  
+✅ **Gaming** (gestión de usuarios y puntuaciones).  
+✅ **E-commerce** (catálogos de productos, carritos de compra).  
+✅ **IoT y Big Data** (almacenamiento y análisis de eventos).
+
+## **🔥 ¿Qué Sigue?**  
+🔹 Configurar **Índices Secundarios** para búsquedas más rápidas.  
+🔹 Integrar **AWS Lambda + DynamoDB** para eventos en tiempo real.  
+🔹 Configurar **Global Tables** para replicación entre regiones.
+
+### Resumen
+
+**DynamoDB es una base de datos NOSQL de documentos clave-valor**, que ofrece un rendimiento en milisegundos de un solo dígito. Entre sus casos de uso tenemos manejo de datos actualizados en tiempo real.
+
+Una **base de datos clave-valor** almacena datos en forma de claves y valores/atributos. En un documento de **Dynamo DB** podemos tener claves y una cantidad de atributos distinta para cada clave. Estos atributos también pueden ser de distintos tipos.
+
+### Características de DynamoDB
+
+**DynamoDB** es completamente administrado (PAAS). Funciona en múltiples regiones y **puede manejar hasta 20 millones de solicitudes por segundo**. Además, cuenta con **seguridad, respaldo y restauración integrados**.
+
+**Lecturas recomendadas**
+
+[Bases de datos de manera gratuita - AWS](https://aws.amazon.com/es/free/database/)
