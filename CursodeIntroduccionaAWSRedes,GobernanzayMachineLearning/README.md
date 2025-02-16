@@ -246,3 +246,328 @@ La **respuesta de múltiples valores** permite devolver varios valores, como dir
 **Conclusión**
 
 **Route 53 es un servicio complejo, pero útil para mantener nuestros sitios web rápidos y altamente disponibles. Es rentable, seguro, escalable, y posee distintas opciones de enrutamiento para distintos casos**.
+
+## Cómo crear el diagrama de una VPC
+
+Para crear un diagrama de una **VPC en AWS**, sigue estos pasos:
+
+### **1️⃣ Definir la arquitectura de la VPC**  
+Tu VPC debe incluir elementos clave como:  
+✅ **CIDR Block**: El rango de direcciones IP privadas (Ej: `10.0.0.0/16`).  
+✅ **Subredes**: Al menos una pública y una privada.  
+✅ **Internet Gateway (IGW)**: Permite el acceso a Internet.  
+✅ **Route Tables**: Define cómo se enruta el tráfico entre subredes.  
+✅ **NAT Gateway**: Permite que las subredes privadas accedan a Internet sin ser accesibles desde el exterior.  
+✅ **Security Groups & Network ACLs**: Controlan el tráfico entrante y saliente.
+
+### **2️⃣ Elegir una herramienta para diagramar**  
+Puedes usar:  
+🔹 **AWS Diagramming Tool (en AWS Architecture Center)**  
+🔹 **Lucidchart**  
+🔹 **Draw.io** (gratuito y fácil de usar)  
+🔹 **Visio**  
+🔹 **Excalidraw**
+
+### **3️⃣ Construcción del diagrama**  
+Aquí te dejo una estructura típica:  
+
+📌 **Ejemplo de diagrama de una VPC con 2 subredes**  
+```
+                 ┌──────────────────────────────────────┐
+                 │              AWS VPC                │  (10.0.0.0/16)
+                 ├──────────────────────────────────────┤
+                 │                                      │
+    ┌───────────┴───────────┐      ┌───────────┴───────────┐
+    │   Subred Pública      │      │   Subred Privada      │
+    │  (10.0.1.0/24)        │      │  (10.0.2.0/24)        │
+    │   Internet Gateway    │      │  NAT Gateway (Opcional) │
+    │  EC2 (Servidor Web)   │      │  EC2 (Base de Datos)  │
+    └───────────┬───────────┘      └───────────┬───────────┘
+                 │                              │
+                 └─────── Route Table ─────────┘
+```
+---
+### **4️⃣ Validación y Mejoras**  
+🔹 Usa **AWS Well-Architected Tool** para validar la arquitectura.  
+🔹 Considera **VPC Peering** si necesitas comunicarte con otras VPCs.  
+🔹 Añade **VPN o AWS Direct Connect** si integras con tu red local.
+
+### Resumen
+
+Aprendámos a crear los componentes básicos de una VPC desde cero. **Primero necesitamos hacer un diagrama para entender cómo están divididos estos componentes básicos**.
+
+Para originar el diagrama nos dirigimos [a esta herramienta de diagramas de flujo](https://app.diagrams.net/ "a esta herramienta de diagramas de flujo") y escogemos dónde guardaremos el diagrama (en esta clase se escoge Google Drive, pero puedes guardarlo donde prefieras). Entonces le damos a **“Create New Diagram”** -> **“Blank Diagram”**.
+
+### Creando el diagrama de la VPC
+
+En el recuadro de búsqueda podemos poner “AWS VPC”. Escogemos la siguiente figura.
+
+![VPC shape](images/VPC_shape.png)
+
+Luego, buscamos las siguientes figuras: “AWS Internet Gateway”, “User”, “network access control”, “router” y “subnet”. Entonces las ordenamos de la siguiente manera
+
+![Diagrama de VPC](images/Diagrama_de_VPC.png)
+
+Este es el diagrama final. Muestra que cuando un usuario intenta acceder al VPC se encontrará con el **[Internet Gateway](https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Internet_Gateway.html "Internet Gateway")**. Luego, el tráfico será dirigido al **router**, que se encargará de redirigirlo a una de las dos subnets las cuales contienen un **Network Access Control List**. Este se encargará de validar que el usuario pueda acceder al contenido.
+
+**Lecturas recomendadas**
+
+[Cloud Computing Services - Amazon Web Services (AWS)](https://aws.amazon.com/)
+
+[Flowchart Maker & Online Diagram Software](https://app.diagrams.net/)
+
+## Cómo crear la VPC y el internet gateway
+
+Puedes crear una VPC y un Internet Gateway desde la **Consola de AWS** o usando la **AWS CLI**. Aquí te explico ambos métodos.
+
+### **📌 Opción 1: Crear VPC desde la Consola de AWS**  
+
+1️⃣ **Ir a la Consola de AWS** → **VPC** → **Crear VPC**  
+2️⃣ **Configurar la VPC**:  
+   - **Nombre**: `MiVPC`  
+   - **Rango de IP (CIDR)**: `10.0.0.0/16`  
+   - **Tenancy**: `Predeterminado`  
+3️⃣ **Crear y guardar**  
+
+4️⃣ **Crear un Internet Gateway (IGW)**:  
+   - Ir a **Internet Gateways** → **Crear Internet Gateway**  
+   - **Nombre**: `MiInternetGateway`  
+   - Hacer clic en **Crear**  
+
+5️⃣ **Adjuntar el IGW a la VPC**:  
+   - Seleccionar `MiInternetGateway`  
+   - Hacer clic en **Acciones → Adjuntar a VPC**  
+   - Seleccionar `MiVPC` y **Confirmar**
+
+## **📌 Opción 2: Crear VPC e IGW con AWS CLI**  
+
+📌 **Crear la VPC:**  
+```sh
+aws ec2 create-vpc --cidr-block 10.0.0.0/16 --tag-specifications 'ResourceType=vpc,Tags=[{Key=Name,Value=MiVPC}]'
+```
+
+📌 **Crear el Internet Gateway:**  
+```sh
+aws ec2 create-internet-gateway --tag-specifications 'ResourceType=internet-gateway,Tags=[{Key=Name,Value=MiInternetGateway}]'
+```
+
+📌 **Adjuntar el IGW a la VPC:**  
+```sh
+VPC_ID=$(aws ec2 describe-vpcs --filters "Name=cidr-block,Values=10.0.0.0/16" --query "Vpcs[0].VpcId" --output text)
+IGW_ID=$(aws ec2 describe-internet-gateways --filters "Name=tag:Name,Values=MiInternetGateway" --query "InternetGateways[0].InternetGatewayId" --output text)
+
+aws ec2 attach-internet-gateway --internet-gateway-id $IGW_ID --vpc-id $VPC_ID
+```
+
+### **📌 Pasos Siguientes**  
+✅ **Crear subredes** (pública y privada)  
+✅ **Configurar una tabla de enrutamiento** para permitir tráfico a Internet  
+✅ **Configurar reglas de seguridad** en los Security Groups
+
+### Resumen
+
+Una vez creado nuestro [diagrama de vpc](https://platzi.com/clases/2733-aws-redes/48889-crea-el-diagrama/ "diagrama de vpc"), [iniciamos sesión en AWS](https://console.aws.amazon.com/console/home?nc2=h_ct&src=header-signin "iniciamos sesión en AWS") para crear los primeros componentes de nuestra VPC.
+
+### Pasos para crear la VPC
+
+1. En la caja de búsqueda de AWS buscamos VPC y seleccionamos el primer resultado.
+2. Nos dirigimos a “**Sus VPC**” y le damos a “**Crear VPC**”.
+3. Colocamos las siguientes opciones, y dejamos el resto de valores por defecto:
+
+- **Etiqueta de nombre - opcional**: DemoVPCLaboratorio.
+- **Bloque de CIDR IPv4**: Entrada manual de CIDR IPv4.
+- **CIDR IPv4**: 10.0.0.0/24.
+
+![Configuración de la VPC](images/Configuracion_de_la_VPC.png)
+
+Entonces le damos a **Crear VPC**.
+
+### Pasos para crear el Internet Gateway
+
+1. Nos dirigimos a **“Gateways de Internet” -> “Crear gateway de Internet”**.
+2. En “**Etiqueta de nombre**”, colocamos “**DemoIGWLaboratorio**”, y le damos a “Crear gateway de Internet”.
+3. Nos aparecerá nuestro nuevo Internet Gateway con un estado “Detached”, ya que no está ligado a ninguna VPC.
+4. Para conectar el Intenet Gateway a nuestra VPC, simplemente le damos clic en “**Acciones**” -> “**Conectar a la VPC**”.
+5. Aquí seleccionamos nuestra VPC, y le damos clic a “**Concetar gateway de Internet**”. Ojo, **el Internet Gatway y la VPC deben estar en la misma región.**
+
+![diagrama de la VPC](images/diagramaVPC.png)
+
+Ya con esto creamos dos de los componentes de nuestra VPC.
+
+## Cómo crear la tabla de enrutamiento y otros componentes 
+
+Después de crear la **VPC y el Internet Gateway (IGW)**, necesitas:  
+✔ **Tabla de enrutamiento** para dirigir el tráfico.  
+✔ **Subredes** (pública y privada).  
+✔ **Asociar la tabla de enrutamiento** con las subredes.  
+✔ **Configurar un grupo de seguridad** para controlar el tráfico.
+
+### **📌 Paso 1: Crear Subredes**
+
+Debes crear al menos **una subred pública** y **una privada** dentro de la VPC.
+
+### **Desde la Consola AWS**
+
+1️⃣ Ir a **VPC** → **Subredes** → **Crear Subred**  
+2️⃣ **Seleccionar la VPC creada (MiVPC)**  
+3️⃣ **Crear subred pública**  
+   - Nombre: `SubredPublica`  
+   - CIDR: `10.0.1.0/24`  
+   - Zona de disponibilidad: (Ej: `us-east-1a`)  
+   - **Habilitar la asignación automática de IPs públicas**  
+4️⃣ **Crear subred privada**  
+   - Nombre: `SubredPrivada`  
+   - CIDR: `10.0.2.0/24`  
+   - Zona de disponibilidad: (Ej: `us-east-1b`)  
+
+### **Desde AWS CLI**
+
+```sh
+VPC_ID=$(aws ec2 describe-vpcs --filters "Name=tag:Name,Values=MiVPC" --query "Vpcs[0].VpcId" --output text)
+
+aws ec2 create-subnet --vpc-id $VPC_ID --cidr-block 10.0.1.0/24 --availability-zone us-east-1a --tag-specifications 'ResourceType=subnet,Tags=[{Key=Name,Value=SubredPublica}]'
+
+aws ec2 create-subnet --vpc-id $VPC_ID --cidr-block 10.0.2.0/24 --availability-zone us-east-1b --tag-specifications 'ResourceType=subnet,Tags=[{Key=Name,Value=SubredPrivada}]'
+```
+
+## **📌 Paso 2: Crear la Tabla de Enrutamiento y Asociarla**
+
+La tabla de enrutamiento define cómo se dirige el tráfico dentro de la VPC.
+
+### **Desde la Consola AWS**
+
+1️⃣ Ir a **VPC** → **Tablas de Enrutamiento** → **Crear Tabla de Enrutamiento**  
+2️⃣ **Nombre**: `TablaPublica`  
+3️⃣ **Seleccionar la VPC (MiVPC)**  
+4️⃣ **Agregar Ruta**:  
+   - Destino: `0.0.0.0/0` (todo el tráfico)  
+   - Target: `Internet Gateway (MiInternetGateway)`  
+5️⃣ **Asociar con la Subred Pública**  
+   - Ir a **Asociaciones de Subredes** → Seleccionar `SubredPublica`  
+
+### **Desde AWS CLI**
+
+```sh
+# Crear tabla de enrutamiento
+RT_ID=$(aws ec2 create-route-table --vpc-id $VPC_ID --query "RouteTable.RouteTableId" --output text)
+aws ec2 create-tags --resources $RT_ID --tags Key=Name,Value=TablaPublica
+
+# Agregar ruta a Internet Gateway
+IGW_ID=$(aws ec2 describe-internet-gateways --filters "Name=tag:Name,Values=MiInternetGateway" --query "InternetGateways[0].InternetGatewayId" --output text)
+aws ec2 create-route --route-table-id $RT_ID --destination-cidr-block 0.0.0.0/0 --gateway-id $IGW_ID
+
+# Asociar con la Subred Pública
+SUBNET_ID=$(aws ec2 describe-subnets --filters "Name=tag:Name,Values=SubredPublica" --query "Subnets[0].SubnetId" --output text)
+aws ec2 associate-route-table --route-table-id $RT_ID --subnet-id $SUBNET_ID
+```
+
+## **📌 Paso 3: Configurar un Grupo de Seguridad (Firewall de AWS)**  
+Los grupos de seguridad controlan el tráfico entrante y saliente de instancias EC2.
+
+### **Desde la Consola AWS**  
+1️⃣ Ir a **VPC** → **Grupos de Seguridad** → **Crear Grupo de Seguridad**  
+2️⃣ **Nombre**: `SG-WebServer`  
+3️⃣ **Seleccionar VPC (MiVPC)**  
+4️⃣ **Reglas Entrantes**:  
+   - **Permitir tráfico HTTP (80)**:  
+     - Tipo: HTTP  
+     - Protocolo: TCP  
+     - Puerto: 80  
+     - Origen: `0.0.0.0/0`  
+   - **Permitir tráfico SSH (22)** _(solo si necesitas administrar el servidor)_  
+     - Tipo: SSH  
+     - Protocolo: TCP  
+     - Puerto: 22  
+     - Origen: `Tu IP` (`X.X.X.X/32`)  
+
+### **Desde AWS CLI**  
+```sh
+SG_ID=$(aws ec2 create-security-group --group-name SG-WebServer --description "Grupo de Seguridad para Web" --vpc-id $VPC_ID --query "GroupId" --output text)
+
+# Permitir HTTP (80)
+aws ec2 authorize-security-group-ingress --group-id $SG_ID --protocol tcp --port 80 --cidr 0.0.0.0/0
+
+# Permitir SSH (22) - Cambia "X.X.X.X/32" por tu IP
+aws ec2 authorize-security-group-ingress --group-id $SG_ID --protocol tcp --port 22 --cidr X.X.X.X/32
+```
+
+### **📌 Paso 4: Crear una Instancia EC2 (Opcional)**
+Si quieres probar la conectividad, puedes lanzar una instancia EC2 en la **Subred Pública** con el **Grupo de Seguridad** creado.
+
+```sh
+aws ec2 run-instances --image-id ami-0abcdef1234567890 --count 1 --instance-type t2.micro --subnet-id $SUBNET_ID --security-group-ids $SG_ID --key-name MiClave --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=ServidorWeb}]'
+```
+
+### **🎯 Conclusión**
+✅ Ya tienes tu VPC configurada con una subred pública conectada a Internet.  
+✅ Puedes lanzar servidores en la **Subred Pública** con acceso a Internet.  
+✅ Si necesitas una **Subred Privada**, puedes crear una con un **NAT Gateway**.
+
+### Resumen
+
+Una vez que [creamos nuestra VPC y el Internet Gateway y los conectamos](https://platzi.com/clases/2733-aws-redes/49130-crear-la-vpc-y-crear-el-internet-gateway/ "creamos nuestra VPC y el Internet Gateway y los conectamos"), procedemos a crear la **tabla de enrutamiento**, las **listas de acceso de control** y **las subredes**.
+
+### Pasos para crear la tabla de enrutamiento
+
+1. Desde la [página del servicio de VPC](https://console.aws.amazon.com/vpc/home "página del servicio de VPC"), nos dirigimos a “**Tablas de ruteo**”.
+2. Notamos que ya existe una tabla de ruteo asociada a nuestra VPC, que se creó automáticamente junto con la VPC.
+3. La seleccionamos, nos dirigimos a la sección de rutas, y hacemos clic en “**Editar rutas**”.
+
+![Editar rutas](images/Editar_rutas.png)
+
+4. Hacemos clic en “**Agregar ruta**”, colocamos **0.0.0.0/0** y “**Puerta de enlace de internet**”, y seleccionamos el [Internet Gateway](https://platzi.com/clases/2733-aws-redes/49130-crear-la-vpc-y-crear-el-internet-gateway/ "Internet Gateway") que creamos en la clase pasada.
+5. Le damos en “**Guardar cambios**”. De esta manera, todo el mundo podrá acceder a nuestra VPC mediante el Internet Gateway.
+
+![Agregar ruta](images/Agregar_ruta.png)
+
+### Pasos para crear Access Control List
+
+1. En el apartado de “**Seguridad**” del servicio de VPC, nos dirigimos a “**ACL de red**”.
+2. Le damos clic a “**Crear ACL de red**”. Crearemos dos ACL de red, uno para cada subred. Le damos los nombres **NACLA** y **NACLB**, y en VPC escogemos nuestra VPC.
+3. Le damos clic en “**Crear ACL de red**”.
+
+![Crear ACL de red](images/Crear_ACL_de_red.png)
+
+### Pasos para añadir una regla de entrada y una de salida
+
+Ahora, para cada ACL de red creado debemos añadir una regla de entrada y una de salida, con el fin de permitir el tráfico HTTP en el puerto 80. Para esto:
+
+1. Seleccionamos una ACL de red
+2. Nos vamos a “**Reglas de entrada**” -> “**Editar reglas de entrada**”.
+
+![Editar reglas de entrada](Editar_reglas_de_entrada.png)
+
+3. Le damos clic en “**Añadir una nueva regla**”. Y colocamos los siguientes parámetros
+
+- **Número de regla**: 100 (las reglas se evalúan comenzando por la regla de número más bajo).
+- **Tipo**: HTTP (80).
+- **Origen**: 0.0.0.0/0.
+- **Permitir/denegar**: Permitir.
+
+4. Le damos a “**Guardar cambios**”.
+5. Repetimos el proceso con la regla de salida y con el otro ACL (NACLB), colocando los mismos parámetros anteriores. Ahora solo falta añadir estos ACL a nuestras subredes, las cuales crearemos a continuación.
+
+![Añadir una nueva regla de entrada](Añadir_una_nueva_regla_de_entrada.png)
+Añadir una nueva regla de entrada
+
+### Pasos para crear subredes
+
+1. En la sección de “**Subredes**” vamos al botón “**Crear subred**”.
+2. Escogemos nuestra VPC, y colocamos los siguientes parámetros:
+- **Nombre de la subred**: DemoSubredA.
+- **Zona de dispinibilidad**: la primera que te aparezca en el menú de selección, que termine en “a”.
+- **Bloque de CIDR IPv4**: 10.0.0.0/25 (asumiendo que tu VPC tiene el bloque de CIDR 10.0.0.0/24)
+
+3. Le damos clic en “**Crear subred**”
+4. Repetimos el procedimiento para la otra subred con los siguientes parámetros:
+- **Nombre de la subred**: DemoSubredB.
+- **Zona de dispinibilidad**: la segunda que te aparezca en el menú de selección, que termine en “b”.
+- **Bloque de CIDR IPv4**: 10.0.0.128/25.
+
+![Crear subred](Crear_subred.png)
+
+Ahora solo falta **asociar los ACL que creamos con las subredes**. Para esto simplemente hacemos clic derecho en DemoSubredA y clic en “**Editar la asociación de ACL de red**”, y seleccionamos la ACL correspondiente (NACLA). Entonces le damos en Guardar, y repetimos el procedimiento con *DemoSubredB*.
+
+**Recapitulación**
+
+Ya creamos todos los componentes de nuestra VPC: el Internet Gateway, la tabla de enrutamiento, las Access Control List y las subredes. Además, dimos acceso público a dichas subredes mediante HTTP en el puerto 80.
