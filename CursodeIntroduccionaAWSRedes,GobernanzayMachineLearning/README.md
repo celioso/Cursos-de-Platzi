@@ -571,3 +571,417 @@ Ahora solo falta **asociar los ACL que creamos con las subredes**. Para esto sim
 **Recapitulación**
 
 Ya creamos todos los componentes de nuestra VPC: el Internet Gateway, la tabla de enrutamiento, las Access Control List y las subredes. Además, dimos acceso público a dichas subredes mediante HTTP en el puerto 80.
+
+## Administración y gobernanza con AWS
+
+AWS proporciona un conjunto de servicios para ayudar a administrar y gobernar los recursos en la nube de manera eficiente, segura y escalable. Estos servicios se enfocan en la administración de cuentas, costos, cumplimiento, monitoreo y automatización.
+
+### **📌 Principales Servicios de Administración y Gobernanza en AWS**  
+
+| Servicio | Descripción |
+|----------|------------|
+| **AWS Organizations** | Permite la administración centralizada de múltiples cuentas de AWS. Facilita la aplicación de políticas y la consolidación de facturación. |
+| **AWS Control Tower** | Automatiza la configuración de un entorno multi-cuenta seguro y bien gobernado. |
+| **AWS IAM (Identity and Access Management)** | Administra el acceso seguro a los servicios y recursos de AWS con permisos detallados. |
+| **AWS Config** | Monitorea y audita la configuración de los recursos en AWS para asegurar el cumplimiento normativo. |
+| **AWS CloudTrail** | Registra todas las acciones realizadas en la cuenta de AWS para auditoría y seguridad. |
+| **AWS CloudWatch** | Proporciona monitoreo en tiempo real de métricas, logs y eventos de los recursos de AWS. |
+| **AWS Budgets** | Ayuda a administrar los costos y el uso de AWS con alertas configurables. |
+| **AWS Cost Explorer** | Permite visualizar, analizar y optimizar los costos y el uso de AWS. |
+| **AWS Service Catalog** | Permite a las empresas administrar y distribuir catálogos de productos aprobados en AWS. |
+| **AWS Systems Manager** | Facilita la administración y automatización de recursos a gran escala. |
+| **AWS Trusted Advisor** | Proporciona recomendaciones para optimizar costos, rendimiento, seguridad y tolerancia a fallos. |
+
+### **📌 Casos de Uso de Administración y Gobernanza en AWS**  
+
+### **1️⃣ Gestión Centralizada de Cuentas**
+
+- **AWS Organizations** permite agrupar cuentas bajo una jerarquía.  
+- Se pueden aplicar políticas a nivel de organización para restringir permisos.  
+
+### **2️⃣ Monitoreo y Cumplimiento**
+
+- **AWS Config** verifica si los recursos cumplen con estándares establecidos.  
+- **AWS CloudTrail** rastrea acciones y cambios en la cuenta.  
+
+### **3️⃣ Optimización de Costos**
+
+- **AWS Budgets** alerta cuando los costos superan un límite definido.  
+- **AWS Cost Explorer** ayuda a identificar oportunidades de ahorro.  
+
+### **4️⃣ Seguridad y Control de Acceso**
+
+- **AWS IAM** permite administrar permisos detallados.  
+- **AWS Trusted Advisor** revisa configuraciones para mejorar la seguridad.  
+
+### **5️⃣ Automatización de Administración**
+
+- **AWS Systems Manager** facilita la ejecución de comandos en múltiples instancias EC2.  
+- **AWS Service Catalog** define productos estándar para los equipos de TI.
+
+### **📌 Conclusión**  
+AWS ofrece herramientas robustas para administrar y gobernar la nube con eficiencia, seguridad y control de costos. Implementar estos servicios permite optimizar la infraestructura y garantizar el cumplimiento normativo.
+
+### Resumen
+
+En el pasado, las empresas u organizaciones tenían que lograr un equilibrio entre innovar y mantener un control de los costos, la seguridad y el cumplimiento. Los servicios de administración y gobernanza de AWS sirven para simplificar este equilibrio. Estos servicios buscan que la administración de AWS sea lo más fácil y optimizada posible.
+
+### Administración de cuentas
+
+Entre los servicios que nos ayudan a administrar nuestras cuentas de AWS tenemos:
+
+- **AWS Control Tower**: una manera fácil de configurar y gobernar un entorno seguro de AWS de múltiples cuentas
+- **AWS Organizations**: nos brinda una forma de gobernar, de administrar de manera centralizada nuestros entornos en varias cuentas de AWS
+- **AWS Budgets**: nos ayuda a planificar y realizar control de costos
+
+### Servicios de aprovisionamiento
+
+Estos servicios facilitan el aprovisionamiento o la creación y configuración de nuevos recursos de AWS:
+
+- **AWS CloudFormation**: permite modelar y aprovisionar todos sus recursos mediante código
+- **AWS OpsWorks**: ayuda a automatizar todas las operaciones con Chef y Puppet
+- **AWS Service Catalog**: un servicio para crear, organizar y gobernar nuestro propio catálogo curado de productos de AWS en toda nuestra organización
+- **Marketplace**: es donde vamos a poder encontrar, probar e implementar software que se ejecuta en AWS
+
+### Servicios para operar el entorno AWS
+
+Estos servicios nos ayudan a operar nuestro entorno de AWS
+
+- **Amazon CloudWatch**: permite observar nuestros servicios a través de métricas y registros
+- **Amazon Config**: permite registrar y evaluar las configuraciones de nuestros recursos en AWS
+- **AWS CloudTrail**: rastrea toda la actividad del usuario de la cuenta de AWS. Esto es importante en investigaciones de seguridad
+- **Systems Manager**: optimiza el rendimiento y la seguridad mientras administramos una gran cantidad de sistemas
+Amazon X-Ray: analiza y depura aplicaciones en producción.
+
+## Qué es CloudFormation y cuáles son sus beneficios
+
+**AWS CloudFormation** es un servicio de AWS que permite modelar, aprovisionar y gestionar la infraestructura de AWS como código (IaC - Infrastructure as Code). Con CloudFormation, puedes definir los recursos en archivos de texto utilizando **YAML o JSON** y desplegarlos de manera automatizada.
+
+### **📌 Beneficios de AWS CloudFormation**  
+
+| Beneficio | Descripción |
+|-----------|------------|
+| **Infraestructura como Código (IaC)** | Permite definir y administrar recursos de AWS mediante archivos YAML o JSON. |
+| **Automatización** | Despliega y gestiona recursos de manera automatizada, reduciendo errores manuales. |
+| **Reutilización y Consistencia** | Usa plantillas predefinidas para garantizar configuraciones estandarizadas en múltiples entornos. |
+| **Escalabilidad** | Facilita la administración de infraestructuras grandes y complejas con un solo archivo de plantilla. |
+| **Gestión del Ciclo de Vida** | Permite actualizar, modificar y eliminar recursos de forma controlada mediante pilas (stacks). |
+| **Integración con otros servicios de AWS** | Compatible con **AWS Lambda, AWS IAM, Amazon EC2, Amazon RDS**, entre otros. |
+| **Sin costo adicional** | Solo pagas por los recursos que CloudFormation despliega, no por el servicio en sí. |
+
+### **📌 ¿Cómo funciona AWS CloudFormation?**
+
+1. **Crear una plantilla** en **YAML o JSON** que defina los recursos a desplegar.  
+2. **Subir la plantilla a CloudFormation** y crear una **pila (stack)**.  
+3. **CloudFormation aprovisiona los recursos** según la plantilla.  
+4. **Administrar la pila** para actualizar o eliminar recursos cuando sea necesario.
+
+### **📌 Ejemplo de Plantilla en YAML**
+
+Esta plantilla crea una instancia EC2 simple en AWS:
+
+```yaml
+AWSTemplateFormatVersion: '2010-09-09'
+Resources:
+  MiInstanciaEC2:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: t2.micro
+      ImageId: ami-0abcdef1234567890  # Reemplazar con una AMI válida
+```
+
+### **📌 Casos de Uso**
+
+- **Implementación automatizada de infraestructuras** en entornos de desarrollo, pruebas y producción.  
+- **Configuración de entornos multi-región** de manera rápida y consistente.  
+- **Automatización del despliegue de aplicaciones** junto con la infraestructura necesaria.  
+- **Administración de permisos y políticas de seguridad** en múltiples cuentas de AWS.
+
+### **📌 Conclusión**  
+AWS CloudFormation simplifica la administración de la infraestructura al permitir su gestión como código. Esto mejora la eficiencia, reduce errores manuales y garantiza consistencia en los despliegues.
+
+### Resumen
+
+**CloudFormation** es un servicio que permite provisionar servicios como máquinas virtuales o VPCs mediante código. Para esto se usan las *CloudFormation Templates*, que son plantillas en donde especificamos los recursos que queremos desplegar. Estas plantillas pueden estar en formato *JSON* o *YAML*, y en ellas se define un [stack](https://docs.aws.amazon.com/es_es/AWSCloudFormation/latest/UserGuide/stacks.html "stack") o pila de recursos a provisionar.
+
+### Beneficios de CloudFormation
+
+¿Por qué es útil desplegar infraestructura y recursos basados en una plantilla de CloudFormation? Porque ofrece las siguientes ventajas.
+
+### Control de versiones
+
+Ya que podemos definir los recursos que queremos desplegar mediante código, este código lo podemos mantener en un sistema de control de versiones como Git y GitHub. **Esto permite tener un historial completo de nuestros recursos en un solo archivo, así como la colaboración en el despliegue de la infraestructura**.
+
+### Automatización
+
+CloudFormation permite a los encargados de [DevOps](https://platzi.com/clases/1526-gitlab/19272-que-es-devops/ "DevOps") automatizar la creación de infraestructura y recursos en AWS.
+
+### Escala
+
+Gracias a las plantillas podemos replicar la infraestructura en distintas cuentas de AWS y en distintas regiones. Solo debemos ajustar ciertos parámetros.
+
+## Qué es Cloudwatch
+
+**Amazon CloudWatch** es un servicio de monitoreo y observabilidad de AWS que permite recopilar y analizar métricas, logs y eventos de los recursos en la nube. Es útil para supervisar aplicaciones, optimizar el rendimiento, detectar anomalías y configurar alertas automatizadas. 
+
+### **📌 Beneficios de AWS CloudWatch**  
+
+| Beneficio | Descripción |
+|-----------|------------|
+| **Monitoreo en tiempo real** | Recopila métricas de CPU, memoria, tráfico de red y más. |
+| **Gestión centralizada de logs** | Agrega, filtra y analiza registros de aplicaciones y sistemas. |
+| **Alertas y notificaciones** | Configura alarmas con **Amazon SNS** para recibir notificaciones. |
+| **Dashboards personalizables** | Visualiza datos en paneles gráficos en tiempo real. |
+| **Automatización con AWS Lambda** | Ejecuta funciones en respuesta a eventos. |
+| **Optimización de costos** | Identifica patrones de uso para reducir gastos. |
+
+### **📌 ¿Cómo funciona AWS CloudWatch?**  
+
+1. **Recopila métricas** de servicios como **EC2, S3, RDS, Lambda**, entre otros.  
+2. **Almacena y visualiza datos** en dashboards personalizados.  
+3. **Crea alarmas** para eventos críticos y envía notificaciones.  
+4. **Automatiza respuestas** con AWS Lambda o Auto Scaling.  
+5. **Analiza logs** con **CloudWatch Logs Insights**.
+
+### **📌 Principales Componentes de CloudWatch**  
+
+### **1️⃣ CloudWatch Metrics** 📊
+
+- Registra métricas de recursos de AWS.  
+- Permite configurar alarmas en función de umbrales definidos.  
+
+### **2️⃣ CloudWatch Logs** 📜
+
+- Recopila logs de **EC2, Lambda, API Gateway, VPC Flow Logs** y más.  
+- Permite consultas avanzadas con **Logs Insights**.  
+
+### **3️⃣ CloudWatch Alarms** 🚨
+
+- Genera alertas cuando una métrica supera un umbral predefinido.  
+- Puede activar acciones como notificaciones **SNS** o ejecución de **Lambda**.  
+
+### **4️⃣ CloudWatch Events (EventBridge)** ⏳
+
+- Responde a eventos de AWS en tiempo real.  
+- Integra con **Lambda, SNS, Step Functions** y otros servicios.
+
+### **📌 Ejemplo de Uso: Configurar una Alarma en CloudWatch**  
+
+Supongamos que quieres recibir una alerta si el uso de CPU en una instancia EC2 supera el **80%**.  
+
+1️⃣ Ve a la consola de **CloudWatch** en AWS.  
+2️⃣ Entra en **Alarmas → Crear alarma**.  
+3️⃣ Selecciona la métrica: **EC2 → Uso de CPU**.  
+4️⃣ Configura el umbral: **mayor al 80%**.  
+5️⃣ Define la acción: **Enviar notificación a SNS (correo o SMS)**.  
+6️⃣ Guarda la alarma y monitorea el comportamiento.
+
+### **📌 Casos de Uso**
+
+✅ **Monitoreo de aplicaciones**: Detecta errores o caídas en servicios.  
+✅ **Optimización de costos**: Identifica recursos inactivos o sobredimensionados.  
+✅ **Automatización de respuestas**: Escala instancias EC2 automáticamente según demanda.  
+✅ **Seguridad y cumplimiento**: Detecta accesos no autorizados o tráfico inusual.
+
+### **📌 Conclusión**  
+AWS CloudWatch es una herramienta clave para la observabilidad en AWS. Permite **monitorear, alertar y automatizar** respuestas ante eventos en la nube.
+
+### Resumen
+
+**CloudWatch es un servicio de supervision y observabilidad para AWS. Está diseñado para que podamos ver todo lo que sucede dentro de nuestra cuenta de AWS**. En este sentido, CloudWatch ofrece la posibilidad de:
+
+- Recopilar métricas o datos de sus servicios
+- Integrar con unos 80 servicios de AWS
+- Tener métricas predefinidas
+- Recopilar y desplegar datos en una vista unificada con distintos gráficos.
+- Configurar de alarmas de acuerdo a los graficos que nos muestre cloudWaatch
+- Enviar archivos de registro y buscar de forma interactiva datos de registros. Posee un almacén de registros centralizado. Esto nos ayuda a encontrar y resolver problemas de manera eficaz.
+
+### Caso de uso de CloudWatch
+
+Imagínate que tienes una máquina virtual a la cual se accede mediante SSH. Si queremos saber cuando alguien intenta piratear nuestra máquina virtual con SSH, **podemos enviar los logs de inicio de sesión a CloudWatch**.
+
+Mediante CloudWatch, **podemos usar un filtro para visualizar el número de intentos de sesión fallidos**. Además, podemos configurar una alerta en el caso de que los intentos fallidos superen cierto límite en un periodo específico de tiempo.
+
+## Cómo aplicar autoescalamiento
+
+## **📌 Autoescalamiento en AWS (Auto Scaling)**
+
+El **Auto Scaling** en AWS permite aumentar o reducir automáticamente los recursos informáticos en función de la demanda. Esto ayuda a optimizar el rendimiento y los costos, asegurando que siempre haya suficiente capacidad disponible sin desperdiciar recursos.
+
+## **📌 Servicios que Soportan Auto Scaling**
+
+✅ **Amazon EC2 Auto Scaling** (para instancias EC2).  
+✅ **AWS Fargate Auto Scaling** (para contenedores en ECS/EKS).  
+✅ **Amazon DynamoDB Auto Scaling** (para bases de datos NoSQL).  
+✅ **Amazon Aurora Auto Scaling** (para bases de datos relacionales).
+
+## **📌 Tipos de Autoescalamiento**
+
+1️⃣ **Escalado Vertical** ⬆️⬇️
+
+   - Cambia el tipo de instancia (más CPU, RAM, etc.).
+   - Se hace manualmente, no automático.
+
+2️⃣ **Escalado Horizontal** ➡️⬅️
+
+   - Añade o elimina instancias según la demanda.
+   - Se logra con **Amazon EC2 Auto Scaling**.
+
+### **📌 Pasos para Configurar Auto Scaling en EC2**
+
+### **1️⃣ Crear un Grupo de Auto Scaling**
+
+1. Ve a la consola de AWS y accede a **EC2 Auto Scaling**.
+2. Clic en **"Crear grupo de Auto Scaling"**.
+3. **Selecciona una plantilla de lanzamiento** (AMI, tipo de instancia, etc.).
+4. Configura la cantidad mínima, máxima y deseada de instancias.
+5. Asigna una **política de escalado** (opcional por ahora).
+
+### **2️⃣ Configurar una Política de Escalado**
+1. Ve a **Grupos de Auto Scaling** y selecciona tu grupo.
+2. En **"Escalado"**, elige "Añadir una política de escalado".
+3. Define la métrica a monitorear (ejemplo: uso de CPU).
+4. Configura reglas:
+   - **Aumentar instancias** si CPU > **80%**.
+   - **Disminuir instancias** si CPU < **30%**.
+5. Guarda la configuración.
+
+### **3️⃣ Asociar un Balanceador de Carga (opcional pero recomendado)**
+1. Ve a **Elastic Load Balancer (ELB)** en AWS.
+2. Crea un **Application Load Balancer** y configúralo con una zona de disponibilidad.
+3. En **Auto Scaling**, enlaza el grupo con el balanceador de carga.
+4. AWS distribuirá el tráfico automáticamente entre instancias activas.
+
+### **📌 Beneficios del Auto Scaling**
+
+✅ **Alta disponibilidad**: Mantiene suficientes instancias activas según la demanda.  
+✅ **Optimización de costos**: Reduce instancias cuando la carga es baja.  
+✅ **Flexibilidad**: Se adapta automáticamente a picos de tráfico.  
+✅ **Menos intervención manual**: Reduce la necesidad de ajustes manuales.
+
+### **📌 Ejemplo de Política de Escalado Basado en CloudWatch**
+
+Supongamos que queremos escalar si el uso de CPU supera el **80%**:
+
+1. En **CloudWatch → Alarmas**, crea una nueva alarma.
+2. Elige la métrica **EC2 → CPUUtilization**.
+3. Configura el umbral **CPU > 80%**.
+4. En **Acciones**, selecciona **Auto Scaling Group → Aumentar tamaño**.
+5. Guarda la configuración.
+
+De manera similar, puedes crear otra política para reducir instancias cuando el uso sea bajo.
+
+### **📌 Conclusión**
+Auto Scaling en AWS es una herramienta poderosa para administrar cargas de trabajo de manera eficiente. Permite ajustar los recursos automáticamente, mejorando la disponibilidad y optimizando costos.
+
+### Resumen
+
+El auto escalamiento (autoscaling) nos permite escalar la capacidad de nuestras instancias de máquinas virtuales automáticamente, de acuerdo con nuestras condiciones definidas.
+
+**Podemos aumentar la cantidad de instancias que tenemos en ejecución durante los picos de demanda y disminuirlos cuando no los necesitemos**. Esto trae una alta disponibilidad, tolerancia a fallos y un ahorro de costos.
+
+### Pasos para aplicar autoescalamiento
+
+1. Para aprovechar el autoescalamiento, debemos crear un grupo de auto escalamiento que asocie nuestras instancias.
+2. En este grupo especificaremos un tamaño mínimo (el número mínimo de instancias a correr), y una capacidad deseada (el número óptimo de instancias en función de las necesidades).
+3. Entonces se agregarán más instancias según sea necesario hasta alcanzar un máximo.
+
+Cabe destacar que el Load Balancer de AWS es lo que permite distribuir automaticamente las conexiones a medida que aparecen y desaparecen estos servidores.
+
+Nota: EC2 no es el único servicio que tiene auto escalamiento. DynamoDB y Aurora también implementan este concepto.
+
+
+
+----------------------------------------------------------------------------
+
+## Empezando con Machine Learning
+
+Machine Learning (ML) es una rama de la inteligencia artificial que permite a las computadoras aprender de los datos sin ser programadas explícitamente. Se basa en algoritmos que identifican patrones y hacen predicciones o decisiones automáticamente.
+
+### **📌 Tipos de Machine Learning**
+Existen tres categorías principales:
+
+1️⃣ **Aprendizaje Supervisado** 🎯  
+   - Se entrena con datos etiquetados (entrada y salida esperada).  
+   - Ejemplo: Clasificación de correos electrónicos como spam o no spam.  
+   - Algoritmos populares: Regresión Lineal, Regresión Logística, Árboles de Decisión, Random Forest, SVM, Redes Neuronales.
+
+2️⃣ **Aprendizaje No Supervisado** 🔍  
+   - No tiene etiquetas, encuentra patrones ocultos en los datos.  
+   - Ejemplo: Agrupar clientes según su comportamiento de compra.  
+   - Algoritmos populares: K-Means, DBSCAN, PCA, Autoencoders.
+
+3️⃣ **Aprendizaje por Refuerzo** 🏆  
+   - Un agente aprende mediante ensayo y error, obteniendo recompensas.  
+   - Ejemplo: Un robot aprendiendo a caminar.  
+   - Algoritmos populares: Q-Learning, Deep Q-Networks (DQN), Proximal Policy Optimization (PPO).
+
+### **📌 Flujo de Trabajo en Machine Learning**
+
+1️⃣ **Definir el problema**  
+   - ¿Qué queremos predecir o clasificar?  
+
+2️⃣ **Recolección de datos**  
+   - Obtener datos limpios y representativos.  
+
+3️⃣ **Preprocesamiento de datos**  
+   - Limpieza, normalización y transformación de datos.  
+
+4️⃣ **Selección del modelo**  
+   - Elegir el algoritmo adecuado según el problema.  
+
+5️⃣ **Entrenamiento del modelo**  
+   - Alimentar el modelo con datos de entrenamiento.  
+
+6️⃣ **Evaluación del modelo**  
+   - Usar métricas como precisión, recall, F1-score, MAE, RMSE.  
+
+7️⃣ **Optimización y ajuste de hiperparámetros**  
+   - Mejorar el rendimiento ajustando parámetros.  
+
+8️⃣ **Despliegue del modelo**  
+   - Usar el modelo en producción para hacer predicciones.  
+
+### **📌 Herramientas y Bibliotecas Populares**
+🔹 **Python**: Lenguaje más usado en ML.  
+🔹 **NumPy y Pandas**: Manipulación de datos.  
+🔹 **Matplotlib y Seaborn**: Visualización de datos.  
+🔹 **Scikit-learn**: Algoritmos de ML clásicos.  
+🔹 **TensorFlow y PyTorch**: Redes neuronales y deep learning.  
+
+### **📌 Primer Proyecto en Machine Learning**
+Si quieres empezar con un proyecto básico, puedes trabajar con la base de datos **Iris** (clasificación de flores) usando **Scikit-learn**.
+
+### Resumen
+
+**El *machine learning* es un tipo de inteligencia artificial donde podemos escribir programas que aprenden de los datos que se le proporcionan**, y “recuerdan” los resultados de procesar estos datos. Un programa de machine learning aprende al ejecutarse una y otra vez. Esta clase de programas tienen usos en distintas industrias:
+
+- Automóviles automáticos
+- Relojes Inteligentes
+- Agricultura
+- Perfil Financiero
+- Correos electrónicos
+
+### Servicios de inteligencia artificial en AWS
+
+Entre los servicios de AWS que usan inteligencia artificial o machine learning encontramos:
+
+- **Amazon Kendra**: provee un sistema de búsqueda inteligente a nuestros clientes
+- **Amazon Personalize**: brinda recomendaciones personalizadas a nuestros clientes
+
+### Servicios de analisis de métricas comerciales
+
+- **Amazon Lookout for metrics**: detecta automáticamente cambios inesperados en aspectos como el rendimiento de los ingresos y la retención de los clientes, ayudándonos a identificar la causas
+- **Amazon Forecast**: nos ayuda a crear modelos de pronósticos precisos
+- **Amazon Fraud Detector**: identifica actividades en línea potencialmente fraudulentas
+
+### Servicios de visión artificial
+
+**Amazon Rekognition permite analizar imágenes, videos y extraer el significado de estos**. Es uno de los servicios más populares de AWS en cuanto a inteligencia artificial.
+
+### Servicios de idiomas
+
+- **Amazon Polly**: ayuda a convertir el texto en un habla realista
+- **Amazon Transcribe**: permite agregar traducciones de voz a texto de calidad
+- **Amazon Lex**: permite generar agentes conversacionales o bots de chat
