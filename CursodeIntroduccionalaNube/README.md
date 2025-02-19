@@ -435,3 +435,60 @@ AWS tiene **más de 450 Puntos de Presencia** (PoPs) en todo el mundo para acele
 **Lecturas recomendadas**
 
 [https://pages.awscloud.com/rs/112-TZM-766/images/Enter_the_Purpose-Built-Database-Era.pdf](https://pages.awscloud.com/rs/112-TZM-766/images/Enter_the_Purpose-Built-Database-Era.pdf)
+
+## Nube privada, pública, híbrida, multinube
+
+El **Cloud Computing** ofrece diferentes modelos de implementación según las necesidades de cada empresa. Aquí exploramos los cuatro principales tipos de nube:
+
+### **☁️ 1. Nube Pública**  
+📌 **Definición:** Es una infraestructura de nube gestionada por un proveedor externo como AWS, Google Cloud o Azure, y los recursos (servidores, almacenamiento, bases de datos) se comparten entre múltiples clientes.  
+
+✅ **Ventajas:**  
+✔️ **Costo reducido** – No se necesita infraestructura propia.  
+✔️ **Escalabilidad** – Se ajusta según la demanda.  
+✔️ **Accesibilidad global** – Disponible en cualquier parte del mundo.  
+✔️ **Mantenimiento gestionado** – El proveedor se encarga de actualizaciones y seguridad.  
+
+🚀 **Ejemplo:** Usar **Amazon EC2**, **Google Compute Engine** o **Microsoft Azure Virtual Machines** para ejecutar aplicaciones en la nube sin administrar servidores físicos.
+
+### **🏢 2. Nube Privada**  
+📌 **Definición:** Es una infraestructura de nube dedicada a una sola organización. Puede estar ubicada en un centro de datos propio o administrada por un tercero.  
+
+✅ **Ventajas:**  
+✔️ **Mayor seguridad y control** – Datos y sistemas exclusivos de la empresa.  
+✔️ **Cumplimiento normativo** – Ideal para industrias reguladas (banca, salud).  
+✔️ **Personalización** – Se adapta a necesidades específicas.  
+
+⚠️ **Desafíos:**  
+❌ Costos elevados de mantenimiento.  
+❌ Escalabilidad limitada en comparación con la nube pública.  
+
+🚀 **Ejemplo:** Un banco con su propio centro de datos usa **VMware Cloud** o **OpenStack** para administrar sus servidores de manera privada.
+
+### **🔄 3. Nube Híbrida**  
+📌 **Definición:** Combina **nube privada y pública**, permitiendo mover cargas de trabajo entre ambas según las necesidades.  
+
+✅ **Ventajas:**  
+✔️ **Flexibilidad** – Datos sensibles en nube privada y cargas pesadas en nube pública.  
+✔️ **Optimización de costos** – Se paga por recursos solo cuando se necesitan.  
+✔️ **Mayor continuidad del negocio** – Alternativa en caso de fallos en una infraestructura.  
+
+🚀 **Ejemplo:** Una empresa usa **AWS para desarrollo** y mantiene **datos confidenciales en servidores privados**.
+
+### **🌍 4. Multinube**  
+📌 **Definición:** Usa múltiples proveedores de nube (AWS, Azure, Google Cloud) para distribuir aplicaciones y servicios.  
+
+✅ **Ventajas:**  
+✔️ **Evita dependencia de un solo proveedor** (vendor lock-in).  
+✔️ **Alta disponibilidad** – Redundancia entre diferentes nubes.  
+✔️ **Optimización de rendimiento** – Se elige el mejor proveedor según la carga de trabajo.  
+
+🚀 **Ejemplo:** Una empresa usa **Google Cloud para análisis de datos**, **AWS para almacenamiento** y **Azure para inteligencia artificial**.
+
+### **📌 Conclusión**  
+Cada tipo de nube tiene ventajas y desafíos:  
+
+- **Nube pública**: Ideal para startups y empresas que buscan escalabilidad y costos bajos.  
+- **Nube privada**: Perfecta para organizaciones con altos requerimientos de seguridad y cumplimiento.  
+- **Nube híbrida**: Combina lo mejor de ambas, brindando flexibilidad y eficiencia.  
+- **Multinube**: Adecuada para grandes empresas que necesitan resiliencia y evitar dependencias.
