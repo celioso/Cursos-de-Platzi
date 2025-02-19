@@ -199,3 +199,239 @@ Los **contenedores** empaquetan aplicaciones con sus dependencias para garantiza
 ✅ **Microservicios** → Ideal para arquitecturas escalables y modulares.  
 ✅ **Funciones Serverless** → Perfecto para ejecutar tareas bajo demanda sin administrar infraestructura.  
 ✅ **Contenedores** → Facilitan el despliegue y portabilidad de aplicaciones.
+
+## ¿Qué es on-premises?
+
+**On-Premises** (también conocido como **"en las instalaciones"**) se refiere a un modelo de infraestructura donde una empresa posee, opera y mantiene sus propios **servidores, almacenamiento y redes** dentro de sus instalaciones físicas, en lugar de utilizar servicios en la nube.
+
+### **🔹 Características del On-Premises**  
+
+✅ **Control Total** – La empresa gestiona toda la infraestructura y seguridad.  
+✅ **Personalización** – Se pueden ajustar servidores y redes según las necesidades específicas.  
+✅ **Costos Iniciales Altos** – Se requiere inversión en hardware, software y mantenimiento.  
+✅ **Escalabilidad Limitada** – Ampliar la capacidad requiere adquirir más hardware.  
+✅ **Responsabilidad Completa** – La empresa es responsable de la seguridad, parches y actualizaciones.
+
+### **🔹 Diferencias Entre On-Premises y la Nube ☁️**  
+
+| **Característica**     | **On-Premises** | **Cloud (Nube)** |
+|------------------------|----------------|------------------|
+| **Gestión**            | Empresa propia  | Proveedor en la nube |
+| **Costos**            | Altos costos iniciales + mantenimiento | Pago por uso, sin inversión inicial |
+| **Escalabilidad**     | Limitada, depende del hardware adquirido | Escalabilidad automática |
+| **Seguridad**         | Control total, pero mayor responsabilidad | Seguridad gestionada por el proveedor |
+| **Actualizaciones**   | Se deben hacer manualmente | Se actualiza automáticamente |
+
+### **🔹 ¿Cuándo Usar On-Premises?**  
+
+🔹 Empresas con **regulaciones estrictas** de datos (bancos, gobiernos, salud).  
+🔹 Negocios que requieren **control total sobre la seguridad y la infraestructura**.  
+🔹 Organizaciones con **infraestructura ya amortizada** y sin necesidad de escalabilidad.
+
+### **📌 Conclusión**  
+
+Si bien **On-Premises** ofrece control total, la **nube** permite mayor flexibilidad, reducción de costos y escalabilidad. Hoy en día, muchas empresas optan por **arquitecturas híbridas** que combinan ambas soluciones.
+
+**Lecturas recomendadas**
+
+[https://cloud.google.com/learn/what-is-cloud-computing?hl=es-419](https://cloud.google.com/learn/what-is-cloud-computing?hl=es-419)
+
+[https://azure.microsoft.com/es-es/resources/cloud-computing-dictionary/what-is-the-cloud](https://azure.microsoft.com/es-es/resources/cloud-computing-dictionary/what-is-the-cloud)
+
+[AWS | Informática en la nube. Ventajas y Beneficios](https://aws.amazon.com/es/what-is-cloud-computing/)
+
+## ¿Qué es Cloud Computing o nube?
+
+**Cloud Computing**, o **computación en la nube**, es un modelo que permite el acceso a recursos informáticos como **servidores, almacenamiento, bases de datos, redes y software** a través de Internet, en lugar de mantenerlos en una infraestructura física propia (**on-premises**).  
+
+Con la nube, las empresas pueden **escalar** recursos según la demanda y pagar solo por lo que utilizan, lo que reduce costos y mejora la eficiencia operativa.
+
+### **🔹 Características del Cloud Computing**  
+
+✅ **Pago por Uso** – Solo pagas por lo que consumes, sin grandes inversiones iniciales.  
+✅ **Escalabilidad** – Puedes aumentar o reducir recursos de manera flexible.  
+✅ **Accesibilidad** – Se accede desde cualquier parte del mundo con conexión a Internet.  
+✅ **Seguridad** – Protección avanzada con cifrado, firewalls y copias de seguridad automáticas.  
+✅ **Automatización** – Gestión de actualizaciones, parches y mantenimiento sin intervención manual.
+
+### **🔹 Modelos de Servicio en la Nube**  
+
+| **Modelo** | **Descripción** | **Ejemplo** |
+|------------|----------------|-------------|
+| **IaaS** (Infraestructura como Servicio) | Alquila servidores, almacenamiento y redes sin gestionar hardware físico. | AWS EC2, Google Compute Engine, Azure Virtual Machines |
+| **PaaS** (Plataforma como Servicio) | Proporciona entornos listos para el desarrollo sin gestionar servidores. | AWS Elastic Beanstalk, Google App Engine, Heroku |
+| **SaaS** (Software como Servicio) | Aplicaciones listas para usar a través de Internet. | Google Drive, Dropbox, Gmail |
+
+### **🔹 Tipos de Nube**  
+
+🌍 **Nube Pública** – Gestionada por terceros (AWS, Google Cloud, Azure).  
+🏢 **Nube Privada** – Infraestructura exclusiva de una empresa.  
+🔗 **Nube Híbrida** – Combinación de nube pública y privada.  
+🌐 **Nube Multicloud** – Uso de varios proveedores de nube.
+
+### **🔹 Beneficios del Cloud Computing**  
+
+🔹 **Reducción de costos** – Evita comprar y mantener servidores físicos.  
+🔹 **Flexibilidad y escalabilidad** – Adapta los recursos a la demanda en segundos.  
+🔹 **Alta disponibilidad** – Centros de datos globales garantizan continuidad.  
+🔹 **Mayor seguridad** – Protección contra ataques y copias de seguridad automáticas.  
+🔹 **Colaboración global** – Equipos pueden trabajar en cualquier lugar.
+
+### **📌 Conclusión**  
+
+El **Cloud Computing** ha revolucionado la forma en que las empresas gestionan su infraestructura tecnológica, permitiendo mayor eficiencia, seguridad y reducción de costos.
+
+## ¿Por qué usar Cloud Computing o nube?
+
+El **Cloud Computing** ha transformado la forma en que las empresas y usuarios acceden a la tecnología, ofreciendo **flexibilidad, escalabilidad y reducción de costos**. En lugar de depender de servidores físicos locales (**on-premises**), la nube permite acceder a recursos informáticos a través de Internet.  
+
+A continuación, te explico las **principales razones para usar la nube**:
+
+### **🔹 1. Reducción de Costos 💰**  
+✅ **Menos inversión inicial** – No necesitas comprar hardware costoso.  
+✅ **Pago por uso** – Solo pagas por los recursos que consumes.  
+✅ **Menos costos de mantenimiento** – El proveedor de la nube gestiona la infraestructura.  
+
+📌 *Ejemplo:* Empresas pueden alojar sus sitios web en AWS o Google Cloud sin comprar servidores propios.
+
+### **🔹 2. Escalabilidad y Flexibilidad 📈**  
+✅ **Escala automáticamente** según la demanda (más o menos recursos cuando sea necesario).  
+✅ **Adapta los servicios** sin necesidad de grandes cambios en la infraestructura.  
+✅ **Globalización rápida** – Implementa servidores en cualquier región del mundo.  
+
+📌 *Ejemplo:* Netflix usa AWS para escalar sus servidores y atender millones de usuarios simultáneamente.
+
+### **🔹 3. Alta Disponibilidad y Continuidad del Negocio 🔄**  
+✅ **Centros de datos distribuidos** en todo el mundo garantizan disponibilidad.  
+✅ **Resistencia a fallos** – Si un servidor falla, otro toma el control.  
+✅ **Recuperación ante desastres** con copias de seguridad automáticas.  
+
+📌 *Ejemplo:* Un banco puede seguir operando sin interrupciones gracias a la nube.
+
+### **🔹 4. Seguridad Avanzada 🔒**  
+✅ **Protección contra ataques cibernéticos** con firewalls, cifrado y autenticación multifactor.  
+✅ **Cumplimiento de normativas** como GDPR, ISO 27001 y HIPAA.  
+✅ **Monitoreo 24/7** y alertas en caso de amenazas.  
+
+📌 *Ejemplo:* AWS proporciona seguridad de datos con cifrado y acceso restringido.
+
+### **🔹 5. Acceso desde Cualquier Lugar 🌍**  
+✅ Solo necesitas conexión a Internet para trabajar desde cualquier dispositivo.  
+✅ Facilita el **trabajo remoto y la colaboración** en tiempo real.  
+✅ No hay necesidad de instalar software localmente.  
+
+📌 *Ejemplo:* Empresas como Google y Microsoft permiten trabajar en la nube con Google Drive y OneDrive.
+
+### **🔹 6. Automatización y Agilidad 🚀**  
+✅ **Actualizaciones automáticas** sin interrupciones.  
+✅ **Integración con Inteligencia Artificial y Machine Learning**.  
+✅ **Menos carga de trabajo para los equipos de TI**.  
+
+📌 *Ejemplo:* Un e-commerce puede automatizar el procesamiento de pagos y gestión de inventario en la nube.
+
+### **📌 Conclusión**  
+
+🔹 **Cloud Computing** es ideal para empresas de todos los tamaños por su **costo reducido, escalabilidad, seguridad y accesibilidad**.  
+🔹 Empresas como Amazon, Google, Netflix y startups **dependen de la nube** para operar con eficiencia.  
+🔹 La nube permite a las empresas **innovar más rápido y mejorar la experiencia del usuario**.
+
+## ¿Por qué una arquitectura en Cloud Computing o nube es diferente?
+
+La arquitectura en la **nube** es diferente de la arquitectura **tradicional on-premises** porque está diseñada para aprovechar las características únicas de la computación en la nube: **escalabilidad, automatización, pago por uso y resiliencia**.  
+
+A continuación, te explico las diferencias clave:
+
+### **🔹 1. Escalabilidad y Elasticidad 📈**  
+✅ **Automática y bajo demanda** – La nube ajusta los recursos según el tráfico.  
+✅ **Horizontal y vertical** – Se pueden añadir más servidores (escalado horizontal) o mejorar los existentes (escalado vertical).  
+
+📌 *Ejemplo:* Un e-commerce escala automáticamente en Black Friday sin interrupciones.
+
+### **🔹 2. Pago por Uso y Optimización de Costos 💰**  
+✅ **No requiere inversión en hardware** – Solo pagas por lo que consumes.  
+✅ **Optimización dinámica** – Se pueden apagar recursos no utilizados.  
+
+📌 *Ejemplo:* Un startup solo paga por los servidores mientras su aplicación está activa.
+
+### **🔹 3. Alta Disponibilidad y Tolerancia a Fallos 🔄**  
+✅ **Centros de datos distribuidos en diferentes regiones** garantizan continuidad.  
+✅ **Balanceadores de carga** redirigen el tráfico si un servidor falla.  
+
+📌 *Ejemplo:* Netflix usa AWS para asegurar que su servicio nunca se caiga.
+
+### **🔹 4. Infraestructura como Código (IaC) ⚙️**  
+✅ Se puede **automatizar y gestionar** toda la infraestructura con código.  
+✅ Permite **despliegues rápidos y repetibles**.  
+
+📌 *Ejemplo:* Con AWS CloudFormation, se puede crear toda una infraestructura con un solo comando.
+
+### **🔹 5. Seguridad y Gobernanza 🔒**  
+✅ **Control de acceso granular** – Se definen permisos con IAM (Identity and Access Management).  
+✅ **Cifrado de datos en tránsito y en reposo**.  
+
+📌 *Ejemplo:* Un banco en la nube usa AWS KMS para cifrar datos sensibles.
+
+### **🔹 6. Desacoplamiento y Microservicios 🔧**  
+✅ Se dividen las aplicaciones en **microservicios independientes**.  
+✅ Se utilizan **APIs y colas de mensajes** para comunicación entre servicios.  
+
+📌 *Ejemplo:* Uber usa microservicios en la nube para gestionar pagos, mapas y usuarios de forma separada.
+
+### **📌 Conclusión**  
+
+🔹 **La nube permite una arquitectura más eficiente, escalable y resiliente.**  
+🔹 **Reduce costos operativos y facilita la automatización.**  
+🔹 **Empresas como Netflix, Amazon y Google han optimizado sus sistemas gracias a la nube.**
+
+## Infraestructura global, regiones y zonas
+
+AWS cuenta con una **infraestructura global distribuida** para ofrecer **alta disponibilidad, baja latencia y escalabilidad**. Está diseñada para soportar cargas de trabajo críticas a nivel mundial.
+
+### **🔹 1. Infraestructura Global de AWS 🌐**  
+AWS opera en múltiples ubicaciones alrededor del mundo, organizadas en:  
+
+✅ **Regiones** 🏢  
+✅ **Zonas de Disponibilidad (AZs)** 📡  
+✅ **Puntos de Presencia (PoPs) para CDN** 📍
+
+### **🔹 2. ¿Qué es una Región en AWS? 📍**  
+Una **Región de AWS** es una ubicación geográfica donde AWS tiene **múltiples centros de datos**.  
+
+📌 **Características:**  
+✔️ Cada **región es independiente** de las demás en términos de seguridad y cumplimiento.  
+✔️ Está compuesta por **varias Zonas de Disponibilidad** para mayor redundancia.  
+✔️ **Ejemplo de regiones:** `us-east-1` (Virginia), `eu-west-1` (Irlanda), `sa-east-1` (São Paulo).  
+
+**🔎 ¿Cómo elegir una región?**  
+✅ **Latencia baja** (cercanía a los usuarios).  
+✅ **Requisitos de cumplimiento** (normativas locales).  
+✅ **Costo** (diferentes precios por región).
+
+### **🔹 3. ¿Qué es una Zona de Disponibilidad (AZ)? 🏢**  
+Cada **Región** contiene **varias Zonas de Disponibilidad (AZs)**, que son centros de datos físicamente separados pero interconectados con redes de alta velocidad.  
+
+📌 **Ejemplo:** La región `us-east-1` tiene **6 AZs** (`us-east-1a`, `us-east-1b`, etc.).  
+
+**✅ Beneficios de las AZs:**  
+✔️ **Alta disponibilidad** – Si una AZ falla, otra sigue operando.  
+✔️ **Baja latencia** – Comunicación rápida entre AZs.  
+✔️ **Balanceo de carga** – Distribución eficiente de tráfico.
+
+### **🔹 4. Puntos de Presencia (PoPs) y AWS Edge Locations 🌎**  
+AWS tiene **más de 450 Puntos de Presencia** (PoPs) en todo el mundo para acelerar la entrega de contenido a los usuarios.  
+
+📌 **AWS CloudFront** usa estas ubicaciones para mejorar la velocidad de acceso a sitios web, videos y datos.  
+
+✅ **Beneficios:**  
+✔️ **Baja latencia** con servidores más cercanos a los usuarios.  
+✔️ **Seguridad mejorada** con protección contra ataques DDoS.  
+✔️ **CDN eficiente** para distribuir contenido globalmente.  
+
+### **📌 Conclusión**  
+🔹 AWS tiene una **infraestructura global robusta**, con **Regiones, Zonas de Disponibilidad y Puntos de Presencia**.  
+🔹 Permite a empresas construir aplicaciones **escalables, seguras y altamente disponibles** en todo el mundo.  
+🔹 **¿Listo para desplegar tu aplicación en la nube? 🚀**
+
+**Lecturas recomendadas**
+
+[https://pages.awscloud.com/rs/112-TZM-766/images/Enter_the_Purpose-Built-Database-Era.pdf](https://pages.awscloud.com/rs/112-TZM-766/images/Enter_the_Purpose-Built-Database-Era.pdf)
