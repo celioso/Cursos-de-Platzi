@@ -492,3 +492,153 @@ Cada tipo de nube tiene ventajas y desafíos:
 - **Nube privada**: Perfecta para organizaciones con altos requerimientos de seguridad y cumplimiento.  
 - **Nube híbrida**: Combina lo mejor de ambas, brindando flexibilidad y eficiencia.  
 - **Multinube**: Adecuada para grandes empresas que necesitan resiliencia y evitar dependencias.
+
+## ¿Qué es Cloud Native?
+
+**Cloud Native** es un enfoque para diseñar, construir y operar aplicaciones aprovechando al máximo las capacidades de la computación en la nube. Se basa en principios como la escalabilidad, la resiliencia, la automatización y la eficiencia en el uso de los recursos.
+
+### 📌 **Principales Características de Cloud Native**
+1. **Microservicios**: Aplicaciones divididas en pequeños servicios independientes, cada uno con su propia lógica y base de datos.
+2. **Contenedores**: Uso de tecnologías como Docker y Kubernetes para ejecutar aplicaciones de manera portable y eficiente.
+3. **Orquestación y Automatización**: Uso de herramientas como Kubernetes para gestionar la escalabilidad y disponibilidad.
+4. **DevOps y CI/CD**: Integración y entrega continua para agilizar el desarrollo y despliegue de aplicaciones.
+5. **Escalabilidad Dinámica**: Uso de recursos en la nube bajo demanda para optimizar costos y rendimiento.
+6. **Resiliencia y Auto-recuperación**: Arquitecturas diseñadas para tolerar fallos sin afectar la disponibilidad.
+7. **Infraestructura como Código (IaC)**: Definición de infraestructuras mediante código para su gestión automatizada.
+
+### 🔹 **Ejemplos de Tecnologías Cloud Native**
+- **Contenedores**: Docker, Podman
+- **Orquestación**: Kubernetes, OpenShift
+- **Monitoreo y Logging**: Prometheus, Grafana, ELK Stack
+- **Plataformas Serverless**: AWS Lambda, Azure Functions, Google Cloud Functions
+
+### 🎯 **Ventajas de Cloud Native**
+✅ Mayor velocidad de desarrollo  
+✅ Mejor aprovechamiento de recursos  
+✅ Escalabilidad bajo demanda  
+✅ Resiliencia y alta disponibilidad  
+
+**CNCF (Cloud Native Computing Foundation)** es una fundación que impulsa la adopción de tecnologías **Cloud Native** mediante el desarrollo de software de código abierto, estándares y mejores prácticas. CNCF forma parte de la **Linux Foundation** y es responsable de proyectos clave como **Kubernetes, Prometheus y Envoy**.
+
+### 📌 **¿Qué hace CNCF?**
+✅ **Desarrolla y mantiene proyectos de código abierto**: Kubernetes, Helm, gRPC, OpenTelemetry, etc.  
+✅ **Define estándares para arquitecturas Cloud Native**.  
+✅ **Fomenta la colaboración entre empresas y desarrolladores**.  
+✅ **Organiza conferencias y certificaciones** (como la CKA – Certified Kubernetes Administrator).
+
+### 🔹 **Principales proyectos de CNCF**
+- **Kubernetes** 🛠️ (Orquestación de contenedores)  
+- **Prometheus** 📊 (Monitoreo y alertas)  
+- **Helm** 🎭 (Gestión de aplicaciones en Kubernetes)  
+- **Envoy** 🔀 (Proxy y Service Mesh)  
+- **OpenTelemetry** 📡 (Observabilidad y trazabilidad de datos)
+
+### 🎯 **¿Por qué es importante CNCF?**
+Si trabajas con **arquitecturas en la nube, DevOps o microservicios**, CNCF es clave porque ofrece tecnologías estandarizadas, seguras y escalables.  
+
+Si te interesa explorar CNCF en tu trabajo o proyectos, dime qué tecnologías usas y te ayudo a integrarlas. 🚀
+
+
+**Lecturas recomendadas**
+
+[Cloud Native Computing Foundation](https://www.cncf.io/)
+
+[Graduated and Incubating Projects | Cloud Native Computing Foundation](https://www.cncf.io/projects/)
+
+## Ejemplo de arquitectura Cloud Native
+
+Aquí tienes un ejemplo de una **arquitectura Cloud Native** basada en microservicios con Kubernetes en la nube.
+
+### **🌐 Ejemplo: Plataforma de E-commerce Cloud Native**
+Imagina que estamos construyendo una tienda en línea con pagos, catálogo de productos y usuarios.  
+
+### **🔹 Componentes de la arquitectura Cloud Native**
+1. **Frontend (React/Vue.js/Angular)**
+   - Aplicación web servida como contenedor en **NGINX**.  
+   - Se comunica con el backend a través de una **API REST o GraphQL**.  
+
+2. **Backend (Microservicios con Python/Node.js/Go)**
+   - Desplegado como microservicios en contenedores **Docker**.  
+   - Cada microservicio maneja una parte de la lógica del negocio:
+     - **Usuarios** 👤 (registro, login, autenticación JWT)
+     - **Productos** 🛍️ (gestión del catálogo)
+     - **Pagos** 💳 (procesamiento de transacciones con Stripe/PayPal)
+     - **Órdenes** 📦 (gestión de compras y envíos)
+
+3. **Base de Datos (Managed DB en la nube)**
+   - **PostgreSQL/MySQL** en **Amazon RDS, Google Cloud SQL o Azure SQL**.  
+   - **Redis** para caché de datos.  
+
+4. **Orquestación con Kubernetes (K8s)**
+   - Todos los microservicios corren en **pods de Kubernetes** en un clúster en la nube (**AWS EKS, Google GKE o Azure AKS**).  
+   - Uso de **Helm** para gestionar los despliegues.  
+
+5. **Service Mesh (Envoy/Istio/Linkerd)**
+   - Maneja comunicación entre microservicios con seguridad y balanceo de carga.  
+
+6. **Mensajería Asíncrona (Kafka/RabbitMQ)**
+   - Para eventos como confirmaciones de pedidos, notificaciones y actualizaciones de stock.  
+
+7. **Monitoreo y Logging**
+   - **Prometheus** + **Grafana** para métricas.  
+   - **ELK Stack (Elasticsearch, Logstash, Kibana)** para logs centralizados.  
+
+8. **CI/CD (Integración y Entrega Continua)**
+   - Uso de **GitHub Actions / GitLab CI / Jenkins** para automatizar despliegues.  
+   - **Terraform o Pulumi** para Infraestructura como Código (IaC).
+
+### **📌 Beneficios de esta arquitectura**
+✅ **Escalabilidad dinámica** 📈 → Kubernetes ajusta la infraestructura según la demanda.  
+✅ **Resiliencia** 🔄 → Si un microservicio falla, el sistema sigue funcionando.  
+✅ **Agilidad** 🚀 → Equipos pueden desarrollar e implementar servicios de forma independiente.  
+✅ **Optimización de costos** 💰 → Uso eficiente de recursos en la nube.
+
+### **🛠️ Tecnologías utilizadas en el stack Cloud Native**
+- **Infraestructura:** Kubernetes, Terraform  
+- **Backend:** Node.js, Python (FastAPI), Go  
+- **Base de Datos:** PostgreSQL, Redis  
+- **Mensajería:** Kafka, RabbitMQ  
+- **Monitoreo:** Prometheus, Grafana  
+- **DevOps:** Docker, GitHub Actions
+
+## ¿Qué es Serverless?
+
+### **🚀 ¿Qué es Serverless?**  
+**Serverless** es un modelo de computación en la nube donde los desarrolladores pueden ejecutar código sin administrar servidores. Aunque los servidores siguen existiendo, la nube los **provisiona, escala y administra automáticamente**, permitiendo a los desarrolladores enfocarse solo en el código.
+
+### **📌 Características Clave de Serverless**
+✅ **Sin gestión de servidores** → No necesitas configurar ni mantener infraestructura.  
+✅ **Escalabilidad automática** → La plataforma ajusta los recursos según la demanda.  
+✅ **Pago por uso** → Solo pagas cuando se ejecuta el código, lo que reduce costos.  
+✅ **Ejecución basada en eventos** → Funciona en respuesta a eventos como peticiones HTTP, cargas de archivos o mensajes en colas.
+
+### **🔹 Ejemplos de Plataformas Serverless**
+- **AWS Lambda**  
+- **Google Cloud Functions**  
+- **Azure Functions**  
+- **Cloudflare Workers**  
+- **OpenFaaS (Open Source Serverless en Kubernetes)**
+
+### **🔧 Ejemplo de Aplicación Serverless**  
+### **Caso: API REST con AWS Lambda y API Gateway**  
+1. **El usuario hace una solicitud HTTP** a una API (por ejemplo, para obtener información de un producto).  
+2. **AWS API Gateway recibe la petición** y la envía a una función Lambda.  
+3. **AWS Lambda ejecuta el código** (por ejemplo, consulta una base de datos en DynamoDB).  
+4. **Lambda devuelve la respuesta al usuario**.  
+
+📌 **Tecnologías utilizadas:**  
+- AWS Lambda (ejecución del código sin servidor)
+- API Gateway (manejo de solicitudes HTTP)  
+- DynamoDB (base de datos escalable)  
+- S3 (almacenamiento de archivos)
+
+### **🎯 ¿Cuándo Usar Serverless?**  
+🔹 Microservicios y APIs sin estado  
+🔹 Procesamiento de eventos (archivos, notificaciones, IoT)  
+🔹 Automatización de tareas (por ejemplo, generación de reportes)  
+🔹 Aplicaciones que necesitan alta escalabilidad y baja latencia
+
+**Lecturas recomendadas**
+
+[Learning Serverless [Book]](https://www.oreilly.com/library/view/learning-serverless/9781492057000/)
+
