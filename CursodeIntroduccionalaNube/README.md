@@ -1147,3 +1147,307 @@ Los servicios en la nube se dividen en **tres modelos principales** según el ni
 ## **📌 Conclusión**
 📌 **Alta Disponibilidad** = Evita interrupciones con recuperación rápida.  
 📌 **Tolerancia a Fallos** = Sigue funcionando incluso si algo falla.
+
+## Escalabilidad Horizontal vs Vertical
+
+La **escalabilidad** es la capacidad de un sistema para aumentar su rendimiento a medida que crece la demanda. Existen **dos enfoques principales**:
+
+### **1️⃣ Escalabilidad Vertical (Scale-Up)**
+🔹 **¿Qué es?** Aumentar la **capacidad de un solo servidor** (más CPU, RAM, almacenamiento, etc.).  
+🔹 **Cómo se logra:**  
+✔️ Mejorar el hardware (procesador más potente, más memoria, discos más rápidos).  
+✔️ Migrar a una máquina más poderosa (**ejemplo: cambiar de un servidor de 16GB RAM a uno de 64GB**).  
+
+✅ **Ventajas:**  
+✔️ Simplicidad: Menos cambios en la arquitectura.  
+✔️ Puede ser más eficiente para aplicaciones monolíticas.  
+
+❌ **Desventajas:**  
+❌ **Límite físico:** No se puede escalar indefinidamente.  
+❌ **Punto único de falla:** Si el servidor falla, todo el sistema cae.  
+❌ **Costoso:** Máquinas más potentes son más caras.  
+
+📌 **Ejemplo en la nube:**  
+- Aumentar el tamaño de una **instancia EC2 en AWS** (pasar de t2.micro a t3.large).  
+- Cambiar una base de datos de **Google Cloud SQL** a un tamaño mayor.
+
+### **2️⃣ Escalabilidad Horizontal (Scale-Out)**
+🔹 **¿Qué es?** Añadir **más servidores** para distribuir la carga de trabajo.  
+🔹 **Cómo se logra:**  
+✔️ Agregar más instancias y distribuir la carga con un **balanceador de carga**.  
+✔️ Descomponer una aplicación monolítica en **microservicios** para escalar partes específicas.  
+
+✅ **Ventajas:**  
+✔️ **Alta disponibilidad**: Si un nodo falla, los demás siguen funcionando.  
+✔️ **Escalabilidad infinita**: Se pueden agregar más servidores según sea necesario.  
+✔️ **Eficiencia de costos**: Mejor aprovechamiento de recursos.  
+
+❌ **Desventajas:**  
+❌ **Mayor complejidad:** Requiere arquitecturas distribuidas y balanceadores de carga.  
+❌ **Latencia**: La comunicación entre servidores puede afectar el rendimiento.  
+
+📌 **Ejemplo en la nube:**  
+- **AWS Auto Scaling**: Se agregan instancias EC2 cuando aumenta la demanda.  
+- **Google Kubernetes Engine (GKE)**: Escalar contenedores automáticamente.  
+- **Base de datos distribuida** como **Google Spanner o Amazon DynamoDB**.
+
+### **📊 Comparación:**
+| **Característica** | **Escalabilidad Vertical** | **Escalabilidad Horizontal** |
+|-------------------|---------------------|---------------------|
+| **Método** | Mejorar el hardware del servidor | Agregar más servidores |
+| **Límite de crecimiento** | Limitado por la máquina | Escalabilidad casi infinita |
+| **Costo** | Alto (máquinas potentes son caras) | Mejor optimización de costos |
+| **Disponibilidad** | Punto único de falla | Mayor disponibilidad |
+| **Complejidad** | Baja | Alta (requiere balanceo de carga y distribución de datos) |
+| **Ejemplo** | Aumentar RAM de un servidor | Agregar más servidores con balanceador de carga |
+
+### **🚀 ¿Cuál elegir?**
+✔ **Escalabilidad Vertical** → Si el crecimiento es **moderado** y la arquitectura es monolítica.  
+✔ **Escalabilidad Horizontal** → Si necesitas **alta disponibilidad, distribución de carga y crecimiento continuo**.
+
+**Lecturas recomendadas**
+
+[https://azure.microsoft.com/es-es/resources/cloud-computing-dictionary/scaling-out-vs-scaling-up/#overview](https://azure.microsoft.com/es-es/resources/cloud-computing-dictionary/scaling-out-vs-scaling-up/#overview)
+
+## Arquitectura agnóstica base
+
+### **¿Qué es una Arquitectura Agnóstica?**  
+Una arquitectura **agnóstica** es aquella que **no está atada a un proveedor, tecnología o plataforma específica**, lo que permite migrar o adaptar los componentes sin grandes cambios.  
+
+✅ **Objetivo:** Evitar el **vendor lock-in** (dependencia de un solo proveedor de nube o tecnología).  
+✅ **Beneficios:** Mayor **flexibilidad, portabilidad y resiliencia**.
+
+### **🔧 Componentes Claves de una Arquitectura Agnóstica**  
+
+1️⃣ **Infraestructura como Código (IaC)**  
+- Usa herramientas como **Terraform, Pulumi o Ansible** en lugar de servicios específicos de un solo proveedor (ej. AWS CloudFormation).  
+
+2️⃣ **Contenedores y Orquestación**  
+- Usa **Docker + Kubernetes** en lugar de servicios propietarios como AWS ECS o Google Cloud Run.  
+- Kubernetes permite mover cargas de trabajo entre AWS, Azure, Google Cloud, o incluso **on-premise**.  
+
+3️⃣ **Bases de Datos Multicloud**  
+- En lugar de usar **AWS RDS o Google Cloud SQL**, usa bases de datos compatibles en múltiples nubes como **PostgreSQL, MySQL, MongoDB o CockroachDB**.  
+
+4️⃣ **Microservicios y APIs Rest/GraphQL**  
+- Diseñar la arquitectura con **microservicios** desacoplados y APIs abiertas facilita la portabilidad.  
+- Usa **gRPC, OpenAPI o GraphQL** en lugar de servicios específicos de un proveedor.  
+
+5️⃣ **Almacenamiento y CDN Agnósticos**  
+- En lugar de depender de **AWS S3**, usar opciones como **MinIO, Ceph o Wasabi**.  
+- Para distribución de contenido (CDN), usar **Cloudflare, Fastly o Akamai** en lugar de AWS CloudFront o Azure CDN.  
+
+6️⃣ **Autenticación y Seguridad**  
+- Implementar **OAuth2, OpenID Connect o JWT** en lugar de depender de IAM específico de cada nube.  
+- Usar **HashiCorp Vault** o **Cloudflare Zero Trust** en lugar de servicios propietarios como AWS Secrets Manager.  
+
+7️⃣ **Observabilidad y Monitoreo**  
+- Evitar depender de herramientas específicas como AWS CloudWatch o Azure Monitor.  
+- Usar opciones abiertas como **Prometheus + Grafana, OpenTelemetry o ELK Stack (Elasticsearch, Logstash, Kibana)**.
+
+### **📐 Ejemplo de Arquitectura Agnóstica Base**  
+
+🔹 **Infraestructura**: Terraform + Kubernetes  
+🔹 **Aplicaciones**: Microservicios en Docker  
+🔹 **Base de Datos**: PostgreSQL (compatible con múltiples nubes)  
+🔹 **Autenticación**: OAuth2 con Keycloak  
+🔹 **Almacenamiento**: MinIO (compatible con S3)  
+🔹 **CDN**: Cloudflare  
+🔹 **Monitoreo**: Prometheus + Grafana
+
+### **🚀 Conclusión**
+Una **arquitectura agnóstica** permite **mayor flexibilidad, evita lock-in y facilita la migración** entre nubes o entornos híbridos.
+
+![Arquitectura Agnostica](ArquitecturaAgnostica.jpg)
+
+**Lecturas recomendadas**
+
+[draw.io](https://www.drawio.com/)
+
+[Homepage | Lucid](https://lucid.co/)
+
+[Cloudcraft – Draw AWS diagrams](https://www.cloudcraft.co/)
+
+## Arquitectura base con servidores
+
+### **📌 ¿Qué es una Arquitectura con Servidores?**  
+Es un diseño tradicional donde las aplicaciones y servicios se ejecutan en **servidores físicos o virtuales**, en lugar de una arquitectura serverless o basada completamente en contenedores.  
+
+✅ **Usos comunes:**  
+- Aplicaciones empresariales con alta personalización.  
+- Sistemas legados que requieren infraestructura dedicada.  
+- Aplicaciones con control total sobre hardware y software.
+
+### **🔧 Componentes Clave de una Arquitectura Base con Servidores**  
+
+### **1️⃣ Capa de Presentación (Front-end)**
+- Servidor web para atender peticiones HTTP/HTTPS.  
+- Ejemplos: **NGINX, Apache, IIS**.  
+- Puede estar en servidores dedicados o balanceados en varias máquinas.  
+
+### **2️⃣ Capa de Aplicación (Back-end)**
+- Servidores donde corre la lógica del negocio.  
+- Tecnologías: **Node.js, Python (Django/Flask), Java (Spring Boot), .NET, Ruby on Rails**.  
+- Puede ser monolítica o basada en microservicios.  
+
+### **3️⃣ Capa de Base de Datos**
+- Bases de datos relacionales: **PostgreSQL, MySQL, SQL Server**.  
+- Bases de datos NoSQL: **MongoDB, Cassandra, Redis**.  
+- Puede estar en un solo servidor o en un clúster de alta disponibilidad.  
+
+### **4️⃣ Capa de Almacenamiento**
+- Servidores de archivos para almacenar documentos, imágenes, etc.  
+- Ejemplo: **NAS, SAN, NFS o almacenamiento en la nube (S3, MinIO)**.  
+
+### **5️⃣ Capa de Seguridad**
+- **Firewall** para proteger la red.  
+- **VPN o acceso seguro SSH**.  
+- **Certificados SSL/TLS** para cifrar la comunicación.  
+- **Autenticación y autorización** con OAuth2, LDAP o Active Directory.  
+
+### **6️⃣ Capa de Balanceo de Carga**
+- Distribuye el tráfico entre múltiples servidores de aplicación.  
+- Ejemplo: **NGINX, HAProxy, AWS ELB, Azure Load Balancer**.  
+
+### **7️⃣ Monitoreo y Logging**
+- **Monitoreo**: Prometheus + Grafana, Nagios, Zabbix.  
+- **Logging**: ELK Stack (Elasticsearch, Logstash, Kibana).  
+- **Auditoría**: Graylog, Fluentd.
+
+### **📐 Ejemplo de Arquitectura con Servidores**  
+
+```
+[ Cliente ]  <--->  [ Balanceador de Carga ]  <--->  [ Servidores Web (Apache/NGINX) ]
+                                              |        
+                                              v
+                                     [ Servidores de Aplicación ]
+                                              |
+                                              v
+                                    [ Servidores de Base de Datos ]
+                                              |
+                                              v
+                                  [ Almacenamiento (NAS/S3) ]
+```
+
+✅ **Escalabilidad:** Puede ser **vertical** (máquinas más potentes) o **horizontal** (agregar más servidores).  
+✅ **Disponibilidad:** Puede usar clústeres y replicación de bases de datos.
+
+![Arquitectura Agnostica-1](ArquitecturaAgnostica-1.jpg)
+
+### **🚀 Conclusión**
+Esta arquitectura ofrece **control total** sobre la infraestructura y es ideal para sistemas con altos requerimientos de personalización y seguridad. Sin embargo, requiere **mayor mantenimiento** que una solución basada en la nube o serverless.
+
+## Arquitectura base con contenedores
+
+### **📌 ¿Qué es una Arquitectura con Contenedores?**  
+Es un diseño donde las aplicaciones se ejecutan en **contenedores ligeros** (como Docker), en lugar de servidores físicos o máquinas virtuales tradicionales.  
+
+✅ **Beneficios:**  
+✔ **Portabilidad:** Se puede ejecutar en cualquier entorno (nube, on-premise, híbrido).  
+✔ **Escalabilidad rápida:** Se pueden agregar o quitar contenedores según la demanda.  
+✔ **Eficiencia de recursos:** Usa menos memoria y CPU que una VM.  
+✔ **Facilidad de despliegue:** Automatización con CI/CD.
+
+### **🔧 Componentes Clave de una Arquitectura con Contenedores**  
+
+### **1️⃣ Capa de Contenedores**  
+- Contienen la aplicación y sus dependencias.  
+- Tecnologías: **Docker, Podman, LXC**.  
+- Se ejecutan sobre un host con Linux o Windows.  
+
+### **2️⃣ Orquestador de Contenedores**  
+- Gestiona el escalado, despliegue y networking de los contenedores.  
+- Ejemplo: **Kubernetes (K8s), Docker Swarm, Amazon ECS, Azure AKS, Google GKE**.  
+
+### **3️⃣ Registro de Contenedores**  
+- Almacena y distribuye imágenes de contenedores.  
+- Ejemplo: **Docker Hub, AWS ECR, Azure ACR, GitHub Packages**.  
+
+### **4️⃣ Capa de Networking y Service Mesh**  
+- Permite la comunicación entre contenedores.  
+- Ejemplo: **CNI, Istio, Linkerd**.  
+
+### **5️⃣ Capa de Balanceo de Carga y Gateway API**  
+- Dirige el tráfico a los contenedores adecuados.  
+- Ejemplo: **NGINX, Traefik, Envoy, API Gateway**.  
+
+### **6️⃣ Base de Datos y Almacenamiento Persistente**  
+- Bases de datos en contenedores o externas.  
+- Ejemplo: **PostgreSQL, MySQL, MongoDB, Redis**.  
+- Almacenamiento: **Ceph, NFS, EFS, Persistent Volumes en K8s**.  
+
+### **7️⃣ CI/CD para Automatización**  
+- Pipelines de despliegue y actualización continua.  
+- Ejemplo: **GitHub Actions, GitLab CI/CD, ArgoCD, Jenkins**.  
+
+### **8️⃣ Observabilidad (Monitoreo y Logging)**  
+- **Monitoreo:** Prometheus + Grafana, Datadog.  
+- **Logging:** ELK Stack (Elasticsearch, Logstash, Kibana).  
+- **Trazabilidad:** OpenTelemetry, Jaeger.
+
+### **📐 Ejemplo de Arquitectura con Contenedores**  
+
+```
+[ Cliente ]  <--->  [ Balanceador de Carga ]  <--->  [ API Gateway ]  <--->  [ Kubernetes Cluster ]
+                                                                          |   
+                      +--------------------+--------------------+--------------------+
+                      |      Servicio 1    |     Servicio 2     |     Servicio 3     |
+                      | (Docker + Flask)   | (Docker + Node.js) | (Docker + Go)      |
+                      +--------------------+--------------------+--------------------+
+                                      |                  |                   |
+                                  [ Base de Datos ]   [ Redis Cache ]   [ Almacenamiento ]
+```
+
+![Arquitectura base con contenedores](arquibaseContenedor.jpg)
+
+### **🚀 Conclusión**
+Una **arquitectura con contenedores** permite crear sistemas escalables, portátiles y eficientes. Kubernetes y Docker son claves en esta estrategia.
+
+## Arquitectura con funciones
+
+### **📌 ¿Qué es una Arquitectura basada en Funciones?**  
+Es un modelo donde las aplicaciones se dividen en **funciones pequeñas y autónomas**, ejecutadas en la nube sin necesidad de gestionar servidores.  
+
+✅ **Beneficios:**  
+✔ **Autoescalado:** Se ejecutan solo cuando se invocan.  
+✔ **Menor costo:** Se paga solo por ejecución.  
+✔ **Simplicidad:** No requiere administrar infraestructura.
+
+### **🔧 Componentes Claves de una Arquitectura con Funciones**  
+
+### **1️⃣ Funciones como Servicio (FaaS)**  
+- Son la unidad de procesamiento ejecutada en la nube.  
+- Ejemplo: **AWS Lambda, Azure Functions, Google Cloud Functions**.  
+
+### **2️⃣ Gateway de API**  
+- Expone las funciones como endpoints HTTP.  
+- Ejemplo: **AWS API Gateway, Azure API Management, Kong**.  
+
+### **3️⃣ Eventos y Triggers**  
+- Disparan la ejecución de funciones.  
+- Ejemplo: **Mensajería (SQS, Pub/Sub), cambios en bases de datos, cron jobs**.  
+
+### **4️⃣ Base de Datos y Almacenamiento**  
+- Bases de datos serverless.  
+- Ejemplo: **DynamoDB, Firebase Firestore, Cosmos DB**.  
+- Almacenamiento: **S3, Cloud Storage, Azure Blob Storage**.  
+
+### **5️⃣ Observabilidad y Logging**  
+- **Monitoreo:** AWS CloudWatch, Azure Monitor.  
+- **Logging:** ELK Stack, Cloud Logging.  
+- **Tracing:** OpenTelemetry, AWS X-Ray.
+
+### **📐 Ejemplo de Arquitectura con Funciones**  
+
+```
+[ Cliente ]  <--->  [ API Gateway ]  <--->  [ Función 1 (Autenticación) ]  
+                                          |  
+                                          |---> [ Función 2 (Procesamiento) ]  
+                                          |  
+                                          |---> [ Función 3 (Guardar en DB) ]  
+                                          |  
+                                          |---> [ Base de Datos Serverless ]  
+```
+
+## **🚀 Conclusión**
+Una arquitectura basada en funciones es ideal para aplicaciones **ligeras, escalables y económicas**.
