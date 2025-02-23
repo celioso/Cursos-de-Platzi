@@ -1258,7 +1258,7 @@ Una arquitectura **agnóstica** es aquella que **no está atada a un proveedor, 
 ### **🚀 Conclusión**
 Una **arquitectura agnóstica** permite **mayor flexibilidad, evita lock-in y facilita la migración** entre nubes o entornos híbridos.
 
-![Arquitectura Agnostica](ArquitecturaAgnostica.jpg)
+![Arquitectura Agnostica](images/ArquitecturaAgnostica.jpg)
 
 **Lecturas recomendadas**
 
@@ -1332,7 +1332,7 @@ Es un diseño tradicional donde las aplicaciones y servicios se ejecutan en **se
 ✅ **Escalabilidad:** Puede ser **vertical** (máquinas más potentes) o **horizontal** (agregar más servidores).  
 ✅ **Disponibilidad:** Puede usar clústeres y replicación de bases de datos.
 
-![Arquitectura Agnostica-1](ArquitecturaAgnostica-1.jpg)
+![Arquitectura Agnostica-1](images/ArquitecturaAgnostica-1.jpg)
 
 ### **🚀 Conclusión**
 Esta arquitectura ofrece **control total** sobre la infraestructura y es ideal para sistemas con altos requerimientos de personalización y seguridad. Sin embargo, requiere **mayor mantenimiento** que una solución basada en la nube o serverless.
@@ -1398,7 +1398,7 @@ Es un diseño donde las aplicaciones se ejecutan en **contenedores ligeros** (co
                                   [ Base de Datos ]   [ Redis Cache ]   [ Almacenamiento ]
 ```
 
-![Arquitectura base con contenedores](arquibaseContenedor.jpg)
+![Arquitectura base con contenedores](images/arquibaseContenedor.jpg)
 
 ### **🚀 Conclusión**
 Una **arquitectura con contenedores** permite crear sistemas escalables, portátiles y eficientes. Kubernetes y Docker son claves en esta estrategia.
@@ -1448,6 +1448,6 @@ Es un modelo donde las aplicaciones se dividen en **funciones pequeñas y autón
                                           |  
                                           |---> [ Base de Datos Serverless ]  
 ```
-
+![Arquitectura con funciones](images/Arquitecturaconfunciones.jpg)
 ## **🚀 Conclusión**
 Una arquitectura basada en funciones es ideal para aplicaciones **ligeras, escalables y económicas**.
