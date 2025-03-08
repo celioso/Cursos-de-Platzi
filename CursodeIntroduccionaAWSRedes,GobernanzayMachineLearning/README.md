@@ -805,18 +805,18 @@ Mediante CloudWatch, **podemos usar un filtro para visualizar el número de inte
 
 ## Cómo aplicar autoescalamiento
 
-## **📌 Autoescalamiento en AWS (Auto Scaling)**
+### **📌 Autoescalamiento en AWS (Auto Scaling)**
 
 El **Auto Scaling** en AWS permite aumentar o reducir automáticamente los recursos informáticos en función de la demanda. Esto ayuda a optimizar el rendimiento y los costos, asegurando que siempre haya suficiente capacidad disponible sin desperdiciar recursos.
 
-## **📌 Servicios que Soportan Auto Scaling**
+### **📌 Servicios que Soportan Auto Scaling**
 
 ✅ **Amazon EC2 Auto Scaling** (para instancias EC2).  
 ✅ **AWS Fargate Auto Scaling** (para contenedores en ECS/EKS).  
 ✅ **Amazon DynamoDB Auto Scaling** (para bases de datos NoSQL).  
 ✅ **Amazon Aurora Auto Scaling** (para bases de datos relacionales).
 
-## **📌 Tipos de Autoescalamiento**
+### **📌 Tipos de Autoescalamiento**
 
 1️⃣ **Escalado Vertical** ⬆️⬇️
 
@@ -891,9 +891,247 @@ Cabe destacar que el Load Balancer de AWS es lo que permite distribuir automatic
 
 Nota: EC2 no es el único servicio que tiene auto escalamiento. DynamoDB y Aurora también implementan este concepto.
 
+## Laboratorio: empezando con CloudFormation
 
+CloudFormation es un servicio de AWS que permite modelar y aprovisionar recursos de infraestructura en la nube utilizando archivos de configuración en formato YAML o JSON. Un laboratorio básico para empezar con CloudFormation incluiría los siguientes pasos:
 
--------------------------------------------------------------------------
+### **1. Crear un Stack Básico en CloudFormation**
+Para empezar, se puede desplegar una infraestructura simple en AWS, como un bucket de S3.
+
+#### **Paso 1: Crear el archivo de la plantilla (YAML)**
+Crea un archivo llamado `s3-bucket.yaml` con el siguiente contenido:
+
+```yaml
+AWSTemplateFormatVersion: '2010-09-09'
+Resources:
+  MyS3Bucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: my-cloudformation-lab-bucket
+```
+
+#### **Paso 2: Subir la Plantilla a CloudFormation**
+1. Accede a la consola de AWS y ve a **CloudFormation**.
+2. Haz clic en **Create Stack** > **With new resources (standard)**.
+3. Selecciona **Upload a template file** y sube `s3-bucket.yaml`.
+4. Asigna un nombre a tu Stack, como `MyFirstStack`.
+5. Haz clic en **Next**, luego en **Next** nuevamente sin cambiar configuraciones adicionales.
+6. En la pantalla de revisión, haz clic en **Create stack**.
+
+#### **Paso 3: Verificar la Creación**
+- Una vez que el Stack se haya creado con éxito, ve a **S3** en la consola de AWS y verifica que el bucket `my-cloudformation-lab-bucket` ha sido creado.
+
+### **2. Eliminar el Stack**
+Para limpiar los recursos creados:
+1. Ve a la consola de CloudFormation.
+2. Selecciona el Stack `MyFirstStack`.
+3. Haz clic en **Delete**.
+
+### **Conceptos Claves en CloudFormation**
+- **Plantilla**: Define la infraestructura a desplegar.
+- **Stack**: Es una instancia de la plantilla en AWS.
+- **Recursos**: Son los componentes creados por CloudFormation (S3, EC2, RDS, etc.).
+- **Parámetros**: Permiten personalizar la plantilla sin modificar el código.
+- **Salidas**: Valores generados al ejecutar el Stack.
+
+Este laboratorio es un buen punto de partida para entender cómo funciona CloudFormation. A partir de aquí, puedes experimentar con otros recursos como EC2, RDS o VPC. 🚀
+
+### Resumen
+
+CloudFormation nos permite provisionar infraestructura como código. Para poner a prueba CloudFormation, mediante una **plantilla vamos a crear un stack a partir del cual se desplegará un bucket de [S3](https://platzi.com/clases/2732-aws-computo/47018-s3-y-s3-glacier/ "S3")**. Luego, actualizaremos el stack añadiendo otro bucket de S3, y finalmente lo eliminaremos.
+
+![Diagrama de stack de CloudFormation](images/DiagramadestackdeCloudFormation.png)
+
+### Entendiendo la plantilla
+
+En [este repositorio](https://github.com/platzi/aws-cloud-practitioner/tree/main/lab-cloudformation "este repositorio") encontrarás la plantilla de CloudFormation que usaremos. La plantilla tiene la siguiente estructura JSON (recuerda, CloudFormation acepta formato JSON o YAML):
+
+```json
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "this template does XXXX",
+  "Metadata": {},
+  "Parameters": {},
+  "Mappings": {},
+  "Conditions": {},
+  "Transform": {},
+  "Resources": {},
+  "Outputs": {}
+}
+```
+
+Estos parámetros corresponden a lo siguiente:
+
+- **AWSTemplateFormatVersion**: este parámetro es opcional. Aquí especificamos la versión de la plantilla
+- **Description**: cadena de texto que describe la plantilla. Debe ir después de *AWSTemplateFormatVersion*
+- **Metadata**: objetos que proporcionan información adicional sobre la plantilla
+- **Parameters**: valores que pasaremos a la plantilla al ejecutarse, ya sea durante la creación o actualización del *stack*
+- **Mappings**: permite asignar un conjunto de valores a una clave específica. Por ejemplo, para establecer valores en función de una región, podemos crear un *mapping* que usa el nombre de una región como clave y contiene los valores que deseemos especificar para cada región
+- **Conditions**: controla que se creen recursos o se asignen valores a dichos recursos en función de una condición. Por ejemplo, podemos asignar valores distintos para entornos de producción o de prueba
+- **Transform**: especifica las [macros](https://docs.aws.amazon.com/es_es/AWSCloudFormation/latest/UserGuide/template-macros.html "macros") que AWS CloudFormation usa para procesar la plantilla
+- **Resources**: aquí se declaran los recursos a incluir en el stack. Por ejemplo, instancias EC2 o *buckets* de S3.
+- **Outputs**: declara valores de salida que pueden ser usados en otros stacks
+
+### Pasos para crear el stack
+
+1. Nos dirigimos a la [página de CloudFormation](https://console.aws.amazon.com/cloudformation/home "página de CloudFormation") desde nuestra cuenta de AWS (en esta página podremos conocer más sobre el servicio en cuestión).
+2. Aquí le damos a “**Crear stack**”.
+3. Para crear el stack, en “Especificar plantilla” seleccionamos “**Cargar un archivo de plantilla**”, y cargamos el archivo [createstack.json](https://github.com/platzi/aws-cloud-practitioner/blob/main/lab-cloudformation/createstack.json "createstack.json"). Este archivo simplemente define un bucket de S3 llamado “platzilab”.
+```json
+{
+  "Resources": {
+    "platzilab": {
+      "Type": "AWS::S3::Bucket"
+    }
+  }
+}
+```
+
+![Subir plantilla](images/Subirplantilla.png)
+
+4. Le damos clic a siguiente y, a continuación, escogemos un nombre para el *stack* o pila. En este caso, la llamamos **cfnlab**, y le damos a siguiente.
+5. Opcionalmente, podemos añadir etiquetas para identificar la pila, y un rol de IAM.
+6. Dejamos el resto de configuraciones por defecto y le damos a siguiente. Entonces nos llevará a revisar las configuraciones, y le damos a “**Crear pila**”.
+7. Podremos ver el proceso de creación de la pila, los eventos y los recursos que fueron creados. Si te fijas en el nombre del bucket creado, **verás que este está compuesto por el nombre de la pila, el nombre que le asignamos al bucket en la plantilla, y una cadena de texto aleatoria**. Esto es para evitar crear recursos con nombre duplicados.
+
+![Pila y bucket creados](images/Pilaybucketcreados.png)
+
+**Lecturas recomendadas**
+
+[https://us-east-1.console.aws.amazon.com/](https://us-east-1.console.aws.amazon.com/)
+
+[aws-cloud-practitioner/lab-cloudformation at main · platzi/aws-cloud-practitioner · GitHub](https://github.com/platzi/aws-cloud-practitioner/tree/main/lab-cloudformation)
+
+## Laboratorio: actualizando y eliminando la stack
+
+En este laboratorio, aprenderás a actualizar y eliminar una **Stack** en AWS CloudFormation.  
+
+### **1. Crear la Stack Inicial**  
+Si no tienes una Stack creada, sigue el laboratorio anterior para desplegar un **Bucket de S3** con la siguiente plantilla (`s3-bucket.yaml`):  
+
+```yaml
+AWSTemplateFormatVersion: '2010-09-09'
+Resources:
+  MyS3Bucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: my-cloudformation-lab-bucket
+```
+
+Sigue los pasos mencionados en el laboratorio anterior para crear la Stack en AWS CloudFormation.
+
+## **2. Actualizar la Stack**  
+Vamos a modificar la Stack para agregar una **política de acceso público restringido** al Bucket de S3.  
+
+### **Paso 1: Crear una Nueva Versión de la Plantilla**
+Crea un nuevo archivo llamado `s3-bucket-updated.yaml` con el siguiente contenido:  
+
+```yaml
+AWSTemplateFormatVersion: '2010-09-09'
+Resources:
+  MyS3Bucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: my-cloudformation-lab-bucket
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+```
+
+### **Paso 2: Aplicar la Actualización en AWS CloudFormation**
+1. Ve a la **consola de AWS CloudFormation**.
+2. Selecciona la Stack que creaste (`MyFirstStack`).
+3. Haz clic en **Update**.
+4. Selecciona **Replace current template**, y luego **Upload a template file**.
+5. Sube el archivo `s3-bucket-updated.yaml`.
+6. Haz clic en **Next** y revisa los cambios.
+7. Haz clic en **Update Stack**.
+
+📝 **Nota**: Si el cambio no se puede aplicar directamente, es posible que CloudFormation realice una **recreación del recurso** en lugar de una actualización.
+
+### **3. Eliminar la Stack**  
+Si deseas eliminar la infraestructura creada por la Stack, sigue estos pasos:
+
+1. Ve a la **consola de AWS CloudFormation**.
+2. Selecciona la Stack (`MyFirstStack`).
+3. Haz clic en **Delete**.
+4. Confirma la eliminación.
+
+⏳ **Espera unos minutos mientras AWS elimina todos los recursos.**
+
+## **Conclusión**  
+✅ Aprendiste cómo:  
+✔️ Crear una Stack en CloudFormation.  
+✔️ Actualizar una Stack para modificar su configuración.  
+✔️ Eliminar una Stack para liberar recursos.  
+
+Este es un flujo básico, pero puedes seguir explorando con **parámetros, salidas y dependencias** en CloudFormation. 🚀
+
+### Resumen
+
+Ahora que creamos nuestra pila de CloudFormation, procederemos a actualizarla añadiendo otro bucket de S3. Después, veremos cómo eliminar la pila.
+
+### Pasos para actualizar la pila
+
+1. Para actualizar la pila primero usaremos el archivo [updatestack1.json](https://github.com/platzi/aws-cloud-practitioner/blob/main/lab-cloudformation/updatestack1.json "updatestack1.json"). El contenido de este archivo es el siguiente:
+```json
+{
+  "Resources": {
+    "platzilab": {
+      "Type": "AWS::S3::Bucket"
+    },
+    "platzilabalexis": {
+      "Type": "AWS::S3::Bucket"
+    }
+  }
+}
+```
+
+Como podrás notar, definimos el mismo bucket que en la clase anterior, más un nuevo bucket con ID lógico “platzilabelalexis”.
+
+2. Ahora, en la página de CloudFormation, escogemos la pila que creamos y le damos a “**Actualizar**”.
+
+[Escoger la pila](images/Escogerlapila.png)
+
+3. En “Preparar la plantilla” escogemos “**Reemplazar la plantilla actual**” y cargamos el archivo **updatestack1.json**.
+
+4. Le damos a Siguiente tres veces, y notamos que en “Vista previa del conjunto de cambios” nos muestra que solo va a añadir un nuevo bucket de S3, **puesto que el bucket con ID lógico “platzilab” ya existe**. Entonces le damos a “**Actualizar pila**”.
+
+[Vista previa de cambios](images/Vistapreviadecambios.png)
+
+Si nos vamos a ver nuestros buckets de S3, encontraremos que se ha creado uno nuevo cuyo nombre incluye “platzilabalexis”.
+
+### Crear una pila con un nombre de bucket explícito
+
+Podemos crear otra pila dándole un nombre explícito a los buckets que queremos provisionar. Para ello, usemos el archivo [updatestack2.json](https://github.com/platzi/aws-cloud-practitioner/blob/main/lab-cloudformation/updatestack2.json "updatestack2.json").
+
+```json
+{
+  "Resources": {
+    "platzilab": {
+      "Type": "AWS::S3::Bucket",
+      "Properties": {
+        "BucketName": "mibucket123"
+      }
+    },
+    "platzilabalexis  ": {
+      "Type": "AWS::S3::Bucket"
+    }
+  }
+}
+```
+
+Nota que en este caso el bucket con ID lógico “platzilab” tiene en sus propiedades el nombre de bucket “mibucket123”. Este nombre debe ser único en todo *AWS*. **Si intentamos crear la pila con un bucket con nombre repetido, tendremos un error y no se creará la pila**.
+
+### Cómo eliminar las pilas
+
+Para ello simplemente seleccionamos una pila y le damos a “**Eliminar**”. Nos va a pedir confirmación, entonces le damos a “**Eliminar pila**”. Repetimos el proceso para todas las pilas. Si exploramos nuestros buckets de S3, veremos que ya no están los que creamos con CloudFormation.
+
+**Lecturas recomendadas**
+
+[aws-cloud-practitioner/lab-cloudformation at main · platzi/aws-cloud-practitioner · GitHub](https://github.com/platzi/aws-cloud-practitioner/tree/main/lab-cloudformation "aws-cloud-practitioner/lab-cloudformation at main · platzi/aws-cloud-practitioner · GitHub")
 
 ## Empezando con Machine Learning
 
