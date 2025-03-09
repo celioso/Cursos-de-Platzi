@@ -1223,3 +1223,196 @@ Entre los servicios de AWS que usan inteligencia artificial o machine learning e
 - **Amazon Polly**: ayuda a convertir el texto en un habla realista
 - **Amazon Transcribe**: permite agregar traducciones de voz a texto de calidad
 - **Amazon Lex**: permite generar agentes conversacionales o bots de chat
+
+## Qué es AWS Rekognition
+
+### **¿Qué es AWS Rekognition?**  
+
+**AWS Rekognition** es un servicio de **visión por computadora** de Amazon Web Services (AWS) que permite analizar imágenes y videos mediante algoritmos de inteligencia artificial y aprendizaje automático.  
+
+Se utiliza para tareas como:  
+✅ **Detección de rostros** (y análisis de emociones).  
+✅ **Reconocimiento facial** (comparación de rostros con una base de datos).  
+✅ **Detección de objetos y escenas** en imágenes y videos.  
+✅ **Detección de texto** (OCR) en imágenes.  
+✅ **Moderación de contenido** para detectar contenido explícito.  
+✅ **Seguimiento de personas** en videos.  
+
+### **Ejemplo de Uso con AWS Rekognition**  
+#### 🔹 **Detectar objetos en una imagen con Python y Boto3**  
+```python
+import boto3
+
+# Crear cliente de Rekognition
+rekognition = boto3.client('rekognition', region_name='us-east-1')
+
+# Cargar una imagen desde un archivo
+with open("imagen.jpg", "rb") as image_file:
+    image_bytes = image_file.read()
+
+# Detectar etiquetas (objetos en la imagen)
+response = rekognition.detect_labels(Image={'Bytes': image_bytes})
+
+# Imprimir resultados
+for label in response['Labels']:
+    print(f"{label['Name']} - Confianza: {label['Confidence']:.2f}%")
+```
+
+### **Casos de Uso**  
+📷 **Seguridad y autenticación** – Control de acceso basado en reconocimiento facial.  
+🎞 **Análisis de medios** – Moderación de contenido en videos y fotos.  
+🛍 **E-commerce** – Búsqueda de productos a partir de imágenes.  
+🛂 **Gobierno y cumplimiento** – Verificación de identidad en aeropuertos y fronteras.  
+
+AWS Rekognition es un servicio **serverless**, lo que significa que no necesitas configurar servidores, solo usas la API y pagas por el uso. 🚀
+
+### Resumen
+
+*Amazon Rekognition* es un servicio que nos permite analizar imágenes y videos mediante aprendizaje automático. Para ello, le pasamos una imagen al servicio, y nos devuelve una lista de elementos que puede contener esa imagen, junto con un porcentaje de confianza para cada elemento.
+
+![Imagen analizada por Rekognition](images/ImagenanalizadaporRekognition.png)
+
+Un caso de uso de *Rekognition* es para detectar imágenes con contenido para adultos o violento, a fin de moderar lo que se sube en alguna plataforma.
+
+### Explorando Rekognition
+
+Iniciamos sesión en AWS y nos dirigimos a la [página de Rekognition](https://console.aws.amazon.com/rekognition/home "página de Rekognition"). En la parte de Demos, escogemos “**Celebrity recognition**”. Nos encontraremos una imagen de Jeff Bezos junto a un porcentaje de confianza.
+
+Podemos subir la imagen de cualquier celebridad y obtendremos un porcentaje de confianza. Probemos con una imagen de los 3 Spider-Man (Tom Holland, Andrew Garfield y Tobey Maguire). Para ello simplemente le damos a “**Upload**” y escogemos la imagen.
+
+![Reconocimiento de los 3 spiderman](images/Reconocimientodelos3spiderman.png)
+
+Como se puede apreciar, *Rekognition* reconoce a los tres actores con un porcentaje de confianza.
+
+Cabe destacar que Rekognition también nos retorna un objeto Response, el cual contiene distintas características de la imagen, como la posición de los actores, e incluso un estimado de cuál sentimiento expresan sus caras.
+
+Te invito a que explores las demás demos de Rekognition.
+
+**Lecturas recomendadas**
+
+[https://us-east-1.console.aws.amazon.com/](https://us-east-1.console.aws.amazon.com/)
+
+## Amazon Polly
+
+**Amazon Polly** es un servicio de **síntesis de voz (Text-to-Speech, TTS)** de AWS que convierte texto en **voz natural** utilizando inteligencia artificial.  
+
+### **Características principales**  
+🔹 **Voces naturales y expresivas** en múltiples idiomas y acentos.  
+🔹 **Neural Text-to-Speech (NTTS)** para mejorar la naturalidad y expresividad.  
+🔹 **Soporte para SSML** (Speech Synthesis Markup Language) para personalizar entonación, pausas y énfasis.  
+🔹 **Generación de archivos de audio en formatos como MP3 y OGG**.  
+🔹 **Streaming de audio en tiempo real**.
+
+### **Ejemplo de uso con Python y Boto3**  
+📌 **Convertir texto a voz y guardar el audio como un archivo MP3**  
+```python
+import boto3
+
+# Crear cliente de Amazon Polly
+polly = boto3.client('polly', region_name='us-east-1')
+
+# Texto a convertir en voz
+text = "Hola, bienvenido a Amazon Polly. Esto es una demostración."
+
+# Solicitar la conversión de texto a voz
+response = polly.synthesize_speech(
+    Text=text,
+    OutputFormat="mp3",
+    VoiceId="Lucia"  # Nombre de la voz (Español: "Lucia", "Miguel", etc.)
+)
+
+# Guardar el audio en un archivo
+with open("output.mp3", "wb") as file:
+    file.write(response['AudioStream'].read())
+
+print("Audio generado exitosamente.")
+```
+
+### **Casos de Uso**  
+🎙 **Asistentes virtuales** – Mejorar la interacción con los usuarios.  
+📚 **Lectura en voz alta** – Convertir libros electrónicos o artículos en audio.  
+📺 **Accesibilidad** – Crear contenido accesible para personas con discapacidad visual.  
+📞 **Respuesta de voz interactiva (IVR)** – Automatización en centros de llamadas.  
+🎬 **Narración de videos y podcasts** – Generar voces sintéticas para contenido multimedia.  
+
+Amazon Polly es un servicio **serverless**, por lo que solo pagas por la cantidad de texto convertido a voz. 🚀
+
+### Resumen
+
+**Amazon Polly nos permite generar discursos realistas a partir de texto**. Exploremos cómo podemos usar Amazon Polly.
+
+### Explorando Amazon Polly
+
+Nos dirigimos a la [página del servicio de Polly](https://console.aws.amazon.com/polly/home "página del servicio de Polly"), y le damos clic a “**Pruebe Polly**”. Aquí tenemos distintas opciones de idioma, dialectos y voces, en función del motor que escojamos.
+
+P**odemos escoger un motor neural o estándar**. El motor neural produce el habla más similar a la humana posible, mientras que el estándar solo provee voz con un sonido natural, pero nos da más opciones de voces.
+
+Una vez que escojamos el motor, idioma y voz, podemos probar Polly introduciendo un texto y dándole a “**Escuchar**”.
+
+![Probando Polly](images/ProbandoPolly.png)
+
+Cabe destacar que podemos guardar el resultado en un bucket de S3. Además, podemos personalizar el formato de archivo a guardar y la pronunciación, esto en “Configuración adicional”.
+
+**Lecturas recomendadas**
+
+[Curso de Introducción a AWS: Fundamentos de Cloud Computing - Platzi](https://platzi.com/cursos/aws-fundamentos/)
+
+[Curso de Cloud Computing con AWS - Platzi](https://platzi.com/cursos/aws-computo-2018/)
+
+## Amazon Transcribe
+
+**Amazon Transcribe** es un servicio de **reconocimiento automático de voz (ASR - Automatic Speech Recognition)** de AWS que convierte **audio en texto** de manera precisa y automática.
+
+### **Características principales**  
+🎙 **Conversión de audio a texto** en varios idiomas y acentos.  
+🔍 **Identificación de hablantes** (speaker diarization) para transcripciones con múltiples personas.  
+📝 **Puntuación y formato automático** para mejorar la legibilidad.  
+🔤 **Detección de palabras inapropiadas** para censurar contenido.  
+📌 **Etiquetado de palabras con confianza** para mejorar la precisión.  
+💼 **Integración con otros servicios de AWS** como Amazon S3, Lambda y Comprehend.
+
+### **Ejemplo de uso con Python y Boto3**  
+📌 **Convertir un archivo de audio en texto**  
+```python
+import boto3
+
+# Crear cliente de Amazon Transcribe
+transcribe = boto3.client('transcribe', region_name='us-east-1')
+
+# Nombre del trabajo de transcripción
+job_name = "mi-transcripcion"
+audio_file_uri = "s3://mi-bucket/audio.mp3"  # Archivo de audio en S3
+
+# Iniciar la transcripción
+transcribe.start_transcription_job(
+    TranscriptionJobName=job_name,
+    Media={'MediaFileUri': audio_file_uri},
+    MediaFormat='mp3',  # Formato del archivo de audio
+    LanguageCode='es-US'  # Código de idioma (ejemplo: español)
+)
+
+# Verificar el estado de la transcripción
+response = transcribe.get_transcription_job(TranscriptionJobName=job_name)
+print("Estado:", response['TranscriptionJob']['TranscriptionJobStatus'])
+```
+
+### **Casos de Uso**  
+📞 **Análisis de llamadas** – Transcripción automática para atención al cliente.  
+🎙 **Subtitulación de videos y podcasts** – Generar subtítulos precisos.  
+🗂 **Indexación de contenido** – Convertir audio en texto para facilitar la búsqueda.  
+🚀 **Comandos de voz** – Integración con aplicaciones que usan reconocimiento de voz.  
+🏛 **Cumplimiento y auditoría** – Convertir grabaciones en texto para documentación.  
+
+Amazon Transcribe es **serverless**, por lo que **solo pagas por el tiempo de audio procesado**. 🚀
+
+### Resumen
+
+**Amazon Transcribe permite crear transcripciones de voz a texto de calidad para un amplio abanico de casos de uso** (por ejemplo, accesibilidad). Exploremos cómo podemos usar Amazon Transcribe.
+
+### Explorando Amazon Transcribe
+
+En la [página del servicio de Amazon Transcribe](https://console.aws.amazon.com/transcribe/home "página del servicio de Amazon Transcribe") podemos explorar sus opciones y casos de uso. También podemos poner a prueba el servicio haciendo clic en “**Create a transcript**”.
+
+A continuación, escogemos el lenguaje y presionamos en “**Start streaming**”. El navegador nos va a pedir permiso para usar el micrófono. Una vez que otorgamos el permiso, podemos comenzar a hablar y veremos como nuestro discurso se transcribe en tiempo real. Para detener la transcripción, simplemente le damos a “**Stop streaming**”.
+
+![Prueba de Amazon Transcribe](images/PruebadeAmazonTranscribe.png)
