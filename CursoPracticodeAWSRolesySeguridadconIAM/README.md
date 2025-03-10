@@ -114,3 +114,216 @@ Esta práctica te guiará paso a paso en la creación de usuarios y grupos en **
 ✔️ **Rotar las claves de acceso periódicamente**.  
 
 ✅ **¡Listo! Has creado y gestionado usuarios y grupos en AWS IAM con seguridad y control!** 🚀
+
+## Politicas IAM
+
+Las **políticas IAM** son reglas que definen permisos para los usuarios, grupos y roles en AWS. Permiten controlar quién puede hacer qué en los servicios y recursos de AWS.  
+
+## 📌 **Tipos de Políticas IAM**  
+1. **Administradas por AWS**: Políticas predefinidas listas para usar (Ej: `AdministratorAccess`, `AmazonS3ReadOnlyAccess`).  
+2. **Administradas por el Cliente**: Políticas personalizadas creadas por el usuario.  
+3. **Políticas en Línea**: Específicas para un solo usuario, grupo o rol. 
+
+### 📜 **Estructura de una Política IAM (JSON)**  
+Una política en IAM sigue un formato JSON con los siguientes elementos clave:  
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": "s3:ListBucket",
+      "Resource": "arn:aws:s3:::mi-bucket"
+    }
+  ]
+}
+```
+
+### 🛠 **Explicación de los elementos**  
+- **`Version`**: Define la versión de la política (debe ser `"2012-10-17"` para compatibilidad).  
+- **`Statement`**: Lista de reglas en la política.  
+- **`Effect`**: `"Allow"` (permitir) o `"Deny"` (denegar).  
+- **`Action`**: Acción permitida o denegada (Ejemplo: `"s3:ListBucket"` permite listar objetos en un bucket S3).  
+- **`Resource`**: Especifica a qué recurso se aplica la política (Ejemplo: `arn:aws:s3:::mi-bucket`).
+
+### 🎯 **Ejemplo de Política con Múltiples Acciones**  
+Permite a los usuarios leer y escribir en un bucket S3 específico:  
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "s3:GetObject",
+        "s3:PutObject"
+      ],
+      "Resource": "arn:aws:s3:::mi-bucket/*"
+    }
+  ]
+}
+```
+
+### 🚫 **Ejemplo de Política de Denegación**  
+Deniega la eliminación de objetos en un bucket S3:  
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Deny",
+      "Action": "s3:DeleteObject",
+      "Resource": "arn:aws:s3:::mi-bucket/*"
+    }
+  ]
+}
+```
+
+### 🔄 **Cómo Adjuntar una Política a un Usuario o Grupo**  
+1. **Desde la Consola de AWS**:  
+   - Ir a **IAM > Usuarios / Grupos / Roles**.  
+   - Seleccionar el usuario o grupo.  
+   - Ir a la pestaña **Permisos** y hacer clic en **Adjuntar políticas**.  
+   - Buscar y seleccionar la política deseada.  
+
+2. **Desde AWS CLI** (Ejemplo: adjuntar `AmazonS3ReadOnlyAccess` a un usuario):  
+
+```sh
+aws iam attach-user-policy --user-name MiUsuario --policy-arn arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess
+```
+
+### ✅ **Buenas Prácticas en IAM**  
+✔ **Aplicar el principio de menor privilegio** (dar solo los permisos necesarios).  
+✔ **Usar roles en lugar de usuarios con credenciales permanentes**.  
+✔ **Habilitar MFA (Autenticación Multifactor)** para mayor seguridad.  
+✔ **Revisar y auditar permisos regularmente** con **IAM Access Analyzer**.
+
+🚀 **¡Ahora tienes el control sobre las políticas IAM en AWS!** 🔐
+
+**Lecturas recomendadas**
+
+[AWS Policy Generator](https://awspolicygen.s3.amazonaws.com/policygen.html)
+
+[https://policysim.aws.amazon.com/home/index.jsp](https://policysim.aws.amazon.com/home/index.jsp)
+
+## Prácticas politicas IAM
+
+Aquí tienes algunas prácticas recomendadas y ejercicios para trabajar con **políticas IAM** en AWS.
+
+### 🏋️ **Prácticas con Políticas IAM en AWS**  
+
+### 📌 **1. Crear una Política Personalizada en IAM**  
+**Objetivo**: Crear una política que permita a un usuario ver pero no modificar los recursos en Amazon S3.  
+
+### **Pasos**:  
+1. Ir a la consola de **AWS IAM**.  
+2. En el menú lateral, seleccionar **Políticas** → **Crear política**.  
+3. Seleccionar **JSON** y agregar la siguiente política:  
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "s3:ListBucket",
+        "s3:GetObject"
+      ],
+      "Resource": [
+        "arn:aws:s3:::mi-bucket",
+        "arn:aws:s3:::mi-bucket/*"
+      ]
+    }
+  ]
+}
+```
+4. Hacer clic en **Siguiente** y asignar un nombre, por ejemplo: `"S3ReadOnlyPolicy"`.  
+5. Guardar la política y adjuntarla a un usuario o grupo en IAM.
+
+### 📌 **2. Crear una Política de Acceso Restringido a una Región**  
+**Objetivo**: Permitir que un usuario solo cree instancias EC2 en la región **us-east-1**.  
+
+### **Pasos**:  
+1. En IAM, ir a **Políticas** → **Crear política**.  
+2. En **JSON**, agregar:  
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": "ec2:RunInstances",
+      "Resource": "*",
+      "Condition": {
+        "StringEquals": {
+          "aws:RequestedRegion": "us-east-1"
+        }
+      }
+    }
+  ]
+}
+```
+3. Guardar la política y adjuntarla a un usuario de prueba.  
+4. Intentar lanzar una instancia en otra región para verificar la restricción.
+
+### 📌 **3. Crear una Política de Acceso Basado en Horarios**  
+**Objetivo**: Permitir que un usuario acceda a la consola de AWS solo en horarios laborales (Ejemplo: de 8 AM a 6 PM UTC).  
+
+### **Pasos**:  
+1. Crear una nueva política en **IAM**.  
+2. En **JSON**, agregar la siguiente regla:  
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Deny",
+      "Action": "*",
+      "Resource": "*",
+      "Condition": {
+        "NumericGreaterThan": { "aws:CurrentTime": "18:00:00" },
+        "NumericLessThan": { "aws:CurrentTime": "08:00:00" }
+      }
+    }
+  ]
+}
+```
+3. Adjuntar esta política a un usuario y probar acceder fuera del horario permitido.
+
+### 📌 **4. Crear una Política para Bloquear la Eliminación de Recursos Críticos**  
+**Objetivo**: Evitar que los usuarios eliminen instancias EC2, pero permitirles iniciarlas y detenerlas.  
+
+### **Pasos**:  
+1. Crear una política con la siguiente configuración en **JSON**:  
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Deny",
+      "Action": [
+        "ec2:TerminateInstances"
+      ],
+      "Resource": "*"
+    }
+  ]
+}
+```
+2. Asignar la política a un usuario y verificar que **no pueda eliminar** una instancia EC2.
+
+### ✅ **Buenas Prácticas al Trabajar con IAM**  
+✔ **Aplicar el principio de menor privilegio**: Asignar solo los permisos necesarios.  
+✔ **Usar roles en lugar de usuarios con claves de acceso permanentes**.  
+✔ **Habilitar MFA (Autenticación Multifactor) para usuarios críticos**.  
+✔ **Revisar permisos regularmente con AWS IAM Access Analyzer**.  
+✔ **Monitorear con AWS CloudTrail para detectar accesos sospechosos**.
+
+🚀 **¡Ahora puedes poner en práctica el manejo de políticas IAM en AWS!** 🔐
+
