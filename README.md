@@ -138,9 +138,7 @@
 - [Curso de Introducción a AWS: Cómputo, Almacenamiento y Bases de Datos](CursodeIntroduccionaAWSComputo,AlmacenamientoyBasesdeDatos)
 - [Curso de Introducción a AWS: Redes, Gobernanza y Machine Learning](CursodeIntroduccionaAWSRedes,GobernanzayMachineLearning)
 - [Curso Práctico de AWS: Roles y Seguridad con IAM](CursoPracticodeAWSRolesySeguridadconIAM)
-
-Curso de Data Warehousing y Data Lakes
-
+- [Curso de Data Warehousing y Data Lakes](CursodeDataWarehousingyDataLakes)
 - [Curso de Data Warehousing y Modelado OLAP](CursodeDataWarehousingyModeladoOLAP)
 - [Curso de Databricks: Arquitectura Delta Lake](CursodeDatabricksArquitecturaDeltaLake)
 - [Curso de Fundamentos de Apache Airflow](CursodeFundamentosdeApacheAirflow)
