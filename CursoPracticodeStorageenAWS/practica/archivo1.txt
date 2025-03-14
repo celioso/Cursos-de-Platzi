@@ -1,0 +1,5 @@
+archivo inicial de versionamiento
+
+Ahora este es la versión 1 del archivo
+
+Ahora esta es la versión 2 del archivo

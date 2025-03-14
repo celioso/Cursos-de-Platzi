@@ -148,13 +148,22 @@
 
 - [Curso de Introducción a la Administración de Servidores Linux](CursodeIntroducciónalaAdministracióndeServidoresLinux)
 - [Curso Práctico de AWS: Cómputo con EC2](CursoPracticodeAWSComputoconEC2)
+- [Curso Práctico de Storage en AWS](CursoPracticodeStorageenAWS)
 
-Curso Práctico de Storage en AWS
 Curso Práctico de Bases de Datos en AWS
 Curso de Big Data en AWS
 
 - [Curso de AWS Redshift para Manejo de Big Data](CursodeAWSRedshiftparaManejodeBigData)
 [Curso de Docker: Fundamentos](CursoDeDockerFundamentos)
+
+## Certificación de AWS Cloud Practitioner
+
+- [Curso de Introducción a la Nube](CursodeIntroduccionalaNube)
+- [Curso de Introducción a AWS: Fundamentos de Cloud Computing](CursodeIntroduccionaAWSFundamentosdeCloudComputing)
+- [Curso de Introducción a AWS: Cómputo, Almacenamiento y Bases de Datos](CursodeIntroduccionaAWSComputo,AlmacenamientoyBasesdeDatos)
+- [Curso de Introducción a AWS: Redes, Gobernanza y Machine Learning](CursodeIntroduccionaAWSRedes,GobernanzayMachineLearning)
+- [Curso Práctico de AWS: Roles y Seguridad con IAM](CursoPracticodeAWSRolesySeguridadconIAM)
+- [Curso Práctico de AWS: Cómputo con EC2](CursoPracticodeAWSComputoconEC2)
 
 ## Fundamentos de Servidores Linux
 
