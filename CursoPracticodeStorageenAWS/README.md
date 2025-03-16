@@ -1977,3 +1977,1362 @@ Estas reflexiones no solo fortalecen la seguridad de la información, sino que t
 **Lecturas recomendadas**
 
 [Información general de las Access Control Lists (ACL, Listas de control de acceso) - Amazon Simple Storage Service](https://docs.aws.amazon.com/es_es/AmazonS3/latest/dev/acl-overview.html)
+
+## Características de storage gateway
+
+**Amazon Storage Gateway** es un servicio híbrido de AWS que permite conectar almacenamiento local con la nube de AWS, proporcionando una integración fluida entre centros de datos on-premise y servicios en la nube.
+
+### 🚀 **Características Principales de Amazon Storage Gateway**  
+
+### 🔹 **1. Tipos de Gateway**  
+
+✅ **File Gateway (Gateway de Archivos)**  
+🔹 Permite almacenar archivos en **Amazon S3** mediante protocolos SMB o NFS.  
+🔹 Se usa para archivado, backup y migración de archivos.  
+
+✅ **Volume Gateway (Gateway de Volumenes)**  
+🔹 Proporciona almacenamiento en la nube accesible como volúmenes iSCSI.  
+🔹 Se usa para backups y recuperación ante desastres con snapshots en **Amazon EBS**.  
+🔹 Modos disponibles:  
+   - **Modo en caché**: Solo los datos más utilizados se almacenan localmente.  
+   - **Modo almacenado**: Todos los datos están en local, con backups en AWS.  
+
+✅ **Tape Gateway (Gateway de Cintas Virtuales)**  
+🔹 Emula una biblioteca de cintas para respaldos en la nube.  
+🔹 Compatible con software de backup como **Veeam, Veritas, NetBackup, etc.**  
+🔹 Almacena cintas en **Amazon S3 Glacier** para archivado de largo plazo.
+
+### 🔹 **2. Integración con Servicios de AWS**  
+
+✅ **Amazon S3** – Almacenamiento de objetos para archivos.  
+✅ **Amazon EBS** – Para snapshots y volúmenes persistentes.  
+✅ **Amazon S3 Glacier** – Archivado de largo plazo con costos bajos.  
+✅ **AWS Backup** – Gestión centralizada de copias de seguridad.  
+✅ **AWS IAM** – Control de acceso y seguridad.
+
+### 🔹 **3. Seguridad y Administración**  
+
+🔐 **Cifrado de datos** en tránsito y en reposo.  
+📜 **Compatibilidad con AWS IAM** para permisos granulares.  
+📊 **Monitoreo con Amazon CloudWatch** para métricas y alertas.
+
+### 🔹 **4. Casos de Uso**  
+
+📂 **Extensión de almacenamiento local a la nube** sin necesidad de grandes inversiones.  
+📀 **Backup y recuperación ante desastres** con almacenamiento en Amazon S3 y Amazon Glacier.  
+🚀 **Migración de datos a AWS** sin interrumpir las operaciones.  
+📁 **Acceso compartido a archivos** entre usuarios on-premise y en la nube.
+
+### 🎯 **Conclusión**  
+AWS Storage Gateway es una solución ideal para empresas que buscan **extender su almacenamiento local a la nube**, aprovechar las ventajas de AWS sin cambiar sus aplicaciones y mejorar la gestión de backups y archivado de datos.
+
+### Resumen
+
+### ¿Qué es AWS Storage Gateway?
+
+AWS Storage Gateway es un servicio innovador de Amazon Web Services que actúa como un puente esencial entre infraestructuras on-premise y la nube. Este servicio híbrido permite aprovechar todas las ventajas del almacenamiento en la nube, como la seguridad, durabilidad, disponibilidad y replicación, conectando eficientemente los recursos locales con los ofertados por AWS. Uno de los aspectos más destacados de Storage Gateway es su utilidad para las empresas que buscan migrar gradualmente hacia la nube, proporcionando un entorno controlado y escalable.
+
+### ¿Cuáles son las características principales de Storage Gateway?
+
+Este servicio no solo integra arquitecturas on-premise con la nube, sino que también ofrece soluciones híbridas de almacenamiento. Algunas características clave incluyen:
+
+- **Conexión con diferentes tipos de almacenamiento en la nube**: Storage Gateway permite transferir archivos, volúmenes y conexiones de origen local a Amazon S3, Glacier o Amazon EBS.
+- **Integración con servicios AWS**: Puedes utilizar funcionalidades avanzadas de Amazon S3 como ciclo de vida de archivos, cifrado y políticas de permisos.
+- **Protocolos de conexión**: Utiliza protocolos como NFS, SMB e iSCSI para facilitar las transferencias de datos.
+
+Estas características hacen de Storage Gateway una herramienta poderosa y flexible para integrar soluciones locales con la nube de forma segura y eficiente.
+
+### ¿Cuándo utilizar AWS Storage Gateway?
+
+AWS Storage Gateway es ideal en varias situaciones, como:
+
+1. **Transición a la nube**: Perfecto para aquellas empresas que desean empezar a probar las ventajas de la nube sin comprometerse completamente desde el inicio.
+2. **Migración de backups**: Puedes transferir backups existentes y archivos históricos, como cintas, hacia Glacier para su almacenamiento a largo plazo.
+3. **Disaster Recovery**: En caso de fallas en la infraestructura on-premise, los datos pueden recuperarse y desplegarse rápidamente en la nube.
+4. **Cloud Data Processing**: Integra aplicaciones locales que generan grandes cantidades de logs con herramientas de Big Data en la nube para análisis y procesamiento.
+
+### ¿Cómo se utiliza AWS Storage Gateway?
+
+Para empezar a utilizar Storage Gateway, una máquina virtual se descarga e instala en la plataforma local. Esta máquina actúa como el puente para cargar información y subir los datos o backups que sean necesarios hacia la nube. Mediante este método, los usuarios pueden comenzar a experimentar los beneficios del almacenamiento en la nube sin necesidad de una migración completa desde el inicio.
+
+Además, es fundamental destacar la robusta seguridad que ofrece Storage Gateway. Integra funcionalidades previas de AWS en lo que respecta a seguridad, como cifrado y políticas de acceso, asegurando que los datos migrados a la nube estén completamente protegidos.
+
+En el siguiente paso del aprendizaje sobre AWS Storage Gateway, se explorarán a fondo los diferentes tipos de Storage Gateway, ofreciendo así una comprensión más completa de las soluciones y alternativas que pueden implementarse en la migración hacia la nube.
+
+## File Gateway
+
+**Amazon S3 File Gateway** es una de las modalidades de **AWS Storage Gateway** que permite a aplicaciones on-premise almacenar y recuperar archivos en **Amazon S3** mediante protocolos de archivos estándar como **SMB** y **NFS**.
+
+### 🚀 **¿Cómo Funciona?**  
+
+1️⃣ **Conexión Local** – Se implementa como una máquina virtual en el entorno on-premise o en EC2.  
+2️⃣ **Acceso a Archivos** – Permite a los usuarios y aplicaciones acceder a archivos usando SMB o NFS.  
+3️⃣ **Almacenamiento en S3** – Los archivos se guardan como **objetos en Amazon S3** en una estructura jerárquica.  
+4️⃣ **Caché Local** – Mantiene una caché en el almacenamiento local para mejorar el rendimiento.
+
+### 🔹 **Características Principales**  
+
+✅ **Compatibilidad con NFS y SMB** – Se puede conectar con Windows, Linux y Mac.  
+✅ **Almacenamiento Escalable** – Usa **Amazon S3** como almacenamiento de backend.  
+✅ **Caché Local** – Permite acceso rápido a los archivos más utilizados.  
+✅ **Compresión y Cifrado** – Protección con **AWS KMS** y cifrado en tránsito.  
+✅ **Control de Acceso** – Integración con **AWS IAM** y **Active Directory**.  
+✅ **Integración con AWS Backup** – Permite realizar copias de seguridad automatizadas.  
+✅ **Versionado de Archivos** – Compatible con **versioning en S3**.  
+✅ **Eventos en S3** – Permite activar notificaciones y flujos de trabajo en la nube.
+
+### 🔹 **Casos de Uso**  
+
+📂 **Extensión de almacenamiento local a la nube** – Reduce costos y mejora la escalabilidad.  
+📀 **Backup y recuperación ante desastres** – Automatización de backups en **Amazon S3 Glacier**.  
+🚀 **Migración a la nube** – Permite mover grandes volúmenes de datos sin interrupciones.  
+📁 **Colaboración en la nube** – Facilita el acceso compartido a archivos en múltiples ubicaciones.
+
+### 🔹 **Pasos para Configurar un S3 File Gateway**  
+
+### **1️⃣ Implementación**  
+- Crear una **máquina virtual** en VMware, Hyper-V o Amazon EC2.  
+- Asignar un **almacenamiento local** para la caché.  
+
+### **2️⃣ Configuración**  
+- Configurar el gateway en **AWS Storage Gateway Console**.  
+- Vincularlo a un bucket de **Amazon S3**.  
+
+### **3️⃣ Acceso a Archivos**  
+- Montar el gateway en servidores on-premise usando **NFS o SMB**.  
+- Comenzar a almacenar y recuperar archivos desde S3.
+
+### 🎯 **Conclusión**  
+
+**Amazon S3 File Gateway** es una solución ideal para empresas que desean **integrar almacenamiento en la nube con sistemas locales**, manteniendo la compatibilidad con protocolos tradicionales.
+
+### Resumen
+
+### ¿Qué es un Storage Gateway?
+
+El uso de la nube ha transformado la forma en que las empresas almacenan y gestionan su información. Sin embargo, la transición total hacia la nube puede ser un desafío para muchas organizaciones. Aquí es donde entra en juego Storage Gateway. Este servicio actúa como un puente entre las aplicaciones on-premise y los servicios de almacenamiento en la nube, facilitando una integración sin problemas y mejorando la eficiencia de sus operaciones. Uno de los tipos más destacados es el File Gateway.
+
+### ¿Qué es un File Gateway?
+
+El **File Gatewa**y es una solución esencial para aplicaciones on-premise que requieren acceso a almacenamiento a través de SMB o NFS, permitiendo una conexión fluida entre sus instalaciones y el almacenamiento en la nube de AWS. Aquí se almacenan los datos en forma de objetos mediante Amazon S3, lo cual posibilita gestionar archivos de manera fácil y eficiente.
+
+### Casos de uso de File Gateway
+
+- **Migración y acceso frecuente**: Cuando necesita migrar datos a S3 pero desea mantener ciertos archivos accesibles rápidamente on-premise, el File Gateway ofrece la opción de caché local para minimizar la latencia.
+- **Integración con el ciclo de vida de los objetos**: Aprovecha funcionalidades como la gestión del ciclo de vida de los objetos en S3.
+
+### ¿Cómo configurar un File Gateway en la consola?
+
+Configurar un File Gateway es un proceso sencillo que implica varios pasos en la consola de AWS:
+
+1. Dirígete a **Storage Gateway** en la consola de AWS.
+2. Selecciona **Get Started** y elige **File Gateway**.
+3. Configura la compatibilidad deseada, que puede incluir VMware ESXI, Hyper-V 2012, o incluso implementar en un Hardware Appliance.
+
+### Compatibilidad y requisitos
+
+El File Gateway es compatible con diversas plataformas:
+
+- **VMware ESXI** y **Hyper-V**: Ofrecen fácil integración para entornos virtualizados.
+- **Hardware Appliance**s: Posibilidad de adquirir e instalar dispositivos específicos para facilitar la implementación.
+
+Se requiere una IP específica para establecer conexión entre la nube y la imagen local, asegurando así que las operaciones fluyan sin inconvenientes.
+
+### ¿Por qué elegir File Gateway?
+
+File Gateway ofrece múltiples ventajas que lo convierten en una opción atractiva:
+
+- **Caché Local**: Mejora la latencia y acceso rápido a los objetos más frecuentados.
+- **Compatibilidad Extensa**: Funciona con VMware, Hyper-V y otros appliances especializados.
+- **Sincronización de Objetos**: Facilita un traslado y sincronización eficiente de objetos hacia S3, permitiendo aprovechar las funcionalidades nativas de S3 una vez migrados.
+
+Este servicio no solo proporciona una integración optimizada entre instalaciones locales y la nube, sino que también amplifica las capacidades de almacenamiento y gestión de datos, reforzando así la infraestructura tecnológica de la empresa. Como siempre, te animamos a seguir explorando más servicios y herramientas que AWS ofrece para potenciar tu crecimiento en la nube.
+
+## Virtual Tape Library
+
+**Amazon Storage Gateway - Virtual Tape Library (VTL)** es una solución de AWS que permite a las empresas reemplazar sus bibliotecas de cintas físicas por almacenamiento escalable en la nube, utilizando **Amazon S3** y **Amazon S3 Glacier** como backend.
+
+### 🚀 **¿Cómo Funciona?**  
+
+1️⃣ **Simulación de una Biblioteca de Cintas** – Actúa como una **VTL** (Virtual Tape Library) que imita cintas físicas.  
+2️⃣ **Backup On-Premise** – Se integra con software de backup como **Veeam, Commvault, Veritas, NetBackup, etc.**  
+3️⃣ **Almacenamiento en AWS** – Los backups se almacenan inicialmente en **Amazon S3** y se mueven a **Amazon S3 Glacier** o **Glacier Deep Archive** para archivado a largo plazo.  
+4️⃣ **Recuperación de Datos** – Las cintas virtuales pueden recuperarse en minutos u horas según el tipo de almacenamiento.
+
+### 🔹 **Características Clave**  
+
+✅ **Compatibilidad con Software de Backup** – Funciona con herramientas tradicionales sin cambios en la infraestructura.  
+✅ **Escalabilidad Ilimitada** – No hay límite en la cantidad de cintas virtuales almacenadas.  
+✅ **Reducción de Costos** – Evita la compra y mantenimiento de hardware de cintas físicas.  
+✅ **Alta Durabilidad** – Los datos se almacenan en **Amazon S3 (11 9s de durabilidad)**.  
+✅ **Soporte para Compresión y Cifrado** – Seguridad con **AWS KMS** y cifrado en tránsito.  
+✅ **Automatización del Ciclo de Vida** – Mueve automáticamente cintas inactivas a **Glacier**.
+
+### 🔹 **Casos de Uso**  
+
+📀 **Eliminación de cintas físicas** – Reducción de costos de almacenamiento y mantenimiento.  
+📂 **Backup y recuperación ante desastres** – Almacena backups en la nube para recuperación en caso de fallo.  
+⏳ **Archivado a largo plazo** – Cumple requisitos de retención de datos en industrias reguladas.  
+🔄 **Migración de bibliotecas de cintas existentes** – Transición sin afectar procesos de backup actuales.
+
+### 🔹 **Pasos para Implementar un VTL en AWS**  
+
+### **1️⃣ Implementación del Gateway**  
+- Implementar **AWS Storage Gateway** en una máquina virtual (VMware, Hyper-V o EC2).  
+- Asignar almacenamiento local para la caché.  
+
+### **2️⃣ Configuración en AWS**  
+- Configurar el gateway como **VTL** en **AWS Storage Gateway Console**.  
+- Crear un **punto de acceso iSCSI** para la conexión con software de backup.  
+
+### **3️⃣ Integración con Software de Backup**  
+- Configurar el software para utilizar la VTL como un destino de cintas.  
+- Definir políticas de backup y retención.  
+
+### **4️⃣ Almacenamiento y Recuperación**  
+- Monitorear el estado de las cintas virtuales en la consola de AWS.  
+- Restaurar cintas según sea necesario desde **Amazon S3 Glacier**.
+
+### 🎯 **Conclusión**  
+
+**AWS Storage Gateway - Virtual Tape Library (VTL)** es una solución eficiente para reemplazar bibliotecas de cintas físicas, proporcionando almacenamiento escalable, seguro y económico en la nube.
+
+### Resumen
+
+### ¿Qué es una Virtual Tape Library (VTL)?
+
+La Virtual Tape Library (VTL) es un tipo particular de Storage Gateway en AWS que resulta fundamental en el mundo corporativo. Aunque es poco probable que un usuario doméstico tenga un sistema de cintas en casa, las empresas históricamente han utilizado cintas físicas para almacenamiento y backup de datos. VTL ofrece la oportunidad de reemplazar estos sistemas físicos con una solución en la nube más eficiente y rentable, minimizando la carga administrativa y reduciendo los costos drásticamente. Cuando mencionamos cintas de backup y almacenamiento histórico de datos, Amazon Glacier es el aliado perfecto por su economía y funcionalidad.
+
+### ¿Cómo se implementa una VTL?
+
+Implementar una Virtual Tape Library implica conectar los sistemas on-premise de gestión de cintas con la nube. Con VTL, se simula el funcionamiento de un sistema de cintas pero en un entorno virtual dentro de la infraestructura de AWS. Aquí están los pasos básicos para llevar a cabo esta implementación:
+
+1. **Conexión Virtual**: Se descarga una imagen de máquina virtual y se conecta vía IP a través de plataformas como VMware o Hyper-V.
+2. **Configuración**: Una vez establecida la conexión virtual, se procede a activar y configurar el sistema para la transferencia de los backups de las cintas físicas hacia Amazon S3 o Glacier.
+3. **Integración con Herramientas Existentes**: VTL es compatible con los principales fabricantes y software de gestión de cintas, facilitando la migración de los procesos actuales a la nube.
+
+### ¿Cuáles son los beneficios económicos y operativos?
+
+Adoptar una VTL trae consigo una serie de beneficios significativos, tanto en términos económicos como operativos. Entre estos destacan:
+
+- **Reducción de Costos**: Prescindir de robots de cintas físicos, que son costosos de adquirir y mantener, y de las cintas mismas que también requieren una inversión elevada.
+- **Administración Simplificada**: Almacenamiento en la nube elimina la labor manual de cambiar y rotar cintas, así como la necesidad de custodiar cintas en empresas de seguridad.
+- **Acceso Mejorado a los Backups**: Acceso más fácil y rápido a los datos archivados sin necesidad de procedimientos físicos para recuperar cintas.
+
+### ¿Qué compatibilidad ofrece AWS para VTL?
+
+AWS se ha asegurado de hacer su solución de VTL ampliamente compatible, facilitando así su adopción por empresas con diferentes infraestructuras tecnológicas. Esto incluye:
+
+- **Compatibilidad con VMware y Hyper-V**: Integración sencilla con versiones de Hyper-V 2008 y 2012.
+- **Conexión con AWS Services**: Posibilidad de usar hardware appliance o soluciones de almacenamiento como Amazon S3 y Glacier para una experiencia optimizada en la nube.
+
+Adoptar la funcionalidad de VTL no solo significa una simplificación del proceso de backup y almacenamiento, sino que resalta las ventajas competitivas de la nube, promoviendo a las empresas a migrar sus sistemas de archivos históricos hacia plataformas más modernas, seguras, y rentables como AWS. ¡No esperes más para sumergirte en este mundo de oportunidades y maximiza tus beneficios operativos!
+
+## Volume Gateway
+
+**AWS Volume Gateway** es un servicio que permite extender el almacenamiento en la nube de **Amazon S3** a servidores on-premise, proporcionando volúmenes accesibles a través de **iSCSI** para respaldos, archivado y almacenamiento híbrido.
+
+### 🚀 **Modos de Operación**  
+
+📌 **1. Gateway Cached Volumes**  
+✔️ Los datos se almacenan **principalmente en Amazon S3**, manteniendo una caché local para acceso rápido.  
+✔️ Reduce la necesidad de almacenamiento local, aprovechando la nube.  
+✔️ Ideal para entornos con gran cantidad de datos que requieren acceso frecuente.  
+
+📌 **2. Gateway Stored Volumes**  
+✔️ Los datos se almacenan **localmente**, pero se respaldan en Amazon S3.  
+✔️ Proporciona baja latencia al acceder a los datos.  
+✔️ Adecuado para sitios que necesitan almacenamiento primario on-premise con redundancia en la nube.  
+
+📌 **3. Gateway Snapshot Volumes**  
+✔️ Permite realizar **snapshots en Amazon S3** de volúmenes almacenados localmente o en caché.  
+✔️ Se pueden restaurar como nuevos volúmenes en AWS (EBS).  
+✔️ Útil para **backup, recuperación ante desastres y migración de datos**.
+
+### 🔹 **Características Clave**  
+
+✅ **Extiende la Capacidad Local con la Nube** – Sin necesidad de ampliar el hardware.  
+✅ **Alta Disponibilidad** – Los datos están en Amazon S3 y se pueden restaurar en cualquier momento.  
+✅ **Compatibilidad con Software de Backup** – Se integra con Veeam, Veritas, etc.  
+✅ **Seguridad con Cifrado** – Usa **AWS KMS** para cifrado en tránsito y en reposo.  
+✅ **Optimización del Ancho de Banda** – Transferencia eficiente solo de los cambios en los datos.
+
+### 🔹 **Casos de Uso**  
+
+📁 **Extensión de Almacenamiento On-Premise** – Organizaciones con almacenamiento limitado pueden usar la nube.  
+💾 **Backup y Recuperación Ante Desastres** – Snapshots en Amazon S3 para restauración rápida.  
+🔄 **Migración a AWS** – Mueve volúmenes locales a la nube y conviértelos en **EBS**.  
+🏢 **Almacenamiento Híbrido** – Empresas que necesitan acceso rápido a datos locales con respaldo en la nube.
+
+### 🔹 **Implementación Paso a Paso**  
+
+### **1️⃣ Implementar AWS Storage Gateway**  
+- Desplegar en una máquina virtual **(VMware, Hyper-V o EC2)**.  
+- Asignar almacenamiento para la caché y el buffer.  
+
+### **2️⃣ Configurar el Volume Gateway**  
+- Seleccionar el modo (**Cached, Stored o Snapshot**).  
+- Conectar los volúmenes vía **iSCSI** a servidores on-premise.  
+
+### **3️⃣ Gestionar Snapshots y Recuperación**  
+- Configurar copias de seguridad automáticas en Amazon S3.  
+- Restaurar volúmenes en caso de pérdida o fallo.
+
+### 🎯 **Conclusión**  
+
+**AWS Volume Gateway** es una solución ideal para empresas que desean integrar almacenamiento en la nube sin abandonar sus sistemas locales. Ofrece **flexibilidad, seguridad y escalabilidad** sin requerir grandes inversiones en hardware.
+
+### Resumen
+
+### ¿Qué es Volume Gateway en AWS Storage Gateway?
+
+Explorar cómo gestionar eficientemente el almacenamiento de datos es crucial para cualquier empresa que busque integrar su infraestructura con soluciones cloud. Volume Gateway, parte del conjunto AWS Storage Gateway, es una solución híbrida que permite crear volúmenes locales y cargarlos asincrónicamente a la nube, específicamente a través de Amazon Elastic Block Store (EBS).
+
+### ¿Cómo se diferencia Volume Gateway de otros tipos de Storage Gateway?
+
+Volume Gateway se centra en el manejo de volúmenes y ofrece dos tipos principales: Stored Volumes y Cached Volumes. Estas opciones destacan por su capacidad para:
+
+- **Stored Volumes**: Permiten almacenar una copia completa de los datos localmente y programar su carga a AWS, ideal para empresas que quieran disponer de datos on-premise y en la nube.
+
+- **Cached Volumes**: Proveen acceso rápido a datos en la nube, manteniendo los datos más recientes localmente en caché para mejorar la latencia de las aplicaciones críticas.
+
+Comparado con File Gateway y Tape Gateway, Volume Gateway se especializa en el traslado y gestión de volúmenes, haciendo uso de sistemas virtualizados compatibles con VMware y Microsoft Hyper-V.
+
+### ¿Cómo implemento Volume Gateway en mi infraestructura?
+
+Integrar Volume Gateway comienza con un despliegue tipificado por su flexibilidad y adaptabilidad a entornos ya existentes, gracias a su compatibilidad con hipervisores de virtualización como:
+
+- VMware ESXi
+- Microsoft Hyper-V 2008 y 2012
+- Amazon S2 y Hardware Appliance
+
+Para empezar, necesitas asegurar que tu entorno cloud puede visualizar y conectarse con Volume Gateway a través de una IP configurada. Luego, configura los discos locales para sincronizar y replicar los datos con AWS, ajustándose a las necesidades de tu negocio.
+
+### ¿Cuáles son los casos de uso ideales para Volume Gateway?
+
+La elección de Volume Gateway debe basarse en la evaluación de tu arquitectura actual y necesidades futuras. Casos ideales incluyen:
+
+1. **Migraciones híbridas**: Para empresas que buscan una transición gradual a la nube, permitiendo mantener ciertos datos críticos on-premise mientras aprovechan los beneficios del cloud.
+
+3. **Optimización de latencia**: Aplicaciones que requieren acceso rápido a datos sin la latencia asociada al acceso directo a la nube.
+
+5. **Copias de seguridad y recuperación**: Mediante snapshots locales y su transferencia asincrónica hacia AWS, se asegura la integridad y continuidad de la disponibilidad de los datos.
+
+### ¿Qué desafíos presenta la implementación de Storage Gateway?
+
+Adoptar Storage Gateway implica considerar y planificar la arquitectura adecuada para tu entorno. Experimenta diseñando arquitecturas que integren componentes on-premise y cloud, identificando cuál de los módulos de Storage Gateway, ya sea Volume, File o Tape Gateway, mejor se adapta a tu caso de uso.
+
+Este enfoque no solo potencia los flujos de trabajo actuales, sino que sienta las bases para una infraestructura más ágil y escalable, facilitando el camino hacia el futuro digital de tu organización.
+
+## Elastic File System
+
+**Amazon EFS (Elastic File System)** es un servicio de almacenamiento de archivos totalmente administrado que proporciona un sistema de archivos **escalable, elástico y altamente disponible** para instancias de Amazon EC2 y otros servicios de AWS.
+
+### 🚀 **Características Principales**  
+
+✅ **Totalmente Administrado** – AWS gestiona la infraestructura y mantenimiento.  
+✅ **Escalabilidad Automática** – Crece y se reduce según el uso, sin necesidad de aprovisionamiento manual.  
+✅ **Alto Rendimiento** – Ideal para cargas de trabajo que requieren acceso simultáneo a archivos desde múltiples instancias.  
+✅ **Acceso Multi-Instancia** – Se puede montar en varias instancias EC2 a la vez.  
+✅ **Compatibilidad con NFS** – Soporta **NFS v4.1 y v4.0**, lo que facilita la integración con sistemas Linux.  
+✅ **Almacenamiento Distribuido** – Replica los datos en **múltiples zonas de disponibilidad** para mayor disponibilidad y durabilidad.  
+✅ **Seguridad** – Usa **AWS IAM y KMS** para el control de acceso y cifrado de datos.  
+✅ **Bajo Mantenimiento** – No requiere gestión de hardware o configuración de servidores.
+
+### 🎯 **Casos de Uso**  
+
+📁 **Sistemas de Archivos Compartidos** – Aplicaciones en múltiples instancias de EC2 pueden acceder a los mismos datos.  
+🎞 **Procesamiento de Medios y Contenido** – Edición de videos, almacenamiento de imágenes, procesamiento de grandes volúmenes de datos.  
+📊 **Análisis de Big Data** – Se usa en **Hadoop, Spark y otros frameworks de análisis**.  
+💻 **Aplicaciones Web y CMS** – Sistemas como WordPress que requieren acceso compartido a archivos.  
+🖥 **Entornos de Desarrollo y Pruebas** – Facilita la colaboración entre desarrolladores accediendo a los mismos archivos desde varias instancias.  
+📂 **Backup y Almacenamiento a Largo Plazo** – Alternativa escalable para respaldos y datos de archivo.
+
+### 🔹 **Clases de Almacenamiento**  
+
+🔹 **EFS Standard** – Para cargas de trabajo frecuentes, con alta disponibilidad y replicación automática en varias zonas.  
+🔹 **EFS Infrequent Access (IA)** – Reduce costos para datos accedidos con menor frecuencia.  
+
+💡 **EFS Lifecycle Management** puede mover automáticamente los archivos no utilizados a **EFS IA** para optimizar costos.
+
+### 🔧 **Cómo Configurar Amazon EFS**  
+
+### **1️⃣ Crear un Sistema de Archivos**  
+- En la consola de AWS, ir a **EFS** y crear un sistema de archivos.  
+- Elegir las opciones de rendimiento y redundancia según la necesidad.  
+
+### **2️⃣ Configurar Permisos**  
+- Usar **Security Groups** para controlar el acceso desde EC2.  
+- Configurar **IAM Policies** para gestionar permisos de acceso.  
+
+### **3️⃣ Montar el Sistema en EC2**  
+- Instalar el cliente **NFS** en las instancias EC2:  
+  ```bash
+  sudo yum install -y amazon-efs-utils
+  ```  
+- Crear un punto de montaje y montarlo:  
+  ```bash
+  sudo mkdir /mnt/efs
+  sudo mount -t efs fs-XXXXXX:/ /mnt/efs
+  ```  
+- Para montar automáticamente al reiniciar, agregarlo en `/etc/fstab`:  
+  ```
+  fs-XXXXXX:/ /mnt/efs efs defaults,_netdev 0 0
+  ```
+
+### 📊 **Comparación con Otras Soluciones de Almacenamiento en AWS**  
+
+| **Característica**  | **EFS (Elastic File System)**  | **EBS (Elastic Block Store)**  | **S3 (Simple Storage Service)**  |
+|---------------------|--------------------------------|--------------------------------|--------------------------------|
+| **Modelo de Datos** | Sistema de archivos | Almacenamiento en bloques | Objetos |
+| **Acceso Concurrente** | Múltiples instancias simultáneamente | Solo 1 instancia a la vez | Accesible desde cualquier parte |
+| **Escalabilidad** | Automática y sin límite | Requiere ajuste manual | Ilimitada |
+| **Casos de Uso** | Aplicaciones compartidas, Big Data, DevOps | Bases de datos, almacenamiento de VM | Archivos, Backup, Big Data |
+
+### 🎯 **Conclusión**  
+
+**Amazon EFS** es la solución ideal para cargas de trabajo que requieren **almacenamiento de archivos escalable y compartido** en la nube. Su capacidad de **escalar automáticamente y soportar múltiples instancias EC2** lo hace perfecto para aplicaciones distribuidas, análisis de datos y sistemas de archivos empresariales.
+
+### Resumen
+
+### ¿Qué es Elastic File System (EFS) en AWS?
+
+Elastic File System, comúnmente conocido como EFS, es un servicio de almacenamiento de archivos elásticos en la nube proporcionado por Amazon Web Services (AWS). Sirve como una solución de almacenamiento compartido que permite a múltiples instancias en la nube acceder a un sistema de archivos común y centralizado. Es particularmente útil cuando se requiere que varias instancias de servidor compartan y accedan a los mismos datos de manera simultánea, similar a cómo funcionaría un sistema de archivos en red en un entorno físico.
+
+### ¿Cómo se usa EFS en AWS?
+
+El caso de uso más notable de EFS es el de proporcionar un punto de conexión centralizado que puede ser accedido por múltiples instancias de servidor, incluso si se encuentran en diferentes zonas de disponibilidad dentro de la misma región. Esto es ideal para situaciones donde:
+
+- Varias instancias necesitan leer y escribir sobre los mismos datos, como en el caso de un sitio web alojado en múltiples servidores.
+- Una infraestructura necesita escalar horizontalmente, permitiendo que nuevas instancias utilicen las mismas estructuras de datos.
+
+### ¿Cuáles son las características principales de EFS?
+
+EFS se distingue por varias características que lo hacen atractivo para muchas aplicaciones empresariales:
+
+- **Escalabilidad Automática**: La capacidad de EFS se adapta en línea con el uso real, lo que significa que solo pagas por el almacenamiento que consumes.
+
+- **Compatibilidad con Linux**: Actualmente, EFS solo es compatible con instancias que ejecutan sistemas operativos Linux, no soporta Windows.
+
+- **Acceso Compartido**: Permite el acceso masivo y paralelo a miles de instancias S2.
+
+- **Cifrado en Reposo**: Utiliza el servicio KMS (Key Management Service) para cifrar datos almacenados, ofreciendo una capa adicional de seguridad.
+
+- **Integración Direct Connect**: Permite la conexión segura con centros de datos on-premise, facilitando así una arquitectura híbrida eficaz.
+
+### ¿Cómo afecta el pricing en EFS?
+
+El esquema de precios en EFS está basado en el gigabyte consumido en lugar de aprovisionado, lo que puede ser más costoso que otras soluciones como S3, pero ofrece la flexibilidad de pagar únicamente por el almacenamiento efectivamente usado. Esto hace que EFS sea una opción económica cuando hay peaks de tráfico o de almacenamiento temporales.
+
+### ¿Cómo se monta un sistema de archivos EFS?
+
+AWS proporciona instrucciones claras para montar EFS, lo que requiere especificar la Virtual Private Cloud (VPC) y las zonas de disponibilidad donde estará accesible. El montaje es exclusivo para Linux y, una vez configurado, se muestra como cualquier otro directorio en el sistema de archivos:
+
+`sudo mount -t nfs4 -o nfsvers=4.1 <EFS-DNS>:/ <EFS-mount-point>`
+
+### ¿Qué consideraciones de red y rendimiento se deben tener en cuenta?
+
+La red juega un papel crucial en el rendimiento de EFS. AWS permite especificar un rendimiento de red aprovisionado para atender a grandes demandas de tráfico, y ofrece opciones de:
+
+- **Transmisión por ráfagas**: Buena para cargas de trabajo intermitentes con picos ocasionales.
+- **Rendimiento aprovisionado**: Ideal para cargas de trabajo constantes y exigentes en recursos.
+
+Cuando se usan instancias en varias zonas de disponibilidad, es importante tener en cuenta la latencia de la red y el ancho de banda.
+
+EFS representa una opción poderosa para organizaciones que buscan una solución de almacenamiento dinámica y compartida en la nube. Su integración con otros servicios de AWS y su modelo de costo flexible lo convierten en un componente central para muchas arquitecturas de nube bien diseñadas. ¡Sigue explorando y aprendiendo sobre las posibilidades de EFS en AWS para optimizar tus soluciones de almacenamiento!
+
+## Casos de uso de EFS.
+
+Amazon EFS es un servicio de almacenamiento de archivos **escalable, elástico y altamente disponible**, ideal para entornos en los que múltiples instancias de EC2 necesitan acceso simultáneo a los mismos archivos. A continuación, te presento algunos de los **casos de uso más comunes**:
+
+### 🎯 **1️⃣ Aplicaciones Web y CMS**  
+**Caso:** Plataformas como **WordPress, Joomla o Drupal** requieren acceso compartido a archivos, ya que varias instancias pueden estar detrás de un **balanceador de carga**.  
+
+**Beneficio:**  
+✅ Almacenamiento centralizado accesible por múltiples servidores.  
+✅ Facilita la escalabilidad horizontal de aplicaciones web.  
+✅ Sin necesidad de configurar servidores de archivos manualmente.  
+
+🔹 **Ejemplo:** Un sitio web con alta concurrencia que usa múltiples instancias EC2 con **Auto Scaling** para manejar picos de tráfico.
+
+### 📊 **2️⃣ Análisis de Datos y Big Data**  
+**Caso:** Procesamiento de grandes volúmenes de datos con herramientas como **Apache Spark, Hadoop y Amazon SageMaker**, que requieren acceso rápido y compartido a archivos.  
+
+**Beneficio:**  
+✅ Soporte para cargas de trabajo intensivas en E/S.  
+✅ Escalabilidad automática sin intervención manual.  
+✅ Compatible con **AWS DataSync** para mover datos entre sistemas locales y la nube.  
+
+🔹 **Ejemplo:** Un equipo de ciencia de datos que necesita acceder a archivos de entrada y salida de modelos de Machine Learning.
+
+### 🎬 **3️⃣ Procesamiento y Edición de Medios**  
+**Caso:** Empresas de producción audiovisual que trabajan con archivos pesados (videos, imágenes en alta resolución, archivos CAD) en múltiples estaciones de trabajo.  
+
+**Beneficio:**  
+✅ Permite edición colaborativa en tiempo real.  
+✅ Alta disponibilidad y escalabilidad.  
+✅ Acceso desde múltiples instancias en diferentes zonas de disponibilidad.  
+
+🔹 **Ejemplo:** Un estudio de animación renderizando escenas en 3D con múltiples nodos de cómputo en EC2.
+
+### 📦 **4️⃣ DevOps y Entornos de Desarrollo/Pruebas**  
+**Caso:** Equipos de desarrollo que necesitan acceso compartido a archivos de código fuente, compilaciones y artefactos.  
+
+**Beneficio:**  
+✅ Facilita la integración y despliegue continuo (CI/CD).  
+✅ Almacena configuraciones y entornos de desarrollo.  
+✅ Compatible con herramientas como **Jenkins, Git y Terraform**.  
+
+🔹 **Ejemplo:** Un equipo de desarrollo con múltiples servidores de prueba y entornos de staging que acceden a los mismos archivos.
+
+### 📁 **5️⃣ Sistemas de Archivos Compartidos Empresariales**  
+**Caso:** Empresas que necesitan un sistema de archivos centralizado para acceder a documentos, bases de datos y archivos internos.  
+
+**Beneficio:**  
+✅ Accesible desde múltiples oficinas y empleados remotos.  
+✅ Seguridad integrada con **IAM y cifrado KMS**.  
+✅ Integración con **AWS Direct Connect y VPN** para acceso híbrido.  
+
+🔹 **Ejemplo:** Una empresa multinacional que necesita compartir archivos financieros y reportes entre distintas sucursales.
+
+### 🎮 **6️⃣ Videojuegos y Simulación**  
+**Caso:** Juegos en línea o simulaciones requieren un sistema de archivos rápido y escalable para almacenar estados de juego y perfiles de usuario.  
+
+**Beneficio:**  
+✅ Baja latencia para acceso a datos en tiempo real.  
+✅ Escalabilidad para miles/millones de jugadores.  
+✅ Integración con servidores de juegos en EC2 o ECS.  
+
+🔹 **Ejemplo:** Un juego multijugador en la nube donde cada servidor EC2 accede a configuraciones compartidas.
+
+### 🛡 **7️⃣ Backup y Almacenamiento a Largo Plazo**  
+**Caso:** Empresas que necesitan **respaldar datos empresariales** en un almacenamiento accesible y con redundancia.  
+
+**Beneficio:**  
+✅ Compatible con **AWS Backup** para automatizar copias de seguridad.  
+✅ Alternativa más rápida que Amazon S3 para ciertos casos.  
+✅ Integración con **EFS Lifecycle Management** para optimizar costos.  
+
+🔹 **Ejemplo:** Un banco almacenando registros de transacciones con acceso frecuente para auditorías.
+
+### 🔥 **Conclusión**  
+
+Amazon EFS es una solución **potente y flexible** para almacenamiento de archivos en la nube. Su capacidad de **escalar automáticamente, soportar múltiples instancias EC2 y ofrecer acceso compartido** lo hace ideal para aplicaciones web, análisis de datos, desarrollo, edición multimedia y más.
+
+### Resumen
+
+### ¿Cuál es el uso de EFS en arquitecturas de escalado automático?
+
+EFS (Elastic File System) es una solución de almacenamiento de archivos en la nube de AWS que se integra efectivo con otras arquitecturas y servicios como el auto-scaling. Aquí te mostramos cómo se aprovecha en contextos de alta demanda.
+
+### ¿Cómo funciona EFS en combinación con el auto-scaling?
+
+El auto-scaling es una práctica común cuando se tiene un sitio web o aplicación que requiere mantener el rendimiento a medida que aumenta la demanda de usuarios:
+
+- **Instancias escalables**: Permite que la infraestructura escale automáticamente al crear instancias adicionales en respuesta a métricas configurables, como el uso de CPU.
+- **Consistencia de datos**: Cuando se generan nuevas instancias para manejar la carga, estas acceden a EFS para asegurarse de que todas tengan acceso a la misma información.
+- **Integración con S3**: Para separar la aplicación de los datos estáticos, las instancias también pueden recoger información desde Amazon S3, maximizando el performance y carga conjunta con datos en EFS.
+
+### ¿Por qué usar EFS y no otro tipo de almacenamiento?
+
+Al elegir EFS sobre soluciones como S3 o Storage Gateway, se tiene en cuenta varios aspectos importantes:
+
+- **Conexiones múltiples**: EFS se puede montar en miles de instancias EC2 simultáneamente, permitiendo acceso conjunto a archivos.
+- **Rendimiento optimizado**: Se encuentra ajustado para alto rendimiento con sistemas operativos Linux esenciales en EC2.
+- **Costo**: Aunque el costo de EFS es elevado y basado en el sistema de archivos usados, ofrece una relación costo-eficiencia mejor para aplicaciones que requieren alta coherencia de datos entre múltiples usuarios.
+
+### ¿Cómo podemos visualizar el uso eficaz de EFS?
+
+Para entender precisamente dónde se utilizaría EFS, crear diagramas prácticos es una práctica recomendada:
+
+1. **Casos de uso específicos**: Piensa en una aplicación web basada en WordPress escalando sobre instancias con alta concurrencia. Así todas las instancias miraran la misma data desde EFS.
+2. **Comparativas**: Dibuja diagramas que contrasten esquemas de uso de EFS versus S3 o un Storage Gateway.
+3. **Publica y aprende**: Compartir diagramas en foros o secciones de comentarios permite recibir sinergia de ideas que favorecen el aprendizaje colaborativo e incrementan el conocimiento sobre el uso de EFS.
+
+Esta práctica no solo nutre el entendimiento técnico sino brinda vías para analizar distintos escenarios y determinar la mejor utilidad de soluciones como EFS frente a necesidades específicas.
+
+## Características de Elastic Block Storage
+
+Amazon EBS (Elastic Block Store) es un servicio de almacenamiento en la nube de **bloques** diseñado para usarse con instancias **Amazon EC2**. Es ideal para bases de datos, aplicaciones empresariales y cargas de trabajo que requieren **baja latencia y alta disponibilidad**.  
+
+A continuación, te explico sus principales características:
+
+### ⚡ **1️⃣ Almacenamiento Persistente**  
+Los volúmenes de EBS son **persistentes**, lo que significa que los datos almacenados en un volumen **no se pierden** si la instancia EC2 se detiene o reinicia.  
+
+✅ A diferencia del almacenamiento **efímero**, EBS mantiene los datos incluso si la instancia EC2 se apaga.  
+✅ Se pueden realizar snapshots (copias de seguridad) para restaurar datos en caso de fallos.
+
+### 🏎 **2️⃣ Alto Rendimiento y Baja Latencia**  
+EBS está optimizado para ofrecer **altas tasas de IOPS** (operaciones de entrada/salida por segundo) y **baja latencia**, lo que lo hace ideal para aplicaciones exigentes como bases de datos transaccionales y big data.  
+
+✅ **Tipos de volúmenes optimizados** según el rendimiento:  
+   - **SSD (gp3, gp2, io1, io2)** → Para bases de datos y cargas de trabajo intensivas en IOPS.  
+   - **HDD (st1, sc1)** → Para almacenamiento de archivos y análisis de logs.  
+
+✅ Puede alcanzar hasta **256,000 IOPS** y velocidades de transferencia de **4,000 MB/s** con volúmenes io2 Block Express.
+
+### 📏 **3️⃣ Escalabilidad Flexible**  
+Amazon EBS permite **escalar volúmenes en caliente** sin interrumpir la aplicación.  
+
+✅ **Aumentar capacidad** de almacenamiento sin perder datos.  
+✅ Cambiar el **tipo de volumen** (de gp2 a io2, por ejemplo) sin detener la instancia.  
+
+📌 **Ejemplo:** Si una base de datos crece más de lo esperado, puedes aumentar el tamaño del volumen **sin downtime**. 
+
+### 🔄 **4️⃣ Snapshots y Backup Automatizado**  
+EBS permite crear **snapshots** (instantáneas) para respaldar datos y restaurarlos en cualquier momento.  
+
+✅ **Snapshots incrementales:** Solo guardan los cambios desde el último backup, reduciendo costos.  
+✅ Se pueden almacenar en **Amazon S3** y replicar a otras regiones para **recuperación ante desastres**.  
+✅ Compatible con **AWS Backup** para gestionar backups de manera centralizada.  
+
+📌 **Ejemplo:** Antes de actualizar una base de datos en producción, puedes crear un snapshot por seguridad.
+
+### 🛡 **5️⃣ Seguridad y Encriptación**  
+Amazon EBS ofrece **encriptación en reposo y en tránsito** con **AWS KMS (Key Management Service)**.  
+
+✅ Cifrado AES-256 gestionado por AWS o por el usuario.  
+✅ Protección contra accesos no autorizados con **IAM (Identity & Access Management)**.  
+✅ Soporta **volúmenes encriptados**, asegurando que los datos estén protegidos.  
+
+📌 **Ejemplo:** Una empresa financiera almacena datos de clientes en volúmenes EBS cifrados con claves personalizadas.
+
+### 🌎 **6️⃣ Alta Disponibilidad y Replicación**  
+Cada volumen de EBS se replica **automáticamente dentro de su zona de disponibilidad (AZ)** para evitar pérdidas de datos.  
+
+✅ Alta **tolerancia a fallos** dentro de la misma AZ.  
+✅ Para mayor disponibilidad, los snapshots pueden **replicarse en otra región**.  
+✅ Opción de **Multi-Attach** en volúmenes io1/io2, permitiendo que varias instancias EC2 accedan al mismo volumen.  
+
+📌 **Ejemplo:** Un servidor de base de datos en EC2 puede tener replicación activa de EBS en otra zona de AWS.
+
+### 🔄 **7️⃣ Tipos de Volúmenes en EBS**  
+EBS ofrece distintos tipos de volúmenes optimizados para diferentes cargas de trabajo:  
+
+🔹 **SSD - Optimizado para rendimiento (IOPS altas):**  
+- **gp3** → Balance entre costo y rendimiento (hasta 16,000 IOPS).  
+- **gp2** → Buen rendimiento a menor costo.  
+- **io1/io2** → Para bases de datos con IOPS intensivas (hasta 256,000 IOPS con io2 Block Express).  
+
+🔹 **HDD - Optimizado para almacenamiento secuencial:**  
+- **st1** → HDD de alto rendimiento para big data y logs.  
+- **sc1** → HDD de menor costo para almacenamiento poco frecuente.  
+
+📌 **Ejemplo:** Un sistema de facturación con alta concurrencia puede usar un **volumen io2** para mejorar la velocidad de acceso a la base de datos.
+
+### 🚀 **8️⃣ Integración con Otros Servicios AWS**  
+EBS se integra fácilmente con otros servicios en AWS, como:  
+
+✅ **EC2 Auto Scaling** → Para ajustar automáticamente la capacidad según la demanda.  
+✅ **RDS** → Para bases de datos gestionadas con volúmenes de alto rendimiento.  
+✅ **AWS Lambda + EBS Snapshots** → Para crear automatizaciones de backup.  
+
+📌 **Ejemplo:** Una aplicación de e-commerce puede utilizar EBS junto con **Amazon RDS** para almacenar y procesar información de pedidos.
+
+### 🎯 **Conclusión**  
+Amazon EBS es una solución de almacenamiento de **alto rendimiento, escalable y segura** para aplicaciones en la nube. Sus características lo hacen ideal para:  
+
+✅ Bases de datos relacionales y NoSQL.  
+✅ Aplicaciones empresariales con alta demanda de IOPS.  
+✅ Análisis de Big Data y procesamiento de logs.  
+✅ Workloads críticos que requieren **baja latencia** y **alta disponibilidad**.
+
+### Resumen
+
+### ¿Qué es Elastic Block Storage en AWS?
+
+Elastic Block Storage (EBS) es una solución de almacenamiento en bloque ofrecida por Amazon Web Services (AWS). Es ideal para casos donde se requiere almacenar sistemas operativos y aplicaciones, brindando características únicas que no se encuentran en otros sistemas de archivos. EBS es, esencialmente, un disco duro virtual en la nube, diseñado principalmente para usarse con instancias de servidores en AWS.
+
+### ¿Cómo se utiliza EBS?
+
+Al utilizar EBS, se debe tener en cuenta que este almacenamiento se asocia a instancias EC2. A diferencia de Elastic File System (EFS), en EBS **pagamos por el almacenamiento aprovisionado**, es decir, por la cantidad total que se reserva, no solo por la cantidad utilizada. Por ejemplo, si se aprovisionan 50 GB para un volumen en un servidor Windows, se factura por esos 50 GB independientemente de cuánto espacio se utilice.
+
+### ¿Cómo se puede redimensionar un volumen en EBS?
+
+Es posible aumentar el tamaño de un volumen EBS según las necesidades. En sistemas operativos Linux, se puede usar la consola o comandos específicos para redimensionar el volumen. En Windows, se puede cambiar el tamaño a través de la administración de discos, ampliando el volumen desde la consola de AWS.
+
+### ¿Cómo se maneja la réplica y el diseño en EBS?
+
+Cada volumen de EBS se replica automáticamente dentro de una zona de disponibilidad, garantizando la protección de datos frente a fallos. AWS ofrece varias versiones de EBS, diseñadas según diferentes casos de uso, que optimizan el rendimiento según las necesidades específicas de lectura y escritura.
+
+### ¿Cuáles son las características principales de EBS?
+
+EBS se puede montar únicamente en instancias EC2, no en múltiples instancias a la vez. Además, hay varias características importantes:
+
+- **Arranque de instancia**: Un volumen EBS puede ser el volumen de arranque de una instancia, pero los volúmenes raíz que contienen el sistema operativo no pueden ser encriptados.
+- **Encriptación**: Aunque los volúmenes raíz no pueden ser encriptados, los volúmenes adicionales pueden configurarse para ser encriptados.
+- **Montaje**: El montaje se puede realizar a través de la CLI, SDK o la consola de AWS.
+
+### ¿Qué tipos de EBS están disponibles?
+
+Existen varios tipos de volúmenes EBS, según el caso de uso:
+
+1. **General Purpose (SSD)**: Ideal para uso general.
+2. **Provisioned IOPS (SSD)**: Para aplicaciones que requieren IOPS altos.
+3. **Throughput Optimized (HDD)**: Diseñado para lectura y escritura de gran capacidad.
+4. **Cold (HDD)**: Adecuado para datos accedidos con poca frecuencia.
+
+Cada uno tiene casos de uso específicos y diferentes precios asociados. Es importante seleccionar el tipo adecuado para optimizar costos y rendimiento.
+
+### ¿Cuál es el límite de almacenamiento de EBS?
+
+Los volúmenes EBS pueden variar desde 1 GB hasta 16 TB, dependiendo del tipo de volumen seleccionado. Por lo tanto, es crucial planificar el aprovisionamiento con suficiente espacio para evitar el redimensionamiento futuro, que podría suponer riesgos para el sistema operativo o pérdida de datos.
+
+### ¿Qué consideraciones de seguridad ofrece EBS?
+
+EBS proporciona opciones de protección ante borrados accidentales. Cuando se crea un servidor, se puede habilitar un check para proteger el volumen o la instancia contra eliminaciones accidentales. Esta protección adicional requiere un paso más para confirmar cualquier borrado, asegurando que los discos no se eliminen por error.
+
+#### Recomendaciones para trabajar con EBS
+
+Para optimizar el uso de EBS, se recomienda:
+
+- Aprovisionar suficiente espacio desde el principio para evitar redimensionamientos.
+- Seleccionar el tipo de volumen adecuado para el caso de uso específico.
+- Habilitar la protección contra borrados accidentales para prevenir pérdidas de datos.
+
+EBS es una pieza fundamental en el ecosistema de AWS, especialmente para aquellos que buscan un almacenamiento robusto y flexible para sus aplicaciones y sistemas operativos en la nube. ¡Sigue explorando las múltiples posibilidades que AWS tiene para ofrecerte y sigue aprendiendo!
+
+### Tipos de EBS - GP2 - IO1
+
+Amazon Elastic Block Store (EBS) ofrece distintos tipos de volúmenes optimizados para diferentes cargas de trabajo. En esta comparación veremos **GP2 (General Purpose SSD)** e **IO1 (Provisioned IOPS SSD)**, dos de las opciones más utilizadas en la nube de AWS.
+
+### 🔹 **1️⃣ GP2 - General Purpose SSD**  
+
+📌 **Características:**  
+✅ **Equilibrio entre costo y rendimiento**.  
+✅ Ideal para cargas de trabajo de uso general, como bases de datos de tamaño medio y sistemas operativos.  
+✅ **Rendimiento basado en el tamaño del volumen:**  
+   - Ofrece **3 IOPS por cada GB** de almacenamiento.  
+   - Hasta un máximo de **16,000 IOPS**.  
+✅ **Bursts automáticos:** Puede aumentar temporalmente su rendimiento a **3,000 IOPS** en volúmenes menores a 1 TB.  
+✅ **Tamaño:** 1 GB a 16 TB.  
+✅ **Costo más bajo** en comparación con IO1.  
+
+📌 **Casos de uso:**  
+- Servidores web y aplicaciones.  
+- Bases de datos pequeñas o medianas.  
+- Sistemas operativos y almacenamiento de volúmenes de inicio en EC2.  
+
+⚠ **Limitaciones:**  
+- No garantiza un rendimiento constante en cargas de trabajo intensivas en IOPS.
+
+### 🔹 **2️⃣ IO1 - Provisioned IOPS SSD**  
+
+📌 **Características:**  
+✅ Diseñado para aplicaciones críticas que requieren **baja latencia y rendimiento consistente**.  
+✅ **IOPS aprovisionados:** El usuario define cuántos IOPS necesita, hasta un máximo de **64,000 IOPS**.  
+✅ **Ratio IOPS/GB:** Hasta **50 IOPS por cada GB** de almacenamiento.  
+✅ **Multi-Attach:** Puede ser utilizado por varias instancias EC2 simultáneamente.  
+✅ **Tamaño:** 4 GB a 16 TB.  
+✅ **Más costoso**, pero ideal para aplicaciones de alto rendimiento.  
+
+📌 **Casos de uso:**  
+- Bases de datos relacionales (Oracle, MySQL, SQL Server, PostgreSQL).  
+- Bases de datos NoSQL de alto rendimiento (MongoDB, Cassandra).  
+- Aplicaciones financieras y de análisis de datos que requieren alta disponibilidad.  
+
+⚠ **Limitaciones:**  
+- **Costo elevado** en comparación con GP2.
+
+### 📊 **Comparación Rápida**  
+
+| Característica     | GP2 (General Purpose SSD) | IO1 (Provisioned IOPS SSD) |
+|-------------------|--------------------------|--------------------------|
+| **Costo** | Más económico | Más costoso |
+| **IOPS Máximo** | 16,000 IOPS | 64,000 IOPS |
+| **IOPS por GB** | 3 IOPS/GB | Hasta 50 IOPS/GB |
+| **Bursts** | Sí, hasta 3,000 IOPS | No aplica |
+| **Uso Principal** | Aplicaciones generales | Workloads críticos |
+| **Tamaño (GB)** | 1 GB - 16 TB | 4 GB - 16 TB |
+| **Multi-Attach** | No | Sí |
+
+### 🎯 **Conclusión: ¿Cuál Elegir?**  
+
+✅ **Elige GP2 si…**  
+🔹 Buscas una opción económica con buen rendimiento.  
+🔹 Necesitas almacenamiento para servidores web, aplicaciones generales o bases de datos pequeñas.  
+
+✅ **Elige IO1 si…**  
+🔹 Necesitas **IOPS garantizados** y rendimiento consistente.  
+🔹 Ejecutas bases de datos críticas o aplicaciones de alta carga transaccional.  
+
+### Resumen
+
+### ¿Qué tipos de almacenamiento ofrece Amazon EBS?
+
+Amazon Elastic Block Store (EBS) es un servicio de Amazon Web Services (AWS) que proporciona almacenamiento de bloques duradero y de alto rendimiento para instancias EC2. Es fundamental conocer los diferentes tipos de almacenamiento EBS y sus casos de uso para optimizar recursos y costos. Aquí exploraremos dos de los tipos más populares: GP2 y IO1.
+
+### ¿Qué es el almacenamiento GP2 y para qué se utiliza?
+
+El primer tipo de almacenamiento EBS que vamos a discutir es el GP2. Este almacenamiento utiliza discos de estado sólido (SSD) y es conocido como General Purpose, o de propósito general. Es ideal para aplicaciones con cargas de trabajo generales y no para aquellos que requieren altos picos de escritura y lectura.
+
+- **Característica principal**: Balance entre funcionamiento y costo.
+- **Uso ideal**: Aplicaciones con un consumo regular, sin cargas repentinas muy altas.
+- **Relación IOPS/GB**: Cada GB proporciona aproximadamente 3 IOPS (Operaciones de Entrada/Salida por Segundo).
+- **Capacidades técnica**s: Puede manejar ráfagas cortas de hasta 3000 IOPS, lo que lo hace útil para bases de datos con consumo regular o sistemas operativos de Windows o Linux.
+- **Tamaño**: Entre 1 GB y 16 TB.
+- **Versatilidad**: Se puede utilizar como disco root o de arranque en instancias EC2.
+
+### ¿Qué tipo de almacenamiento es el IO1 y cuándo se debe usar?
+
+El almacenamiento IO1 también es un disco de estado sólido, diseñado para operaciones de I/O (Input/Output) intensivas. Este tipo es más potente que GP2 y está optimizado para aplicaciones que requieren un alto rendimiento en operaciones de lectura y escritura.
+
+- **Característica diferencial**: Soporte para más de 10,000 hasta 20,000 IOPS por volumen.
+- **Uso recomendado**: Aplicaciones que demandan un alto volumen de operaciones de I/O, como bases de datos no relacionales.
+- **Comparación con GP2**: Proporciona un rendimiento más de 5 veces superior en términos de IOPS.
+- **Capacidades técnicas**: Al igual que el GP2, también puede ser utilizado como disco root de una instancia, compatible con sistemas operativos Linux y Windows.
+- **Tamaño**: Su capacidad oscila entre 4 GB y 16 TB.
+
+### Principales diferencias y consideraciones
+
+- **Límites de IOPS**: El GP2 ofrece un máximo de 3,000 IOPS, mientras que el IO1 llega hasta 20,000.
+- **Uso**: GP2 es adecuado para aplicaciones regulares; IO1 es preferible para aplicaciones exigentes en términos de Input/Output.
+- **Costo**: El precio varía según el rendimiento; IO1 es generalmente más caro debido a sus capacidades avanzadas.
+- **Flexibilidad**: Ambos pueden servir como discos raíz, lo que proporciona flexibilidad para diversos tipos de sistemas operativos.
+
+Elegir el tipo correcto de EBS depende de las especificaciones de sus aplicaciones y la clase de carga de trabajo que maneja. GP2 ofrece un equilibrio económico para aplicaciones estándar, mientras que IO1 proporciona la robustez necesaria para aplicaciones intensivas en I/O. Entender estos matices es crucial para sacar el máximo provecho de las capacidades de AWS y asegurar el rendimiento óptimo de tus aplicaciones.
+
+## Tipos de EBS - ST1 - SC1
+
+Amazon Elastic Block Store (EBS) ofrece varios tipos de volúmenes optimizados para diferentes casos de uso. Entre ellos, **ST1 (Throughput Optimized HDD)** y **SC1 (Cold HDD)** son opciones de almacenamiento basadas en HDD diseñadas para cargas de trabajo con acceso secuencial y gran cantidad de datos.  
+
+### **Tipos de EBS: ST1 y SC1**  
+
+1. **ST1 (Throughput Optimized HDD)**  
+   - **Descripción:** Discos HDD optimizados para rendimiento secuencial.  
+   - **Casos de uso:**  
+     - Big Data  
+     - Procesamiento de logs  
+     - Cargas de trabajo que requieren alto rendimiento secuencial  
+   - **Características:**  
+     - Rendimiento basado en el sistema de créditos de IOPS  
+     - Máximo de **500 MB/s** de rendimiento  
+     - Tamaño de volumen: **500 GiB – 16 TiB**  
+
+2. **SC1 (Cold HDD)**  
+   - **Descripción:** Discos HDD diseñados para datos de acceso poco frecuente.  
+   - **Casos de uso:**  
+     - Archivos de respaldo  
+     - Almacenamiento a largo plazo  
+     - Datos que requieren acceso ocasional  
+   - **Características:**  
+     - Rendimiento más bajo que ST1  
+     - Máximo de **250 MB/s** de rendimiento  
+     - Tamaño de volumen: **500 GiB – 16 TiB**  
+
+Ambos tipos de volúmenes utilizan un sistema de **bursting**, lo que significa que acumulan créditos cuando no se usan y pueden ofrecer picos de rendimiento cuando es necesario. Sin embargo, **SC1 es la opción más económica** y adecuada solo para almacenamiento de datos a los que se accede raramente.
+
+### Resumen
+
+### ¿Qué son ST1 y SC1 y para qué se utilizan?
+
+En el vasto mundo de Amazon EBS, dos tipos de volúmenes a menudo se destacan por sus casos de uso específicos: ST1 y SC1. Ambos se diseñan para atender necesidades particulares de almacenamiento en la nube, favoreciendo la flexibilidad y eficiencia de costos y rendimientos en diversas aplicaciones.
+
+### ¿Qué es ST1?
+
+ST1 es conocido por su aplicación en campos específicos como Big Data, Data Warehouse, Log Process o Streaming. Este tipo de volumen se caracteriza por sus amplias capacidades, que oscilan entre 500 GB y 16 TB. Sin embargo, es crucial entender que no se puede utilizar como BUD o ROOT de una instancia EC2, es decir, no es posible instalar un sistema operativo en un volumen ST1.
+
+### ¿Para qué sirve SC1?
+
+A diferencia de ST1, SC1 se enfoca en cargas de acceso infrecuente. Se presenta como una opción de volumen más económica, ideal para escenarios donde el costo es un factor determinante. Con capacidades que van de 500 GB a 1 TB, SC1 también es incapaz de actuar como BUD para una instancia EC2 y su pago se basa en la capacidad aprovisionada, promoviendo un ahorro significativo en situaciones en las que el acceso es esporádico.
+
+### ¿Cómo seleccionar y configurar volúmenes EBS?
+
+Al iniciar una instancia EC2, se presenta una variedad de opciones de almacenamiento que deben ajustarse estratégicamente a las necesidades del usuario. Analizar adecuadamente las opciones disponibles resulta esencial para optimizar tanto el rendimiento como los costos.
+
+### ¿Diferencias entre volúmenes General Purpose y Provisioned?
+
+- **General Purpose (GP2)**: Ofrece una relación de tres IOPS por GB, diseñándose para satisfacer necesidades generales de almacenamiento con un rendimiento balanceado hasta 3,000 IOPS. Es una opción común para un amplio espectro de aplicaciones.
+
+- **Provisioned IOPS (IO1)**: Este ajuste permite especificar la cantidad de IOPS, que puede alcanzar hasta 10,000 con 100 gigabytes, mostrando un rendimiento mucho más significativo para aplicaciones que requieren alta intensidad de operaciones de entrada/salida.
+
+Ambas opciones, GP2 e IO1, permiten persistir el volumen independientemente de acciones como eliminar el servidor, y pueden ser encriptadas mediante el servicio KMS.
+
+### ¿Cómo gestionar el almacenamiento adicional?
+
+El proceso de adjuntar nuevos volúmenes es sencillo desde la consola de AWS. Al crear un volumen, tenemos la posibilidad de seleccionar entre diferentes tipos de EBS como General Purpose, ST1 o SC1, ajustando parámetros como tamaño, IOPS y zona de disponibilidad.
+
+Para unirlo a una instancia, se utiliza la función de "attach volume", permitiendo que un volumen sirva exclusivamente a una instancia a la vez, asegurando la estabilidad e integridad de los datos.
+
+### Factores clave en la selección de volúmenes EBS
+
+Elegir el tipo de EBS adecuado requiere una comprensión profunda de las necesidades específicas de la aplicación. Considera los siguientes factores:
+
+1. **Caso de uso**: Determina qué tipo de EBS se adapta mejor al propósito deseado.
+2. **Rendimiento**: Evalúa tanto en términos de IOPS como de throughput para satisfacer las demandas operativas.
+3. **Costo**: Considera el costo asociado a diferentes niveles de rendimiento y tamaño, alineando la opción elegida con el presupuesto disponible.
+
+Estos elementos son fundamentales para seleccionar eficientemente un volumen EBS, optimizando no solo los costos, sino también facilitando un desempeño efectivo y confiable en Amazon Cloud.
+
+Explorar con detalle cada una de estas características te permitirá gestionar de manera óptima los recursos en la nube, asegurando un equilibrio entre precio, rendimiento y capacidad.
+
+## Snapshots y AMI
+
+### **1. Snapshots de Amazon EBS**  
+Los **Snapshots** en Amazon Elastic Block Store (EBS) son copias puntuales de un volumen EBS, almacenadas en Amazon S3. Sirven para respaldo, recuperación ante desastres y migración de datos.  
+
+**Características:**  
+- Se almacenan de forma incremental: solo los bloques modificados desde el último snapshot se guardan.  
+- Se pueden utilizar para restaurar volúmenes EBS nuevos.  
+- Se pueden copiar entre regiones para mayor disponibilidad.  
+- Permiten automatización mediante **Amazon Data Lifecycle Manager (DLM)**.  
+
+**Casos de uso:**  
+- Backup y restauración de volúmenes EBS.  
+- Creación de volúmenes replicados en otras regiones.  
+- Migración de datos y despliegues en diferentes entornos.
+
+### **2. Amazon Machine Image (AMI)**  
+Una **Amazon Machine Image (AMI)** es una plantilla que contiene el sistema operativo, aplicaciones y configuraciones necesarias para lanzar instancias EC2.  
+
+**Tipos de AMI:**  
+- **AMI con respaldo en EBS**: Se pueden crear y modificar fácilmente.  
+- **AMI con respaldo en Instance Store**: Son más rápidas pero no persistentes.  
+
+**Características:**  
+- Permiten el escalado rápido de infraestructura.  
+- Se pueden compartir con otras cuentas o hacer públicas.  
+- Se pueden crear a partir de instancias EC2 existentes.  
+- Facilitan la automatización del despliegue de servidores.  
+
+**Casos de uso:**  
+- Creación de entornos idénticos en múltiples instancias EC2.  
+- Distribución de aplicaciones preconfiguradas.  
+- Implementación rápida de servidores con configuraciones estándar.
+
+### **Diferencia clave entre Snapshots y AMI**  
+
+| **Característica** | **Snapshot** | **AMI** |
+|-------------------|-------------|--------|
+| Almacenamiento | Copia de un volumen EBS | Plantilla para instancias EC2 |
+| Contenido | Datos de disco | Sistema operativo + software |
+| Propósito | Backup y recuperación | Creación y despliegue de instancias |
+| Uso principal | Restaurar volúmenes EBS | Lanzar instancias EC2 |
+
+En resumen: **los Snapshots son copias de seguridad de volúmenes EBS, mientras que las AMI son plantillas completas para lanzar nuevas instancias EC2**.
+
+### Resumen
+
+### ¿Qué es un snapshot y por qué es importante?
+
+Un snapshot en Amazon EBS es esencial para garantizar la disponibilidad y recuperación de datos críticos en tu empresa. Es como una fotografía de tu volumen EBS en un momento específico, que te permite revertir en caso de fallas o errores. Este proceso de copia de seguridad es vital para mantener la continuidad del negocio y la integridad de los datos.
+
+Hay dos maneras de gestionar los snapshots:
+
+- **Manual**: Puedes crear un snapshot directamente desde la consola de AWS clicando en el volumen y seleccionando la opción para crear el snapshot.
+
+- **Automatizada**: Mediante el uso de AWS Lifecycle Manager, que permite programar la creación y gestión automática de snapshots basándose en reglas predeterminadas como etiquetas (tags).
+
+Además, es crucial mencionar que los snapshots son totalmente independientes del sistema operativo instalado en el volumen EBS.
+
+### ¿Cómo funcionan los snapshots incrementales?
+
+Los snapshots en AWS son incrementales, lo que significa que el sistema solo guarda los cambios realizados desde el último snapshot. Esto reduce significativamente el espacio de almacenamiento necesario y, por lo tanto, los costes asociados.
+
+Por ejemplo:
+
+- **Fase 1**: Creas un snapshot de un volumen de 10 GB. Este primer snapshot ocupará 10 GB.
+
+- **Fase 2**: Si solo modificas una parte del volumen, el siguiente snapshot solo guardará esos cambios específicos, ahorrando espacio de almacenamiento y costes.
+
+- **Fase 3**: Siguiendo con este patrón, cualquier cambio adicional será el único almacenado en los snapshots siguientes.
+
+### ¿Cómo crear y gestionar snapshots en la consola de AWS?
+
+Para trabajar con snapshots en AWS, primero accede a la consola de EC2 y sigue estos pasos:
+
+1. Creación de Snapshots:
+
+ - Ve a la sección de volúmenes.
+ - Selecciona el volumen deseado.
+ - Haz clic en "Create Snapshot" y asigna un nombre al snapshot.
+ - Nota que si el volumen original estaba encriptado, el snapshot resultante también lo estará automáticamente.
+
+2. Gestión con AWS Lifecycle Manager:
+
+ - Crea una regla basada en tags para automatizar la creación de snapshots.
+ - Define el nombre del schedule, la frecuencia y el número de snapshots retenidos.
+ - Configura los roles necesarios para la automatización de estas tareas.
+
+Este sistema te permite ahorrar tiempo y asegurar que la copia de seguridad se realice de manera coherente con las políticas de la empresa.
+
+### ¿Cuál es la diferencia entre snapshots y AMIs?
+
+Aunque los snapshots y las AMIs (Amazon Machine Images) parecen similares, tienen usos distintos:
+
+- **Snapshots**: Son ideales para realizar copias de seguridad de volúmenes EBS. Permiten revertir un volumen a un estado previo.
+
+- **AMIs**: Son imágenes completas del sistema, que incluyen configuraciones de software. Ideales para replicar entornos, puedes utilizarlas para lanzar múltiples instancias con las mismas configuraciones o, incluso, compartirlas a través del AWS Marketplace.
+
+Por ejemplo, si configuras un servidor con aplicaciones especializadas, puedes crear una AMI para facilitar su despliegue en varias regiones sin tener que repetir el proceso de configuración manualmente.
+
+### Consejos prácticos para usar snapshots y AMIs
+
+1. **Automatiza Con Lifecycle Manager**: Configura reglas que faciliten el uso de snapshots en tu infraestructura, considerando siempre las necesidades de almacenamiento y costos.
+
+3. **Diferencia clara entre snapshot y AMI**: Recuerda que mientras el snapshot es más un mecanismo de backup, la AMI se usa como plantilla para despliegue de infraestructuras completas.
+
+5. **Integración con Herramientas DevOps**: Las AMIs pueden integrarse en procesos de CI/CD usando servicios como AWS CodePipeline, facilitando el despliegue continuo y eficiente de aplicaciones.
+
+Utiliza estos recursos sabiamente para optimizar la gestión de tus datos en la nube y asegurarte de que tu infraestructura esté protegida y lista para cualquier eventualidad.
+
+## Volumen EBS para Windows
+
+Amazon Elastic Block Store (**EBS**) es un servicio de almacenamiento de bloques para instancias EC2, compatible con sistemas operativos Windows y Linux.  
+
+### **1. Tipos de Volumen EBS recomendados para Windows**  
+Dependiendo del rendimiento y costo, puedes elegir entre varios tipos de volúmenes EBS:  
+
+| **Tipo de Volumen** | **Uso recomendado en Windows** | **Características** |
+|---------------------|--------------------------------|---------------------|
+| **gp3 (General Purpose SSD)** | Servidores de aplicaciones y bases de datos en Windows | Rendimiento predecible, hasta 16,000 IOPS, 1,000 MB/s |
+| **gp2 (General Purpose SSD)** | Instancias Windows de uso general | Rendimiento basado en tamaño, hasta 3,000 IOPS |
+| **io1/io2 (Provisioned IOPS SSD)** | Bases de datos SQL Server de alto rendimiento | Latencia baja, hasta 256,000 IOPS |
+| **st1 (Throughput Optimized HDD)** | Servidores de archivos en Windows | Alta tasa de transferencia, menor costo |
+| **sc1 (Cold HDD)** | Archivos de respaldo en Windows | Bajo costo, rendimiento secuencial |
+
+### **2. Creación y configuración de un volumen EBS en Windows**  
+
+### **Paso 1: Crear el volumen EBS**  
+1. Ir a **AWS Management Console** > **EC2** > **Volúmenes**.  
+2. Hacer clic en **Crear volumen**.  
+3. Seleccionar el **tipo de volumen** (ej. gp3).  
+4. Definir el tamaño y la zona de disponibilidad (debe coincidir con la instancia EC2).  
+5. Hacer clic en **Crear volumen**.  
+
+### **Paso 2: Adjuntar el volumen a una instancia EC2**  
+1. Seleccionar el volumen creado.  
+2. Hacer clic en **Acciones** > **Adjuntar volumen**.  
+3. Elegir la instancia Windows EC2 y hacer clic en **Adjuntar**.  
+
+### **Paso 3: Inicializar el volumen en Windows**  
+1. Conectarse a la instancia Windows vía **RDP**.  
+2. Abrir el **Administrador de discos** (`diskmgmt.msc`).  
+3. Identificar el nuevo volumen (mostrará "No asignado").  
+4. Hacer clic derecho en el volumen y seleccionar **Inicializar disco**.  
+5. Elegir **MBR** o **GPT** según la necesidad.  
+6. Crear un nuevo volumen, asignar una letra de unidad y formatearlo en **NTFS**.
+
+### **3. Buenas prácticas**  
+✅ **Usar gp3 en lugar de gp2** para obtener mejor rendimiento a menor costo.  
+✅ **Habilitar copias de seguridad automáticas** con **Snapshots de EBS**.  
+✅ **Monitorear el rendimiento** con **CloudWatch**.  
+✅ **Usar múltiples volúmenes** para separar sistema operativo y datos.  
+
+💡 **Ejemplo de uso:** Un servidor Windows con SQL Server puede usar un volumen **io2** para bases de datos y un **gp3** para archivos del sistema.
+
+### Resumen
+
+### ¿Cómo se crea un volumen EBS en AWS?
+
+Crear un volumen EBS en Amazon Web Services es una tarea esencial que proporcionará a tus instancias de EC2 el almacenamiento persistente que necesitan. A continuación, veremos cómo puedes configurar un volumen EBS desde cero y conectarlo a una instancia de Windows.
+
+### ¿Qué pasos iniciales se deben seguir?
+
+Para comenzar, dirígete a la consola de administración de AWS y sigue estos pasos:
+
+- **Crear una instancia EC2**: Accede al servicio EC2 y selecciona una instancia tipo Windows. Es recomendable elegir un tamaño grande para evitar problemas de capacidad.
+- **Configurar detalles de la instancia**: Utiliza la VPC y la subred pública por defecto. No se necesitan roles adicionales ni unirlo a un dominio.
+- **Agregar almacenamiento**: Define 60 GB para el disco raíz y agrega un volumen adicional de 100 GB. Configura las etiquetas, como "Windows Platzi" para identificar la instancia.
+
+### ¿Cómo configurar la seguridad y lanzar la instancia?
+
+Después de definir el almacenamiento, sigue estos pasos para finalizar la configuración:
+
+- **Grupo de seguridad**: Permite acceso al puerto RDP desde tu dirección IP y crea un grupo de seguridad denominado "Platzi Windows".
+- **Crear y descargar la llave**: Al lanzar la instancia, crea una nueva clave, descárgala y úsala para obtener el password del administrador.
+- **Conectar a la instancia vía RDP**: Accede al servidor utilizando el password generado y establece conexión con el servidor Windows 2016.
+
+### ¿Por qué no aparece el disco adicional?
+
+Aunque se haya añadido un disco extra, puede no aparecer automáticamente en Windows. Para solucionarlo:
+
+- **Buscar en File and Storage Services**: Ve a "Discos" y busca el disco que aparece "offline".
+- **Activar el disco**: Haz clic derecho y selecciona "Bring Online". Esto comenzará a aprovisionar el disco.
+
+### ¿Cómo crear y extender un volumen en Windows?
+
+Una vez el disco esté en línea, el siguiente paso es crear y extender un volumen:
+
+- **Crear un nuevo volumen**: Dentro del administrador de discos, selecciona el nuevo disco, asigna una letra y formatea el espacio. Inicialmente, serán 100 GB.
+- **Extender el volumen**: Si necesitas más espacio, regresa a la configuración del volumen EBS en AWS. Puedes modificar el tamaño hasta 200 GB, pero recuerda que EBS solo permite aumentar, no disminuir el tamaño de un volumen.
+
+### ¿Cuál es la importancia de manejar correctamente el almacenamiento?
+
+El almacenamiento adecuado es esencial para evitar tareas de extendimiento, aunque ampliarlo es posible cuando las necesidades cambian. Ten presente las siguientes ventajas del uso de EBS:
+
+- **Flexibilidad**: Crece el almacenamiento acorde a tus necesidades sin comprometer el servicio.
+- **Persistencia de datos**: Los datos almacenados en EBS persisten independientemente del ciclo de vida de la instancia.
+- **Respaldo y recuperación**: Puedes crear snapshots para respaldar y recuperar datos de manera eficiente.
+
+Al integrar estos pasos en la creación y gestión de volúmenes EBS, aprovecharás al máximo las capacidades de AWS para tus instancias de Windows. Sigue practicando y experimentando con estas funciones para seguir solidificando tus habilidades en la administración de servicios en la nube. ¡Buena suerte en tu camino de aprendizaje!
+
+## Volumen EBS para Linux
+
+Amazon Elastic Block Store (**EBS**) proporciona almacenamiento persistente para instancias EC2 en Linux. Se pueden adjuntar, formatear y montar como discos adicionales en el sistema.  
+
+### **1. Tipos de Volumen EBS recomendados para Linux**  
+
+| **Tipo de Volumen** | **Uso recomendado** | **Características** |
+|---------------------|--------------------|---------------------|
+| **gp3 (General Purpose SSD)** | Servidores web, aplicaciones y bases de datos de uso general | Rendimiento predecible, hasta 16,000 IOPS, 1,000 MB/s |
+| **gp2 (General Purpose SSD)** | Instancias de propósito general | Rendimiento basado en tamaño, hasta 3,000 IOPS |
+| **io1/io2 (Provisioned IOPS SSD)** | Bases de datos como MySQL, PostgreSQL | Baja latencia, hasta 256,000 IOPS |
+| **st1 (Throughput Optimized HDD)** | Servidores de archivos, Big Data | Alta tasa de transferencia, menor costo |
+| **sc1 (Cold HDD)** | Almacenamiento de respaldo y archivado | Bajo costo, rendimiento secuencial |
+
+### **2. Crear y configurar un volumen EBS en Linux**  
+
+### **Paso 1: Crear el volumen en AWS**  
+1. Ir a **AWS Management Console** > **EC2** > **Volúmenes**.  
+2. Hacer clic en **Crear volumen**.  
+3. Elegir el **tipo de volumen** (ej. gp3).  
+4. Definir el tamaño y la zona de disponibilidad (debe coincidir con la instancia EC2).  
+5. Hacer clic en **Crear volumen**.  
+
+### **Paso 2: Adjuntar el volumen a una instancia EC2**  
+1. Seleccionar el volumen creado.  
+2. Hacer clic en **Acciones** > **Adjuntar volumen**.  
+3. Elegir la instancia EC2 y hacer clic en **Adjuntar**.  
+
+### **Paso 3: Formatear y montar el volumen en Linux**  
+1. Conectar a la instancia vía **SSH**:  
+   ```bash
+   ssh -i clave.pem usuario@ip-publica
+   ```
+2. Identificar el nuevo volumen con `lsblk`:  
+   ```bash
+   lsblk
+   ```
+3. Crear un sistema de archivos en el nuevo volumen (ejemplo con **ext4**):  
+   ```bash
+   sudo mkfs -t ext4 /dev/xvdf
+   ```
+4. Crear un punto de montaje:  
+   ```bash
+   sudo mkdir /mnt/volumen_ebs
+   ```
+5. Montar el volumen en la carpeta creada:  
+   ```bash
+   sudo mount /dev/xvdf /mnt/volumen_ebs
+   ```
+6. Verificar que está montado:  
+   ```bash
+   df -h
+   ```
+7. **Hacer el montaje permanente** (para que persista tras reinicio):  
+   - Obtener el **UUID** del volumen:  
+     ```bash
+     sudo blkid /dev/xvdf
+     ```
+   - Editar el archivo `/etc/fstab`:  
+     ```bash
+     sudo nano /etc/fstab
+     ```
+   - Agregar la línea:  
+     ```
+     UUID=xxxxxxx /mnt/volumen_ebs ext4 defaults,nofail 0 2
+     ```
+   - Guardar y salir (`Ctrl + X`, `Y`, `Enter`).  
+   - Probar el montaje:  
+     ```bash
+     sudo mount -a
+     ```
+
+### **3. Buenas prácticas**  
+✅ **Usar gp3 en lugar de gp2** para mejor rendimiento y menor costo.  
+✅ **Habilitar copias de seguridad** con **Snapshots de EBS**.  
+✅ **Monitorear el rendimiento** con **CloudWatch**.  
+✅ **Usar volúmenes separados** para sistema y datos en bases de datos.
+
+### Resumen
+
+### ¿Cómo crear una instancia Linux con un volumen EBS en AWS?
+
+Al sumergirnos en el mundo de la computación en la nube, uno de los pasos esenciales es aprender a configurar una instancia Linux con un volumen EBS utilizando Amazon Web Services (AWS). Este proceso puede parecer complejo al principio, pero con la guía adecuada, descubrirás que es más sencillo de lo que imaginas.
+
+### ¿Cuál es el proceso de despliegue de una instancia?
+
+Para comenzar, nos dirigimos a la consola de AWS, donde creamos una nueva instancia. Utilizaremos la imagen de Amazon Linux por defecto y configuraremos la instancia para que el tamaño sea mayor. Los pasos son:
+
+- **Seleccionar la imagen y el tamaño de la instancia**: Optamos por Amazon Linux y ajustamos el tamaño según nuestras necesidades.
+- **Configuración de almacenamiento**: Aquí dejamos el volumen raíz más grande y añadimos un volumen adicional de 35 GB.
+- **Agregar etiquetas y configurar el security group**: Asignamos un nombre a la etiqueta, en este caso "linux platzi", y configuramos el security group permitiendo solo el puerto 22 desde nuestra IP.
+- **Lanzamiento de la instancia**: Utilizamos una llave de acceso para potenciar la seguridad y lanzamos la instancia.
+
+### ¿Cómo acceder y verificar el almacenamiento?
+
+Una vez que la instancia está en marcha, es momento de conectarse a ella. Podremos verificar el almacenamiento utilizando comandos Linux.
+
+- **Conexión a la instancia**: Examinamos la IP pública proporcionada, utilizamos herramientas como PuTTY o MobaXterm, y nos conectamos a la instancia.
+- **Verificación con lsblk**: Ejecutamos este comando para observar dos discos; uno de 20 GB perteneciente al volumen raíz y otro de 35 GB, listo para ser configurado.
+
+### ¿Cómo configurar el volumen EBS?
+
+Una vez dentro de la instancia, es crucial dar formato al volumen y montar el sistema de archivos para que el espacio de almacenamiento esté preparado para ser utilizado:
+
+1. **Formato del volumen**: Usamos un sistema de archivos soportado por Linux, como ext4, para formatear el volumen.
+
+`sudo mkfs -t ext4 /dev/xvdb`
+
+2. **Creación del punto de montaje**: Se crea un directorio en el sistema donde el volumen EBS estará montado.
+
+`mkdir /platzi`
+
+3. Montaje del volumen: Se monta el volumen en el directorio creado.
+
+`sudo mount /dev/xvdb /platzi`
+
+Con esto, cualquier archivo creado dentro de "/platzi" se almacenará directamente en el volumen EBS.
+
+### ¿Cómo manejar el aumento del tamaño del volumen?
+
+AWS proporciona flexibilidad para aumentar el tamaño de los volúmenes de manera sencilla. Cabe destacar que, aunque podemos aumentar el tamaño de los volúmenes, no es posible reducir su tamaño:
+
+1. **Ampliación desde la consola de AWS**: Navegamos a la sección de volúmenes, seleccionamos el volumen y utilizamos la opción "modify" para ampliar su tamaño.
+2. **Ajuste en el sistema operativo**: Posteriormente, ejecutamos el comando resizefs para que el sistema operativo reconozca el nuevo tamaño disponible.
+
+`sudo resize2fs /dev/xvdb`
+
+### Recomendaciones y consejos
+
+- Asegúrate de realizar un backup antes de realizar cambios significativos en tus volúmenes.
+- Familiarízate con los comandos de Linux, dado que simplifican mucho el manejo de almacenamiento en la nube.
+- Explora todas las opciones de EBS que ofrece AWS; puedes aprovechar funcionalidades avanzadas para optimizar el rendimiento de tus aplicaciones.
+
+Aprender estos pasos te preparará no solo para gestionar almacenamiento en AWS, sino también para enfrentar desafíos más complejos en la administración de sistemas en la nube. ¡No te detengas aquí! Continúa explorando y experimentando para mejorar tus habilidades en la nube.
+
+`lsblk` = revisamos volumenes montados
+
+`sudo mkfs -t ext4 /dev/xdb` = Este comando nos ayuda a dar formato al volumen.
+
+`sudo mkdir platzi` = Creamos punto o directorio de montaje de la ruta
+
+`sudo mount /dev/xvdb platzi`= Realizamos el montaje del volumen a punto de montaje que se indico anteriormente
+
+`cd platzi` = Aquí vamos al punto de montaje para poder escribir.
+
+Nota: El best practice es que se pueda editar el archivo /etc/fstab para agregar una linea donde se agrega el punto de montaje y así quedara de manera persistente en el SO.
+
+## AWS Storage S3 vs EBS vs EFS, Cuándo usar cada uno
+
+AWS ofrece múltiples soluciones de almacenamiento, pero cada una está optimizada para casos de uso específicos. Aquí te explico sus diferencias y cuándo usar cada una. 
+
+### **📌 Comparación general**
+| **Característica** | **Amazon S3** (Simple Storage Service) | **Amazon EBS** (Elastic Block Store) | **Amazon EFS** (Elastic File System) |
+|-------------------|-----------------------------------|----------------------------------|-----------------------------|
+| **Tipo de almacenamiento** | Objeto | Bloques | Archivos |
+| **Acceso** | HTTP(S) mediante API REST | Adjuntado a una sola instancia EC2 | Montable en múltiples instancias EC2 |
+| **Escalabilidad** | Altamente escalable | Escalabilidad limitada al tamaño del volumen | Escalable automáticamente |
+| **Persistencia** | Alta disponibilidad y redundancia | Persistente, pero ligado a una zona de disponibilidad (AZ) | Alta disponibilidad en múltiples AZ |
+| **Casos de uso** | Almacenamiento de datos, copias de seguridad, sitios web estáticos, big data | Discos para bases de datos, sistemas operativos, aplicaciones de alto rendimiento | Aplicaciones compartidas, servidores web, procesamiento de datos |
+
+### **🛠️ Cuándo usar cada uno**  
+
+### **1️⃣ Amazon S3 (Almacenamiento de objetos)**
+📌 **Ideal para:**  
+✅ Sitios web estáticos.  
+✅ Almacenamiento de archivos, imágenes, videos, logs.  
+✅ Backup y archivado.  
+✅ Data lakes y big data.  
+✅ Distribución de contenido con CloudFront.  
+
+📌 **Ejemplo de uso:**  
+- Una aplicación web que necesita almacenar imágenes de perfil de usuarios.  
+- Un sistema de backup automático de bases de datos.
+
+### **2️⃣ Amazon EBS (Almacenamiento en bloques)**
+📌 **Ideal para:**  
+✅ Discos duros de instancias EC2.  
+✅ Bases de datos como MySQL, PostgreSQL.  
+✅ Aplicaciones que requieren acceso rápido a discos SSD.  
+✅ Ambientes que requieren alto rendimiento y baja latencia.  
+
+📌 **Ejemplo de uso:**  
+- Un servidor de base de datos en EC2 que requiere almacenamiento persistente.  
+- Un servidor de aplicaciones que necesita almacenamiento rápido y confiable.  
+
+🔹 **Nota:** Un volumen EBS solo puede ser usado por una instancia EC2 a la vez y está ligado a una **zona de disponibilidad (AZ)**.
+
+### **3️⃣ Amazon EFS (Almacenamiento de archivos)**
+📌 **Ideal para:**  
+✅ Aplicaciones distribuidas o multi-servidor.  
+✅ Servidores web con múltiples instancias EC2.  
+✅ Procesamiento de datos en paralelo (Big Data, Machine Learning).  
+✅ Compartir archivos entre varias instancias EC2.  
+
+📌 **Ejemplo de uso:**  
+- Un servidor web con múltiples instancias EC2 que necesitan compartir los mismos archivos.  
+- Un clúster de procesamiento de datos con varias instancias de EC2 accediendo a los mismos archivos.  
+
+🔹 **Nota:** A diferencia de EBS, **EFS permite que múltiples instancias EC2 accedan a los mismos archivos simultáneamente**.
+
+### **🚀 Resumen final: ¿Cuál elegir?**
+| **Necesidad** | **Servicio recomendado** |
+|--------------|------------------------|
+| Almacenamiento de objetos (imágenes, videos, backups, logs) | **Amazon S3** |
+| Disco duro para una instancia EC2 (bases de datos, SO) | **Amazon EBS** |
+| Compartir archivos entre múltiples EC2 (aplicaciones distribuidas) | **Amazon EFS** |
+| Data Lakes y almacenamiento de datos a gran escala | **Amazon S3** |
+| Archivos que necesitan acceso rápido desde múltiples servidores | **Amazon EFS** |
+| Almacenamiento de estado para instancias EC2 individuales | **Amazon EBS** |
+
+💡 **Consejo:** En arquitecturas modernas, puedes combinar estos servicios. Por ejemplo, usar **EBS para bases de datos**, **EFS para compartir archivos**, y **S3 para backups**.
+
+### Resumen
+
+### ¿Qué tipos de almacenamiento ofrece AWS?
+
+AWS proporciona una variedad de servicios de almacenamiento que se adaptan a diferentes necesidades empresariales y tecnológicas, permitiendo a las organizaciones escalar, administrar costos y optimizar el rendimiento de sus recursos. Los tres principales tipos de almacenamiento en AWS son: Simple Storage Service (S3), Elastic Block Storage (EBS) y Elastic File System (EFS). Comprender sus diferencias es crucial para seleccionar el almacenamiento adecuado para cada caso de uso.
+
+### ¿Para qué se utiliza S3?
+
+- **Orientación a objetos**: AWS S3 es un servicio de almacenamiento orientado a objetos. Es adecuado para almacenar datos desestructurados como imágenes, documentos y archivos.
+- **Pricing basado en el consumo**: Los costos de S3 dependen directamente del uso. Sólo pagas por lo que consumes.
+- **Capacidad de almacenamiento ilimitada**: Puedes almacenar petabytes y exabytes de datos sin preocuparte por los límites de capacidad.
+- **Alta escalabilidad y disponibilidad**: S3 es conocido por su capacidad para escalar automáticamente y su alta disponibilidad, pudiendo manejar fallos en hasta dos zonas de disponibilidad.
+- **Casos de uso**: Ideal para almacenamiento de backups, información histórica, procesamiento de Big Data y sitios web estáticos.
+
+### ¿Qué hace único a EBS?
+
+- **Sistema de bloques**: EBS es un sistema de almacenamiento a nivel de bloques, lo cual es ideal para instalar aplicaciones y sistemas operativos.
+- **Pricing por aprovisionamiento**: Al utilizar EBS, pagas por la capacidad reservada, independientemente del uso real.
+- **Límite de 16 TB por volumen**: Aunque es escalable, la capacidad máxima de un EBS es de 16 TB por volumen.
+- **Disponibilidad más limitada**: EBS no tolera fallos de una zona de disponibilidad, por lo que es recomendable usar snapshots.
+- **Casos de uso comunes**: Suele usarse para el procesamiento de Big Data, bases de datos no relacionales, aplicaciones de contenido dinámico y servidores web.
+
+### ¿Cuál es el uso de Elastic File System (EFS)?
+
+- **Sistema de archivos elástico**: EFS permite que múltiples instancias accedan simultáneamente a los mismos datos, optimizando la colaboración.
+- **Pricing por consumo**: Similar a S3, EFS factura según el uso y permite crecer de manera automática.
+- **Límite de archivo de 52 TB**: Cada archivo almacenado en EFS puede tener un tamaño máximo de 52 TB.
+- **Alta escalabilidad y disponibilidad replicada**: Al igual que S3, EFS tiene una alta disponibilidad gracias a la replicación de datos.
+- **Casos de uso específicos**: Perfecto para aplicaciones que requieren el acceso simultáneo a datos desde múltiples instancias, como sitios web con balanceadores de carga.
+
+### ¿Cuáles son las diferencias clave en la seguridad y el acceso?
+
+### ¿Cómo se maneja la encriptación?
+
+En AWS, la encriptación es una parte integral de la seguridad del almacenamiento:
+
+- **S3** ofrece varios métodos de cifrado, incluyendo cifrado del lado del servidor con opciones S3, C y KMS, así como cifrado del lado del cliente, dependiendo del nivel de control deseado.
+- **EBS** también admite encriptación con KMS, permitiendo proteger los datos sensibles.
+- **EFS** se beneficia de cifrado en el reposo y en tránsito, asegurando la protección total de los datos.
+
+### ¿Qué opciones de control de acceso existen?
+
+Cada tipo de almacenamiento tiene diferentes mecanismos para controlar el acceso a los datos:
+
+- **S3** utiliza políticas de bucket, listas de control de acceso y políticas de usuario para gestionar el acceso basado en las cuentas y permisos.
+- **EBS** y **EFS** permiten el control a nivel de red mediante listas de control de acceso, grupos de seguridad y políticas de usuario asociadas con VPCs (Virtual Private Clouds).
+
+### ¿Cómo afecta la disponibilidad de los servicios?
+
+### Comparación de disponibilidad entre S3, EBS y EFS
+
+- **S3 estándar** mantiene una disponibilidad del 99.99%, garantizando que los objetos continúen operando incluso con fallos en dos zonas de disponibilidad.
+- **EBS** no soporta la caída de una zona de disponibilidad, necesitando snapshots como medidas de contingencia.
+- **EFS** está diseñado para alta disponibilidad, respaldado por la replicación que permite mantener el servicio operativo pese a los fallos en una zona de disponibilidad.
+
+En resumen, cada tipo de almacenamiento en AWS tiene sus propias particularidades que los hacen adecuados para diferentes escenarios. La elección depende de las necesidades específicas de almacenamiento, el control necesario sobre el acceso, la seguridad y las condiciones económicas que puedas enfrentar. Esto asegura que cada organización maximice la eficiencia y seguridad de sus datos.
