@@ -1363,3 +1363,211 @@ Cuando migramos bases de datos a Amazon RDS u otros sistemas, podemos categoriza
 Las migraciones homogéneas son migraciones donde la base de datos de origen y la de destino puede tener diferentes versiones del mismo motor, o son bases de datos compatibles entre sí (*MySQL y Aurora, por ejemplo*).
 
 También podemos realizar migraciones heterogéneas, donde la base de datos de origen no es compatible con la de destino. Estas migraciones NO siempre son posibles, y antes de realizar la migración vamos a necesitar convertir el esquema de la base de datos con la herramienta AWS Schema Conversion Tool.
+
+## Casos de uso de RDS
+
+Amazon RDS (Relational Database Service) es un servicio administrado de bases de datos relacionales que ofrece alta disponibilidad, escalabilidad y seguridad sin la necesidad de gestionar la infraestructura subyacente. A continuación, se presentan algunos de los principales casos de uso de RDS:
+
+### 1️⃣ **Aplicaciones Web y Móviles 📱🌐**  
+📌 **Uso:**  
+- Almacenar y gestionar datos de usuarios, autenticación y preferencias.  
+- Soporta aplicaciones con picos de tráfico gracias a su escalabilidad automática.  
+
+📌 **Ejemplo:**  
+- Una tienda en línea que usa **RDS MySQL** para gestionar pedidos y usuarios.  
+- Aplicaciones móviles que almacenan información en **RDS PostgreSQL**.
+
+### 2️⃣ **Análisis de Datos y Business Intelligence 📊**  
+📌 **Uso:**  
+- Integración con herramientas de análisis como **Amazon Redshift**, **AWS Glue** y **QuickSight**.  
+- Procesamiento de datos estructurados en entornos empresariales.  
+
+📌 **Ejemplo:**  
+- Un banco que analiza transacciones en **RDS SQL Server** para detectar fraudes.  
+- Empresas que consolidan datos desde distintas fuentes en **Amazon Aurora** para generación de reportes.
+
+### 3️⃣ **Sistemas de Gestión de Contenidos (CMS) 📝**  
+📌 **Uso:**  
+- Almacenamiento de contenido dinámico para plataformas como **WordPress, Joomla y Drupal**.  
+- Manejo de blogs, sitios de noticias y portales de información.  
+
+📌 **Ejemplo:**  
+- Un sitio web de noticias que almacena artículos en **RDS MariaDB**.  
+- Una empresa de medios que usa **RDS PostgreSQL** para gestionar su CMS.
+
+### 4️⃣ **Aplicaciones Empresariales y ERP 🏢**  
+📌 **Uso:**  
+- Manejo de datos financieros, RRHH y procesos internos de grandes corporaciones.  
+- Migración de bases de datos on-premise a la nube para reducir costos y aumentar disponibilidad.  
+
+📌 **Ejemplo:**  
+- Un ERP basado en **SAP HANA** integrado con **RDS SQL Server**.  
+- Un sistema de gestión de empleados en **RDS Oracle**.
+
+### 5️⃣ **Juegos y Aplicaciones en Tiempo Real 🎮**  
+📌 **Uso:**  
+- Gestión de jugadores, partidas y transacciones dentro del juego.  
+- Soporte para sesiones multijugador escalables.  
+
+📌 **Ejemplo:**  
+- Un videojuego en línea que almacena perfiles de jugadores en **Amazon Aurora**.  
+- Un casino en línea que usa **RDS MySQL** para registrar apuestas en tiempo real.
+
+### 6️⃣ **E-Commerce y Marketplaces 🛒**  
+📌 **Uso:**  
+- Gestión de catálogos de productos, órdenes y pagos.  
+- Integración con pasarelas de pago y sistemas de recomendación.  
+
+📌 **Ejemplo:**  
+- Un marketplace que usa **RDS MySQL** para gestionar órdenes de compra.  
+- Una tienda de suscripción con **RDS PostgreSQL** para manejar clientes y pagos recurrentes.
+
+### 7️⃣ **Aplicaciones Financieras y Bancarias 💳**  
+📌 **Uso:**  
+- Almacenamiento de transacciones seguras con cumplimiento normativo.  
+- Manejo de grandes volúmenes de operaciones con alta disponibilidad.  
+
+📌 **Ejemplo:**  
+- Un banco que usa **RDS SQL Server** para procesar transferencias electrónicas.  
+- Una fintech que almacena datos de préstamos en **RDS PostgreSQL**.
+
+### 🚀 **Conclusión**  
+✔ **Amazon RDS** es ideal para aplicaciones escalables y de alta disponibilidad en diversos sectores.  
+✔ **Reduce costos operativos** al eliminar la gestión manual de bases de datos.  
+✔ **Asegura datos críticos** con backups automáticos y replicación Multi-AZ.
+
+### Resumen
+
+### ¿Qué es RDS y cómo se integra en diferentes arquitecturas?
+
+Amazon RDS (Relational Database Service) es un servicio administrado que ofrece varias opciones de motores de bases de datos relacionales. Este servicio simplifica muchas tareas tediosas relacionadas con la administración de bases de datos, como la provisión, el parcheo, y la copia de seguridad. Al aparecer en diferentes escenarios, RDS se adapta perfectamente a tus necesidades, ya sea ejecutando aplicaciones web sencillas o complejas arquitecturas empresariales con alta carga de datos.
+
+### ¿Cómo funciona la arquitectura típica de RDS?
+
+En una configuración comúnmente utilizada, puedes tener los siguientes componentes:
+
+- **Route 53**: El servicio de DNS de Amazon se utiliza para conectar tu dominio al balanceador de carga externo.
+- **Balanceador de carga**: Este se encarga de distribuir la carga entre instancias en múltiples zonas de disponibilidad.
+- **Subred pública versus privada**: Las instancias se alojan en subredes públicas para la capa web y en subredes privadas para la aplicación.
+- **RDS en Multi-AZ**: La base de datos puede estar configurada en un entorno multi-AZ, lo que permite alta disponibilidad mediante una instancia maestra y una de standby.
+
+Este diseño es ideal para sitios web que buscan alta disponibilidad, con distribuciones en diferentes capas (web, aplicación y base de datos) y réplicas de lectura para descargar las consultas a la base de datos principal.
+
+### ¿Qué características de RDS son destacables en este contexto?
+
+Algunas de las funcionalidades más relevantes son:
+
+- **Réplicas de lectura**: Mejoran el rendimiento de lectura distribuyendo la carga de trabajo. Las réplicas de lectura son especialmente útiles para aplicaciones de lectura intensiva.
+- **Multi-AZ**: Entre sus beneficios está la capacidad de conmutación por error automática en caso de que falle la base de datos principal, promoviendo la continuidad del servicio.
+
+### ¿Cuáles son otros casos de uso de RDS?
+
+RDS no solo cubre necesidades complejas sino también más simples y específicas:
+
+- **Un escenario sencillo**: Puede involucrar un único dominio con balanceo de carga básico en una sola zona de disponibilidad.
+- En situaciones con **base de datos on-premise**, puedes utilizar RDS para restaurar una base de datos en la nube. Por ejemplo, usando SQL Server con almacenamiento S3 para backups amplía las capacidades de integración y recuperación de datos.
+
+### ¿Por qué considerar RDS para tus proyectos?
+
+Además de las funcionalidades mencionadas, RDS ofrece seis motores de bases de datos, cada uno adaptado para casos de uso específicos. Sus beneficios incluyen:
+
+- **Optimización de desempeño**: Gracias a la administración automática y capacidad de escalado.
+- **Seguridad**: Configuran entornos de bases de datos más seguros mediante cifrado y control de acceso.
+- **Flexibilidad**: Cambia el almacenamiento y modifica instancias según las demandas de tu aplicación.
+
+### Reflexión para el momento de migrar a RDS
+
+Si consideras migrar a RDS, identifica tus necesidades específicas y evalúa cómo el servicio puede solucionar problemas actuales o mejorar el desempeño de tus sistemas. Comparte tus ideas y experiencias, explorando cómo RDS podría transformar la gestión de tus datos y llevar a tus proyectos al siguiente nivel. Tu participación enriquecerá el aprendizaje y fomentará debates sobre la aplicabilidad de RDS en diversos contextos empresariales.
+
+## Introducción a Aurora
+
+Amazon Aurora es un servicio de base de datos relacional completamente administrado por AWS que ofrece alto rendimiento y disponibilidad a escala empresarial. Compatible con **MySQL** y **PostgreSQL**, proporciona una alternativa robusta y escalable a las bases de datos tradicionales con beneficios clave como replicación automática, failover rápido y almacenamiento distribuido.  
+
+### **Características principales de Aurora:**  
+✅ **Compatibilidad con MySQL y PostgreSQL:** Puedes migrar bases de datos existentes sin necesidad de grandes cambios.  
+✅ **Alto rendimiento:** Hasta 5 veces más rápido que MySQL y 3 veces más rápido que PostgreSQL en RDS.  
+✅ **Alta disponibilidad y escalabilidad:** Soporta despliegues Multi-AZ con recuperación automática.  
+✅ **Almacenamiento distribuido y autoescalable:** Crece automáticamente hasta **128 TB** sin necesidad de intervención manual.  
+✅ **Seguridad:** Soporte para cifrado en reposo y en tránsito con integración a AWS KMS.  
+✅ **Costo optimizado:** Pago por uso y escalabilidad automática del almacenamiento.  
+✅ **Aurora Serverless:** Permite escalar la base de datos automáticamente según la demanda sin necesidad de administrar instancias.  
+
+### **Casos de uso:**  
+🔹 Aplicaciones empresariales que requieren alta disponibilidad y bajo tiempo de inactividad.  
+🔹 Aplicaciones web y móviles con tráfico variable.  
+🔹 Migración desde bases de datos comerciales como Oracle o SQL Server.  
+🔹 Aplicaciones de análisis de datos y procesamiento transaccional.
+
+**Resumen**
+
+Aurora es el motor de base de datos más robusto de AWS a nivel relacional. Entre sus características encontramos que AWS garantiza que utilizar Aurora nos asegura un performance 5 veces superior a MySQL y hasta 3 veces superior a PostgreSQL. También soporta hasta 64 TB de almacenamiento y 15 réplicas de lectura con niveles de latencia inferiores a 10 ms.
+
+Cuando creamos una base de datos Aurora, realmente creamos un cluster de bases de datos compuesto por una instancia maestra y múltiples réplicas de lectura, todas desplegadas en diferentes zonas de disponibilidad dependiendo de la región que estamos utilizando.
+
+**Lecturas recomendadas**
+
+[Administración de un clóster de base de datos de Amazon Aurora - Amazon Aurora](https://docs.aws.amazon.com/es_es/AmazonRDS/latest/AuroraUserGuide/CHAP_Aurora.html)
+
+## Características de Aurora
+
+Amazon Aurora es un servicio de base de datos relacional administrado por AWS, diseñado para ofrecer alto rendimiento, disponibilidad y escalabilidad. Es compatible con **MySQL** y **PostgreSQL**, proporcionando una alternativa potente a bases de datos tradicionales.
+
+### **🔹 Características clave de Aurora**  
+
+✅ **1. Compatibilidad con MySQL y PostgreSQL**  
+   - Soporta la mayoría de los motores y extensiones de estos sistemas.  
+   - Permite migraciones sencillas desde bases de datos existentes.  
+
+✅ **2. Alto rendimiento**  
+   - Hasta **5 veces más rápido que MySQL** y **3 veces más rápido que PostgreSQL** en RDS.  
+   - Usa un motor optimizado que mejora la velocidad de lectura y escritura.  
+
+✅ **3. Almacenamiento distribuido y autoescalable**  
+   - Se expande automáticamente hasta **128 TB** sin intervención manual.  
+   - Datos replicados en **tres zonas de disponibilidad (AZs)** para mayor tolerancia a fallos.  
+
+✅ **4. Alta disponibilidad y recuperación automática**  
+   - Replicación automática de datos con failover en **segundos**.  
+   - Soporte para **despliegues Multi-AZ** y Aurora Global Database.  
+
+✅ **5. Aurora Serverless**  
+   - Escala automáticamente los recursos según la demanda.  
+   - No requiere administración manual de instancias, optimizando costos.  
+
+✅ **6. Seguridad y cumplimiento**  
+   - Cifrado de datos en **reposo** y **en tránsito** con AWS KMS.  
+   - Compatible con estándares como **HIPAA, PCI DSS y SOC**.  
+
+✅ **7. Copias de seguridad y restauración automática**  
+   - Backups continuos sin impacto en el rendimiento.  
+   - Restauración de datos con **punto en el tiempo (PITR)**.  
+
+✅ **8. Integración con otros servicios de AWS**  
+   - Compatible con **AWS Lambda, Amazon S3, AWS Glue y Amazon Redshift**.  
+   - Fácil integración con herramientas de análisis y machine learning.  
+
+✅ **9. Modelos de precios flexibles**  
+   - **Pago por uso**, solo se paga por lo que se consume.  
+   - Aurora Serverless reduce costos en aplicaciones con tráfico variable.
+
+### **🔹 Casos de uso**  
+📌 Aplicaciones empresariales con alta demanda y disponibilidad.  
+📌 Aplicaciones web y móviles con cargas de trabajo variables.  
+📌 Migración desde bases de datos comerciales como Oracle o SQL Server.  
+📌 Análisis de datos y procesamiento transaccional intensivo.
+
+**Resumen**
+
+Además de ser una base de datos muy potente y robusta, Aurora nos permite un nivel de customización muy alto, puede crecer hasta 64 TB y nuestra data esta replicada en múltiples Az.
+
+El **endpoint** de nuestra instancia principal nos permite conectarnos a la base de datos maestra y especificar las solicitudes de lectura y escritura, también tenemos **endpoints** para cada una de las replicas de lectura y un último **endpoint** a nivel de instancia que nos provee control sobre cargas de trabajo de la instancia principal y sus replicas, pero AWS nos recomienda NO utilizar este último **endpoint** de instancia.
+
+Otras características de Aurora:
+
+- **Autoreparación**: Guardar la información de la parte dañada en otra parte del disco y reparar el problema automáticamente.
+- **Cache Warm**: Hacer un precalentamiento de la caché al iniciar las consultas más comunes y sus resultados.
+- **Recuperación de accidentes**: Si falla la instancia principal, Aurora promueve una réplica de lectura o crea una nueva instancia principal.
+
+**Lecturas recomendadas**
+
+[How to Stream Data from Amazon DynamoDB to Amazon Aurora using AWS Lambda and Amazon Kinesis Firehose | AWS Database Blog](https://aws.amazon.com/es/blogs/database/how-to-stream-data-from-amazon-dynamodb-to-amazon-aurora-using-aws-lambda-and-amazon-kinesis-firehose/)

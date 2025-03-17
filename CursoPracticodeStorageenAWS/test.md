@@ -2,7 +2,7 @@
 
 1. **Cuando se usa versionamiento en S3, ¿qué pasa con las versiones anteriores del objeto?**
    
-**R//=** xxxxx
+**R//=** Quedan con una marca de eliminación e igualmente visibles con todos los objetos del bucket.
 
 2. **Estás intentando crear un sitio web estático en S3 para conectarlo al dominio corporativo de tu empresa, sin embargo, al momento de crear el bucket te das cuenta que el nombre ya esta siendo utilizado. ¿Qué podrías hacer para solucionar este problema?**
  
@@ -10,7 +10,7 @@
 
 3. **El área de auditoria de tu empresa está solicitando un registro de todas las acciones que se ejecutan sobre el bucket en el cual guardan la información crítica, para cumplir con este requerimiento deberías:**
    
-**R//=** xxxxxx
+**R//=** Configurar el log a nivel de objeto en el bucket.
 
 4. **¿Cuál funcionalidad te permite utilizar los CDN de AWS para mejorar la carga de archivos a S3?**
    
