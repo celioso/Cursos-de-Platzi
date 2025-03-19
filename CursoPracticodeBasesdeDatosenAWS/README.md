@@ -1571,3 +1571,1212 @@ Otras características de Aurora:
 **Lecturas recomendadas**
 
 [How to Stream Data from Amazon DynamoDB to Amazon Aurora using AWS Lambda and Amazon Kinesis Firehose | AWS Database Blog](https://aws.amazon.com/es/blogs/database/how-to-stream-data-from-amazon-dynamodb-to-amazon-aurora-using-aws-lambda-and-amazon-kinesis-firehose/)
+
+## Aurora Serverless
+
+Amazon **Aurora Serverless** es una variante de Amazon Aurora que permite escalar automáticamente la capacidad de la base de datos en función de la demanda de la aplicación. Es ideal para cargas de trabajo intermitentes, impredecibles o con patrones de uso variables.  
+
+### **🔹 Características clave:**  
+
+✅ **Escalabilidad automática**: Ajusta automáticamente la capacidad de la base de datos en función de la carga de trabajo.  
+
+✅ **Pago por uso**: Solo pagas por la capacidad utilizada, lo que reduce costos en comparación con una instancia tradicional en ejecución constante.  
+
+✅ **Alta disponibilidad**: Se distribuye en múltiples zonas de disponibilidad (AZ) de AWS, garantizando alta disponibilidad y recuperación ante fallos.  
+
+✅ **Inicio y suspensión automática**: Se puede configurar para que la base de datos se inicie y se detenga según la demanda, evitando costos innecesarios cuando no se usa.  
+
+✅ **Compatibilidad**: Compatible con MySQL y PostgreSQL, lo que facilita la migración desde bases de datos tradicionales.  
+
+✅ **Seguridad**: Integración con AWS IAM, cifrado en reposo y en tránsito, y backups automáticos.
+
+### **🔹 Casos de uso:**  
+
+🔹 **Aplicaciones con demanda variable** → Por ejemplo, una aplicación de reserva de boletos que tiene picos de tráfico en ciertos momentos del día.  
+
+🔹 **Entornos de desarrollo y prueba** → No necesitas una instancia en ejecución constante, lo que reduce costos.  
+
+🔹 **Aplicaciones de análisis de datos** → Se pueden realizar consultas grandes de forma ocasional sin pagar por una instancia dedicada.  
+
+🔹 **Nuevos proyectos o startups** → Permite empezar con costos bajos y escalar automáticamente a medida que la demanda aumenta.
+
+### **🔹 Diferencias entre Aurora estándar y Aurora Serverless**  
+
+| Característica          | Aurora Estándar          | Aurora Serverless |
+|------------------------|------------------------|-------------------|
+| **Escalabilidad**      | Manual o autoscaling con instancias | Totalmente automática |
+| **Pago**               | Por instancia (aunque esté inactiva) | Solo por uso |
+| **Disponibilidad**     | Multi-AZ con réplicas configurables | Multi-AZ sin gestión manual |
+| **Tiempo de respuesta** | Siempre disponible | Puede haber latencia al activarse |
+| **Casos de uso**       | Cargas de trabajo predecibles y constantes | Cargas intermitentes o impredecibles |
+
+### **🔹 ¿Cuándo elegir Aurora Serverless?**  
+✅ Si la carga de trabajo no es constante y puede haber períodos sin tráfico.  
+✅ Si quieres minimizar costos pagando solo por lo que usas.  
+✅ Si necesitas escalar sin gestionar instancias manualmente.  
+
+❌ **No es ideal si la base de datos necesita estar activa 24/7 con alta disponibilidad inmediata**, ya que el tiempo de reactivación puede causar latencias.
+
+📌 **Conclusión**: Aurora Serverless es una excelente opción para aplicaciones con demanda variable y para reducir costos sin comprometer el rendimiento y la escalabilidad. 🚀
+
+### Resumen
+
+Hasta el momento, la única base de datos relacional autoescalable que encontramos en el mercado es Aurora Serverless, una base de datos donde podemos seleccionar la mínima y máxima capacidad por instancia, a medida que la concurrencia sobre la base de datos va creciendo, esta capacidad mínima se incrementa hasta la capacidad máxima que nuestra aplicación debe soportar. Gracias a esto el precio de nuestros servicios disminuye, solo pagamos por el tiempo y la capacidad que realmente utilizamos.
+
+**Lecturas recomendadas**
+
+[In The Works – Amazon Aurora Serverless | AWS News Blog](https://aws.amazon.com/es/blogs/aws/in-the-works-amazon-aurora-serverless/)
+
+## Casos de uso de Aurora
+
+Amazon Aurora es una base de datos relacional administrada por AWS que combina el rendimiento y la disponibilidad de bases de datos comerciales con la simplicidad y el costo de las bases de datos de código abierto.
+
+### **🔹 1. Aplicaciones Empresariales de Alto Rendimiento**  
+Aurora es ideal para sistemas empresariales que requieren alta disponibilidad, escalabilidad y rendimiento.  
+
+✅ **Ejemplo:** ERP, CRM, sistemas de facturación y gestión de inventarios.  
+✅ **Beneficio:** Alta disponibilidad y escalabilidad automática sin intervención manual.
+
+### **🔹 2. Aplicaciones Web y Móviles**  
+Las aplicaciones web y móviles con alto tráfico pueden beneficiarse de la escalabilidad y rendimiento de Aurora.  
+
+✅ **Ejemplo:** Aplicaciones de e-commerce, redes sociales, plataformas de reserva de viajes.  
+✅ **Beneficio:** Soporte para millones de usuarios con latencias bajas y replicación global.
+
+### **🔹 3. Aplicaciones SaaS (Software as a Service)**  
+Las empresas que ofrecen software como servicio pueden aprovechar Aurora para manejar múltiples clientes con alto rendimiento.  
+
+✅ **Ejemplo:** Plataformas de gestión de proyectos, CRM en la nube.  
+✅ **Beneficio:** Facilidad de administración y escalabilidad para distintos clientes.
+
+### **🔹 4. Análisis de Datos en Tiempo Real**  
+Aurora permite procesar grandes volúmenes de datos en tiempo real con consultas rápidas.  
+
+✅ **Ejemplo:** Dashboards financieros, monitoreo de logs en tiempo real.  
+✅ **Beneficio:** Consultas eficientes con almacenamiento optimizado.
+
+### **🔹 5. Juegos en Línea y Streaming**  
+Las plataformas de gaming y transmisión de contenido requieren bases de datos con baja latencia y escalabilidad.  
+
+✅ **Ejemplo:** Juegos multijugador en línea, plataformas de streaming de video.  
+✅ **Beneficio:** Escalabilidad horizontal para manejar grandes volúmenes de usuarios simultáneos.
+
+### **🔹 6. Migraciones desde Bases de Datos Comerciales**  
+Aurora es una excelente opción para migrar desde bases de datos costosas como Oracle o SQL Server.  
+
+✅ **Ejemplo:** Empresas que desean reducir costos de licencias de bases de datos propietarias.  
+✅ **Beneficio:** Compatibilidad con MySQL y PostgreSQL, reduciendo costos de migración. 
+
+### **🔹 7. Aplicaciones con Demandas Variables (Aurora Serverless)**  
+Aurora Serverless es ideal para aplicaciones con tráfico intermitente o impredecible.  
+
+✅ **Ejemplo:** Aplicaciones de eventos, pruebas y desarrollo.  
+✅ **Beneficio:** Pago por uso sin necesidad de administrar la infraestructura. 
+
+📌 **Conclusión**: Amazon Aurora es una base de datos versátil que se adapta a múltiples casos de uso, desde aplicaciones empresariales hasta gaming y análisis de datos. Su rendimiento, escalabilidad y costos optimizados la convierten en una de las mejores opciones en AWS. 🚀
+
+## Características de DynamoDB
+
+Amazon DynamoDB es un servicio de base de datos NoSQL completamente administrado que proporciona alto rendimiento, escalabilidad y baja latencia. Es ideal para aplicaciones con grandes volúmenes de datos y tráfico variable.
+
+### **🔹 1. Rendimiento Rápido y Escalabilidad Automática**  
+✅ **Baja latencia (< 10 ms)** para operaciones de lectura y escritura.  
+✅ **Escalado automático** según la demanda, sin afectar el rendimiento.
+
+### **🔹 2. Arquitectura Serverless (Sin Servidores)**  
+✅ No requiere administración de infraestructura.  
+✅ AWS gestiona automáticamente el aprovisionamiento, mantenimiento y replicación.
+
+### **🔹 3. Modelo de Datos Flexible**  
+✅ **NoSQL basada en clave-valor y documentos JSON.**  
+✅ No requiere estructuras rígidas de esquema como en bases de datos relacionales.
+
+### **🔹 4. Alta Disponibilidad y Replicación Global**  
+✅ **Multi-Region y Multi-AZ** con AWS Global Tables.  
+✅ Replica datos en múltiples regiones automáticamente.
+
+### **🔹 5. Seguridad Integrada**  
+✅ **Cifrado en reposo y en tránsito** mediante AWS KMS.  
+✅ **Control de acceso con IAM** para permisos granulares.
+
+### **🔹 6. Modelo de Consistencia Configurable**  
+✅ **Lecturas consistentes eventualmente** (por defecto, más rápidas).  
+✅ **Lecturas consistentes fuertemente** (garantiza la última versión del dato).
+
+### **🔹 7. Integración con Otros Servicios de AWS**  
+✅ Se conecta fácilmente con **Lambda, API Gateway, S3, Kinesis, Redshift** y más.  
+✅ **Streaming de datos en tiempo real** con DynamoDB Streams.
+
+### **🔹 8. Modo de Capacidad Flexible**  
+✅ **On-Demand:** Paga solo por las lecturas/escrituras realizadas.  
+✅ **Provisioned:** Configura la capacidad de lectura/escritura para controlar costos.
+
+### **🔹 9. Índices Secundarios (GSI y LSI)**  
+✅ **Global Secondary Index (GSI):** Permite consultas rápidas en atributos no clave.  
+✅ **Local Secondary Index (LSI):** Optimiza consultas sin sacrificar la clave primaria.
+
+### **🔹 10. Copias de Seguridad y Recuperación**  
+✅ **Backups continuos y snapshots automáticos**.  
+✅ **Point-in-Time Recovery (PITR):** Recupera datos en un punto exacto del tiempo.
+
+📌 **Conclusión**: DynamoDB es ideal para aplicaciones con altos volúmenes de tráfico, escalabilidad dinámica y necesidades de alta disponibilidad, como IoT, gaming, e-commerce y big data. 🚀
+
+**Resumen**
+
+DynamoDB es el servicio para bases de datos NOSQL de AWS completamente administrado (*AWS se encarga de todo el background para que nosotros trabajemos nuestra aplicación*), compuesto de varios nodos y distribuido en varias regiones (*altamente disponible con replicación en diferentes locaciones*), es una base de datos de baja latencia con almacenamiento en caché y es completamente escalable sin downtime de nuestra aplicación.
+
+Este servicio se basa en dos conceptos importantes: las unidades en lectura (RCU, *4kb de bloques por segundo*) y las unidades de escritura (WRU, *1kb de bloques por segundo*). Con base en estos dos parámetros se determina el costo de nuestras bases de datos y el autoescalamiento.
+
+La unidad fundamental de DynamoDB son las tablas, que están compuestas por items, que están compuestos por atributos (*por ejemplo, la tabla trabajadores está compuesta por, trabajadores, cada uno con su nombre, edad, identificación y toda su información*). También debemos entender los conceptos de partition key (*llaves primarias para el espacio de almacenamiento*) , sort keys (*para organizar y ordenar la información*) y local and global secondary index (*otros atributos que podemos utilizar junto a las partition keys u otros atributos para obtener información más especifica y con mejor rendimiento*).
+
+**Lecturas recomendadas**
+
+[https://docs.aws.amazon.com/dynamodb/index.html#lang/es_es](https://docs.aws.amazon.com/dynamodb/index.html#lang/es_es)
+
+## Consistencia en DynamoDB
+
+DynamoDB ofrece dos modelos de consistencia en las operaciones de lectura:
+
+### **1️⃣ Lecturas con Consistencia Eventual (Eventually Consistent Reads)**
+✅ **Modo por defecto en DynamoDB.**  
+✅ Puede haber **un pequeño retraso** en la propagación de datos entre réplicas.  
+✅ Optimiza el rendimiento y escalabilidad.  
+✅ Adecuado para aplicaciones que pueden tolerar lecturas de datos ligeramente desactualizados.  
+
+**Ejemplo de uso:**  
+- Feeds de redes sociales.  
+- Dashboards en tiempo real donde la exactitud al instante no es crítica.
+
+### **2️⃣ Lecturas con Consistencia Fuerte (Strongly Consistent Reads)**
+✅ Garantiza que **la lectura siempre devuelve la última versión** del dato.  
+✅ **Mayor latencia y consumo de recursos** en comparación con la consistencia eventual.  
+✅ No siempre disponible en **DynamoDB Global Tables** (lecturas entre regiones).  
+
+**Ejemplo de uso:**  
+- Sistemas de reservas o inventarios en tiempo real.  
+- Aplicaciones bancarias donde la exactitud es crítica.
+
+### **📌 Comparación Rápida**  
+
+| Característica                 | Consistencia Eventual  | Consistencia Fuerte  |
+|--------------------------------|------------------------|----------------------|
+| **Disponibilidad**            | Alta                   | Menor               |
+| **Rendimiento**               | Más rápido             | Más lento           |
+| **Costos**                    | Menores                | Mayores             |
+| **Última versión garantizada**| ❌ No siempre          | ✅ Siempre          |
+| **Uso recomendado**           | Lecturas flexibles     | Lecturas críticas   |
+
+### **🛠️ Configuración en Código**
+Para obtener una lectura con consistencia fuerte en **AWS SDK**, se puede especificar el parámetro `ConsistentRead=True` en las consultas de lectura.
+
+**Ejemplo en Python (boto3)**:
+```python
+import boto3
+
+dynamodb = boto3.resource('dynamodb')
+table = dynamodb.Table('MiTabla')
+
+response = table.get_item(
+    Key={'ID': '123'},
+    ConsistentRead=True  # Fuerza la consistencia fuerte
+)
+
+print(response['Item'])
+```
+📌 **Nota:** Por defecto, `ConsistentRead=False`, lo que significa que la lectura será con consistencia eventual.
+
+🔹 **Conclusión**:  
+- Usa **consistencia eventual** para mejorar escalabilidad y rendimiento en la mayoría de los casos.  
+- Usa **consistencia fuerte** cuando necesites precisión absoluta en los datos. 🚀
+
+**Resumen**
+
+La consistencia eventual de lectura NO puede mostrar los resultados de una tarea de escritura reciente cuando consultamos una tabla recién actualizada, además, consume los 4kb de bloques por segundo en las unidades de lectura.
+
+Por otra parte, la consistencia fuerte de lectura funciona correctamente cuando consultamos una tabla y recibimos la respuesta más reciente, pero consume el doble que la consistencia eventual, así que será más costosa. Este tipo de consistencia es el adecuando para aplicaciones y casos de uso muy específicos donde la consulta y la escritura deben estar tan sincronizadas como sea posible.
+
+## Creando nuestra primer tabla en DynamoDB
+
+### **1️⃣ ¿Qué es una tabla en DynamoDB?**
+Una tabla en **DynamoDB** es una estructura NoSQL que almacena datos en formato de **clave-valor** y **documento**, sin esquemas rígidos.
+
+- **Cada tabla requiere una clave primaria**, que puede ser:
+  - **Clave de partición (Partition Key - PK)**: Una única clave que identifica cada ítem de manera única.
+  - **Clave compuesta (Partition Key + Sort Key)**: Se usa cuando los datos necesitan ser organizados por un criterio secundario.
+
+### **2️⃣ Creando una tabla desde la consola AWS**
+📌 **Pasos en la consola de AWS:**
+1. Ir a la consola de **AWS DynamoDB**.
+2. En el menú de la izquierda, hacer clic en **"Tables"** y luego en **"Create Table"**.
+3. Asignar un nombre a la tabla (por ejemplo, `Usuarios`).
+4. Seleccionar la **clave primaria**:
+   - **Partition Key:** `UserID` (Tipo: String).
+   - (Opcional) **Sort Key:** `FechaRegistro` (Tipo: String).
+5. Configurar la capacidad de escritura/lectura:
+   - **Modo On-Demand** (si no quieres gestionar la capacidad manualmente).
+6. Hacer clic en **"Create Table"** y esperar a que se cree.
+
+### **3️⃣ Creando una tabla con AWS CLI**
+Si prefieres la terminal, usa el siguiente comando:
+
+```sh
+aws dynamodb create-table \
+    --table-name Usuarios \
+    --attribute-definitions AttributeName=UserID,AttributeType=S \
+    --key-schema AttributeName=UserID,KeyType=HASH \
+    --billing-mode PAY_PER_REQUEST
+```
+
+### **4️⃣ Creando una tabla con Python (boto3)**
+Si estás usando Python y **boto3**, puedes crear una tabla con este código:
+
+```python
+import boto3
+
+# Inicializar cliente de DynamoDB
+dynamodb = boto3.resource('dynamodb')
+
+# Crear la tabla
+table = dynamodb.create_table(
+    TableName='Usuarios',
+    KeySchema=[
+        {'AttributeName': 'UserID', 'KeyType': 'HASH'}  # Clave primaria
+    ],
+    AttributeDefinitions=[
+        {'AttributeName': 'UserID', 'AttributeType': 'S'}  # Tipo de dato String
+    ],
+    BillingMode='PAY_PER_REQUEST'  # Modo de facturación
+)
+
+# Esperar a que la tabla esté lista
+table.meta.client.get_waiter('table_exists').wait(TableName='Usuarios')
+
+print("✅ Tabla creada exitosamente.")
+```
+
+### **5️⃣ Validando la Creación**
+Para verificar que la tabla fue creada, puedes listar todas las tablas con:
+
+```sh
+aws dynamodb list-tables
+```
+
+O desde Python:
+```python
+print(dynamodb.tables.all())
+```
+
+### **📌 Conclusión**
+- **DynamoDB** es una base de datos NoSQL altamente escalable y flexible.
+- Se pueden crear tablas desde la **consola AWS, AWS CLI o con SDKs** como `boto3`.
+- Es importante definir correctamente la **clave primaria** según el modelo de datos. 🚀
+
+### Resumen
+
+### ¿Cómo crear una tabla en DynamoDB?
+
+DynamoDB es un servicio de bases de datos NoSQL bajo la gran sombrilla de AWS que ofrece escalabilidad automática, alta disponibilidad y almacenamiento flexible de datos. En este apartado, te guiaré paso a paso para crear tu primera tabla en DynamoDB, utilizando las distintas configuraciones que ofrece la consola de AWS.
+
+### ¿Qué es y cómo funciona la clave de partición?
+
+Al crear una tabla en DynamoDB, primero debes especificar el nombre de la tabla. En este ejemplo, la tabla se llamará "trabajadores". Necesitarás una clave de partición, la cual es esencial para el almacenamiento eficiente de la información en sectores del disco. Usa el ID del trabajador como clave de partición (tipo cadena). Opcionalmente, puedes usar una clave de ordenación (sort key) para organizar datos por elementos como fecha, aunque en este caso no la utilizaremos.
+
+### ¿Cómo es la configuración básica de una tabla?
+
+Al configurar tu tabla, DynamoDB, por defecto, te proporciona cinco unidades de capacidad de lectura y cinco de escritura. Aunque esto es rápido, limita la personalización. La recomendación es deseleccionar esta opción para poder hacer ajustes detallados.
+
+- **Índices Secundarios**: Ofrecen consultas avanzadas, pero para este ejemplo, no crearemos ninguno.
+- **Capacidad**: Ajusta la capacidad de lectura y escritura según sea necesario. Observarás cómo el costo varía con las modificaciones, comenzando con capacidades bajas y ajustando basado en la demanda.
+- **Autoescalamiento**: Activa el autoescalamiento para la lectura y escritura al especificar un porcentaje de utilización deseado, estableciendo capacidades mínimas y máximas.
+
+Siempre habilita el autoescalamiento también para índices secundarios globales si los utilizas para consultas. Recuerda que, al habilitar el escalamiento, debes contar con un rol que tenga permisos adecuados para completar este proceso sin problemas.
+
+### ¿Cómo habilitar el cifrado y completar la creación de la tabla?
+
+El cifrado garantiza que tu información esté segura y cifrada en reposo. Se habilita únicamente desde opciones avanzadas, no en configuraciones predeterminadas. Tras configurar todo, da clic en "crear" y espera a que DynamoDB complete la creación de tu tabla.
+
+### ¿Qué opciones ofrece la consola de AWS una vez creada la tabla?
+
+Con tu tabla "trabajadores" ya creada, la consola de AWS te muestra información detallada y opciones clave.
+
+### ¿Cómo visualizar y gestionar elementos?
+
+En la pestaña de elementos puedes:
+
+- **Agregar elementos**: Ingesta elementos manualmente o usando JSON o SDK. Por ejemplo, crea un elemento con ID, nombre y atributos adicionales como edad o cargo.
+- **Realizar consultas**: Utiliza queries para buscar elementos específicos o scans para inspeccionar toda la tabla.
+
+### ¿Cómo utilizar métricas y alarmas para monitorear?
+
+En métricas, obtendrás gráficos de capacidades de lectura y escritura que permiten monitorear el rendimiento. Puedes:
+
+- **Crear alertas**: Configura alertas para notificar al administrador sobre cambios significativos, usando criterios como niveles de capacidad. Una alerta podría enviar notificaciones cuando supera un umbral especificado.
+
+### ¿Cómo ajustar la capacidad en bases de datos productivas?
+
+DynamoDB permite ajuste de capacidad en tiempo real, sin tiempo de inactividad. Puedes modificar la capacidad de lectura y escritura, beneficiándote de un escalamiento automático, sin afectar la disponibilidad de tus datos.
+
+### ¿Qué otras opciones se pueden configurar?
+
+DynamoDB ofrece opciones adicionales como:
+
+- **Índices, tablas globales, y copias de seguridad**: Estas opciones permiten gestionar cómo se indexan y respaldan tus datos.
+- **Desencadenadores y control de acceso**: Configuran acciones automáticas en respuesta a eventos y gestionan permisos de acceso.
+- **Etiquetado**: Utiliza etiquetas para clasificar y organizar recursos eficientemente.
+
+Crea tu tabla en DynamoDB utilizando estas configuraciones y explora el potencial de este servicio para gestionar datos con eficiencia y seguridad. ¡Continúa explorando y desarrollando tus habilidades en bases de datos!
+
+## Casos de uso en DynamoDB
+
+Amazon **DynamoDB** es una base de datos NoSQL totalmente administrada que ofrece alto rendimiento, escalabilidad automática y baja latencia. Se utiliza ampliamente en diversas industrias y casos de uso. 🚀
+
+### **1️⃣ Aplicaciones Web y Móviles en Tiempo Real**
+**📌 Escenario:** Aplicaciones que requieren alta disponibilidad y escalabilidad, como redes sociales, mensajería y juegos en línea.
+
+✅ **Ejemplo:**
+- Almacenar sesiones de usuario y preferencias.
+- Guardar mensajes de chat en tiempo real.
+- Gestionar perfiles de usuario en plataformas como Twitter o Facebook.
+
+**🔹 ¿Por qué DynamoDB?**
+- Latencia de milisegundos y escalabilidad automática.
+- Integración con AWS Lambda y Amazon API Gateway para arquitecturas sin servidor.
+
+### **2️⃣ Comercio Electrónico**
+**📌 Escenario:** Tiendas en línea con alto tráfico y necesidad de procesamiento rápido.
+
+✅ **Ejemplo:**
+- Gestión de carritos de compra.
+- Registro de historial de compras.
+- Recomendaciones de productos personalizadas.
+
+**🔹 ¿Por qué DynamoDB?**
+- Soporte para alta concurrencia de usuarios.
+- Modelo flexible sin esquemas rígidos para almacenar productos y transacciones.
+
+### **3️⃣ Internet de las Cosas (IoT)**
+**📌 Escenario:** Dispositivos inteligentes que generan grandes volúmenes de datos.
+
+✅ **Ejemplo:**
+- Monitoreo en tiempo real de sensores.
+- Registro de datos de temperatura, humedad y movimiento.
+- Automatización del hogar (smart homes).
+
+**🔹 ¿Por qué DynamoDB?**
+- Procesamiento en tiempo real con AWS IoT Core.
+- Compatible con arquitecturas basadas en eventos.
+
+### **4️⃣ Juegos en Línea**
+**📌 Escenario:** Videojuegos que necesitan almacenamiento rápido y confiable para perfiles y puntuaciones.
+
+✅ **Ejemplo:**
+- Guardado de progreso de los jugadores.
+- Tabla de clasificación en juegos multijugador.
+- Sincronización de datos entre múltiples dispositivos.
+
+**🔹 ¿Por qué DynamoDB?**
+- Capacidad de manejar millones de jugadores simultáneamente.
+- Integración con AWS Lambda para eventos en tiempo real.
+
+### **5️⃣ Finanzas y Banca**
+**📌 Escenario:** Aplicaciones bancarias que requieren seguridad y alta disponibilidad.
+
+✅ **Ejemplo:**
+- Registro de transacciones bancarias.
+- Análisis de fraude en tiempo real.
+- Gestión de cuentas y saldos.
+
+**🔹 ¿Por qué DynamoDB?**
+- Seguridad con encriptación en tránsito y en reposo.
+- Disponibilidad multi-región con backups automáticos.
+
+### **6️⃣ Sistemas de Recomendación**
+**📌 Escenario:** Plataformas que personalizan contenido basado en el comportamiento del usuario.
+
+✅ **Ejemplo:**
+- Recomendaciones de películas en streaming (Netflix, Prime Video).
+- Sugerencias de productos en e-commerce (Amazon, eBay).
+- Personalización de contenido en medios digitales.
+
+**🔹 ¿Por qué DynamoDB?**
+- Alta velocidad en consultas de datos personalizados.
+- Integración con Machine Learning en AWS.
+
+### **📌 Conclusión**
+DynamoDB es ideal para aplicaciones que requieren:
+✅ Escalabilidad automática.  
+✅ Baja latencia.  
+✅ Soporte para arquitecturas sin servidor.  
+✅ Integración con otros servicios de AWS.
+
+### Resumen
+
+El servicio de DynamoDB es muy útil en los siguientes casos:
+
+- Aplicaciones móviles
+- Internet de las cosas (*IoT, gracias al real time y su capacidad para ingesta de información*)
+- Aplicaciones Web
+- Gaming (*gracias a su alta disponibilidad, conexión y por ser no relacional*)
+- Manejo de sesiones
+- RealTime (*ya que no solo nos permite almacenar nuestra información, también podemos utilizar toda la data en tiempo real para alimentar otros servicios y generar otras arquitecturas*)
+
+## Base de Datos corporativa para encuestas en DynamoDB
+
+¡Hola! Con este segundo proyecto del curso vas a aprender a poder poner en práctica tus conocimientos en la creación, configuración y conexión a tabla de DynamoDB.
+
+Eres el arquitecto de soluciones de una empresa y el Director de Marketing le ha pedido que debe desplegar una base de datos en la cual se almacenen las respuestas de una encuesta de clima organizacional realizada a los trabajadores de la empresa.
+
+La encuesta tiene 5 preguntas:
+Pregunta 1 - ¿Cuál es su antigüedad en la empresa?
+Pregunta 2 - ¿Está satisfecho con su asignación salarial?
+Pregunta 3 - ¿Está contento con su posición actual?
+Pregunta 4 - ¿Quién es su jefe inmediato?
+Pregunta 5 - ¿Qué sugerencias tiene para la empresa?.
+
+![encuesta](images/encuesta.png)
+
+- Crea una tabla en DynamoDB con encriptación habilitada en la cual guardes las respuestas de los 5 trabajadores.
+- Configura la tabla con clave principal el **ID EMPLEADO**.
+- Haz una consulta a la tabla para identificar los trabajadores que en la pregunta 2 respondieron “No”.
+- Teniendo la tabla actual, tú como arquitecto ¿cuál considerarías que sería un buen índice secundario para agregar a la tabla?
+
+No olvides compartir tus resultados, desafíos y aciertos en el panel de discusiones.
+
+## Índices y particiones en DynamoDB
+
+Amazon **DynamoDB** es una base de datos NoSQL que maneja datos en formato de clave-valor y documentos. Para mejorar el rendimiento y la flexibilidad de consultas, DynamoDB utiliza **índices** y **particiones** de manera eficiente.
+
+### **1️⃣ Particiones en DynamoDB**  
+
+DynamoDB almacena datos en **particiones** físicas distribuidas automáticamente para mejorar la escalabilidad y la velocidad.  
+
+🔹 **¿Cómo funcionan las particiones?**  
+- Cada elemento en una tabla tiene una **clave de partición (Partition Key)**.  
+- DynamoDB distribuye los datos entre múltiples **particiones físicas** según el **valor de la clave de partición**.  
+- El tamaño máximo de una partición es **10 GB** y puede manejar hasta **3,000 RCU (Read Capacity Units) y 1,000 WCU (Write Capacity Units)**.  
+
+✅ **Consejo:** Para evitar el **"hotspotting"** (carga desbalanceada en algunas particiones), usa claves de partición con valores bien distribuidos.
+
+### **2️⃣ Índices en DynamoDB**  
+
+Los índices permiten realizar consultas más eficientes sin escanear toda la tabla. DynamoDB ofrece dos tipos principales de índices:
+
+### **🔹 Índice Secundario Global (GSI - Global Secondary Index)**  
+- **Permite consultas sobre atributos que NO son clave de partición.**  
+- Se define con una **clave de partición y opcionalmente una clave de ordenamiento (Sort Key).**  
+- **Los datos se almacenan en particiones separadas**, lo que mejora el rendimiento de búsqueda.  
+- Se puede definir con **diferente capacidad de lectura/escritura** que la tabla principal.  
+
+✅ **Ejemplo:**  
+Supongamos que tenemos una tabla `Usuarios` con la siguiente estructura:  
+
+| user_id (PK) | nombre  | email               | edad |  
+|-------------|---------|---------------------|------|  
+| U001        | Mario   | mario@email.com     | 30   |  
+| U002        | Ana     | ana@email.com       | 25   |  
+
+Si queremos buscar usuarios por **email**, creamos un **GSI con email como clave de partición**:
+
+```json
+{
+    "IndexName": "EmailIndex",
+    "KeySchema": [
+        { "AttributeName": "email", "KeyType": "HASH" }
+    ],
+    "Projection": { "ProjectionType": "ALL" }
+}
+```
+
+Ahora podemos consultar `Usuarios` por email sin recorrer toda la tabla.
+
+### **🔹 Índice Secundario Local (LSI - Local Secondary Index)**  
+- **Solo se puede definir al momento de crear la tabla.**  
+- **Usa la misma clave de partición que la tabla principal**, pero permite una **clave de ordenamiento diferente**.  
+- **Optimizado para consultas dentro de un mismo valor de clave de partición.**  
+- Comparte capacidad de lectura/escritura con la tabla principal.  
+
+✅ **Ejemplo:**  
+Supongamos que tenemos una tabla `Pedidos` con la siguiente estructura:
+
+| cliente_id (PK) | pedido_id (SK) | fecha      | total |  
+|----------------|--------------|-----------|-------|  
+| C001          | P1001        | 2025-03-01 | 50    |  
+| C001          | P1002        | 2025-03-05 | 80    |  
+
+Si queremos buscar **pedidos de un cliente ordenados por fecha**, creamos un **LSI con `fecha` como clave de ordenamiento**:
+
+```json
+{
+    "IndexName": "FechaIndex",
+    "KeySchema": [
+        { "AttributeName": "cliente_id", "KeyType": "HASH" },
+        { "AttributeName": "fecha", "KeyType": "RANGE" }
+    ],
+    "Projection": { "ProjectionType": "ALL" }
+}
+```
+
+Ahora podemos buscar todos los pedidos de un cliente en orden de fecha.
+
+### **📌 Diferencias Clave entre GSI y LSI**  
+
+| Característica            | GSI (Global Secondary Index)   | LSI (Local Secondary Index)  |  
+|--------------------------|-------------------------------|-----------------------------|  
+| Se puede crear después de la tabla | ✅ Sí | ❌ No |  
+| Clave de partición diferente a la tabla | ✅ Sí | ❌ No |  
+| Clave de ordenamiento diferente | ✅ Opcional | ✅ Obligatorio |  
+| Capacidad de lectura/escritura separada | ✅ Sí | ❌ No |  
+| Máximo permitido por tabla | 🔹 20 por tabla (por defecto 5) | 🔹 5 por tabla |
+
+### **📌 Conclusión**  
+✅ **Usa Particiones bien distribuidas** para evitar puntos calientes en la base de datos.  
+✅ **Usa GSI** si necesitas buscar por atributos distintos a la clave primaria.  
+✅ **Usa LSI** si necesitas diferentes claves de ordenamiento dentro de la misma partición.
+
+### Resumen
+
+Cuando utilizamos DynamoDB los datos se almacenan en particiones, al crear una tabla, la base de datos asigna su partición para que esta pueda satisfacer el desempeño aprovisionado, y en ciertas ocasiones puede aumentar el tamaño y la cantidad de particiones para mejorar el desempeño o cuando la partición está llena. El limite de las particiones es 10GB de almacenamiento, pero también necesitamos cambiar de partición cuando superamos los niveles de lectura y escritura (3.000 RCU y 1.000 WCU).
+
+DynamoDB utiliza las claves principales simples y compuestas para almacenar y recuperar nuestros elementos y almacenar nuestra información con la función de hash. Cuando utilizamos claves compuestas debemos especificar los valores de la clave para leer los elementos, y el orden de los elementos depende de su clave de ordenación.
+
+La base de datos esta optimizada para distribuir nuestros elementos de forma uniforme entre las particiones de una tabla, con independencia del número de particiones que configuramos. Sin embargo, la recomendación oficial es elegir una clave de partición con un amplio abanico de valores diferentes, es decir, claves tan aleatorias como sea posible en relación con el número de elementos de la tabla, así evitamos que la información se guarde en particiones cercanas o iguales para optimizar las tareas de lectura y escritura de la base de datos.
+
+## Operaciones Scan en DynamoDB
+
+Amazon **DynamoDB** es una base de datos NoSQL que permite recuperar datos de dos maneras principales:  
+1. **Query** → Para buscar elementos mediante la clave de partición (PK).  
+2. **Scan** → Para recorrer todos los elementos de una tabla o un índice secundario.  
+
+En esta guía, veremos cómo funciona la operación **`Scan`**, sus ventajas, desventajas y cómo optimizar su uso.
+
+### **1️⃣ ¿Qué es `Scan` en DynamoDB?**  
+
+La operación `Scan` **recorre toda la tabla** y devuelve los elementos que cumplen con un filtro opcional.  
+
+🔹 **Uso principal:**  
+- Obtener **todos los elementos** de una tabla.  
+- Buscar elementos basados en **atributos no indexados**.  
+- Exportar datos de la tabla a otro servicio.  
+
+✅ **Ejemplo de `Scan`**  
+Supongamos que tenemos la siguiente tabla **Usuarios**:
+
+| user_id (PK) | nombre  | edad | ciudad    |  
+|-------------|--------|------|----------|  
+| U001        | Mario  | 30   | Bogotá   |  
+| U002        | Ana    | 25   | Medellín |  
+| U003        | Juan   | 35   | Bogotá   |  
+
+Si queremos recuperar **todos los usuarios**, ejecutamos:
+
+```python
+import boto3
+
+dynamodb = boto3.resource('dynamodb')
+table = dynamodb.Table('Usuarios')
+
+response = table.scan()
+items = response['Items']
+print(items)
+```
+
+📌 **Salida esperada:**  
+```json
+[
+    {"user_id": "U001", "nombre": "Mario", "edad": 30, "ciudad": "Bogotá"},
+    {"user_id": "U002", "nombre": "Ana", "edad": 25, "ciudad": "Medellín"},
+    {"user_id": "U003", "nombre": "Juan", "edad": 35, "ciudad": "Bogotá"}
+]
+```
+
+### **2️⃣ Agregando Filtros en `Scan`**  
+
+Podemos aplicar **filtros** para reducir los resultados devueltos, aunque la operación sigue recorriendo **toda la tabla**.  
+
+✅ **Ejemplo: Buscar usuarios en Bogotá**  
+
+```python
+response = table.scan(
+    FilterExpression="ciudad = :val",
+    ExpressionAttributeValues={":val": "Bogotá"}
+)
+
+items = response['Items']
+print(items)
+```
+
+📌 **Salida esperada:**  
+```json
+[
+    {"user_id": "U001", "nombre": "Mario", "edad": 30, "ciudad": "Bogotá"},
+    {"user_id": "U003", "nombre": "Juan", "edad": 35, "ciudad": "Bogotá"}
+]
+```
+
+❗ **Importante:** Aunque solo devuelve usuarios de Bogotá, DynamoDB sigue escaneando **toda la tabla**, lo que puede ser ineficiente en grandes volúmenes de datos.
+
+### **3️⃣ `Scan` vs `Query`**  
+
+| Característica | `Scan` | `Query` |
+|--------------|------|------|
+| Escanea toda la tabla | ✅ Sí | ❌ No |
+| Usa índices (PK/SK o GSI/LSI) | ❌ No | ✅ Sí |
+| Eficiencia | 🚨 Lenta en tablas grandes | 🚀 Rápida y optimizada |
+| Filtrado de datos | ✅ Sí (después del escaneo) | ✅ Sí (antes de la búsqueda) |
+| Consumo de RCUs | 🔥 Alto (ineficiente) | ⚡ Bajo (eficiente) |
+
+📌 **Usa `Query` siempre que sea posible.** Solo usa `Scan` cuando **no tienes un índice** que permita una búsqueda eficiente.
+
+### **4️⃣ Estrategias para Optimizar `Scan`**  
+
+Si necesitas usar `Scan`, aquí hay algunas estrategias para mejorar su rendimiento:
+
+### **✅ 1. Limitar los atributos retornados (`ProjectionExpression`)**  
+
+En lugar de devolver toda la información, solicita **solo los atributos necesarios**:
+
+```python
+response = table.scan(
+    ProjectionExpression="user_id, nombre"
+)
+```
+📌 **Beneficio:** Reduce el tamaño de los datos devueltos y mejora el rendimiento.
+
+### **✅ 2. Usar Paginación (`LastEvaluatedKey`)**  
+
+Si la tabla es grande, DynamoDB divide los resultados en **páginas de 1 MB**. Podemos iterar sobre estas páginas:
+
+```python
+items = []
+response = table.scan()
+
+while "LastEvaluatedKey" in response:
+    items.extend(response['Items'])
+    response = table.scan(ExclusiveStartKey=response["LastEvaluatedKey"])
+
+print(items)
+```
+📌 **Beneficio:** Evita que la solicitud sea muy pesada y mejora la escalabilidad.
+
+### **✅ 3. Usar Lectura Consistente Eventual (`ConsistentRead=False`)**  
+
+Por defecto, DynamoDB usa **lectura eventual**, que es más rápida y eficiente en costo:
+
+```python
+response = table.scan(ConsistentRead=False)
+```
+📌 **Beneficio:** Reduce el consumo de capacidad de lectura (RCU).
+
+### **✅ 4. Usar `Parallel Scan`**  
+
+DynamoDB permite **escanear en paralelo** para acelerar la lectura en tablas grandes:
+
+```python
+response = table.scan(
+    TotalSegments=4,  # Divide la carga en 4 procesos
+    Segment=0
+)
+```
+📌 **Beneficio:** Mejora el rendimiento al distribuir la carga de escaneo.
+
+### **📌 Conclusión**  
+
+❌ **Evita `Scan` en tablas grandes** porque **consume muchos recursos y es lento**.  
+✅ **Usa `Query` con índices secundarios** siempre que sea posible.  
+✅ **Si debes usar `Scan`, optimízalo** con `ProjectionExpression`, `LastEvaluatedKey`, `Parallel Scan`, y **limitando los atributos retornados**.
+
+**Resumen**
+
+Las **Operaciones Scan** se encargan de escanear por completo nuestras tablas para examinar todos sus elementos y comprobar si presentan los valores solicitados, pero son muy poco eficientes ya que utilizan bastantes unidades de lectura y aumentan los costos de nuestra base de datos, debemos evitar estas operaciones para tablas grandes.
+
+AWS nos recomienda realizar operaciones pequeñas a lo largo del tiempo en vez de hacer una sola operación muy larga, también podemos configurar límites de tamaño para evitar los escaneos completos y duplicar nuestras tablas para realizar estas operaciones sobre tablas no principales y no afectar su rendimiento.
+
+## Operaciones Query en DynamoDB
+
+Amazon **DynamoDB** es una base de datos NoSQL diseñada para manejar datos con acceso rápido y escalable. Una de las formas más eficientes de recuperar datos es mediante la operación **`Query`**, que permite buscar elementos con base en la clave de partición y, opcionalmente, la clave de ordenación.
+
+### **1️⃣ ¿Qué es `Query` en DynamoDB?**  
+
+`Query` se usa para recuperar elementos **rápidamente** usando el **índice primario** o un **índice secundario (GSI o LSI)**.  
+
+🔹 **Diferencias clave entre `Scan` y `Query`**  
+
+| Operación | Descripción | Eficiencia |
+|-----------|------------|------------|
+| `Scan`   | Recorre **toda la tabla**, aplicando un filtro opcional. | 🚨 Ineficiente en tablas grandes. |
+| `Query`  | Busca por **clave de partición (PK)** y opcionalmente por **clave de ordenación (SK)**. | 🚀 Rápida y optimizada. |
+
+📌 **Siempre que sea posible, usa `Query` en lugar de `Scan` para mejorar el rendimiento.**
+
+### **2️⃣ Ejecutando un `Query` en DynamoDB**  
+
+Para ejecutar una consulta con `Query`, necesitamos conocer:  
+
+✅ **Clave de Partición (PK)**: Obligatoria.  
+✅ **Clave de Ordenación (SK)**: Opcional, pero permite búsquedas más refinadas.
+
+### **Ejemplo de `Query`**  
+
+Supongamos que tenemos la siguiente tabla **Pedidos** con las claves:  
+
+| **pedido_id (PK)** | **fecha (SK)** | **cliente** | **monto** |
+|-------------------|---------------|------------|---------|
+| P001            | 2025-03-10     | Juan       | 100 USD |
+| P001            | 2025-03-12     | Juan       | 150 USD |
+| P002            | 2025-03-11     | Ana        | 200 USD |
+
+### 🔹 **Consultar los pedidos de "P001"**  
+```python
+import boto3
+
+dynamodb = boto3.resource('dynamodb')
+table = dynamodb.Table('Pedidos')
+
+response = table.query(
+    KeyConditionExpression="pedido_id = :pedido",
+    ExpressionAttributeValues={":pedido": "P001"}
+)
+
+items = response['Items']
+print(items)
+```
+
+📌 **Salida esperada:**  
+```json
+[
+    {"pedido_id": "P001", "fecha": "2025-03-10", "cliente": "Juan", "monto": 100},
+    {"pedido_id": "P001", "fecha": "2025-03-12", "cliente": "Juan", "monto": 150}
+]
+```
+
+🔹 **¿Qué está pasando aquí?**  
+- Se está buscando todos los elementos donde `pedido_id = 'P001'`.
+- DynamoDB devuelve **solo esos registros**, sin escanear toda la tabla.
+
+### **3️⃣ Filtrando resultados en `Query`**  
+
+Podemos agregar condiciones en la **clave de ordenación (SK)** o en otros atributos con filtros.
+
+### **✅ 1. Usar operadores en la `SK` (rango de fechas)**  
+
+Si queremos **pedidos después del 2025-03-11**:
+
+```python
+response = table.query(
+    KeyConditionExpression="pedido_id = :pedido AND fecha >= :fecha",
+    ExpressionAttributeValues={
+        ":pedido": "P001",
+        ":fecha": "2025-03-11"
+    }
+)
+```
+
+📌 **Salida esperada:**  
+```json
+[
+    {"pedido_id": "P001", "fecha": "2025-03-12", "cliente": "Juan", "monto": 150}
+]
+```
+
+### **✅ 2. Filtrar por atributos secundarios (`FilterExpression`)**  
+
+Si queremos **pedidos de P001 con monto mayor a 120 USD**:
+
+```python
+response = table.query(
+    KeyConditionExpression="pedido_id = :pedido",
+    FilterExpression="monto > :monto",
+    ExpressionAttributeValues={
+        ":pedido": "P001",
+        ":monto": 120
+    }
+)
+```
+
+📌 **Salida esperada:**  
+```json
+[
+    {"pedido_id": "P001", "fecha": "2025-03-12", "cliente": "Juan", "monto": 150}
+]
+```
+
+❗ **IMPORTANTE:**  
+- **`FilterExpression` NO reduce el número de elementos escaneados**, solo **filtra después de la búsqueda**.  
+- Es más eficiente hacer búsquedas con `KeyConditionExpression`.
+
+### **4️⃣ Ordenamiento y Paginación en `Query`**  
+
+### **✅ 1. Orden Ascendente o Descendente**  
+Por defecto, DynamoDB ordena los resultados en **orden ascendente** por la **clave de ordenación (SK)**.
+
+Si queremos **orden descendente**:
+```python
+response = table.query(
+    KeyConditionExpression="pedido_id = :pedido",
+    ExpressionAttributeValues={":pedido": "P001"},
+    ScanIndexForward=False  # Activa el orden descendente
+)
+```
+
+📌 **Salida esperada (ordenado de más reciente a más antiguo)**:  
+```json
+[
+    {"pedido_id": "P001", "fecha": "2025-03-12", "cliente": "Juan", "monto": 150},
+    {"pedido_id": "P001", "fecha": "2025-03-10", "cliente": "Juan", "monto": 100}
+]
+```
+
+### **✅ 2. Paginación con `LastEvaluatedKey`**  
+
+Si la consulta devuelve **más de 1 MB de datos**, DynamoDB paginará los resultados.
+
+```python
+items = []
+response = table.query(
+    KeyConditionExpression="pedido_id = :pedido",
+    ExpressionAttributeValues={":pedido": "P001"}
+)
+
+while "LastEvaluatedKey" in response:
+    items.extend(response['Items'])
+    response = table.query(
+        KeyConditionExpression="pedido_id = :pedido",
+        ExpressionAttributeValues={":pedido": "P001"},
+        ExclusiveStartKey=response["LastEvaluatedKey"]
+    )
+
+print(items)
+```
+
+📌 **Beneficio:** Se puede manejar **grandes volúmenes de datos sin bloquear la memoria.**
+
+### **5️⃣ `Query` en Índices Secundarios**  
+
+Si queremos consultar por un **atributo que no es la clave de partición**, podemos usar:  
+✅ **Índices Secundarios Locales (LSI)** → Misma PK, diferente SK.  
+✅ **Índices Secundarios Globales (GSI)** → Diferente PK y SK.  
+
+Ejemplo: Si la tabla **Pedidos** tiene un **GSI con `cliente` como PK y `fecha` como SK**, podemos buscar **todos los pedidos de un cliente**:
+
+```python
+response = table.query(
+    IndexName="ClienteIndex",
+    KeyConditionExpression="cliente = :cliente",
+    ExpressionAttributeValues={":cliente": "Juan"}
+)
+```
+
+📌 **Beneficio:** **Permite búsquedas rápidas sin escanear la tabla principal.**
+
+### **📌 Conclusión**  
+
+✅ **Usa `Query` siempre que sea posible**, ya que es **mucho más eficiente que `Scan`**.  
+✅ **Aprovecha los índices secundarios (GSI y LSI)** para optimizar búsquedas sin usar `Scan`.  
+✅ **Filtra con `KeyConditionExpression` en lugar de `FilterExpression`** para reducir la cantidad de elementos escaneados.  
+✅ **Usa paginación con `LastEvaluatedKey`** si la consulta devuelve muchos resultados.  
+✅ **Ordena con `ScanIndexForward=False`** si necesitas datos en orden descendente.
+
+### Resumen
+
+Las **Operaciones Query** (*operaciones de consulta*) nos permiten buscar elementos en cualquier tabla o índice secundario en base a su clave principal compuesta para optimizar la petición.
+
+En vez de escanear toda la tabla (*como en las operaciones Scan*), vamos a especificar los criterios de búsqueda utilizando una expresión de condición clave (*una cadena que determina los elementos que vamos a leer en la tabla o el índice*), especificamos el nombre y valor la clave de partición como una condición de igualdad, podemos realizar consultas utilizando diferentes operadores para encontrar los resultados con mejor precisión.
+
+También podemos limitar el número de elementos que esperamos en los resultados para agilizar las operaciones, pero no obtenemos información tan detallada de la capacidad de lectura que consumimos.
+
+El desafío de esta clase es responder en la sección de comentarios un caso de uso de DynamoDB y cuáles serian sus ventajas frente a los servicios RDS.
+
+## Demo de operaciones Scan y Query en DynamoDB
+
+Aquí tienes una **demo práctica** de las operaciones **`Scan` y `Query`** en **Amazon DynamoDB** usando **Python (boto3)**.
+
+### **📌 1. Configuración Inicial**  
+
+Antes de ejecutar los ejemplos, asegúrate de:  
+✅ Tener **AWS CLI** configurado con las credenciales correctas.  
+✅ Instalar **boto3** en tu entorno:  
+```bash
+pip install boto3
+```
+✅ Tener una **tabla DynamoDB** llamada `"Pedidos"`, con:  
+- **Clave de Partición (PK):** `pedido_id`  
+- **Clave de Ordenación (SK):** `fecha`  
+
+Ejemplo de datos en la tabla **Pedidos**:  
+
+| **pedido_id (PK)** | **fecha (SK)** | **cliente** | **monto** |
+|-------------------|---------------|------------|---------|
+| P001            | 2025-03-10     | Juan       | 100 USD |
+| P001            | 2025-03-12     | Juan       | 150 USD |
+| P002            | 2025-03-11     | Ana        | 200 USD |
+
+### **📌 2. Conectando a DynamoDB en Python**  
+
+```python
+import boto3
+
+# Conectar con DynamoDB
+dynamodb = boto3.resource('dynamodb')
+
+# Definir la tabla
+table = dynamodb.Table('Pedidos')
+```
+
+### **📌 3. `SCAN`: Buscar Todos los Elementos**  
+
+🚨 **`Scan` recorre toda la tabla**, por lo que es **ineficiente en tablas grandes**.  
+
+```python
+response = table.scan()
+
+# Mostrar los resultados
+items = response['Items']
+for item in items:
+    print(item)
+```
+
+📌 **Salida esperada:**  
+```json
+[
+    {"pedido_id": "P001", "fecha": "2025-03-10", "cliente": "Juan", "monto": 100},
+    {"pedido_id": "P001", "fecha": "2025-03-12", "cliente": "Juan", "monto": 150},
+    {"pedido_id": "P002", "fecha": "2025-03-11", "cliente": "Ana", "monto": 200}
+]
+```
+
+### **📌 4. `SCAN` con Filtros**  
+
+Podemos aplicar un **`FilterExpression`** para reducir los resultados.  
+Ejemplo: Buscar **pedidos con monto mayor a 120 USD**.  
+
+```python
+response = table.scan(
+    FilterExpression="monto > :monto",
+    ExpressionAttributeValues={":monto": 120}
+)
+
+items = response['Items']
+print(items)
+```
+
+📌 **Salida esperada:**  
+```json
+[
+    {"pedido_id": "P001", "fecha": "2025-03-12", "cliente": "Juan", "monto": 150},
+    {"pedido_id": "P002", "fecha": "2025-03-11", "cliente": "Ana", "monto": 200}
+]
+```
+
+❗ **Nota:** `Scan` sigue recorriendo **toda la tabla**, solo filtra los datos después de leerlos.
+
+### **📌 5. `QUERY`: Búsqueda Eficiente**  
+
+🚀 **`Query` es más rápido que `Scan`**, ya que solo busca los elementos con una **clave de partición específica**.  
+
+### 🔹 **Ejemplo 1: Buscar pedidos de `P001`**  
+
+```python
+response = table.query(
+    KeyConditionExpression="pedido_id = :pedido",
+    ExpressionAttributeValues={":pedido": "P001"}
+)
+
+items = response['Items']
+print(items)
+```
+
+📌 **Salida esperada:**  
+```json
+[
+    {"pedido_id": "P001", "fecha": "2025-03-10", "cliente": "Juan", "monto": 100},
+    {"pedido_id": "P001", "fecha": "2025-03-12", "cliente": "Juan", "monto": 150}
+]
+```
+
+### 🔹 **Ejemplo 2: `Query` con Rango de Fechas**  
+
+Si queremos pedidos **de "P001" a partir del 2025-03-11**, usamos **rango en `SK`**:
+
+```python
+response = table.query(
+    KeyConditionExpression="pedido_id = :pedido AND fecha >= :fecha",
+    ExpressionAttributeValues={
+        ":pedido": "P001",
+        ":fecha": "2025-03-11"
+    }
+)
+
+items = response['Items']
+print(items)
+```
+
+📌 **Salida esperada:**  
+```json
+[
+    {"pedido_id": "P001", "fecha": "2025-03-12", "cliente": "Juan", "monto": 150}
+]
+```
+
+### 🔹 **Ejemplo 3: `Query` con Filtros**  
+
+Podemos agregar **filtros en atributos secundarios** (ej. `monto > 120`), aunque DynamoDB **sigue trayendo todos los elementos de la PK** antes de filtrarlos.  
+
+```python
+response = table.query(
+    KeyConditionExpression="pedido_id = :pedido",
+    FilterExpression="monto > :monto",
+    ExpressionAttributeValues={
+        ":pedido": "P001",
+        ":monto": 120
+    }
+)
+
+items = response['Items']
+print(items)
+```
+
+📌 **Salida esperada:**  
+```json
+[
+    {"pedido_id": "P001", "fecha": "2025-03-12", "cliente": "Juan", "monto": 150}
+]
+```
+
+### **📌 6. Paginación en `Scan` y `Query`**  
+
+Si hay **muchos resultados**, DynamoDB **devuelve solo 1 MB** de datos a la vez y usa `LastEvaluatedKey` para continuar.
+
+```python
+items = []
+response = table.scan()
+
+while "LastEvaluatedKey" in response:
+    items.extend(response['Items'])
+    response = table.scan(ExclusiveStartKey=response["LastEvaluatedKey"])
+
+print(items)
+```
+
+Lo mismo aplica para `Query`:
+
+```python
+items = []
+response = table.query(
+    KeyConditionExpression="pedido_id = :pedido",
+    ExpressionAttributeValues={":pedido": "P001"}
+)
+
+while "LastEvaluatedKey" in response:
+    items.extend(response['Items'])
+    response = table.query(
+        KeyConditionExpression="pedido_id = :pedido",
+        ExpressionAttributeValues={":pedido": "P001"},
+        ExclusiveStartKey=response["LastEvaluatedKey"]
+    )
+
+print(items)
+```
+
+### **📌 7. `Query` en Índices Secundarios (GSI)**  
+
+Si queremos consultar por otro atributo (ej. `cliente`), necesitamos un **Índice Secundario Global (GSI)**.  
+
+Ejemplo: GSI con **PK = `cliente` y SK = `fecha`**.
+
+```python
+response = table.query(
+    IndexName="ClienteIndex",
+    KeyConditionExpression="cliente = :cliente",
+    ExpressionAttributeValues={":cliente": "Juan"}
+)
+
+items = response['Items']
+print(items)
+```
+
+### **📌 Conclusión**  
+
+✅ **Usa `Query` en lugar de `Scan` siempre que sea posible**.  
+✅ **Filtra con `KeyConditionExpression` para optimizar búsquedas**.  
+✅ **Usa `FilterExpression` solo si necesitas filtrar después de consultar**.  
+✅ **Usa paginación (`LastEvaluatedKey`) para manejar grandes volúmenes de datos**.  
+✅ **Aprovecha los Índices Secundarios (`GSI`, `LSI`) para mejorar rendimiento**.
+
+### Resumen
+
+### ¿Cómo se realizan las operaciones scan y query en DynamoDB?
+
+DynamoDB, un servicio de base de datos NoSQL de AWS, ofrece potentes capacidades para manejar grandes volúmenes de datos. Al entender cómo funciona este servicio, se pueden optimizar las consultas y mejorar el rendimiento de las aplicaciones. Dos operaciones fundamentales en DynamoDB son `scan` y `query`, cada una con sus características y aplicaciones específicas.
+
+### ¿Qué es una operación scan?
+
+La operación `scan` permite recorrer toda la tabla de DynamoDB, evaluando cada ítem según los parámetros o filtros otorgados. Su enfoque principal es el filtrado, proporcionando una funcionalidad robusta pero, dado su alcance, puede no ser siempre la opción más eficiente:
+
+- **ALCANCE COMPLETO**: Escanea todos los registros de la tabla, lo que puede impactar en el rendimiento al enfrentar tablas grandes.
+- **Flexibilidad en el filtrado**: Permite crear múltiples filtros para refinar los resultados según las necesidades específicas.
+- **Falta de eficiencia**: Debido al escaneo completo de la tabla, esta operación puede ser lenta y costosa si no se maneja adecuadamente.
+
+### ¿Cómo mejora el rendimiento una operación query?
+
+Por el contrario, la operación `query` se enfoca en acceder a un subconjunto de los datos, basándose en una clave principal y, opcionalmente, en una clave secundaria. Esto permite un acceso más rápido y eficiente a los datos.
+
+- **Uso de llaves**: Requiere al menos una clave principal para funcionar, lo que limita el alcance de los datos escaneados y mejora el rendimiento.
+- **Filtros precisos**: Además de mejorar el acceso mediante llaves, se pueden incluir filtros adicionales para refinar aún más los resultados.
+- **Ordenamiento**: Ofrece la capacidad de ordenar los resultados de forma ascendente o descendente, facilitando el acceso a datos relevantes primero.
+- **Atributos específicos**: Permite especificar atributos proyectados para limitar los datos devueltos, reduciendo el costo de transferencia y procesamiento.
+
+### Ejemplo de operación query y scan en la consola de DW
+
+Para ejecutar estas operaciones desde la consola de AWS, se selecciona la tabla deseada – por ejemplo, una tabla de trabajadores – y se procede a seleccionar la operación requerida:
+
+- **Uso en la consola**: Para una `scan`, simplemente se definen los filtros y se ejecuta la operación.
+- **Requisitos de `query`**: Es obligatorio proporcionar una clave (ID) que coincida con la estructura de la tabla; una vez definida, se pueden añadir filtros adicionales para refinar la búsqueda.
+
+### ¿Cuáles son las utilidades avanzadas de estas operaciones?
+
+Más allá de las funciones básicas, DynamoDB ofrece características avanzadas para manejar las consultas y mejorar la gestión de datos.
+
+- **Exportación y administración de TTL**: Permite exportar las consultas y gestionar el Time To Live (TTL) de los datos.
+- **Limitación y duplicación de datos**: Provee herramientas para limitar y duplicar consultas según los requerimientos específicos de la aplicación.
+
+En resumen, conocer las operaciones `scan` y `query` y sus aplicaciones en DynamoDB es crucial para optimizar el rendimiento y la eficiencia de las consultas en una base de datos NoSQL. Al aprovechar sus características avanzadas, es posible crear aplicaciones robustas y eficientes.
+
+## ¿Qué es Local Seconday Index?
+
+En una tabla de Dynamo cada ítem debe contener una clave primaria única. Esta llave debe tener una clave de partición y opcionalmente puede tener una range key (Sort Key). Dentro de la partición, los ítems son ordenados por la range key, en los casos donde la información que necesitemos coincida con nuestra range key el acceso a los elementos va a ser mucho más rápido.
+
+![clave primaria](images/claveprimaria.png)
+
+![clave primaria key](images/claveprimariakey.png)
+
+Sin embargo se presentan casos en los cuales la información que necesitamos se encuentra en otro atributo totalmente diferente a la range key, para estos casos podemos utilizar un Local Secondary Index (LSI) el cual tiene la misma clave de partición pero puede tener una range key completamente diferente (por tabla se pueden crear hasta 5 LSI), se debe tener en cuenta que los LSI solamente se pueden crear al momento de crear la tabla, una vez creada no se podrán crear LSI.
+
+![clave primaria key sort](images/claveprimariakeysort.png)
+
+Por ejemplo si tenemos la una tabla que mantiene el puntaje de jugadores en diferentes juegos online.
+
+La tabla Scores está conformada de la siguiente forma:
+
+- Llave de partición: GameName → Nombre del Juego
+
+- Llave de ordenamiento (Range o Sort Key): LastGameMatch → Fecha de la última partida disputada en el juego.
+
+![tabla Scores](images/tablaScores.png)
+
+Para la tabla SCORE podríamos obtener información de los juegos y la fecha de la última partida disputada en el juego por diferente usuario.
+
+Ahora supongamos que necesitamos responder preguntas diferentes como:
+
+- ¿Cuál es el puntaje máximo en un determinado juego?
+
+- ¿Cuál es la partida ganada más antigua en el juego?
+
+No sería posible obtener la información solicitada con los índices que se tienen actualmente, tendríamos que hacer una operación SCAN que consumiría muchas unidades de lectura.
+
+Para este caso la mejor solución sería utilizar LSI:
+
+- GameName y Score.
+
+- GameName y LastWin.
+
+Con estos LSI podríamos consultar la data con la misma llave de partición (GameName) y obtener resultados sobre otras llaves range como Score y LastWin. Esto nos ayudaría en nuestra tabla a obtener los datos que necesitamos de forma más eficiente y también evitamos el consumo de unidades de lectura de la tabla RCU lo cual se verá reflejado en un ahorro de costos.
