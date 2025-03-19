@@ -2780,3 +2780,319 @@ Para este caso la mejor solución sería utilizar LSI:
 - GameName y LastWin.
 
 Con estos LSI podríamos consultar la data con la misma llave de partición (GameName) y obtener resultados sobre otras llaves range como Score y LastWin. Esto nos ayudaría en nuestra tabla a obtener los datos que necesitamos de forma más eficiente y también evitamos el consumo de unidades de lectura de la tabla RCU lo cual se verá reflejado en un ahorro de costos.
+
+## Características Streams y Replicación en DynamoDB
+
+Amazon **DynamoDB Streams** y la **Replicación Global** son dos características clave para mantener la integridad de los datos y la alta disponibilidad en aplicaciones distribuidas.
+
+### **1️⃣ DynamoDB Streams**  
+
+🔹 **¿Qué es?**  
+Es una **flujo de cambios** en una tabla DynamoDB que **captura eventos** de inserción, modificación o eliminación de datos.  
+
+🔹 **Casos de Uso:**  
+✅ Replicación de datos en múltiples regiones.  
+✅ Procesamiento en tiempo real con AWS Lambda.  
+✅ Auditoría y control de cambios.  
+✅ Sincronización con otros sistemas (Ej. Elasticsearch, Redshift, etc.).  
+
+### **🚀 Cómo Funciona**  
+Cuando se habilita **DynamoDB Streams**, cada cambio genera un **registro en el stream**, que se mantiene por **24 horas**.  
+
+Cada registro puede incluir:  
+- `NEW_IMAGE`: Estado después del cambio.  
+- `OLD_IMAGE`: Estado antes del cambio.  
+- `KEYS_ONLY`: Solo las claves afectadas.  
+- `NEW_AND_OLD_IMAGES`: Antes y después del cambio.  
+
+### **🔹 Ejemplo de Evento en el Stream**
+```json
+{
+  "eventID": "1",
+  "eventName": "INSERT",
+  "dynamodb": {
+    "Keys": { "pedido_id": { "S": "P001" } },
+    "NewImage": {
+      "pedido_id": { "S": "P001" },
+      "fecha": { "S": "2025-03-10" },
+      "monto": { "N": "100" }
+    },
+    "StreamViewType": "NEW_IMAGE"
+  }
+}
+```
+
+### **📌 2️⃣ Replicación Global en DynamoDB**  
+
+🔹 **¿Qué es?**  
+La **Replicación Global** permite crear **tablas sincronizadas en múltiples regiones** de AWS para mejorar la disponibilidad y reducir la latencia.  
+
+🔹 **Casos de Uso:**  
+✅ **Alta disponibilidad**: Evita caídas si una región falla.  
+✅ **Baja latencia**: Los usuarios acceden a la región más cercana.  
+✅ **Disaster recovery**: Recuperación rápida ante fallos.  
+✅ **Cumplimiento legal**: Mantener datos en regiones específicas.  
+
+### **🚀 Cómo Funciona**  
+1️⃣ Se crea una **Tabla Global** con la misma estructura en varias regiones.  
+2️⃣ DynamoDB **replica automáticamente** los cambios entre regiones.  
+3️⃣ La replicación es **asíncrona**, garantizando **eventual consistency**.  
+
+🔹 **DynamoDB Streams se usa internamente** para detectar cambios y replicarlos a otras regiones.
+
+### **📌 Diferencias entre Streams y Replicación Global**  
+
+| **Característica**       | **DynamoDB Streams**        | **Replicación Global**  |
+|-------------------------|----------------------------|------------------------|
+| **Propósito**           | Procesar cambios en tiempo real | Replicar tablas entre regiones |
+| **Alcance**            | Solo una tabla en una región  | Varias tablas en múltiples regiones |
+| **Persistencia**       | 24 horas                     | Permanente |
+| **Consistencia**       | Eventual o fuerte            | Eventual |
+| **Costo**              | Bajo (pago por uso)         | Más alto (multi-región) |
+
+### **📌 Conclusión**  
+✅ **DynamoDB Streams** es ideal para **procesamiento en tiempo real y auditoría**.  
+✅ **Replicación Global** es esencial para **disponibilidad en múltiples regiones**.  
+✅ Ambas características pueden usarse **juntas** para crear arquitecturas resilientes y escalables.
+
+### **🚀 Cómo Usar DynamoDB Streams en AWS**
+
+DynamoDB Streams permite **capturar cambios en una tabla DynamoDB en tiempo real**. Puedes usarlo con **AWS Lambda, Kinesis, o procesarlo manualmente**.
+
+### **1️⃣ Habilitar DynamoDB Streams**
+1. **Ir a la Consola de AWS** → **DynamoDB** → **Tablas**.
+2. Selecciona tu **tabla**.
+3. Ve a la pestaña **"Streams"**.
+4. Habilita el stream y elige el **formato de vista**:
+   - `KEYS_ONLY`: Solo claves primarias.
+   - `NEW_IMAGE`: Solo valores nuevos.
+   - `OLD_IMAGE`: Solo valores antiguos.
+   - `NEW_AND_OLD_IMAGES`: Antes y después del cambio.
+5. Guarda los cambios.
+
+### **2️⃣ Configurar AWS Lambda para Procesar el Stream**
+AWS Lambda puede reaccionar automáticamente a eventos de DynamoDB Streams.
+
+#### **Paso 1: Crear la Función Lambda**
+1. Ir a **AWS Lambda** → **Crear función**.
+2. Seleccionar **Autor desde cero**.
+3. Nombre: `DynamoDBStreamProcessor`
+4. **Tiempo de ejecución:** Python 3.x (o Node.js)
+5. Crear función.
+
+#### **Paso 2: Asignar Permisos a Lambda**
+1. Ir a **Roles de IAM** → Selecciona el rol de la función Lambda.
+2. Agregar la política **"AWSLambdaDynamoDBExecutionRole"**.
+
+#### **Paso 3: Conectar Lambda con el Stream**
+1. Ir a **Lambda** → **Agregar Trigger**.
+2. Seleccionar **DynamoDB**.
+3. Escoger tu **tabla y stream**.
+4. Configurar **batch size** (ej. 100).
+5. Guardar.
+
+#### **Paso 4: Código Lambda (Python)**
+Este código imprime los eventos de DynamoDB Streams.
+
+```python
+import json
+
+def lambda_handler(event, context):
+    for record in event['Records']:
+        print("Evento recibido:", json.dumps(record, indent=2))
+        if record['eventName'] == 'INSERT':
+            print("Nuevo ítem agregado:", record['dynamodb']['NewImage'])
+        elif record['eventName'] == 'MODIFY':
+            print("Ítem modificado:", record['dynamodb'])
+        elif record['eventName'] == 'REMOVE':
+            print("Ítem eliminado:", record['dynamodb']['Keys'])
+    
+    return {'statusCode': 200, 'body': 'Procesado'}
+```
+
+### **3️⃣ Probar el Stream**
+1. **Insertar datos en DynamoDB**:
+   ```python
+   import boto3
+
+   dynamodb = boto3.resource('dynamodb')
+   table = dynamodb.Table('MiTabla')
+
+   table.put_item(
+       Item={
+           'id': '123',
+           'nombre': 'Producto A',
+           'precio': 100
+       }
+   )
+   ```
+2. **Verificar en CloudWatch** → Logs de Lambda.
+3. Revisar eventos de `INSERT`, `MODIFY`, `REMOVE`.
+
+### **🚀 Conclusión**
+✅ DynamoDB Streams captura cambios en tiempo real.  
+✅ AWS Lambda permite procesarlos sin servidores.  
+✅ Puedes integrarlo con Kinesis, SQS o eventos personalizados.
+
+
+### Resumen
+
+**DynamoDB Streams** nos proporciona una secuencia ordenada por tiempo de cambios de los elementos de cualquier tabla, es decir, guarda los cambios de nuestros elementos para que podamos procesar y consumir esta información, podemos ampliar el poder de DynamoDB con replicación entre regiones, análisis continuo con integración a Redshift, notificación de cambios y muchos otros escenarios.
+
+Estos streams capturan una secuencia en orden cronológico de las modificaciones de los elementos de una tabla y almacenan la información por 24 horas. Cada registro de secuencia contiene la información sobre una sola modificación a los datos de un elemento de la tabla. Nuestras aplicaciones pueden obtener acceso a este registro y ver los elements de datos tal y como se encontraban antes y después.
+
+## Casos de uso Streams y Replicación en DynamoDB
+
+### **🚀 DynamoDB Streams: Captura de Cambios en Tiempo Real**
+DynamoDB Streams permite rastrear cambios en una tabla DynamoDB y reaccionar en tiempo real.  
+
+🔹 **¿Qué tipo de cambios puede capturar?**  
+   - **INSERT**: Un nuevo ítem es agregado.  
+   - **MODIFY**: Un ítem existente es actualizado.  
+   - **REMOVE**: Un ítem es eliminado.  
+
+### **🔹 Casos de Uso de DynamoDB Streams**
+1️⃣ **📊 Procesamiento en Tiempo Real de Datos**  
+   - Monitoreo de eventos en **aplicaciones financieras** (ej. registros de transacciones).  
+   - Seguimiento en **aplicaciones IoT** para actualizar dispositivos en tiempo real.  
+
+2️⃣ **⚡ Integración con AWS Lambda para Automatización**  
+   - Enviar notificaciones en **SNS** o **SQS** cuando se agregan nuevos registros.  
+   - Sincronizar datos con **otros sistemas**, como ElasticSearch para búsquedas.  
+
+3️⃣ **🔄 Auditoría y Monitoreo de Cambios**  
+   - Registrar todos los cambios en S3 o CloudWatch para auditorías.  
+   - Generar reportes históricos de actividad.
+
+### **🌍 Replicación en DynamoDB: Sincronización Multi-Región**
+DynamoDB soporta **replicación multi-región** mediante **Global Tables**. Esto permite que los datos se sincronicen automáticamente en varias regiones de AWS.
+
+### **🔹 Casos de Uso de Replicación en DynamoDB**
+1️⃣ **🌎 Aplicaciones Globales con Baja Latencia**  
+   - Servicios con usuarios en diferentes continentes.  
+   - Juegos en línea que requieren disponibilidad rápida de datos.  
+
+2️⃣ **✅ Alta Disponibilidad y Recuperación ante Desastres**  
+   - En caso de fallo en una región, la aplicación sigue operando desde otra.  
+   - Permite **failover automático** entre regiones.  
+
+3️⃣ **📡 Sincronización en Sistemas Distribuidos**  
+   - Sincronización en tiempo real de datos en múltiples centros de datos.  
+   - Empresas que necesitan acceso instantáneo a datos en diferentes ubicaciones.
+
+### **🚀 Conclusión**
+✅ **DynamoDB Streams** es ideal para procesamiento en tiempo real y automatización.  
+✅ **Replicación con Global Tables** garantiza baja latencia y alta disponibilidad.  
+
+### Resumen
+
+### ¿Por qué deberías considerar el uso de DynamoDB Streams?
+
+DynamoDB Streams no es solo otra funcionalidad de bases de datos, sino una herramienta esencial para habilitar una arquitectura reactiva y en tiempo real en varias aplicaciones. Conectar DynamoDB Streams en tu solución puede mejorar significativamente la eficiencia y la funcionalidad de tu sistema, brindando beneficios como la ejecución de funciones Lambda o la replicación de bases de datos en diferentes regiones en tiempo real. A continuación, exploramos con detalle cuándo y por qué utilizar DynamoDB Streams.
+
+### ¿Cómo funcionan las notificaciones en tiempo real?
+
+Imagina que desarrollaste una aplicación móvil y un usuario se registra en ella. Al almacenar su información en una tabla de DynamoDB, el uso de Streams asegura que se active automáticamente una función Lambda. Esta función toma la información del nuevo usuario y envía una notificación a través de los servicios de AWS, como el Sistema de Notificaciones Simple (SNS).
+
+Este proceso asegura que:
+
+- El usuario reciba una bienvenida personalizada al instante.
+- Se mejore la experiencia del usuario con notificaciones rápidas.
+- Reduzca el tiempo de espera entre el registro y la notificación.
+
+Esta capacidad de mandar una notificación en tiempo real da a las aplicaciones un toque profesional que los usuarios actuales valoran profundamente.
+
+### ¿Cómo facilita DynamoDB Streams la replicación de bases de datos?
+
+Cuando gestionas sistemas distribuidos o aplicaciones globales, replicar bases de datos en distintas regiones es crucial. Aquí, DynamoDB Streams muestra su valor:
+
+1. **Procesamiento en tiempo real**: Una función Lambda escribe datos en DynamoDB, disparando un Stream.
+2. **Activación de funciones Lambda adicionales**: Este Stream activa otra función Lambda que copia en una tabla de DynamoDB en una región diferente.
+3. **Replicación eficiente y confiable**: Permite asegurar que todos los datos estén actualizados en todas las regiones correspondientes, algo vital para la consistencia de datos y la velocidad de acceso.
+
+Esto es especialmente útil cuando se busca tener una réplica de la base de datos para mejorar la velocidad de acceso de usuarios en diferentes partes del mundo.
+
+### ¿Cómo maximizar la capacidad de notar la actividad de los usuarios?
+
+Al diseñar portales web, identificar y responder a la actividad del usuario en tiempo real puede ser fundamental para brindar una experiencia personalizada. DynamoDB Streams facilita este proceso:
+
+- **Ingesta y procesamiento de datos**: Al instante de un registro, una función Lambda puede tomar la información del usuario y procesarla.
+- **Escritura en servidores y envío de correos**: Un Stream desencadena acciones como escribir datos en un servidor diferente y enviar correos electrónicos personalizados.
+- **Complejidad optimizada**: La arquitectura permite integrar múltiples procesos automáticos de forma coordinada, mejorando la fuerza operativa de tus sistemas.
+
+La habilidad de documentar y actuar sobre la actividad de los usuarios tan pronto como se registra garantiza que tu plataforma se mantenga competitiva y user-friendly.
+
+### ¿Cuáles son las ventajas adicionales de usar DynamoDB Streams?
+
+DynamoDB Streams es poderoso no solo por los casos personalizados que resuelve, sino también por sus características generales que pueden transformar una arquitectura de datos:
+
+- **Procesamiento en alto volumen**: Ideal para aplicaciones donde la ingesta de datos es alta y necesita procesamiento inmediato.
+- **Escalabilidad y flexibilidad**: Se integra fácilmente con otros servicios de AWS, proporcionando escalabilidad automática.
+- **Facilidad de integración**: No requiere cambios significativos en tu arquitectura existente.
+
+Al utilizar DynamoDB Streams, aprovechas todas estas ventajas a la vez que optimizas las operaciones internas de tu aplicación, mejorando la calidad y eficiencia de tus servicios.
+
+En resumen, las capacidades de DynamoDB Streams permiten crear sistemas responsivos con funcionalidades como notificaciones instantáneas, replicación de datos cross-región en tiempo real, y mejor manejo de la actividad del usuario, transformando por completo tus soluciones tecnológicas. Siempre que necesites procesos que demanden información real-time, los Streams de DynamoDB son la elección indicada.
+
+## DAX: DynamoDB Accelerator
+
+**DynamoDB Accelerator (DAX)** es un servicio de caché en memoria completamente administrado diseñado para **acelerar las lecturas de Amazon DynamoDB**. Su objetivo principal es **reducir la latencia de lectura a microsegundos**, lo que lo hace ideal para aplicaciones con cargas de lectura intensivas.
+
+### **🔹 Características principales**
+1. **Caché en memoria de alto rendimiento** 🏎️  
+   - Reduce la latencia de lectura a **microsegundos** en comparación con los milisegundos de DynamoDB.  
+   - Utiliza **memoria RAM** para almacenar datos en caché.  
+
+2. **Totalmente compatible con DynamoDB** 🔄  
+   - Funciona como un **proxy de DynamoDB**.  
+   - No requiere cambiar el código de la aplicación; se usa el mismo SDK de AWS.
+
+3. **Escalabilidad automática** 📈  
+   - Se adapta al crecimiento de la aplicación sin intervención manual.  
+   - Maneja **millones de solicitudes por segundo**.  
+
+4. **Alta disponibilidad y resiliencia** 🔧  
+   - Funciona en un **clúster con múltiples nodos** para mayor disponibilidad.  
+   - Replicación de datos entre nodos para evitar pérdida de información.  
+
+5. **Reducción de costos en DynamoDB** 💰  
+   - Disminuye el número de lecturas directas en DynamoDB, reduciendo el costo de las consultas.  
+   - Ideal para cargas **Read-Heavy** (muchas lecturas y pocas escrituras).
+
+### **🔹 Casos de uso**
+✅ **Aplicaciones con muchas lecturas**  
+   - Aplicaciones web y móviles con alto tráfico.  
+
+✅ **Tablas con datos de solo lectura o con pocas actualizaciones**  
+   - Datos de configuración, catálogos de productos, perfiles de usuario, etc.  
+
+✅ **Workloads que requieren baja latencia**  
+   - Sistemas financieros, juegos en tiempo real, análisis de datos en streaming.
+
+### **🔹 ¿Cómo funciona DAX?**
+1. **Solicitud de lectura** → La aplicación consulta un dato en DAX.  
+2. **DAX verifica la caché**:  
+   - **Si el dato está en caché**, lo devuelve en microsegundos.  
+   - **Si el dato no está en caché**, DAX lo recupera desde DynamoDB, lo almacena en la caché y lo devuelve.  
+
+3. **Actualizaciones** → DAX propaga cambios a DynamoDB para mantener consistencia.
+
+### **🔹 Tipos de consistencia en DAX**
+- **Lectura eventual (por defecto)**: Más rápida, pero los datos pueden estar desactualizados unos milisegundos.  
+- **Lectura consistente**: Garantiza los datos más recientes, pero con mayor latencia.  
+
+### **🔹 Implementación en AWS**
+Para usar DAX en una aplicación con DynamoDB:
+1. **Crear un clúster DAX** en la consola de AWS.  
+2. **Configurar permisos IAM** para permitir que la aplicación acceda a DAX.  
+3. **Actualizar el SDK de AWS** para que la aplicación consulte DAX en lugar de DynamoDB directamente.  
+4. **Ajustar la configuración de TTL (Time to Live)** para definir cuánto tiempo se almacenan los datos en caché. 
+
+### **💡 Conclusión**
+DAX es una excelente solución para mejorar el rendimiento de DynamoDB en aplicaciones que requieren **altas velocidades de lectura y baja latencia**. Sin embargo, no es ideal para cargas de trabajo con muchas escrituras o donde se necesita **consistencia fuerte en cada lectura**.
+
+**Resumen**
+
+DAX (*DynamoDB Accelerator*) es un cluster de caché completamente administrado por AWS y de alta disponibilidad para DynamoDB con un rendimiento de hasta 10 veces superior (*de milisegundos a microsegundos*) y soporta millones de solicitudes por segundo.
+
+Entre sus características encontramos la encriptación en reposo, podemos utilizar hasta 10 nodos y se puede seleccionar la zona de disponibilidad donde se desplegará el cluster. Podemos utilizar instancias *small* y *medium* para cargas de prueba, de resto todas son de tipo R (*optimizadas en memoria*).
