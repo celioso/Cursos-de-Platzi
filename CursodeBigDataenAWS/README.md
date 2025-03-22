@@ -2284,4 +2284,1176 @@ Con estas guías y herramientas, estarás en camino de dominar la ingeniería de
 
 [GitHub - czam01/glue-examples](https://github.com/czam01/glue-examples)
 
+## Demo - Creando nuestro primer ETL - Ejecución
+
+Para ejecutar tu primer **ETL (Extract, Transform, Load)** en **AWS Glue**, sigue estos pasos:
+
+### **1️⃣ Crear un Job en AWS Glue**
+1. **Accede a AWS Glue** desde la consola de AWS.
+2. En el menú izquierdo, selecciona **"Jobs"** y haz clic en **"Create job"**.
+3. Configura:
+   - **Nombre del Job**: Un nombre descriptivo.
+   - **IAM Role**: Un rol con permisos para acceder a S3 y Glue.
+   - **Tipo de script**: Python o Scala.
+   - **Ubicación del código**: Puedes escribirlo en la consola o almacenarlo en S3.
+
+### **2️⃣ Escribir el código del ETL**
+Ejemplo en **Python** usando **AWS Glue DynamicFrames**:
+
+```python
+import sys
+from awsglue.transforms import *
+from awsglue.utils import getResolvedOptions
+from pyspark.context import SparkContext
+from awsglue.context import GlueContext
+from awsglue.job import Job
+
+# Inicializar contexto de Glue
+args = getResolvedOptions(sys.argv, ['JOB_NAME'])
+sc = SparkContext()
+glueContext = GlueContext(sc)
+spark = glueContext.spark_session
+job = Job(glueContext)
+job.init(args['JOB_NAME'], args)
+
+# Extraer datos desde S3
+datasource = glueContext.create_dynamic_frame.from_options(
+    format_options={"multiline": True},
+    connection_type="s3",
+    format="json",
+    connection_options={"paths": ["s3://mi-bucket/input/"], "recurse": True},
+)
+
+# Transformar datos
+transformed_df = datasource.toDF()
+transformed_df = transformed_df.withColumnRenamed("old_column", "new_column")
+
+# Cargar datos a S3
+output_dyf = DynamicFrame.fromDF(transformed_df, glueContext, "output_dyf")
+glueContext.write_dynamic_frame.from_options(
+    frame=output_dyf,
+    connection_type="s3",
+    connection_options={"path": "s3://mi-bucket/output/"},
+    format="parquet"
+)
+
+job.commit()
+```
+
+### **3️⃣ Ejecutar el Job**
+1. Guarda el script en **S3** o en el editor de Glue.
+2. En la consola de **AWS Glue**, selecciona el **Job** creado.
+3. Haz clic en **"Run Job"** y monitorea su ejecución en **"Runs"**.
+
+### **4️⃣ Monitorear la Ejecución**
+- Ve a **AWS Glue → Jobs → Runs** para ver el estado del Job.
+- Revisa **AWS CloudWatch Logs** para depurar errores.
+
+📌 **Opcional:** Automatiza la ejecución con **AWS Lambda** o **AWS Step Functions** si deseas que el ETL corra periódicamente. 🚀
+
+### Resumen
+
+### ¿Cómo conectarse a AWS Glue para ejecutar tareas ETL?
+
+Amazon Glue es un servicio de ETL (extracción, transformación y carga) totalmente administrado que permite a los usuarios preparar y cargar sus datos para análisis. A lo largo de este artículo, exploraremos un escenario práctico sobre cómo configurar un entorno de desarrollo, verificar conexiones y ejecutar tareas de transformación en AWS Glue. Aquí vamos.
+
+### ¿Cómo configurar un entorno de desarrollo para AWS Glue?
+
+En este caso, el primer paso es asegurarse de que su entorno de desarrollo esté correctamente conectado. Para lograrlo, debemos establecer un túnel SSH al endpoint de desarrollo. Estos son los pasos básicos:
+
+1. **Configurar el túnel SSH**: Utilice la llave privada y el endpoint de desarrollo proporcionado por AWS Glue. Abra la consola, seleccione el endpoint de desarrollo y copie el comando para iniciar el túnel. Asegúrese de que la llave privada esté disponible y ejecútelo.
+
+3. **Verificar la conexión desde Zeppelin**: Una vez configurado el túnel, es crucial verificar que tienes sincronización con los datos almacenados en S3. Actualiza tu instancia de Zeppelin y confirma que está conectada con S3.
+
+### ¿Cómo crear y ejecutar un contexto de Glue?
+
+El siguiente paso después de la configuración del entorno de desarrollo es crear el contexto de Glue, el cual establece la conexión y carga las librerías necesarias para la ejecución de las tareas ETL. Aquí te explicamos cómo hacerlo:
+
+1. **Crear el Glue Context**: Copia el comando para crear el Glue Context desde los ejemplos proporcionados en los enlaces del curso. Ve a tu interfaz de Zeppelin, pega la información y ejecútala.
+
+3. **Crear un Dynamic Frame**: Con el Glue Context en marcha, el siguiente comando es crear un Dynamic Frame, que permitirá identificar y manipular los datos desde la base de datos PlatziDB y la tabla 'persons-json'. Esto implica realizar la conexión al catálogo Glue y verificar la cantidad de registros disponibles y su esquema.
+
+### ¿Cómo corregir errores durante la ejecución de comandos?
+
+Mientras se ejecutan comandos, es posible que te encuentres con errores. A continuación te mostramos cómo abordarlos:
+
+1. **Agregar comandos que faltan**: Si un comando no se ejecuta correctamente, verifica que todas las librerías necesarias estén importadas. Puedes crear un nuevo bloque en Zeppelin donde especifiques que estás trabajando con PySpark y luego ejecutar el comando completo con todas las librerías. 
+2. **Usar la consola SSH para debuggin**g: Si los errores persisten, puedes intentar conectarte a PySpark a través de SSH. Ejecuta los comandos línea por línea a través de la CLI, lo cual puede facilitar la identificación de errores y otros problemas.
+
+### ¿Cómo realizar consultás directas para depuración?
+
+Exploremos la opción de conectarse al developer endpoint a través de SSH para hacer un troubleshooting más detallado:
+
+- **Conexión vía SSH**: En caso de que encuentres errores al usar Zeppelin, puedes optar por conectarte directamente a PySpark a través de SSH. Una vez conectado, ejecuta las consultas directamente desde la CLI.
+
+- **Validar resultados en la CLI**: Ejecutando las consultas de esta manera, tendrás oportunidad de ver los resultados en tiempo real, incluyendo errores o advertencias que puedan surgir durante la ejecución.
+
+Este enfoque te permitirá ejecutar análisis, solucionar errores y planificar los siguientes pasos en la arquitectura de datos de AWS Glue. Sigue explorando e integrando tus datos para maximizar su valor y seguir aprendiendo en el emocionante mundo de la ingeniería de datos.
+
+**Lecturas recomendadas**
+
+[aws-glue-samples/join_and_relationalize.md at master · aws-samples/aws-glue-samples · GitHub](https://github.com/aws-samples/aws-glue-samples/blob/master/examples/join_and_relationalize.md)
+
+[GitHub - czam01/glue-examples](https://github.com/czam01/glue-examples)
+
+## Demo - Creando nuestro primer ETL - Carga
+
+La fase de **carga** en un proceso ETL consiste en almacenar los datos transformados en un destino adecuado, como Amazon S3, Amazon Redshift, DynamoDB, o una base de datos relacional en RDS. 
+
+A continuación, te muestro cómo realizar la **carga de datos en S3** y otras opciones:
+
+### **1️⃣ Cargar los datos transformados en S3 (Parquet, CSV, JSON)**  
+Si en la fase de transformación trabajaste con un **DynamicFrame** en AWS Glue, puedes cargarlo a S3 usando:
+
+```python
+glueContext.write_dynamic_frame.from_options(
+    frame=output_dyf,  # DynamicFrame transformado
+    connection_type="s3",
+    connection_options={"path": "s3://mi-bucket/output/"},
+    format="parquet"  # También puedes usar "csv" o "json"
+)
+```
+📌 **Opciones de formato:**
+- `"parquet"` (Recomendado para analítica)
+- `"json"`
+- `"csv"` (Puede requerir opciones adicionales como delimitador)
+
+### **2️⃣ Cargar los datos en Amazon Redshift**
+Si deseas cargar los datos en **Amazon Redshift**, usa **JDBC** con `connection_options`:
+
+```python
+glueContext.write_dynamic_frame.from_jdbc_conf(
+    frame=output_dyf,
+    catalog_connection="redshift-connection",
+    connection_options={
+        "database": "mi_base",
+        "dbtable": "mi_tabla",
+        "redshiftTmpDir": "s3://mi-bucket/temp-dir/"
+    },
+    redshift_tmp_dir="s3://mi-bucket/temp-dir/",
+    transformation_ctx="datasink4"
+)
+```
+✅ **Requisitos para Redshift:**
+- Un **Cluster Redshift** con una tabla creada.
+- Conexión JDBC en **AWS Glue Connections**.
+- Permisos en el **IAM Role** para escribir en Redshift.
+
+### **3️⃣ Cargar los datos en Amazon DynamoDB**
+Para almacenar datos en una **tabla de DynamoDB**, usa:
+
+```python
+glueContext.write_dynamic_frame.from_options(
+    frame=output_dyf,
+    connection_type="dynamodb",
+    connection_options={"dynamodb.output.tableName": "mi_tabla_dynamodb"}
+)
+```
+📌 **Consideraciones:**
+- Asegurar que la tabla en DynamoDB ya exista.
+- Configurar permisos de escritura en DynamoDB.
+
+### **4️⃣ Ejecutar y Monitorear la Carga**
+Después de agregar la carga en el **script de AWS Glue**, sigue estos pasos:
+1. **Guarda el script** en la consola de AWS Glue o en S3.
+2. **Ejecuta el Job** desde la consola de Glue.
+3. **Monitorea la ejecución** en **AWS Glue > Jobs > Runs**.
+4. **Revisa logs en CloudWatch** en caso de errores.
+
+### **🚀 Conclusión**
+- **S3:** Ideal para almacenamiento escalable en formatos Parquet, JSON o CSV.
+- **Redshift:** Para cargas analíticas y BI.
+- **DynamoDB:** Para almacenamiento en NoSQL con alta disponibilidad.
+
+Si necesitas optimizar la carga, considera **particionar los datos en S3** o **usar COPY en Redshift**.
+
+### Resumen
+
+### ¿Cómo crear y gestionar un Job en AWS Glue?
+
+Al trabajar con grandes volúmenes de datos, la transformación de los mismos es clave. Amazon Web Services (AWS) Glue permite automatizar y escalar estas tareas de transformación mediante sus Jobs. Descubre cómo configurar y ejecutar un Job de ETL usando Glue y sigue paso a paso para optimizar tus datos.
+
+### ¿Qué es un Job en AWS Glue?
+
+Un Job en AWS Glue es un componente encargado de transformar datos. Son procesos que consisten en código de transformación que manipula los datos según se requiera. Estos son algunos pasos clave para configurar y utilizar un Job de AWS Glue:
+
+1. **Creación del Job**:
+
+ - Accede a la consola de AWS Glue y selecciona "Jobs".
+ - Haz clic en "Agregar Job" y asigna un nombre, por ejemplo, "Platzi ETL".
+ - Define el rol de IAM utilizado, como "AWS Glue Service Role Platzi".
+ - Elige el tipo de ejecución, ya sea Spark o Python Shell. En este caso, seleccionamos Spark.
+
+2. Configuración de Script:
+
+ - Proporciona un nuevo script Python para el ETL.
+ - Aprovecha las propiedades avanzadas para ajustar configuraciones como marcas de trabajo o tiempos de espera.
+
+### Transformaciones ETL:
+
+ - Edita el script Python para definir el Glue Context y especificar detalles del ETL.
+ - Cambia el nombre de la base de datos y especifica directorios de salida en S3.
+
+### ¿Cómo realizar transformaciones con Glue?
+Para comenzar la transformación de datos, es importante definir al menos tres operaciones básicas:
+
+1. **Creación de Dynamic Frames**: Son estructuras que permiten a Glue identificar y gestionar orígenes de datos para transformaciones dinámicas.
+
+2. **Operaciones de datos**:
+
+ - Eliminar o renombrar columnas que no son necesarias.
+ - Uniones (Joins) entre tablas para consolidar información de distintas fuentes.
+ 
+```python
+# Ejemplo de un Join en el script Python de Glue
+joined_data = DynamicFrame.fromDF(
+    memberships_df.join(persons_df, memberships_df.id == persons_df.personid),
+    glueContext,
+    "joined_data"
+)
+```
+
+2. **Escritura y Formato**:
+
+ - Escribe los datos procesados en formato Parquet, que optimiza espacio y rendimiento.
+ - Define el destino de escritura en S3 y particiona archivos según sea necesario.
+
+### ¿Cómo automatizar y optimizar la ejecución de Jobs?
+
+Automatizar la ejecución de Jobs es fundamental para optimizar el tiempo y recursos en un entorno profesional:
+
+ - **Uso de Crawler**: Después de transformar los datos, un Crawler actualiza la metadata en AWS Glue Data Catalog.
+ - **Automatización con SDK de AWS**: Orquesta ejecuciones automáticamente, maneja errores y asegura reintentos en caso de fallas.
+
+### ¿Qué sucederá una vez finalizado el Job?
+Una vez ejecutado el Job exitosamente, puedas verificar en S3 que los archivos se actualicen según lo previsto.
+
+ - Comprueba el estado del job en la consola de AWS Glue. Debe mostrar 'succeeded' si se completó con éxito.
+ - Verifica la estructuración y calidad de los datos transformados usando servicios como AWS Atena.
+
+Las operaciones realizadas a través de AWS Glue son una vía poderosa y automatizada para manejar grandes volúmenes de datos. Estos pasos proporcionan un marco básico que se puede expandir y personalizar según las características y necesidades de cada proyecto de Big Data. ¡Continúa explorando y aprendiendo para maximizar el potencial de tus proyectos con AWS Glue y más!
+
+## AWS - EMR
+
+AWS **Elastic MapReduce (EMR)** es un servicio en la nube que facilita el procesamiento de **grandes volúmenes de datos** utilizando **frameworks de Big Data** como **Apache Spark, Hadoop, Hive, Presto, HBase y Flink**. Se usa principalmente para análisis de datos, machine learning y procesamiento ETL.
+
+### **🚀 Características clave de AWS EMR**
+1. **Escalabilidad automática**: Ajusta la capacidad de los clusters según la demanda.
+2. **Soporte para múltiples frameworks**: Hadoop, Spark, Hive, Presto, Flink, etc.
+3. **Integración con AWS**: Se conecta fácilmente con S3, RDS, DynamoDB, Redshift y otros servicios.
+4. **Administración simplificada**: AWS gestiona la configuración y el mantenimiento de los clusters.
+5. **Pago por uso**: Paga solo por los recursos utilizados.
+
+### **📌 Arquitectura de EMR**
+Un clúster de EMR está compuesto por **tres tipos de nodos**:
+
+1. **Master Node**: Controla la ejecución del clúster y distribuye tareas.
+2. **Core Nodes**: Procesan los datos y almacenan información en HDFS.
+3. **Task Nodes** *(opcional)*: Solo ejecutan tareas sin almacenar datos.
+
+### **💻 Pasos para crear un clúster EMR en AWS**
+### **1️⃣ Configuración inicial**
+- Ve a la **consola de AWS** y busca **Amazon EMR**.
+- Haz clic en **"Create cluster"**.
+
+### **2️⃣ Elegir un método de despliegue**
+- **EMR on EC2**: Cluster en instancias EC2.
+- **EMR on EKS**: Cluster gestionado en Kubernetes.
+- **EMR Serverless**: Ejecución sin necesidad de administrar servidores.
+
+### **3️⃣ Configurar el clúster**
+- **Nombre del clúster**: Ej. `mi-cluster-emr`.
+- **Versión de EMR**: Ej. `6.9.0` (con Apache Spark, Hadoop, etc.).
+- **Aplicaciones**: Selecciona los frameworks que necesitas (Spark, Hive, HBase, Presto, etc.).
+- **Tipo de instancias EC2**: Ej. `m5.xlarge` (depende de la carga de trabajo).
+- **Cantidad de nodos**:
+  - 1 Master Node
+  - 2+ Core Nodes (según el tamaño del clúster)
+
+### **4️⃣ Configurar almacenamiento**
+- **S3**: Para almacenar los datos de entrada y salida.
+- **HDFS**: Sistema de archivos distribuido dentro del clúster.
+
+### **5️⃣ Configurar networking**
+- Selecciona la **VPC**, **subred** y **grupo de seguridad**.
+
+### **6️⃣ Opciones avanzadas**
+- **Auto-terminación**: Configura si el clúster debe apagarse tras completar la tarea.
+- **Spot Instances**: Reduce costos usando instancias Spot.
+- **IAM Roles**: Define permisos para acceder a S3, Glue, DynamoDB, etc.
+
+### **7️⃣ Lanzar el clúster**
+- Revisa la configuración y haz clic en **"Create cluster"**.
+
+### **📊 Ejecutar trabajos en EMR**
+### **1️⃣ Desde la consola AWS**
+- Ve a **Clusters EMR** > **Actions** > **Submit Step**.
+- Elige el tipo de trabajo (`Spark`, `Hive`, `Hadoop`, etc.).
+- Sube el código o referencia un archivo en **S3**.
+
+### **2️⃣ Desde AWS CLI**
+Ejecutar un script PySpark en EMR:
+
+```bash
+aws emr add-steps --cluster-id j-XXXX \
+    --steps Type=Spark,Name="MySparkJob",ActionOnFailure=CONTINUE,Args=[--deploy-mode,client,--master,yarn,s3://mi-bucket/scripts/job.py]
+```
+
+### **3️⃣ Con Jupyter Notebook en EMR**
+- Activa **EMR Notebooks** para ejecutar código interactivo en un **Notebook Jupyter**.
+
+### **🛠 Integraciones con otros servicios de AWS**
+✅ **S3**: Almacenamiento de datos de entrada y salida.  
+✅ **Glue**: Catálogo de datos y transformación ETL.  
+✅ **Athena**: Consulta de datos sin servidores en S3.  
+✅ **Redshift**: Integración con data warehouses.  
+✅ **CloudWatch**: Monitoreo y logs del clúster.  
+
+### **📌 Casos de uso de EMR**
+✅ **Análisis de datos masivos**: Logs, sensores IoT, datos de redes sociales.  
+✅ **ETL**: Extracción, transformación y carga de grandes volúmenes de datos.  
+✅ **Machine Learning**: Entrenamiento de modelos con Spark MLlib.  
+✅ **Procesamiento en tiempo real**: Con Apache Flink o Spark Streaming.
+
+### **💰 Costos de AWS EMR**
+- Basado en **pago por hora** según el tipo de instancia EC2 y el número de nodos.
+- Puedes ahorrar usando **Spot Instances** o **EMR Serverless**.
+
+💡 **Simula los costos en la calculadora de AWS**:  
+[🔗 AWS Pricing Calculator](https://calculator.aws/#/)
+
+### **🎯 Conclusión**
+AWS EMR es una **solución poderosa y escalable** para procesar **Big Data** en la nube con **Spark, Hadoop y otros frameworks**. Su facilidad de integración con S3, Glue, Redshift y otros servicios lo hace ideal para empresas que manejan grandes volúmenes de información.
+
+**Resumen**
+
+Elastic MapReduce o EMR es un clúster en el cual podemos correr cargas muy grandes de trabajo.
+
+- Estos clusters son instancias de EC2 basadas en Hadoop.
+- Provee interacción con otros servicios de AWS como S3, RedShift, DynamoDB y Kinesis.
+- Contamos con acciones Bootstrap, estos son scripts que se van a ejecutar al iniciar un clúster.
+- Podemos ejecutar de manera ordenada distintos scripts utilizando Step.
+
+## Demo - Desplegando nuestro primer clúster con EMR
+
+Aquí tienes una guía paso a paso para **desplegar tu primer clúster en AWS EMR**.
+
+### **🚀 Desplegar un Clúster EMR en AWS**
+Un clúster de **Elastic MapReduce (EMR)** en AWS permite ejecutar frameworks de **Big Data** como **Apache Spark, Hadoop, Hive y Presto** para procesamiento de datos a gran escala.
+
+### **1️⃣ Configurar el Clúster desde la Consola AWS**
+### **1.1 Ir a Amazon EMR**
+1. Accede a la consola de AWS.
+2. Busca "EMR" en la barra de búsqueda y selecciona **Amazon EMR**.
+3. Haz clic en **"Crear clúster"**.
+
+### **1.2 Elegir el Tipo de Despliegue**
+AWS EMR ofrece tres opciones:
+- **EMR en EC2**: Clúster con instancias EC2 (recomendado para control total).
+- **EMR en EKS**: Para ejecutar EMR sobre Kubernetes.
+- **EMR Serverless**: Sin necesidad de gestionar servidores.
+
+Para este caso, elegiremos **EMR en EC2**.
+
+### **1.3 Configurar el Clúster**
+#### **🔹 Configuración básica**
+- **Nombre del clúster**: `mi-cluster-emr`
+- **Versión de EMR**: Se recomienda la última estable (ej. `6.9.0`).
+- **Aplicaciones**:
+  - Apache Spark (si trabajas con análisis de datos y ML)
+  - Hadoop, Hive, Presto (para procesamiento ETL)
+- **Modo de despliegue**: `Clúster estándar` (para un entorno persistente).
+
+#### **🔹 Configuración de la Red**
+- **VPC**: Selecciona la VPC donde correrá el clúster.
+- **Subred**: Elige una subred disponible.
+- **Grupo de seguridad**: Usa los predeterminados o crea uno personalizado.
+
+#### **🔹 Configurar los Nodos del Clúster**
+Un clúster EMR tiene tres tipos de nodos:
+
+| Tipo de Nodo  | Función  | Cantidad recomendada  |
+|--------------|---------|----------------------|
+| **Master** | Coordina las tareas del clúster. | `1` |
+| **Core** | Procesa datos y almacena en HDFS. | `2+` |
+| **Task (Opcional)** | Solo ejecuta tareas, no almacena datos. | `0+` |
+
+**Ejemplo de configuración**:
+- **Master Node**: `m5.xlarge`
+- **Core Nodes**: `2` x `m5.xlarge`
+- **Task Nodes**: Opcional
+
+#### **🔹 Configuración de Almacenamiento**
+- **S3 Bucket**: Para almacenar logs y resultados de procesamiento.
+- **HDFS**: Para almacenamiento distribuido dentro del clúster.
+
+#### **🔹 Configuración Avanzada**
+- **IAM Roles**: `EMR_DefaultRole` (asegúrate de que tenga permisos adecuados para acceder a S3, DynamoDB, etc.).
+- **Auto-terminación**: Habilitar si solo necesitas el clúster temporalmente.
+- **Spot Instances**: Reducir costos usando instancias Spot para los nodos de cómputo.
+
+### **1.4 Crear y Lanzar el Clúster**
+- **Revisar configuración** y hacer clic en **"Crear clúster"**.
+- El clúster tardará **de 5 a 15 minutos** en iniciarse.
+
+### **2️⃣ Ejecutar un Trabajo en el Clúster**
+Una vez desplegado el clúster, puedes ejecutar trabajos de **Spark, Hadoop, Hive, Presto, etc.**.
+
+### **2.1 Enviar una tarea desde la consola AWS**
+1. Ve a **Clusters EMR**.
+2. Selecciona tu clúster y haz clic en **"Submit Step"**.
+3. Elige el tipo de tarea (Ejemplo: Spark, Hive, etc.).
+4. Especifica la ubicación del script (ejemplo: `s3://mi-bucket/scripts/job.py`).
+5. Ejecuta el trabajo.
+
+### **2.2 Ejecutar un Trabajo con AWS CLI**
+Si prefieres la línea de comandos:
+
+```bash
+aws emr add-steps --cluster-id j-XXXX \
+    --steps Type=Spark,Name="MySparkJob",ActionOnFailure=CONTINUE,Args=[--deploy-mode,client,--master,yarn,s3://mi-bucket/scripts/job.py]
+```
+
+### **2.3 Conectar Jupyter Notebook a EMR**
+Para ejecutar código interactivo:
+1. En la consola AWS, ve a **EMR** > **Notebooks** > **Create Notebook**.
+2. Conéctalo al clúster EMR.
+3. Escribe código en PySpark dentro del Notebook.
+
+### **3️⃣ Monitorear y Detener el Clúster**
+Para revisar logs y estado del clúster:
+- **CloudWatch Logs**: Ver registros de ejecución.
+- **Cluster UI**: Acceder a interfaces como Spark UI.
+
+Para **detener el clúster** y evitar costos adicionales:
+```bash
+aws emr terminate-clusters --cluster-ids j-XXXX
+```
+
+### **🎯 Conclusión**
+AWS EMR es una solución poderosa para ejecutar **Big Data y procesamiento ETL** en la nube. Siguiendo estos pasos, puedes desplegar y ejecutar tu primer clúster de forma eficiente.
+
+**Resumen**
+
+EMR tiene una gran cantidad de versiones, lo que cambia entre una versión y otra son las herramientas de software que contiene. Para esta demo utilizaremos la versión 5.20.0.
+
+Un clúster de EMR se compone de:
+
+- Master Nodes
+- Core Nodes
+- Task Nodes
+
+## Demo - Conectándonos a Apache Zeppelin en EMR
+
+Apache Zeppelin es una interfaz basada en web que permite interactuar con **Spark, Hive y Presto** en **AWS EMR**. Sigue estos pasos para conectarte a Zeppelin en tu clúster EMR. 
+
+### **1️⃣ Configurar Zeppelin al Crear el Clúster EMR**  
+Si aún no has creado el clúster, asegúrate de **habilitar Apache Zeppelin** en la configuración.  
+
+🔹 **Desde la Consola AWS**:  
+1. Ve a **Amazon EMR** y haz clic en **Crear Clúster**.  
+2. En la sección **Aplicaciones**, selecciona:  
+   - **Zeppelin** (para una interfaz interactiva).  
+   - **Spark** (para ejecutar consultas).  
+3. Configura el resto del clúster y lanza la instancia.  
+
+Si el clúster ya está creado, puedes **instalar Zeppelin manualmente** con el siguiente comando:  
+```bash
+sudo amazon-linux-extras enable epel
+sudo yum install zeppelin -y
+```
+
+### **2️⃣ Acceder a Zeppelin en EMR**  
+Una vez que el clúster está en ejecución:  
+
+🔹 **Desde la Consola AWS**:  
+1. Ve a **Amazon EMR** > **Clusters**.  
+2. Selecciona tu clúster y abre la pestaña **Aplicaciones**.  
+3. Encuentra **Zeppelin** y copia el enlace de la interfaz web.  
+
+🔹 **Si no aparece el enlace**, debes configurar el acceso con un túnel SSH:
+
+### **3️⃣ Crear un Túnel SSH para Acceder a Zeppelin**  
+Para conectarte a Zeppelin desde tu navegador, necesitas un **túnel SSH**.  
+
+### **🔹 Paso 1: Obtener la IP del Master Node**  
+Ejecuta en AWS CLI:  
+```bash
+aws emr describe-cluster --cluster-id j-XXXXXX --query "Cluster.MasterPublicDnsName"
+```
+Copiará un resultado similar a:  
+`ec2-XX-XXX-XX-XX.compute-1.amazonaws.com`
+
+### **🔹 Paso 2: Crear el Túnel SSH**  
+Ejecuta en tu terminal:  
+```bash
+ssh -i "tu-clave.pem" -N -L 8890:localhost:8890 hadoop@ec2-XX-XXX-XX-XX.compute-1.amazonaws.com
+```
+⚠️ **Nota**:  
+- Reemplaza `"tu-clave.pem"` por la clave SSH de tu instancia.  
+- Reemplaza `ec2-XX-XXX-XX-XX.compute-1.amazonaws.com` con la IP de tu nodo master.
+
+### **🔹 Paso 3: Abrir Zeppelin en el Navegador**  
+1. Abre un navegador y accede a:  
+   ```
+   http://localhost:8890
+   ```
+2. ¡Listo! Ahora puedes ejecutar consultas en Zeppelin.
+
+### **4️⃣ Ejecutar Código en Zeppelin**  
+Una vez dentro de Zeppelin, puedes usar **PySpark** para analizar datos.  
+
+Ejemplo de consulta en **PySpark**:  
+```python
+%pyspark
+df = spark.read.csv("s3://mi-bucket/datos.csv", header=True, inferSchema=True)
+df.show()
+```
+
+### **5️⃣ Cerrar el Túnel SSH y el Clúster**  
+Para evitar costos adicionales:  
+1. **Cerrar el túnel SSH** presionando `Ctrl + C` en la terminal.  
+2. **Apagar el clúster** con:  
+   ```bash
+   aws emr terminate-clusters --cluster-ids j-XXXXXX
+   ```
+
+### **🎯 Conclusión**  
+Conectarse a Apache Zeppelin en AWS EMR te permite analizar datos de manera visual e interactiva. Si sigues estos pasos, podrás acceder sin problemas y ejecutar consultas en Spark.  
+
+### Resumen
+
+### ¿Cómo conectar Apache Zeppelin a un clúster de EMR?
+
+Conectar Apache Zeppelin a un clúster de EMR puede parecer un reto al principio, pero con los pasos adecuados, puedes hacerlo eficientemente y sacar el máximo provecho de tus cargas de trabajo en la nube. Aquí te guiaré en el proceso para habilitar esta conexión y detallaré las configuraciones necesarias para emplear Apache Zeppelin en Amazon EMR.
+
+### ¿Qué se necesita para establecer la conexión?
+
+La conexión a Apache Zeppelin desde un clúster de EMR requiere que ajustes los grupos de seguridad asociados al nodo maestro del clúster. Estos pasos son esenciales:
+
+- **Habilitación de la conexión web**: Por defecto, la conexión web podría no estar habilitada. Esto se debe a las restricciones impuestas por los grupos de seguridad que protegen el masternode del clúster.
+
+- **Configuración del puerto adecuado**: Dependiendo de las herramientas instaladas en EMR, será necesario abrir diferentes puertos. Para Apache Zeppelin, es fundamental abrir el puerto 8890 en el masternode.
+
+### ¿Cómo configurar el grupo de seguridad del nodo maestro?
+
+Para habilitar la conexión, es necesario modificar el grupo de seguridad del nodo principal. Aquí se explica cómo hacerlo:
+
+- **Acceso a la consola de EMR**: Ve a la consola de Amazon EMR y localiza tu clúster activo.
+- **Identificación de los grupos de seguridad**: Busca los grupos de seguridad asignados al nodo maestro y al nodo esclavo.
+- **Modificación de reglas de entrada (inbound rules)**: En el grupo de seguridad del nodo maestro, añade una nueva regla de entrada que permita el tráfico a través del puerto 8890 desde cualquier dirección de origen.
+- **Guardado de configuraciones**: Guarda los cambios. Esto habilitará la conexión web al clúster.
+
+### ¿Cómo probar la conexión a Zeppelin?
+
+Una vez configurado el grupo de seguridad, sigue estos pasos para asegurarte de que tienes acceso a Apache Zeppelin:
+
+- **Copiar y probar el DNS**: Copia el DNS público del nodo maestro y prueba el acceso a Apache Zeppelin en un navegador utilizando el siguiente formato de URL: `http://<DNS_publico>:8890`.
+- **Verificación de ejecución**: El navegador deberá cargar la página de inicio de Apache Zeppelin que está corriendo en tu clúster de EMR.
+
+### ¿Cómo mejorar la seguridad en Apache Zeppelin?
+
+La seguridad es crucial cuando operamos en entornos de nube. Por esto, es importante seguir las mejores prácticas de seguridad y configuraciones adicionales para proteger tus datos.
+
+- **Subred y balanceador de carga**: Se recomienda ejecutar el clúster dentro de una subred privada y poner un balanceador de carga en la subred pública. Esto ayuda a asegurar que solamente el tráfico permitido tenga acceso.
+- **Certificados de seguridad**: Utiliza servicios como Route 53 para agregar un certificado de seguridad y un dominio, aumentando así la seguridad de la conexión.
+- **Archivo shiro.ini**: Apache Zeppelin permite configuraciones avanzadas de seguridad mediante el archivo shiro.ini. Configura integraciones con Directorio Activo para requerir autenticación del usuario con nombre y contraseña.
+
+### ¿Cómo visualizar más recursos en Spark?
+
+Si deseas habilitar y visualizar recursos adicionales en Spark dentro de Apache Zeppelin, como el Spark History Server, sigue estas recomendaciones:
+
+- **Configuración de vista de recursos detallados**: Asegúrate de que tienes habilitado Yarn y otras configuraciones en tu clúster para poder ver métricas detalladas a nivel gráfico.
+- **Acceso público y seguridad**: Aunque puedas hacer visualizaciones públicas, asegúrate de seguir las recomendaciones de seguridad para no exponer tus datos a riesgos innecesarios.
+
+El proceso de conexión a Apache Zeppelin en EMR es un paso clave para maximizar tus trabajos de transformación en la nube. Explora las opciones de integraciones de seguridad y ajuste de recursos como Spark para generar informes detallados y proteger tus aplicaciones. Con la infraestructura de nube de AWS y las capacidades de análisis de Zeppelin, tus datos estarán seguros y accesibles en todo momento. ¡Sigue explorando y aprendiendo!
+
+**Lecturas recomendadas**
+
+[Apache Zeppelin - Amazon EMR](https://docs.aws.amazon.com/emr/latest/ReleaseGuide/emr-zeppelin.html)
+
+[View Web Interfaces Hosted on Amazon EMR Clusters - Amazon EMR](https://docs.aws.amazon.com/emr/latest/ManagementGuide/emr-web-interfaces.html)
+
+## Demo- Despliegue automático de EMR con cloudformation
+
+AWS CloudFormation permite desplegar clústeres de **EMR (Elastic MapReduce)** de manera automatizada usando plantillas en **YAML o JSON**. A continuación, te explico cómo crear y desplegar un clúster EMR con **CloudFormation**.
+
+### **1️⃣ Crear la Plantilla de CloudFormation**
+A continuación, una plantilla básica en **YAML** que despliega un clúster EMR con **Spark y Zeppelin**:
+
+```yaml
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "CloudFormation para desplegar un Clúster EMR"
+
+Resources:
+  EMRCluster:
+    Type: "AWS::EMR::Cluster"
+    Properties:
+      Name: "MiClusterEMR"
+      ReleaseLabel: "emr-6.7.0"  # Versión de EMR
+      Applications:
+        - Name: "Spark"
+        - Name: "Zeppelin"
+      Instances:
+        MasterInstanceGroup:
+          InstanceType: "m5.xlarge"
+          InstanceCount: 1
+        CoreInstanceGroup:
+          InstanceType: "m5.xlarge"
+          InstanceCount: 2
+      JobFlowRole: "EMR_EC2_DefaultRole"
+      ServiceRole: "EMR_DefaultRole"
+      VisibleToAllUsers: true
+```
+
+### **2️⃣ Implementar la Plantilla en AWS CloudFormation**
+### **🔹 Opción 1: Subir la Plantilla desde la Consola AWS**
+1. Ir a la consola de **AWS CloudFormation**.
+2. Seleccionar **Crear pila** → **Con recursos nuevos**.
+3. Seleccionar **Cargar un archivo** y subir el archivo `.yaml`.
+4. Configurar los parámetros y hacer clic en **Crear pila**.
+5. Esperar a que el estado cambie a **CREATE_COMPLETE**.
+
+### **🔹 Opción 2: Desplegar con AWS CLI**
+Si tienes instalado **AWS CLI**, ejecuta:
+```bash
+aws cloudformation create-stack --stack-name MiClusterEMR \
+  --template-body file://mi_emr_template.yaml \
+  --capabilities CAPABILITY_NAMED_IAM
+```
+
+Para verificar el estado del despliegue:
+```bash
+aws cloudformation describe-stacks --stack-name MiClusterEMR
+```
+
+### **3️⃣ Acceder a Zeppelin en el Clúster EMR**
+Una vez creado el clúster, puedes conectarte a Zeppelin con un **túnel SSH**:
+
+1. **Obtener la IP del nodo Master**:
+   ```bash
+   aws emr describe-cluster --cluster-id j-XXXXXX --query "Cluster.MasterPublicDnsName"
+   ```
+
+2. **Crear el túnel SSH**:
+   ```bash
+   ssh -i "tu-clave.pem" -N -L 8890:localhost:8890 hadoop@ec2-XX-XXX-XX-XX.compute-1.amazonaws.com
+   ```
+
+3. **Abrir Zeppelin en el navegador**:
+   ```
+   http://localhost:8890
+   ```
+
+### **4️⃣ Eliminar el Clúster para Ahorrar Costos**
+Si ya no necesitas el clúster, elimínalo con:
+```bash
+aws cloudformation delete-stack --stack-name MiClusterEMR
+```
+
+### **🎯 Conclusión**
+Con esta configuración, puedes desplegar un clúster EMR de forma automática con **CloudFormation**, incluyendo **Spark y Zeppelin** para análisis de datos.
+
+### Resumen
+
+### ¿Cómo desplegar un clúster EMR de manera automatizada?
+
+Desplegar un clúster EMR (Elastic MapReduce) de forma automatizada es una práctica esencial en entornos productivos. Utilizar infraestructuras como código facilita la repetición y configuración de los procesos, reduciendo el esfuerzo de administración. Vamos a explorar cómo lograrlo a través de una plantilla de CloudFormation.
+
+### ¿Qué es una plantilla de CloudFormation?
+
+Una plantilla de CloudFormation es un recurso de AWS que permite definir la infraestructura y servicios que se desean implementar. Dentro de ésta, se describe cada componente de una estructura tecnológica, y se configura para implementar un clúster EMR de manera automatizada:
+
+- **Región y nombre del ambiente**: Se define la región donde el clúster se desplegará, junto con un nombre para identificar el entorno.
+
+- **Subredes y VPCs**: Dependiendo del entorno (público o privado), se determinan las subredes y VPCs donde el clúster operará, permitiendo flexibilidad al modificar directamente las subredes o usar mapeos predefinidos.
+
+### ¿Cómo gestionar los steps?
+
+Los "steps" son acciones o comandos que se ejecutan secuencialmente dentro del clúster. En el código de infraestructura, estos steps están organizados con las siguientes reglas:
+
+- **Dependencia**: Un step no comenzará hasta que el anterior finalice, asegurando un flujo de trabajo coherente.
+
+- **Acciones en caso de fallo**: Se determina la respuesta del clúster si un step falla, como continuar con la ejecución o cancelar operaciones subsiguientes.
+
+- **Argumentos adicionales**: Se pueden incluir directorios específicos o ejecuciones puntuales personalizadas.
+
+### ¿Cómo configurar las instancias del clúster?
+
+En la plantilla, se especifica la cantidad y tipos de instancias, abarcando desde instancias master hasta instancias type core, todas con capacidad de demanda on demand. Además, aspectos como el tamaño y nombre de las instancias se determinan según necesidades específicas. Entre otros detalles, se incluyen:
+
+- **Subred de las instancias**: Se puede definir usando directamente el ID de la subred o referenciar mapeos que obtengan el ID adecuado según el entorno.
+
+- **Seguridad y conexiones**: La plantilla incluye configuraciones predeterminadas para grupos de seguridad, diferenciando entre desplegues en subredes públicas y privadas, y contemplando el uso de llaves SSH para conexión a instancias master.
+
+- **Bootstrap actions**: Acciones que se ejecutan antes de que el clúster esté activo, como el uso de scripts localizados en buckets S3.
+
+### ¿Qué aplicaciones y configuraciones adicionales se pueden incluir?
+
+El clúster EMR es altamente configurable. Aquí algunos aspectos que se pueden personalizar:
+
+- **Aplicaciones instaladas**: Se define qué aplicaciones instalar, como Zeppelin, Hadoop, Spark, especificando versiones que dependen de la versión del EMR.
+
+- **Configuraciones de logs y Java**: Es posible definir configuraciones específicas de logs y ajustar la versión de Java (p. ej., Java 1.8 en este caso).
+
+- **Roles y etiquetas**: Se especifican los roles que el clúster utilizará por defecto y las etiquetas que ayudarán a identificar los recursos.
+
+### ¿Cómo se automatiza el despliegue en un entorno productivo?
+
+El uso de repositorios de código y herramientas de integración continua como CodePipeline facilita el despliegue automatizado:
+
+1. **Repositorio de código**: La plantilla de CloudFormation se almacena en repositorios como GitHub o Bitbucket.
+
+3. **CodePipeline**: Toma las tareas del repositorio y despliega la plantilla, lanzando el clúster y ejecutando los steps.
+
+5. **Eventos automático**s: Herramientas como CloudWatch pueden programar eventos diarios, como lanzar pipelines a medianoche para procesar, por ejemplo, los logs del día anterior.
+
+Esta automatización no solo agiliza procesos, sino que también optimiza costos, al permitir apagados automáticos del clúster tras completar las tareas, evitando gastos innecesarios por instancias funcionando sin uso activo.
+
+**Lecturas recomendadas**
+
+[GitHub - czam01/emr-cloudformation](https://github.com/czam01/emr-cloudformation)
+
+## AWS - Lambda
+
+AWS Lambda es un servicio de computación **sin servidor (serverless)** que te permite ejecutar código sin necesidad de gestionar servidores. Se activa mediante eventos y se escala automáticamente.  
+
+✅ **Casos de uso**:  
+- Procesamiento de datos en tiempo real  
+- Automatización de tareas  
+- Respuesta a eventos en S3, DynamoDB, API Gateway, etc.  
+- Integración con otros servicios de AWS  
+
+### **1️⃣ Creando una función Lambda desde la Consola**  
+### 🔹 **Pasos para crear una función Lambda en AWS**  
+1. **Ir a la consola de AWS Lambda**  
+2. **Hacer clic en "Crear función"**  
+3. Seleccionar **"Crear desde cero"**  
+4. **Asignar un nombre** y elegir el **runtime** (por ejemplo, Python 3.9)  
+5. **Asignar permisos** (usar una IAM Role con acceso adecuado)  
+6. Hacer clic en **"Crear función"**  
+
+### 🔹 **Ejemplo de código en Python**  
+```python
+import json
+
+def lambda_handler(event, context):
+    return {
+        'statusCode': 200,
+        'body': json.dumps('¡Hola desde AWS Lambda!')
+    }
+```
+
+---
+
+### **2️⃣ Implementación con AWS CLI**  
+Si prefieres desplegar Lambda desde la terminal, sigue estos pasos:
+
+### **🔹 1. Crear el archivo de código**
+Guarda este código en un archivo `lambda_function.py`:
+```python
+def lambda_handler(event, context):
+    return {"message": "Hola desde Lambda CLI"}
+```
+
+### **🔹 2. Crear un archivo ZIP**
+Empaqueta el código en un archivo ZIP:
+```bash
+zip function.zip lambda_function.py
+```
+
+### **🔹 3. Crear la función Lambda con AWS CLI**
+```bash
+aws lambda create-function \
+  --function-name MiFuncionLambda \
+  --runtime python3.9 \
+  --role arn:aws:iam::XXXXXXXXXXXX:role/service-role/rol_lambda \
+  --handler lambda_function.lambda_handler \
+  --zip-file fileb://function.zip
+```
+
+### **🔹 4. Invocar la función Lambda desde CLI**
+```bash
+aws lambda invoke --function-name MiFuncionLambda response.json
+cat response.json
+```
+
+### **3️⃣ Activar Lambda con S3 (Ejemplo de Trigger)**  
+Puedes configurar Lambda para que se ejecute automáticamente cuando un archivo se suba a un bucket de **S3**.
+
+### 🔹 **Pasos para configurar el Trigger en la Consola**  
+1. Ir a **AWS Lambda** y seleccionar la función creada  
+2. Hacer clic en **"Agregar Trigger"**  
+3. Seleccionar **S3** y elegir el bucket  
+4. En **evento**, seleccionar **"PUT"** (cuando se sube un archivo)  
+5. Guardar los cambios  
+
+### 🔹 **Ejemplo de Código que procesa archivos en S3**
+```python
+import json
+import boto3
+
+s3 = boto3.client('s3')
+
+def lambda_handler(event, context):
+    for record in event['Records']:
+        bucket = record['s3']['bucket']['name']
+        key = record['s3']['object']['key']
+        print(f"Nuevo archivo en S3: {bucket}/{key}")
+
+    return {"statusCode": 200, "body": json.dumps("Archivo procesado")}
+```
+
+### **4️⃣ Eliminar la función Lambda**  
+Si ya no necesitas la función, elimínala con:
+```bash
+aws lambda delete-function --function-name MiFuncionLambda
+```
+
+### **🎯 Conclusión**
+AWS Lambda es una solución eficiente para **ejecutar código sin servidores** y reaccionar a eventos en tiempo real.
+
+**Resumen**
+
+Al momento de hacer proyectos de Big Data con Lambda debes tomar en cuenta:
+
+- La **cantidad de llamadas concurrentes** a la función lambda, por defecto tienes un límite de 1000 llamadas concurrentes, es posible llegar hasta 20000.
+- Se puede integrar con Kinesis Firehose para realizar transformaciones de datos.
+- Es recomendable utilizar **colas de trabajo** para que las tareas estén en espera mientras la lambda se va desocupando. Pierdes un poco de real-time, pero no habrá delay en la lambda.
+- Optimizar y automatizar el despliegue de código en las lambdas usando Codepipeline y Boto3.
+
+## Ejemplos AWS- Lambda
+
+A continuación, te muestro varios ejemplos de funciones **AWS Lambda** con distintos propósitos, utilizando **Python**. 
+
+### **1️⃣ Lambda Básico - "Hola Mundo"**
+Ejecuta una función básica que retorna un mensaje de respuesta.  
+```python
+import json
+
+def lambda_handler(event, context):
+    return {
+        'statusCode': 200,
+        'body': json.dumps('¡Hola desde AWS Lambda!')
+    }
+```
+✅ **Casos de uso:** Pruebas básicas, despliegue inicial.
+
+### **2️⃣ Procesando un Evento de S3**  
+Esta función se activa cuando un archivo se sube a un bucket de **S3**.  
+```python
+import json
+import boto3
+
+s3 = boto3.client('s3')
+
+def lambda_handler(event, context):
+    for record in event['Records']:
+        bucket = record['s3']['bucket']['name']
+        key = record['s3']['object']['key']
+        print(f"Archivo subido: {bucket}/{key}")
+
+    return {"statusCode": 200, "body": json.dumps("Evento procesado")}
+```
+✅ **Casos de uso:** Procesamiento de archivos, notificaciones automáticas.
+
+### **3️⃣ Guardar Datos en DynamoDB**  
+Esta función recibe un evento, extrae datos y los guarda en **DynamoDB**.  
+```python
+import boto3
+import json
+
+dynamodb = boto3.resource('dynamodb')
+table = dynamodb.Table('MiTabla')
+
+def lambda_handler(event, context):
+    item = {
+        'id': event['id'],
+        'nombre': event['nombre'],
+        'edad': event['edad']
+    }
+    table.put_item(Item=item)
+    
+    return {"statusCode": 200, "body": json.dumps("Datos guardados en DynamoDB")}
+```
+✅ **Casos de uso:** Registro de usuarios, almacenamiento de datos estructurados.
+
+### **4️⃣ Enviar un Correo con SES (Simple Email Service)**  
+Envía un email usando **AWS SES**.  
+```python
+import boto3
+
+ses = boto3.client('ses')
+
+def lambda_handler(event, context):
+    response = ses.send_email(
+        Source="tucorreo@example.com",
+        Destination={'ToAddresses': ["destino@example.com"]},
+        Message={
+            'Subject': {'Data': "Notificación desde AWS Lambda"},
+            'Body': {'Text': {'Data': "Este es un correo de prueba"}}
+        }
+    )
+    
+    return {"statusCode": 200, "body": "Correo enviado correctamente"}
+```
+✅ **Casos de uso:** Notificaciones automáticas, alertas.
+
+### **5️⃣ Ejecutar un Query en Athena**  
+Ejecuta una consulta en **AWS Athena** y retorna los resultados.  
+```python
+import boto3
+
+athena = boto3.client('athena')
+
+def lambda_handler(event, context):
+    query = "SELECT * FROM mi_base.mi_tabla LIMIT 10;"
+    response = athena.start_query_execution(
+        QueryString=query,
+        QueryExecutionContext={'Database': 'mi_base'},
+        ResultConfiguration={'OutputLocation': 's3://mi-bucket-athena/'}
+    )
+    return {"statusCode": 200, "body": f"Query ejecutado: {response['QueryExecutionId']}"}
+```
+✅ **Casos de uso:** Análisis de datos, consultas sin servidores.
+
+### **6️⃣ Conectando Lambda con API Gateway**  
+Lambda puede servir como backend para **API Gateway**.  
+```python
+import json
+
+def lambda_handler(event, context):
+    response = {
+        "statusCode": 200,
+        "body": json.dumps({"mensaje": "¡Hola desde API Gateway y Lambda!"})
+    }
+    return response
+```
+✅ **Casos de uso:** Creación de APIs sin servidores.
+
+### **7️⃣ Detener Instancias de EC2**  
+Esta función **detiene todas las instancias EC2 en una región** específica.  
+```python
+import boto3
+
+ec2 = boto3.client('ec2')
+
+def lambda_handler(event, context):
+    instances = ec2.describe_instances(Filters=[{"Name": "instance-state-name", "Values": ["running"]}])
+    instance_ids = [inst['InstanceId'] for res in instances['Reservations'] for inst in res['Instances']]
+    
+    if instance_ids:
+        ec2.stop_instances(InstanceIds=instance_ids)
+        return {"statusCode": 200, "body": "Instancias detenidas"}
+    else:
+        return {"statusCode": 200, "body": "No hay instancias activas"}
+```
+✅ **Casos de uso:** Optimización de costos, apagado programado.
+
+### 📌 **Conclusión**
+AWS Lambda se puede usar para múltiples propósitos como:  
+✔ Automatización  
+✔ Procesamiento de eventos  
+✔ Creación de APIs  
+✔ Integración con otros servicios de AWS  
+
+### Resumen
+
+### ¿Cómo se utilizan las funciones Lambda en proyectos de Big Data?
+
+Las funciones Lambda han demostrado su eficiencia y versatilidad en la gestión de datos a gran escala. En el siguiente contenido exploraremos cómo estas funciones se implementan en proyectos de Big Data para ofrecer capacidades de procesamiento en tiempo real y batch. Al comprender su funcionamiento, podrás transformar la manera en que gestionas y distribuyes datos en tus proyectos.
+
+### ¿Cuál es el flujo de datos en tiempo real con Lambda?
+
+En proyectos de Big Data, se puede establecer un sofisticado flujo de datos usando funciones Lambda. A través de CloudWatch, se genera un flujo de logs que activa una función Lambda de distribución. Esta función, también conocida como Lambda de Fan Out, recibe los eventos y los distribuye eficientemente a múltiples Lambdas que, a su vez, alimentan diferentes endpoints.
+
+- La distribución se realiza mediante SNS (Simple Notification Service), aunque también es posible utilizar SQS (Simple Queue Service).
+- Con SQS, hay que tener presente que un evento puede llegar más de una vez, por lo que es necesario manejar posibles duplicados.
+
+Este flujo garantiza que, desde CloudWatch, los eventos son procesados y distribuidos hacia aplicaciones como Elasticsearch y Kibana, optimizando la gestión de índices y consultas.
+
+### ¿Cómo se integran las Lambdas con bases de datos en memoria?
+
+En ciertos escenarios, es esencial utilizar una base de datos en memoria, como Redis, para evitar la duplicación de eventos críticos al alimentar un endpoint. Para lograr esto:
+
+- Se coloca una Lambda en una VPC (Virtual Private Cloud) para acceder a Redis mediante un NAT Gateway.
+- La función Lambda consulta Redis para verificar si un evento ha sido procesado antes. Si no ha sido procesado, la Lambda procede con el procesamiento, asegurando la unicidad de eventos en el endpoint.
+
+Esta implementación es crucial cuando se requiere que eventos únicos lleguen a un endpoint sin duplicaciones.
+
+### ¿Cómo pueden reemplazar las Lambdas a un clúster de EMR?
+
+Un clúster de Elastic MapReduce (EMR) puede ser sustituido por una orquestación de Lambdas y S3 para procesamiento batch, emulando funcionalidades de Map Reduce.
+
+- Las funciones Lambda pueden enviar eventos a S3, activando otras Lambdas para consolidar información.
+- Un Coordinador se encarga de organizar las tareas de reducción y consolidación.
+
+Este enfoque ofrece una solución eficiente y escalable para procesos batch, eliminando la necesidad de mantener un clúster EMR dedicado.
+
+### Aplicaciones prácticas de las funciones Lambda
+
+Las funciones Lambda son un pilar esencial en la arquitectura de Big Data, ya sea en tiempo real o para procesamiento batch. Su versatilidad permite su uso en:
+
+- Proyectos de análisis de datos en tiempo real, como la alimentación de Elasticsearch.
+- Procesamiento de datos batch, replicando funcionalidades de Map Reduce.
+- Integración con otros servicios en la nube, como Kinesis Firehose.
+
+Incorporando Lambda en tu diseño arquitectónico, puedes optimizar tus procesos de Big Data, incrementando la eficiencia, reduciendo costos y mejorando la escalabilidad de tus operaciones. ¡Continúa aprendiendo y descubre todo lo que las funciones Lambda pueden ofrecerte en tus innovadores proyectos de datos! 
+
+## Demo - Creando una lambda para BigData
+
+Aquí tienes un **Dockerfile** para crear un entorno con AWS Lambda orientado a Big Data. La función Lambda podría procesar datos desde S3, utilizar PySpark, Pandas o Boto3 para interactuar con servicios de AWS.
+
+### **Dockerfile para AWS Lambda con Big Data**
+```dockerfile
+# Imagen base oficial de AWS Lambda con Python
+FROM public.ecr.aws/lambda/python:3.8
+
+# Actualizar paquetes e instalar dependencias necesarias
+RUN yum update -y && \
+    yum install -y unzip tar gzip curl && \
+    yum clean all
+
+# Instalar paquetes de Python para Big Data
+RUN pip install --no-cache-dir \
+    boto3 \
+    pandas \
+    numpy \
+    pyarrow \
+    fastparquet \
+    s3fs \
+    requests
+
+# Copiar el código fuente de la Lambda
+COPY lambda_function.py ${LAMBDA_TASK_ROOT}
+
+# Configurar la Lambda para ejecutarse con el archivo
+CMD ["lambda_function.lambda_handler"]
+```
+
+### **Código de Ejemplo (`lambda_function.py`)**
+Este código lee un archivo CSV de un bucket de S3, lo convierte en Parquet y lo guarda nuevamente en S3.
+
+```python
+import json
+import boto3
+import pandas as pd
+import io
+
+s3 = boto3.client('s3')
+
+def lambda_handler(event, context):
+    bucket_name = "mi-bucket-datos"
+    input_file = "input/datos.csv"
+    output_file = "output/datos.parquet"
+
+    # Descargar el archivo CSV de S3
+    obj = s3.get_object(Bucket=bucket_name, Key=input_file)
+    df = pd.read_csv(io.BytesIO(obj['Body'].read()))
+
+    # Convertir a formato Parquet
+    buffer = io.BytesIO()
+    df.to_parquet(buffer, engine='pyarrow')
+
+    # Subir archivo Parquet a S3
+    s3.put_object(Bucket=bucket_name, Key=output_file, Body=buffer.getvalue())
+
+    return {
+        'statusCode': 200,
+        'body': json.dumps(f'Archivo {output_file} guardado en S3')
+    }
+```
+
+### **Cómo Construir y Ejecutar**
+1. **Construir la imagen Docker**
+   ```sh
+   docker build -t my-lambda-bigdata .
+   ```
+
+2. **Ejecutar Lambda en Local**
+   ```sh
+   docker run -p 9000:8080 my-lambda-bigdata
+   ```
+
+3. **Probar con una Petición Local**
+   ```sh
+   curl -XPOST "http://localhost:9000/2015-03-31/functions/function/invocations" -d '{}'
+   ```
+
+Este setup te permite desplegar una función Lambda optimizada para Big Data en AWS. 🚀  
+Si necesitas más optimización (por ejemplo, integrar PySpark en AWS EMR), dime y lo ajustamos.
+
+### Resumen
+
+### ¿Cómo podemos crear una función Lambda en AWS para Big Data?
+
+Las funciones Lambda en AWS son una herramienta clave en la gestión y procesamiento de Big Data gracias a su capacidad para ejecutar código en respuesta a eventos y su integración con otros servicios de AWS. A continuación, te explicamos cómo crear una función Lambda desde cero, paso a paso, y los aspectos críticos a considerar.
+
+### ¿Cómo crear una función Lambda desde cero?
+
+- **Accede a la consola de AWS**: Inicia sesión en tu consola de AWS y busca el servicio Lambda.
+- **Crea la función**: Selecciona "Crear función" y elige la opción de crear una desde cero. Asigna un nombre, por ejemplo, "Platzi", y selecciona el tiempo de ejecución adecuado (en este caso, Python 3.6 es usado).
+- **Selecciona un rol**: Es crucial definir el rol que determinará los permisos de la función Lambda para interactuar con otros servicios.
+
+### ¿Qué son los desencadenadores o triggers?
+
+Los triggers son eventos que inician la ejecución de una función Lambda. Para proyectos de Big Data, es común utilizar SNS o SQS. Si optas por SQS, se conectará a colas de tipo estándar. Estos servicios permiten orquestar flujos de trabajo complejos al notificar a tu función Lambda cuando ciertos eventos ocurren.
+
+### ¿Qué es la funcionalidad "layers"?
+
+"Layers" es una funcionalidad que simplifica la gestión de librerías compartidas entre múltiples funciones Lambda. Al utilizar "layers", puedes centralizar y replicar librerías de manera eficiente, reduciendo el tiempo de administración.
+
+### ¿Cuál es la importancia de las variables de entorno?
+
+En Big Data, las variables de entorno juegan un papel crucial para el manejo seguro de conexiones, como aquellas a bases de datos. Siempre se recomienda encriptar esta información, utilizando servicios como KMS para garantizar la confidencialidad.
+
+### ¿Cómo gestionar roles y permisos?
+
+El rol de la función Lambda define con qué servicios puede interactuar. Por ejemplo, un rol puede otorgar acceso a CloudWatch Logs y CloudFormation. Es fundamental aplicar el principio de menor privilegio, otorgando solo los permisos necesarios.
+
+### ¿Cómo optimizar y configurar nuestras funciones Lambda?
+
+La optimización y configuración adecuadas de funciones Lambda son esenciales para maximizar la eficacia en los proyectos de Big Data. Exploremos varias configuraciones importantes.
+
+### ¿Cómo gestionar la memoria y el tiempo de ejecución?
+
+- **Memoria**: Ajusta la memoria en función del código y la ejecución necesaria para tu función, incrementando la asignación a medida que lo necesites.
+- **Tiempo de Ejecución**: También conocido como "timeout", puedes configurarlo hasta un máximo de 15 minutos, adaptándolo a los requerimientos de tu proceso.
+
+### ¿Qué consideraciones debemos tomar respecto a la red?
+
+Es posible desplegar funciones Lambda dentro de una VPC, definiendo la subred y el grupo de seguridad. Esto permite controlar de manera precisa el entorno de red en el que se ejecuta tu función.
+
+### ¿Qué significa "dead letter queue"?
+
+Las "dead letter queues" son herramientas cruciale que aseguran la no pérdida de eventos críticos en la gestión de Big Data. En el caso de fallos o errores regulares en la ejecución de funciones, los mensajes problemáticos pueden ser redirigidos a una cola secundaria para posterior revisión y procesado.
+
+### ¿Por qué es importante habilitar el servicio de X-Ray?
+
+Activar X-Ray permite el seguimiento detallado de la ejecución de funciones Lambda. Esto es vital para identificar cuellos de botella y tiempos de retardo, proporcionando un análisis en profundidad del rendimiento de tus aplicaciones en la nube.
+
+### ¿Cuáles son otros aspectos esenciales en la configuración de Lambdas para Big Data?
+
+Finalmente, algunos aspectos más avanzados permiten una mayor eficiencia y seguimiento en ejecución de funciones Lambda.
+
+### ¿Cómo configuramos la concurrencia?
+
+Lambda permite una concurrencia predeterminada de 1000 instancias simultáneas. Es posible aumentar esta cantidad hasta 20,000 mediante una solicitud a AWS. Reserva concurrencia para asegurarte de que tus funciones críticas siempre tengan recursos disponibles cuando los necesiten.
+
+### ¿Cómo gestionamos la monitorización y eventos?
+
+Es esencial registrar todas las ejecuciones mediante CloudWatch Logs para asegurarte de capturar métricas y eventos que pueden ser críticos para solucionar problemas y entender el comportamiento de tu aplicación.
+
+### ¿Qué roles tienen Glue, EMR y Lambdas en la transformación de Big Data?
+
+En proyectos de Big Data, diferentes servicios juegan roles complementarios:
+
+- **Glue**: Servicio ETL completamente administrado y serverless.
+- **EMR (Elastic MapReduce)**: Permite la transformación y análisis de datos utilizando clústeres administrados.
+- **Lambdas**: Ofrecen flexibilidad para proyectos en tiempo real y batch, permitiendo la transformación de información sin necesidad de gestionar servidores.
+
+Te animo a continuar explorando estas capacidades en tus proyectos, aprovechando al máximo las herramientas y configuraciones disponibles en AWS para transformar el Big Data de manera eficiente y segura.
+
+
+
 docker run -p 8080:8080 --rm --name zeppelin apache/zeppelin:0.12.0
