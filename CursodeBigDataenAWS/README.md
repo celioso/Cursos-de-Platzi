@@ -3454,6 +3454,927 @@ En proyectos de Big Data, diferentes servicios juegan roles complementarios:
 
 Te animo a continuar explorando estas capacidades en tus proyectos, aprovechando al máximo las herramientas y configuraciones disponibles en AWS para transformar el Big Data de manera eficiente y segura.
 
+## AWS - Athena
 
+Amazon Athena es un servicio de consulta interactivo que permite analizar datos directamente en Amazon S3 utilizando SQL estándar. No requiere servidores, ya que es completamente administrado por AWS y se basa en **Presto**, optimizado para grandes volúmenes de datos.  
+
+### **Casos de uso de Athena**  
+- Análisis de registros y monitoreo de seguridad  
+- Exploración de datos en un **Data Lake** en S3  
+- Generación de informes sin necesidad de ETL  
+- Integración con herramientas como **Quicksight** o **Power BI**  
+
+### **Pasos básicos para usar Athena**
+1. **Configurar un bucket en S3**: Asegúrate de que los datos estén almacenados en S3 en formatos como **Parquet, ORC, JSON o CSV**.  
+2. **Crear una base de datos y tablas**: Se usa **AWS Glue Data Catalog** o se definen manualmente en Athena.  
+3. **Ejecutar consultas SQL**: Puedes usar **SQL estándar** para explorar los datos.  
+4. **Optimizar el rendimiento**: Usar **particiones**, **compresión** y formatos eficientes como **Parquet** para reducir costos.  
+
+**Resumen**
+
+Es un servicio completamente administrado cuyas características más importantes son:
+
+- Podemos realizar consultas SQL a la data almacenada en S3.
+- Soporta diferentes formatos de archivo de información.
+- Provee una integración nativa con otros servicios de AWS de almacenamiento como S3, RedShift, DynamoDB y Kinesis.
+- Podemos integrarlo con otras herramientas utilizando JDBC o ODBC.
+- Puedes almacenar las queries que realices y que más utilices.
+
+## Demo - Consultando data con Athena
+
+Amazon **Athena** es un servicio de consulta interactiva sin servidor que permite analizar datos almacenados en **Amazon S3** utilizando **SQL estándar**. Se basa en **Presto** y es ideal para ejecutar consultas ad hoc sobre grandes volúmenes de datos sin necesidad de configurar servidores.
+
+### 🔹 **Pasos para consultar datos con Amazon Athena**
+#### **1️⃣ Habilitar Amazon Athena**
+Antes de consultar datos, asegúrate de que Athena esté habilitado en la consola de **AWS**:
+- Ve a la consola de AWS.
+- Busca "Athena" en la barra de búsqueda y ábrelo.
+- Configura un "S3 Query result location" donde se almacenarán los resultados de las consultas.
+
+#### **2️⃣ Crear una base de datos en Athena**
+Ejecuta el siguiente comando en el editor de Athena para crear una base de datos:
+
+```sql
+CREATE DATABASE mi_base_de_datos;
+```
+
+Para usar la base de datos en futuras consultas:
+
+```sql
+USE mi_base_de_datos;
+```
+
+#### **3️⃣ Crear una tabla basada en datos almacenados en S3**
+Si los datos están en **Amazon S3**, puedes crear una tabla en Athena sin mover los datos, solo definiendo el esquema:
+
+```sql
+CREATE EXTERNAL TABLE mi_tabla (
+    id STRING,
+    nombre STRING,
+    edad INT,
+    ciudad STRING
+)
+ROW FORMAT DELIMITED
+FIELDS TERMINATED BY ','
+STORED AS TEXTFILE
+LOCATION 's3://ruta-del-bucket/datos/';
+```
+
+#### **4️⃣ Consultar datos con SQL**
+Puedes hacer consultas como en una base de datos tradicional:
+
+📌 **Obtener todos los registros:**
+```sql
+SELECT * FROM mi_tabla LIMIT 10;
+```
+
+📌 **Filtrar por una condición:**
+```sql
+SELECT * FROM mi_tabla WHERE ciudad = 'Bogotá';
+```
+
+📌 **Agrupar datos:**
+```sql
+SELECT ciudad, COUNT(*) AS total
+FROM mi_tabla
+GROUP BY ciudad;
+```
+
+### 🔹 **Consejos para optimizar las consultas en Athena**
+✅ **Usa formatos eficientes**: Convertir los datos a **Parquet** o **ORC** en lugar de CSV o JSON mejora la velocidad y reduce costos.  
+✅ **Crea particiones**: Para mejorar la velocidad de consulta, usa **particiones** en columnas con alta cardinalidad como `fecha` o `ciudad`.  
+✅ **Usa compresión**: Archivos comprimidos con **Snappy** o **Gzip** reducen el costo de escaneo.
+
+### Resumen
+
+### ¿Cómo realizar consultas sobre datos en S3 utilizando Athena?
+
+Explorar los datos almacenados en Amazon S3 de manera eficiente es una habilidad fundamental en el análisis de datos en la nube. Gracias al servicio AWS Athena, este proceso se simplifica mediante el uso de consultas SQL, permitiendo acceder directamente a la información sin necesidad de trasladarla a otros sistemas de procesamiento. Esta clase te guiará a través del uso de Athena para consultar datos en S3 de manera efectiva.
+
+### ¿Qué es Athena y cómo se relaciona con Glue Catalog?
+
+Athena es un servicio de consulta interactiva que facilita el acceso a datos en Amazon S3 utilizando SQL estándar. Lo espectacular de Athena es su capacidad para integrarse con el Glue Catalog de AWS, donde se almacenan las bases de datos y tablas que definen la estructura y el esquema de los datos en S3.
+
+- **Glue Catalog**: Funciona como un registro que organiza y describe los metadatos. Las bases de datos y tablas que aparecen en Athena proceden directamente de este catálogo, siendo actualizadas por crawlers que examinan los datos en S3.
+- **Crawlers**: Herramientas que recorren los archivos almacenados para determinar su estructura, componentes y tipologías. 
+
+### ¿Cómo ejecutar consultas SQL en Athena?
+
+Con Athena, puedes ejecutar consultas SQL para explorar tus datasets. Después de haber definido tus esquemas en el Glue Catalog, puedes empezar a consultar las bases de datos desde la consola de Athena.
+
+1. **Consulta de vista previa (Preview Table)**: Ejecuta una consulta rápida para previsualizar los primeros registros de una tabla. Por defecto, esta consulta devuelve un límite inferior a 10, pero puedes modificarlo según tus necesidades.
+
+`SELECT * FROM nombre_de_tu_tabla LIMIT 100;`
+
+2. **Consulta personalizada**: Ajusta tus consultas para obtener información específica, considerando que el costo de ejecución dependerá del volumen de datos escaneados.
+
+### ¿Cómo administrar consultas y resultados en Athena?
+
+Una vez que comienzas a manejar diversas consultas en Athena, se vuelve crucial administrar estas de manera eficiente:
+
+- **Almacenamiento de Queries:** Puedes guardar consultas con un nombre y descripción, lo cual facilita ejecutar queries recurrentes sin tener que reescribirlas cada vez.
+
+- **Historial de Ejecuciones**: Athena ofrece un registro detallado de las consultas ejecutadas para que puedas revisarlas, optimizarlas o reutilizarlas. Incluye información sobre el tiempo de ejecución y el volumen de datos escaneados, lo cual te permite estimar costos.
+
+- **Descarga de Resultados**: Los resultados de las consultas pueden descargarse para su análisis posterior o para ser integrados en herramientas de reporteo.
+
+### ¿Cómo gestionar enfoques de seguridad y permisos en Athena?
+
+El manejo seguro del acceso a tus datos es crucial. Athena permite configurar permisos granulares a través de roles y políticas de AWS Identity and Access Management (IAM).
+
+- **Roles y políticas**: Al definir roles, puedes especificar qué tablas y bases de datos pueden ser accedidas, asegurando que solo usuarios autorizados puedan ejecutar ciertas consultas.
+
+### ¿Cómo integrar Athena con herramientas de visualización?
+
+Athena no solo es potente por su capacidad de consulta, sino también por su flexibilidad de integración. Puedes conectar Athena con herramientas de visualización como Amazon QuickSight para generar dashboards interactivos, aportando un mayor nivel de análisis gráfico a tus datasets.
+
+A través del dominio de estas funcionalidades, puedes transformar la manera en que interactúas con los datos en la nube y optimizar tus procesos de análisis y toma de decisiones en tiempo real. ¡La práctica constante y el aprendizaje continuo son tus mejores aliados!
+
+## AWS - RedShift
+
+**Amazon Redshift** es un servicio de almacenamiento de datos (**Data Warehouse**) totalmente administrado que permite ejecutar consultas **analíticas SQL** sobre grandes volúmenes de datos de manera rápida y escalable. Se basa en un modelo de **procesamiento paralelo masivo (MPP)** para optimizar el rendimiento.
+
+### **1️⃣ Configuración de Amazon Redshift**
+### **✅ Creación de un clúster Redshift**
+Para comenzar con Redshift:
+1. Ve a la consola de **AWS** y busca **Amazon Redshift**.
+2. Haz clic en **"Create Cluster"**.
+3. Configura los siguientes parámetros:
+   - **Tipo de nodo**: elige entre `dc2.large`, `ra3.4xlarge`, etc.
+   - **Cantidad de nodos**: Mínimo 1 nodo (para pruebas) o varios para producción.
+   - **Endpoint de conexión**: Se generará al crear el clúster.
+
+4. Habilita **Enhanced VPC Routing** si necesitas integración con S3.
+5. Finaliza la configuración y espera a que el clúster se aprovisione.
+
+### **2️⃣ Conectando a Amazon Redshift**
+Una vez que el clúster esté listo, usa un cliente SQL como:
+- **Query Editor** en la consola de AWS.
+- **DBeaver**, **pgAdmin**, **SQL Workbench**, o cualquier herramienta compatible con **PostgreSQL**.
+
+Para conectarte con `psql` desde la terminal:
+```bash
+psql -h <ENDPOINT_DEL_CLUSTER> -U <USUARIO> -d <BASE_DE_DATOS>
+```
+
+### **3️⃣ Creación de una Base de Datos y Tablas**
+Dentro de **Redshift**, usa SQL para gestionar datos:
+
+📌 **Crear una base de datos**:
+```sql
+CREATE DATABASE mi_base_redshift;
+```
+
+📌 **Crear una tabla optimizada**:
+```sql
+CREATE TABLE ventas (
+    id_venta INT PRIMARY KEY,
+    fecha TIMESTAMP,
+    producto VARCHAR(255),
+    cantidad INT,
+    precio DECIMAL(10,2)
+)
+DISTSTYLE EVEN;
+```
+
+### **4️⃣ Carga de Datos desde Amazon S3**
+Puedes cargar datos desde **S3** con el comando `COPY`:
+
+```sql
+COPY ventas
+FROM 's3://mi-bucket/ventas.csv'
+IAM_ROLE 'arn:aws:iam::123456789012:role/RedshiftRole'
+FORMAT AS CSV
+IGNOREHEADER 1;
+```
+✅ **Importante**:
+- El rol IAM debe tener permisos para acceder a S3.
+- Puedes importar datos en formato **CSV, Parquet, JSON, Avro, ORC**.
+
+### **5️⃣ Consultas SQL en Redshift**
+📌 **Obtener registros:**
+```sql
+SELECT * FROM ventas LIMIT 10;
+```
+
+📌 **Ventas totales por producto:**
+```sql
+SELECT producto, SUM(cantidad * precio) AS total_ventas
+FROM ventas
+GROUP BY producto;
+```
+
+📌 **Consultas con partición por fecha:**
+```sql
+SELECT fecha, COUNT(*) 
+FROM ventas 
+WHERE fecha > '2024-01-01'
+GROUP BY fecha;
+```
+
+### **6️⃣ Optimización en Redshift**
+🔹 **Distribución de datos (`DISTSTYLE`)**:
+   - `EVEN`: distribuye filas equitativamente.
+   - `KEY`: distribuye en base a una columna clave para minimizar movimientos de datos.
+
+🔹 **Sort Keys (`SORTKEY`)**:
+   - Para columnas usadas en **ORDER BY** o **JOIN**, mejora la lectura de datos.
+
+🔹 **Compresión (`ENCODE`)**:
+   - Redshift aplica compresión automática para reducir el tamaño del almacenamiento.
+
+### **7️⃣ Integración con Otras Herramientas**
+Redshift puede conectarse con:
+- **Amazon Quicksight** (BI & Dashboards)
+- **Amazon Glue** (ETL)
+- **Amazon Athena** (Consultas Ad-hoc en S3)
+- **Apache Airflow** (Orquestación de tareas)
+
+### **🔹 Conclusión**
+Redshift es una solución potente para almacenamiento de datos analíticos con alto rendimiento y escalabilidad. Si necesitas ayuda con una implementación específica, dime qué necesitas y te ayudo. 🚀
+
+**Resumen**
+
+RedShift es un servicio que se lanza en un clúster de instancias, para el almacenamiento de datos a gran escala pensando en guardar PB. Permite realizar consultas complejas de SQL.
+
+RedShift está basado en PostgreSQL, es una base de datos columnar haciendo mejor el rendimiento de I/O en los discos y performance.
+
+## Demo - Creando nuestro primer clúster de RedShift
+
+Para desplegar un clúster de **Amazon Redshift**, sigue estos pasos:  
+
+### **1️⃣ Acceder a la Consola de AWS**
+1. Ve a la consola de **AWS** → Busca **Amazon Redshift**.
+2. Haz clic en **"Create cluster"**.
+
+### **2️⃣ Configuración del Clúster**
+En la página de configuración, ajusta los siguientes parámetros:
+
+### **🔹 Configuración Básica**
+- **Cluster name**: Nombre del clúster (Ejemplo: `mi-cluster-redshift`).
+- **Database name**: Nombre de la base de datos principal (Ejemplo: `mi_base_redshift`).
+- **Database port**: Puerto predeterminado `5439`.
+
+### **🔹 Tipo de Clúster**
+- **Uso**: Selecciona "Production" o "Free trial" (si aplica).
+- **Node type**: Elige la instancia según tu carga de trabajo:
+  - `dc2.large` (uso ligero).
+  - `ra3.4xlarge` (escalable para grandes volúmenes de datos).
+- **Number of nodes**:
+  - `1` nodo para pruebas.
+  - `2 o más` para entornos productivos con cargas pesadas.
+
+### **🔹 Autenticación**
+- **Master username**: Nombre de usuario administrador.
+- **Master password**: Contraseña segura.
+
+### **3️⃣ Configuración Avanzada**
+### **🔹 Network & Security**
+- **Virtual Private Cloud (VPC)**: Selecciona la VPC donde se desplegará.
+- **Public accessibility**:  
+  - `Sí`: Permite conexiones externas.
+  - `No`: Solo accesible dentro de la VPC.
+
+### **🔹 Integración con S3 (Opcional)**
+Si cargarás datos desde **Amazon S3**, asigna un **IAM Role** con permisos:
+
+1. Ve a **AWS IAM** → Crea un rol con la política `AmazonS3FullAccess`.
+2. En "Cluster permissions", asigna ese rol al clúster.
+
+### **4️⃣ Crear el Clúster**
+1. Revisa la configuración.
+2. Haz clic en **"Create cluster"**.
+3. Espera **5-10 minutos** hasta que el estado sea **Available**.
+
+### **5️⃣ Conectar a Redshift**
+📌 **Desde la consola de AWS**  
+1. Ve a **Amazon Redshift** → **Query Editor**.
+2. Conéctate usando el usuario y la base de datos creados.
+
+📌 **Desde un cliente SQL (`psql`, DBeaver, pgAdmin, etc.)**  
+```bash
+psql -h <ENDPOINT_DEL_CLUSTER> -U <USUARIO> -d <BASE_DE_DATOS> -p 5439
+```
+🔹 **Para encontrar el endpoint:**  
+- Ve a **Clusters** → Selecciona tu clúster → Copia el **"Endpoint"**.
+
+### **6️⃣ Creación de Tablas y Carga de Datos**
+📌 **Crear una tabla en Redshift**
+```sql
+CREATE TABLE ventas (
+    id_venta INT PRIMARY KEY,
+    fecha TIMESTAMP,
+    producto VARCHAR(255),
+    cantidad INT,
+    precio DECIMAL(10,2)
+);
+```
+
+📌 **Cargar datos desde S3**
+```sql
+COPY ventas
+FROM 's3://mi-bucket/datos.csv'
+IAM_ROLE 'arn:aws:iam::123456789012:role/RedshiftRole'
+FORMAT AS CSV
+IGNOREHEADER 1;
+```
+
+### 🎯 **Conclusión**
+¡Listo! Ya tienes un **clúster de Amazon Redshift** en funcionamiento. 🚀 Puedes empezar a ejecutar consultas SQL y analizar grandes volúmenes de datos.  
+
+### Resumen
+
+### ¿Cómo configurar Amazon Redshift en AWS?
+
+Amazon Redshift es una herramienta poderosa en la gestión de grandes cantidades de datos dentro del ecosistema de AWS. Sin embargo, configurarlo adecuadamente es crucial para optimizar su rendimiento y costos. A continuación, exploramos cómo hacerlo eficientemente desde la consola de AWS.
+
+### ¿Cómo iniciar un cluster en Redshift?
+
+Para comenzar, accede a la consola de AWS y localiza el servicio de Amazon Redshift. Dentro de la sección de Clusters, sigue los pasos para lanzar un nuevo cluster:
+
+1. **Identificador del cluster**: Asigna un nombre a tu cluster, por ejemplo, "Platzi Cluster".
+2. **Base de datos**: Define la base de datos asociada, recordando que detrás de Redshift hay un PostgreSQL, por ejemplo, "platzi db".
+3. **Configuración de acceso**: Establece un nombre de usuario, como "admin", y un password cumpliendo políticas de compliance (mínimo una mayúscula, una minúscula y longitud mínima).
+4. **Tipo de nodo**: Este es un punto crítico ya que afectará directamente el costo. Investiga el Pricing de cada tipo de nodo. Por ejemplo, el DC2.large ofrece 15 GB de memoria por nodo.
+
+
+```shell
+# Ejemplo de configuración básica del cluster:
+Cluster Identifier: Platzi Cluster
+Database Name: platzi db
+Port: 5439
+Username: admin
+Node Type: DC2.large 
+Number of Nodes: 1 (opcionalmente se puede expandir)
+```
+
+### ¿Por qué es importante el tipo de nodo?
+
+El tipo de nodo determina no solo el rendimiento, sino también el costo del servicio. Examina las especificaciones técnicas de los nodos disponibles. Para un nodo DC2.large, obtienes una memoria de 15 GB y dos Virtual Core. Si se opta por nodos más grandes, se incrementan tanto los recursos como el costo. Siempre considera el balance adecuado entre desempeño y precio acorde a tus necesidades.
+
+### ¿Qué hay que considerar en términos de seguridad y despliegue?
+
+1. **Datos de VPC**: Vital para conexiones con herramientas de terceros vía JDBC y ODBC. Configura adecuadamente tu clúster para hechos como acceso público y seguridad de grupos.
+2. **Zona de disponibilidad**: Puedes elegir una zona para desplegar tu cluster, asegurando disponibilidad y redundancia.
+3. **Seguridad adyacente**: Considera integrar con servicios como HSM y gestiona las seguridades con Parameter Groups para configuraciones detalladas. Los grupos de parámetros te permiten ajustar aspectos del motor de base de datos PostgreSQL subyacente.
+
+### ¿Cuáles son las opciones adicionales útiles?
+
+- **Dashboard y consulta**: Utiliza el dashboard para monitorizar tu clúster, ejecuta consultas y gestiona snapshots.
+- **Reserva de nodos**: Para uso prolongado del cluster, la reserva de nodos puede reducir costos significativamente.
+- **Integración de roles y mantenimiento**: Agrega roles que tu cluster usará y configura ventanas de mantenimiento.
+- **Conexión y manejo de eventos**: Explora diferentes formas de conectar y manejar eventos para personalizar el funcionamiento del cluster.
+
+Amazon Redshift es una herramienta invaluable en la gestión de datos en la nube; sin embargo, la clave para su uso eficiente radica en una configuración cuidadosa que alinee pros y contras de los diferentes aspectos técnicos y económicos. Con este enfoque, puedes maximizar los beneficios de su implementación en tu organización.
+
+## AWS - Lake Formation
+
+AWS Lake Formation es un servicio que facilita la creación, seguridad y administración de un **Data Lake** en AWS. Permite centralizar datos desde varias fuentes, establecer controles de acceso detallados y consultarlos mediante servicios como **AWS Glue, Athena y Redshift Spectrum**.
+
+### 🚀 **Pasos para Configurar AWS Lake Formation**
+### **1️⃣ Habilitar Lake Formation**
+1. Ve a la consola de **AWS Lake Formation**.
+2. Haz clic en **"Get started"**.
+3. **Selecciona la cuenta de administración** del Data Lake.
+4. **Configura los permisos iniciales** para el administrador de datos.
+
+### **2️⃣ Configurar la Fuente de Datos**
+Puedes agregar datos desde:
+- **S3 Buckets** → Si tienes datos en S3, debes registrar el bucket en Lake Formation.
+- **Bases de datos** → Puedes conectar bases de datos como RDS o Redshift.
+
+#### **📌 Pasos para registrar un bucket S3**
+1. **Entra a "Data lake locations"** en Lake Formation.
+2. Haz clic en **"Register location"**.
+3. **Selecciona el bucket de S3** donde están los datos.
+4. **Asigna permisos** para acceder a los datos.
+5. Guarda los cambios.
+
+### **3️⃣ Definir Permisos de Seguridad y Gobernanza**
+Lake Formation permite un **control detallado** sobre quién accede a qué datos.
+
+#### **📌 Configurar permisos en tablas y bases de datos**
+1. **Ve a "Permissions" → "Grant"**.
+2. **Selecciona el usuario o rol de IAM** que necesita acceso.
+3. Define qué permisos dar (Ej: **SELECT, INSERT, DELETE**).
+4. Guarda los cambios.
+
+También puedes definir **enmascaramiento de datos**, reglas de acceso condicionales y auditorías.
+
+### **4️⃣ Crear un Catálogo de Datos con AWS Glue**
+Lake Formation usa AWS Glue para catalogar los datos.
+
+#### **📌 Configurar un Crawler en AWS Glue**
+1. **Ve a AWS Glue** → "Crawlers".
+2. **Crea un nuevo Crawler** y selecciona el bucket S3 con los datos.
+3. **Define un rol de IAM** con permisos para leer S3.
+4. **Ejecuta el Crawler** para descubrir esquemas y crear el catálogo.
+
+### **5️⃣ Consultar Datos con Athena o Redshift Spectrum**
+Una vez que los datos están catalogados, puedes consultarlos:
+
+#### **📌 Consultar datos con Athena**
+1. Ve a **AWS Athena**.
+2. **Selecciona la base de datos** creada en Lake Formation.
+3. Ejecuta consultas SQL para explorar los datos.
+
+#### **📌 Consultar datos con Redshift Spectrum**
+1. Configura un clúster de **Amazon Redshift**.
+2. Crea una tabla externa en **Redshift Spectrum** apuntando al catálogo de Lake Formation.
+3. Consulta los datos con **SQL**.
+
+### 🔥 **Beneficios de AWS Lake Formation**
+✅ **Centralización de datos** en un Data Lake seguro.  
+✅ **Gestión avanzada de accesos y permisos**.  
+✅ **Integración con servicios de análisis** como **Athena, Redshift, Glue y EMR**.  
+✅ **Facilidad para importar y transformar datos** desde múltiples fuentes.
+
+**Resumen**
+
+Este servicio aún no se encuentra disponible al público, pero cuenta con grandes características:
+
+- Facilita y permite la creación de data lake en cuestión de días.
+- Tiene integración con diferentes fuentes usando JDBC.
+- Va a ejecutar Crawlers.
+- Te va a ayudar con los ETL.
+- Limpia y elimina data duplicada utilizando FindMatch.
+- Optimiza las particiones de S3.
+- Control de permisos por usuario por bases de datos, tablas y columnas.
+- Se puede asignar data owners para control de permisos.
+- Analytics desde otros servicios como EMR y RedShift.
+
+## AWS - ElasticSearch
+
+AWS **Elasticsearch Service** (hoy conocido como **Amazon OpenSearch Service**) es un servicio administrado que facilita la implementación, escalado y operación de clústeres de Elasticsearch u OpenSearch en AWS. Se utiliza principalmente para **búsqueda, análisis de logs y monitoreo de datos en tiempo real**.
+
+### 🚀 **Pasos para Configurar Amazon OpenSearch Service**
+### **1️⃣ Crear un Dominio de OpenSearch**
+1. Ve a la consola de **Amazon OpenSearch Service**.
+2. Haz clic en **"Create domain"**.
+3. **Selecciona la versión** de OpenSearch (o Elasticsearch, si lo necesitas).
+4. **Elige la configuración de nodo y almacenamiento**:
+   - Tipo de instancia (**t3.small, m5.large**, etc.).
+   - Número de nodos y almacenamiento en **EBS**.
+
+### **2️⃣ Configurar Accesos y Seguridad**
+🔒 **Opciones de autenticación:**
+- **IAM**: Para controlar accesos desde usuarios de AWS.
+- **Cognito**: Para integrar con usuarios externos.
+- **Básico**: Usuario/contraseña (para dominios públicos o autenticación simple).
+
+✅ **Definir accesos a través de políticas de dominio**
+1. **Selecciona "Modify access policy"**.
+2. **Elige quién puede acceder** (Ej: solo ciertos roles o usuarios IAM).
+3. **Configura reglas de acceso** (Ej: solo consultas desde una VPC).
+
+### **3️⃣ Ingresar a OpenSearch Dashboards (Antes Kibana)**
+1. **Ve a la consola de OpenSearch** y haz clic en el **endpoint de Dashboards**.
+2. **Autentícate** con el método configurado (IAM, Cognito o usuario básico).
+3. Explora los datos con **consultas SQL, DSL o visualizaciones**.
+
+### **4️⃣ Ingesta de Datos en OpenSearch**
+Puedes enviar datos desde:
+- **AWS Lambda**: Para indexar eventos en tiempo real.
+- **Kinesis Data Firehose**: Para streaming de logs.
+- **Logstash**: Para procesamiento de logs de servidores.
+- **Beats/Fluentd**: Para recolectar datos de aplicaciones.
+
+#### **Ejemplo: Insertar Datos con CURL**
+```bash
+curl -X POST "https://tu-dominio-opensearch.amazonaws.com/index/_doc/1" \
+-H "Content-Type: application/json" \
+-d '{"nombre": "Mario", "edad": 30, "ciudad": "Bogotá"}'
+```
+
+### **5️⃣ Consultar Datos en OpenSearch**
+Puedes hacer búsquedas avanzadas con **DSL de Elasticsearch**:
+```json
+GET /index/_search
+{
+  "query": {
+    "match": {
+      "ciudad": "Bogotá"
+    }
+  }
+}
+```
+
+También puedes usar **SQL en OpenSearch**:
+```sql
+SELECT nombre, edad FROM index WHERE ciudad = 'Bogotá';
+```
+
+### 🔥 **Casos de Uso de OpenSearch**
+✅ **Análisis de logs** en tiempo real (Ej: logs de AWS CloudWatch).  
+✅ **Búsqueda rápida** en bases de datos grandes.  
+✅ **Monitoreo de sistemas** con dashboards en tiempo real.  
+✅ **Análisis de seguridad** con detección de anomalías.  
+
+**Resumen**
+
+Algunas características importantes de ElasticSearch:
+
+- Es un motor de búsqueda basado en Lucene. Busca texto completo y JSON sin esquema.
+- Se despliega en un clúster.
+- Viene integrada con Kibana y Logstash.
+- Se puede integrar con AWS Cognito para manejar la autenticación de usuarios.
+- Puede recibir información de Kinesis Firehose y Lambda.
+- Así como en MySQL trabajas con bases de datos, tablas, columnas y filas. Dentro de ElasticSearch utilizas índices, tipos y documentos con propiedades.
+- Un índice se puede dividir en múltiples shards que se va a distribuir en diferentes nodos del clúster.
+
+## Demo - Creando nuestro primer clúster de ElasticSearch
+
+Aquí tienes los pasos para crear tu primer **clúster de Amazon OpenSearch Service (antes llamado ElasticSearch en AWS)**.
+
+### 🚀 **Ejercicio: Creando un Clúster en Amazon OpenSearch Service**
+Vamos a desplegar un clúster, cargar datos y realizar consultas en OpenSearch.
+
+### **1️⃣ Crear un Clúster en OpenSearch (ElasticSearch)**
+1. Ve a la consola de **AWS OpenSearch Service**.
+2. Haz clic en **Create Domain**.
+3. **Elige la versión** (recomendada la más reciente).
+4. **Configura el tipo de clúster**:
+   - Deployment Type: **Development and testing** (para pruebas).
+   - Instance Type: **t3.small.search** (mínimo costo).
+   - Número de nodos: **1** (single node).
+5. **Configura la seguridad**:
+   - Habilita **Fine-grained access control**.
+   - Crea un **usuario maestro** (admin).
+   - Permite el acceso público (solo para pruebas) o restringe por VPC.
+6. Haz clic en **Create** y espera a que el clúster esté listo (~10 minutos).
+7. Copia la **URL de acceso** del clúster.
+
+### **2️⃣ Insertar Datos en OpenSearch**
+Conéctate con **cURL** o Postman y agrega documentos:
+```bash
+curl -X POST "https://mi-cluster.us-east-1.es.amazonaws.com/productos/_doc/1" -H "Content-Type: application/json" -d '
+{
+  "nombre": "Laptop",
+  "precio": 1200,
+  "stock": 5
+}'
+```
+
+### **3️⃣ Consultar Datos en OpenSearch**
+Busca todos los productos en el índice:
+```bash
+curl -X GET "https://mi-cluster.us-east-1.es.amazonaws.com/productos/_search" -H "Content-Type: application/json" -d '
+{
+  "query": {
+    "match_all": {}
+  }
+}'
+```
+> 🔹 **Nota**: Reemplaza `mi-cluster.us-east-1.es.amazonaws.com` con la URL real de tu OpenSearch.
+
+### 🔥 **Extensión del Ejercicio**
+- 🔹 Usa **Kibana** para visualizar datos.
+- 🔹 Conéctalo con **Amazon Kinesis** para streaming.
+- 🔹 Configura **AWS Lambda** para ingestar datos en tiempo real.
+
+### Resumen
+
+### ¿Cómo se despliega un clúster de Elasticsearch en AWS?
+
+Desplegar un clúster de Elasticsearch en AWS es una tarea esencial para manejar, buscar y analizar grandes volúmenes de datos de manera eficiente. Este proceso permite a las empresas crear robustos sistemas de búsqueda y análisis sin tener que preocuparse por la infraestructura. Aquí te guiaremos a través de los pasos necesarios para crear un clúster de Elasticsearch en AWS, maximizando su rendimiento y seguridad.
+
+### ¿Qué es lo primero que debes hacer?
+
+Antes de comenzar, es crucial familiarizarse con la interfaz de AWS. Una vez dentro de la consola de AWS, deberás buscar el servicio de Elasticsearch. Aquí, tendrás la opción de crear un nuevo dominio. Los dominios en Elasticsearch son entornos independientes que alojan tu clúster de Elasticsearch.
+
+### ¿Cómo configurar el dominio?
+
+Al crear un nuevo dominio, AWS ofrece varias opciones de implementación:
+
+- **Producción**: Optimizaciones para entornos de generación de ingresos.
+- **Desarrollo y pruebas**: Para experimentos o ambientes de no producción.
+- **Personalizado**: Ideal para un control granular sobre la configuración.
+
+Para este ejemplo, seleccionaremos el tipo Personalizado para explorar cada detalle importante en la creación del clúster.
+
+### ¿Cuáles son las configuraciones clave?
+
+#### Nombre y zonas de disponibilidad
+
+1. **Nombre del dominio**: Este será un identificador único para tu entorno de Elasticsearch. Ejemplo: Platzi Domain.
+2. **Zonas de disponibilidad**: Se recomienda seleccionar al menos tres para garantizar la durabilidad y la disponibilidad en producción. Para cargas no críticas, podrían utilizarse menos.
+
+#### Tipo de instancia
+
+Amazon recomienda utilizar:
+
+1. **Instancias tipo I**: Adecuadas para cargas de trabajo intensivas de IO.
+2. **Instancias optimizadas en memoria (tipo R)**: Aptas para datos voluminosos requeridos en memoria.
+
+Para este caso, seleccionaremos el tipo I3-2XLarge.
+
+### Almacenamiento y cifrado
+
+El almacenamiento predeterminado se ajusta al tipo de instancia que seleccionaste. Es recomendable activar el cifrado de datos:
+
+- **De nodo a nodo y en reposo**: Para asegurarte de que la comunicación y los datos almacenados estén seguros e integrados automáticamente con KMS (Key Management Service).
+
+### ¿Cómo se gestiona el acceso y la seguridad del clúster?
+
+La seguridad es crítica para garantizar que solo los usuarios autorizados tengan acceso:
+
+1. **Acceso**:
+
+ - **Público**: Puede ser utilizado, pero siempre con precauciones.
+ - **VPC**: Seguridad privada más elevada, usualmente recomendado.
+
+2. **Integración con Amazon Cognito**: Cuando se opta por acceso público, es vital integrarlo con Cognito para gestionar la autenticación de usuarios de forma segura.
+
+3. **Política de acceso**: Configura políticas basadas en JSON para definir quién puede realizar qué acciones en tu clúster.
+
+### ¿Cómo visualizar y administrar Elasticsearch?
+
+Elasticsearch se integra de manera fluida con herramientas como Kibana para visualización:
+
+- **Endpoints**: El despliegue generará dos endpoints esenciales, uno para Elasticsearch y otro para Kibana, ayudando a gestionar y visualizar tus datos de manera eficiente.
+
+### ¿Cuáles son las mejores prácticas para mantener?
+
+1. **Dimensionamiento**: Ajusta correctamente la cantidad de shards y almacenamiento al crecer tus datos.
+2. **Cifrado**: Siempre activa el cifrado de datos tanto en tránsito como en reposo, especialmente en ambientes productivos.
+3. **Actualización**: Antes de actualizar a nuevas versiones, asegúrate de que el dimensionamiento de tus shards esté optimizado para evitar demoras.
+4. **Backup y restauración**: Establece un horario para snapshots automáticos y verifica que las restauraciones funcionen sin problemas.
+
+El despliegue de un clúster de Elasticsearch en AWS, si bien demanda cuidado y planeación detallada, proporciona un sistema potente y escalable para manejar grandes conjuntos de datos. Al seguir estos pasos, estarás en camino de optimizar tu entorno de búsqueda y análisis de datos de manera eficiente y segura.
+
+## AWS - Kibana
+
+Kibana es la interfaz visual para explorar datos en OpenSearch. Vamos a desplegar un **clúster OpenSearch con Kibana** y realizar consultas.
+
+### **1️⃣ Crear un Clúster en OpenSearch con Kibana**
+1. Ve a la **Consola de AWS** → **OpenSearch Service**.
+2. Haz clic en **Create Domain**.
+3. Configura el clúster:
+   - **Version**: OpenSearch 2.x o superior.
+   - **Deployment type**: Development & Testing (para pruebas).
+   - **Instance type**: `t3.small.search` (mínimo costo).
+   - **Número de nodos**: 1.
+4. En la sección **Security**, activa **Fine-grained access control** y crea un **usuario admin**.
+5. En **Network**, selecciona **Public Access** (solo para pruebas).
+6. Haz clic en **Create** y espera ~10 minutos.
+
+### **2️⃣ Acceder a Kibana**
+1. Ve a **OpenSearch Service → Domains**.
+2. Selecciona tu dominio y busca la **URL de OpenSearch Dashboards** (antes Kibana).
+3. Abre la URL y **usa las credenciales admin**.
+
+### **3️⃣ Ingestar y Consultar Datos en Kibana**
+**🔹 Insertar datos desde la API**
+```bash
+curl -X POST "https://mi-cluster.us-east-1.es.amazonaws.com/productos/_doc/1" -H "Content-Type: application/json" -d '
+{
+  "nombre": "Smartphone",
+  "precio": 500,
+  "stock": 10
+}'
+```
+
+**🔹 Crear una visualización en Kibana**
+1. En Kibana, ve a **Management → Index Patterns**.
+2. Crea un patrón `productos*` y selecciona `timestamp` como campo de tiempo.
+3. Ve a **Discover** y explora los datos.
+4. Usa **Visualizations** para gráficos.
+
+### 🔥 **Extensiones**
+- **Conectar OpenSearch con Lambda o Kinesis**.
+- **Automatizar el despliegue con CloudFormation o Terraform**.
+- **Integrar con AWS Athena para análisis avanzado**.
+
+**Resumen**
+
+- Al venir incluido con ElasticSearch permite visualizar de forma gráfica la información que tenemos en este.
+- Provee muchas opciones de visualización.
+- Permite el uso de plugins de terceros para analítica.
+
+## AWS - QuickSight
+ 
+Amazon QuickSight es una herramienta de **Business Intelligence (BI)** en la nube que permite crear **dashboards interactivos y visualizaciones** a partir de datos almacenados en AWS.
+
+### **1️⃣ Configurar Amazon QuickSight**
+1. **Ir a la Consola de AWS** → Busca **QuickSight**.
+2. **Suscribirse a QuickSight** (elige la versión Standard o Enterprise según necesidades).
+3. **Seleccionar almacenamiento de datos**: 
+   - Amazon S3  
+   - RDS / Redshift  
+   - Athena  
+   - Archivos CSV / JSON  
+   - Conexión a bases de datos externas (MySQL, PostgreSQL, etc.)
+
+### **2️⃣ Conectar QuickSight a una Fuente de Datos**
+**Ejemplo: Conectar a Amazon Redshift**
+1. En QuickSight, ir a **Datasets** → **New Dataset**.
+2. Seleccionar **Amazon Redshift**.
+3. Ingresar la información de conexión:
+   - **Cluster ID**
+   - **Database name**
+   - **User y password**
+   - **Schema y tabla**
+4. Hacer clic en **Validate Connection**.
+5. **Importar los datos** o conectarse directamente con "Direct Query".
+
+### **3️⃣ Crear Dashboards en QuickSight**
+1. **Seleccionar un Dataset** y hacer clic en **Create Analysis**.
+2. **Agregar visualizaciones**: 
+   - Barras, líneas, mapas de calor, gráficos circulares, etc.
+3. **Aplicar filtros y cálculos** con funciones como **AVG(), SUM(), COUNT()**.
+4. **Publicar como Dashboard** y compartir con usuarios.
+
+### **4️⃣ Casos de Uso con AWS**
+- **Análisis de ventas** con datos en Redshift.
+- **Monitorización de logs** desde AWS S3 y Athena.
+- **Seguimiento de KPIs de negocio** en tiempo real.
+
+**Resumen**
+
+- Es un servicio enfocado para Business Intelligence en cloud para análisis y visualización.
+- Cuenta con un cliente para dispositivos móviles.
+- Puede escalar hasta 10000 usuarios.
+- Incluye funcionalidades de machine learning para detectar anomalías y prevenir.
+- Se puede integrar con varios servicios dentro de AWS y servicios de terceros.
+
+## Demo - Visualizando nuestra data con QuickSight
+
+Amazon QuickSight permite crear **dashboards interactivos** con datos almacenados en AWS. A continuación, te explico cómo visualizar tu data en QuickSight paso a paso.  
+
+### **1️⃣ Conectar la Fuente de Datos**
+Antes de visualizar, necesitas cargar o conectar tu fuente de datos en QuickSight.  
+
+1. Ir a la consola de **Amazon QuickSight**.
+2. En el panel de navegación, seleccionar **Datasets** → **New Dataset**.
+3. Elegir la fuente de datos (S3, Redshift, RDS, Athena, etc.).
+4. Configurar la conexión e importar la data o usar "Direct Query".
+
+### **2️⃣ Crear un Nuevo Análisis**
+Una vez que la data está cargada:  
+
+1. Ir a **Analyses** → **New Analysis**.
+2. Seleccionar el dataset previamente configurado.
+3. Hacer clic en **Create Analysis**.
+
+### **3️⃣ Crear Visualizaciones**
+Dentro del análisis:  
+
+1. En **Visual types**, elegir el tipo de gráfico:
+   - 📊 **Barras**: Comparaciones entre categorías.
+   - 📈 **Líneas**: Tendencias a lo largo del tiempo.
+   - 🎯 **KPI**: Métricas clave (ventas, ingresos, etc.).
+   - 🌎 **Mapas**: Datos geoespaciales.
+   - 🔥 **Heatmaps**: Concentración de datos.
+2. Arrastrar campos desde el panel de datos hacia las **dimensiones y medidas** del gráfico.  
+3. **Agregar filtros** para segmentar la información.  
+
+### **4️⃣ Personalizar el Dashboard**
+1. Cambiar los colores y estilos de las visualizaciones.
+2. Agregar **widgets de texto e imágenes** para mayor contexto.
+3. Aplicar cálculos con **funciones como SUM(), AVG(), COUNT()**.
+
+### **5️⃣ Publicar y Compartir**
+1. Hacer clic en **Share** → **Publish Dashboard**.
+2. Configurar permisos para otros usuarios de la cuenta AWS.
+3. Opcionalmente, activar **actualización automática de datos**.
+
+### 🚀 **Ejemplo Práctico**
+Si tienes un dataset con datos de ventas en Redshift, podrías:  
+- Crear un gráfico de **barras** para ver las ventas por región.  
+- Agregar un **KPI** para mostrar el total de ventas del mes.  
+- Usar un **filtro** para seleccionar diferentes períodos de tiempo.  
+
+### Resumen
+
+### ¿Cómo habilitar el servicio de QuickSight?
+
+Explorar los datos es fundamental para la toma de decisiones informada, y Amazon QuickSight ofrece una herramienta poderosa en este sentido. Si aún no has utilizado este servicio, aquí encontrarás cómo habilitarlo en AWS y comenzar a aprovechar sus capacidades de visualización y análisis de datos.
+
+### ¿Qué es QuickSight y qué opciones ofrece?
+
+QuickSight es el servicio de inteligencia de negocios (BI) en AWS que permite crear, compartir y publicar dashboards interactivos con facilidad. Existen dos suscripciones:
+
+- **Estándar**: Por 9 USD al mes, puedes acceder a este plan que ofrece funcionalidades básicas de visualización.
+- **Enterprise**: Con un precio de 18 USD mensuales, incluye características avanzadas como el motor de Machine Learning SPICE y la integración con el Directorio Activo.
+
+Para habilitar el servicio:
+
+1. Accede a tu consola de AWS y busca QuickSight.
+2. Haz clic en "Sign Up for QuickSight" y selecciona el tipo de suscripción.
+3. Completa la información de tu cuenta y región (por ejemplo, Virginia).
+4. Finaliza la creación de tu cuenta.
+
+### ¿Cómo explorar y conectar con datos?
+
+Una vez QuickSight esté listo, puedes comenzar a explorar datos:
+
+1. **Conexión con fuentes de datos**: QuickSight se conecta automáticamente a tus instancias de RDS y clústeres de Redshift para análisis.
+2. **Crear un nuevo análisis**: Puedes cargar datos desde varios orígenes como Salesforce, S3, RDS, Athena, Redshift, MySQL, Aurora, GitHub, entre otros.
+3. **Ejemplo de integración**: Selecciona un dataset y conéctalo a servicios como Athena para validar conexiones y explorar tu información.
+
+### ¿Cómo utilizar datasets y crear análisis?
+
+Cuando tengas datos listos, puedes comenzar el análisis:
+
+- **Publicar y compartir**: Comparte dashboards o análisis completos para que otros visualicen o creen sus propias visualizaciones. También puedes compartir datasets.
+- **Gráficas recomendadas**: QuickSight sugiere tipos de gráficos según tus datos. Estas incluyen gráficos de barras, tortas, mapas de calor y más.
+- **Aplicar filtros**: Crea filtros personalizados para refinar las visualizaciones, como por género o fecha.
+
+### ¿Cómo cargar y visualizar tus datos?
+
+Si ya cuentas con tus propios datos, el proceso es sencillo:
+
+1. Dirígete a QuickSight y carga tus archivos (por ejemplo, en formato JSON).
+2. Revisa las columnas y edita la información según se necesite.
+3. Utiliza los 1 GB gratis para experimentar con el motor SPICE y realizar análisis detallados.
+
+### ¿Cómo crear múltiples visualizaciones?
+
+La diversidad de QuickSight permite personalizar los análisis:
+
+- **Tipos de gráficas**: Desde tortas hasta gráficas de tendencias, explora diferentes representaciones según la naturaleza de tus datos.
+- **Interacción en dashboards**: Los datos pueden ser filtrados, organizados y representados de manera dinámica para profundizar en el análisis.
+
+Recuerda, QuickSight se integra con múltiples fuentes, por lo que puedes cargar datos desde archivos CSV o Excel directamente para comenzar a experimentar.
+
+A medida que te adentras en el mundo de Big Data, no olvides aprender sobre componentes y servicios de seguridad, orquestación y automatización que complementan el uso de QuickSight. Sigue explorando y utilizando este poderoso servicio para descubrir todo su potencial.
+
+## Seguridad en los Datos 
+
+La seguridad de los datos es fundamental para proteger la información contra accesos no autorizados, alteraciones, robos o pérdidas. Abarca estrategias, herramientas y políticas diseñadas para garantizar la **confidencialidad, integridad y disponibilidad** de los datos. 
+
+### 🔎 **Principales Principios de Seguridad de Datos**
+1️⃣ **Confidencialidad** – Solo personas autorizadas pueden acceder a los datos.  
+2️⃣ **Integridad** – Los datos deben mantenerse correctos y no ser alterados sin permiso.  
+3️⃣ **Disponibilidad** – Los datos deben estar accesibles cuando se necesiten.
+
+### 🛡️ **Estrategias de Seguridad en los Datos**
+### 🔐 **1. Cifrado de Datos**
+Protege la información convirtiéndola en un formato ilegible sin la clave de descifrado.  
+✔ **Cifrado en tránsito**: Protege los datos mientras viajan por la red (SSL/TLS).  
+✔ **Cifrado en reposo**: Protege datos almacenados en bases de datos o servidores.  
+
+📌 **Ejemplo en AWS**:  
+- **S3 Encryption** (almacenamiento cifrado).  
+- **RDS Encryption** (cifrado en bases de datos).
+
+### 🔑 **2. Control de Acceso**
+Permite que solo usuarios autorizados accedan a la información.  
+✔ **Autenticación** – Verificación de identidad (contraseña, 2FA, biometría).  
+✔ **Autorización** – Definir qué acciones puede hacer cada usuario.  
+
+📌 **Ejemplo en AWS**:  
+- **IAM (Identity and Access Management)**: Define roles y permisos.  
+- **MFA (Multi-Factor Authentication)**: Seguridad extra con múltiples verificaciones.
+
+### 🏴‍☠️ **3. Protección contra Amenazas y Malware**
+Evita que virus, malware o ataques cibernéticos comprometan los datos.  
+✔ **Antivirus y firewalls** – Detectan y bloquean accesos maliciosos.  
+✔ **Análisis de vulnerabilidades** – Detecta fallos en la seguridad.  
+
+📌 **Ejemplo en AWS**:  
+- **AWS WAF (Web Application Firewall)** – Bloquea tráfico malicioso.  
+- **GuardDuty** – Monitorea amenazas y ataques.
+
+### 🗄️ **4. Copias de Seguridad (Backups)**
+Los datos deben tener respaldos para evitar pérdidas por errores, fallos o ataques.  
+✔ **Backups automáticos** – Copias periódicas de datos.  
+✔ **Almacenamiento redundante** – Guardar copias en diferentes ubicaciones.  
+
+📌 **Ejemplo en AWS**:  
+- **AWS Backup** – Copias de seguridad automatizadas.  
+- **S3 Versioning** – Permite restaurar versiones anteriores de archivos.  
+
+### 🚨 **5. Auditoría y Monitoreo**
+Registra accesos y cambios en los datos para detectar actividades sospechosas.  
+✔ **Logs de auditoría** – Historial de acciones realizadas en el sistema.  
+✔ **Monitoreo en tiempo real** – Detecta accesos o cambios no autorizados.  
+
+📌 **Ejemplo en AWS**:  
+- **AWS CloudTrail** – Registro de eventos y accesos en la cuenta.  
+- **AWS CloudWatch** – Monitorea actividad en servicios y aplicaciones.
+
+### 🔥 **Mejores Prácticas para Proteger los Datos**
+✅ Usar **cifrado** en todos los datos sensibles.  
+✅ Implementar **políticas de acceso restrictivas** (Principio de **menor privilegio**).  
+✅ Habilitar **autenticación multifactor** (MFA).  
+✅ Realizar **copias de seguridad periódicas**.  
+✅ **Monitorear actividad sospechosa** y responder a incidentes.  
+✅ Mantener **sistemas y software actualizados**. 
+
+### 🛠 **Herramientas de Seguridad en AWS**
+📌 **IAM** – Control de acceso y permisos.  
+📌 **AWS Shield** – Protección contra ataques DDoS.  
+📌 **AWS Secrets Manager** – Almacena credenciales y claves de API de forma segura.  
+📌 **AWS KMS (Key Management Service)** – Gestión de claves de cifrado.  
+📌 **AWS Macie** – Identifica datos confidenciales automáticamente.
+
+**Resumen**
+
+- En todos los servicios que te lo permitan deberías activar el cifrado.
+- Asigna de forma granular los permisos que tengan tus usuarios. Mientras más específico mejor.
+- Es recomendable siempre utilizar servicios administrados, serverless.
+- Monitorea siempre tus servicios.
+- Siempre ejecuta pruebas antes de mandar la información a producción.
 
 docker run -p 8080:8080 --rm --name zeppelin apache/zeppelin:0.12.0
