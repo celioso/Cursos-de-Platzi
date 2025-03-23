@@ -246,3 +246,178 @@ docker run -it -d ubuntu-python-mysql-git
 ```
 
 Déjame saber si necesitas alguna modificación o ajustes. 🚀
+
+Para crear un contenedor de **Kali Linux** con Docker, sigue estos pasos:
+
+### **1️⃣ Instalar Docker** (si no lo tienes ya)  
+En **Ubuntu/Debian**, ejecuta:
+```sh
+sudo apt update
+sudo apt install docker.io -y
+```
+Para **Windows/Mac**, descarga **Docker Desktop** desde [aquí](https://www.docker.com/products/docker-desktop/).
+
+---
+
+### **2️⃣ Descargar y ejecutar Kali Linux en Docker**
+Ejecuta este comando para descargar y correr un contenedor de Kali Linux:
+```sh
+docker run -it --rm kalilinux/kali-rolling /bin/bash
+```
+📌 **Explicación**:
+- `docker run` → Ejecuta un nuevo contenedor.
+- `-it` → Permite interacción con el terminal.
+- `--rm` → Borra el contenedor cuando se detiene.
+- `kalilinux/kali-rolling` → Imagen oficial de Kali Linux.
+- `/bin/bash` → Inicia el contenedor con la shell de Bash.
+
+---
+
+### **3️⃣ Mantener el contenedor después de cerrar**
+Si deseas que el contenedor **persista**, usa:
+```sh
+docker run -it --name kali_persist kalilinux/kali-rolling /bin/bash
+```
+Luego, para **reanudar** el contenedor:
+```sh
+docker start -ai kali_persist
+```
+
+---
+
+### **4️⃣ Instalar herramientas adicionales en Kali**
+Dentro del contenedor, puedes instalar herramientas como:
+```sh
+apt update && apt install -y metasploit-framework nmap
+```
+## Apache zepellin 
+
+`docker run -p 8080:8080 --rm --name zeppelin apache/zeppelin:0.12.0`
+
+
+## contenedor de kali linux
+
+¡Claro! Vamos a desglosar el comando:  
+
+```bash
+docker run -it --rm --name kali_persist kalilinux/kali-rolling /bin/bash
+```
+
+### Explicación de cada parte:
+
+1. **`docker run`**  
+   - Ejecuta un nuevo contenedor.
+
+2. **`-it`**  
+   - `-i` (interactivo): Mantiene la entrada estándar abierta para que puedas interactuar con el contenedor.  
+   - `-t` (pseudo-TTY): Asigna una terminal virtual para que puedas ver el shell como si fuera una terminal normal.  
+
+3. **`--rm`**  
+   - **Elimina automáticamente el contenedor cuando se detiene.**  
+   - Esto significa que cualquier cambio realizado dentro del contenedor se perderá a menos que uses volúmenes o montes un directorio persistente.  
+
+4. **`--name kali_persist`**  
+   - Asigna el nombre `kali_persist` al contenedor para facilitar su identificación.  
+
+5. **`kalilinux/kali-rolling`**  
+   - Usa la imagen `kalilinux/kali-rolling`, que es la versión rolling de Kali Linux disponible en Docker Hub.  
+
+6. **`/bin/bash`**  
+   - Ejecuta el shell Bash dentro del contenedor, permitiéndote interactuar con el sistema.  
+
+### **¿Qué hace este comando en resumen?**  
+Crea y ejecuta un contenedor de Kali Linux en modo interactivo con una terminal (`bash`). Además, el contenedor se eliminará automáticamente (`--rm`) cuando lo detengas.  
+
+### **Si deseas que el contenedor sea persistente**  
+Si no quieres que se elimine al cerrarlo, elimina `--rm` y usa `-d` (modo en segundo plano):  
+
+```bash
+docker run -it -d --name kali_persist kalilinux/kali-rolling /bin/bash
+```
+
+Luego puedes conectarte con:  
+```bash
+docker exec -it kali_persist /bin/bash
+```
+
+### INstalar python 
+
+Para instalar Python en Linux, sigue estos pasos según tu distribución:  
+
+---
+
+### **1. Verificar si Python ya está instalado**  
+Antes de instalar, verifica qué versión de Python tienes con:  
+```bash
+python3 --version
+```
+Si ya está instalado, verás algo como:  
+```
+Python 3.x.x
+```
+Si no, sigue los pasos de instalación según tu sistema operativo.
+
+---
+
+### **2. Instalar Python según tu distribución**  
+
+#### **En Debian, Ubuntu y derivados**  
+Ejecuta:  
+```bash
+sudo apt update && sudo apt upgrade -y
+sudo apt install -y python3 python3-pip python3-venv
+```
+Verifica la instalación con:  
+```bash
+python3 --version
+pip3 --version
+```
+
+---
+
+#### **En CentOS, RHEL, Fedora**  
+Primero, asegúrate de tener `dnf`:  
+```bash
+sudo dnf install -y python3 python3-pip
+```
+Verifica con:  
+```bash
+python3 --version
+pip3 --version
+```
+
+---
+
+#### **En Arch Linux y Manjaro**  
+Usa `pacman`:  
+```bash
+sudo pacman -Syu python python-pip
+```
+Verifica:  
+```bash
+python --version
+pip --version
+```
+
+---
+
+### **3. Configurar Python como predeterminado (Opcional)**  
+Si deseas que `python3` sea el comando predeterminado en lugar de `python`:  
+```bash
+sudo update-alternatives --install /usr/bin/python python /usr/bin/python3 1
+```
+
+---
+
+### **4. Instalar versiones específicas con `pyenv` (Opcional)**  
+Si necesitas instalar y administrar múltiples versiones de Python:  
+```bash
+curl https://pyenv.run | bash
+exec $SHELL
+pyenv install 3.10.12  # Instalar una versión específica
+pyenv global 3.10.12   # Establecerla como predeterminada
+```
+
+---
+
+Con estos pasos, tendrás Python instalado y listo para usarse en Linux. 🚀
