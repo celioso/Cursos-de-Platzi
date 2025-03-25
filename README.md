@@ -163,6 +163,12 @@
 - [Curso Práctico de AWS: Roles y Seguridad con IAM](CursoPracticodeAWSRolesySeguridadconIAM)
 - [Curso Práctico de AWS: Cómputo con EC2](CursoPracticodeAWSComputoconEC2)
 
+## AWS Certifications
+
+- [Curso de Introducción a la Nube](CursodeIntroduccionalaNube)
+- [Curso de Introducción a AWS: Fundamentos de Cloud Computing](CursodeIntroduccionaAWSFundamentosdeCloudComputing)
+- [Curso AWS Cloud Practitioner Certification](CursoAWSCloudPractitionerCertification)
+
 ## Fundamentos de Servidores Linux
 
 - [Curso de Introducción a la Terminal y Línea de Comandos](Curso-de-Introducción-a-la-Terminal-y-Linea-de-Comandos)
