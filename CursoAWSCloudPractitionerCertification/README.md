@@ -873,3 +873,5 @@ Para garantizar seguridad y eficiencia, considera los siguientes consejos:
 - **Gestión de tablas de enrutamiento**: Asegúrate de configurar rutas adecuadas para permitir el tráfico necesario sin exponer innecesariamente los activos.
 
 La configuración y gestión correcta de estos componentes te permitirá construir una estructura de red segura y efectiva dentro de AWS. Con la práctica y el estudio continuo, podrás enfrentar y superar los desafíos que presenta el entorno de la nube. Sigue aprendiendo y perfeccionando tus habilidades en AWS para maximizar el potencial de tus soluciones.
+
+nmap -sCV -p80, 443, 1883, 5672, 8161, 36007, 61613, 61614, 61616 172.17.0.3

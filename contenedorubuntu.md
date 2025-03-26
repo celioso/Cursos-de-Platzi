@@ -421,3 +421,52 @@ pyenv global 3.10.12   # Establecerla como predeterminada
 ---
 
 Con estos pasos, tendrás Python instalado y listo para usarse en Linux. 🚀
+
+Para ver el estado de un contenedor en Docker, puedes utilizar los siguientes comandos:  
+
+### 🔹 **1. Ver todos los contenedores en ejecución**
+```sh
+docker ps
+```
+✅ Muestra solo los contenedores que están en ejecución.  
+
+---
+
+### 🔹 **2. Ver el estado de todos los contenedores (incluyendo los detenidos)**
+```sh
+docker ps -a
+```
+✅ Muestra los contenedores en ejecución, detenidos y creados.  
+
+---
+
+### 🔹 **3. Ver el estado específico de un contenedor**
+Si conoces el nombre o ID del contenedor, usa:  
+```sh
+docker inspect -f '{{.State.Status}}' <container_id>
+```
+📌 **Ejemplo:**
+```sh
+docker inspect -f '{{.State.Status}}' my_container
+```
+👀 **Posibles resultados:**  
+- `"running"` → Contenedor en ejecución  
+- `"exited"` → Contenedor detenido  
+- `"paused"` → Contenedor en pausa  
+
+---
+
+### 🔹 **4. Ver más detalles del contenedor**
+Para ver más información sobre su estado y configuración:  
+```sh
+docker inspect <container_id>
+```
+✅ Muestra detalles como estado, puertos, volúmenes y más.  
+
+---
+
+💡 **Resumen:**
+- 🚀 **`docker ps`** → Ver contenedores en ejecución.  
+- 🛑 **`docker ps -a`** → Ver todos los contenedores, incluso los detenidos.  
+- 🔍 **`docker inspect -f '{{.State.Status}}' <container_id>`** → Ver estado exacto.  
+- 📄 **`docker inspect <container_id>`** → Ver detalles completos del contenedor.  
