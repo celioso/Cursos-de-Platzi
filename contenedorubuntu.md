@@ -470,3 +470,51 @@ docker inspect <container_id>
 - 🛑 **`docker ps -a`** → Ver todos los contenedores, incluso los detenidos.  
 - 🔍 **`docker inspect -f '{{.State.Status}}' <container_id>`** → Ver estado exacto.  
 - 📄 **`docker inspect <container_id>`** → Ver detalles completos del contenedor.  
+
+# craecion d en dokerfile para crearlo como computadora de que voy a atacar
+
+Tu `Dockerfile` tiene un problema con el comando `CMD`. El servicio de Apache no se está ejecutando correctamente porque `service apache2 start` no mantiene el proceso en primer plano, lo que puede hacer que el contenedor termine o que Apache no funcione correctamente.  
+
+Aquí tienes un `Dockerfile` corregido:  
+
+```dockerfile
+FROM debian:latest
+
+# Actualizar paquetes y instalar dependencias
+RUN apt update && apt upgrade -y && \
+    apt install -y apache2 openssh-server sudo
+
+# Copiar el archivo index.html al directorio web
+COPY index.html /var/www/html/index.html
+
+# Crear usuario 'mario' con contraseña
+RUN useradd -ms /bin/bash mario && \
+    echo 'mario:camilo345' | chpasswd
+
+# Dar permisos a 'mario' para usar sudo sin contraseña
+RUN echo "mario ALL=(ALL) NOPASSWD: /usr/bin/env" >> /etc/sudoers
+
+# Exponer puertos HTTP (80) y SSH (22)
+EXPOSE 80 22
+
+# Comando de inicio: ejecutar Apache y SSH en primer plano
+CMD ["bash", "-c", "service ssh start && apachectl -D FOREGROUND"]
+```
+
+### Explicaciones de los cambios:
+1. **Corrección en `CMD`**  
+   - `service apache2 start && service ssh start && tail -f /dev/null` no es la mejor práctica porque los servicios pueden detenerse cuando el contenedor se inicia.  
+   - Se usa `apachectl -D FOREGROUND` para que Apache se ejecute en primer plano y no se cierre.  
+
+2. **Uso de `EXPOSE 80 22`**  
+   - Esto informa a Docker que el contenedor usa los puertos 80 (HTTP) y 22 (SSH).  
+
+3. **Corrección en la copia del `index.html`**  
+   - Asegúrate de que el archivo `index.html` exista en el mismo directorio donde se encuentra el `Dockerfile`.  
+
+### Para construir y ejecutar el contenedor:
+```sh
+docker build -t mi-servidor .
+docker run -d -p 80:80 -p 22:22 --name servidor-web mi-servidor
+```
+Luego, abre tu navegador y prueba con `http://localhost` o la IP del contenedor.

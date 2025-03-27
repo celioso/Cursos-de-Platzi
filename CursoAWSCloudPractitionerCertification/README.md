@@ -874,4 +874,249 @@ Para garantizar seguridad y eficiencia, considera los siguientes consejos:
 
 La configuración y gestión correcta de estos componentes te permitirá construir una estructura de red segura y efectiva dentro de AWS. Con la práctica y el estudio continuo, podrás enfrentar y superar los desafíos que presenta el entorno de la nube. Sigue aprendiendo y perfeccionando tus habilidades en AWS para maximizar el potencial de tus soluciones.
 
-nmap -sCV -p80, 443, 1883, 5672, 8161, 36007, 61613, 61614, 61616 172.17.0.3
+## Seguridad en una VPC
+
+La seguridad en una **VPC (Virtual Private Cloud)** es fundamental para proteger los recursos y datos dentro de una infraestructura en la nube. Aquí tienes los principales aspectos de seguridad a considerar:
+
+### 🔒 **1. Control de Acceso a la Red**
+#### 🔹 **Grupos de Seguridad (Security Groups)**
+- Actúan como **firewalls virtuales** para instancias EC2.
+- Se configuran **reglas de entrada y salida** para controlar el tráfico.
+- Solo permiten el tráfico explícitamente autorizado.
+
+#### 🔹 **Listas de Control de Acceso a la Red (Network ACLs)**
+- Son reglas a nivel de subred para controlar el tráfico entrante y saliente.
+- Proporcionan un **nivel adicional de seguridad** además de los grupos de seguridad.
+- Permiten reglas de "Deny" (los grupos de seguridad solo permiten tráfico explícito).
+
+#### 🔹 **Peering de VPC**
+- Conexión entre dos VPCs para comunicación privada.
+- Evita exponer servicios a Internet innecesariamente.
+
+#### 🔹 **VPN y Direct Connect**
+- VPN: conexión cifrada entre la VPC y un entorno on-premise.
+- Direct Connect: enlace físico privado para mejorar seguridad y latencia.
+
+### 🔐 **2. Seguridad de las Instancias y Aplicaciones**
+#### 🔹 **Autenticación y Control de Acceso**
+- **MFA (Multi-Factor Authentication)** para accesos críticos.
+- **IAM Roles** en lugar de claves de acceso en instancias.
+- **Principio de mínimo privilegio** en permisos.
+
+#### 🔹 **Protección de Datos**
+- Cifrado en **EBS (Elastic Block Store)** y **S3** con claves de AWS KMS.
+- **TLS/SSL** para cifrar datos en tránsito.
+- **Backups y snapshots** para recuperación ante incidentes.
+
+#### 🔹 **Monitoreo y Registro**
+- **AWS CloudTrail**: registra todas las acciones en la VPC.
+- **AWS Config**: monitorea cambios en la configuración de la infraestructura.
+- **Amazon GuardDuty**: detección de amenazas en la red.
+- **VPC Flow Logs**: analiza el tráfico y detecta accesos sospechosos.
+
+### 🛡️ **3. Protección contra Amenazas**
+#### 🔹 **DDoS Protection**
+- AWS Shield: protección básica o avanzada contra ataques DDoS.
+- AWS WAF: firewall para bloquear tráfico malicioso en aplicaciones web.
+
+#### 🔹 **Instancias Bastion**
+- Servidor intermedio para acceder a instancias en subredes privadas.
+- Evita exposición innecesaria de SSH o RDP.
+
+#### 🔹 **Subredes Públicas y Privadas**
+- **Subred pública**: solo para recursos que necesitan acceso externo.
+- **Subred privada**: para bases de datos y servidores internos, sin acceso directo desde Internet.
+
+### 🚀 **Buenas Prácticas Generales**
+✔️ **Usar IAM Roles en lugar de credenciales embebidas**  
+✔️ **Restringir puertos abiertos (ej. SSH, RDP solo desde direcciones confiables)**  
+✔️ **Configurar alertas en AWS CloudWatch para detectar comportamientos anómalos**  
+✔️ **Auditar accesos y permisos regularmente**  
+✔️ **Habilitar cifrado en volúmenes EBS y snapshots**
+
+### Resumen
+
+### ¿Qué es un Security Group en una VPC?
+
+Las VPC o Virtual Private Clouds son componentes esenciales en AWS que requieren seguridad robusta. Los Security Groups representan la primera capa de protección en este escenario. Funcionan como un firewall, protegiendo los recursos dentro de una VPC al controlar el tráfico que es permitido.
+
+La función principal de un Security Group es definir reglas específicas que permitan el tráfico de entrada y salida hacia los recursos en la nube. En términos simples, si tienes una base de datos alojada en un servidor, y necesitas que se conecte por el puerto 3306, deberás configurar una regla en tu Security Group para permitir esta conexión. Esto ilustra cómo los Security Groups actúan como puerta de acceso a los servidores.
+
+### ¿Cómo configuramos el tráfico en un Security Group?
+
+- **Reglas permitidas**: Los Security Groups solo operan bajo reglas que permiten el tráfico.
+- **Puertos específicos**: Por ejemplo, para permitir conexiones SSH, HTTP o HTTPS, se abrirían los puertos 22, 80 y 443, respectivamente.
+
+Considera los Security Groups como la primera instancia de resolución cuando un servidor no responde a conexiones específicas; revisa las configuraciones de tráfico allí primero.
+
+### ¿Qué es una Network ACL en una VPC?
+
+Las listas de control de acceso de redes, conocidas como Network ACLs, ofrecen una capa de seguridad adicional en una VPC. Protegen toda la subred en lugar de un único recurso. Estas operan de manera más extensa y permiten definir tanto qué tráfico bloquear como permitir.
+
+### Características principales de una Network ACL
+
+- **Bloquear y permitir**: A diferencia de los Security Groups, puedes establecer reglas para bloquear o permitir tráficos entrantes y salientes.
+- **Cobertura amplia**: Protegen a todos los componentes dentro de una subred, no solo a un servidor individual.
+
+Por ejemplo, si tienes dos servidores en una subred privada, la Network ACL podría proteger ambas máquinas a nivel de subred. Incluso si un atacante supera la Network ACL, cada servidor tendría su propio Security Group para defenderse.
+
+### Analogía práctica de Security Groups y Network ACLs
+
+Para entender mejor cómo funcionan estos componentes de seguridad, pensemos en un conjunto residencial:
+
+- **Security Group**: Sería la puerta de tu casa, y la llave sería la regla permitida. ¿A quién le entregas la llave para que pueda ingresar? Esta es la entrada específica que permites, como abrir el puerto 22 para SSH.
+
+- **Network ACL**: Imagina el perímetro del conjunto residencial y el personal de seguridad. Protegen todas las casas del conjunto, ofreciendo una barrera adicional que un intruso debe superar antes de llegar a las puertas individuales.
+
+En un caso donde un intruso intenta entrar, primero tendría que evitar la seguridad del perímetro (Network ACL) y luego vulnerar la entrada de cada casa (Security Group) para tener acceso completo.
+
+Con este conocimiento sobre Security Groups y Network ACLs, estás listo para avanzar y practicar la configuración de estas medidas de seguridad esenciales paso a paso. La seguridad en la nube es clave, y entender cómo configurarla es crucial para proteger tus recursos en AWS. ¡Continúa aprendiendo y experimentando!
+
+## Laboratorio: Crear una VPC en AWS (Subredes y Zonas de Disponibilidad)
+
+En este tutorial, configuraremos una **VPC en AWS** con sus respectivas **subredes y zonas de disponibilidad** utilizando la **Consola de AWS** y la **CLI de AWS**. 
+
+### **🔹 1. Crear una VPC desde la Consola de AWS**
+### 📌 **Pasos:**
+1️⃣ **Inicia sesión en la consola de AWS** y ve a **VPC**.  
+2️⃣ En el panel izquierdo, selecciona **VPCs** → Clic en **Crear VPC**.  
+3️⃣ **Configura la VPC:**
+   - Nombre: `MiVPC`
+   - Rango de IPv4 CIDR: `10.0.0.0/16`
+   - Habilitar IPv6 (opcional)
+   - **Tenancy:** predeterminado
+4️⃣ **Clic en "Crear VPC"**.
+
+✅ **¡VPC creada!**
+
+### **🔹 2. Crear Subredes en Diferentes Zonas de Disponibilidad**
+### 📌 **Pasos:**
+1️⃣ En el panel izquierdo, selecciona **Subredes** → Clic en **Crear subred**.  
+2️⃣ **Selecciona la VPC** (`MiVPC`).  
+3️⃣ **Configura las subredes:**
+   - 🔹 **Subred Pública:**  
+     - Nombre: `Subred-Publica`
+     - Zona de Disponibilidad: `us-east-1a`
+     - Rango CIDR: `10.0.1.0/24`
+   - 🔹 **Subred Privada:**  
+     - Nombre: `Subred-Privada`
+     - Zona de Disponibilidad: `us-east-1b`
+     - Rango CIDR: `10.0.2.0/24`
+4️⃣ Clic en **Crear subred**.
+
+✅ **¡Subredes creadas en distintas zonas!** 🎉
+
+## **🔹 3. Crear una Internet Gateway y Asociarla a la VPC**
+### 📌 **Pasos:**
+1️⃣ **Ir a "Internet Gateways"** → Clic en **Crear Internet Gateway**.  
+2️⃣ Asigna un nombre, por ejemplo: `MiIGW`, y **créala**.  
+3️⃣ **Asociar la IGW a la VPC:**  
+   - Ve a **VPCs** → Selecciona `MiVPC` → Clic en **Acciones** → **Adjuntar IGW**.  
+   - Selecciona `MiIGW` y confirma.
+
+✅ **¡La VPC ahora tiene conexión a Internet!** 
+
+### **🔹 4. Crear una Tabla de Rutas y Asociarla a la Subred Pública**
+### 📌 **Pasos:**
+1️⃣ **Ir a "Tablas de Rutas"** → Clic en **Crear tabla de rutas**.  
+2️⃣ Asigna un nombre, por ejemplo: `Rutas-Publicas`, y **selecciona la VPC**.  
+3️⃣ **Editar las rutas**:
+   - Destino: `0.0.0.0/0`
+   - Target (objetivo): `MiIGW`
+4️⃣ **Asociar la tabla de rutas a la subred pública**:
+   - En **Asociaciones de subred**, elige `Subred-Publica`.
+   - Guarda los cambios.
+
+✅ **¡La subred pública ahora tiene acceso a Internet!** 🚀
+
+### **🔹 5. Crear un Grupo de Seguridad**
+### 📌 **Pasos:**
+1️⃣ **Ir a "Grupos de Seguridad"** → Clic en **Crear grupo de seguridad**.  
+2️⃣ **Nombre**: `SG-Web`  
+3️⃣ **Reglas de entrada**:
+   - **HTTP (80)** → `0.0.0.0/0`
+   - **HTTPS (443)** → `0.0.0.0/0`
+   - **SSH (22)** → Solo tu IP (`xx.xx.xx.xx/32`)
+4️⃣ **Asigna el grupo de seguridad a las instancias**.
+
+✅ **¡Seguridad configurada!** 🔐
+
+### **🔹 6. Crear una VPC con AWS CLI**
+Si prefieres usar la **AWS CLI**, aquí tienes los comandos:
+
+```sh
+aws ec2 create-vpc --cidr-block 10.0.0.0/16
+aws ec2 create-subnet --vpc-id vpc-xxxxxxxx --cidr-block 10.0.1.0/24 --availability-zone us-east-1a
+aws ec2 create-internet-gateway
+aws ec2 attach-internet-gateway --internet-gateway-id igw-xxxxxxxx --vpc-id vpc-xxxxxxxx
+aws ec2 create-route-table --vpc-id vpc-xxxxxxxx
+aws ec2 create-route --route-table-id rtb-xxxxxxxx --destination-cidr-block 0.0.0.0/0 --gateway-id igw-xxxxxxxx
+```
+
+✅ **¡VPC creada desde la CLI!** 🎯  
+
+
+### **🎯 Conclusión**
+Con estos pasos, tienes una **VPC en AWS** con **subred pública y privada**, conectividad a Internet y seguridad configurada. ¡Listo para lanzar instancias EC2! 🚀🔥
+
+### Resumen
+
+### ¿Cómo crear una VPC desde cero en AWS? 
+
+El fascinante mundo de las Redes y Computación en la Nube puede parecer imponente al principio, pero con la guía adecuada, se convierte en una habilidad realmente enriquecedora. Hoy vamos a profundizar en el proceso para crear una VPC (Virtual Private Cloud) en AWS desde cero. Este recorrido detallado le dará las bases sólidas para entender cada componente esencial y su propósito dentro de la infraestructura. ¡Así que prepara tu consola y comencemos!
+
+### ¿Cómo se inicia el proceso en la consola de AWS?
+
+Para iniciar, es necesario acceder a la consola de AWS. Aprovecha la barra de búsqueda en la parte superior izquierda y escribe "VPC". Esto te llevará a una lista desplegable donde deberás seleccionar VPC. Una vez dentro, observarás varias opciones relacionadas con VPCs y los recursos por región.
+
+En la parte superior derecha, busca el botón amarillo "Create VPC". Al hacer clic allí, se abrirá un menú que te permitirá crear tu VPC de dos maneras: una automática, y otra personalizada. Para un aprendizaje más profundo, optaremos por el método manual, configurando la VPC desde cero para comprender plenamente cada paso.
+
+### ¿Cuál es el siguiente paso al crear una VPC?
+
+Una vez en la sección "VPC Settings", seleccionarás la opción "VPC Only". Aquí, lo primero que debes proporcionar es el nombre de tu VPC, por ejemplo, "mi primer VPC".
+
+- **Versión IP**: Optaremos por IP versión 4, asignando una dirección clase A, como 10.0.0.0 con una máscara /16.
+- **Tenancy**: Mantenemos el Tenancy por defecto, ya que no es necesario un hardware dedicado para nuestra VPC.
+- E**tiquetas (Tags)**: Se recomiendan como buena práctica las etiquetas para identificar el proyecto y el dueño, como por ejemplo "proyecto: Aplicación X" y "owner: Carlos.Zambrano".
+
+Una vez configurados estos elementos, haz clic en "Create VPC" para finalizar.
+
+### ¿Cómo se añaden subredes a la VPC creada?
+
+Después de crear una VPC, el siguiente paso es añadir subredes. En el menú de la izquierda, selecciona "Subnets" y procede a crear tus subredes. Aquí, asegúrate de:
+
+1. Seleccionar la VPC previamente creada.
+2. Asignar un nombre a la subred, como "privada1".
+3. Elegir la zona de disponibilidad, como "1A".
+4. Configurar la dirección IP; para "privada1", usaríamos 10.0.1.0/24.
+
+Cada subred deberá ser creada una por una. El proceso es repetido para cada subred, como "privada2", "publica1", y "publica2", variando su nombre, zonas de disponibilidad y direcciones IP dentro del esquema.
+
+### ¿Qué representa la distribución de subredes en la arquitectura?
+
+La distribución de subredes entre distintas zonas de disponibilidad asegura una arquitectura altamente disponible. Tener subredes divididas así permite que, si una zona (como la A) falla, las otras (como B) sigan funcionando perfectamente, proporcionando una redundancia crítica.
+
+```bash
+Zona 1A: Privada1, Pública1
+Zona 1B: Privada2, Pública2
+```
+
+Este diseño garantiza resiliencia y continuidad del servicio, vital en aplicaciones críticas y entornos corporativos.
+
+### ¿Cómo visualizar y diagramar la VPC y sus componentes?
+
+Para entender mejor la relación visual de la VPC con sus subredes y zonas de disponibilidad, es útil diagramar la arquitectura. Herramientas como Lucidchart pueden ser empleadas para este fin, ayudando a visualizar cómo las subredes (representadas en azul y verde) se distribuyen y organizan.
+
+El ejercicio de diagrama no solo refuerza la comprensión visual, sino que también prepara para gestionar entornos más complejos.
+
+### ¿Cuáles son las claves para dominar la creación de VPCs?
+
+La práctica continua es el mejor consejo para dominar el arte de la creación de VPCs en AWS. Comprender de manera práctica cómo se interrelacionan los componentes y cómo mejorar la disponibilidad y seguridad te colocará un paso adelante. Recuerda que cada error y corrección es un aprendizaje valioso en este viaje.
+
+Sigue explorando, cuestionando y aprendiendo con cada clase. La nube ofrece un vasto universo de posibilidades, y cada capa que descubres te acerca más a ser un experto confiado en esta asombrosa tecnología.
+
+**Lecturas recomendadas**
+
+[Direcciones IP y sus clases](https://es.wikipedia.org/wiki/Direcci%C3%B3n_IP#:~:text=Una%20IP%20puede%20ser%20privada,manera%20fija%20y%20no%20din%C3%A1mica)
+
+[Calculadora IP](https://aprendaredes.com/cgi-bin/ipcalc/ipcalc_cgi1)
