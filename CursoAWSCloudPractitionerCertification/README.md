@@ -3142,10 +3142,666 @@ Recuerda que la seguridad y la planificación adecuada son vitales para un despl
 
 Te animamos a seguir profundizando en estos conocimientos y a estar pendiente de nuestras próximas guías para completar tu laboratorio y llevar tu aplicación a un nivel profesional en AWS.
 
+## Laboratorio: Instalación de Apache y gestión de seguridad en AWS
 
+Apache es uno de los servidores web más utilizados. Aquí te mostraré cómo instalarlo en **AWS EC2** y aplicar configuraciones de seguridad esenciales.
 
+### **1️⃣ Instalación de Apache en una Instancia EC2 (Amazon Linux / Ubuntu)**
 
+### **🔹 Paso 1: Conéctate a tu Servidor EC2**
+Si aún no lo hiciste, accede a tu servidor con SSH:
+```sh
+ssh -i "mi-clave.pem" ec2-user@IP_DEL_SERVIDOR
+```
 
+### **🔹 Paso 2: Instalar Apache**
+#### 🔹 **Para Amazon Linux o CentOS**
+```sh
+sudo yum update -y
+sudo yum install httpd -y
+```
+#### 🔹 **Para Ubuntu / Debian**
+```sh
+sudo apt update
+sudo apt install apache2 -y
+```
+
+### **🔹 Paso 3: Iniciar y Habilitar Apache**
+```sh
+sudo systemctl start httpd  # Amazon Linux / CentOS
+sudo systemctl enable httpd
+
+sudo systemctl start apache2  # Ubuntu / Debian
+sudo systemctl enable apache2
+```
+💡 Ahora puedes acceder a tu servidor desde un navegador en `http://IP_DEL_SERVIDOR/`.
+
+### **2️⃣ Configuración de Seguridad en AWS**
+Es importante proteger tu servidor Apache con reglas de firewall y permisos adecuados.
+
+### **🔹 Paso 4: Configurar Reglas del Security Group**
+Ve a **AWS Console** → **EC2** → **Security Groups** y agrega las siguientes reglas:
+
+| Tipo   | Protocolo | Puerto | Fuente        |
+|--------|----------|--------|--------------|
+| HTTP   | TCP      | 80     | 0.0.0.0/0    |
+| HTTPS  | TCP      | 443    | 0.0.0.0/0    |
+| SSH    | TCP      | 22     | Tu IP Pública |
+
+### **3️⃣ Protección Adicional**
+🔹 **Desactivar directory listing** en Apache:
+```sh
+sudo nano /etc/httpd/conf/httpd.conf  # Amazon Linux / CentOS
+sudo nano /etc/apache2/apache2.conf  # Ubuntu / Debian
+```
+Busca `<Directory "/var/www/html">` y cambia:
+```apache
+Options -Indexes
+```
+🔹 **Activar firewall (opcional)**
+```sh
+sudo yum install firewalld -y && sudo systemctl enable firewalld && sudo systemctl start firewalld
+sudo firewall-cmd --add-service=http --permanent
+sudo firewall-cmd --add-service=https --permanent
+sudo firewall-cmd --reload
+```
+
+🔹 **Instalar Certificado SSL con Let’s Encrypt**:
+```sh
+sudo yum install epel-release -y  # Amazon Linux / CentOS
+sudo yum install certbot python-certbot-apache -y
+sudo certbot --apache -d tu-dominio.com
+```
+
+✅ **Listo! Ahora tu servidor Apache está instalado y seguro en AWS.** 🚀  
+
+![gestion de segurida](images/gestiondesegurida.jpg)
+
+### Resumen
+
+### ¿Cómo conectarse a un servidor utilizando AWS EC2?
+
+Conectar a un servidor en AWS EC2 puede sonar complicado al principio, pero con una guía clara, se puede lograr de manera eficiente. A continuación, exploramos el proceso para establecer esta conexión efectiva utilizando un JumpHost y configurando adecuadamente los grupos de seguridad.
+
+### ¿Cuál es el primer paso para conectarse a un servidor?
+
+1. Acceso a la consola de AWS EC2: Inicia sesión en AWS y dirígete a la consola de EC2.
+2. Localiza y edita el JumpHost: Busca las instancias en ejecución y selecciona tu JumpHost. Es fundamental editar sus configuraciones de seguridad para permitir conexiones SSH.
+
+### ¿Cómo configurar las reglas de seguridad?
+
+La seguridad es esencial en las conexiones a servidor, y configurar las reglas correctamente es crucial:
+
+- **Edita las reglas de entrada en Security Groups**: Accede a la sección de Seguridad y agrega una nueva regla permitiendo conexiones SSH (puerto 22) desde tu dirección IP.
+- **Guarda los cambios**: Asegúrate de guardar cualquier modificación en los grupos de seguridad para aplicar las configuraciones.
+
+### ¿Cómo conectarse al JumpHost?
+
+Una vez configuradas las reglas de seguridad, el siguiente paso es la conexión a través de la terminal:
+
+`ssh EC2-user@<JumpHost_IP> -i /ruta/a/la/llave/jumphost.pem`
+
+- **Verificación**: Si todo está bien, recibirás un mensaje de confirmación. Acepta la conexión escribiendo "yes" cuando sea necesario.
+
+### ¿Cómo conectar y manejar servidores en subredes privadas?
+
+Con el JumpHost en acceso, el siguiente desafío es llegar a los servidores que están en subredes privadas.
+
+### ¿Cómo permitir el acceso del JumpHost a los servidores privados?
+
+- **Configura los grupos de seguridad de los servidores privados**: Demuestra cómo los servidores privados pueden aceptar conexiones desde el JumpHost mediante la modificación de su Security Group respectivo.
+
+### ¿Cómo realizar saltos SSH?
+
+Configurar mecanismos para saltar de un servidor público a uno privado es esencial:
+
+1. **Crea y edita un archivo de llave para el Servidor A**:
+
+ - Usa un editor de texto en el JumpHost para crear un archivo de llave.
+ - Copia el contenido de la llave del Servidor A en este archivo.
+
+2. **Realiza el salto SSH del JumpHost al Servidor A**:
+
+`sudo ssh EC2-user@<IP-privada-Servidor-A> -i llaveA.pem`
+
+### ¿Cómo instalar un servidor web Apache?
+
+Configura Apache en cada servidor una vez conectado:
+
+- Use yum para instalar Apache:
+
+`sudo yum install httpd -y`
+
+- Crea un archivo de bienvenida HTML:
+
+```shell
+sudo vim /var/www/html/index.html
+# Insertar mensaje personalizado
+```
+
+- **Reinicia Apache**:
+
+`sudo systemctl restart httpd`
+
+### ¿Cómo configurar un balanceador de carga?
+
+El balanceo de carga es esencial para alta disponibilidad:
+
+- **Próximos pasos**: En la clase siguiente, configuraremos el balanceador de carga en AWS para mejorar la disponibilidad y distribuciones de tráfico en los servidores A y B.
+
+Con todo, la gestión de servidores en AWS nos brinda la posibilidad de aprender procesos críticos y practicar habilidades necesarias en un entorno seguro. Sigue este procedimiento y estarás bien encaminado hacia la optimización de tus aplicaciones en la nube. ¡Adelante!
+
+**Lecturas recomendadas**
+
+[How To Set Up SSH Tunneling on a VPS | DigitalOcean](https://www.digitalocean.com/community/tutorials/how-to-set-up-ssh-tunneling-on-a-vps)
+
+## Laboratorio: Alta disponibilidad y verificación de salud de servidores 
+
+Para garantizar que una aplicación esté siempre disponible y funcione correctamente, AWS ofrece herramientas como **Auto Scaling, Load Balancers y Health Checks**.
+
+### **1️⃣ Alta Disponibilidad en AWS**  
+La **alta disponibilidad** se logra mediante:  
+
+✅ **Múltiples instancias EC2** en diferentes zonas de disponibilidad.  
+✅ **Load Balancer (ALB o NLB)** para distribuir el tráfico.  
+✅ **Auto Scaling** para ajustar la cantidad de instancias según la demanda.  
+✅ **Verificación de salud (Health Checks)** para garantizar que las instancias activas sean funcionales.
+
+### **2️⃣ Creación de un Load Balancer para Distribuir el Tráfico**  
+
+AWS **Elastic Load Balancer (ELB)** distribuye tráfico entre múltiples instancias.  
+
+### **🔹 Paso 1: Crear un Load Balancer (ALB)**  
+1️⃣ Ve a **AWS Console** → **EC2** → **Load Balancers** → **Create Load Balancer**.  
+2️⃣ Selecciona **Application Load Balancer (ALB)**.  
+3️⃣ Configura:  
+   - **Listeners:** HTTP/HTTPS  
+   - **Security Group:** Permitir tráfico en puertos **80 y 443**  
+4️⃣ Crea un **Target Group** para asociar las instancias EC2.  
+5️⃣ **Habilita Health Checks** para detectar fallos en instancias.  
+6️⃣ Finaliza y usa la URL del Load Balancer para probar el acceso.
+
+### **3️⃣ Configuración de Auto Scaling para Alta Disponibilidad**  
+
+### **🔹 Paso 2: Crear un Auto Scaling Group**  
+1️⃣ Ve a **AWS Console** → **Auto Scaling Groups** → **Create Auto Scaling Group**.  
+2️⃣ Usa un **Launch Template** con la configuración de las instancias EC2.  
+3️⃣ Configura los **mínimos y máximos de instancias** según la carga.  
+4️⃣ Conéctalo al **Load Balancer** creado en el paso anterior.  
+5️⃣ Define políticas de escalamiento:  
+   - Aumentar instancias si **CPU > 70%**  
+   - Reducir instancias si **CPU < 30%**  
+
+💡 **AWS CLI para configurar escalamiento**  
+```sh
+aws autoscaling create-auto-scaling-group --auto-scaling-group-name MiASG \
+    --launch-template LaunchTemplateName=MiTemplate \
+    --min-size 2 --max-size 5 --desired-capacity 3 \
+    --target-group-arns arn:aws:elasticloadbalancing:...
+```
+
+### **4️⃣ Verificación de Salud de los Servidores (Health Checks)**  
+
+El **Load Balancer** y **Auto Scaling Group** usan Health Checks para detectar fallos.  
+
+🔹 **Ejemplo de Health Check en ALB:**  
+- **Protocolo:** HTTP  
+- **Ruta de comprobación:** `/health`  
+- **Intervalo:** 30s  
+- **Cantidad de fallos permitidos:** 2  
+
+📌 **Prueba manual de Health Check:**  
+Desde tu terminal:  
+```sh
+curl http://IP_DEL_SERVIDOR/health
+```
+Si devuelve `200 OK`, la instancia está saludable.
+
+### **🎯 Beneficios de Alta Disponibilidad y Health Checks**  
+✅ **Menos tiempo de inactividad** – Instancias fallidas se reemplazan automáticamente.  
+✅ **Escalabilidad automática** – Se ajusta la cantidad de servidores según la demanda.  
+✅ **Reducción de costos** – Solo se usan recursos cuando se necesitan.  
+✅ **Carga distribuida** – Un Load Balancer previene la sobrecarga de un solo servidor.
+
+### Resumen
+
+### ¿Cómo configurar un balanceador de carga en AWS?
+
+La implementación de un balanceador de carga de aplicaciones (Application Load Balancer o ALB) en AWS es crucial para distribuir equitativamente el tráfico entre varias instancias. Este proceso es esencial para mejorar tanto la disponibilidad como la resiliencia de aplicaciones en la nube. En este artículo, exploraremos detalladamente cómo configurar un ALB, paso a paso, utilizando la consola de AWS.
+
+### ¿Cuál es el balanceador de carga adecuado a utilizar?
+
+AWS ofrece diversas opciones de balanceadores, cada uno destinado para diferentes propósitos:
+
+- **Application Load Balancer (ALB)**: Ideal para aplicaciones web, operando a nivel capa 7.
+- **Network Load Balancer (NLB)**: Diseñado para aplicaciones que requieren realizar un balanceo de carga a nivel capa 4.
+- **Gateway Load Balancer (GLB**): Se utiliza principalmente para ejecutar tareas que requieran la integración con firewalls y herramientas de seguridad.
+
+Para aplicaciones web, especialmente aquellas que manejan tráfico HTTP/HTTPS, el ALB es el más adecuado.
+
+### ¿Cómo se configura un Application Load Balancer?
+
+1. **Navegar a EC2 en la consola de AWS**:
+
+ - Desde la consola de AWS, buscar y seleccionar "EC2" en el menú.
+ - En el lado izquierdo, seleccionar la opción "Load Balancers".
+ - Hacer clic en "Create Load Balancer".
+
+2. **Seleccionar el tipo de balanceador de carga**:
+
+ - Elegir "Application Load Balancer" y hacer clic en "Create".
+ - Nombrar el balanceador, por ejemplo, "mi-primer-ALB".
+ - Elegir si será público o privado; en este caso, seleccionar "internet facing".
+ - Seleccionar el tipo de dirección IP, aquí trabajamos con "IPv4".
+
+3. **Configurar las subredes y VPC**:
+
+ - Cambiar la VPC por "mi primer VPC".
+ - Seleccionar las subredes en las zonas de disponibilidad adecuadas (Pública 1 y Pública 2).
+ 
+4. **Configurar el Security Group**:
+
+ - Crear un nuevo grupo de seguridad (Security Group), por ejemplo, "SG-ALB".
+ - Añadir reglas para permitir tráfico HTTP desde cualquier dirección IP.
+ 
+5. **Definir parámetros del listener**:
+
+ - Un "listener" es dónde el ALB 'escucha' tráfico entrante; configurar para que el ALB escuche por el puerto HTTP 80.
+
+6. **Crear un grupo de destino (Target Group)**:
+
+ - Definir cómo se manejan los destinatarios del tráfico (instancias).
+ - Nombrar el grupo de destino, por ejemplo, "mi-primer-target".
+ - Configurar el Health Check para verificar el estado de las instancias.
+
+### ¿Cómo asegurar que las instancias están saludables?
+El balanceador utiliza Health Checks para comunicarse con las instancias:
+
+- **Healthy Threshold**: Define el número de respuestas positivas necesarias para declarar una instancia como saludable.
+- **Unhealthy Threshold:** Número de respuestas negativas antes de considerarla no saludable.
+- **Timeout**: Tiempo que espera el balanceador antes de parar de enviar tráfico si la instancia no responde.
+- **Intervalo**: Tiempo entre cada Health Check.
+- **Respuesta esperada**: Un HTTP 200 indica que la instancia está funcionando correctamente.
+
+### ¿Qué hacer después de configurar el balanceador?
+
+Volver al Load Balancer en la consola, actualizar las instancias en el Target Group y confirmar que están saludables. Si una de las instancias no es saludable, asegúrese de que las reglas del Security Group están correctamente configuradas para aceptar el tráfico desde el ALB.
+
+### ¿Cómo comprobar que la configuración es correcta?
+
+Después de que el ALB esté activo, copiar el DNS proporcionado por AWS e ingresarlo en un navegador web. Al actualizar repetidamente la página, se debería observar que el tráfico se distribuye equitativamente entre las instancias configuradas.
+
+### ¿Qué implicaciones tiene detener una instancia?
+
+Detener una instancia debe reflejarse en el balanceador. Si una instancia deja de estar saludable, el ALB redirige automáticamente todo el tráfico a las instancias restantes que estén saludables.
+
+Este proceso no solo mejora la distribución del tráfico, sino que también asegura la disponibilidad de las aplicaciones, minimizando riesgos de caídas. Sigue explorando y profundizando en esta tecnología para maximizar tus recursos en la nube. ¡Adelante, el conocimiento es poder!
+
+## Laboratorio: Eliminación de recursos en AWS
+
+Eliminar recursos en AWS requiere cuidado, ya que algunos generan costos aún si no están en uso. Aquí te explico cómo eliminar diferentes recursos de AWS de manera segura. 
+
+### **1️⃣ Eliminar una Instancia EC2**  
+Si ya no necesitas una instancia, sigue estos pasos para eliminarla:  
+
+🔹 **Desde la Consola de AWS:**  
+1️⃣ Ve a **EC2** → **Instances**.  
+2️⃣ Selecciona la instancia que quieres eliminar.  
+3️⃣ Haz clic en **Actions** → **Instance state** → **Terminate Instance**.  
+4️⃣ Confirma la terminación.  
+
+🔹 **Desde AWS CLI:**  
+```sh
+aws ec2 terminate-instances --instance-ids i-1234567890abcdef0
+```
+
+⚠ **Advertencia:** La terminación es irreversible. Si solo quieres detener la instancia (para evitar costos), usa:  
+```sh
+aws ec2 stop-instances --instance-ids i-1234567890abcdef0
+```
+
+### **2️⃣ Eliminar un Load Balancer**  
+Los Load Balancers generan costos incluso si no hay tráfico.  
+
+🔹 **Desde la Consola de AWS:**  
+1️⃣ Ve a **EC2** → **Load Balancers**.  
+2️⃣ Selecciona el Load Balancer y haz clic en **Delete**.  
+3️⃣ Confirma la eliminación.  
+
+🔹 **Desde AWS CLI:**  
+```sh
+aws elb delete-load-balancer --load-balancer-name mi-load-balancer
+```
+
+### **3️⃣ Eliminar un Auto Scaling Group**  
+🔹 **Desde AWS CLI:**  
+```sh
+aws autoscaling delete-auto-scaling-group --auto-scaling-group-name MiASG --force-delete
+```
+Esto elimina el grupo, incluso si hay instancias en ejecución.
+
+### **4️⃣ Eliminar un Bucket S3**  
+Un bucket no se puede eliminar si tiene objetos dentro.  
+
+🔹 **Desde AWS CLI:**  
+Eliminar todos los objetos antes de eliminar el bucket:  
+```sh
+aws s3 rm s3://mi-bucket --recursive
+aws s3 rb s3://mi-bucket --force
+```
+
+### **5️⃣ Eliminar una Elastic IP (EIP)**  
+Las direcciones IP elásticas generan costos si no están asociadas.  
+
+🔹 **Liberar la dirección IP desde AWS CLI:**  
+```sh
+aws ec2 release-address --allocation-id eipalloc-0f2fd74a12ae02656
+```
+
+### **6️⃣ Eliminar un RDS (Base de Datos Relacional)**  
+Si tienes una base de datos RDS en uso, elimínala así:  
+
+🔹 **Desde AWS CLI:**  
+```sh
+aws rds delete-db-instance --db-instance-identifier mi-database --skip-final-snapshot
+```
+⚠ Si no usas `--skip-final-snapshot`, AWS creará un backup antes de eliminarla.
+
+### **7️⃣ Eliminar un VPC**  
+Un VPC no se puede eliminar si tiene recursos asociados (subnets, gateways, etc.).  
+
+🔹 **Eliminar un VPC completamente:**  
+```sh
+aws ec2 delete-vpc --vpc-id vpc-12345678
+```
+
+🔹 **Si da error**, primero elimina las subnets, gateways y grupos de seguridad.
+
+### **🛑 Precauciones al Eliminar Recursos en AWS**  
+✅ **Verifica si hay recursos en uso antes de eliminarlos.**  
+✅ **Usa AWS Budgets para controlar costos y evitar cargos inesperados.**  
+✅ **Para entornos de prueba, usa AWS Free Tier o configura alertas de costos.**  
+
+### Resumen
+
+### ¿Cómo eliminar recursos en AWS para evitar costos innecesarios?
+
+Cuando trabajas en la consola de AWS, es crucial eliminar los recursos no utilizados para evitar sorpresas en tu factura. Aquí te mostraré cómo realizar este proceso de manera efectiva. La experiencia y práctica adquiridas te permitirán controlar mejor tus costos en la nube.
+
+### ¿Cómo finalizar instancias EC2?
+
+Primero, asegúrate de detener todas las instancias EC2 que ya no necesitas. Sigue estos pasos:
+
+1. Accede al servicio de EC2 desde la consola de AWS.
+2. Haz clic en "Instance running" para ver todas tus instancias en ejecución.
+3. Selecciona todas las instancias que deseas eliminar.
+4. En el menú superior derecho, haz clic en "Instance State" y selecciona "Terminate".
+
+Después de confirmar la acción, verás que el estado de las instancias cambia a "shutting down" y finalmente a "terminated". No te preocupes si siguen apareciendo por un momento; se eliminarán por completo pronto.
+
+### ¿Por qué eliminar el NAT Gateway es vital?
+
+El NAT Gateway es conocido por ser un recurso financiero demandante si se deja habilitado innecesariamente. Sigue estos pasos para eliminarlo:
+
+1. Dirígete a VPC desde la consola.
+2. Busca y selecciona tu NAT Gateway.
+3. Haz clic en "Actions" y luego en "Delete NAT Gateway".
+4. Escribe "Delete" para confirmar y espera unos minutos para que el proceso finalice.
+
+### ¿Cómo liberar Elastic IPs y qué implicación tiene?
+
+Liberar Elastic IPs es esencial porque AWS cobra por las direcciones IP no utilizadas. Para liberar estas direcciones, sigue estos pasos:
+
+1. Accede a la sección de Elastic IPs desde la consola de EC2.
+2. Selecciona cada IP que desees liberar.
+3. Haz clic en "Actions" y luego en "Release".
+4. Confirma la acción para cada IP seleccionada.
+
+### ¿De qué manera eliminar VPCs y asegurar que todo esté limpiado?
+
+Antes de eliminar la VPC, asegúrate de que el NAT Gateway y las Elastic IPs estén borrados. Luego, prosigue de la siguiente manera:
+
+1. Accede a "Your VPCs" desde la parte superior izquierda.
+2. Selecciona la VPC que desees eliminar.
+3. Haz clic en "Actions" y selecciona "Delete VPC".
+4. Escribe "Delete" para confirmar y espera a que se complete el proceso.
+
+### ¿Qué recursos adicionales debemos considerar para eliminar?
+
+No olvides eliminar las Key Pairs utilizadas durante tus prácticas. Estas no tienen costo, pero es buena práctica mantener un entorno limpio:
+
+1. En la sección de EC2, ve a "Key Pairs".
+2. Selecciona las llaves que deseas eliminar.
+3. Haz clic en "Actions", selecciona "Delete", confirma escribiendo "Delete".
+
+El mantener un entorno organizado no solo evitará cargos innecesarios, sino que también te ayudará a gestionar mejor tus recursos en AWS. Al finalizar el proceso, comparte tus observaciones del laboratorio y la imagen de tu aplicación en funcionamiento en los comentarios. Así podremos verificar que lograste implementar de manera práctica todos los objetivos del curso.
+
+## Almacenamiento en AWS
+
+AWS ofrece varias soluciones de almacenamiento, cada una optimizada para diferentes necesidades: **archivos, objetos, bloques y backups**.  
+
+### **1️⃣ Amazon S3 (Simple Storage Service) – Almacenamiento de Objetos**  
+📌 **Ideal para:** Almacenamiento de datos no estructurados, backups, sitios web estáticos, distribución de contenido y Big Data.  
+
+🔹 **Características:**  
+✅ Escalabilidad automática.  
+✅ Acceso vía API RESTful.  
+✅ Diferentes clases de almacenamiento según costo y rendimiento.  
+✅ Integración con CloudFront (CDN) para mejorar la distribución.  
+
+🔹 **Ejemplo AWS CLI – Subir un archivo a S3:**  
+```sh
+aws s3 cp archivo.txt s3://mi-bucket/
+```
+
+🔹 **Clases de almacenamiento S3:**  
+| Clase S3 | Caso de Uso | Costo 💲 |  
+|----------|------------|----------|  
+| **S3 Standard** | Accesos frecuentes | Alto |  
+| **S3 IA (Infrequent Access)** | Accesos ocasionales | Medio |  
+| **S3 Glacier** | Archivado y backups | Bajo |
+
+### **2️⃣ Amazon EBS (Elastic Block Store) – Almacenamiento de Bloques**  
+📌 **Ideal para:** Instancias EC2, bases de datos, almacenamiento persistente de alto rendimiento.  
+
+🔹 **Características:**  
+✅ Volúmenes persistentes para EC2.  
+✅ Copias de seguridad con snapshots.  
+✅ Rendimiento optimizado para SSD y HDD.  
+
+🔹 **Ejemplo AWS CLI – Crear un volumen EBS:**  
+```sh
+aws ec2 create-volume --size 100 --volume-type gp3 --availability-zone us-east-1a
+```
+
+### **3️⃣ Amazon EFS (Elastic File System) – Almacenamiento de Archivos**  
+📌 **Ideal para:** Compartir archivos entre múltiples instancias EC2.  
+
+🔹 **Características:**  
+✅ Sistema de archivos escalable.  
+✅ Acceso simultáneo desde varias instancias.  
+✅ Pago por uso.  
+
+🔹 **Ejemplo AWS CLI – Crear un sistema de archivos EFS:**  
+```sh
+aws efs create-file-system --performance-mode generalPurpose
+```
+
+### **4️⃣ Amazon FSx – Almacenamiento de Archivos Avanzado**  
+📌 **Ideal para:** Aplicaciones empresariales que requieren compatibilidad con sistemas de archivos tradicionales.  
+
+🔹 **Opciones de FSx:**  
+- **FSx for Windows File Server** (para entornos Windows).  
+- **FSx for Lustre** (para cargas de trabajo de alto rendimiento). 
+
+### **5️⃣ AWS Backup – Gestión Centralizada de Backups**  
+📌 **Ideal para:** Automatizar copias de seguridad en S3, EBS, RDS, DynamoDB, etc.  
+
+🔹 **Ejemplo AWS CLI – Crear un Backup Vault:**  
+```sh
+aws backup create-backup-vault --backup-vault-name MiBackupVault
+```
+
+### **🎯 ¿Qué Solución de Almacenamiento Elegir?**  
+
+| **Necesidad** | **Solución AWS** |  
+|--------------|-----------------|  
+| Almacenamiento de objetos | **S3** |  
+| Almacenamiento de bloques para EC2 | **EBS** |  
+| Compartición de archivos entre instancias | **EFS** |  
+| Archivos Windows o alto rendimiento | **FSx** |  
+| Copias de seguridad y recuperación | **AWS Backup** |
+
+### Resumen
+
+### ¿Cuál es la importancia del almacenamiento en la nube?
+
+El almacenamiento es un concepto esencial en nuestras vidas cotidianas, desde cómo guardamos la ropa hasta cómo protegemos nuestras joyas más preciadas. Al igual que estos objetos físicos, el almacenamiento en la nube es crucial para la gestión de datos en el mundo digital de hoy. La nube permite almacenar información vital y asegurar que está bien protegida, al igual que lo haría un banco para nuestro dinero. Pero ¿cuál es la relevancia específica del almacenamiento en la nube?
+
+### ¿Por qué es crucial seleccionar el servicio de almacenamiento adecuado?
+
+- **Desarrollo de nuevas aplicaciones**: Cuando desarrollas una aplicación que funcionará en la nube, es esencial decidir dónde y cómo almacenar los diferentes tipos de información necesaria. Las aplicaciones que gestionan imágenes, vídeos, datos de usuario o transacciones financieras requieren diferentes tipos de almacenamiento.
+
+- **Migración a la nube**: Al trasladar datos existentes a la nube, encontrar el servicio adecuado para tus necesidades específicas es clave. Cada servicio ofrece diferentes ventajas, y comprender el caso de uso de cada uno te ayudará a tomar la mejor decisión durante el proceso de migración.
+
+- **Recuperación ante desastres**: La nube ofrece múltiples servicios para salvaguardar grandes cantidades de información, asegurando su recuperación en caso de un desastre. Comprender estos servicios puede ser crucial para proteger tus datos.
+
+### ¿Qué servicios de almacenamiento existen en AWS?
+
+Amazon Web Services (AWS) ofrece una amplia variedad de servicios de almacenamiento, cada uno con características, casos de uso y criterios específicos que debes conocer. Estos recursos son esenciales para manejar adecuadamente los datos y garantizar su accesibilidad, protección y eficacia.
+
+- **Almacenamiento en bloques**: Ideal para aplicaciones que necesitan rápido acceso a datos estructurados. Es útil para bases de datos y sistemas de archivos.
+
+- **Almacenamiento por objetos**: Se utiliza principalmente para manejar datos no estructurados como imágenes, videos y copias de seguridad.
+
+- **Almacenamiento con archivos**: Permite el acceso compartido desde múltiples servidores y es útil para grandes repositorios de datos.
+
+###  ¿Qué debes considerar al elegir un servicio de almacenamiento?
+
+El conocimiento de los criterios y casos de uso de cada servicio es fundamental. Al evaluar tus necesidades, considera aspectos como:
+
+- **Seguridad**: ¿Cómo protege el servicio tus datos?
+- **Accesibilidad**: ¿Qué tan fácil es acceder a los datos cuando los necesitas?
+- **Escalabilidad**: ¿Cómo maneja el servicio el crecimiento en volumen de datos?
+- **Costo**: ¿El servicio ofrece una relación costo-beneficio adecuada para tus necesidades?
+
+Cada servicio tiene sus fortalezas y desventajas específicas, y comprenderlas te permitirá tomar decisiones informadas.
+
+La eficiencia, la seguridad y la accesibilidad de los datos dependen de la elección del almacenamiento correcto en la nube. Con el conocimiento preciso, puedes optimizar tus operaciones y proteger mejor tus activos digitales. ¿Estás listo para explorar más a fondo las alternativas que ofrece AWS y mejorar tus habilidades en la gestión de datos en la nube? ¡Continúa aprendiendo y perfeccionando tu conocimiento!
+
+## Almacenamiento por bloques, objetos y archivos
+
+AWS ofrece distintos tipos de almacenamiento optimizados para diferentes casos de uso. A continuación, te explico las diferencias y cuándo utilizar cada uno.
+
+### **1️⃣ Almacenamiento por Bloques – Amazon EBS (Elastic Block Store)**  
+📌 **Concepto:** Funciona como un disco duro virtual que puedes conectar a una instancia de **EC2**.  
+
+🔹 **Características:**  
+✅ Bajo tiempo de latencia y alto rendimiento.  
+✅ Requiere una instancia EC2 para ser accesible.  
+✅ Se pueden hacer **snapshots** (copias de seguridad).  
+✅ No es accesible desde múltiples instancias simultáneamente.  
+
+🔹 **Casos de Uso:**  
+✔ Bases de datos SQL (MySQL, PostgreSQL, Oracle).  
+✔ Aplicaciones que requieren lectura/escritura rápida.  
+✔ Servidores de aplicaciones y sistemas operativos.  
+
+🔹 **Ejemplo AWS CLI – Crear un volumen EBS:**  
+```sh
+aws ec2 create-volume --size 100 --volume-type gp3 --availability-zone us-east-1a
+```
+
+### **2️⃣ Almacenamiento de Objetos – Amazon S3 (Simple Storage Service)**  
+📌 **Concepto:** Guarda datos en objetos dentro de **buckets** y no en archivos tradicionales.  
+
+🔹 **Características:**  
+✅ Almacenamiento escalable y duradero.  
+✅ Accesible desde cualquier parte mediante HTTP/S.  
+✅ Diferentes clases de almacenamiento según frecuencia de acceso.  
+✅ No está diseñado para ser usado como sistema de archivos tradicional.  
+
+🔹 **Casos de Uso:**  
+✔ Backups y archivos multimedia (imágenes, videos, logs).  
+✔ Archivos estáticos para sitios web.  
+✔ Data Lakes y almacenamiento de Big Data.  
+
+🔹 **Ejemplo AWS CLI – Subir un archivo a S3:**  
+```sh
+aws s3 cp archivo.txt s3://mi-bucket/
+```
+
+### **3️⃣ Almacenamiento de Archivos – Amazon EFS (Elastic File System) y FSx**  
+📌 **Concepto:** Similar a un disco compartido, accesible desde varias instancias EC2 al mismo tiempo.  
+
+🔹 **Características:**  
+✅ Permite compartir archivos entre instancias.  
+✅ Se comporta como un sistema de archivos tradicional (NFS).  
+✅ Escalabilidad automática.  
+✅ Disponible en 2 tipos: **EFS** (Linux) y **FSx** (Windows/Lustre).  
+
+🔹 **Casos de Uso:**  
+✔ Aplicaciones que requieren compartir archivos en varios servidores.  
+✔ Sistemas de almacenamiento en red (NAS).  
+✔ Aplicaciones HPC (High Performance Computing).  
+
+🔹 **Ejemplo AWS CLI – Crear un sistema de archivos EFS:**  
+```sh
+aws efs create-file-system --performance-mode generalPurpose
+```
+
+### **📊 Comparación de los Tipos de Almacenamiento en AWS**  
+
+| **Característica**  | **EBS (Bloques)** | **S3 (Objetos)** | **EFS/FSx (Archivos)** |
+|-------------------|----------------|----------------|----------------|
+| **Formato** | Bloques | Objetos | Archivos |
+| **Acceso** | Solo 1 instancia EC2 | Accesible vía API HTTP/S | Múltiples instancias |
+| **Escalabilidad** | Manual | Automática | Automática |
+| **Casos de Uso** | Bases de datos, aplicaciones | Backups, almacenamiento web | Aplicaciones compartidas |
+
+💡 **Resumen:**  
+✅ **EBS** → Para discos de EC2 y bases de datos.  
+✅ **S3** → Para almacenamiento masivo de objetos.  
+✅ **EFS/FSx** → Para sistemas de archivos compartidos.
+
+### Resumen
+
+### ¿Qué alternativas de almacenamiento ofrece AWS?
+
+En el mundo de la computación en la nube, el entendimiento de las diversas opciones de almacenamiento es crucial para optimizar recursos y asegurar el éxito de tus proyectos. AWS ofrece diferentes alternativas adaptadas a necesidades específicas: almacenamiento en bloques, almacenamiento por objetos y almacenamiento en archivos. Exploraremos cada una para que identifiques cuál se adapta mejor a tus requerimientos y puedas afrontar con seguridad el examen de certificación AWS Cloud Practitioner.
+
+### ¿Por qué elegir almacenamiento en bloques?
+
+El almacenamiento en bloques es el pilar del almacenamiento en AWS para aquellos que buscan eficiencia en la reescritura de datos y es conocido en AWS como Elastic Block Storage (EBS). Esta opción es ideal para aquellos:
+
+- Que necesitan un disco duro virtual para un servidor.
+- Que buscan instalar aplicaciones o manejar bases de datos donde se requiere manipulación frecuente de datos.
+
+Este tipo de almacenamiento es particularmente eficiente cuando se trata de sobrescribir solo partes específicas de un archivo, ya que los cambios ocurren en bloques pequeños. Visualízalo como la opción ideal para servidores y bases de datos en la nube de AWS.
+
+### ¿Cuándo usar almacenamiento por archivos?
+
+Imagina que tienes varios servidores y necesitas que compartan una misma capa de almacenamiento. Aquí es donde entra en juego el almacenamiento por archivos o File Storage. AWS ofrece Elastic File Storage (EFS) para servidores Linux y FSx para servidores Windows, permitiendo compartir datos de manera eficiente entre múltiples servidores.
+
+Este tipo de almacenamiento es perfecto para:
+
+- Entornos donde varios servidores necesitan acceso simultáneo a los mismos archivos.
+- Aquellos que quieren una solución de almacenamiento única, visible para todos los sistemas conectados.
+
+### ¿Qué hace al almacenamiento por objetos indispensable?
+
+De todos los tipos de almacenamiento, el almacenamiento por objetos es, sin duda, el más flexible y ampliamente utilizado. Comparte similitudes con servicios populares como Dropbox o Google Drive. En AWS, Amazon S3 es sinónimo de almacenamiento por objetos y es la elección principal cuando se trata de proyectos de análisis de datos o Big Data.
+
+El almacenamiento por objetos es particularmente útil cuando:
+
+- Necesitas almacenar grandes volúmenes de datos que deben ser accedidos y utilizados de manera frecuente.
+- Se busca una solución costo-eficiente para almacenar datasets masivos sin preocupación por sobrescribir datos específicos, ya que se almacena como objetos individuales.
+
+### ¿Cómo elegir la opción correcta para el examen Cloud Practitioner?
+
+Durante el examen, te presentarán escenarios específicos donde necesitarás decidir la mejor opción de almacenamiento. Por ejemplo, almacenar un backup de 5 TB de tu datacenter local de la manera más costo-eficiente. Con tu conocimiento, puedes deducir que Amazon S3 es la mejor opción para backups que deben manejarse como objetos.
+
+Al recordar estos conceptos asociados a los casos de uso reales con cada tipo de almacenamiento, estarás preparado para tomar decisiones informadas tanto en el examen como en situaciones del mundo real. Mantente motivado, sigue explorando las posibilidades y perfeccionando tus habilidades en Amazon S3 y otros servicios de AWS para maximizar tu potencial en soluciones de almacenamiento en la nube.
 
 
 
