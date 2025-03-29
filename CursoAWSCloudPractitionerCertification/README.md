@@ -2907,10 +2907,240 @@ La elección del tipo de balanceador depende de las características y requerimi
 
 Cada balanceador tiene casos de uso específicos, y comprender estas diferencias es clave para optimizar la infraestructura en la nube. ¡Recuerda que la práctica y la experiencia son tus mejores aliados para dominar estos conceptos!
 
+## Escalamiento automático
 
+El **escalamiento automático** en AWS permite **ajustar dinámicamente** la cantidad de recursos (como instancias EC2 o tareas en ECS) según la demanda. Esto ayuda a **optimizar costos y mejorar la disponibilidad** de aplicaciones.
 
+### **1️⃣ Tipos de Auto Scaling en AWS**
+AWS ofrece escalamiento automático para diferentes servicios:
 
+| Tipo de Auto Scaling | Servicio AWS |
+|----------------------|-------------|
+| **EC2 Auto Scaling** | Instancias EC2 |
+| **ECS Auto Scaling** | Contenedores en AWS ECS |
+| **DynamoDB Auto Scaling** | Bases de datos en DynamoDB |
+| **Aurora Auto Scaling** | Clústeres de Amazon Aurora |
+| **Lambda Auto Scaling** | AWS Lambda escala automáticamente |
 
+### **2️⃣ Escalamiento Automático en EC2**
+**EC2 Auto Scaling** ajusta el número de instancias según la demanda.
+
+### **🔹 Pasos para configurar Auto Scaling en EC2**
+1️⃣ **Crear un Launch Template o Launch Configuration**  
+   - Define la imagen AMI, tipo de instancia y configuraciones.  
+
+2️⃣ **Crear un Auto Scaling Group (ASG)**  
+   - Especifica la cantidad mínima, deseada y máxima de instancias.  
+
+3️⃣ **Configurar Políticas de Escalamiento**  
+   - Basadas en métricas como **CPU, tráfico de red o latencia**.  
+
+### **🔹 Comando AWS CLI para crear un Auto Scaling Group**
+```sh
+aws autoscaling create-auto-scaling-group --auto-scaling-group-name MiASG \
+    --launch-template LaunchTemplateName=MiTemplate \
+    --min-size 1 --max-size 5 --desired-capacity 2 \
+    --availability-zones us-east-1a us-east-1b \
+    --health-check-type EC2 --health-check-grace-period 300
+```
+
+### **3️⃣ Escalamiento Automático en Contenedores (ECS)**
+En **AWS ECS**, las tareas pueden escalar automáticamente con **Application Auto Scaling**.
+
+### **🔹 Comando AWS CLI para habilitar Auto Scaling en ECS**
+```sh
+aws application-autoscaling register-scalable-target \
+    --service-namespace ecs \
+    --scalable-dimension ecs:service:DesiredCount \
+    --resource-id service/default/MiServicio \
+    --min-capacity 1 \
+    --max-capacity 10
+```
+
+### **4️⃣ Tipos de Estrategias de Auto Scaling**
+| Estrategia | Descripción |
+|------------|------------|
+| **Escalamiento Reactivo** | Ajusta recursos cuando se superan umbrales (ej. CPU > 80%). |
+| **Escalamiento Predictivo** | Usa Machine Learning para predecir demanda. |
+| **Escalamiento Programado** | Cambia la capacidad en horarios específicos. |
+
+### **5️⃣ Beneficios del Auto Scaling**
+✅ Reduce costos al evitar servidores inactivos.  
+✅ Mejora la disponibilidad y tolerancia a fallos.  
+✅ Responde automáticamente a cambios en la demanda.
+
+### Resumen
+
+### ¿Qué es el autoescalamiento en la nube?
+
+El autoescalamiento en la nube es una maravillosa tecnología que permite ajustar automáticamente la cantidad de recursos informáticos según la demanda de las aplicaciones. Es un componente clave para mantener la eficiencia y optimizar los costos en entornos dinámicos. Amazon ofrece esta funcionalidad bajo el nombre EC2 Auto Scaling, y aquí te explicamos cómo puede ser de gran ayuda, especialmente en situaciones de demanda alta, como el Black Friday.
+
+### ¿Cómo ayuda en eventos de alta demanda?
+
+Imagina que tienes un e-commerce y llega un evento con alta afluencia de usuarios como el Black Friday. La demanda por tus productos aumenta exponencialmente, obligándote a escalar rápidamente para satisfacer a miles de usuarios concurrentes. Aquí es donde entra el autoescalamiento, el cual te permite:
+
+- Aumentar rápidamente la cantidad de servidores para soportar un incremento masivo de usuarios.
+- Ajustar automáticamente la carga de trabajo entre varios servidores.
+- Reducir costos al escalar hacia abajo una vez que el pico de demanda ha pasado.
+
+### ¿Cómo funciona el autoescalamiento?
+
+El autoescalamiento se apoya en servicios de monitoreo como CloudWatch, que analiza métricas clave de los servidores, como el uso de CPU, la RAM y la cantidad de usuarios conectados. El proceso funciona así:
+
+1. **Monitoreo de Servicios**: CloudWatch observa el rendimiento y las métricas de los servidores.
+2. **Activación de Escalamiento**: Si los servidores alcanzan sus límites, CloudWatch lo detecta y activa el mecanismo de escalamiento.
+3. **Expansión Automática**: Se crean nuevos servidores para repartir la carga.
+4. **Reducción Automática**: Cuando la demanda disminuye, el autoescalamiento desactiva los servidores innecesarios.
+
+Ejemplo: Durante un Black Friday, si tus dos servidores iniciales son insuficientes, podrían escalar hasta cinco o más para soportar el incremento de tráfico. Este tipo de escalamiento es generalmente horizontal. Una vez que la demanda baja, se eliminan los servidores adicionales.
+
+### ¿Qué configuraciones se realizan para el autoescalamiento?
+
+Para aprovechar al máximo el autoescalamiento, es fundamental establecer ciertos parámetros de configuración, que incluyen:
+
+### Capacidad mínima, máxima y deseada
+
+- **Capacidad Mínima**: El número mínimo de servidores que siempre deben estar activos, incluso en los peores escenarios.
+
+- **Capacidad Máxima**: El número máximo de servidores que puede desplegarse en caso de un extremo aumento de demanda. Es una configuración crítica basada en el conocimiento de la aplicación.
+
+- **Capacidad Deseada**: La cantidad de servidores que se considera óptima para mantener el equilibrio entre costos y rendimiento. Puede ser ajustada según las necesidades específicas, como la distribución geográfica.
+
+Ejemplo: Si la capacidad deseada es de tres servidores, uno en cada zona, pero la capacidad mínima es de dos, y la capacidad máxima es de cinco, el autoescalamiento fluctúa entre estas cifras para garantizar la eficiencia operativa.
+
+### ¿Cómo combinar el autoescalamiento con otros componentes?
+
+El autoescalamiento no actúa solo. Para maximizar su efectividad, puede combinarse con otros servicios como instancias EC2 y el balanceo de carga. Estos permiten distribuir la carga de trabajo de una manera más sistemática, asegurando que cada solicitud sea manejada eficientemente. Además:
+
+- El balanceador de carga ayuda a distribuir de manera equitativa las solicitudes entre los servidores disponibles.
+- Las Amazon Machine Images (AMIs) permiten escalar con réplicas exactas del ambiente de servidor necesario.
+
+La combinación de estos servicios crea un entorno mucho más robusto, capaz de soportar cambios significativos en la carga de trabajo.
+
+En conclusión, el autoescalamiento es una herramienta esencial para cualquier negocio que busque agilidad e innovación. Anímate a explorarlo en profundidad para llevar tus proyectos al próximo nivel. Ja, ¡nunca detengas tu aprendizaje!
+
+## Laboratorio: Creación de servidores y balanceo de carga
+
+El balanceo de carga y la creación de servidores son esenciales para garantizar **alta disponibilidad, escalabilidad y rendimiento** en una aplicación.
+
+### **1️⃣ Creación de Servidores en AWS EC2**
+En **AWS**, los servidores se crean como **instancias EC2**. Para desplegar un servidor, sigue estos pasos:
+
+### **🔹 Creación de un Servidor EC2 desde la Consola de AWS**
+1️⃣ Ve a **AWS Management Console** → EC2  
+2️⃣ Haz clic en **Launch Instance**  
+3️⃣ Configura:
+   - **AMI (Amazon Machine Image)** → Ej. Amazon Linux, Ubuntu, Windows  
+   - **Tipo de instancia** → Ej. t2.micro (gratis en Free Tier)  
+   - **Par de claves SSH** → Para acceso seguro  
+   - **Reglas de seguridad** → Permitir tráfico HTTP/HTTPS  
+
+4️⃣ **Lanza la instancia** y accede con SSH:
+```sh
+ssh -i "mi-clave.pem" ec2-user@IP_DEL_SERVIDOR
+```
+
+### **2️⃣ Configuración de Balanceo de Carga**
+Un **Load Balancer (ELB)** distribuye tráfico entre varias instancias EC2 para evitar sobrecarga en un solo servidor.
+
+### **🔹 Tipos de Load Balancer en AWS**
+| Tipo | Descripción |
+|------|------------|
+| **Application Load Balancer (ALB)** | Balancea tráfico HTTP/HTTPS y permite reglas avanzadas. |
+| **Network Load Balancer (NLB)** | Maneja tráfico de alto rendimiento con baja latencia. |
+| **Classic Load Balancer (CLB)** | Antiguo, usado en configuraciones heredadas. |
+
+### **🔹 Creación de un Load Balancer (ALB)**
+1️⃣ **Ir a AWS EC2** → **Load Balancers** → **Create Load Balancer**  
+2️⃣ **Seleccionar Application Load Balancer (ALB)**  
+3️⃣ **Configurar listeners** → HTTP/HTTPS  
+4️⃣ **Crear un Target Group**:
+   - Asociar las instancias EC2 para distribuir el tráfico.  
+5️⃣ **Configurar Health Checks** (verifica si las instancias están activas).  
+6️⃣ **Finalizar y probar con la URL del Load Balancer.**  
+
+### **3️⃣ Auto Scaling: Escalabilidad Dinámica**
+Para que los servidores se ajusten automáticamente a la demanda, usa **Auto Scaling Groups**.
+
+### **🔹 Creación de un Auto Scaling Group**
+1️⃣ **Crear un Launch Template** (define la configuración de instancias EC2).  
+2️⃣ **Crear un Auto Scaling Group** y asociarlo al Load Balancer.  
+3️⃣ **Configurar políticas de escalamiento**, por ejemplo:  
+   - Aumentar instancias si CPU > 70%  
+   - Disminuir si CPU < 30%  
+
+Comando en AWS CLI para escalar:
+```sh
+aws autoscaling create-auto-scaling-group --auto-scaling-group-name MiGrupoAutoScaling \
+    --launch-template LaunchTemplateName=MiTemplate \
+    --min-size 2 --max-size 5 --desired-capacity 3 \
+    --target-group-arns arn:aws:elasticloadbalancing:...
+```
+
+### **🎯 Beneficios del Balanceo de Carga y Auto Scaling**
+✅ **Alta disponibilidad** – Evita caídas por sobrecarga.  
+✅ **Mejor rendimiento** – Distribuye tráfico eficientemente.  
+✅ **Escalabilidad automática** – Ajusta servidores según la demanda.  
+✅ **Reducción de costos** – Solo usa recursos cuando son necesarios. 
+
+![Creación de servidores y balanceo de carga](images/Creaciondeservidoresybalanceodecarga.jpg)
+
+### Resumen
+
+### ¿Cómo configurar una aplicación web de alta disponibilidad en AWS?
+
+En este artículo te llevaremos a través de los pasos necesarios para implementar una aplicación web de alta disponibilidad en AWS. Este laboratorio te ayudará a entender cómo combinar efectivamente servicios de cómputo y balanceo de carga para asegurar que tu aplicación esté siempre disponible, incluso en caso de fallos en los servidores.
+
+### ¿Cómo crear servidores EC2 sobre subredes privadas?
+
+La creación de servidores en subredes privadas es el primer paso para asegurar que nuestra aplicación esté debidamente aislada y protegida.
+
+1. Dirígete a la consola de AWS y busca el servicio EC2.
+2. Lanza un nuevo servidor e instálalo en la zona A, etiquetándolo como "Server A".
+ - Utiliza la imagen de Amazon Linux.
+ - Selecciona la instancia T2 Micro para mantenerte dentro de la capa gratuita.
+ - Crea y descarga una nueva llave, nombrándola "Servidor A".
+ - Configura la red para que utilice tu VPC existente en la subred privada 1.
+ - Configura un nuevo security group, IDS "SG privadas", eliminando cualquier regla de entrada y salida abierta.
+3. Repite el proceso para el segundo servidor en la zona llamada “Server B”, pero ubicándolo en la subred privada 2.
+
+En este punto, habrás configurado dos servidores independientemente en sus respectivas subredes privadas, listos para albergar tu aplicación.
+
+```shell
+# Ejemplo de conexión SSH
+ssh -i "ServidorA.pem" ec2-user@ec2-xx-xxx-xxx-xx.us-west-2.compute.amazonaws.com
+```
+
+### ¿Cómo crear un servidor Jump Host para acceso seguro?
+
+El servidor Jump Host actúa como un puente seguro para la conexión a tus servidores en subredes privadas, asegurando que el acceso directo desde Internet sea imposible y, por ende, más seguro.
+
+1. Crea un tercer servidor en AWS EC2 y etiquétalo como "Jump Host".
+2. Utiliza los mismos parámetros de configuración que en los servidores de las subredes privadas.
+3. Asegúrate de que esté en una subred pública para permitir el acceso exterior.
+4. Crea un nuevo security group, "SG Jump Host", restringiendo las reglas de tráfico.
+
+Este servidor servirá como un nodo intermedio desde el cual los administradores pueden conectarse de manera segura a través de SSH a los servidores privados, protegiendo así el acceso directo.
+
+### ¿Cómo asignar una Elastic IP al Jump Host?
+
+Asignar una Elastic IP te permite disponer de una dirección IP pública persistente, esencial para acceder continuamente al Jump Host sin necesidad de cambiar configuraciones cada vez que la instancia se reinicie.
+
+1. Navega a Elastic IPs en la consola de AWS.
+2. Asigna una nueva Elastic IP y asóciala al Jump Host.
+3. Verifica que la IP esté correctamente asociada y disponible para el acceso desde Internet.
+
+El siguiente diagrama ilustra cómo se implementan estos cambios para que el Cloud Engineer pueda acceder a los servidores privados a través del Jump Host:
+
+`Cloud Engineer -> Jump Host (con Elastic IP) -> Servidor A/B (Subred Privada)`
+
+### ¿Cómo prepararse para el despliegue final?
+
+Con todo configurado, estás listo para comenzar el despliegue de tu aplicación web en estos servidores de alta disponibilidad. A continuación, se instalará un servidor web (como Apache) y se configurará el balanceo de carga, asegurando que tu aplicación esté lista para recibir tráfico, incluso si uno de los servidores sufre una interrupción.
+
+Recuerda que la seguridad y la planificación adecuada son vitales para un despliegue exitoso en la nube. Continúa explorando y aprendiendo sobre esta técnica para mantener un entorno seguro y confiable.
+
+Te animamos a seguir profundizando en estos conocimientos y a estar pendiente de nuestras próximas guías para completar tu laboratorio y llevar tu aplicación a un nivel profesional en AWS.
 
 
 
