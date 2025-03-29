@@ -3803,6 +3803,145 @@ Durante el examen, te presentarán escenarios específicos donde necesitarás de
 
 Al recordar estos conceptos asociados a los casos de uso reales con cada tipo de almacenamiento, estarás preparado para tomar decisiones informadas tanto en el examen como en situaciones del mundo real. Mantente motivado, sigue explorando las posibilidades y perfeccionando tus habilidades en Amazon S3 y otros servicios de AWS para maximizar tu potencial en soluciones de almacenamiento en la nube.
 
+## Introduccion a S3
+
+### **📌 ¿Qué es Amazon S3?**  
+Amazon S3 (**Simple Storage Service**) es un servicio de **almacenamiento de objetos** altamente escalable, seguro y duradero en la nube de AWS. Permite almacenar cualquier tipo de dato en "buckets" y acceder a ellos desde cualquier lugar a través de Internet.  
+
+🔹 **Ventajas principales:**  
+✅ **Escalabilidad** → Almacena desde unos pocos MB hasta petabytes de datos.  
+✅ **Alta durabilidad** → 99.999999999% (11 nueves) de durabilidad.  
+✅ **Seguridad avanzada** → Control de acceso, cifrado y auditoría.  
+✅ **Accesibilidad global** → Datos accesibles vía HTTP/S mediante API REST.  
+
+### **🛠️ Componentes Claves de S3**  
+
+### **1️⃣ Buckets (Contenedores de Objetos)**  
+📌 Son las "carpetas" donde se almacenan los objetos. Cada cuenta de AWS puede crear hasta **100 buckets por defecto**.  
+
+🔹 **Ejemplo AWS CLI – Crear un bucket:**  
+```sh
+aws s3 mb s3://mi-bucket
+```
+
+### **2️⃣ Objetos (Archivos + Metadatos)**  
+📌 Cada archivo almacenado en S3 es un **objeto**, el cual incluye:  
+- **Datos (contenido del archivo)**  
+- **Metadatos (información adicional como permisos y cifrado)**  
+- **Clave única (nombre del objeto dentro del bucket)**  
+
+🔹 **Ejemplo AWS CLI – Subir un archivo a S3:**  
+```sh
+aws s3 cp archivo.txt s3://mi-bucket/
+```
+
+### **3️⃣ Clases de Almacenamiento**  
+Amazon S3 ofrece diferentes **clases de almacenamiento** según el costo y la frecuencia de acceso:  
+
+| **Clase** | **Caso de Uso** | **Costo** 💲 |  
+|-----------|----------------|--------------|  
+| **S3 Standard** | Accesos frecuentes | Alto |  
+| **S3 Standard-IA** | Accesos ocasionales | Medio |  
+| **S3 Glacier** | Archivado y backups | Bajo |  
+
+🔹 **Ejemplo AWS CLI – Mover un objeto a Glacier:**  
+```sh
+aws s3 cp archivo.txt s3://mi-bucket/ --storage-class GLACIER
+```
+
+### **🔐 Seguridad en S3**  
+🔹 **Control de Acceso** → IAM Policies, ACLs y Bucket Policies.  
+🔹 **Cifrado** → SSE (Server-Side Encryption) y KMS (AWS Key Management Service).  
+🔹 **Logs y Auditoría** → AWS CloudTrail registra accesos y acciones en S3.  
+
+🔹 **Ejemplo AWS CLI – Bloquear acceso público a un bucket:**  
+```sh
+aws s3api put-public-access-block --bucket mi-bucket --public-access-block-configuration BlockPublicAcls=true,IgnorePublicAcls=true
+```
+
+### **🚀 Casos de Uso de Amazon S3**  
+✅ **Almacenamiento de imágenes, videos y archivos multimedia**  
+✅ **Backups y recuperación de desastres**  
+✅ **Data Lakes y Big Data**  
+✅ **Hosting de sitios web estáticos**  
+
+🔹 **Ejemplo AWS CLI – Habilitar un bucket como sitio web:**  
+```sh
+aws s3 website s3://mi-bucket/ --index-document index.html
+```
+
+### **💡 Conclusión**  
+Amazon S3 es una de las soluciones de almacenamiento en la nube más flexibles y seguras, adecuada para cualquier tipo de negocio. 🚀
+
+### Resumen
+
+### ¿Qué es Amazon S3 y para qué se utiliza?
+
+Amazon S3 es un servicio de almacenamiento en la nube proporcionado por Amazon Web Services (AWS) conocido como Simple Storage Service. Es extremadamente popular para almacenar datos de manera duradera, segura y rentable. Su uso es variado y extenso, desde copias de seguridad hasta sitios web estáticos. Gracias a su capacidad de almacenamiento de objetos, Amazon S3 es capaz de mantener información que necesita ser fácilmente accesible y duradera en el tiempo.
+
+### ¿Cuáles son los casos de uso más comunes de Amazon S3?
+
+- **Almacenamiento de copias de seguridad**: Ideal para guardar backups a largo plazo gracias a su durabilidad y rentabilidad.
+- **Aplicaciones web**: Almacena y gestiona datos de aplicaciones como imágenes de memes, asegurando rápida respuesta y bajo costo.
+- **Proyectos de big data y analytics**: Permite almacenar grandes cantidades de datos, como logs diarios.
+- **Sitios web estáticos**: Perfecto para alojar recursos como HTML e imágenes de sitios web estáticos.
+- **Recuperación ante desastres**: Almacenar backups en diferentes regiones para asegurarse contra fallos y desastres.
+
+### ¿Cómo funcionan los buckets en Amazon S3?
+
+Los buckets son el contenedor principal en Amazon S3 donde se almacenan los objetos. Son el directorio principal para tus datos y tienen que tener un nombre único globalmente. Esto significa que si un bucket llamado "CarlosZambrano" ya ha sido creado por otra persona, nadie más puede volver a usar ese nombre.
+
+### Detalles importantes sobre los buckets
+
+- **Ubicación por región**: Cada bucket debe estar asociado a una región específica de AWS, aunque la información sea accesible desde cualquier lugar.
+- Seguridad y exclusividad: Los nombres deben ser únicos y los buckets pueden tener políticas de seguridad específicas que regulen quién puede acceder y qué acciones pueden realizar.
+
+### ¿Qué es un objeto en Amazon S3 y cuáles son sus características?
+
+Un objeto en Amazon S3 es un fichero almacenado dentro de un bucket. Cada objeto se identifica con una clave, que es la ruta completa al archivo dentro del bucket.
+
+### ¿Cuáles son las reglas de tamaño de objetos en S3?
+
+- **Tamaño máximo de objeto**: 5 terabytes.
+- **Carga máxima en una operación PUT**: 5 gigabytes.
+
+Para superar estas restricciones, S3 ofrece una característica llamada carga multiparte, la cual divide los objetos grandes en segmentos más pequeños, permitiendo su carga de forma paralela y unificada al final del proceso.
+
+### ¿Cómo se protege la información en Amazon S3?
+
+La seguridad es fundamental en Amazon S3. Existen múltiples formas de proteger la información, principalmente mediante políticas de usuario y políticas de recurso.
+
+### Componentes claves de las políticas de seguridad
+
+- **Security Policy (Política de seguridad)**: Documento en JSON que define los permisos de acceso.
+- **Efecto**: Decide si una acción será permitida (allow) o denegada (deny).
+- **Principal**: Define quién puede realizar acciones, a menudo representado por un usuario o un rol.
+- **Action**: Las acciones que se pueden realizar, como `S3:GetObject` para obtener un objeto.
+- **Condition (Condición)**: Permite establecer medidas adicionales de seguridad, como requerir conexión HTTPS.
+
+El control de acceso se puede personalizar, permitiendo o prohibiendo diferentes acciones a usuarios específicos o a grupos mediante roles, asegurando que cada usuario o sistema interactúe con los datos de acuerdo a las necesidades y políticas establecidas.
+
+Amazon S3 destaca por su flexibilidad, seguridad y eficiencia, siendo una solución ideal para necesidades variadas de almacenamiento en la nube. Explora sus capacidades y adapta sus funciones a tus proyectos para maximizar el potencial de esta herramienta robusta y versátil.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
