@@ -3923,6 +3923,648 @@ El control de acceso se puede personalizar, permitiendo o prohibiendo diferentes
 
 Amazon S3 destaca por su flexibilidad, seguridad y eficiencia, siendo una solución ideal para necesidades variadas de almacenamiento en la nube. Explora sus capacidades y adapta sus funciones a tus proyectos para maximizar el potencial de esta herramienta robusta y versátil.
 
+## Clases de almacenamiento en S3
+
+Amazon S3 ofrece varias clases de almacenamiento diseñadas para diferentes necesidades de acceso, durabilidad y costos. A continuación, te explico cada una:  
+
+### **1. S3 Standard**  
+- **Uso:** Datos que se acceden con frecuencia.  
+- **Durabilidad:** 99.999999999% (11 nueves).  
+- **Disponibilidad:** 99.99%.  
+- **Costo:** Más alto que otras clases.  
+- **Casos de uso:** Aplicaciones en tiempo real, sitios web, big data.  
+
+### **2. S3 Standard-IA (Infrequent Access)**  
+- **Uso:** Datos que se acceden ocasionalmente.  
+- **Durabilidad:** 99.999999999%.  
+- **Disponibilidad:** 99.9%.  
+- **Costo:** Más barato que Standard, pero con tarifas por recuperación.  
+- **Casos de uso:** Copias de seguridad a largo plazo, recuperación ante desastres.  
+
+### **3. S3 One Zone-IA**  
+- **Uso:** Datos de acceso infrecuente pero que pueden perderse en caso de falla de zona.  
+- **Durabilidad:** 99.999999999%.  
+- **Disponibilidad:** 99.5%.  
+- **Costo:** Más barato que Standard-IA.  
+- **Casos de uso:** Datos no críticos, copias de seguridad secundarias.  
+
+### **4. S3 Glacier**  
+- **Uso:** Archivo a largo plazo con recuperación diferida.  
+- **Durabilidad:** 99.999999999%.  
+- **Disponibilidad:** 99.99%.  
+- **Costo:** Muy bajo, pero la recuperación puede tardar minutos u horas.  
+- **Casos de uso:** Almacenamiento de registros, archivos legales.  
+
+### **5. S3 Glacier Deep Archive**  
+- **Uso:** Almacenamiento de datos a muy largo plazo.  
+- **Durabilidad:** 99.999999999%.  
+- **Disponibilidad:** 99.99%.  
+- **Costo:** La opción más barata, pero la recuperación puede tardar hasta 12 horas.  
+- **Casos de uso:** Archivos históricos, copias de seguridad regulatorias.  
+
+### **6. S3 Intelligent-Tiering**  
+- **Uso:** Optimiza costos al mover automáticamente los datos entre clases según el acceso.  
+- **Durabilidad:** 99.999999999%.  
+- **Disponibilidad:** 99.9%.  
+- **Costo:** Un poco más alto que Standard, pero sin tarifas por recuperación.  
+- **Casos de uso:** Datos con patrones de acceso impredecibles.  
+
+Cada clase tiene su balance entre costo, disponibilidad y velocidad de acceso, por lo que la elección depende del caso de uso y los requisitos de negocio. 🚀
+
+### Resumen
+
+### ¿Cuáles son las clases de almacenamiento de Amazon S3?
+
+El servicio S3 de Amazon es ampliamente reconocido por su flexibilidad y variedad de opciones de almacenamiento, adaptándose a las necesidades específicas de sus usuarios. Familiarizarse con estas clases es crucial, especialmente si estás preparándote para certificaciones de AWS. Las clases de almacenamiento son las siguientes:
+
+1. **S3 Standard**: Esta es la clase por defecto y tiene una disponibilidad del 99.99%. Es la elección ideal para archivos a los que necesitas acceder frecuentemente, ya sea para leer, escribir o descargar con baja latencia y un SLA del 99.9%.
+
+2. **S3 Infrequent Access (IA)**: Diseñada para datos que se consultan esporádicamente, quizás una o dos veces al mes. La disponibilidad es del 99.9% y el tamaño mínimo de facturación por objeto es de 128KB.
+
+3. **S3 One Zone Infrequent Access**: Guarda la información en una sola zona de disponibilidad. Es adecuada para datos que pueden ser fácilmente regenerados. La disponibilidad aquí es del 99.5%.
+
+4. **S3 Intelligent Tiering**: Este servicio es capaz de monitorear patrones de acceso a los datos y moverlos automáticamente entre las clases Standard e Infrequent Access, optimizando así los costos sin que el usuario tenga que intervenir manualmente.
+
+5. **Glacier Instant Retrieval**: Perfecta para datos que no se utilizan frecuentemente pero que necesitas tener al instante cuando lo requieres. La disponibilidad es del 99.9% y se debe almacenar al menos durante 90 días.
+
+6. **Glacier Flexible Retrieval**: Para datos a los que accedes una o dos veces al año, pero puedes esperar minutos u horas para su recuperación. La disponibilidad también es del 99.9% con un almacenamiento mínimo de 90 días.
+
+7. **Glacier Deep Archive**: Diseñado para datos almacenados durante largos periodos, como logs o datos históricos. La disponibilidad es del 99.99% y los datos deben permanecer al menos 180 días.
+
+### ¿Cómo se relacionan durabilidad y disponibilidad en S3?
+
+En el contexto de Amazon S3, es esencial diferenciar entre durabilidad y disponibilidad. Estos dos conceptos, aunque relacionados, son distintos y reflejan diferentes atributos del almacenamiento de datos:
+
+- **Durabilidad**: Se refiere a la integridad de los datos a lo largo del tiempo. En Amazon S3, la durabilidad está garantizada con 99.999999999%, lo que significa que las probabilidades de perder tus datos son prácticamente nulas.
+
+- **Disponibilidad**: Indica la probabilidad de acceder a los datos en cualquier momento en que los necesites. La disponibilidad varía dependiendo de la clase de almacenamiento, y su gestión está diseñada para asegurar el acceso según las necesidades específicas de cada usuario.
+
+### ¿Cómo afecta el SLA a las decisiones de almacenamiento?
+
+Entender el Acuerdo de Nivel de Servicio (SLA) es vital para elegir la clase de almacenamiento adecuada, ya que define las expectativas entre el proveedor de servicios y tú como cliente:
+
+- **Compromiso de disponibilidad**: AWS se compromete a mantener un 99.9% de disponibilidad bajo el SLA en la mayoría de sus clases de almacenamiento, lo que afecta a las posibles compensaciones en caso de que el servicio no cumpla las expectativas.
+
+- **Diseño frente al compromiso**: Aunque el diseño de S3 puede ofrecer una disponibilidad del 99.99%, el compromiso contractual a través del SLA es del 99.9%. Por eso es crucial considerar este factor a la hora de planificar y elegir el tipo de almacenamiento.
+
+### ¿Qué factores considerar al elegir una clase de almacenamiento?
+
+Elegir la clase de almacenamiento adecuada implica evaluar varios criterios relacionados con tus necesidades específicas de acceso y las características de tus datos:
+
+- **Frecuencia de acceso**: Determina si necesitas un acceso constante, ocasional o casi nunca a tus datos.
+
+- **Coste-beneficio**: Evalúa el coste de almacenamiento en comparación con la frecuencia de acceso, ya que clases como Infrequent Access o Glacier ofrecen tarifas más bajas para accesos menos frecuentes.
+
+- **Latencia y rapidez de acceso**: Considera casos de uso donde la latencia sea crucial, lo cual hace que clases como S3 Standard sean más adecuadas para operaciones con requisitos de baja latencia.
+
+Siempre toma en consideración el patrón de acceso a tus datos y el nivel de durabilidad y disponibilidad que cada clase de almacenamiento promete. Así te asegurarás de optimizar tus costos y al mismo tiempo garantizar la integridad y el acceso a tus datos.
+
+**Lecturas recomendadas**
+
+[Tipos de almacenamiento en la nube | Amazon S3](https://aws.amazon.com/es/s3/storage-classes/)
+
+## Dispositivos AWS SnowFamily
+
+**AWS SnowFamily** es un conjunto de dispositivos diseñados para la transferencia segura y eficiente de grandes volúmenes de datos entre entornos locales y AWS. Son ideales cuando las redes tradicionales no son viables por limitaciones de ancho de banda, latencia o seguridad.  
+
+### 🚀 **Dispositivos de AWS SnowFamily**  
+
+#### 1️⃣ **AWS Snowcone**  
+🔹 **Descripción:** Dispositivo portátil, pequeño y resistente.  
+🔹 **Capacidad:** 8 TB de almacenamiento utilizable.  
+🔹 **Casos de uso:** Transferencias de datos en entornos remotos o desconectados, recopilación de datos en el borde (edge computing).  
+🔹 **Conectividad:** Wi-Fi o Ethernet.  
+
+#### 2️⃣ **AWS Snowball (Snowball Edge Compute y Snowball Edge Storage)**  
+🔹 **Descripción:** Dispositivo de mayor capacidad con opciones de almacenamiento y cómputo.  
+🔹 **Capacidad:** Hasta 80 TB de almacenamiento utilizable.  
+🔹 **Variantes:**  
+   - *Snowball Edge Storage Optimized*: Más almacenamiento.  
+   - *Snowball Edge Compute Optimized*: Incluye capacidad de cómputo con instancias EC2 y machine learning.  
+🔹 **Casos de uso:** Migraciones de grandes volúmenes de datos, procesamiento de datos en entornos sin conectividad estable.  
+
+#### 3️⃣ **AWS Snowmobile**  
+🔹 **Descripción:** Contenedor de almacenamiento masivo montado en un camión.  
+🔹 **Capacidad:** Hasta 100 PB (Petabytes) en un solo Snowmobile.  
+🔹 **Casos de uso:** Migraciones masivas de centros de datos a AWS.  
+🔹 **Seguridad:** Encriptación de extremo a extremo y seguimiento GPS.  
+
+### 📌 **¿Cuándo usar AWS SnowFamily?**  
+✅ Cuando la transferencia de datos por internet tardaría demasiado.  
+✅ Cuando se necesita mover datos desde entornos remotos o con poca conectividad.  
+✅ Para cumplir con regulaciones de seguridad o latencia de datos.  
+
+AWS SnowFamily facilita la migración de datos a la nube de manera rápida, segura y confiable. 🚛💨
+
+### Resumen
+
+### ¿Cuáles son las opciones de almacenamiento en Amazon S3? 
+Al explorar los servicios de almacenamiento en la nube de Amazon Web Services (AWS), es crucial entender las diferentes opciones disponibles para optimizar tanto el costo como la eficiencia del manejo de datos. Uno de estos servicios clave es Amazon S3 OneZone-Infrequent Access. Esta opción es ideal para los datos que se pueden recuperar fácilmente desde sus fuentes originales en caso de pérdida, ya que su diseño está orientado a proporcionar almacenamiento asequible para datos a los que se accede con poca frecuencia.
+
+- **Amazon S3 OneZone-Infrequent Access**: Se centra en el almacenamiento de datos que no se acceden regularmente y que, en caso de que se pierdan, pueden ser regenerados desde sus archivos originales. Esto significa que, aunque no está optimizado para el acceso continuo, es ideal para datos que no son críticos.
+
+### ¿Qué es la "Snow Family" de AWS y para qué se utiliza?
+
+AWS ofrece soluciones innovadoras para mover grandes cantidades de datos a la nube cuando las restricciones de ancho de banda hacen que la transferencia a través de Internet sea poco práctica. Aquí es donde entra en juego la "Snow Family".
+
+### ¿Qué es el Snowcone?
+
+El dispositivo Snowcone es la solución más compacta de AWS para transferir datos. Diseñado para situaciones donde el ancho de banda es limitado, el Snowcone permite trasladar hasta 14 terabytes de datos a los centros de datos de AWS, evitando las complicaciones asociadas con la transferencia en línea.
+
+- **Características del Snowcone**:
+ - Capacidad máxima en disco duro: 8 terabytes.
+ - Capacidad máxima en SSD: 14 terabytes.
+ - Peso: Aproximadamente dos kilos, lo que lo hace portátil.
+ - Uso típico: Transferir grandes volúmenes de datos localmente antes de enviarlos físicamente a AWS.
+ 
+### ¿Cuál es la función del Snowball Edge?
+
+El Snowball Edge es el siguiente paso en capacidad dentro de la Snow Family. Es una solución robusta, diseñada no solo para almacenar grandes volúmenes de datos, sino también para realizar tareas de procesamiento mientras los datos se transfieren.
+
+- **Snowball Edge Storage Optimized**:
+ - Almacenamiento: Hasta 80 terabytes.
+ - Peso: Alrededor de 22 kilos.
+ - Ventaja: Ideal para almacenamiento y procesamiento simultáneos de datos.
+
+- **Snowball Edge Compute Optimized**:
+ - Almacenamiento: Reduce a 28 terabytes en favor de una capacidad de procesamiento mayor.
+ - CPUs virtuales: Hasta 104, lo cual permite ejecutar tareas complejas de transformación de datos durante la transferencia.
+ - Caso de uso: Perfecto para aplicaciones que requieran procesamiento intensivo mientras se transfieren los datos.
+ 
+### ¿Cómo se optimizan los casos de uso con la Snow Family?
+
+La Snow Family se adapta a múltiples escenarios, principalmente en situaciones donde un canal de Internet no es viable para transferir datos a la nube de AWS. Estos dispositivos ofrecen una solución tangible y eficiente para grandes volúmenes de información que necesitan ser trasladados de manera segura y económica.
+
+### ¿Cuáles son los beneficios de utilizar la Snow Family?
+
+- **Eficiencia**: Permite mover grandes cantidades de datos sin necesidad de una conexión a Internet rápida.
+- **Flexibilidad**: Diferentes tamaños y capacidades para adaptarse a necesidades específicas.
+- **Costo-efectividad**: Reducción de costos asociados al ancho de banda y al tiempo de transferencia de datos grandes.
+
+Este enfoque destaca la capacidad de AWS para proporcionar soluciones de almacenamiento y transferencia de datos a medida, adaptadas a las necesidades empresariales específicas. La Snow Family se presenta como una alternativa ingeniosa y práctica para enfrentar los desafíos de la transferencia de grandes volúmenes de información, asegurando que los datos se muevan de forma rápida y eficaz. ¡Te animamos a explorar más sobre estas innovadoras herramientas y descubrir cómo pueden beneficiar a tu organización!
+
+## Laboratorio: Crear nuestro primer bucket en S3
+
+Para crear un **bucket en Amazon S3**, sigue estos pasos desde la **AWS Management Console**:
+
+### **📌 Paso 1: Iniciar sesión en AWS**
+1. Ve a la consola de [AWS S3](https://s3.console.aws.amazon.com/s3/home).
+2. Inicia sesión con tu cuenta de AWS.
+
+### **📌 Paso 2: Crear un bucket**
+1. Haz clic en el botón **"Create bucket"** (Crear bucket).
+2. **Nombre del bucket**:  
+   - Escribe un nombre único a nivel global (Ejemplo: `mi-primer-bucket-12345`).
+   - Solo letras minúsculas, números y guiones (`-`).
+3. **Región**:  
+   - Elige la región más cercana a tus usuarios para minimizar costos y latencia.
+
+### **📌 Paso 3: Configurar opciones adicionales**
+1. **Configuración de objetos públicos** (Importante 🔒):  
+   - Por defecto, el acceso público está bloqueado (mantenerlo bloqueado para seguridad).
+2. **Opcional**: Habilitar versionado para conservar versiones de archivos.
+3. **Opcional**: Configurar el cifrado para proteger los datos.
+
+### **📌 Paso 4: Crear el bucket**
+1. Revisa la configuración y haz clic en **"Create bucket"**.
+
+¡Listo! 🎉 Tu bucket en **Amazon S3** ha sido creado. Ahora puedes subir archivos, configurar permisos y explorar más funciones como **lifecycle policies** y **clases de almacenamiento**.
+
+### **📌 Crear un bucket con AWS CLI**
+Si prefieres hacerlo con la **línea de comandos**, usa:
+
+```sh
+aws s3 mb s3://mi-primer-bucket-12345 --region us-east-1
+```
+
+Esto creará un bucket en la región **us-east-1**.
+
+### Resumen
+
+### ¿Cómo crear un bucket en AWS S3?
+
+Crear un bucket en la consola de Amazon Web Services (AWS) es uno de los primeros pasos esenciales para almacenar datos y objetos en la nube. A continuación, se detalla el proceso para configurar un bucket en Amazon S3 con todas las opciones imprescindibles para su adecuada gestión.
+
+### ¿Cómo iniciar en la consola de AWS?
+
+1. **Acceso a AWS**: Ingresa a la consola de AWS. Ya dentro, dirígete a la barra de búsqueda ubicada en la parte superior izquierda y escribe "S3".
+2. **Selección del servicio**: Clic en el primer servicio que aparece en la lista: Amazon S3.
+
+### ¿Cómo crear un bucket paso a paso?
+
+Una vez en el servicio de Amazon S3, verás el panorama general de S3 y un botón naranja en la parte superior derecha que dice "Create Bucket". Haz clic sobre él y sigue las instrucciones:
+
+- **Región y tipo de bucket**: Escoge la región donde se alojará tu bucket, por ejemplo, US East 1 (Virginia). Para el tipo de bucket, selecciona "Amazon S3 Standard" para un uso general.
+
+- **Nombre del bucket**: Introduce un nombre único. Asegúrate de que el nombre no esté ya en uso, ya que los nombres de bucket deben ser globalmente únicos.
+
+### ¿Qué configuración de seguridad e identificación seleccionar?
+
+- **Object Ownership y ACLs (Listas de control de acceso)**: Determina cómo se gestionará la propiedad de los objetos dentro del bucket. En este caso, mantener las ACLs desactivadas para un control más gestionado.
+
+- **Acceso público**: Es recomendable bloquear por defecto todo el acceso público para aumentar la seguridad. Esta opción está habilitada por defecto.
+
+### ¿Cómo gestionar versiones y etiquetas?
+
+- **Versionamiento**: Activa el versionado para mantener versiones distintas de los archivos con el mismo nombre. Es una práctica recomendada.
+
+- **Etiquetas o tags**: Aunque opcional, es aconsejable asignar etiquetas para identificar fácilmente el proyecto o el propietario del bucket. Ejemplo: "Platzi-Practitioner", "owner: Carlos Sambrano".
+
+### ¿Cómo asegurar el cifrado de datos?
+
+La seguridad de tus datos es fundamental, por ello:
+
+- **Cifrado lado servidor (Server-Side Encryption)**: Usa las llaves administradas por Amazon para cifrar los datos a nivel de servidor. Esta es la opción recomendada por Amazon para el almacenamiento en S3.
+
+### ¿Qué es Object Lock y cómo configurar settings avanzados?
+
+**Object Lock**: Configura esta opción para proteger tus datos de eliminaciones accidentales o maliciosas. Establece reglas de compliance para que la información no pueda ser borrada antes de un tiempo definido.
+
+### Finalizar la creación del bucket
+
+1. **Revisión**: Una vez configuradas todas las opciones, revisa el formulario.
+2. **Creación del bucket**: Haz clic en "Create Bucket" al final de la página para finalizar el proceso.
+
+Con estos pasos, habrás creado un bucket seguro y configurado adecuadamente en Amazon S3. ¡Felicidades! Has dado un paso importante en la gestión de almacenamiento en la nube. Continúa explorando las funcionalidades de S3 en clases y laboratorios avanzados para aprovechar al máximo sus características.
+
+## Introduccion a EBS
+
+**Amazon EBS (Elastic Block Store)** es un servicio de almacenamiento de bloques en **AWS** diseñado para usarse con **instancias EC2**. Proporciona almacenamiento persistente, de alto rendimiento y escalable, ideal para bases de datos, aplicaciones empresariales y cargas de trabajo intensivas en I/O.
+
+### **🔹 Características principales de EBS**  
+
+✅ **Almacenamiento persistente:** Los datos persisten incluso si la instancia EC2 se detiene o termina.  
+✅ **Bajo tiempo de latencia:** Diseñado para aplicaciones que requieren acceso rápido a los datos.  
+✅ **Escalabilidad:** Puedes aumentar el tamaño del volumen sin interrupciones.  
+✅ **Snapshots:** Permite crear copias de seguridad (instantáneas) en **Amazon S3**.  
+✅ **Alta disponibilidad y durabilidad:** Replicación automática dentro de la misma zona de disponibilidad (AZ).
+
+### **🔹 Tipos de Volúmenes EBS**  
+
+EBS ofrece diferentes tipos de volúmenes optimizados para distintas necesidades:  
+
+| Tipo de Volumen | Descripción | Rendimiento |
+|---------------|------------|-------------|
+| **gp3** | SSD de propósito general con rendimiento configurable | 3,000 IOPS (por defecto) |
+| **gp2** | SSD de propósito general con IOPS que dependen del tamaño | 3 IOPS por GB |
+| **io2 / io1** | SSD de alto rendimiento para aplicaciones críticas | Hasta 256,000 IOPS |
+| **st1** | HDD optimizado para throughput (grandes volúmenes de datos) | Hasta 500 MB/s |
+| **sc1** | HDD de bajo costo para almacenamiento frío | Hasta 250 MB/s |
+
+### **🔹 Casos de Uso de EBS**  
+
+🔸 Bases de datos transaccionales como MySQL, PostgreSQL, Oracle.  
+🔸 Aplicaciones de Big Data y analítica.  
+🔸 Hosting de sistemas de archivos como ext4, XFS o NTFS.  
+🔸 Almacenamiento para contenedores y entornos de virtualización.
+
+### **🔹 Creando un volumen EBS en AWS**  
+
+### **1️⃣ Desde la Consola de AWS:**  
+1. Ve a **Amazon EC2 > Elastic Block Store > Volumes**.  
+2. Haz clic en **"Create Volume"**.  
+3. Selecciona el tipo de volumen (**gp3, io2, etc.**).  
+4. Define el tamaño (Ejemplo: **20 GiB**).  
+5. Selecciona la **Zona de Disponibilidad (AZ)** de tu instancia EC2.  
+6. Haz clic en **"Create Volume"**.  
+
+### **2️⃣ Desde AWS CLI:**  
+```sh
+aws ec2 create-volume --size 20 --region us-east-1 --availability-zone us-east-1a --volume-type gp3
+```
+Esto crea un volumen de **20 GiB** en la zona **us-east-1a** con tipo **gp3**. 
+
+### **🔹 Conclusión**  
+Amazon **EBS** es una solución esencial para el almacenamiento de bloques en **AWS**, proporcionando persistencia, escalabilidad y alto rendimiento para una amplia variedad de aplicaciones. Es un servicio clave para administrar datos de manera segura en instancias **EC2**.
+
+### Resumen
+
+### ¿Qué es Elastic Block Store (EBS) y cómo puede beneficiar tu aplicación?
+
+El Elastic Block Store (EBS) es un componente crucial en la infraestructura de Amazon Web Services (AWS) que ofrece almacenamiento en bloques. Piensa en EBS como el disco duro donde se instala el sistema operativo de un servidor, como Linux o Windows. Además de ser una base para sistemas operativos, también puedes asociar múltiples volúmenes EBS a un solo servidor para gestionar diferentes tipos de información. Esta capacidad de segregación es útil para construir y mantener aplicaciones robustas y bien organizadas.
+
+### ¿Cómo puede un snapshot salvar tu día?
+
+Uno de los aspectos más importantes de EBS es su funcionalidad denominada "snapshot". Un snapshot actúa como una fotografía de un volumen EBS en un momento determinado. Su mayor ventaja es permitirte volver a un punto anterior en caso de desastres o pérdida de datos, asegurando que puedes recuperar información crítica con total tranquilidad. Los snapshots son esenciales para la continuidad de servicios y la recuperación ante fallos.
+
+### Características adicionales de EBS que deberías conocer
+
+EBS no solo es un sistema de almacenamiento para sistemas operativos. También se convierte en la base de servicios vitales como:
+
+- **Instancias S2**: Relacionadas con servidores virtuales.
+- **RDS (Relational Database Service)**: Servicio de bases de datos relacionales en Amazon.
+
+Un punto clave a recordar sobre EBS es su independencia. Puedes eliminar un servidor, pero sus volúmenes EBS pueden persistir y ser reutilizados en otras instancias. Sin embargo, recuerda que un volumen EBS solo puede montarse en una instancia a la vez, lo que implica que no podrás compartir un volumen entre dos instancias simultáneamente.
+
+EBS está diseñado para estar asociado a una zona de disponibilidad en particular, lo que refuerza la importancia de los snapshots para garantizar un acceso seguro y continúo a tus datos.
+
+### ¿Qué ofrece la capa gratuita de AWS para EBS?
+
+Cuando configuras tu cuenta en AWS, tienes acceso a una capa gratuita que cubre hasta 30 gigabytes de almacenamiento en EBS por el primer año. Aprovechar esta oferta desde el momento que creas tu cuenta puede ser conveniente para experimentar y adaptarte al servicio sin preocupaciones inmediatas sobre los costes.
+
+### Recomendaciones para administración EBS eficiente
+
+Para asegurar un manejo óptimo del almacenamiento en EBS:
+
+- **Protección contra borrado accidental**: Implementa medidas que eviten que los volúmenes EBS se borren por error.
+- **Realiza snapshots regularmente**: Esto es crucial para resguardarte contra posibles errores o daños. Un punto de recuperación es invaluable en cualquier estrategia de gestión de datos.
+- **Documentación oficial de AWS**: Es altamente recomendable revisar la documentación oficial para profundizar más en las capacidades y mejores prácticas de manejo de EBS. Este servicio no solo es esencial para el examen de certificación, sino para cualquier estructura de aplicación que utilice AWS.
+
+Asegúrate de aprovechar al máximo lo que ofrece EBS, tanto en términos de funcionalidad como en la capacidad de proteger y gestionar adecuadamente tus datos. Con un entendimiento profundo de sus características, tu aplicación podrá alcanzar un nivel superior de eficiencia y seguridad.
+
+**Lecturas recomendadas**
+
+[Documentación oficial de AWS](https://docs.aws.amazon.com/ebs/)
+
+## Tipos de almacenamiento Amazon EBS
+
+Amazon **EBS (Elastic Block Store)** ofrece diferentes tipos de volúmenes diseñados para distintas necesidades de rendimiento y costo. Se agrupan en **SSD (Solid State Drive)** para rendimiento alto y **HDD (Hard Disk Drive)** para almacenamiento optimizado por secuencias de datos.
+
+### **1️⃣ SSD - Almacenamiento para cargas de trabajo de alto rendimiento**  
+
+| **Tipo** | **Descripción** | **IOPS máx.** | **Throughput máx.** | **Casos de uso** |
+|----------|---------------|--------------|------------------|----------------|
+| **gp3 (General Purpose SSD)** | Rendimiento configurable con menor costo | 16,000 | 1,000 MB/s | Bases de datos, servidores web, entornos de desarrollo |
+| **gp2 (General Purpose SSD)** | Rendimiento variable según el tamaño | 16,000 | 250 MB/s | Aplicaciones generales con carga variable |
+| **io2 (Provisioned IOPS SSD)** | Alta confiabilidad (99.999% de durabilidad) y rendimiento constante | 256,000 | 4,000 MB/s | Bases de datos críticas, SAP, Oracle |
+| **io1 (Provisioned IOPS SSD)** | Rendimiento alto pero menos durabilidad que io2 | 256,000 | 4,000 MB/s | Aplicaciones de misión crítica con requisitos elevados |
+
+📌 **Diferencias entre gp3 y gp2:**  
+- **gp3** tiene un rendimiento base de **3,000 IOPS y 125 MB/s**, pero se puede configurar hasta **16,000 IOPS y 1,000 MB/s** sin aumentar el tamaño del volumen.  
+- **gp2** escala sus IOPS en función del tamaño del volumen, a razón de **3 IOPS por GB**.
+
+### **2️⃣ HDD - Almacenamiento optimizado para grandes volúmenes de datos secuenciales**  
+
+| **Tipo** | **Descripción** | **IOPS máx.** | **Throughput máx.** | **Casos de uso** |
+|----------|---------------|--------------|------------------|----------------|
+| **st1 (Throughput Optimized HDD)** | Optimizado para acceso secuencial con alto rendimiento | 500 | 500 MB/s | Big Data, Data Warehouses, streaming de datos |
+| **sc1 (Cold HDD)** | Almacenamiento de bajo costo para datos fríos | 250 | 250 MB/s | Archivos de larga duración, backups, acceso poco frecuente |
+
+📌 **Diferencias entre st1 y sc1:**  
+- **st1** es ideal para cargas de trabajo con acceso frecuente y secuencial, como procesamiento de grandes volúmenes de datos.  
+- **sc1** es la opción más económica, adecuada para datos a los que casi nunca se accede.
+
+### **📌 Comparación rápida**  
+
+| **Tipo de volumen** | **Latencia** | **Costo** | **Recomendado para...** |
+|-----------------|------------|--------|------------------|
+| **gp3** | Baja | Medio | Aplicaciones generales, bases de datos |
+| **gp2** | Baja | Medio | Cargas de trabajo con fluctuación de rendimiento |
+| **io2/io1** | Muy baja | Alto | Bases de datos críticas y aplicaciones intensivas en IOPS |
+| **st1** | Media | Bajo | Big Data, análisis, logs |
+| **sc1** | Alta | Muy bajo | Archivos de largo plazo, backups |
+
+### **🎯 Conclusión**  
+La elección del tipo de almacenamiento en **Amazon EBS** depende de la carga de trabajo:  
+✔️ **Para bases de datos transaccionales y sistemas críticos** → **io2**  
+✔️ **Para aplicaciones generales y bases de datos estándar** → **gp3**  
+✔️ **Para procesamiento de grandes volúmenes de datos** → **st1**  
+✔️ **Para almacenamiento a largo plazo con acceso poco frecuente** → **sc1**
+
+### Resumen
+
+### ¿Qué tipos de volúmenes ofrece Amazon EBS?
+
+Amazon EBS (Elastic Block Store) es una herramienta poderosa en el ecosistema AWS que proporciona almacenamiento basado en bloques para instancias de EC2. Uno de los grandes atractivos de EBS es la variedad de tipos de volúmenes que ofrece. Cada tipo de volumen tiene sus particularidades, lo que permite a los arquitectos de soluciones elegir el más adecuado según las necesidades específicas de cada aplicación.
+
+### ¿Cuáles son los volúmenes de propósito general?
+
+Los volúmenes de propósito general están diseñados para cargas de trabajo comunes que no requieren un uso intensivo del disco duro. Dentro de EBS, estos volúmenes están representados por las categorías GP2 y GP3.
+
+- **GP2 y GP3**: Son volúmenes de disco de estado sólido (SSD) para cargas de trabajo con necesidades estándar. Son ideales para:
+ - Escritorios virtuales.
+ - Bases de datos medianas.
+ - Aplicaciones de rendimiento promedio.
+ - Ambientes de desarrollo.
+ 
+El GP3, la versión más reciente, ofrece varias ventajas sobre su predecesor GP2, como mejores precios por gigabyte y una capacidad de hasta 16,000 IOPS (operaciones de entrada/salida por segundo). Este tipo de volúmen tiene una latencia muy baja, ideal para aplicaciones generales.
+
+### ¿Qué son los volúmenes IO1 y IO2?
+
+Estos volúmenes están diseñados para aplicaciones de alto rendimiento que necesitan un gran número de operaciones de escritura y lectura.
+
+- **IO1**:
+
+ - Capacidad entre 4 GB y 16 TB.
+ - Hasta 64,000 IOPS.
+ - Durabilidad del 99.9%.
+ - Latencia por debajo de los milisegundos.
+
+- **IO2**:
+
+ - Capacidad desde 4 GB hasta 65 TB.
+ - Capaz de manejar hasta 256,000 IOPS.
+ - Diseñado para tareas intensivas en IOPS, como bases de datos muy transaccionales o aplicaciones con alta analítica.
+ - Ofrece latencias más bajas y una durabilidad del 99.999%.
+ 
+### ¿Qué tipos de discos duros magnéticos ofrece EBS?
+
+EBS presenta también opciones de almacenamiento con discos duros magnéticos, que resultan óptimos para ciertas aplicaciones basadas en el costo y el rendimiento.
+
+- **ST1 (rendimiento optimizado)**:
+
+ - Ideal para datos que requieren acceso frecuente.
+ - Capacidad entre 125 GB y 16 TB.
+ 
+- **SC1 (almacenamiento frío)**:
+
+ - Diseñado para datos que se acceden con poca frecuencia, como una o dos veces al mes.
+ - También ofrece una capacidad entre 125 GB y 16 TB.
+ 
+Ambas opciones son de bajo costo, pero difieren en su aplicabilidad según la frecuencia de acceso a los datos.
+
+### ¿Cómo seleccionar el volumen EBS adecuado?
+
+La elección del volumen adecuado dependerá del caso de uso específico. Por ejemplo, para aplicaciones de analítica que manejan grandes volúmenes de datos y requieren acceso concurrente con alta frecuencia, se debe priorizar el número de IOPS. En estos casos, el volumen IO2 es la mejor opción, ya que ofrece alto rendimiento y un soporte sobresaliente en escritura y lectura intensiva.
+
+Por otro lado, para tareas y aplicaciones con menos requisitos de rendimiento, los volúmenes GP3 o incluso los discos magnéticos de bajo costo podrían ser más apropiados. Al ser un arquitecto de soluciones en AWS, una comprensión completa de estos detalles técnicos te será de gran ayuda para tomar decisiones bien informadas y optimizar costos sin sacrificar el rendimiento.
+
+En conclusión, profundizar en las prestaciones de cada opción de Amazon EBS te prepara para enfrentar preguntas similares en contextos de examen o en situaciones del mundo real, asegurando que puedes elegir y argumentar la mejor solución de almacenamiento con confianza.
+
+**Tipos de volúmenes EBS**
+
+Cuando estamos creando un servidor, nos va a mostrar diferentes tipos de volúmenes EBS. Tener en cuenta que para el examen hay que tener el criterio de caso de uso de cada uno de ellos para saber cuál utilizar.
+
+**SSD - Volúmenes de uso general**
+
+**gp**: Discos duros de propósito general para cargas de trabajo de uso común.
+
+ - gp2 y gp3
+ - Discos de estado sólido
+ - Utilizarlos para escritorios virtuales
+ - Bases de datos medianas
+ - Aplicaciones con rendimiento promedio
+ - Entornos de desarrollo
+ - Su costo es uno de los más bajos
+ 
+**SSD gp3**:
+
+ - 1 GB hasta 16 TB
+ - 99.8% - 99.9% durabilidad
+ - Latencia de milisegundos
+ - Mejora el precio vs gp2
+ - Tiene capacidad de hasta 16000 IOPS (Input/Output Operations Per Second)
+ 
+**SSD IOPS**
+
+ - io2 e io1
+ - Son de mayor rendimiento (requiere un disco duro de mucha escritura y lectura)
+ - Cargas de trabajo críticas
+ - Ofrecen alto rendimiento
+ - IOPS intensivo
+ 
+**io2:**
+
+ - 4 GB hasta 65 TB
+ - Hasta 256000 IOPS
+ - Latencia inferior a milisegundos
+ - Se usa en cargas como Oracle, SAP, SQL Server y de analítica
+ - Durabilidad de 99.9999%
+ 
+**io1:**
+
+ - 4 GB hasta 16 TB
+ - Hasta 64000 IOPS
+ - Latencia inferior a milisegundos
+ - Durabilidad 99.9%
+ 
+**HDD**
+
+ - Rendimiento optimizado (Bajo costo, Rendimiento intensivo)
+ - Almacenamiento frío (Bajo costo, Acceso con menos frecuencia)
+ 
+**HDD st1:**
+
+ - Almacenamiento de bajo costo
+ - Datos que se necesitan acceder con mucha frecuencia
+ - 125 GB hasta 16 TB
+ - Enfoque en alto rendimiento
+ 
+**HDD sc1:**
+
+ - Almacenamiento de bajo costo
+ - Se pone información que se va a consumir de manera menos frecuente
+ - 125 GB hasta 16 TB
+
+## Sistemas de archivos Amazon EFS y FSx
+
+AWS ofrece soluciones de almacenamiento **compartido** para cargas de trabajo que requieren acceso simultáneo desde múltiples instancias EC2 o servicios. Los dos principales sistemas de archivos son:  
+
+1️⃣ **Amazon EFS (Elastic File System)** – Almacenamiento de archivos basado en NFS para cargas de trabajo en Linux.  
+2️⃣ **Amazon FSx** – Soluciones optimizadas para sistemas de archivos Windows y otras aplicaciones específicas.
+
+### **🔹 Amazon EFS (Elastic File System) - Sistema de archivos para Linux**  
+
+📌 **Descripción:**  
+Amazon **EFS** es un sistema de archivos escalable, administrado y basado en el protocolo **NFS (Network File System)**, ideal para aplicaciones en entornos Linux que requieren almacenamiento compartido.  
+
+✅ **Características:**  
+- Escalabilidad automática hasta **petabytes**.  
+- Accesible desde **múltiples instancias EC2**, contenedores y servidores on-premise.  
+- Modelos de almacenamiento **Standard y Infrequent Access (IA)** para optimizar costos.  
+- Soporte para **AWS Lambda** y aplicaciones serverless.  
+
+📌 **Casos de uso:**  
+🔹 Aplicaciones web y contenido compartido.  
+🔹 Data Science y Machine Learning.  
+🔹 Copias de seguridad y almacenamiento de logs.  
+🔹 Ambientes de desarrollo colaborativo.  
+
+💰 **Precios:** Basado en **uso por GB almacenado** y costos de transferencia.
+
+### **🔹 Amazon FSx - Sistemas de archivos especializados**  
+
+📌 **Descripción:**  
+Amazon **FSx** ofrece sistemas de archivos altamente optimizados para necesidades específicas.  
+
+### **1️⃣ Amazon FSx for Windows File Server**  
+💻 **Sistema de archivos Windows nativo**, compatible con **SMB (Server Message Block)** y **Active Directory**.  
+✅ Integración con **Microsoft AD**, backups automáticos y alta disponibilidad.  
+
+📌 **Casos de uso:**  
+🔹 Aplicaciones empresariales basadas en Windows.  
+🔹 Almacenamiento de perfiles de usuario y escritorios remotos (Amazon WorkSpaces).  
+🔹 Migración de servidores de archivos on-premise a la nube.  
+
+### **2️⃣ Amazon FSx for Lustre**  
+🚀 **Sistema de archivos de alto rendimiento** diseñado para cargas de trabajo intensivas en computación, como **Machine Learning y análisis de datos**.  
+✅ Integración con **Amazon S3** para procesamiento de grandes volúmenes de datos.  
+
+📌 **Casos de uso:**  
+🔹 Simulación científica y modelado financiero.  
+🔹 Inteligencia artificial y análisis de grandes volúmenes de datos.  
+🔹 Renderización de gráficos y efectos visuales.
+
+### **3️⃣ Amazon FSx for NetApp ONTAP**  
+🛠 **Sistema de archivos empresarial basado en NetApp**, con soporte para **NFS, SMB y iSCSI**.  
+✅ Funcionalidades avanzadas como **deduplicación, compresión y snapshots**.  
+
+📌 **Casos de uso:**  
+🔹 Migraciones de almacenamiento NetApp on-premise a AWS.  
+🔹 Entornos híbridos que requieren compatibilidad con NetApp.  
+🔹 Administración de datos con requisitos avanzados de eficiencia.
+
+### **4️⃣ Amazon FSx for OpenZFS**  
+💾 **Almacenamiento basado en ZFS**, ideal para cargas de trabajo que requieren **alta confiabilidad y gestión avanzada de datos**.  
+✅ Snapshots instantáneos, compresión nativa y alta velocidad de IOPS.  
+
+📌 **Casos de uso:**  
+🔹 Aplicaciones con alto rendimiento en lectura/escritura.  
+🔹 Servidores de bases de datos y sistemas de archivos empresariales.
+
+### **📌 Comparación rápida**  
+
+| Sistema | Compatible con | Protocolo | Casos de uso clave |
+|---------|--------------|-----------|------------------|
+| **EFS** | Linux | NFS | Aplicaciones web, data science, almacenamiento compartido |
+| **FSx for Windows** | Windows | SMB | Aplicaciones empresariales, escritorios remotos |
+| **FSx for Lustre** | Linux | Lustre | HPC, Machine Learning, Big Data |
+| **FSx for NetApp ONTAP** | Windows/Linux | NFS, SMB, iSCSI | Migración NetApp, almacenamiento híbrido |
+| **FSx for OpenZFS** | Linux | NFS | Bases de datos, cargas de alto rendimiento |
+
+### **🎯 Conclusión**  
+
+✔️ **Usa Amazon EFS** si necesitas un sistema de archivos compartido y escalable para **instancias Linux**.  
+✔️ **Usa Amazon FSx for Windows** si trabajas con **Windows Server y Active Directory**.  
+✔️ **Usa Amazon FSx for Lustre** para **computación de alto rendimiento (HPC) y análisis de datos**.  
+✔️ **Usa Amazon FSx for NetApp ONTAP** para **entornos empresariales con NetApp**.  
+✔️ **Usa Amazon FSx for OpenZFS** si necesitas **alta confiabilidad y rendimiento en almacenamiento estructurado**.
+
+### Resumen
+
+### ¿Qué es EFS y qué características tiene?
+
+Si piensas en un almacenamiento donde múltiples servidores puedan acceder de manera simultánea y fluida, Elastic File System (EFS) de AWS es la solución ideal. Este servicio proporciona un sistema de archivos completamente administrado que facilita la colaboración entre servidores. EFS es exclusivo para sistemas operativos Linux y ofrece soporte en múltiples zonas, garantizando alta disponibilidad y escalabilidad. Esto significa que a medida que se añaden más datos, el sistema crece automáticamente sin necesidad de planificación de capacidad.
+
+Una ventaja clave de EFS es su modelo de pago por uso, lo que significa que no pagarás por capacidad no utilizada, a diferencia de Elastic Block Store (EBS). Esto permite una gestión económica eficiente del almacenamiento.
+
+### ¿Qué ofrece FSx y cuáles son sus variantes?
+
+FSx es otro servicio de almacenamiento completamente administrado en AWS que, al igual que EFS, facilita la vida de los administradores al simplificar la gestión del almacenamiento. FSx se divide en diferentes variantes, adaptadas a diferentes necesidades del sistema operativo y niveles de rendimiento.
+
+### FSx para Windows File Server
+
+Como su nombre indica, FSx para Windows File Server está diseñado para sistemas operativos basados en Windows. Esta variante es gestionable, fiable y escalable, y soporta protocolos comunes como SMB y NTFS. Además, ofrece integración directa con Active Directory de Microsoft, lo que facilita la gestión del almacenamiento en entornos Windows.
+
+### Amazon FSx para Lustre
+
+Amazon FSx para Lustre se destaca por su alto rendimiento, ideal para cargas de trabajo intensivas como el análisis de datos, Machine Learning, o procesamiento de videos. Esta variante está optimizada para High Performance Computing, ofreciendo tráfico de hasta 100 GB y millones de IOPS, con latencias extremadamente bajas. Es una opción perfecta para aquellos proyectos que requieren almacenamiento compartido con un rendimiento excepcional.
+
+#### ¿Cómo elegir el mejor servicio de almacenamiento para mis necesidades?
+
+Con la variedad de opciones de almacenamiento que AWS ofrece—como S3 para objetos, EBS para bloques, y los sistemas basados en archivos como EFS y FSx—es importante evaluar cuál se adapta mejor a tus necesidades. Te invito a considerar los siguientes aspectos:
+
+- **Si necesitas un sistema compartido para Linux**: EFS es tu opción ideal.
+- **Si trabajas en un entorno Windows y necesitas integración con Active Directory**: FSx para Windows File Server es el adecuado.
+- **Si buscas rendimiento máximo para tareas intensivas de cálculo**: FSx para Lustre es la opción preferida.
+
+Finalmente, para tomar una decisión informada, consulta la documentación oficial de AWS. Compáralas para diferentes escenarios: ¿cuándo usarías S3 y no EBS? ¿Cuándo optar por EFS en lugar de FSx? Esta comparación te otorgará el criterio necesario para facilitar la elección correcta, tanto en exámenes como en la implementación de proyectos reales. ¡Éxito en tu camino hacia la maestría en almacenamiento en la nube!
+
+**Lecturas recomendadas**
+
+[Documentación oficial de AWS: EFS](https://docs.aws.amazon.com/efs/latest/ug/whatisefs.html)
+
+[Documentación oficial de AWS: FSx](https://docs.aws.amazon.com/fsx/latest/WindowsGuide/what-is.html)
 
 
 
