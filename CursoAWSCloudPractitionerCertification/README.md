@@ -4567,15 +4567,936 @@ Finalmente, para tomar una decisión informada, consulta la documentación ofici
 [Documentación oficial de AWS: FSx](https://docs.aws.amazon.com/fsx/latest/WindowsGuide/what-is.html)
 
 
-hoaaaaaaaaaalllllll
+## Servicios para almacenamiento híbrido
 
+AWS ofrece varias soluciones para integrar el almacenamiento en la nube con entornos **on-premise**, permitiendo mover datos entre ambos sin afectar el rendimiento.
 
+### **🔹 1️⃣ AWS Storage Gateway**  
+📌 **Descripción:** Es un servicio que actúa como un puente entre tu infraestructura local y AWS, permitiendo extender el almacenamiento en la nube sin modificar las aplicaciones on-premise.  
 
+✅ **Modos de uso:**  
+- **File Gateway** → Comparte archivos mediante SMB/NFS en S3.  
+- **Volume Gateway** → Proporciona volúmenes locales que se respaldan en la nube.  
+- **Tape Gateway** → Sustituye cintas físicas con almacenamiento en AWS para copias de seguridad.  
 
+📌 **Casos de uso:**  
+🔹 Backups y recuperación ante desastres.  
+🔹 Extender almacenamiento local sin comprar más hardware.  
+🔹 Migración gradual a la nube.
 
+### **🔹 2️⃣ AWS DataSync**  
+📌 **Descripción:** Servicio rápido y seguro para transferir datos entre almacenamiento on-premise y AWS (S3, EFS o FSx).  
 
+✅ **Beneficios:**  
+- Acelera la transferencia de datos hasta **10 veces más rápido** que herramientas tradicionales.  
+- **Automatiza** la sincronización con programación y validación de integridad.  
+- Compatible con **NFS y SMB**.  
 
+📌 **Casos de uso:**  
+🔹 Migraciones masivas de datos.  
+🔹 Replicación y sincronización de archivos entre centros de datos y AWS.  
+🔹 Respaldo de datos de manera eficiente.
 
+### **🔹 3️⃣ AWS Snow Family (Snowcone, Snowball, Snowmobile)**  
+📌 **Descripción:** Dispositivos físicos que permiten transferir grandes volúmenes de datos entre on-premise y AWS, sin depender de la conexión a internet.  
+
+✅ **Opciones disponibles:**  
+- **AWS Snowcone** → Dispositivo portátil para cargas pequeñas (hasta 8 TB).  
+- **AWS Snowball** → Para migraciones de petabytes con cifrado y cómputo en el borde.  
+- **AWS Snowmobile** → Transporte masivo (exabytes) mediante un contenedor físico.  
+
+📌 **Casos de uso:**  
+🔹 Migración de grandes volúmenes de datos sin impacto en la red.  
+🔹 Procesamiento de datos en entornos remotos con poca conectividad.
+
+### **🔹 4️⃣ Amazon FSx File Gateway**  
+📌 **Descripción:** Extiende sistemas de archivos locales a la nube usando **Amazon FSx for Windows o FSx for NetApp ONTAP**.  
+
+✅ **Beneficios:**  
+- **Acceso a FSx desde on-premise** mediante SMB.  
+- Compatible con **Active Directory** y entornos Windows.  
+- Ideal para empresas que quieren expandir almacenamiento sin reemplazar hardware.  
+
+📌 **Casos de uso:**  
+🔹 Extender servidores de archivos Windows sin modificar infraestructura.  
+🔹 Migración progresiva de archivos sin interrupción.  
+
+### **📌 Comparación rápida**  
+
+| **Servicio** | **Función principal** | **Casos de uso** |
+|-------------|-----------------|---------------|
+| **AWS Storage Gateway** | Acceso híbrido a almacenamiento en la nube | Backups, migraciones |
+| **AWS DataSync** | Transferencia rápida de datos | Sincronización y migraciones |
+| **AWS Snow Family** | Transferencia física de datos a AWS | Migraciones masivas sin internet |
+| **Amazon FSx File Gateway** | Extensión de servidores de archivos Windows a la nube | Archivos compartidos y migraciones |
+
+### **🎯 Conclusión**  
+✔ **Si necesitas acceso híbrido constante**, usa **AWS Storage Gateway** o **FSx File Gateway**.  
+✔ **Si quieres migrar o sincronizar datos de forma eficiente**, usa **AWS DataSync**.  
+✔ **Si tienes grandes volúmenes de datos y poca conectividad**, usa **AWS Snow Family**.
+
+### Resumen
+
+### ¿Qué es el almacenamiento híbrido?
+El almacenamiento híbrido es un concepto crucial en el ámbito de la tecnología moderna. Sirve como un nexo entre los data centers locales y la nube, combinando lo mejor de ambos mundos. Este tipo de almacenamiento permite a las empresas beneficiarse de la versatilidad y la seguridad de la nube junto con el control y la inmediatez del almacenamiento local. Esto resulta invaluable para las empresas que operan con aplicaciones en data centers "on-premises", especialmente cuando gestionan grandes volúmenes de archivos, máquinas virtuales o backups.
+
+### ¿Cómo funciona el Storage Gateway de AWS?
+
+AWS ha desarrollado un servicio llamado Storage Gateway, que actúa como un puente seguro y eficiente entre el almacenamiento local y la nube. Storage Gateway utiliza HTTPS para asegurar la transferencia de datos y proporciona diversos casos de uso que centralizan la información. Las organizaciones pueden integrarse con múltiples servicios de almacenamiento de AWS, como S3, EFS, FSx y EBS, para utilizar el tipo de almacenamiento más adecuado a sus necesidades.
+
+### Casos de uso de Storage Gateway
+
+1. **Conexión segura on-premises-nube**: Permite conectar aplicaciones locales a la nube de forma seguro para realizar tareas de almacenamiento.
+2. **Recuperación ante desastres**: Facilita la recuperación de aplicaciones en la nube si sufren un percance en el entorno local.
+3. **Copias de seguridad en la nube**: Las copias de seguridad de servidores locales se pueden transferir y almacenar en la nube para mayor seguridad y accesibilidad.
+
+### ¿Cuáles son los tipos de Storage Gateway?
+
+AWS ofrece tres variantes de Storage Gateway, cada una diseñada para un propósito específico:
+
+### File Gateway
+
+El File Gateway está diseñado para gestionar archivos. Permite a las aplicaciones locales guardar información en una unidad compartida de almacenamiento que está sincronizada asíncronamente con Amazon S3. Así, los datos más consultados permanecen accesibles localmente gracias a una capa de caché, mientras se sincronizan en la nube.
+
+### Volume Gateway
+
+El Volume Gateway se enfoca en los volúmenes de instancias de máquinas virtuales en el data center. Este servicio automatiza el proceso de backup de volúmenes al transferirlos a Amazon S3 y convertirlos posteriormente en EBS. Esto facilita su posterior uso en instancias EC2.
+
+### Tape Gateway
+
+Diseñado para aquellos que utilizan cintas magnéticas para almacenamiento, el Tape Gateway permite migrar estos datos almacenados en cintas a la nube. Esto ofrece una solución duradera y escalable, destinada a reemplazar las bibliotecas de cintas físicas. Las cintas virtuales transferidas pueden almacenarse en Amazon S3 o Glacier para almacenamiento a largo plazo.
+
+### ¿Cómo comparan Storage Gateway y DataSync?
+
+Es común que haya confusión entre el Storage Gateway y otro servicio de AWS llamado DataSync. Aunque ambos facilitan el uso de la nube, tienen objetivos distintos. DataSync está orientado a la migración de datos del entorno local a la nube rápidamente. Mientras que Storage Gateway se centra en mantener un sistema de almacenamiento híbrido entre ambos entornos sin necesariamente realizar una migración completa.
+
+En resumen, tanto Storage Gateway como DataSync son esenciales para diferentes necesidades de negocio, cada uno optimizado para proporcionar la mejor solución posible de acuerdo a sus casos de uso específicos.
+
+## Bases de datos relacionales en AWS
+
+AWS ofrece varias soluciones de bases de datos relacionales, diseñadas para diferentes niveles de rendimiento, escalabilidad y administración.  
+
+### **🔹 1️⃣ Amazon RDS (Relational Database Service)**  
+📌 **Descripción:** Servicio administrado de bases de datos relacionales que reduce la carga operativa de la administración, escalabilidad y mantenimiento.  
+
+✅ **Características:**  
+- Soporte para **varios motores** de bases de datos.  
+- **Automatización de backups, parches y monitoreo**.  
+- Escalabilidad automática con **Read Replicas** y **Multi-AZ** para alta disponibilidad.  
+- Seguridad con cifrado en tránsito y en reposo.  
+
+✅ **Motores compatibles:**  
+- **Amazon Aurora (compatible con MySQL y PostgreSQL)**
+- **MySQL**
+- **PostgreSQL**
+- **MariaDB**
+- **SQL Server**
+- **Oracle**  
+
+📌 **Casos de uso:**  
+🔹 Aplicaciones web y móviles con alta demanda.  
+🔹 Sistemas empresariales con bases de datos SQL.
+
+### **🔹 2️⃣ Amazon Aurora**  
+📌 **Descripción:** Un motor de base de datos relacional diseñado por AWS, compatible con **MySQL y PostgreSQL**, con alto rendimiento y escalabilidad automática.  
+
+✅ **Características clave:**  
+- **Hasta 5 veces más rápido** que MySQL y 3 veces más rápido que PostgreSQL.  
+- **Almacenamiento escalable automáticamente** hasta 128 TB.  
+- **Alta disponibilidad** con replicación automática en múltiples zonas.  
+- **Aurora Serverless** permite pagar solo por lo que usas.  
+
+📌 **Casos de uso:**  
+🔹 Aplicaciones que requieren **alto rendimiento y disponibilidad**.  
+🔹 Startups y empresas que quieren **pagar solo por consumo**.
+
+### **🔹 3️⃣ Amazon Redshift**  
+📌 **Descripción:** Base de datos relacional optimizada para **almacenamiento de datos (Data Warehousing)** y análisis de grandes volúmenes de datos.  
+
+✅ **Características:**  
+- Diseñado para **consultas analíticas en grandes conjuntos de datos**.  
+- **Columnar Storage**, optimizado para cargas de trabajo de BI y análisis.  
+- Compatible con **SQL estándar** y herramientas de análisis.  
+- **Integración con S3, Glue, QuickSight y otros servicios de AWS**.  
+
+📌 **Casos de uso:**  
+🔹 Análisis de datos a gran escala.  
+🔹 Data Warehousing para Business Intelligence.
+
+### **📌 Comparación rápida**  
+
+| **Servicio** | **Propósito principal** | **Casos de uso** |
+|-------------|-----------------|---------------|
+| **Amazon RDS** | Base de datos relacional administrada | Aplicaciones web y empresariales |
+| **Amazon Aurora** | Base de datos relacional optimizada para alto rendimiento | Aplicaciones de alta demanda |
+| **Amazon Redshift** | Almacenamiento de datos para análisis | Data Warehousing y BI |
+
+### **🎯 Conclusión**  
+✔ **Si necesitas una base de datos administrada con soporte para MySQL, PostgreSQL, SQL Server, etc., usa Amazon RDS.**  
+✔ **Si buscas un alto rendimiento con escalabilidad automática, usa Amazon Aurora.**  
+✔ **Si necesitas almacenar y analizar grandes volúmenes de datos, usa Amazon Redshift.**
+
+### Resumen
+
+### ¿Cómo comenzar con bases de datos relacionales en AWS?
+
+Explorar bases de datos en AWS RDS es una ruta emocionante para aquellos que buscan mejorar sus habilidades en el manejo de datos. AWS proporciona una consola robusta con múltiples opciones que facilitan tanto la gestión como la creación de bases de datos robustas y escalables. Sumérgete en el mundo de las bases de datos relacionales con AWS y descubre cómo tomar el control total de tus datos con un detallado grado de personalización.
+
+### ¿Qué encontramos en la consola de AWS RDS?
+
+Al ingresar a la consola de AWS, puedes buscar "RDS" en la parte superior izquierda para acceder a las bases de datos relacionales. Al abrir el servicio, se despliega un menú rico en opciones que facilitan el aprendizaje y la manipulación de las bases de datos relacionales.
+
+- **Crear base de datos**: Al hacer clic en "Create Database", puedes seleccionar tanto el método de creación como el motor de base de datos que desees utilizar, como los motores estándar y opciones avanzadas como IBM DB2.
+- **Editor de consultas**: Permite realizar ediciones de consultas directamente en la consola de AWS.
+
+### ¿Cómo gestionar el rendimiento y seguridad?
+
+AWS ofrece herramientas avanzadas para el monitoreo y copias de seguridad detalladas de tus bases de datos, asegurando que puedas mantener un control preciso sobre su rendimiento y guardado.
+
+- **Performance Insights**: Esta herramienta monitorea detalladamente tu base de datos, proporcionando una visibilidad milimétrica del comportamiento en tiempo real. Recuerda considerar el costo adicional que esto pueda representar.
+- **Snapshots**: Puedes crear snapshots manuales y del sistema, compartirlos y exportarlos a Amazon S3 para asegurar tus datos.
+
+### ¿Qué otras características de AWS son útiles?
+
+AWS cuenta con características avanzadas que facilitan la administración y el despliegue eficaz de tus bases de datos, ofreciendo personalización y optimización precisas.
+
+- **Reservation de instancias**: Comprando una base de datos por un año puedes ahorrar costos considerablemente.
+- **Parameter Group**: Esencial para personalizar cada aspecto de tu base de datos, permitiéndote cambiar configuraciones del motor con gran detalle para obtener flexibilidad máxima.
+
+### ¿Cómo crear y conectar tu primera base de datos relacional?
+
+La creación de una base de datos relacional no es solo un clic simple, es un proceso que te enseña sobre las funcionalidades y características específicas involucradas. A través de guiados paso a paso, aprenderás a crear, configurar y conectar a tu nueva base de datos en AWS, lo que te permitirá dominar todo el proceso. No te olvides de explorar el Panel de Control donde visualizarás la cantidad de instancias, clústeres y eventos activos.
+
+Nunca había sido tan accesible para todos abrir las puertas al potencial de las bases de datos relacionales en la nube. Atrévete a descubrirlo y únete a millones de profesionales que ya están sacando el máximo provecho de esta tecnología. ¡Continúa aprendiendo y abre el camino hacia un futuro lleno de posibilidades en la gestión de datos!
+
+## Tipos de bases de datos en AWS
+
+AWS ofrece una amplia variedad de bases de datos diseñadas para diferentes tipos de aplicaciones y cargas de trabajo. Se pueden clasificar en **relacionales**, **NoSQL**, **data warehouses**, **bases de datos en memoria**, **bases de datos gráficas** y más.
+
+### **🔹 1️⃣ Bases de Datos Relacionales (SQL)**  
+📌 **Descripción:** Usan un modelo basado en tablas con relaciones entre datos. Son ideales para aplicaciones empresariales y transacciones estructuradas.  
+
+✅ **Opciones en AWS:**  
+- **Amazon RDS** → Servicio administrado con soporte para MySQL, PostgreSQL, MariaDB, SQL Server y Oracle.  
+- **Amazon Aurora** → Base de datos escalable compatible con MySQL y PostgreSQL.  
+- **Amazon Redshift** → Base de datos analítica para Data Warehousing.  
+
+📌 **Casos de uso:**  
+🔹 Aplicaciones empresariales, e-commerce, CRM, ERP, BI.
+
+### **🔹 2️⃣ Bases de Datos NoSQL**  
+📌 **Descripción:** Diseñadas para manejar datos semi-estructurados o no estructurados, permitiendo escalabilidad horizontal.  
+
+✅ **Opciones en AWS:**  
+- **Amazon DynamoDB** → Base de datos NoSQL completamente administrada, altamente escalable y rápida.  
+- **Amazon ElastiCache** → Base de datos en memoria compatible con Redis y Memcached.  
+- **Amazon DocumentDB** → Base de datos NoSQL optimizada para documentos JSON, compatible con MongoDB.  
+- **Amazon Neptune** → Base de datos gráfica para almacenar y consultar relaciones complejas.  
+
+📌 **Casos de uso:**  
+🔹 Aplicaciones en tiempo real, IoT, gaming, análisis de redes sociales.
+
+### **🔹 3️⃣ Bases de Datos en Memoria**  
+📌 **Descripción:** Optimizadas para baja latencia y alto rendimiento. Se utilizan principalmente para almacenamiento en caché y procesamiento en tiempo real.  
+
+✅ **Opciones en AWS:**  
+- **Amazon ElastiCache** → Compatible con Redis y Memcached para caching de alta velocidad.  
+- **Amazon MemoryDB for Redis** → Base de datos en memoria con persistencia de datos.  
+
+📌 **Casos de uso:**  
+🔹 Caching de bases de datos, sesiones de usuario, gaming, mensajería en tiempo real.
+
+### **🔹 4️⃣ Bases de Datos para Almacén de Datos (Data Warehousing)**  
+📌 **Descripción:** Diseñadas para almacenar y analizar grandes volúmenes de datos estructurados.  
+
+✅ **Opción en AWS:**  
+- **Amazon Redshift** → Optimizado para consultas analíticas en grandes conjuntos de datos.  
+
+📌 **Casos de uso:**  
+🔹 Business Intelligence, análisis de datos, Big Data.
+
+### **🔹 5️⃣ Bases de Datos Gráficas**  
+📌 **Descripción:** Diseñadas para manejar y analizar relaciones complejas entre datos.  
+
+✅ **Opción en AWS:**  
+- **Amazon Neptune** → Base de datos gráfica compatible con Gremlin y SPARQL.  
+
+📌 **Casos de uso:**  
+🔹 Redes sociales, detección de fraudes, recomendaciones personalizadas.
+
+### **🔹 6️⃣ Bases de Datos Especializadas**  
+📌 **Descripción:** AWS ofrece bases de datos optimizadas para casos de uso específicos.  
+
+✅ **Opciones en AWS:**  
+- **Amazon Timestream** → Base de datos para series de tiempo, ideal para IoT y métricas.  
+- **Amazon QLDB (Quantum Ledger Database)** → Base de datos inmutable y transparente para auditorías y trazabilidad.  
+
+📌 **Casos de uso:**  
+🔹 IoT, monitoreo de sensores, registros financieros, auditorías.
+
+### **📌 Comparación rápida**  
+
+| **Tipo de Base de Datos** | **Servicio AWS** | **Casos de Uso** |
+|----------------|----------------|------------------|
+| **Relacional (SQL)** | Amazon RDS, Aurora, Redshift | Aplicaciones empresariales, Data Warehousing |
+| **NoSQL** | DynamoDB, DocumentDB, Neptune | Aplicaciones web, IoT, redes sociales |
+| **En Memoria** | ElastiCache, MemoryDB | Caching, gaming, procesamiento en tiempo real |
+| **Data Warehousing** | Redshift | BI, análisis de grandes volúmenes de datos |
+| **Gráficas** | Neptune | Redes sociales, detección de fraudes |
+| **Especializadas** | Timestream, QLDB | IoT, auditorías, métricas de sistemas |
+
+### **🎯 Conclusión**  
+✔ **Si necesitas una base de datos SQL administrada**, usa **Amazon RDS o Aurora**.  
+✔ **Si buscas escalabilidad y alto rendimiento sin SQL**, usa **DynamoDB o DocumentDB**.  
+✔ **Si quieres almacenar y analizar grandes volúmenes de datos, usa Redshift**.  
+✔ **Si necesitas procesamiento en tiempo real, usa ElastiCache o MemoryDB**.  
+✔ **Si trabajas con datos altamente conectados, usa Neptune**.  
+✔ **Para registros de auditoría e IoT, usa QLDB o Timestream**.
+
+### Resumen
+
+### ¿Cómo se organiza el almacenamiento en la nube con bases de datos en AWS?
+
+El mundo de AWS ofrece un abanico de bases de datos que se ajustan a muy diversos casos de uso, cada una con sus propias funcionalidades y restricciones. Al explorar las opciones de almacenamiento como EFS, EBS, FSx, y S3, surgen limitaciones que convierten a las bases de datos en la solución ideal para ciertas necesidades. Amazon nos brinda bases de datos diseñadas específicamente para distintos propósitos, dependiendo del tipo de información, tamaño y manera en que necesitamos consumirla.
+
+AWS estructura sus bases de datos en dos grandes categorías: relacionales y no relacionales (o no-SQL), cada una con características únicas y soluciones específicas para diferentes retos.
+
+### ¿Qué son las bases de datos relacionales en AWS?
+
+Las bases de datos relacionales en AWS se asemejan a hojas de cálculo, con datos organizados en tablas interrelacionadas. Esta estructura permite una fácil utilización del lenguaje SQL para consultar y manejar grandes volúmenes de información. Las opciones de bases de datos relacionales ofrecidas por AWS incluyen:
+
+- **Amazon Aurora**: Favorita entre muchos, desarrollada por AWS, es compatible con PostgreSQL y MySQL, ofreciendo un rendimiento elevado. Posee múltiples características que aportan a proyectos personales un alto valor.
+- **MySQL**: Un motor de base de datos nativo y confiable.
+- **SQL Server**: Requiere considerar temas de licencia, ya que los costos dependen de su edición (estándar, enterprise, etc.).
+- **Oracle**: Al igual que SQL Server, implica considerar las licencias necesarias.
+- **MariaDB**: Totalmente compatible con MySQL, se presenta como una excelente opción.
+- **PostgreSQL**: Amplia y robusta, ofrece poderosas características para diversos proyectos.
+
+Dentro de las bases de datos relacionales destaca Amazon Aurora, que además ofrece opciones de base de datos sin servidor (serverless), y Amazon RDS, que agrupa los motores mencionados anteriormente para una gestión más sencilla.
+
+### ¿Cuándo es mejor optar por bases de datos no relacionales?
+
+Las bases de datos no relacionales o no-SQL proporcionan flexibilidad en la gestión de datos, no exigiendo un esquema específico. Esto resulta útil cuando se manejan grandes volúmenes de datos sin necesidad de establecer relaciones estrictas entre ellos. En este ecosistema se incluyen:
+
+- **Amazon Keyspaces**: Similar a Cassandra, permite trabajar con grandes volúmenes de datos distribuidos.
+- **Database Migration Service**: Facilita la migración de datos de sistemas locales a la nube, inclusive cambiando el motor de base de datos en proceso.
+- **Amazon Elastic Cache**: Enfocada en guardar datos en memoria para un acceso rápido.
+- **DocumentDB**: Basada en documentos, similar a MongoDB.
+- **DynamoDB**: Una potente base de datos clave-valor, completamente gestionada, que garantiza flexibilidad.
+- **Amazon Neptune**: Focalizada en el almacenamiento de grafos.
+- **Amazon Memory for Redis**: Ofrece persistencia para datos en caché.
+- **Amazon Timestream**: Diseñada para el almacenamiento de series temporales, ideal para aplicaciones de monitoreo en tiempo real.
+
+### ¿Por qué es crucial elegir la base de datos correcta en AWS?
+
+La elección de la base de datos adecuada es fundamental para el éxito de un proyecto en la nube. Un mal criterio de selección podría llevar a una arquitectura fallida, con pérdida de datos valiosos y problemas de escalabilidad que podrían resultar en grandes pérdidas económicas. Algunos puntos clave a considerar son:
+
+- Definir claramente el caso de uso y los requisitos específicos del proyecto.
+- Conocer las características, costos y limitaciones de cada motor de base de datos.
+- Evaluar la capacidad de escalabilidad y rendimiento necesario.
+
+AWS ofrece un ecosistema enriquecido por más de una decena de bases de datos especializadas, y entender cómo funcionan es un paso vital hacia la realización de aplicaciones de alto rendimiento. Siempre es esencial estar informado y continuar aprendiendo sobre cada tipo de base de datos para poder tomar decisiones informadas que maximicen el valor de las inversiones tecnológicas.
+
+## Laboratorio: Crear de una base de datos relacional en AWS RDS 
+
+En este laboratorio, aprenderás a crear una **base de datos relacional** en **Amazon RDS** paso a paso.
+
+### **📌 1️⃣ Acceder a la Consola de AWS**  
+1. Inicia sesión en [AWS Management Console](https://aws.amazon.com/console/).  
+2. En la barra de búsqueda, escribe **RDS** y selecciona **Amazon RDS**.
+
+### **📌 2️⃣ Crear una nueva instancia de RDS**  
+1. En la consola de Amazon RDS, haz clic en **"Crear base de datos"**.  
+2. En la sección **"Método de creación"**, selecciona **"Estándar"**.
+
+### **📌 3️⃣ Configuración del motor de base de datos**  
+1. En **"Motor de base de datos"**, selecciona el motor que deseas usar, por ejemplo:  
+   - **MySQL**  
+   - **PostgreSQL**  
+   - **MariaDB**  
+   - **SQL Server**  
+   - **Oracle**  
+   - **Amazon Aurora**  
+2. Elige la versión compatible según los requisitos de tu aplicación.
+
+### **📌 4️⃣ Configuración de la instancia**  
+1. En **"Identificador de la instancia"**, escribe un nombre para la base de datos (ejemplo: `mi-base-datos`).  
+2. En **"Credenciales del usuario maestro"**, define:  
+   - **Nombre de usuario** (ejemplo: `admin`)  
+   - **Contraseña** (guárdala en un lugar seguro).
+
+### **📌 5️⃣ Configuración de almacenamiento**  
+1. Define el **tipo de almacenamiento** (SSD recomendado).  
+2. Especifica el **tamaño inicial en GB** (Ejemplo: 20 GB).  
+3. Activa la opción **"Escalado automático del almacenamiento"** si deseas que aumente según sea necesario. 
+
+### **📌 6️⃣ Configuración de conectividad**  
+1. En **"Conectividad"**, elige:  
+   - **VPC**: Usa la predeterminada o crea una nueva.  
+   - **Accesibilidad pública**: **Sí** (si deseas conectarte desde fuera de AWS) o **No** (si solo se usará dentro de AWS).  
+   - **Grupo de seguridad**: Permite conexiones desde tu IP o desde otras instancias dentro de AWS.  
+   - **Puerto**: El puerto predeterminado de MySQL es `3306`, de PostgreSQL es `5432`, etc.
+
+### **📌 7️⃣ Creación y monitoreo**  
+1. Haz clic en **"Crear base de datos"**.  
+2. Espera unos minutos mientras AWS configura la instancia.  
+3. Una vez creada, ve a **"Bases de datos"** en la consola de RDS y verifica que el estado sea **"Disponible"**.
+
+### **📌 8️⃣ Conectar a la base de datos**  
+### **Desde MySQL Workbench (si elegiste MySQL)**  
+1. Abre **MySQL Workbench**.  
+2. Crea una nueva conexión:  
+   - **Hostname**: Copia el **Endpoint** de la base de datos desde la consola de AWS.  
+   - **Usuario**: `admin` (o el que configuraste).  
+   - **Contraseña**: La que definiste al crear la base de datos.  
+   - **Puerto**: 3306 (o el que configuraste).  
+3. Guarda y **conéctate**.  
+
+### **Desde una instancia EC2 en AWS**  
+Si la base de datos **NO es pública**, conéctate a una **instancia EC2** y usa este comando en Linux:  
+```bash
+mysql -h <endpoint-rds> -u admin -p
+```
+Ingresa la contraseña y ya estarás dentro de la base de datos.
+
+### **🎯 Conclusión**  
+✔ Ahora tienes una base de datos **RDS configurada y lista para usar**.  
+✔ Puedes conectarte desde **una aplicación, una instancia EC2 o una herramienta externa**.  
+✔ **Recuerda eliminar la instancia si no la necesitas** para evitar costos.
+
+### Resumen
+
+### ¿Cómo crear una base de datos relacional en AWS paso a paso?
+
+Crear una base de datos relacional en AWS es un proceso esencial para muchas aplicaciones modernas. Con AWS RDS, puedes seleccionar entre diferentes motores de base de datos, configurar requisitos de seguridad y ajustar el rendimiento según tus necesidades. Vamos a ver cómo configurarlo paso a paso.
+
+### ¿Por dónde empezamos en la consola de AWS?
+
+1. **Accede a AWS RDS**: Inicia sesión en la consola de AWS. En la barra de búsqueda en la parte superior izquierda, escribe "RDS" y selecciona el servicio de bases de datos relacionales.
+
+3. **Crear base de datos**: Haz clic en el botón naranja "Create Database" para comenzar el proceso de creación.
+
+### ¿Qué opciones de motores de base de datos ofrece AWS?
+
+AWS RDS ofrece una variedad de motores de bases de datos, como:
+
+- Aurora
+- PostgreSQL
+- MySQL
+- MariaDB
+- Oracle
+
+Para este ejemplo, seleccionaremos MySQL.
+
+### ¿Cómo configurar las características principales?
+
+- **Templates**: AWS RDS proporciona plantillas para producción, desarrollo, pruebas y capa gratuita. Para este caso, seleccionaremos la opción de producción para explorar todas las características.
+
+- **Availability and Durability:** Selecciona la opción de "singleDB instance" para disponer de una única base de datos para pruebas. Las opciones de clúster múltiple y instancias en múltiples zonas de disponibilidad ofrecen más resiliencia, pero a un mayor costo.
+
+### ¿Cómo gestionar las credenciales de la base de datos?
+
+- **Credenciales**: El nombre de usuario maestro por defecto es "admin". Puedes optar por gestionar las credenciales utilizando AWS Secrets Manager, una opción más segura, ideal para producción. Para el laboratorio, optaremos por "self-managed", donde tú defines la contraseña de la base de datos.
+
+### ¿Cómo configurar los recursos y almacenamiento de la base de datos?
+
+- **Instance configuration**: Puedes seleccionar entre varios tamaños de instancias. Para una opción básica y económica selecciona "T3 Micro".
+
+- **Almacenamiento**: Elige GP3 para almacenamiento de propósito general con un tamaño inicial de 20 GB. Activa "Storage Autoscaling" para ajustarse dinámicamente a necesidades de hasta 1000 GB.
+
+### ¿Qué configuraciones adicionales son necesarias?
+
+- **Conectividad**: Selecciona "Yes" en "Public Access" para permitir las conexiones externas a la base de datos. Configura un nuevo grupo de seguridad para gestionar los puertos y accesos.
+
+- **Autenticación**: Mantén la autenticación por contraseña habilitada si has configurado un usuario y contraseña anteriormente.
+
+- **Monitoreo y copias de seguridad**: Deshabilita el "Enhanced Monitoring" si deseas evitar costos adicionales. Configura el "Retention Period" con un valor estándar de 7 días, aunque puede extenderse a 35 días para producción.
+
+- **Protección contra eliminación**: Habilita "Deletion Protection" para evitar borrados accidentales de la base de datos.
+
+Finalmente, el sistema te proporcionará una estimación del costo mensual, y al dar clic en "Create Database", comenzará la creación. Una vez creada, estarás listo para conectar y ejecutar consultas en tu nueva base de datos.
+
+¡Continúa aprendiendo y explorando nuevas configuraciones para alcanzar un dominio completo de RDS en AWS!
+
+## Laboratorio: Eliminación de una base de datos MySQL en AWS RDS
+
+Si ya no necesitas tu base de datos en **Amazon RDS**, es recomendable eliminarla para evitar costos innecesarios. Sigue estos pasos para eliminar de forma segura tu instancia de **MySQL en AWS RDS**.
+
+### **📌 1️⃣ Acceder a la Consola de AWS**  
+1. Inicia sesión en [AWS Management Console](https://aws.amazon.com/console/).  
+2. En la barra de búsqueda, escribe **RDS** y selecciona **Amazon RDS**.
+
+### **📌 2️⃣ Seleccionar la base de datos a eliminar**  
+1. En el panel de Amazon RDS, haz clic en **"Bases de datos"** en el menú lateral izquierdo.  
+2. Busca la base de datos MySQL que deseas eliminar.  
+3. Selecciónala haciendo clic en el **checkbox** a la izquierda del nombre. 
+
+### **📌 3️⃣ Eliminar la instancia de RDS**  
+1. Con la base de datos seleccionada, haz clic en el botón **"Acciones"** en la parte superior.  
+2. Selecciona **"Eliminar"**.  
+3. AWS te pedirá confirmar la eliminación.
+
+### **📌 4️⃣ Opciones antes de eliminar**  
+Antes de eliminar, AWS te dará algunas opciones:  
+✅ **Hacer un snapshot final:**  
+   - Se recomienda si quieres conservar una copia antes de eliminar la base de datos.  
+   - Si no la necesitas, selecciona **"No crear una instantánea final"**.  
+
+✅ **Forzar la eliminación de backups automatizados:**  
+   - Puedes eliminarlos o dejarlos activos hasta que expiren.  
+
+✅ **Confirmar la eliminación:**  
+   - Escribe **delete me** en el campo de confirmación.  
+
+4. Finalmente, haz clic en **"Eliminar base de datos"**.
+
+### **📌 5️⃣ Verificar la eliminación**  
+1. La base de datos cambiará su estado a **"Eliminando"**.  
+2. Espera unos minutos hasta que desaparezca de la lista.  
+
+### **⚠️ Consideraciones Importantes**  
+✔ **No se puede recuperar una base de datos eliminada** (a menos que hayas creado un snapshot antes de eliminarla).  
+✔ **Verifica que no haya aplicaciones conectadas** a la base de datos antes de eliminarla.  
+✔ **Si la base de datos forma parte de una arquitectura más grande (EC2, Lambda, etc.), actualiza las configuraciones** para evitar errores de conexión.
+
+### **🎯 Conclusión**  
+✔ Ahora has eliminado correctamente tu instancia de MySQL en **AWS RDS**.  
+✔ Ya no generarás costos por almacenamiento ni uso.  
+✔ Puedes crear una nueva instancia en el futuro si la necesitas.  
+
+### Resumen
+
+### ¿Cómo conectarse a una base de datos MySQL en AWS?
+
+La conexión a bases de datos MySQL en AWS se ha vuelto una habilidad esencial para desarrolladores y administradores de sistemas. Conocer cómo hacerlo te abrirá puertas al mundo de las bases de datos relacionales y sus aplicaciones en diversas industrias. A continuación, te guiaré paso a paso para lograrlo de manera efectiva y segura.
+
+### ¿Cómo preparar tu entorno para conectar la base de datos?
+
+Primero, asegúrate de tener una aplicación confiable que facilite la conexión a bases de datos MySQL. En este tutorial utilizaremos DBeaver, una herramienta de software libre que te permitirá interactuar con tu base de datos de manera gráfica y sencilla.
+
+1. **Descarga DBeaver**: Necesitas descargar e instalar DBeaver en tu computadora. Te proporcionaremos el enlace para que obtengas la versión correcta del software.
+
+2. **Configura las reglas de seguridad en AWS**:
+
+- Ve a la consola de AWS y localiza tu base de datos.
+- Dirígete a la sección de Security y selecciona el **Security Group**.
+- Modifica las reglas de entrada para permitir conexiones desde tu dirección IP actual, seleccionando **MySQL Aurora** y guardando los cambios.
+
+### ¿Cómo realizar la conexión desde DBeaver?
+
+Con el entorno listo, es momento de configurar la conexión a la base de datos en DBeaver:
+
+1. Accede al Endpoint en AWS:
+
+ - Desde la opción de RDS en AWS, copia el endpoint de tu base de datos.
+
+2. **Configura la conexión en DBeaver**:
+
+ - Abre DBeaver y selecciona crear una nueva conexión.
+ - Elige MySQL y en la opción de Server Host, pega el endpoint que copiaste previamente.
+ - Introduce tus credenciales de usuario, usando "admin" como nombre de usuario y la contraseña que configuraste para tu base de datos.
+ - Haz clic en Finalizar para completar la conexión.
+
+3. **Interacción con la base de datos**:
+
+ - Una vez conectado, podrás ver tus bases de datos en el menú desplegable de DBeaver.
+ - Puedes crear nuevas bases de datos, usuarios y tablas desde el asistente gráfico.
+
+### ¿Cómo borrar una base de datos en AWS?
+
+Es importante saber cómo eliminar una base de datos para evitar cargos innecesarios en tus facturas de AWS. A continuación, te explico cómo hacerlo:
+
+1. **Desactiva la protección contra eliminación en AWS**:
+
+ - En la consola de AWS RDS, selecciona tu base de datos, ve a Modify, y desactiva la protección de eliminación.
+ - Aplica los cambios inmediatamente seleccionando Modify the instance.
+ 
+2. **Eliminar la base de datos**:
+
+ - Navega a DB Instances, selecciona tu base de datos, y elige Actions > Delete.
+ - Desmarca la opción de crear snapshots finales y confirma con Delete Me.
+ - Haz clic en Delete para concluir el proceso.
+
+### ¿Por qué es útil aprender a manejar bases de datos relacionales?
+
+Las bases de datos relacionales son ampliamente utilizadas en diversas aplicaciones. Aquí algunos ejemplos:
+
+ - **CRM y ERP**: Herramientas clave para la gestión de relaciones con clientes y recursos de la empresa.
+ - **Aplicaciones corporativas**: Sistemas que manejan grandes volúmenes de datos, como tablas de empleados y proyectos.
+ - **Sistemas contables**: La base de toda transacción financiera de una empresa.
+
+Con este conocimiento, estarás en una mejor posición para entender cómo estas herramientas son implementadas en el mundo real y cómo pueden mejorar la eficiencia de las operaciones empresariales. Te animo a seguir explorando más sobre las bases de datos relacionales en AWS y su impacto en la industria.
+
+**Lecturas recomendadas**
+
+[Descargar DBeaver](https://dbeaver.io/download/)
+
+## Introducción a DynamoDB
+
+### **¿Qué es Amazon DynamoDB?**  
+Amazon **DynamoDB** es un servicio de **base de datos NoSQL** completamente administrado por AWS. Se diseñó para ofrecer **alta disponibilidad, escalabilidad y rendimiento** sin necesidad de gestionar infraestructura.  
+
+✅ **Características clave:**  
+- **NoSQL**: Almacena datos en **documentos** o **clave-valor**.  
+- **Bajo tiempo de respuesta**: Responde en **milisegundos** incluso con millones de solicitudes.  
+- **Escalabilidad automática**: Se adapta a cargas de trabajo grandes sin intervención manual.  
+- **Alta disponibilidad**: Replicación automática en múltiples zonas de AWS.  
+- **Seguro y cifrado**: Integración con IAM para permisos y cifrado en reposo.
+
+### **📌 Casos de uso**
+- 🚀 **Aplicaciones web y móviles** que necesitan respuestas rápidas.  
+- 🎮 **Juegos en línea** con almacenamiento de sesiones y puntuaciones.  
+- 📊 **IoT y análisis en tiempo real**.  
+- 🛒 **Carritos de compras y catálogos de productos**.  
+- 📩 **Mensajería instantánea** y sistemas de notificación.
+
+### **📂 Modelo de Datos en DynamoDB**  
+A diferencia de bases de datos relacionales, **DynamoDB usa tablas sin esquemas rígidos**.  
+
+✔ **Conceptos clave:**  
+- **Tabla**: Colección de datos organizados en **ítems**.  
+- **Ítem**: Similar a una fila en SQL, con **atributos dinámicos**.  
+- **Atributo**: Similar a una columna en SQL, sin un esquema fijo.  
+- **Clave primaria**: Identificador único de cada ítem. Puede ser:  
+  - **Clave de partición (Partition Key)**: Un solo atributo único.  
+  - **Clave compuesta (Partition Key + Sort Key)**: Dos atributos (permite ordenar datos).  
+
+✅ **Ejemplo de una tabla "Usuarios" en DynamoDB**:  
+
+| UserID (Partition Key) | Nombre | Edad | País  |  
+|------------------------|--------|------|-------|  
+| 101                    | Juan   | 25   | 🇲🇽 México  |  
+| 102                    | Ana    | 30   | 🇨🇴 Colombia |  
+| 103                    | Luis   | 28   | 🇦🇷 Argentina |
+
+### **⚡ Operaciones Básicas en DynamoDB**
+DynamoDB permite ejecutar **operaciones CRUD** (Create, Read, Update, Delete):  
+
+🔹 **Insertar un ítem (PutItem)**  
+```python
+import boto3
+
+dynamodb = boto3.resource('dynamodb')
+tabla = dynamodb.Table('Usuarios')
+
+tabla.put_item(
+    Item={
+        'UserID': '104',
+        'Nombre': 'Carlos',
+        'Edad': 35,
+        'País': 'España'
+    }
+)
+print("Usuario agregado correctamente")
+```
+
+🔹 **Consultar un ítem (GetItem)**  
+```python
+response = tabla.get_item(Key={'UserID': '104'})
+print(response['Item'])
+```
+
+🔹 **Eliminar un ítem (DeleteItem)**  
+```python
+tabla.delete_item(Key={'UserID': '104'})
+```
+
+### **🛠️ Integración con Otros Servicios de AWS**  
+- **AWS Lambda**: Para ejecutar funciones sin servidores cuando los datos cambian.  
+- **Amazon API Gateway**: Para exponer DynamoDB como una API.  
+- **Amazon S3**: Para almacenar archivos relacionados con los datos.  
+- **Amazon CloudWatch**: Para monitoreo y métricas.  
+
+### **🎯 Conclusión**  
+✔ **DynamoDB es ideal para aplicaciones que requieren alta disponibilidad y rendimiento.**  
+✔ **No requiere administración de infraestructura, ya que AWS maneja la escalabilidad y el rendimiento.**  
+✔ **Es perfecto para cargas de trabajo variables y datos no estructurados.**  
+
+### Resumen
+
+### ¿Por qué elegir DynamoDB para tus aplicaciones web?
+
+Elegir la base de datos adecuada es crucial para el éxito de cualquier aplicación, ya sea un e-commerce que necesita almacenar las preferencias de los clientes o un juego en línea que requiere guardar posiciones y resultados de jugadores. DynamoDB, una base de datos no relacional de AWS, sobresale por su flexibilidad, escalabilidad, y el conjunto de características que la convierten en la opción predilecta en el ámbito de bases de datos administradas.
+
+### ¿Cuáles son las características más destacadas de DynamoDB?
+
+DynamoDB es notable por varias razones fundamentales. Junto con su gestión completamente administrada, donde solo nos encargamos de la configuración y almacenamiento de datos, ofrece:
+
+- **Replicación regional**: Tu información está replicada en tres zonas de disponibilidad diferentes, asegurando la salvaguarda de tus datos.
+- **Escalabilidad automática**: Es ideal para aplicaciones que crecen rápidamente, permitiendo atender millones de solicitudes por segundo sin problemas.
+- **Rendimiento constante y rápido**: Asegura respuestas rápidas y confiables para tus aplicaciones.
+- Integraciones con Identity and Access Management: Gestiones precisas y seguras de permisos sobre las tablas.
+
+Además, su flexibilidad de costos permite adaptarse a diferentes cargas de lectura y escritura, así como al tamaño de la información almacenada.
+
+### ¿Cómo optimiza DynamoDB el almacenamiento de datos?
+
+DynamoDB emplea un esquema flexible, lo que significa que no estás obligado a tener todos los atributos para cada elemento. Este tipo de base de datos utiliza:
+
+- **Ítems**: Cada fila en la tabla es un ítem, y puede tener diferentes atributos según se requiera.
+- **Particiones**: Organización interna de la información a través de operaciones hash, permitiendo la identificación única de cada ítem con un ID específico.
+
+### ¿Cómo maximiza DynamoDB la eficiencia de las consultas?
+
+DynamoDB ofrece índices que mejoran la eficiencia de búsqueda, permitiendo realizar consultas más específicas y rápidas:
+
+- **Local Secondary Index (LSI)**: Combinación de la llave de partición con un atributo diferente, como una dirección, para búsquedas más eficientes.
+- **Global Secondary Index (GSI)**: Atributos completamente diferentes de la llave de partición, como dirección y nombre. Se puede crear en cualquier momento, a diferencia del LSI que debe crearse al inicio.
+
+### ¿Qué es DynamoDB Accelerator (DAX) y cuándo usarlo?
+
+Para aplicaciones que requieren tiempos de respuesta extremadamente rápidos, DynamoDB ofrece DAX, un clúster de caché completamente gestionado:
+
+- **Latencia ultrabaja**: Ofrece acceso en microsegundos, mejorando el rendimiento de una tabla hasta 10 veces.
+- **Alta disponibilidad y seguridad**: Garantizada por su diseño escalable y su integración directa con DynamoDB.
+
+DAX es ideal cuando es necesario un rendimiento por debajo de los milisegundos y solo se integra con DynamoDB, siendo necesario considerar su costo en función del tamaño y consumo de lectura.
+
+### ¿Por qué es DynamoDB esencial en AWS?
+
+DynamoDB no solo es crucial dentro del ecosistema de AWS debido a su capacidad de manejar estructuras llave-valor sin problemas de manejo operativo, sino que también es una herramienta sumamente flexible para cualquier aplicación. Su importancia y utilidad están reflejadas en la gran cantidad de funcionalidad que ofrece, haciendo que aprender y especializarse en DynamoDB abra un amplio abanico de posibilidades en el mundo de las bases de datos no relacionales.
+
+Con todo esto, se invita a seguir explorando más sobre DynamoDB, revisando documentación oficial y sumergirse en su potencial para abrir nuevas oportunidades y ampliar los conocimientos en este fascinante campo.
+
+**Lecturas recomendadas**
+
+[Documentación para profundizar en DynamoDB](https://docs.aws.amazon.com/dynamodb/)
+
+## Laboratorio: Crear una tabla en DynamoDB 
+
+Para almacenar datos en **DynamoDB**, primero debemos crear una **tabla**. A continuación, te explico cómo hacerlo desde la **Consola de AWS** y con **Python (Boto3)**.
+
+### **✅ Método 1: Desde la Consola de AWS**  
+
+### **1️⃣ Acceder a DynamoDB**
+1. Inicia sesión en [AWS Console](https://aws.amazon.com/console/).  
+2. En la barra de búsqueda, escribe **DynamoDB** y selecciona el servicio.  
+3. Haz clic en **Tablas → Crear tabla**. 
+
+### **2️⃣ Configurar la tabla**
+1. **Nombre de la tabla:** `Usuarios` (puedes elegir otro).  
+2. **Clave de partición (Partition Key):** `UserID` (Tipo: `String`).  
+3. *(Opcional)* Agregar una **Clave de ordenación (Sort Key)**, si necesitas ordenar los datos.  
+4. **Modo de capacidad:**  
+   - **Bajo demanda (On-Demand)**: Para tráfico variable.  
+   - **Provisionado**: Si deseas establecer lectura/escritura manualmente.
+
+### **3️⃣ Crear la tabla**
+1. Revisa la configuración y haz clic en **"Crear tabla"**.  
+2. Espera unos segundos hasta que el estado cambie a **"Activo"**.
+
+### **✅ Método 2: Usando Boto3 en Python**  
+Si prefieres crear la tabla desde código, puedes usar **Boto3**, la biblioteca de AWS para Python.  
+
+### **1️⃣ Instalar Boto3 (si no lo tienes)**
+```bash
+pip install boto3
+```
+
+### **2️⃣ Código para crear una tabla en DynamoDB**
+```python
+import boto3
+
+# Crear recurso DynamoDB
+dynamodb = boto3.resource('dynamodb', region_name='us-east-1')  # Ajusta la región
+
+# Crear la tabla
+tabla = dynamodb.create_table(
+    TableName='Usuarios',
+    KeySchema=[
+        {'AttributeName': 'UserID', 'KeyType': 'HASH'}  # Clave primaria
+    ],
+    AttributeDefinitions=[
+        {'AttributeName': 'UserID', 'AttributeType': 'S'}  # Tipo String
+    ],
+    ProvisionedThroughput={
+        'ReadCapacityUnits': 5,
+        'WriteCapacityUnits': 5
+    }
+)
+
+# Esperar a que la tabla esté lista
+tabla.wait_until_exists()
+
+print("✅ Tabla 'Usuarios' creada con éxito")
+```
+
+### **📌 Verificar la Creación de la Tabla**  
+Puedes comprobar que la tabla se creó:  
+- **Desde la consola de AWS**: En **DynamoDB → Tablas**.  
+- **Con Python**:
+  ```python
+  tablas = dynamodb.tables.all()
+  for tabla in tablas:
+      print(tabla.name)
+  ```
+
+### **🎯 Conclusión**  
+✔ Puedes crear una tabla en DynamoDB **desde la consola o con código en Python**.  
+✔ **DynamoDB es flexible**, permitiendo definir estructuras dinámicas de datos.  
+✔ **Listo para almacenar y consultar datos 🚀!**  
+
+### Resumen
+
+### ¿Cómo crear una tabla en DynamoDB?
+
+Para comenzar a manejar bases de datos no relacionales en AWS, uno de los primeros pasos es saber cómo crear una tabla en DynamoDB. Este proceso es sencillo y puede ser muy gratificante para aquellos que están incursionando en el uso de servicios de AWS. La capacidad de DynamoDB para manejar grandes cantidades de datos y su flexibilidad hacen de este servicio una herramienta poderosa para diversas aplicaciones.
+
+### ¿Cómo accedo al servicio y creo una tabla?
+
+1. **Acceder a AWS Console**: Dirígete a la consola de AWS y en la barra de búsqueda superior escribe "Dynamo". Selecciona el servicio DynamoDB del menú.
+
+3. **Crear la tabla**: Una vez en la interfaz de DynamoDB, haz clic en el botón "Create Table" para iniciar el proceso de creación de una tabla nueva.
+
+5. **Configurar detalles de la tabla**: Proporciona la información necesaria para crear la tabla:
+
+ - **Nombre de la tabla**: Ejemplo: `empleados`.
+ - **Partition Key**: Un identificador único, como `ID empleado`.
+ - Opcionalmente, puedes añadir una "Sort Key" para ordenar los datos; en este ejemplo, no se utilizará.
+
+### ¿Cómo personalizo las configuraciones de la tabla?
+
+Al personalizar la configuración, puedes ajustar parámetros importantes que impactarán el rendimiento y costo de tu tabla:
+
+1. **Class de Tabla**: Seleccione entre "Standard" o "Acceso Poco Frecuente". En este caso, dejamos la tabla como estándar.
+
+2. **Capacity Calculator**: Este calculador ayuda a prever cuántas unidades de lectura y escritura necesitarás por segundo. Al modificar estos valores, podrás observar el costo mensual estimado.
+
+3. **Capacity Mode**: Tienes dos modos principales para provisionar capacidad:
+
+ - Provisionado: Establece un mínimo y máximo de unidades de lectura/escritura que deseas provisionar.
+ - On-demand: Permite que la capacidad crezca automáticamente según la demanda, pero cuidado, podría ser más costoso.
+ 
+4. **Protección y seguridad**:
+
+ - **Cifrado**: Por defecto, utiliza la clave administrada por Amazon para cifrar los datos dentro de DynamoDB.
+ - **Protección contra eliminado accidental**: Habilita esta función para evitar la eliminación no intencionada de la tabla.
+ 
+### ¿Cómo agrego ítems a mi tabla?
+
+Una vez creada la tabla, es hora de añadirle elementos para empezar a utilizarla:
+
+1. **Agregar ítems**: En la consola de DynamoDB, selecciona tu tabla recién creada y haz clic en "Create Item".
+
+2. **Detalles del ítem**:
+
+ - Partition Key: Debe coincidir con el campo definido durante la creación de la tabla. Por ejemplo, 123456.
+ - Otros atributos: Crea nuevos atributos como nombre, edad, dirección, etc., según tus necesidades. Ejemplo:
+ 
+```bash
+ID empleado: 123456
+Nombre: Carlos Zambrano
+Edad: 20
+Dirección: Avenida Siempre Viva 123
+```
+
+3. Crear más ítems: Repite el proceso para agregar más ítems. Recuerda que los ítems no necesitan tener los mismos atributos, lo cual brinda flexibilidad.
+
+### ¿Qué otras opciones tengo en DynamoDB?
+
+DynamoDB ofrece una variedad de herramientas y configuraciones avanzadas que permiten una gestión robusta y eficiente:
+
+- **Índices secundarios**: Crea índices secundarios para mejorar la eficiencia de las consultas.
+- **Monitoreo**: Realiza un seguimiento del rendimiento de la tabla.
+- **Backups y Streams**: Implementa copias de seguridad y usa streamings para manejar el flujo continuo de datos.
+- **Policy de protección de recursos**: Establece quién puede acceder a ciertas funciones de tu base de datos.
+
+El potencial de DynamoDB es vasto, y es una herramienta excelente para manejar datos de manera ágil y en gran escala. Explorar sus capacidades te permitirá adaptarlo a una amplia gama de aplicaciones y necesidades empresariales.
+
+**Lecturas recomendadas**
+
+[Documentación para profundizar en DynamoDB](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/getting-started-step-1.html)
+
+## Seguridad en AWS
+
+AWS ofrece múltiples servicios y mejores prácticas para proteger **datos, aplicaciones e infraestructuras** en la nube.
+
+### **1️⃣ Principales Servicios de Seguridad en AWS**  
+
+### **✅ AWS Identity and Access Management (IAM)**
+📌 **Propósito**: Controla quién puede acceder a los recursos y qué pueden hacer.  
+🔹 Creación de **usuarios, grupos y roles** con permisos específicos.  
+🔹 Uso de **políticas basadas en JSON** para definir permisos.  
+🔹 Implementación de **autenticación multifactor (MFA)**.
+
+### **✅ AWS Key Management Service (KMS)**
+📌 **Propósito**: Administración de claves de cifrado para proteger datos.  
+🔹 Permite **cifrado automático** en servicios como S3, RDS y DynamoDB.  
+🔹 Soporta integración con **CloudTrail** para auditoría de accesos.
+
+### **✅ Amazon GuardDuty**
+📌 **Propósito**: **Detección de amenazas** con Machine Learning.  
+🔹 Analiza logs de **VPC Flow, DNS y CloudTrail**.  
+🔹 Identifica accesos sospechosos o actividad maliciosa.
+
+### **✅ AWS WAF (Web Application Firewall)**
+📌 **Propósito**: Protección contra ataques web.  
+🔹 Bloquea **ataques DDoS, inyección SQL y XSS**.  
+🔹 Se integra con **CloudFront, ALB y API Gateway**.
+
+### **✅ AWS Shield**
+📌 **Propósito**: Protección contra ataques **DDoS**.  
+🔹 AWS Shield **Standard**: Protección automática y gratuita.  
+🔹 AWS Shield **Advanced**: Protección mejorada con monitoreo en tiempo real.
+
+### **✅ AWS Security Hub**
+📌 **Propósito**: Centraliza la **seguridad y cumplimiento** en AWS.  
+🔹 Consolida alertas de **GuardDuty, IAM Access Analyzer y AWS Inspector**.  
+🔹 Permite evaluar configuraciones con **AWS Foundational Security Best Practices**.
+
+### **✅ AWS CloudTrail**
+📌 **Propósito**: Registra **todas las acciones** en la cuenta de AWS.  
+🔹 Monitorea cambios en configuraciones y accesos no autorizados.  
+🔹 Integra con **Amazon S3 y CloudWatch** para auditorías.
+
+### **✅ Amazon Inspector**
+📌 **Propósito**: Análisis de **vulnerabilidades** en instancias EC2 y contenedores.  
+🔹 Escanea configuraciones y sugiere mejoras de seguridad.
+
+### **2️⃣ Buenas Prácticas de Seguridad en AWS**  
+✔ **Usar IAM con principio de menor privilegio** (solo permisos necesarios).  
+✔ **Habilitar MFA** en usuarios root y cuentas críticas.  
+✔ **Cifrar datos en tránsito y en reposo** (TLS, KMS, S3 Encryption).  
+✔ **Activar AWS GuardDuty y Security Hub** para monitoreo de amenazas.  
+✔ **Configurar registros en CloudTrail y Amazon S3** para auditoría.  
+✔ **Habilitar AWS WAF y AWS Shield** para proteger aplicaciones web.
+
+### Resumen
+
+### ¿Por qué es crucial la seguridad en AWS?
+
+Imagina por un momento que tu aplicación en la nube de AWS es como una casa. La seguridad es como la puerta y la cerradura que evitan que individuos indeseados tengan acceso a tu hogar. Similarmente, en tus aplicaciones y datos en la nube, la seguridad es esencial para proteger lo más importante: tu información y aplicaciones. Esta clase nos lleva a entender la importancia de implementar prácticas de seguridad efectivas en AWS, desde proteger aplicaciones hasta asegurar datos confidenciales en Amazon S3. Además, este tema es fundamental en el examen de Cloud Practitioner.
+
+### ¿Qué debemos proteger en la nube?
+
+En AWS, podemos tener distintas clases de recursos, como servidores, bases de datos y almacenamiento, que son el almacén de nuestra información. La misión es identificar y usar servicios que protejan nuestra infraestructura en la nube.
+
+- **Servidores (EC2)**: Debemos garantizar la seguridad del sistema operativo que se ejecute. Es esencial asegurar que, por ejemplo, un Windows tenga antivirus.
+- **Bases de datos (RDS)**: Aquí, el sistema operativo es responsabilidad del proveedor, pero la seguridad de la conexión es crucial.
+
+### ¿Qué es el modelo de responsabilidad compartida?
+Este modelo define las responsabilidades entre AWS y el usuario:
+
+- **Responsabilidad de AWS**: Gestión de la infraestructura física, desde hardware hasta instalaciones.
+- **Responsabilidad del usuario**: Depende del servicio que se utilice; puede incluir el sistema operativo, las aplicaciones y la configuración de seguridad.
+
+### ¿Qué pilares son esenciales en seguridad?
+
+La seguridad en la nube abarca múltiples pilares críticos, que frecuentemente se relacionan con diversas áreas de gestión:
+
+- **Gestión de parches**: Corregir vulnerabilidades en aplicaciones.
+- **Administración de servicios y componentes**: Asegurar que cumplen con las normas de seguridad.
+- **Conciencia sobre seguridad**: Es vital para cualquier perfil, desde desarrolladores hasta especialistas en DevSecOps.
+
+### ¿Cómo empezar con los servicios de seguridad en AWS?
+
+AWS ofrece varios servicios diseñados para proteger tus datos y aplicaciones eficientemente. Aquí algunos ejemplos:
+
+1. **IAM (Identity and Access Management)**: Permite gestionar el acceso y las políticas de recursos de forma segura.
+2. **AWS Shield**: Protege contra ataques de denegación de servicio (DDoS).
+3. **AWS WAF (Web Application Firewall)**: Protege tus aplicaciones web de amenazas comunes en la web.
+
+Es esencial que nos formemos en seguridad, sin importar nuestro rol en la industria tecnológica. La seguridad debe ser uno de los pilares fundamentales si queremos que nuestras aplicaciones crezcan y escalen a millones de usuarios de manera segura y eficiente. ¡Motívate a seguir aprendiendo y protegiendo tus recursos en la nube!
 
 
 
