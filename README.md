@@ -169,6 +169,39 @@
 - [Curso de Introducción a AWS: Fundamentos de Cloud Computing](CursodeIntroduccionaAWSFundamentosdeCloudComputing)
 - [Curso AWS Cloud Practitioner Certification](CursoAWSCloudPractitionerCertification)
 
+## Amazon Web Services
+
+### Fundamentos
+
+- [Curso de Introducción a la Nube](CursodeIntroduccionalaNube)
+- [Curso de Introducción a AWS: Fundamentos de Cloud Computing](CursodeIntroduccionaAWSFundamentosdeCloudComputing)
+- [Curso de Introducción a AWS: Cómputo, Almacenamiento y Bases de Datos](CursodeIntroduccionaAWSComputo,AlmacenamientoyBasesdeDatos)
+- [Curso de Introducción a AWS: Redes, Gobernanza y Machine Learning](CursodeIntroduccionaAWSRedes,GobernanzayMachineLearning)
+
+### Ciencia de Datos
+
+- [Curso de Big Data en AWS](CursodeBigDataenAWS)
+- [Curso de AWS Redshift para Manejo de Big Data](CursodeAWSRedshiftparaManejodeBigData)
+
+### Serverless
+
+- [Curso de Serverless Framework en AWS](CursodeServerlessFrameworkenAWS)
+Curso Avanzado de Serverless Framework en AWS
+
+### Practica en AWS
+
+- [Curso Práctico de AWS: Roles y Seguridad con IAM](CursoPracticodeAWSRolesySeguridadconIAM)
+- [Curso Práctico de AWS: Cómputo con EC2](CursoPracticodeAWSComputoconEC2)
+
+Curso Práctico de AWS Cloud
+Curso Práctico de Cloud Computing con AWS
+
+- [Curso Práctico de Storage en AWS](CursoPracticodeStorageenAWS)
+- [Curso Práctico de Bases de Datos en AWS](CursoPracticodeBasesdeDatosenAWS)
+
+Curso de Amazon DynamoDB
+Curso de Infraestructura Como Código en AWS
+
 ## Fundamentos de Servidores Linux
 
 - [Curso de Introducción a la Terminal y Línea de Comandos](Curso-de-Introducción-a-la-Terminal-y-Linea-de-Comandos)

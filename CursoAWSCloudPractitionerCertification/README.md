@@ -9028,31 +9028,6 @@ Con dos certificaciones bajo el cinturón, ya sea el Arquitecto de Soluciones o 
 
 Recuerda, el aprendizaje continuo junto con la actualización de certificaciones es crucial para mantenerte competitivo en el siempre cambiante paisaje de la tecnología en la nube. Así que sigue explorando, aprendiendo y avanzando en este apasionante campo. ¡Buena suerte en tu emocionante viaje en la nube!
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 ## NOTAS:
 
 Para instalar la última versión de **Python 3** en Amazon Linux, sigue estos pasos según tu versión del sistema operativo:  
@@ -9112,5 +9087,3 @@ sudo alternatives --config python3
 ### **🚀 Resumen**
 - Para la versión por defecto: `sudo yum install -y python3`
 - Para la última versión oficial: Compilar desde el código fuente.
-
-¿Necesitas una versión específica o más ayuda? 😃
