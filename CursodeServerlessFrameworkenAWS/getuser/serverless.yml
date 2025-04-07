@@ -1,0 +1,47 @@
+service: crud-serverless-users
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  environment:
+    IS_OFFLINE: true
+    AWS_ACCESS_KEY_ID: fakeMyKeyId
+    AWS_SECRET_ACCESS_KEY: fakeSecretAccessKey
+
+functions:
+  get-users:
+    handler: handler.getUsers
+    events:
+      - http:
+          path: users
+          method: GET
+
+plugins:
+  - serverless-offline
+  - serverless-dynamodb-local
+
+custom:
+  dynamodb:
+    stages:
+      - dev
+    start:
+      port: 8001
+      inMemory: true
+      migrate: true
+
+
+resources:
+  Resources:
+    UsersTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: UsersTable
+        AttributeDefinitions:
+          - AttributeName: pk
+            AttributeType: S
+        KeySchema:
+          - AttributeName: pk
+            KeyType: HASH
+        ProvisonedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1

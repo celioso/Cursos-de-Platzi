@@ -1307,3 +1307,908 @@ Luego, sigue el reto. ¡Anímate a crear nuevas aplicaciones! Cambia los mensaje
 **Lecturas recomendadas**
 
 [Platzi: Cursos online profesionales de tecnología](https://platzi.com/clases/2731-aws-fundamentos/45997-laboratorio-crea-tu-cuenta-en-aws/)
+
+## Probar y debuggear en local y en la nube
+
+¡Perfecto! Aquí te explico cómo **probar y debuggear tu proyecto Serverless Framework**, tanto **localmente** como en la **nube (AWS)**:
+
+### ✅ 1. **Probar en Local con `serverless-offline`**
+
+### 🧪 Paso 1: Asegúrate de tener los plugins
+
+En tu `serverless.yml` ya tienes esto:
+
+```yaml
+plugins:
+  - serverless-offline
+  - serverless-dynamodb-local
+```
+
+### 🧪 Paso 2: Instala dependencias (si no lo hiciste)
+
+```bash
+npm install --save-dev serverless serverless-offline serverless-dynamodb-local
+```
+
+### 🧪 Paso 3: Levanta el entorno local
+
+```bash
+npx serverless offline start
+```
+
+Esto inicia un servidor HTTP en `http://localhost:3000` (puede variar) que emula AWS API Gateway + Lambda.
+
+> Si usas DynamoDB local, asegúrate también de tener Java instalado, o usa `--no-dynamodb` si no lo estás usando.
+
+### 🐞 2. **Debuggear en Local**
+
+Puedes usar `console.log()` dentro de tus handlers para debuggear:
+
+```js
+const hello = async (event) => {
+  console.log("Evento recibido:", event);
+
+  return {
+    statusCode: 200,
+    body: JSON.stringify({ message: "Hola mundo desde Serverless Offline" }),
+  };
+};
+```
+
+Y luego puedes hacer un request:
+
+```bash
+curl http://localhost:3000/dev/hello
+```
+
+En la terminal donde se ejecuta `serverless offline`, verás el `console.log`.
+
+### ☁️ 3. **Desplegar y probar en la nube (AWS)**
+
+### ☁️ Paso 1: Configura tus credenciales de AWS
+
+Si no lo hiciste antes:
+
+```bash
+aws configure
+```
+
+> Asegúrate de tener permisos para desplegar Lambda, API Gateway y DynamoDB.
+
+### ☁️ Paso 2: Desplega
+
+```bash
+npx serverless deploy
+```
+
+Esto:
+
+- Empaqueta tus funciones.
+- Las sube a AWS.
+- Crea recursos como Lambda, API Gateway, DynamoDB.
+
+### ☁️ Paso 3: Prueba en la nube
+
+Después del deploy, Serverless mostrará una URL como esta:
+
+```
+endpoints:
+  GET - https://xxxxx.execute-api.us-east-1.amazonaws.com/dev/hello
+```
+
+Puedes probarla con:
+
+```bash
+curl https://xxxxx.execute-api.us-east-1.amazonaws.com/dev/hello
+```
+
+### 🧰 4. **Debugging en la nube (CloudWatch)**
+
+Cuando una función falla o lanza errores, puedes ver los logs así:
+
+```bash
+npx serverless logs -f hello-world
+```
+
+O para ver en tiempo real:
+
+```bash
+npx serverless logs -f hello-world -t
+```
+
+También puedes ir directamente a [CloudWatch Logs](https://console.aws.amazon.com/cloudwatch/home#logs:) en la consola de AWS.
+
+### Resumen
+
+#### ¿Cómo probar aplicaciones serverless localmente?
+
+Si estás trabajando con aplicaciones serverless, puede ser un desafío probar localmente funciones que están diseñadas para funcionar en la nube. Afortunadamente, existen herramientas que facilitan este proceso, permitiéndote emular y verificar el funcionamiento de tu aplicación antes de desplegarla. Veamos cómo puedes hacerlo eficientemente.
+
+#### ¿Cómo hacer la aplicación más dinámica?
+
+Para añadir dinamismo a una API y asegurarte de que responda con datos cambiantes, puedes jugar con variables como la hora, los minutos y los segundos. Aquí tienes un ejemplo de cómo implementar esto en tu aplicación:
+
+```java
+const hora = new Date().getHours();
+const minuto = new Date().getMinutes();
+const segundo = new Date().getSeconds();
+
+// Concatenar para mostrar en el body de la respuesta
+const mensaje = `Hora: ${hora}:${minuto}:${segundo}`;
+```
+
+Así, cada solicitud `GET` a tu función lambda te mostrará una hora distinta, logrando un comportamiento más reactivo y menos estático.
+
+#### ¿Cómo invocar funciones localmente con Serverless Framework?
+
+Una ventaja del framework serverless es la capacidad de probar tus funciones localmente. Aquí te mostramos cómo:
+
+#### 1. Uso del comando `invoke local`:
+
+Este comando te permite ejecutar funciones localmente sin necesidad de desplegar tu aplicación en la nube. Específicamente, utiliza:
+
+`sls invoke local --function nombreDeFunción`
+
+Reemplaza `nombreDeFunción` con el nombre específico de la función lambda que deseas probar, como está definido en tu archivo `serverless.yaml`.
+
+#### ¿Qué es y cómo se instala el plugin Serverless Offline?
+
+El plugin Serverless Offline es una herramienta imprescindible para emular un entorno AWS local. Permite simular el comportamiento de AWS Lambda y API Gateway. Para instalarlo:
+
+#### 1. Instalación con npm:
+
+Ejecuta el siguiente comando en tu terminal:
+
+`npm install serverless-offline`
+
+#### 2. Configuración en `serverless.yaml`:
+
+Añade la sección de plugins en tu archivo de configuración para incluir el plugin:
+
+```json
+plugins:
+  - serverless-offline
+```
+  
+#### ¿Cómo probar la aplicación con Serverless Offline?
+
+Después de configurar e instalar el plugin, puedes iniciar tu aplicación en un entorno simulado local:
+
+#### 1. Ejecutar el servidor offline:
+
+Usa el comando siguiente para arrancar la aplicación simulando AWS API Gateway:
+
+`sls offline start`
+
+#### 2. Acceso a la función:
+
+La aplicación correrá en `localhost` en el puerto 3000. Puedes verificar su funcionamiento en tu navegador visitando la URL mostrada, típicamente algo como: `http://localhost:3000/dev/hello`.
+
+Con estas herramientas, puedes ahorrar tiempo y recursos al poder desarrollar y probar diferentes lógicas y funcionalidades de manera eficaz antes de llevar tu aplicación a producción.
+
+#### ¿Por qué usar Serverless Framework y sus plugins?
+
+Usar Serverless Framework junto con plugins como Serverless Offline te otorga flexibilidad y control sobre el proceso de desarrollo. El uso de estos recursos te ayudará a evitar el ciclo ineficaz de despliegue y prueba en entornos en la nube, acelerando significativamente tu flujo de trabajo.
+
+Estos pasos aseguran no solo que tu código funcione correctamente antes de implementarlo, sino que también te da la oportunidad de explorar y familiarizarte con otros plugins que la comunidad ofrece, enriqueciendo aún más el alcance y las capacidades de tus proyectos serverless. ¡Anímate a experimentar con ellos y lleva tus desarrollos al siguiente nivel!
+
+**Lecturas recomendadas**
+
+[serverless-offline - npm](https://www.npmjs.com/package/serverless-offline)
+
+[Serverless Framework: Plugins](https://www.serverless.com/plugins/serverless-offline)
+
+## Recapitulación de la aplicación y método GET
+
+¡Perfecto! Aquí te dejo una **recapitulación clara y completa** de tu aplicación Serverless con el método **GET** funcionando:
+
+### 🚀 **1. Objetivo de la aplicación**
+Crear una API REST Serverless básica en AWS que responda con un mensaje `"Hola mundo"` al hacer una solicitud `GET` al endpoint `/hello`.
+
+### 📁 **Estructura de archivos**
+```
+hola-mundo/
+│
+├── handler.js                 # Función Lambda
+├── serverless.yml            # Configuración del framework
+├── package.json              # Dependencias y scripts del proyecto
+└── node_modules/             # Módulos de Node.js
+```
+
+### 🔧 **2. Archivo `handler.js`**
+```js
+const hello = async (event, context) => {
+  return {
+    statusCode: 200,
+    body: JSON.stringify({
+      message: 'Hola mundo - bienvenidos al curso de serverless framework en AWS'
+    })
+  };
+};
+
+module.exports = {
+  hello
+};
+```
+
+### 🧩 **3. Archivo `serverless.yml`**
+```yaml
+service: hola-mundo
+
+provider:
+  name: aws
+  runtime: nodejs18.x  # ✅ Asegúrate de usar nodejs18.x o una versión compatible
+
+functions:
+  hello-world:
+    handler: handler.hello
+    events:
+      - http:
+          path: hello
+          method: GET
+
+plugins:
+  - serverless-offline
+```
+
+### 📦 **4. `package.json`**
+```json
+{
+  "name": "hola-mundo",
+  "version": "1.0.0",
+  "main": "handler.js",
+  "scripts": {
+    "start": "serverless offline start"
+  },
+  "devDependencies": {
+    "serverless": "^3.40.0",
+    "serverless-offline": "^14.4.0"
+  }
+}
+```
+
+### ▶️ **5. Ejecutar localmente**
+
+### ✅ Paso a paso:
+```bash
+npm install                 # Instala dependencias
+npx serverless offline      # O puedes usar npm run start
+```
+
+### Accede al endpoint:
+```
+http://localhost:3000/hello
+```
+
+### ✅ **Respuesta esperada**
+```json
+{
+  "message": "Hola mundo - bienvenidos al curso de serverless framework en AWS"
+}
+```
+
+### Resumen
+
+#### ¿Cómo iniciar un proyecto serverless con DynamoDB?
+
+Adentrarse en el mundo del desarrollo serverless puede parecer un reto, pero con las herramientas adecuadas, es un camino más accesible del que muchos piensan. Este artículo te guía a través de la implementación inicial de un proyecto serverless utilizando AWS API Gateway, Lambda y DynamoDB en un entorno simulado localmente.
+
+#### ¿Qué integra nuestro ecosistema serverless?
+
+El ecosistema que estamos construyendo tiene varios componentes esenciales:
+
+1. **Usuario**: El punto de entrada para las llamadas vía HTTP.
+2. **API Gateway**: Maneja las solicitudes entrantes al sistema.
+3. **Lambdas**: Funciones que realizan operaciones específicas, conectadas a la base de datos.
+4. **DynamoDB**: Una base de datos serverless, ideal para este proyecto.
+
+La administración de estos elementos se realiza a través de Serverless Framework, garantizando que todo nuestro despliegue sea coherente y eficiente.
+
+#### ¿Cuáles son los primeros pasos?
+
+Para comenzar, consideramos una refactorización del proyecto existente:
+
+- **Renombrar directorios y funciones**: Cambiar los nombres a algo más descriptivo y acorde a la función que realizarán, como `GetUsers`.
+- **Modificar el archivo `serverless.yaml`**: Adaptarlo a los nuevos nombres y funcionalidades, asegurando una estructura clara y consistente.
+
+#### ¿Cómo se integra DynamoDB mediante AWS-SDK?
+
+Para interactuar con DynamoDB, es necesario instalar el “AWS-SDK”:
+
+`npm install aws-sdk --save-dev`
+
+Posteriormente, configurar un cliente de DynamoDB para manejar las consultas:
+
+```java
+const AWS = require('aws-sdk');
+const DynamoDB = new AWS.DynamoDB.DocumentClient();
+```
+
+Esta integración facilita la creación de queries y garantiza una comunicación efectiva con la base de datos.
+
+#### ¿Cómo se estructuran las consultas y el endpoint?
+
+Definimos el handler `getUsers` para gestionar las peticiones HTTP:
+
+```json
+module.exports.getUsers = async (event) => {
+  const params = {
+    TableName: 'CRUDServerlessUsers',
+    KeyConditionExpression: 'pk = :pk',
+    ExpressionAttributeValues: {
+      ':pk': 1,
+    },
+  };
+
+  try {
+    const res = await DynamoDB.query(params).promise();
+    return {
+      statusCode: 200,
+      body: JSON.stringify({ user: res.Items }),
+    };
+  } catch (error) {
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ error: error.message }),
+    };
+  }
+};
+```
+
+#### ¿Cuáles son las claves del desarrollo local con serverless offline?
+
+Probar localmente tu aplicación es crucial para asegurar un correcto funcionamiento antes de migrar a producción. Siguientes pasos:
+
+- Instala y configura el plugin `serverless-offline`.
+- Ejecuta el servidor local con el comando:
+
+`serverless offline start`
+
+Este comando simula el comportamiento de API Gateway y Lambda en tu entorno local.
+
+#### ¿Cómo abordar errores comunes en el desarrollo?
+
+El manejo de errores es parte del proceso de aprendizaje. Algunos errores típicos incluyen:
+
+- **Errores de nombres de handlers**: Verifica que los nombres coincidan entre tu código y la configuración.
+- **Keys invalidas en DynamoDB**: Asegúrate de que las condiciones y expresiones sean correctas.
+- **Recursos no encontrados**: Confirma que tanto tu base de datos como tus tablas existan y estén correctamente referenciadas.
+
+#### ¿Qué sigue después de la configuración inicial?
+
+Después de establecer la lógica básica, el siguiente paso es crear la base de datos en DynamoDB y optimizar el rendimiento de las queries. Es importante seguir investigando y formándote en esta área para perfeccionar tus habilidades en el desarrollo serverless.
+
+El mundo serverless es vasto y ofrece infinitas oportunidades para desarrolladores que buscan eficiencia y escalabilidad. No dudes en continuar explorando y experimentando con nuevas tecnologías y estrategias dentro de este emocionante ecosistema.
+
+**Lecturas recomendadas**
+
+[Querying and scanning a DynamoDB table - Amazon SDK for JavaScript](https://docs.amazonaws.cn/en_us/sdk-for-javascript/v3/developer-guide/dynamodb-example-query-scan.html)
+
+[Curso de Bases de Datos en AWS - Platzi](https://platzi.com/cursos/db-aws/)
+
+**NOTA:**
+
+¡Perfecto! 🎉 Ya se instaló correctamente `serverless-offline`. El mensaje sobre vulnerabilidades es común y se puede revisar luego si quieres más seguridad.
+
+---
+
+### ✅ Ahora asegúrate de que `serverless-offline` esté activado en tu archivo `serverless.yml`.
+
+Agrega esto **al final** del archivo:
+
+```yaml
+plugins:
+  - serverless-offline
+```
+
+Ejemplo completo (`serverless.yml`):
+
+```yaml
+service: hola-mundo
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+
+functions:
+  hello-world:
+    handler: handler.hello
+    events:
+      - http:
+          path: hello
+          method: GET
+
+plugins:
+  - serverless-offline
+```
+
+---
+
+### 🚀 Luego ejecuta en la terminal:
+
+```bash
+npx serverless offline
+```
+
+o si tienes `serverless` global:
+
+```bash
+serverless offline
+```
+
+Deberías ver algo como:
+
+```
+Offline [HTTP] listening on http://localhost:3000
+```
+
+Y si vas a `http://localhost:3000/hello` en tu navegador, verás:
+
+```json
+{
+  "message": "Hola mundo - bienvenidos al curso de serverless framework en aws"
+}
+```
+
+## DynamoDB en local
+
+¡Genial! Vamos a levantar **DynamoDB local** junto con Serverless Framework. A continuación te muestro los pasos exactos para que funcione sin problemas.
+
+### 🧩 Paso 1: Instalar los plugins necesarios
+
+Desde tu proyecto:
+
+```bash
+npm install serverless-dynamodb-local --save-dev
+npm install aws-sdk --save
+```
+
+También necesitas **Java** instalado, ya que DynamoDB Local corre sobre Java (JAR). Puedes verificarlo con:
+
+```bash
+java -version
+```
+
+Si no lo tienes, [descárgalo aquí](https://www.oracle.com/java/technologies/javase-downloads.html) o usa [OpenJDK](https://adoptium.net/).
+
+### 🧾 Paso 2: Configurar `serverless.yml`
+
+Agrega el plugin y configura DynamoDB Local:
+
+```yaml
+service: hola-mundo
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  region: us-east-1
+  stage: dev
+
+plugins:
+  - serverless-offline
+  - serverless-dynamodb-local
+
+custom:
+  dynamodb:
+    stages:
+      - dev
+    start:
+      port: 8000
+      inMemory: true
+      migrate: true
+
+functions:
+  hello-world:
+    handler: handler.hello
+    events:
+      - http:
+          path: hello
+          method: GET
+```
+
+### 📁 Paso 3: Crear archivo de tablas DynamoDB
+
+Crea un archivo llamado `resources/dynamodb-tables.yml` y define una tabla. Ejemplo:
+
+```yaml
+Resources:
+  UsersTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: Users
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      BillingMode: PAY_PER_REQUEST
+```
+
+Y enlázalo en el `serverless.yml`:
+
+```yaml
+resources:
+  - ${file(resources/dynamodb-tables.yml)}
+```
+
+### 🚀 Paso 4: Iniciar en local
+
+Primero inicia DynamoDB Local:
+
+```bash
+npx serverless dynamodb install
+```
+
+Y luego:
+
+```bash
+npx serverless offline start
+```
+
+Esto levantará:
+- El **API Gateway local** (`http://localhost:3000`)
+- **DynamoDB en memoria** (`http://localhost:8000`)
+
+Perfecto, para instalar el plugin `serverless-dynamodb-local` correctamente, sigue estos pasos desde la raíz de tu proyecto:
+
+### ✅ 1. Instalar el plugin:
+
+```bash
+npm install serverless-dynamodb-local --save-dev
+```
+
+### ✅ 2. Instalar el SDK de AWS (si aún no lo tienes):
+
+```bash
+npm install aws-sdk
+```
+
+### ✅ 3. Instalar DynamoDB local:
+
+Este comando descarga el archivo `.jar` de DynamoDB para correrlo localmente:
+
+```bash
+npx serverless dynamodb install
+```
+
+> 💡 Esto descargará los binarios en `.dynamodb` dentro de tu proyecto.
+
+
+### ⚠️ Requisitos
+
+- **Java** debe estar instalado. Verifica con:
+
+```bash
+java -version
+```
+
+Si no está instalado, puedes descargarlo desde:
+- [Oracle JDK](https://www.oracle.com/java/technologies/javase-downloads.html)
+- [OpenJDK (Adoptium)](https://adoptium.net/)
+
+Una vez hecho esto, podrás correr DynamoDB local con:
+
+```bash
+npx serverless dynamodb start
+```
+
+¡Genial! Aquí tienes un ejemplo de archivo `serverless.yml` que configura:
+
+- El plugin `serverless-dynamodb-local` para correr DynamoDB localmente.  
+- Una tabla `UsersTable`.  
+- Una función llamada `createUser` que se puede probar con un método `POST`.
+
+### 📄 `serverless.yml`
+
+```yaml
+service: users-service
+
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  stage: dev
+  region: us-east-1
+  environment:
+    USERS_TABLE: UsersTable
+
+plugins:
+  - serverless-dynamodb-local
+  - serverless-offline
+
+custom:
+  dynamodb:
+    stages:
+      - dev
+    start:
+      port: 8000
+      inMemory: true
+      migrate: true
+    migration:
+      dir: offline/migrations
+
+resources:
+  Resources:
+    UsersTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: UsersTable
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        BillingMode: PAYPERREQUEST
+
+functions:
+  createUser:
+    handler: handler.createUser
+    events:
+      - http:
+          path: users
+          method: post
+```
+
+### 📁 Estructura del proyecto
+
+```
+.
+├── handler.js
+├── serverless.yml
+├── package.json
+├── .dynamodb/ (creado tras correr `npx serverless dynamodb install`)
+```
+
+### 📜 `handler.js` (ejemplo de función)
+
+```js
+const { v4: uuidv4 } = require('uuid');
+const AWS = require('aws-sdk');
+
+const dynamoDb = new AWS.DynamoDB.DocumentClient({
+  region: 'localhost',
+  endpoint: 'http://localhost:8000',
+});
+
+module.exports.createUser = async (event) => {
+  const data = JSON.parse(event.body);
+
+  const params = {
+    TableName: process.env.USERS_TABLE,
+    Item: {
+      id: uuidv4(),
+      name: data.name,
+      email: data.email,
+    },
+  };
+
+  await dynamoDb.put(params).promise();
+
+  return {
+    statusCode: 201,
+    body: JSON.stringify({ message: 'Usuario creado', user: params.Item }),
+  };
+};
+```
+
+### ✅ Para iniciar todo en local:
+
+1. Instala dependencias:
+```bash
+npm install
+```
+
+2. Descarga DynamoDB local:
+```bash
+npx serverless dynamodb install
+```
+
+3. Inicia la base de datos:
+```bash
+npx serverless dynamodb start
+```
+
+4. Abre otra terminal y ejecuta tu API en local:
+```bash
+npx serverless offline start
+```
+
+## Despliegue y Testing de nuestro GET
+
+¡Vamos a desplegar y testear tu endpoint **GET** en Serverless Framework usando AWS! 🔥
+
+
+### 🚀 **Despliegue del proyecto en AWS**
+
+### ✅ Paso 1: Configura tus credenciales de AWS
+
+Si no lo hiciste antes, ejecuta:
+
+```bash
+aws configure
+```
+
+Ingresa:
+
+- `AWS Access Key ID`
+- `AWS Secret Access Key`
+- Región (`us-east-1`, por ejemplo)
+- Formato de salida: `json` (o deja en blanco)
+
+> 💡 Estas credenciales deben tener permisos para Lambda, API Gateway y CloudFormation.
+
+### ✅ Paso 2: Verifica que tu `serverless.yml` esté listo
+
+Ejemplo mínimo para función GET:
+
+```yaml
+service: hola-mundo
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  region: us-east-1
+  stage: dev
+
+functions:
+  hello-world:
+    handler: handler.hello
+    events:
+      - http:
+          path: hello
+          method: get
+
+plugins:
+  - serverless-offline
+```
+
+### ✅ Paso 3: Desplegar la función
+
+```bash
+npx serverless deploy
+```
+
+Esto:
+- Empaqueta tu función
+- Crea los recursos en AWS (Lambda, API Gateway, roles IAM, etc.)
+- Te da la URL pública del endpoint
+
+Al final verás algo como:
+
+```
+endpoints:
+  GET - https://xxxxx.execute-api.us-east-1.amazonaws.com/dev/hello
+```
+
+### 🧪 **Testing del método GET**
+
+### ✅ Prueba con `curl`:
+
+```bash
+curl https://xxxxx.execute-api.us-east-1.amazonaws.com/dev/hello
+```
+
+### ✅ O prueba con Postman:
+
+- Método: `GET`
+- URL: `https://xxxxx.execute-api.us-east-1.amazonaws.com/dev/hello`
+
+### ✅ O desde el navegador:
+
+- Abre la URL directamente y verás la respuesta JSON
+
+
+### 💬 ¿Qué deberías recibir?
+
+Ejemplo de respuesta:
+
+```json
+{
+  "message": "Hola mundo - bienvenidos al curso de serverless framework en AWS"
+}
+```
+
+### 🛠️ ¿Cómo ver logs si algo falla?
+
+```bash
+npx serverless logs -f hello-world
+```
+
+Para ver en tiempo real:
+
+```bash
+npx serverless logs -f hello-world -t
+```
+
+### Resumen
+
+#### ¿Cómo podemos manejar el ambiente al desplegar a la nube?
+
+¡Desplegar aplicaciones a la nube puede ser un desafío! Aunque ya probamos nuestra aplicación GET y parece lista para ir a la nube, hay diferencias sutiles entre el entorno local y la nube que deben ser consideradas. Estos detalles son esenciales para evitar errores y asegurar un desarrollo uniforme entre ambientes.
+
+#### Uso de variables de entorno
+
+Las variables de entorno son claves cuando trabajamos en múltiples ambientes. En la aplicación local, nuestro cliente de DynamoDB se conecta a una base de datos local, sin embargo, para el despliegue en la nube, eso podría ocasionar un error al intentar llegar al `localhost`.
+
+La solución es usar process.env para determinar si estamos trabajando en local o en la nube. Si la variable `IS_OFFLINE` está definida, estamos en local; de lo contrario, en la nube. Así:
+
+```bash
+let dynamoDBClientParams = {};
+if (process.env.IS_OFFLINE) {
+    dynamoDBClientParams = {
+        // Parámetros locales aquí
+    };
+}
+```
+
+#### Ajuste del endpoint de la función Lambda
+
+Al desplegar en la nube, un problema frecuente es que la Lambda intenta conectarse a un recurso que no está disponible. Por defecto, cuando no se especifica un endpoint, esta se conecta a la base de datos adecuada en la nube, resolviendo el problema automáticamente.
+
+#### ¿Cómo manejar IDs dinámicos en las solicitudes?
+
+El manejo de IDs fijos no es factible. Por lo tanto, necesitamos extraer dinámicamente los IDs de la URL. Esto se logra mediante el uso del objeto event que proporciona información sobre el evento HTTP que desencadena la función Lambda.
+
+`const userId = event.pathParameters.id;`
+
+Configuración del path parameter en Serverless
+En el archivo serverless.yml, debemos indicar que esperamos un parámetro en la ruta. Esto se configura simplemente así:
+
+```bash
+functions:
+  getUser:
+    handler: handler.getUser
+    events:
+      - http:
+          path: users/{id}
+          method: get
+```
+
+#### ¿Cómo podemos resolver errores comunes?
+
+Es común encontrar errores al desplegar en la nube, como el de "Access Denied". Esto suele ser causado por permisos insuficientes del rol de AWS asociado. AWS presta especial atención a la seguridad, por lo que debemos otorgar permisos explícitamente.
+
+#### Solucionar errores de permisos con IAM
+
+A través de IAM, se deben conceder permisos específicos a las funciones Lambda, especialmente cuando interactúan con servicios como DynamoDB. Configuramos estos permisos editando el archivo serverless.yml.
+
+```bash
+provider:
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - "dynamodb:*"
+      Resource: 
+        - "arn:aws:dynamodb:REGION:ACCOUNT_ID:table/UsersTable"
+```
+
+Con esto, permitimos todas las acciones de DynamoDB, pero limitadas a una tabla específica.
+
+#### ¿Qué estrategia podemos seguir para verificar y corregir errores?
+
+Al detectar errores, CloudWatch en AWS es una herramienta esencial. Lambda inyecta automáticamente sus logs en CloudWatch, lo que nos permite revisar las causas de cualquiera de los errores que surjan.
+
+#### Usar CloudWatch para depuración
+
+Para verificar logs en CloudWatch:
+
+1. Navega a la consola de CloudWatch.
+2. Dirígete a Log Groups y selecciona el grupo de logs de la Lambda.
+3. Examina los logs para determinar la causa de cualquier error.
+
+#### ¿Cómo mejorar la lógica para obtener datos específicos?
+
+Actualmente, obtenemos una lista de usuarios coincidiendo con un ID, aunque solo el ID es único. Propongo realizar una mejora para regresar únicamente la información del usuario en lugar de una lista.
+
+#### Tarea práctica
+
+Te invito a intentar refactorizar la lógica de nuestra aplicación para que regrese solo la información específica de un usuario. Esto ayudará a optimizar la consulta y asegurar que nuestra aplicación sea más precisa.
+
+La mejora y personalización de nuestras aplicaciones no solo resuelven problemas inmediatos, sino que también preparan el terreno para un desarrollo más robusto a largo plazo. ¡Sigue experimentando y ajustando!
+
+**Lecturas recomendadas**
+
+[GitHub - platzi/serverless-framework](https://github.com/platzi/serverless-framework)

@@ -13,8 +13,10 @@
   "author": "Mario Celis",
   "license": "ISC",
   "devDependencies": {
-    "serverless": "^3.40.0",
-    "serverless-offline": "^12.0.0",
-    "serverless-dynamodb-local": "^0.2.39"
+    "aws-sdk": "^2.1692.0",
+    "serverless": "^4.11.1",
+    "serverless-dynamodb-local": "^0.2.40",
+    "serverless-offline": "^14.4.0",
+    "serverless-offline-ssm": "^6.2.0"
   }
 }
