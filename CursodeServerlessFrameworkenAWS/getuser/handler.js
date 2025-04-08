@@ -1,21 +1,23 @@
-const AWS = require('aws-sdk');
+const aws = require('aws-sdk');
 
-const isOffline = process.env.IS_OFFLINE;
+let dynamoDBClienteParams = {}
 
-const options = isOffline
-    ? {
+if (process.env.IS_OFFLINE){
+    dynamoDBClienteParams = {
         region: 'localhost',
-        endpoint: 'http://localhost:8000',
-        accessKeyId: 'fakeMyKeyId',
-        secretAccessKey: 'fakeSecretAccessKey',
-        }
-    : {};
+        endpoint: 'http://localhost:8001',
+        accessKeyId: 'DEFAULT_ACCESS_KEY',
+        secretAccessKey: 'DEFAULT_SECRET'}
+}
 
-const dynamoDb = new AWS.DynamoDB.DocumentClient(options);
+const dynamodb = new aws.DynamoDB.DocumentClient(dynamoDBClienteParams);
 
 const getUsers = async (event, context) => {
+
+    let userId = event.pathParameters.id
+
     var params = {
-        ExpressionAttributeValues: { ':pk':'1'},
+        ExpressionAttributeValues: { ':pk': userId},
         KeyConditionExpression: "pk=:pk",
         TableName: "UsersTable",
     };
