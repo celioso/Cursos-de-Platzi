@@ -1,0 +1,96 @@
+# "org" ensures this Service is used with the correct Serverless Framework Access Key.
+org: celiscorp
+# "app" enables Serverless Framework Dashboard features and sharing them with other Services.
+app: prueba
+service: crud-serverless-users
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  environment:
+    IS_OFFLINE: ${env:IS_OFFLINE, 'false'}
+    DYNAMODB_CUSTOMER_TABLE: ${self:service}-customerTable-${sls:stage}
+  iam:
+    role:
+      statements:
+        - Effect: 'Allow'
+          Action:
+            - 'dynamodb:PutItem'
+            - 'dynamodb:Get*'
+            - 'dynamodb:Scan*'
+            - 'dynamodb:UpdateItem'
+            - 'dynamodb:DeleteItem'
+          Resource: arn:aws:dynamodb:us-east-1:376129853411:table/crud-serverless-users-customerTable-dev
+
+functions:
+  get-users:
+    handler: getuser/handler.getUsers
+    package:
+      patterns:
+        - "getusers/handler.js"
+    events:
+      - http:
+          path: users/{id}
+          method: GET
+  create-users:
+    handler: createUsers/handler.createUsers
+    package:
+      patterns:
+        - "createUsers/handler.js"
+    events:
+      - http:
+          path: users
+          method: POST
+  update-users:
+    handler: updateUsers/handler.updateUsers
+    package:
+      patterns:
+        - "updateUsers/handler.js"
+    events:
+      - http:
+          path: users/{id}
+          method: PATCH
+  delete-users:
+    handler: deleteUsers/handler.deleteUsers
+    runtime: python3.8
+    package:
+      patterns:
+        - "deleteUsers/handler.py"
+    events:
+      - http:
+          path: users/{id}
+          method: DELETE
+
+plugins:
+  - serverless-offline
+  - serverless-dynamodb-local
+
+package:
+  individually: true
+  patterns:
+    - "!.dynamodb"
+    - "!node_modules"
+
+custom:
+  dynamodb:
+    stages:
+      - dev
+    start:
+      port: 8000
+      inMemory: true
+      migrate: true
+      dbPath: .dynamodb
+
+resources:
+  Resources:
+    UsersTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:provider.environment.DYNAMODB_CUSTOMER_TABLE}
+        AttributeDefinitions:
+          - AttributeName: pk
+            AttributeType: S
+        KeySchema:
+          - AttributeName: pk
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST

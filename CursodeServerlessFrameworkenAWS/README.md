@@ -2212,3 +2212,1296 @@ La mejora y personalización de nuestras aplicaciones no solo resuelven problema
 **Lecturas recomendadas**
 
 [GitHub - platzi/serverless-framework](https://github.com/platzi/serverless-framework)
+
+## Creación y despliegue de POST
+
+¡Perfecto! Vamos a crear y desplegar la función **POST** para tu proyecto `crud-serverless-users` con Serverless Framework y DynamoDB. Esta función agregará un nuevo usuario a la tabla `usersTable`.
+
+### 🛠️ Paso 1: Crear la función `createUser` en `handler.js`
+
+Agrega esto a tu archivo `handler.js`:
+
+```js
+const AWS = require("aws-sdk");
+
+let dynamoDBClientParams = {};
+
+if (process.env.IS_OFFLINE) {
+  dynamoDBClientParams = {
+    region: "localhost",
+    endpoint: "http://localhost:8001",
+    accessKeyId: "DEFAULT_ACCESS_KEY",
+    secretAccessKey: "DEFAULT_SECRET",
+  };
+}
+
+const dynamodb = new AWS.DynamoDB.DocumentClient(dynamoDBClientParams);
+
+const createUser = async (event) => {
+  try {
+    const data = JSON.parse(event.body);
+    const { id, name, email } = data;
+
+    const params = {
+      TableName: "usersTable",
+      Item: {
+        pk: id,
+        name,
+        email,
+      },
+    };
+
+    await dynamodb.put(params).promise();
+
+    return {
+      statusCode: 201,
+      body: JSON.stringify({ message: "Usuario creado correctamente", user: params.Item }),
+    };
+  } catch (err) {
+    console.error("Error al crear el usuario", err);
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ message: "Error interno del servidor" }),
+    };
+  }
+};
+
+module.exports = {
+  createUser,
+};
+```
+
+### ⚙️ Paso 2: Agregar la función al `serverless.yml`
+
+Agrega la función debajo de `functions:` en tu `serverless.yml`:
+
+```yaml
+  createUser:
+    handler: handler.createUser
+    events:
+      - http:
+          path: users
+          method: post
+```
+
+Tu bloque `functions:` debería verse así:
+
+```yaml
+functions:
+  getUser:
+    handler: handler.getUser
+    events:
+      - http:
+          path: users/{id}
+          method: GET
+
+  createUser:
+    handler: handler.createUser
+    events:
+      - http:
+          path: users
+          method: POST
+```
+
+### 🚀 Paso 3: Instala dependencias y despliega
+
+Si no lo has hecho aún:
+
+```bash
+npm install aws-sdk
+```
+
+Y luego:
+
+```bash
+serverless deploy
+```
+
+### ✅ Paso 4: Probar la función
+
+Puedes probarla con `curl` o Postman:
+
+```bash
+curl -X POST https://<tu-api-endpoint>/users \
+  -H "Content-Type: application/json" \
+  -d '{"id": "u123", "name": "Juan", "email": "juan@example.com"}'
+```
+
+Reemplaza `<tu-api-endpoint>` por el endpoint de tu API desplegada (lo verás al final del deploy).
+
+¡Perfecto! Para probar tu función `createUser` localmente con **Serverless Offline**, solo sigue estos pasos:
+
+### 🧪 Paso 1: Verifica que tienes instalados los plugins
+
+Asegúrate de tener estos dos plugins en tu proyecto:
+
+```bash
+npm install serverless-offline serverless-dynamodb-local aws-sdk --save-dev
+```
+
+También instala DynamoDB local si aún no lo hiciste:
+
+```bash
+sls dynamodb install
+```
+
+### ⚙️ Paso 2: Configura `serverless.yml` (ya deberías tener esto, pero asegúrate)
+
+Debes tener en tu `serverless.yml`:
+
+```yaml
+plugins:
+  - serverless-offline
+  - serverless-dynamodb-local
+
+custom:
+  dynamodb:
+    stages:
+      - dev
+    start:
+      port: 8001
+      inMemory: true
+      migrate: true
+```
+
+Y el recurso de la tabla también debe estar:
+
+```yaml
+resources:
+  Resources:
+    UsersTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: usersTable
+        AttributeDefinitions:
+          - AttributeName: pk
+            AttributeType: S
+        KeySchema:
+          - AttributeName: pk
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
+```
+
+### ▶️ Paso 3: Levanta el entorno local
+
+Primero, inicia DynamoDB local en otra terminal (si quieres separarlo):
+
+```bash
+sls dynamodb start
+```
+
+Luego, en tu terminal principal, corre el entorno offline:
+
+```bash
+sls offline start
+```
+
+Verás algo como:
+
+```
+POST | http://localhost:3000/users
+```
+
+### 📬 Paso 4: Probar el endpoint local
+
+Desde otra terminal o Postman:
+
+```bash
+curl -X POST http://localhost:3000/users \
+  -H "Content-Type: application/json" \
+  -d '{"id": "u001", "name": "Mario", "email": "mario@celiscorp.com"}'
+```
+
+Deberías obtener:
+
+```json
+{
+  "message": "Usuario creado correctamente",
+  "user": {
+    "pk": "u001",
+    "name": "Mario",
+    "email": "mario@celiscorp.com"
+  }
+}
+```
+
+### ✅ Tip
+
+También puedes inspeccionar si se guardó bien con un `scan`:
+
+```js
+const params = {
+  TableName: 'usersTable'
+};
+dynamodb.scan(params).promise().then(console.log);
+```
+
+¡Genial! Vamos a crear la función `getAllUsers` que hará un **scan** sobre la tabla DynamoDB para devolver todos los usuarios.
+
+### 📂 1. Agrega la función en tu archivo `handler.js` (o donde esté tu lógica):
+
+```js
+const aws = require("aws-sdk");
+
+let dynamoDBClientParams = {};
+
+if (process.env.IS_OFFLINE) {
+    dynamoDBClientParams = {
+        region: 'localhost',
+        endpoint: 'http://localhost:8001',
+        accessKeyId: 'DEFAULT_ACCESS_KEY',
+        secretAccessKey: 'DEFAULT_SECRET'
+    };
+}
+
+const dynamodb = new aws.DynamoDB.DocumentClient(dynamoDBClientParams);
+
+const getAllUsers = async () => {
+    const params = {
+        TableName: 'usersTable'
+    };
+
+    try {
+        const data = await dynamodb.scan(params).promise();
+        return {
+            statusCode: 200,
+            body: JSON.stringify({ users: data.Items })
+        };
+    } catch (error) {
+        console.error(error);
+        return {
+            statusCode: 500,
+            body: JSON.stringify({ message: 'Error al obtener usuarios', error: error.message })
+        };
+    }
+};
+
+module.exports = {
+    getAllUsers,
+    // ya deberías tener estas
+    createUser,
+    getUsers,
+};
+```
+
+### 📦 2. Agrega la ruta al `serverless.yml`
+
+Dentro de `functions:` añade:
+
+```yaml
+  getAllUsers:
+    handler: handler.getAllUsers
+    events:
+      - http:
+          path: users
+          method: GET
+```
+
+### 🚀 3. Despliega o ejecuta localmente
+
+Si estás en local:
+
+```bash
+sls offline start
+```
+
+Y accede con:
+
+```bash
+curl http://localhost:3000/users
+```
+
+O visita: [http://localhost:3000/users](http://localhost:3000/users)
+
+### Resumen
+
+#### ¿Cómo insertar usuarios a la base de datos Dynamo usando funciones Lambda?
+
+Insertar usuarios en una base de datos Dynamo usando funciones Lambda es un paso esencial para cualquier proyecto que busque manejar datos eficientemente en la nube. Aunque la tarea generalmente comienza con una persona, el ciclo de vida del desarrollo software puede resultar en diferentes manos trabajando y mejorando el código. A continuación, te mostramos cómo navegar por este proceso de manera exitosa.
+
+#### ¿Cómo refactorizar la estructura del proyecto?
+
+Para manejar múltiples funcionalidades como crear, actualizar y borrar datos, es recomendable modularizar el proyecto.
+
+1. **Organización del código**: Se sugiere crear carpetas separadas para cada funcionalidad, por ejemplo, createUsers, getUsers, etc., lo que ayuda a mantener el código organizado y fácil de manejar.
+2. **Servidor y funcionalidad**: Al añadir nuevas funciones Lambda (como **createUsers**), debemos modificar el archivo serverless.yml para reflejar estos cambios.
+3. Múltiples handlers: Adapte la estructura de carpetas y asegúrese de que cada función tenga su propio handler.
+
+#### ¿Cómo definir una solicitud POST en serverless.yml?
+
+Con las funciones HTTP podemos manejar diferentes tipos de solicitudes. Aquí te mostramos cómo cambiar una solicitud GET a POST:
+
+```yaml
+functions:
+  createUsers:
+    handler: createUsers/index.handler
+    events:
+      - http:
+          path: users
+          method: post
+```
+
+#### ¿Cómo garantizar la inserción correcta en DynamoDB?
+Es crucial definir parámetros adecuados al insertar datos en DynamoDB. A continuación, se presentan algunos pasos cruciales para lograrlo:
+
+- **Generar un UUID aleatorio para cada usuario usando la librería crypto en Node.js:**
+
+```java
+const { randomUUID } = require('crypto');
+const id = randomUUID();
+```
+
+- **Extraer el body del evento con JSON.parse para evitar errores de sintaxis**:
+
+`const userBody = JSON.parse(event.body);`
+
+- **Vincular el ID generado al objeto userBody:**
+
+`userBody.id = id;`
+
+- **Ejecutar la operación PUT en lugar de QUERY y devolver el resultado:**
+
+`await dynamoDb.put({ TableName: 'YourTableName', Item: userBody }).promise();`
+
+#### ¿Cómo probar la función Lambda localmente y en la nube?
+Utilizar herramientas como Postman es fundamental para probar la creación de usuarios tanto localmente como en la nube.
+
+1. **Modo local**: Usa serverless offline start para realizar pruebas sin necesidad de desplegar en la nube.
+2. **Uso de Postman**: Define una nueva solicitud POST con un body en formato JSON, ajustándolo según el esquema de tu base de datos.
+
+```json
+{
+  "name": "Yagi",
+  "phone": "1234567890"
+}
+```
+
+### ¿Cómo optimizar el empaquetado con Serverless Framework?
+
+Al utilizar Serverless Framework, asegúrate de no incluir dependencias innecesarias que aumenten el tamaño del paquete.
+
+-  **Exclude Patterns**: Define patrones de exclusión para carpetas como `node_modules` o `dynamoDB` local.
+
+```yaml
+package:
+  individually: true
+  exclude:
+    - node_modules/**
+    - dynamoDB/**
+```
+
+Siguiendo estos pasos, puedes insertar usuarios eficientemente en una base de datos Dynamo usando funciones Lambda. No olvides compartir tus resultados y seguir experimentando; el aprendizaje no se detiene. ¡Nos vemos en la próxima clase para aprender a realizar un update!
+
+**Lecturas recomendadas**
+
+[GitHub - platzi/serverless-framework](https://github.com/platzi/serverless-framework)
+
+## UPDATE para actualizar datos
+
+¡Perfecto! Vamos a crear una función `updateUsers` en tu handler que permita actualizar los datos de un usuario en DynamoDB utilizando el método `update` de `DocumentClient`.
+
+### ✅ 1. **Estructura básica de `updateUsers`**
+
+Supongamos que tu `body` del `POST` (o `PUT`) contiene un JSON como este:
+
+```json
+{
+  "name": "Nuevo nombre",
+  "email": "nuevo@email.com"
+}
+```
+
+Y que el `id` del usuario viene por la ruta: `/users/{id}`.
+
+### 🛠 Código `updateUsers`:
+
+```js
+const updateUsers = async (event, context) => {
+    const userId = event.pathParameters.id;
+    const body = JSON.parse(event.body);
+
+    const updateExpressions = [];
+    const expressionAttributeNames = {};
+    const expressionAttributeValues = {};
+
+    for (const [key, value] of Object.entries(body)) {
+        updateExpressions.push(`#${key} = :${key}`);
+        expressionAttributeNames[`#${key}`] = key;
+        expressionAttributeValues[`:${key}`] = value;
+    }
+
+    const params = {
+        TableName: process.env.DYNAMODB_CUSTOMER_TABLE,
+        Key: { pk: userId },
+        UpdateExpression: 'SET ' + updateExpressions.join(', '),
+        ExpressionAttributeNames: expressionAttributeNames,
+        ExpressionAttributeValues: expressionAttributeValues,
+        ReturnValues: 'ALL_NEW'
+    };
+
+    try {
+        const result = await dynamodb.update(params).promise();
+        return {
+            statusCode: 200,
+            body: JSON.stringify({
+                message: 'Usuario actualizado correctamente',
+                updatedUser: result.Attributes
+            })
+        };
+    } catch (error) {
+        console.error('Error actualizando usuario:', error);
+        return {
+            statusCode: 500,
+            body: JSON.stringify({ error: 'No se pudo actualizar el usuario' })
+        };
+    }
+};
+```
+
+### ✅ 2. **Agrega la función al `serverless.yml`**
+
+```yaml
+  update-users:
+    handler: updateUsers/handler.updateUsers
+    events:
+      - http:
+          path: users/{id}
+          method: PUT
+```
+
+### ✅ 3. **Exporta la función en tu `handler.js`**
+
+```js
+module.exports = {
+    getUsers,
+    updateUsers
+};
+```
+
+### Resumen
+
+#### ¿Cómo integrar updates en una aplicación serverless con DynamoDB?
+
+La integración y actualización de datos en una aplicación serverless con DynamoDB es un componente esencial que te permitirá tener un sistema CRUD totalmente funcional. Hasta este punto, hemos cubierto los métodos de creación y consulta. La lógica de actualización tiene sus propios matices, y aquí te llevaremos paso a paso para implementar el método update usando Amazon DynamoDB con lambda functions.
+
+#### ¿Cómo estructurar el proyecto para implementar la función update?
+
+Para comenzar, debes contar con una estructura de carpetas adecuada. Crea una carpeta llamada `updateUsers` donde incluirás un archivo `handler.js`. Es importante modificar el `serverless.yml` para añadir una nueva función lambda que representará la funcionalidad de `updateUsers`. Recuerda:
+
+- Actualizar el nombre de la función: Cambia el nombre en el archivo de configuración `serverless.yml`.
+- Definir el handler correspondiente: Asegúrate de que el handler apunta al archivo `handler.js` dentro de tu carpeta `updateUsers`.
+- Seleccionar el método HTTP correcto: Según las buenas prácticas de DynamoDB, utiliza el método HTTP `PATCH` para las actualizaciones.
+
+#### ¿Cómo hacer el refactoring del código para el update?
+
+Un punto crucial al implementar la función de `update` es el refactoring del código base. A continuación, te explico cómo hacerlo:
+
+1. **Obtener los parámetros necesarios**: La función toma un `ID` desde la URL y un `body` que contiene los datos que se deben actualizar.
+
+```java
+const userId = // obtener ID de la URL
+const body = JSON.parse(event.body); // parsear el body para usarlo
+```
+
+2. **Configurar los params de DynamoDB**: Adaptar los parámetros necesarios, incluyendo `UpdateExpression`, `ExpressionAttributeNames`, y `ExpressionAttributeValues`.
+
+```java
+const params = {
+    TableName: 'users_table',
+    Key: { 'userId': userId },
+    UpdateExpression: 'SET #name = :name',
+    ExpressionAttributeNames: { '#name': 'name' },
+    ExpressionAttributeValues: { ':name': body.name }
+};
+```
+
+3. **Hacer el update llamado**: Cambia la lógica para realizar la operación de `update` que incorpore los parámetros previamente configurados.
+
+Esto te permitirá actualizar los datos según los inputs proporcionados en el `body` de la solicitud.
+
+#### ¿Cómo desplegar la función lambda actualizada?
+
+Una vez que tu lógica está lista, es hora de desplegar la función. Usa el comando `serverless deploy` para iniciar el despliegue. Este proceso es sencillo y automatizado gracias a las capacidades del framework serverless.
+
+Mira cómo se despliega una función lambda:
+
+`serverless deploy`
+
+Después de un despliegue exitoso, utiliza herramientas como Postman para verificar que la aplicación efectivamente realiza las actualizaciones sobre los registros de DynamoDB. Asegúrate de proporcionar el ID correcto y un `body` en formato JSON.
+
+#### ¿Cuál es el siguiente paso?
+
+Ahora que tienes una aplicación parcialmente completa con create, read, y update, el siguiente paso será implementar la funcionalidad de delete para completar el ciclo CRUD. Mantente atento a la próxima clase donde exploraremos cómo eliminar registros utilizando lambda functions.
+
+En cada paso del camino, vamos construyendo un sistema cada vez más robusto y eficiente que se aprovecha de la escalabilidad y facilidad de implementación que AWS y el framework serverless ofrecen. ¡Sigue adelante y comparte tus experiencias con la comunidad!
+
+**Lecturas recomendadas**
+
+[GitHub - platzi/serverless-framework](https://github.com/platzi/serverless-framework)
+
+## Hacemos un DELETE con python
+
+¡Perfecto! Vamos a crear una función `updateUsers` en tu handler que permita actualizar los datos de un usuario en DynamoDB utilizando el método `update` de `DocumentClient`.
+
+### ✅ 1. **Estructura básica de `updateUsers`**
+
+Supongamos que tu `body` del `POST` (o `PUT`) contiene un JSON como este:
+
+```json
+{
+  "name": "Nuevo nombre",
+  "email": "nuevo@email.com"
+}
+```
+
+Y que el `id` del usuario viene por la ruta: `/users/{id}`.
+
+### 🛠 Código `updateUsers`:
+
+```js
+const updateUsers = async (event, context) => {
+    const userId = event.pathParameters.id;
+    const body = JSON.parse(event.body);
+
+    const updateExpressions = [];
+    const expressionAttributeNames = {};
+    const expressionAttributeValues = {};
+
+    for (const [key, value] of Object.entries(body)) {
+        updateExpressions.push(`#${key} = :${key}`);
+        expressionAttributeNames[`#${key}`] = key;
+        expressionAttributeValues[`:${key}`] = value;
+    }
+
+    const params = {
+        TableName: process.env.DYNAMODB_CUSTOMER_TABLE,
+        Key: { pk: userId },
+        UpdateExpression: 'SET ' + updateExpressions.join(', '),
+        ExpressionAttributeNames: expressionAttributeNames,
+        ExpressionAttributeValues: expressionAttributeValues,
+        ReturnValues: 'ALL_NEW'
+    };
+
+    try {
+        const result = await dynamodb.update(params).promise();
+        return {
+            statusCode: 200,
+            body: JSON.stringify({
+                message: 'Usuario actualizado correctamente',
+                updatedUser: result.Attributes
+            })
+        };
+    } catch (error) {
+        console.error('Error actualizando usuario:', error);
+        return {
+            statusCode: 500,
+            body: JSON.stringify({ error: 'No se pudo actualizar el usuario' })
+        };
+    }
+};
+```
+
+### ✅ 2. **Agrega la función al `serverless.yml`**
+
+```yaml
+  update-users:
+    handler: updateUsers/handler.updateUsers
+    events:
+      - http:
+          path: users/{id}
+          method: PUT
+```
+
+### ✅ 3. **Exporta la función en tu `handler.js`**
+
+```js
+module.exports = {
+    getUsers,
+    updateUsers
+};
+```
+
+### Resumen
+
+#### ¿Cómo crear una función Lambda 'delete' con Python en un proyecto serverless?
+
+Crear funciones Lambda para eliminar datos de una base de datos DynamoDB es un paso crucial en el desarrollo de aplicaciones serverless. A lo largo de este proyecto, hemos trabajado en crear, actualizar e insertar registros, pero ahora nos enfocaremos en la eliminación programática de elementos no deseados.
+
+#### ¿Cómo estructurar el handler para la función 'delete'?
+
+Para empezar, necesitamos definir el handler en Python de la función delete. Comenzamos importando las dependencias necesarias: `boto3` para interactuar con AWS, `json` para manejar datos JSON y `os` para acceder a las variables de entorno del sistema operativo.
+
+```python
+import boto3
+import json
+import os
+
+def delete_users(event, context):
+    user_id = event['pathParameters']['id']
+    client = boto3.resource('dynamodb')
+    table = client.Table('YourTableName')
+    
+    response = table.delete_item(
+        Key={
+            'primaryKey': user_id
+        }
+    )
+    
+    return {
+        'statusCode': response['ResponseMetadata']['HTTPStatusCode'],
+        'body': json.dumps({'message': f'Usuario {user_id} eliminado'})
+    }
+```
+
+#### ¿Cómo manejar parámetros y la lógica de HTTP en Python?
+
+El manejo de los path parameters es esencial. En el handler, podemos acceder a estos parámetros mediante `event['pathParameters']`. Esto nos permite extraer el `userId` que deseamos eliminar y proceder con la operación `delete`.
+
+La operación `delete_item` en `boto3` es bastante directa, necesaria para borrar el ítem correspondiente en DynamoDB. Utilizamos el userId como clave primaria para llevar a cabo esta operación.
+
+#### ¿Cómo configurar el serverless YAML?
+
+Es crucial asegurar que el `serverless.yml` está configurado de manera adecuada para manejar runtimes diferentes, en este caso, Python 3.8:
+
+```python
+functions:
+  deleteUsers:
+    handler: deleteUsers.handler
+    runtime: python3.8
+    events:
+      - http:
+          path: users/{id}
+          method: delete
+```
+
+#### ¿Cómo desplegar y resolver errores comunes?
+
+Para desplegar la función Lambda, se utiliza `sls deploy`. A menudo surgen errores, como la referencia incorrecta a un archivo de JavaScript o typos en nombres de tablas. Herramientas como CloudWatch son fundamentales para depurar y obtener logs detallados.
+
+Durante el desarrollo, es común enfrentar errores como `502 bad gateway` o errores de configuración en las tablas de DynamoDB. Estas situaciones deben verse como oportunidades de aprendizaje, ya que cada error nos permite mejorar y corregir nuestra implementación.
+
+#### ¿Cómo interactuar con AWS para probar y verificar acciones?
+
+Para probar tus funciones Lambda, herramientas como Postman son ideales para enviar requests HTTP y verificar las respuestas. Ingresar el `userId` en la URL y observar la respuesta nos ayuda a determinar si la eliminación fue exitosa. Utilizar CloudWatch ayuda a revisar logs cuando algo no va según lo planificado.
+
+Finalmente, seguir aprendiendo a usar herramientas serverless es vital para el desarrollo de aplicaciones modernas en la nube. No dudes en investigar más sobre otros servicios de AWS que pueden complementarse con aplicaciones serverless y seguir integrando estos conocimientos en nuevos proyectos. ¡Ánimo! ¡El aprendizaje nunca se detiene!
+
+**Lecturas recomendadas**
+
+[GitHub - platzi/serverless-framework](https://github.com/platzi/serverless-framework)
+
+## Otros servicios AWS y presentación de casos de uso del segundo curso
+
+¡Genial! Si estás avanzando al **segundo curso de Serverless con AWS**, este usualmente cubre servicios adicionales y casos de uso más reales. A continuación, te dejo una presentación estructurada de **otros servicios AWS** y **casos de uso comunes**, tal como lo podrías ver en el contenido del curso.
+
+### 🧠 **Otros Servicios de AWS usados en Serverless**
+
+| Servicio | Descripción | Casos de Uso |
+|---------|-------------|--------------|
+| **AWS Lambda** | Ejecuta código sin aprovisionar servidores. | Backend serverless, procesamiento en tiempo real, automatización. |
+| **Amazon API Gateway** | Crea APIs REST o WebSocket para tus funciones. | Exponer funciones Lambda como endpoints HTTP. |
+| **Amazon DynamoDB** | Base de datos NoSQL totalmente gestionada. | Almacenamiento serverless, apps móviles, IoT. |
+| **Amazon S3** | Almacenamiento de objetos. | Cargar archivos, sitios estáticos, backups. |
+| **Amazon SNS** | Servicio de notificaciones tipo pub/sub. | Alertas, integración con Lambda o SQS. |
+| **Amazon SQS** | Cola de mensajes distribuida. | Comunicación entre microservicios, desacoplar procesos. |
+| **AWS Step Functions** | Orquestación de flujos de trabajo. | Procesos de negocio, ETL, automatización de tareas. |
+| **AWS Cognito** | Autenticación y gestión de usuarios. | Login con redes sociales, control de acceso. |
+| **AWS EventBridge** | Enrutamiento de eventos entre servicios. | Automatización basada en eventos, integración entre servicios. |
+
+### 🧪 Casos de Uso Prácticos en Serverless
+
+### 1. 🧾 **CRUD Completo con Lambda + API Gateway + DynamoDB**
+- Crear, leer, actualizar y borrar registros.
+- Cada endpoint es una función Lambda.
+- Se usan variables de entorno para separar por stage.
+
+### 2. 🛒 **Carrito de Compras en una Tienda**
+- DynamoDB para almacenar productos y carritos.
+- Lambda para procesar los endpoints.
+- SNS para notificar al usuario sobre el estado del pedido.
+
+### 3. 📩 **Procesamiento de Emails**
+- S3 para almacenar archivos adjuntos.
+- Lambda para parsear emails.
+- SQS para manejar archivos en cola y procesarlos secuencialmente.
+
+### 4. 🧠 **Análisis de Datos por Eventos**
+- S3 + Lambda para analizar archivos subidos.
+- DynamoDB o Redshift para guardar los resultados.
+- EventBridge para coordinar pasos complejos.
+
+### 5. 🎥 **Procesamiento de Video/Imágenes**
+- Subida a S3 → activa Lambda.
+- Lambda invoca servicios de análisis (Rekognition, Transcribe).
+- Guarda metadatos en DynamoDB.
+
+### 🧰 Buenas Prácticas
+
+- **Variables de entorno** por stage (dev, prod).
+- **Logs y monitoreo** con CloudWatch.
+- **Roles mínimos necesarios** en IAM.
+- **Uso de `serverless.yml` para declarar todo** como IaC.
+- **Separación de funciones** por responsabilidad (Single Responsibility Principle).
+
+### Resumen
+
+#### ¿Qué es el ecosistema serverless en AWS?
+
+El ecosistema serverless en AWS es un conjunto de servicios que permite a los desarrolladores construir y ejecutar aplicaciones sin la necesidad de gestionar servidores. AWS se encarga de la infraestructura, permitiendo a los desarrolladores centrarse en la lógica de sus aplicaciones. En este curso, hemos revisado servicios fundamentales como AWS Lambda, Amazon API Gateway y Amazon DynamoDB. Conocer cómo integrar estos servicios es crucial para crear aplicaciones serverless eficientes y escalables.
+
+#### ¿Qué otros servicios complementan a Lambda en un entorno serverless?
+
+Además de los servicios revisados, hay otros que permiten orquestar y potenciar nuestras aplicaciones serverless:
+
+- **Amazon SNS y SQS**: Facilitan la comunicación entre partes de la aplicación. SNS permite la mensajería en tiempo real, mientras que SQS gestiona colas de mensajes, permitiendo una comunicación confiable y desacoplada.
+- **Amazon S3**: Cada vez que un bucket recibe un objeto como una imagen o un video, puede desencadenar eventos en Lambda para procesar esos objetos. Esto puede incluir la creación de thumbnails o cualquier otro procesamiento de datos.
+- **Otros servicios**: Incluyen eventos de programación, Amazon MQ, servicios de IoT y hasta integraciones con Alexa.
+
+#### ¿Cómo se compara el AWS Free Tier con el serverless framework?
+
+AWS Free Tier y serverless framework son herramientas distintas pero pueden integrarse para obtener el máximo provecho de las aplicaciones serverless.
+
+- **AWS Free Tier**: Ofrece una cantidad limitada de recursos gratuitos por tiempo determinado, ideal para empezar o realizar pruebas. Cada servicio en el Free Tier tiene restricciones específicas, como el uso de RDS, que ofrece 750 horas por base de datos.
+
+- **Serverless Framework**: Una herramienta que ayuda a automatizar el despliegue de servicios y facilita la gestión de infraestructura serverless. Su amplia documentación y comunidad activa ofrecen soporte para integrar servicios de AWS con facilidad.
+
+#### Ejemplo de integración con Serverless Framework
+
+Por ejemplo, para integrar RDS con Serverless Framework, podemos usar **RDS Proxy**. Este servicio gestiona el pool de conexiones, lo cual es crucial para evitar sobrecargar una base de datos cuando una Lambda escala.
+
+#### ¿Cómo controlar costos y gestionar recursos en un entorno serverless?
+
+El uso eficiente de los recursos y el control de costos son esenciales en un entorno serverless. Aquí hay algunos consejos:
+
+- **Establecer budgets y alertas**: Configurar presupuestos y alertas en AWS puede ayudarte a no exceder tu presupuesto. Puedes establecer límites en el uso de diferentes servicios para evitar sorpresas en la facturación.
+- **Optimizar uso de servicios**: Entender las restricciones del AWS Free Tier y ajustar el uso de servicios como RDS puede prevenir gastos innecesarios.
+
+#### ¿Dónde encontrar más información y apoyo en la comunidad?
+
+La documentación de AWS y Serverless Framework son recursos valiosos para profundizar en los servicios sujetos a gratuidad y en las mejores prácticas. Además, la comunidad ofrece foros y guías prácticas para resolver dudas y compartir experiencias.
+
+El aprendizaje en el entorno serverless es continuo. Aunque este curso ha ofrecido una base sólida, siempre hay nuevas herramientas y servicios por explorar. ¡Sigue investigando y descubriendo nuevas posibilidades en el mundo serverless con AWS!
+
+**Lecturas recomendadas**
+
+[Curso Avanzado de Serverless Framework en AWS](https://platzi.com/cursos/serverless-avanzado)
+
+## Creación de Budget en AWS
+
+¡Perfecto! Crear un **presupuesto (Budget)** en AWS es una excelente práctica para controlar costos y evitar sorpresas desagradables. Te muestro paso a paso cómo hacerlo, con una pequeña guía visual y buenas prácticas.
+
+### 💰 **Cómo crear un Budget en AWS (Presupuesto de Costos)**
+
+### 🔧 Paso a Paso
+
+1. **Ingresa a la consola de AWS:**
+   - URL: [https://console.aws.amazon.com/billing/home](https://console.aws.amazon.com/billing/home)
+
+2. En el menú lateral izquierdo, selecciona:
+   - `Budgets` > `Create a budget`.
+
+3. **Elige el tipo de presupuesto:**
+   - Selecciona **Cost budget** (Presupuesto de costos).
+
+4. **Configura el presupuesto:**
+   - **Nombre**: `presupuesto-serverless-dev`
+   - **Periodo**: Mensual (puedes elegir diario o anual también).
+   - **Monto fijo o variable**: Por ejemplo, `$10.00 USD`.
+
+5. **Definir filtros (opcional pero recomendado):**
+   - Por **cuenta**, **servicio** (ej. Lambda, DynamoDB), **etiquetas**, o **grupo de costos**.
+   - Esto te ayuda si tienes varios entornos o equipos.
+
+6. **Notificaciones:**
+   - Crea una alerta por email.
+   - Ejemplo: si se ha usado el 80% del presupuesto → envía a tu correo.
+   - Puedes agregar varios umbrales (50%, 80%, 100%).
+
+7. **Revisar y crear:**
+   - Revisa toda la configuración.
+   - Haz clic en **Create Budget**.
+
+### 📬 Notificaciones
+
+AWS enviará correos a los emails configurados cuando:
+- El gasto llegue a cierto porcentaje.
+- Se exceda el presupuesto.
+
+Ejemplo de email que recibirás:
+
+```
+Subject: AWS Budget Notification - 80% of Monthly Budget Used
+
+Your budget 'presupuesto-serverless-dev' has used 80% of its $10.00 USD monthly limit.
+```
+
+### ✅ Buenas Prácticas
+
+- Crea **presupuestos por entorno**: dev, staging, prod.
+- Usa **etiquetas (tags)** para agrupar recursos por proyecto o equipo.
+- Monitorea con **AWS Cost Explorer** para entender de dónde vienen los gastos.
+- Agrega **límites en la consola**, si es una cuenta educativa o de prueba.
+
+### Resumen
+
+#### ¿Cómo evitar costos inesperados al usar AWS Budgets?
+
+Al trabajar con AWS, es fundamental gestionar eficazmente los costos para evitar sorpresas desagradables al final del mes. Amazon Web Services ofrece herramientas robustas como AWS Budgets, que permiten a los usuarios establecer límites de gasto y recibir alertas cuando se acercan o superan estos límites. Si alguna vez te has preocupado por los costos inesperados en AWS, estás en el lugar correcto para aprender a controlar este aspecto crucial del uso de la nube.
+
+#### ¿Qué es AWS Budgets?
+
+AWS Budgets es un servicio que te permite crear presupuestos personalizados y recibir notificaciones cuando se alcance un umbral determinado. Esto es esencial para cualquiera que use los servicios de AWS, ya que fomenta el manejo responsable de los recursos y ayuda a evitar gastos innecesarios. Emplear AWS Budgets es sencillo y puede hacerse con pocos clics, gracias a varias plantillas y opciones de personalización.
+
+#### ¿Cómo configurar un Zero Spend Budget?
+
+- Navega a AWS Budgets usando el buscador en la consola de AWS.
+- Selecciona “Create a Budget” para comenzar el proceso.
+- Elige la plantilla “Zero Spend Budget” que impide cualquier gasto inesperado.
+- Introduce un nombre para tu presupuesto y un correo electrónico para recibir las notificaciones.
+- Crea el presupuesto y verifica que esté configurado correctamente en la vista de revisión.
+
+#### ¿Se pueden configurar presupuestos más detallados?
+
+Sí, puedes crear presupuestos más complejos basados en tus necesidades específicas:
+
+- Selecciona “Customize/Advanced” al crear un nuevo presupuesto.
+- Opta por un presupuesto mensual con un gasto estimado, por ejemplo, de $10.
+- Configura una alerta predictiva al 60% del presupuesto, avisándote antes de que cumplas con el gasto total.
+- Añade tu correo para notificaciones y, opcionalmente, integra servicios adicionales como SNS para acciones automatizadas.
+
+#### ¿Qué ventajas tiene integrar AWS Budgets con servicios serverless?
+
+AWS Budgets se integra de maravilla con servicios serverless, permitiéndote ampliar las acciones desencadenadas cuando se alcanzan ciertos umbrales:
+
+- Integra Amazon SNS para recibir notificaciones por múltiples canales.
+- Activa funciones de AWS Lambda para ejecutar scripts o acciones específicas.
+- Maximiza el uso de serverless para una gestión de costos eficaz y proactiva.
+
+#### Recomendaciones para una gestión de costos efectiva en AWS
+
+- **Evalúa tus necesidades**: Antes de crear un presupuesto, analiza cuánta capacidad realmente necesitas.
+- **Configura alertas adecuadamente**: Los mejores presupuestos son aquellos que te avisan con tiempo sobre un posible sobrepaso.
+- **Revisa la configuración periódicament**e: Asegúrate de que tus presupuestos y sus umbrales siguen siendo pertinentes a tus necesidades empresariales.
+- **Utiliza Cost Explorer**: Complementa el uso de AWS Budgets con análisis más profundos a través de AWS Cost Explorer para entender tus patrones de gasto.
+
+Siempre es crucial cuidar el presupuesto, y con AWS Budgets tienes a tu disposición una herramienta que no solo te permite establecer límites, sino que te educa a comprender y optimizar tu gasto en la nube. No dejes de experimentar y personalizar tus presupuestos, y sigue aprendiendo para aprovechar al máximo los servicios de AWS sin comprometer innecesariamente tus finanzas.
+
+**Lecturas recomendadas**
+
+[Curso de Introducción a AWS: Fundamentos de Cloud Computing - Platzi](https://platzi.com/cursos/aws-fundamentos/)
+
+[Curso de Fundamentos de AWS Cloud - Platzi](https://platzi.com/cursos/aws-cloud-practico/)
+
+[Curso de Cloud Computing con AWS - Platzi](https://platzi.com/cursos/aws-cloud-computing/)
+
+[Curso de Storage en AWS - Platzi](https://platzi.com/cursos/storage-aws/)
+
+## Indicaciones de GitHub Actions
+
+Este curso ha sido fundamentado en AWS, sin embargo, por facilidad de uso vamos a usar GitHub Actions para hacer un flujo de CI/CD por la facilidad con que se integra en GitHub y su rápido entendimiento, sin embargo, hay varias cosas que debes tener en cuenta.
+
+GitHub y AWS son servicios de diferentes empresas, por lo tanto, debemos autenticarnos en GitHub Actions contra AWS para poder desplegar allí nuestra aplicación serverless, para lograr esto vamos a seguir los siguientes pasos:
+
+Vas a ir a IAM (servicio de Amazon donde se administran los permisos y accesos)
+
+
+
+![serverles 1](images/serverless01_02.png)
+
+Cuando estés acá, debes bajar hasta que veas un botón llamado “Create access key”
+
+![serverles 2](images/serverless01_03.png)
+
+Aquí podrás crear un par de keys, estas keys son ultra secretas, ya que con ellas puedes tener acceso programático a tus recursos de AWS, puedes crear, borrar o editar recursos accediendo a través de ellas a tu cuenta de AWS usando el CLI de AWS, Serverless Framework, Terraform o cualquier otra herramienta, son como las llaves de tu casa y por eso debes darle un tratamiento especial.
+
+Por esta misma razón AWS nos dará un grupo de opciones alternativas que podrían servir nuestra necesidad, para este caso vamos a seleccionar “Other” y continuaremos.
+
+![serverles 3](images/serverless01_04.png)
+
+Después agregaremos una descripción opcional a nuestras Keys y crearemos nuestras keys haciendo click en “Create access key”
+
+![serverles 4](images/serverless01_05.png)
+
+¡Listo, tenemos nuestras keys listas para ser usadas!
+
+![serverles 5](images/serverless01_06.png)
+
+
+Nota: Estas keys son super secretas, por ningún motivo subas esto a un repositorio público e intenta no subirlas a un repositorio privado, con estas credenciales se podría hacer cualquier cosa con tu cuenta de AWS lo cual en manos equivocadas podría incurrir en costos exagerados en tu tarjeta de crédito. A pesar de que los permisos de estas keys se limitan a los permisos de su dueño, te recomendamos tener especial cuidado con ellas y que las borres cuando termines el curso.
+
+Ya con tus keys en mano vas a ir a tu repositorio de GitHub donde quieres correr los workflows de GitHub Actions y entraras a Settings, bajas hasta la sección Actions → General, allí habilitaras el uso de Actions para este repositorio haciendo click en “Allow all actions and reusable workflows”.
+
+![serverles 6](images/serverless01_07.png)
+
+Después iras a la sección Secrets and variables → Actions, acá podrás agregar secretos para tu repositorio u organización, continuas entonces en New repository secret
+
+![serverles 7](images/serverless01_08.png)
+
+
+Agregaremos primero nuestro secreto AWS_ACCESS_KEY_ID
+
+![serverles 8](images/serverless01_09.png)
+
+Después agregaremos nuestro secreto AWS_SECRET_ACCESS_KEY
+
+![serverles 9](images/serverless01_10.png)
+
+Listo, ya deberías tener tus dos secretos listos para tu repositorio y puedes empezarlos a usar en tus workflows de GitHub Actions
+
+![serverles 10](images/serverless01_11.png)
+
+Te recomendamos que vayas al Curso de [GitHub Actions](https://platzi.com/cursos/github-actions/).
+
+O si quedaste con dudas vayas al curso de AWS para entender más sobre AWS IAM: [Curso Práctico de AWS: Roles y Seguridad con IAM](https://platzi.com/cursos/aws-iam/).
+
+## CI/CD para nuestro proyecto
+
+¡Perfecto! Vamos a armar un pipeline de **CI/CD (Integración y Despliegue Continuos)** para tu proyecto `crud-serverless-users` que usa **Serverless Framework**, **AWS Lambda**, y **DynamoDB Local**. Te explico cómo hacerlo paso a paso con **GitHub Actions**, que es ideal para este tipo de proyectos.
+
+### 🚀 CI/CD con GitHub Actions para Serverless Framework
+
+### 📁 Estructura base esperada del proyecto
+
+```bash
+crud-serverless-users/
+│
+├── serverless.yml
+├── package.json
+├── getuser/
+│   └── handler.js
+├── createUsers/
+│   └── handler.js
+├── .github/
+│   └── workflows/
+│       └── deploy.yml  ← aquí va nuestro pipeline
+```
+
+### ⚙️ 1. Agrega el workflow `deploy.yml`
+
+Crea el archivo: `.github/workflows/deploy.yml`
+
+```yaml
+name: Deploy Serverless Application
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout código
+        uses: actions/checkout@v3
+
+      - name: Instalar Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Instalar dependencias
+        run: npm install
+
+      - name: Instalar Serverless CLI
+        run: npm install -g serverless
+
+      - name: Desplegar con Serverless
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        run: serverless deploy
+```
+
+### 🔐 2. Agrega las credenciales de AWS a GitHub
+
+Ve a tu repositorio → **Settings** → **Secrets and variables** → **Actions**:
+
+Agrega:
+
+- `AWS_ACCESS_KEY_ID`
+- `AWS_SECRET_ACCESS_KEY`
+
+> Asegúrate de que el IAM User que generó esas keys tenga permisos para:
+> - `lambda:*`
+> - `dynamodb:*`
+> - `cloudformation:*`
+> - `apigateway:*`
+> - etc.
+
+### 🧪 3. Bonus: Agrega pruebas (opcional pero recomendado)
+
+En tu proyecto puedes tener una carpeta `tests/` y en el pipeline agregar:
+
+```yaml
+      - name: Ejecutar pruebas
+        run: npm test
+```
+
+### ✅ Resultado final
+
+Cada vez que hagas **push al branch `main`**, GitHub Actions:
+
+1. Descarga tu código.
+2. Instala Node.js y tus dependencias.
+3. Despliega tu stack en AWS con Serverless Framework.
+
+### Resumen
+
+#### ¿Por qué es importante sincronizar un equipo remoto en el despliegue de aplicaciones serverless?
+
+Trabajar en equipo, sobre todo de forma remota, implica ciertos desafíos técnicos y organizativos. Uno de los aspectos cruciales en el desarrollo de software es asegurar que todos los miembros del equipo pueden realizar despliegues sin conflictos o errores. Automatizar el proceso de integración y despliegue continuo (CI/CD) permite que el código se compile, pruebe y despliegue de manera eficiente en cualquier ambiente.
+
+La implementación del framework Serverless en los despliegues ayuda a manejar aplicaciones en la nube de manera sencilla, utilizando solo un comando: **serverless deploy**. Sin embargo, es clave un sistema automatizado como GitHub Actions para garantizar que cada miembro del equipo pueda operar independientemente, sin necesidad de compartir acceso a computadoras específicas.
+
+#### ¿Cómo se integra GitHub Actions para soluciones CI/CD?
+
+GitHub Actions permite automatizar flujos de trabajo directamente desde el repositorio de GitHub. Un flujo de trabajo típico con GitHub Actions para aplicaciones serverless incluiría:
+
+1. Configuración de workflows: Se define un archivo YAML en la carpeta .github/workflows. Por ejemplo, el archivo DeployDev ejecutará un flujo de trabajo cuando haya un pull request hacia la rama principal (main).
+2. Creación de ramas y pull requests: Establecer estas prácticas asegura que los cambios se revisen y validen antes de ser integrados. Un pull request es vital para iniciar los workflows en GitHub Actions.
+3. Configuración de jobs para pruebas y despliegue: Los workflows pueden incluir jobs o tareas para realizar pruebas del código antes del despliegue. Aunque las pruebas no fueron añadidas en este ejemplo, es una buena práctica conversar con el equipo de QA para implementarlas a futuro.
+4. Uso de caché: Configurar el caché de dependencias es esencial para ahorrar tiempo y recursos durante los despliegues.
+5. Ejecutar despliegues automáticos: Tras validar los cambios, una acción en el repositorio ejecuta automáticamente el despliegue en el entorno apropiado.
+
+#### ¿Qué papel juegan los secretos y el caché en GitHub Actions?
+
+En proyectos que utilizan servicios externos, como AWS, es fundamental manejar secretos para autenticar y realizar operaciones seguras. GitHub Actions permite gestionar esta información sensible mediante la sección de configuraciones de secretos.
+
+- **Manejo de secretos**: Se deben crear variables secretas como el `AWS Access Key I`D y un `GitHub Token` automático, esencial para asegurar interacciones seguras y sin intervención manual.
+- **Uso de caché**: Establecer el caché en GitHub Actions ayuda a reducir el tiempo de despliegue. Cuando las dependencias ya han sido descargadas, el sistema valida un "cache hit", evitando instalaciones redundantes.
+
+###¿Cuáles son las mejores prácticas para utilizar GitHub Actions en despliegues serverless?
+
+Al usar GitHub Actions en entornos serverless, es importante:
+
+- **Incluir pruebas antes de despliegues**: Verificar que el código funcione correctamente antes de lanzarlo a producción es crucial.
+- **Reutilizar dependencias**: Utilizar dependencias previamente descargadas para optimizar tiempo y recursos.
+- **Implementar múltiples ambientes**: Aunque en este caso solo se utiliza un ambiente de desarrollo (dev), planificar para diferentes entornos es una buena práctica.
+- **Monitorear costos**: GitHub Actions cobra por minuto de tiempo de ejecución, por lo que optimizar procesos para ahorrar segundos puede ser beneficioso económicamente.
+
+Este tipo de configuración no solo facilita el despliegue de aplicaciones sino que prepara a los equipos para colaborar eficientemente, independientemente de su ubicación. ¡Esperamos que esta guía te inspire a seguir explorando y aprendiendo más sobre CI/CD y el uso de herramientas como GitHub Actions en tus proyectos!
+
+**Lecturas recomendadas**
+
+[Curso de Git y Github [Empieza Gratis] - Platzi](https://platzi.com/cursos/git-github/)
+
+[Curso Básico de GitHub Actions - Platzi](https://platzi.com/cursos/github-actions/)
+
+## Refactor y alistamiento para Prod
+
+Perfecto, Mario. Vamos a refactorizar y preparar tu proyecto `crud-serverless-users` para producción. Aquí te dejo una guía paso a paso con los puntos clave:
+
+### ✅ **1. Actualizar dependencias**
+Evita conflictos y mantén compatibilidad para producción.
+
+```bash
+npm install serverless@latest serverless-offline@latest
+npm install serverless-dynamodb-local@latest --save-dev
+```
+
+También puedes agregar el flag `--legacy-peer-deps` si sigues teniendo errores.
+
+### ✅ **2. Configurar entorno de producción en `serverless.yml`**
+
+Agrega variables de entorno y condiciones según el stage:
+
+```yaml
+provider:
+  name: aws
+  runtime: nodejs18.x
+  stage: ${opt:stage, 'dev'}
+  environment:
+    USERS_TABLE: usersTable-${opt:stage, 'dev'}
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action: 'dynamodb:*'
+          Resource:
+            - arn:aws:dynamodb:us-east-1:*:table/usersTable-*
+
+custom:
+  dynamodb:
+    stages:
+      - dev
+    start:
+      port: 8000
+      inMemory: true
+      migrate: true
+```
+
+Y modifica tu recurso DynamoDB:
+
+```yaml
+resources:
+  Resources:
+    usersTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: usersTable-${self:provider.stage}
+        AttributeDefinitions:
+          - AttributeName: pk
+            AttributeType: S
+        KeySchema:
+          - AttributeName: pk
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
+```
+
+### ✅ **3. Separar entornos `dev` y `prod`**
+
+Para desplegar:
+
+```bash
+# Desarrollo
+serverless deploy --stage dev
+
+# Producción
+serverless deploy --stage prod
+```
+
+### ✅ **4. Refactor funciones y acceso a la tabla**
+Ejemplo en tu handler JS:
+
+```js
+const AWS = require("aws-sdk");
+const dynamodb = new AWS.DynamoDB.DocumentClient();
+const USERS_TABLE = process.env.USERS_TABLE;
+
+module.exports.getUsers = async (event) => {
+  const { id } = event.pathParameters;
+  const params = {
+    TableName: USERS_TABLE,
+    Key: { pk: id }
+  };
+
+  try {
+    const result = await dynamodb.get(params).promise();
+    return {
+      statusCode: 200,
+      body: JSON.stringify(result.Item)
+    };
+  } catch (error) {
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ error: "Error al obtener usuario" })
+    };
+  }
+};
+```
+
+### ✅ **5. Validación y logging**
+Agrega validaciones y logs para facilitar el monitoreo:
+
+```js
+console.log("Request:", event);
+```
+
+### ✅ **6. Eliminar código innecesario**
+Revisa los `patterns` de `package` para eliminar carpetas innecesarias y reducir el tamaño de despliegue.
+
+### ✅ **7. Pruebas**
+Agrega pruebas básicas para funciones Lambda usando `jest` o `mocha`.
+
+### Resumen
+
+#### ¿Cómo podemos lograr que nuestras funciones Lambda sean más rápidas y ligeras?
+
+Las funciones Lambda son una herramienta poderosa en el mundo del desarrollo serverless en Amazon Web Services (AWS). Sin embargo, uno de los desafíos comunes es asegurar que estas funciones sean lo más ligeras y eficientes posible. Aquí exploraremos cómo mejorar el desempeño mediante la reducción de tamaño de las funciones Lambda, ahorrando tiempo y costo en su despliegue.
+
+#### ¿Por qué es importante reducir el tamaño de las funciones Lambda?
+
+Mantener el tamaño de las funciones Lambda bajo es crucial por varias razones:
+
+- **Tiempo de arranque (cold start)**: Las funciones Lambda voluminosas pueden incrementar el tiempo de inicio, afectando el rendimiento y la rapidez con que responden.
+- **Velocidad de despliegue**: Funciones más pequeñas se despliegan más rápido, lo que es vital cuando se utilizan herramientas de automatización como GitHub Actions.
+- **Costos asociados**: Reducir el tiempo que tardan en ser subidas a AWS puede ahorrar combustible en cronometrizados servicios como GitHub Actions.
+
+Amazon Web Services trata cada petición a Lambda como un "trigger" que activa la carga del código en un servidor. Por lo tanto, cuanto menos pese el código, más eficiente será la ejecución.
+
+#### ¿Cómo optimizar el empaquetado de funciones Lambda?
+
+Para que las funciones sean ligeras, el enfoque es excluir archivos innecesarios y enfocar el empaquetado solo en lo esencial: el handler. Aquí te mostramos cómo hacerlo:
+
+```yaml
+# Ejemplo de configuración de serverless.yaml
+package:
+  exclude:
+    - "**"
+
+functions:
+  createUser:
+    handler: createUsers/handler.handler
+    package:
+      include:
+        - createUsers/handler.js
+
+  getUser:
+    handler: getUsers/handler.handler
+    package:
+      include:
+        - getUsers/handler.js
+
+  deleteUser:
+    handler: deleteUsers/handler.handler
+    package:
+      include:
+        - deleteUsers/handler.py
+```
+
+- **Excluir archivos**: Inicialmente, la idea es excluir todos los archivos, logrando un empaquetado vacío.
+- **Incluir esencialmente handlers**: Para cada función Lambda, reincluso exclusivamente los archivos indispensables para su ejecución, como el `handler`.
+
+#### ¿Cómo probar los cambios de optimización?
+
+Una vez realizados estos cambios, es esencial probarlos:
+
+- **Despliegue local**: Utilizando SLS deploy local para observar el comportamiento antes de confirmar los cambios.
+- **Automatización con GitHub Actions**: Con un simple `git commit` y `git push`, es posible validar si los cambios surten el efecto deseado mediante la ejecución del flujo automatizado.
+
+#### Estrategias adicionales para mejorar el despliegue
+
+Aparte de empaquetar solo los handlers necesarios, existen otras estrategias para optimizar aún más:
+
+- **Uso de caché**: Guardar en caché dependencias recurrentes para acelerar despliegues.
+- **Lambda layers**: Segmentar las dependencias significativamente grandes para reutilizarlas entre diferentes Lambdas.
+- **Condicionar el pipeline**: Ejecutar pasos selectivos en el pipeline de CI/CD para reducir tiempos de ejecución.
+
+Con estos consejos y técnicas, no solo optimizas el tiempo de carga y despliegue de tus Lambdas, sino que también cumples con las mejores prácticas del sector cloud, ahorrando recursos valiosos en el proceso. ¡Atrévete a aplicar estas optimizaciones en tu próximo proyecto serverless!
+
+**Lecturas recomendadas**
+
+[GitHub - platzi/serverless-framework](https://github.com/platzi/serverless-framework)
+
+## Limpiemos nuestro workspace en AWS
+
+
+Serverless Framework nos ha ayudado creando un montón de recursos durante este curso, todos estos recursos están asociados a tu cuenta de AWS y a la región en donde estés desplegando y a un stack de CloudFormation en particular, por lo general el uso de estos recursos o servicios tiene un costo asociado en AWS, sin embargo, para el scope de este curso usamos únicamente servicios que estuvieran disponibles dentro del Free tier, es decir, servicios que pueden ser usados gratis si cumplen con las condiciones necesarias, para saber más sobre el free tier te invito a que revises la [documentación de AWS](https://aws.amazon.com/es/free/?all-free-tier.sort-by=item.additionalFields.SortRank&all-free-tier.sort-order=asc&awsf.Free%20Tier%20Types=*all&awsf.Free%20Tier%20Categories=*all).
+
+A pesar de ser servicios que pueden no generar costos, es importante que eliminemos todo lo que hemos creado durante el curso si ya no lo vamos a usar más, para eliminar todos los recursos creados en el stack de CloudFormation que se creó a través de nuestro serverless.yaml usando serverless deploy solo hara falta usar serverless remove, así entonces.
+
+Para borrar todos los recursos creados por el deploy debes ejecutar:
+
+`serverless remove`
+
+Pero no te preocupes, si quieres volver a desplegar tu aplicación puedes hacerlo, te tomará minutos y es precisamente otra de las ventajas de usar infraestructura como código, para desplegar tu aplicación nuevamente bastara con ejecutar:
+
+`serverless deploy`
+
+Otro punto aún más importante es la seguridad, recuerda que para este curso hemos creado un par de AWS_ACCESS_KEY_ID y AWS_SECRET_ACCESS_KEY, estas son las llaves para acceder y tomar acciones dentro de tu cuenta de AWS, son las que usa Serverless Framework para crear los recursos de nuestra app. Es muy importante que eliminemos estas llaves si no se usaran más, no queremos que se filtren por algún motivo a Internet, para borrarlas debes entonces:
+
+1. Ir a [IAM dentro de la consola web de AWS](https://us-east-1.console.aws.amazon.com/iamv2/home?region=us-east-1#/security_credentials?section=IAM_credentials).
+
+En la sección de **Access keys**, elimina o desactiva las keys que ya no usaras más.
+
+![serverless01 1](images/serverless01_1.png)
+
+Después te aparecerá un recuadro de confirmación, en el que primero debes desactivar la key y copiar y pegar el AWS_ACCESS_KEY_ID en el recuadro para confirmar que quieres borrar la key.
+
+![serverless01 2](images/serverless01_02.png)
+
+Recuerda que la seguridad en la nube es compartida, gran parte de la responsabilidad es tuya y otra gran parte de la responsabilidad es de parte del proveedor de servicio(AWS), por eso debes ser responsable de administrar bien los recursos que crees y hacer buen uso de los ACCESS_KEY, por ningún motivo se los debes compartir a alguien.
+
+[https://aws.amazon.com/es/compliance/shared-responsibility-model/](https://aws.amazon.com/es/compliance/shared-responsibility-model/)
