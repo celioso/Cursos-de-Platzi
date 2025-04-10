@@ -67,6 +67,13 @@ module.exports.hola = async (event) => {
 npm install -g serverless
 ```
 
+o
+
+```bash
+npm install --global serverless
+```
+
+
 ### 🧪 Comandos útiles
 
 | Comando | Descripción |
@@ -3505,3 +3512,232 @@ Después te aparecerá un recuadro de confirmación, en el que primero debes des
 Recuerda que la seguridad en la nube es compartida, gran parte de la responsabilidad es tuya y otra gran parte de la responsabilidad es de parte del proveedor de servicio(AWS), por eso debes ser responsable de administrar bien los recursos que crees y hacer buen uso de los ACCESS_KEY, por ningún motivo se los debes compartir a alguien.
 
 [https://aws.amazon.com/es/compliance/shared-responsibility-model/](https://aws.amazon.com/es/compliance/shared-responsibility-model/)
+
+## Crea tus API’s con Serverless Framework y ChatGPT
+
+¡Buena idea! Crear tus APIs con **Serverless Framework** y apoyarte en **ChatGPT** puede hacer el proceso mucho más rápido y ordenado. Aquí te va una guía práctica para crear una API RESTful **CRUD** (Create, Read, Update, Delete) con **Serverless Framework**, usando **DynamoDB**, **Node.js**, y configurada para **producción**.
+
+### 🚀 Paso a paso para crear tus APIs con Serverless Framework y ChatGPT
+
+
+### 🧱 1. Crea tu proyecto
+
+```bash
+serverless create --template aws-nodejs --path crud-serverless-users
+cd crud-serverless-users
+npm init -y
+npm install aws-sdk
+npm install serverless-offline serverless-dynamodb-local --save-dev
+```
+
+### 📁 2. Estructura básica de carpetas y archivos
+
+```
+crud-serverless-users/
+│
+├── handler.js
+├── serverless.yml
+├── package.json
+└── utils/
+    └── responses.js
+```
+
+### 📦 3. `package.json` básico
+
+```json
+{
+  "name": "crud-serverless-users",
+  "version": "1.0.0",
+  "main": "handler.js",
+  "scripts": {
+    "start": "serverless offline"
+  },
+  "dependencies": {
+    "aws-sdk": "^2.1256.0"
+  },
+  "devDependencies": {
+    "serverless": "^3.21.0",
+    "serverless-offline": "^14.4.0",
+    "serverless-dynamodb-local": "^0.1.1"
+  }
+}
+```
+
+### ⚙️ 4. Configura `serverless.yml`
+
+```yaml
+service: crud-serverless-users
+
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  stage: ${opt:stage, 'dev'}
+  region: us-east-1
+  environment:
+    USERS_TABLE: usersTable-${opt:stage, 'dev'}
+
+plugins:
+  - serverless-offline
+  - serverless-dynamodb-local
+
+custom:
+  dynamodb:
+    stages:
+      - dev
+    start:
+      port: 8000
+      inMemory: true
+      migrate: true
+
+functions:
+  createUser:
+    handler: handler.createUser
+    events:
+      - http:
+          path: users
+          method: post
+
+  getUser:
+    handler: handler.getUser
+    events:
+      - http:
+          path: users/{id}
+          method: get
+
+  updateUser:
+    handler: handler.updateUser
+    events:
+      - http:
+          path: users/{id}
+          method: patch
+
+  deleteUser:
+    handler: handler.deleteUser
+    events:
+      - http:
+          path: users/{id}
+          method: delete
+
+resources:
+  Resources:
+    UsersTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:provider.environment.USERS_TABLE}
+        AttributeDefinitions:
+          - AttributeName: pk
+            AttributeType: S
+        KeySchema:
+          - AttributeName: pk
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
+```
+
+### 🧠 5. Crea los handlers en `handler.js`
+
+```js
+const AWS = require("aws-sdk");
+const { success, failure } = require("./utils/responses");
+
+const dynamodb = new AWS.DynamoDB.DocumentClient();
+const TABLE = process.env.USERS_TABLE;
+
+module.exports.createUser = async (event) => {
+  const data = JSON.parse(event.body);
+  const params = {
+    TableName: TABLE,
+    Item: {
+      pk: data.id,
+      name: data.name,
+      email: data.email
+    }
+  };
+
+  try {
+    await dynamodb.put(params).promise();
+    return success({ message: "Usuario creado" });
+  } catch (err) {
+    return failure(err);
+  }
+};
+
+module.exports.getUser = async (event) => {
+  const { id } = event.pathParameters;
+  const params = {
+    TableName: TABLE,
+    Key: { pk: id }
+  };
+
+  try {
+    const result = await dynamodb.get(params).promise();
+    return success(result.Item);
+  } catch (err) {
+    return failure(err);
+  }
+};
+
+// Puedes seguir con updateUser y deleteUser igual de fácil
+```
+
+### 🛠️ 6. `utils/responses.js`
+
+```js
+module.exports.success = (data = {}, statusCode = 200) => ({
+  statusCode,
+  body: JSON.stringify(data)
+});
+
+module.exports.failure = (error = {}, statusCode = 500) => ({
+  statusCode,
+  body: JSON.stringify({ error: error.message || "Error interno" })
+});
+```
+
+### ✅ 7. Corre localmente
+
+```bash
+serverless dynamodb install
+npm run start
+```
+
+### 🌐 8. Despliegue a producción
+
+```bash
+serverless deploy --stage prod
+```
+
+### Resumen
+
+#### ¿Qué es Serverless Framework y ChatGPT?
+
+La revolución del desarrollo de software está en marcha con el uso de herramientas como Serverless Framework y ChatGPT. Pero, ¿de qué se trata realmente? Serverless Framework es una poderosa herramienta que te permite construir aplicaciones sin necesidad de gestionar servidores tradicionalmente. Aunque puedas pensar que por su nombre no hay servidores involucrados, en realidad los servidores están allí, pero la administración de estos está completamente a cargo del proveedor de la nube, como AWS (Amazon Web Services). Por otro lado, ChatGPT es una inteligencia artificial que puede generar texto y código bajo instrucciones claras, maximizando la productividad de los desarrolladores.
+
+#### ¿Cuáles son las ventajas de estas herramientas?
+
+1. **Escalabilidad y eficiencia**: Serverless Framework permite que las aplicaciones se escalen automáticamente según la demanda, sin configurar manualmente el hardware.
+2. **Reducción de costos y tiempo**: Al no tener que administrar servidores, los costos de operación disminuyen. Y con ChatGPT automatizando tareas de codificación, el tiempo de desarrollo se reduce significativamente.
+3. **Flexibilidad de idioma y plataforma**: El framework permite el uso de múltiples lenguajes de programación y despliegue en varias nubes, mientras que ChatGPT puede entender y generar texto en varios idiomas.
+
+#### ¿Cómo aprovechar ChatGPT y Serverless Framework en proyectos?
+
+El potencial de estas herramientas juntas se puede observar en proyectos prácticos como la creación de APIs para generar poemas sobre distintos lenguajes de programación. Imagina tener la capacidad de recibir peticiones que generen un poema sobre Java o Python, ajustándose a tus criterios específicos como el número de palabras o si debe ser romántico o no. Esto no solo ejemplifica cómo combinar tecnologías modernas, sino también cómo simplificar procesos complejos.
+
+#### ¿Cómo iniciar un proyecto con Serverless Framework?
+
+Aquí tienes un pequeño resumen de los pasos iniciales:
+
+- **Configura tu herramienta y entorno**: Instala Serverless Framework y asegúrate de tener una cuenta de AWS configurada.
+- **Define tus archivos básicos**: Necesitarás archivos como serverless.yaml para la configuración del servicio y definiendo cómo tu aplicación debe interactuar con otros servicios como API Gateway.
+- **Utiliza ChatGPT para generar el código base**: Delega la creación de código repetitivo a ChatGPT, que puede elaborar el código inicial de tus scripts, ahorrando tiempo significativo.
+
+#### Seguridad y precauciones al usar ChatGPT
+
+Aunque ChatGPT es una herramienta poderosa, es esencial entender sus limitaciones. No es inusual que ChatGPT cometa errores al generar código, por lo que la revisión y corrección humanas son cruciales. Manten siempre medidas de seguridad apropiadas y no dejes que el código arriesgue la integridad de tu aplicación. Valida siempre la lógica de negocio y asegúrate de que los datos sensibles, como las claves de acceso, estén aseguradas.
+
+#### Implementación y despliegue continuo
+
+Una vez configurada y probada tu aplicación localmente, puedes desplegarla con comandos simples como `serverless deploy`. Este proceso de despliegue automático a través de CloudFormation en AWS es eficiente y simplifica la complejidad que en el pasado requeriría configuraciones manuales extensas. La simplicidad de serverless radica en que maneja automáticamente las preocupaciones de infraestructura mientras tú te enfocas en la lógica de tu aplicación.
+
+La comunidad tecnológica está cada vez más inclinada hacia estas innovaciones, y en plataformas como Platzi, siempre estarás preparado para aprender y afrontar las novedades del desarrollo de software. Continúa explorando, experimentando y seguro encontrarás formas eficientes y efectivas de desarrollar soluciones innovadoras.
