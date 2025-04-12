@@ -1,0 +1,70 @@
+service: crud-python
+
+frameworkVersion: "4"
+
+provider:
+  name: aws
+  runtime: python3.9
+  region: us-east-1
+  environment:
+    USERS_TABLE: usersTable
+    IS_OFFLINE: ${env:IS_OFFLINE, 'false'}
+  iam:
+    role:
+      statements:
+        - Effect: 'Allow'
+          Action:
+            - 'dynamodb:PutItem'
+            - 'dynamodb:Get*'
+            - 'dynamodb:Scan*'
+            - 'dynamodb:UpdateItem'
+            - 'dynamodb:DeleteItem'
+          Resource: arn:aws:dynamodb:us-east-1:376129853411:table/usersTable
+
+plugins:
+  - serverless-python-requirements
+  - serverless-dynamodb-local
+  - serverless-offline
+
+custom:
+  pythonRequirements:
+    dockerizePip: true
+
+  dynamodb:
+    stages:
+      - dev
+    start:
+      port: 8000
+      inMemory: true
+      migrate: true
+
+functions:
+  api:
+    handler: handler.handler
+    events:
+      - http:
+          path: users
+          method: post
+      - http:
+          path: users/{id}
+          method: get
+      - http:
+          path: users/{id}
+          method: put
+      - http:
+          path: users/{id}
+          method: delete
+
+resources:
+  Resources:
+    UsersTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: usersTable
+        AttributeDefinitions:
+          - AttributeName: pk
+            AttributeType: S
+        KeySchema:
+          - AttributeName: pk
+            KeyType: HASH
+        BillingMode: PAYPERREQUEST

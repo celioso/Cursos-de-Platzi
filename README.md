@@ -186,7 +186,7 @@
 ### Serverless
 
 - [Curso de Serverless Framework en AWS](CursodeServerlessFrameworkenAWS)
-Curso Avanzado de Serverless Framework en AWS
+- [Curso Avanzado de Serverless Framework en AWS](CursoAvanzadodeServerlessFrameworkenAWS)
 
 ### Practica en AWS
 

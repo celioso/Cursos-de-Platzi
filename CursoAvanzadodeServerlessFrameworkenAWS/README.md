@@ -445,3 +445,18 @@ Integrar S3 para el frontend, Lambda y SQS para el backend, y DynamoDB como capa
 - **Persistencia confiable**: DynamoDB asegura un almacenamiento de datos seguro y accesible.
 
 Estos servicios se combinan para ofrecer una solución robusta, escalable y eficiente, capaz de manejar desde pequeñas aplicaciones hasta infraestructuras empresariales complejas. Considerar un curso en profundidad sobre cada uno de estos servicios de AWS puede ampliar tus habilidades y conocimientos, mejorando aún más tus competencias dentro del mundo *serverless*.
+
+
+
+
+petición a un lambda `serverless invoke -f hello -s dev`y en local `serverless invoke local -f hello -s dev`
+
+iniciar el package.json `npm init -y`
+
+instalar serverless-offline `npm install serverless-offline --save-dev`
+
+instalar el aws-sdk `npm install aws-sdk --save-dev`
+
+pasa hacer deploy a una sola funcion `serverless deploy function -f helloUser`
+
+INSTALAR QUERYSTRING `npm install --save querystring`

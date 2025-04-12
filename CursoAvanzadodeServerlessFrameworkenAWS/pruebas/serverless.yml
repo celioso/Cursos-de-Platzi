@@ -1,0 +1,75 @@
+service: ejemplo-crud-usuario
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  stage: dev
+  region: us-east-1
+  environment:
+    IS_OFFLINE: ${env:IS_OFFLINE, 'false'}
+    USERS_TABLE: usuariosTable-${sls:stage}
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - dynamodb:*
+          Resource:
+            - arn:aws:dynamodb:us-east-1:*:table/usuariosTable-*
+
+functions:
+  app:
+    handler: handler.handler
+    events:
+      - http:
+          path: usuario/{id}
+          method: get
+          request:
+            parameters:
+              paths:
+                id: true
+      - http:
+          path: usuario
+          method: post
+      - http:
+          path: usuario/{id}
+          method: put
+          request:
+            parameters:
+              paths:
+                id: true
+      - http:
+          path: usuario/{id}
+          method: delete
+          request:
+            parameters:
+              paths:
+                id: true
+
+plugins:
+  - serverless-offline
+  - serverless-dynamodb-local
+
+custom:
+  dynamodb:
+    stages:
+      - dev
+    start:
+      port: 8000
+      inMemory: true
+      migrate: true
+      dbPath: .dynamodb
+
+resources:
+  Resources:
+    UsersTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: usersTable-${sls:stage}
+        AttributeDefinitions:
+          - AttributeName: pk
+            AttributeType: S
+        KeySchema:
+          - AttributeName: pk
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST

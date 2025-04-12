@@ -1691,6 +1691,8 @@ El mundo serverless es vasto y ofrece infinitas oportunidades para desarrollador
 
 [Querying and scanning a DynamoDB table - Amazon SDK for JavaScript](https://docs.amazonaws.cn/en_us/sdk-for-javascript/v3/developer-guide/dynamodb-example-query-scan.html)
 
+[Querying and scanning a DynamoDB table - Amazon SDK for JavaScript en español](https://docs.aws.amazon.com/es_es/sdk-for-javascript/v2/developer-guide/dynamodb-example-document-client.html)
+
 [Curso de Bases de Datos en AWS - Platzi](https://platzi.com/cursos/db-aws/)
 
 **NOTA:**
@@ -2022,6 +2024,13 @@ npx serverless dynamodb start
 ```bash
 npx serverless offline start
 ```
+**Lecturas recomendadas**
+
+[https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/DynamoDBLocal.DownloadingAndRunning.html#DynamoDBLocal.DownloadingAndRunning.title](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/DynamoDBLocal.DownloadingAndRunning.html#DynamoDBLocal.DownloadingAndRunning.title) instalación manual
+
+[video explicativo de instalación](https://www.youtube.com/watch?v=mZxkg9Go_ok&t=207s&ab_channel=JasCloudTech)
+
+**NOTA**: el dynamodb se deve iniciar desde la carpeta .dynamodb y usta este comando para powershell `java -D"java.library.path=./DynamoDBLocal_lib" -jar DynamoDBLocal.jar`
 
 ## Despliegue y Testing de nuestro GET
 

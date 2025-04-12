@@ -1,0 +1,45 @@
+# "org" ensures this Service is used with the correct Serverless Framework Access Key.
+org: celiscorp
+# "service" is the name of this project. This will also be added to your AWS resource names.
+service: curso-sls-hola-mundo
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+  region: us-east-1
+  # profile: serverless para usar un perfil predeterminado
+  apiGateway:
+    shouldStartNameWithService: true
+
+plugins:
+  - serverless-offline
+
+functions:
+  hello:
+    handler: handler.hello
+    events:
+      - httpApi:
+          path: /
+          method: GET
+
+  #helloUser:
+  #  handler: handler.helloUser
+  #  events:
+  #   - httpApi:
+  #        path: /user
+  #        method: GET
+  
+  helloUser:
+    handler: handler.helloUser
+    events:
+      - httpApi:
+          path: /user/{name}
+          method: GET
+
+  createUser:
+    handler: handler.createUser
+    events:
+      - httpApi:
+          path: /user
+          method: POST
+
