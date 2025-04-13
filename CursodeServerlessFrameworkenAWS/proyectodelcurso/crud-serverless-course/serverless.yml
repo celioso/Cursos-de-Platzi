@@ -8,6 +8,8 @@ frameworkVersion: "4"
 provider:
   name: aws
   runtime: nodejs20.x
+  #environment:
+    #DYNAMODB_CUSTOMER_TABLE: ${self:service}-customerTable-${sls:stage}
   iam:
     role:
       statements:
@@ -20,6 +22,7 @@ provider:
             - dynamodb:UpdateItem
             - dynamodb:DeleteItem
           Resource: arn:aws:dynamodb:us-east-1:376129853411:table/usersTable
+
 
 
 plugins:
@@ -42,15 +45,15 @@ functions:
   hello-world:
     handler: hello-world/handler.hello
     events:
-      - http:
-          path: hello
+      - httpApi:
+          path: /hello
           method: GET
 
   get-users:
     handler: getusers/handler.getUsers
     events:
-      - http:
-          path: users/{id}
+      - httpApi:
+          path: /users/{id}
           method: GET
 
 resources:
@@ -62,11 +65,10 @@ resources:
         AttributeDefinitions:
           - AttributeName: pk
             AttributeType: S
+        BillingMode: PAY_PER_REQUEST
         KeySchema:
           - AttributeName: pk
             KeyType: HASH
-        ProvisionedThroughput:
-          ReadCapacityUnits: 5
-          WriteCapacityUnits: 5
+        
 
 
