@@ -8,26 +8,31 @@ frameworkVersion: "4"
 provider:
   name: aws
   runtime: nodejs20.x
-  #environment:
-    #DYNAMODB_CUSTOMER_TABLE: ${self:service}-customerTable-${sls:stage}
   iam:
     role:
       statements:
         - Effect: Allow
           Action:
-            - dynamodb:Query
-            - dynamodb:Scan
-            - dynamodb:GetItem
-            - dynamodb:PutItem
-            - dynamodb:UpdateItem
-            - dynamodb:DeleteItem
-          Resource: arn:aws:dynamodb:us-east-1:376129853411:table/usersTable
-
-
+            - 'dynamodb:PutItem'
+            - 'dynamodb:GetItem'
+            - 'dynamodb:Query'
+            - 'dynamodb:UpdateItem'
+            - 'dynamodb:DeleteItem'
+          Resource: arn:aws:dynamodb:${aws:region}:${aws:accountId}:table/${self:service}-customerTable-${sls:stage}
+  environment:
+    DYNAMODB_CUSTOMER_TABLE: ${self:service}-customerTable-${sls:stage}
 
 plugins:
   - serverless-offline
   - serverless-dynamodb-local
+
+package:
+  individually: true
+  patterns:
+    - "!node_modules/**"
+    - "!.dynamodb/**"
+    - "!.serverless/**"
+
 
 custom:
   dynamodb:
@@ -50,18 +55,31 @@ functions:
           method: GET
 
   get-users:
-    handler: getusers/handler.getUsers
+    handler: getUsers/handler.getUsers
     events:
       - httpApi:
           path: /users/{id}
           method: GET
+  
+  create-users:
+    handler: createUsers/handler.createUsers
+    events:
+      - httpApi:
+          path: /users
+          method: POST
+
+  update-users:
+    handler: updateUsers/handler.updateUsers
+    events:
+      - httpApi:
+          path: /users/{id}
+          method: PATCH
 
 resources:
   Resources:
     usersTable:
       Type: AWS::DynamoDB::Table
       Properties:
-        TableName: usersTable
         AttributeDefinitions:
           - AttributeName: pk
             AttributeType: S
@@ -69,6 +87,4 @@ resources:
         KeySchema:
           - AttributeName: pk
             KeyType: HASH
-        
-
-
+        TableName: ${self:service}-customerTable-${sls:stage}
