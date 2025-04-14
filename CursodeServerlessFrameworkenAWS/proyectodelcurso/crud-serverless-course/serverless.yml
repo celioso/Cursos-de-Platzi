@@ -1,9 +1,9 @@
 # "org" ensures this Service is used with the correct Serverless Framework Access Key.
 org: celiscorp
+# "app" enables Serverless Framework Dashboard features and sharing them with other Services.
+app: aprendiendo-serverless
 # "service" is the name of this project. This will also be added to your AWS resource names.
 service: crud-serverless-course
-
-frameworkVersion: "4"
 
 provider:
   name: aws
@@ -32,7 +32,6 @@ package:
     - "!node_modules/**"
     - "!.dynamodb/**"
     - "!.serverless/**"
-
 
 custom:
   dynamodb:
@@ -74,6 +73,14 @@ functions:
       - httpApi:
           path: /users/{id}
           method: PATCH
+
+  delete-users:
+    handler: deleteUsers/handler.deleteUsers
+    runtime: python3.10
+    events:
+      - httpApi:
+          path: /users/{id}
+          method: DELETE
 
 resources:
   Resources:
