@@ -66,7 +66,7 @@ functions:
       - httpApi:
           path: /users/{id}
           method: GET
-  
+
   create-users:
     handler: createUsers/handler.createUsers
     package:
@@ -76,7 +76,10 @@ functions:
       - httpApi:
           path: /users
           method: POST
-
+          body:
+            application/json: 
+              schema: ${file(schemas/user-schema.json)}
+              
   update-users:
     handler: updateUsers/handler.updateUsers
     package:
@@ -86,6 +89,9 @@ functions:
       - httpApi:
           path: /users/{id}
           method: PATCH
+          body:
+            application/json: 
+              schema: ${file(schemas/user-schema.json)}
 
   delete-users:
     handler: deleteUsers/handler.deleteUsers

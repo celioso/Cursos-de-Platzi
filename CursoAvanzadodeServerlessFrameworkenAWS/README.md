@@ -400,6 +400,7 @@ En resumen, API Gateway no solo es una herramienta para conectar servicios, sino
 **Lecturas recomendadas**
 
 [json schema](hhttps://json-schema.org/learn/getting-started-step-by-step)
+[miscellaneous examples](https://json-schema.org/learn/miscellaneous-examples)
 
 ## Cuáles servicios vamos a usar
 

@@ -3263,6 +3263,50 @@ Cada vez que hagas **push al branch `main`**, GitHub Actions:
 2. Instala Node.js y tus dependencias.
 3. Despliega tu stack en AWS con Serverless Framework.
 
+**COMANDOS:**
+
+colocar el yaml de test en la ruta [.github/workflows/workflow.yaml](.github/workflows/workflow.yaml)
+`git checkout -b adding-github-actions`
+`git add .`
+`git commit -m ""agregando github workflow`
+`git push origin adding-github-actions`
+
+¡Claro! Vamos a ver **línea por línea** qué hace cada comando que escribiste en Git paso a paso:
+
+### 1️⃣ `git checkout -b adding-github-actions`
+
+🔁 **¿Qué hace?**
+
+- Crea una **nueva rama** llamada `adding-github-actions`.
+- Luego, **cambia a esa rama** automáticamente.
+
+📌 Es útil cuando quieres trabajar en una nueva funcionalidad sin tocar directamente la rama principal (`main` o `master`).
+
+### 2️⃣ `git add .`
+
+📂 **¿Qué hace?**
+
+- Le dice a Git que **agregue todos los archivos modificados, nuevos o eliminados** (dentro del directorio actual y subdirectorios) al *staging area*, es decir, que están listos para hacer commit.
+
+💡 El punto (`.`) significa "todo lo que haya cambiado".
+
+### 3️⃣ `git commit -m "agregando github workflow"`
+
+💬 **¿Qué hace?**
+
+- Crea un commit con los cambios agregados (`git add .`) y lo etiqueta con un **mensaje descriptivo**.
+- El `-m` permite escribir el mensaje directamente en la línea de comandos.
+
+💡 El mensaje `"agregando github workflow"` indica qué estás subiendo: probablemente un archivo `.yml` para automatizar algo con GitHub Actions.
+
+### 4️⃣ `git push origin adding-github-actions`
+
+🚀 **¿Qué hace?**
+
+- Envía tu nueva rama (`adding-github-actions`) al **repositorio remoto** llamado `origin` (usualmente GitHub).
+- Después de esto, podrás ver la rama en GitHub y, por ejemplo, abrir un pull request para que se revise o se una a `main`.
+
+
 ### Resumen
 
 #### ¿Por qué es importante sincronizar un equipo remoto en el despliegue de aplicaciones serverless?
