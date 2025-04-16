@@ -8,9 +8,9 @@ if os.environ.get("IS_OFFLINE"):
     dynamodb = boto3.resource(
         'dynamodb',
         region_name='localhost',
-        endpoint_url='http://localhost:8000',
-        aws_access_key_id='DEFAULT_ACCESS_KEY',
-        aws_secret_access_key='DEFAULT_SECRET'
+        endpoint_url='http://localhost:8002',
+        aws_access_key_id='DEFAULTACCESSKEY',
+        aws_secret_access_key='DEFAULTSECRET'
     )
 else:
     dynamodb = boto3.resource('dynamodb')

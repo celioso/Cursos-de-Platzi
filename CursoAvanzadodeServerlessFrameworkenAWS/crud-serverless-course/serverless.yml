@@ -8,6 +8,7 @@ service: crud-serverless-course
 provider:
   name: aws
   runtime: nodejs20.x
+  region: us-east-1
   iam:
     role:
       statements:
@@ -40,11 +41,11 @@ custom:
     stages:
       - dev
     start:
-      port: 8000
+      port: 8002
       inMemory: true
       migrate: true
     # Uncomment only if you already have a DynamoDB running locally
-    # noStart: true
+      noStart: true
 
 functions:
   hello-world:
@@ -76,9 +77,7 @@ functions:
       - httpApi:
           path: /users
           method: POST
-          body:
-            application/json: 
-              schema: ${file(schemas/user-schema.json)}
+          
               
   update-users:
     handler: updateUsers/handler.updateUsers
@@ -89,9 +88,6 @@ functions:
       - httpApi:
           path: /users/{id}
           method: PATCH
-          body:
-            application/json: 
-              schema: ${file(schemas/user-schema.json)}
 
   delete-users:
     handler: deleteUsers/handler.deleteUsers

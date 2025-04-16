@@ -11,10 +11,10 @@ let clientParams = {};
 if (process.env.IS_OFFLINE) {
   clientParams = {
     region: "localhost",
-    endpoint: "http://localhost:8000",
+    endpoint: "http://localhost:8002",
     credentials: {
-      accessKeyId: "DEFAULT_ACCESS_KEY",
-      secretAccessKey: "DEFAULT_SECRET",
+      accessKeyId: "DEFAULTACCESSKEY",
+      secretAccessKey: "DEFAULTSECRET",
     },
   };
 }

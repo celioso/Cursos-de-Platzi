@@ -447,6 +447,107 @@ Integrar S3 para el frontend, Lambda y SQS para el backend, y DynamoDB como capa
 
 Estos servicios se combinan para ofrecer una solución robusta, escalable y eficiente, capaz de manejar desde pequeñas aplicaciones hasta infraestructuras empresariales complejas. Considerar un curso en profundidad sobre cada uno de estos servicios de AWS puede ampliar tus habilidades y conocimientos, mejorando aún más tus competencias dentro del mundo *serverless*.
 
+## S3 para guardar objetos
+
+¡Perfecto! Si vas a usar **Amazon S3 para guardar objetos**, te doy una guía rápida de cómo hacerlo y cómo integrarlo con tus otros servicios como API Gateway, Lambda, etc.
+
+### 🗂️ ¿Qué es Amazon S3?
+Amazon **S3 (Simple Storage Service)** es un servicio para **guardar y recuperar archivos u objetos** (imágenes, JSON, PDF, backups, etc.) de forma segura, escalable y barata.
+
+### 🎯 Casos típicos de uso
+- Guardar imágenes subidas desde un frontend.
+- Almacenar archivos generados por funciones Lambda.
+- Servir contenido estático (como sitios web).
+- Respaldar datos de DynamoDB u otros servicios.
+
+### ⚙️ Cómo configurar un bucket S3 básico
+
+### 1. Crear un bucket
+Puedes hacerlo desde la consola AWS o usando CloudFormation/Serverless Framework.
+
+**Desde consola:**
+- Ir a [https://s3.console.aws.amazon.com/s3/](https://s3.console.aws.amazon.com/s3/)
+- Clic en “Create bucket”.
+- Asigna un nombre único global.
+- Selecciona región.
+- Puedes dejar la configuración predeterminada para empezar.
+
+### 2. Subir objetos a S3
+**Manual:**
+- Desde la consola, entra a tu bucket → "Upload" → selecciona archivos → subir.
+
+**Automático (ejemplo con Node.js AWS SDK v3):**
+```js
+import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+
+const s3 = new S3Client({ region: "us-east-1" });
+
+const uploadParams = {
+  Bucket: "tu-nombre-de-bucket",
+  Key: "ruta/archivo.txt",
+  Body: Buffer.from("Contenido del archivo"),
+};
+
+await s3.send(new PutObjectCommand(uploadParams));
+```
+
+### 3. Dar permisos a Lambda o usuarios para escribir/leer
+
+#### Opción 1: En el `serverless.yml`:
+```yaml
+provider:
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - s3:GetObject
+            - s3:PutObject
+          Resource: arn:aws:s3:::tu-nombre-de-bucket/*
+```
+
+### 4. Enlazar con otros servicios
+- **API Gateway + Lambda**: Recibes un archivo por `POST`, lo subes a S3.
+- **S3 + Lambda Trigger**: Cuando alguien sube algo a un bucket, se dispara un Lambda para procesarlo.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -461,3 +562,5 @@ instalar el aws-sdk `npm install aws-sdk --save-dev`
 pasa hacer deploy a una sola funcion `serverless deploy function -f helloUser`
 
 INSTALAR QUERYSTRING `npm install --save querystring`
+
+Iniciar dynamodb `java -D"java.library.path=./DynamoDBLocal_lib" -jar DynamoDBLocal.jar -port 8002`

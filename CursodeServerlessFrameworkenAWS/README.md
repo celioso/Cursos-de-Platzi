@@ -1699,8 +1699,6 @@ El mundo serverless es vasto y ofrece infinitas oportunidades para desarrollador
 
 ¡Perfecto! 🎉 Ya se instaló correctamente `serverless-offline`. El mensaje sobre vulnerabilidades es común y se puede revisar luego si quieres más seguridad.
 
----
-
 ### ✅ Ahora asegúrate de que `serverless-offline` esté activado en tu archivo `serverless.yml`.
 
 Agrega esto **al final** del archivo:
@@ -1730,8 +1728,6 @@ functions:
 plugins:
   - serverless-offline
 ```
-
----
 
 ### 🚀 Luego ejecuta en la terminal:
 
