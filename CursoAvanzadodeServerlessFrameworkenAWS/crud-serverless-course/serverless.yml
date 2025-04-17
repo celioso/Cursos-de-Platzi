@@ -20,8 +20,17 @@ provider:
             - 'dynamodb:UpdateItem'
             - 'dynamodb:DeleteItem'
           Resource: arn:aws:dynamodb:${aws:region}:${aws:accountId}:table/${self:service}-customerTable-${sls:stage}
+        - Effect: Allow
+          Action:
+            - 's3:GetObject'
+            - 's3:PutObject'
+            - 's3:DeleteObject'
+            - 's3:ListBucket'
+          Resource: arn:aws:s3:::${self:service}-customer-bucket-${sls:stage}/*
   environment:
     DYNAMODB_CUSTOMER_TABLE: ${self:service}-customerTable-${sls:stage}
+    BUCKET: bucket-serverless-course-54963217
+
 
 plugins:
   - serverless-offline
@@ -73,6 +82,8 @@ functions:
     package:
       patterns:
       - "createUsers/handler.js"
+      - "node_modules/**"
+    
     events:
       - httpApi:
           path: /users
@@ -100,6 +111,16 @@ functions:
           path: /users/{id}
           method: DELETE
 
+  signedURL:
+    handler: signedurl/handler.handler
+    package:
+      patterns:
+      - "signedurl/handler.js"
+    events:
+      - httpApi:
+          path: /signedurl
+          method: GET
+
 resources:
   Resources:
     usersTable:
@@ -113,3 +134,49 @@ resources:
           - AttributeName: pk
             KeyType: HASH
         TableName: ${self:service}-customerTable-${sls:stage}
+
+    S3Bucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        PublicAccessBlockConfiguration:
+          BlockPublicAcls: false
+          IgnorePublicAcls: false
+          BlockPublicPolicy: false
+          RestrictPublicBuckets: false
+        BucketName: bucket-serverless-course-54963217
+
+    BucketPolicy:
+      Type: AWS::S3::BucketPolicy
+      Properties:
+        Bucket: !Ref S3Bucket
+        PolicyDocument:
+          Version: "2012-10-17"
+          Statement:
+            - Sid: PublicReadGetObject
+              Effect: Allow
+              Principal: "*"
+              Action: s3:GetObject
+              Resource: !Join
+                - ""
+                - - "arn:aws:s3:::"
+                  - !Ref S3Bucket
+                  - "/*"
+
+  Outputs:
+    PublicBucketName:
+      Description: "Es un Bucket de serverless"
+      Value: !Ref S3Bucket
+      Export:
+        Name: BucketDePrueba
+
+    PublicBucketArn:
+      Description: "The ARN of the public S3 bucket"
+      Value: !GetAtt S3Bucket.Arn
+      Export:
+        Name: PublicBucketArn
+
+    PublicBucketWebsiteURL:
+      Description: "The website URL of the public S3 bucket (if configured for website hosting)"
+      Value: !GetAtt S3Bucket.WebsiteURL
+      Export:
+        Name: PublicBucketWebsiteURL

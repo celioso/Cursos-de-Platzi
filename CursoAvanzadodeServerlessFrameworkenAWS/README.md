@@ -510,6 +510,302 @@ provider:
 - **API Gateway + Lambda**: Recibes un archivo por `POST`, lo subes a S3.
 - **S3 + Lambda Trigger**: Cuando alguien sube algo a un bucket, se dispara un Lambda para procesarlo.
 
+## Serverless puede crear cualquier recurso de amazon
+
+Sí, **Serverless Framework puede crear prácticamente cualquier recurso de AWS**, siempre y cuando ese recurso sea compatible con **CloudFormation**, que es la tecnología subyacente que Serverless usa para desplegar infraestructura.
+
+### ✅ Ejemplos de recursos que puedes crear con Serverless:
+
+- **Lambda Functions**
+- **API Gateway**
+- **DynamoDB tables**
+- **S3 Buckets**
+- **SQS Queues**
+- **SNS Topics**
+- **Step Functions**
+- **EventBridge Rules**
+- **Cognito User Pools**
+- **IAM Roles and Policies**
+- **CloudWatch Alarms**
+- **RDS (bases de datos relacionales)**
+- Y muchos más...
+
+### 📦 ¿Cómo lo hace?
+
+Usas la propiedad `resources:` en tu archivo `serverless.yml`:
+
+```yaml
+resources:
+  Resources:
+    MyS3Bucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: mi-bucket-personalizado
+```
+
+Esto crea un bucket de S3 directamente desde Serverless.
+
+### 🧠 Tip:
+
+Si un recurso **no tiene un plugin oficial o no tiene configuración directa en `serverless.yml`**, **aún puedes declararlo como recurso `CloudFormation`** bajo `resources:`.
+
+### Resumen
+
+#### ¿Cómo se crea un bucket en S3 utilizando CloudFormation?
+
+Para subir imágenes u objetos a S3 impementando un enfoque serverless, lo primero es crear un bucket en S3. Este bucket almacenará los objetos y firmará las URLs. Aunque no se requiere conexión directa con funciones Lambda al principio, es un recurso imprescindible de Amazon Web Services.
+
+#### Ejemplo de creación del bucket en YAML
+
+Creamos el bucket usando la sintaxis de CloudFormation, que nos permite crear recursos de AWS con YAML o JSON. Aquí mostramos cómo buscar un ejemplo y adaptarlo:
+
+1. Busque ejemplos de CloudFormation para crear un bucket S3.
+2. Seleccione un ejemplo de bucket de acceso público para ver las imágenes.
+3. Cópielo y péguelo en su archivo `serverless.yml`.
+
+Aquí se ilustra un ejemplo básico en YAML:
+
+```xml
+Resources:
+  S3Bucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      AccessControl: PublicRead
+```
+
+Es crucial que los buckets tengan un nombre globalmente único, similar a los nombres de dominio. Puede usar nombres aleatorios para asegurarse de su unicidad, como `bucket-serverless-curso-12345`.
+
+#### ¿Qué políticas de acceso necesita el bucket?
+
+Un bucket S3 requiere una Policy que establezca si es públicamente accesible. Esto asegura que los objetos que almacene tengan el nivel de acceso adecuado.
+
+#### Añadir un Bucket Policy
+
+Para definir un Bucket Policy en CloudFormation sigue estos pasos:
+
+1. Busque un ejemplo de "CloudFormation Bucket Policy".
+2. Adapte el ejemplo, haciendo referencias al bucket creado.
+
+Aquí tiene un fragmento de YAML para añadir a su archivo `serverless.yml`:
+
+```xml
+Resources:
+  S3BucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref S3Bucket
+      PolicyDocument:
+        Statement:
+          - Effect: Allow
+            Action:
+              - "s3:GetObject"
+            Resource: !Sub "arn:aws:s3:::${S3Bucket}/*"
+            Principal: "*"
+```
+
+Este ejemplo permite la lectura pública de los objetos del bucket.
+
+####  ¿Cómo desplegar los recursos con Serverless Framework?
+
+Con todos los elementos listos en su archivo YAML, el siguiente paso es desplegarlos usando Serverless Framework.
+
+#### Pasos para desplegar con Serverless Framework
+
+1. Execute `sls deploy` en su terminal.
+2. CloudFormation detectará y aplicará los cambios necesarios para crear el bucket y la política.
+3. Supervise el progreso de la implementación y asegúrese de corregir errores si ocurren.
+
+Este proceso añadirá el bucket y el policy a su stack de CloudFormation, integrando estos recursos con su arquitectura existente.
+
+#### ¿Cómo confirmar que el bucket está bien configurado?
+
+Después de implementar, es vital asegurarse de que el bucket se creó correctamente y es accesible como se esperaba.
+
+#### Verifique que el bucket es accesible públicamente
+
+1. Ingrese a AWS, navegue a S3 y busque su bucket.
+2. Suba un archivo, como una imagen.
+3. Consiga la URL pública del archivo subido y verifique el acceso público.
+
+Si el bucket está configurado correctamente, la imagen debería ser accesible públicamente a través del URL proporcionado por Amazon.
+
+Con estos pasos, ya tendrá su bucket de S3 listo para integrarse con una función Lambda que firme las URLs y entregue estas al usuario. Este es un procedimiento fundamental al construir aplicaciones serverless con AWS. ¡Siga explorando estas tecnologías para potenciar sus aplicaciones!
+
+[AWS::S3::Bucket](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-s3-bucket.html)
+
+[AWS::S3::BucketPolicy](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-s3-bucketpolicy.html)
+
+## Firmar URLS y subir objetos a S3
+
+Claro, vamos a cubrir cómo **firmar URLs** (presigned URLs) y **subir objetos a Amazon S3** usando AWS SDK. ¿Te interesa hacerlo desde Python, Node.js, o algún otro lenguaje?
+
+Aquí te muestro cómo hacerlo en **Python (boto3)**, que es bastante común.
+
+### 🔐 Firmar una URL para subir un archivo a S3 (Presigned URL)
+
+Esto te permite darle a un cliente (como un navegador o una app) una URL temporal para subir un archivo directamente a S3 sin pasar por tu servidor.
+
+```python
+import boto3
+from botocore.exceptions import NoCredentialsError
+import datetime
+
+s3_client = boto3.client('s3')
+
+def generar_presigned_url(bucket, key, expiration=3600):
+    try:
+        url = s3_client.generate_presigned_url(
+            'put_object',
+            Params={'Bucket': bucket, 'Key': key},
+            ExpiresIn=expiration
+        )
+        return url
+    except NoCredentialsError:
+        print("Credenciales no configuradas")
+        return None
+
+# Uso
+bucket_name = 'tu-bucket'
+file_key = 'carpeta/nombre_del_archivo.txt'
+url = generar_presigned_url(bucket_name, file_key)
+print("URL para subir archivo:", url)
+```
+
+### 📤 Subir un archivo directamente desde Python a S3
+
+```python
+def subir_a_s3(bucket, key, file_path):
+    try:
+        s3_client.upload_file(file_path, bucket, key)
+        print("Archivo subido correctamente.")
+    except Exception as e:
+        print("Error al subir:", e)
+
+# Uso
+subir_a_s3('tu-bucket', 'carpeta/archivo.txt', '/ruta/local/archivo.txt')
+```
+
+### 🧪 Bonus: Subida desde navegador usando la URL firmada (HTML/JS)
+
+```html
+<input type="file" id="fileInput">
+<script>
+document.getElementById('fileInput').addEventListener('change', async function() {
+    const file = this.files[0];
+    const presignedUrl = "https://s3.amazonaws.com/tu-bucket/carpeta/archivo.txt?..."; // generado por tu backend
+
+    await fetch(presignedUrl, {
+        method: "PUT",
+        body: file
+    }).then(response => {
+        if (response.ok) {
+            alert("Archivo subido con éxito");
+        } else {
+            alert("Error al subir");
+        }
+    });
+});
+</script>
+```
+
+### Resumen
+
+#### ¿Cómo configurar una aplicación para subir imágenes a Amazon S3?
+
+En el entorno de desarrollo actual, la implementación de aplicaciones serverless se ha vuelto una habilidad fundamental. En esta sección, exploraremos cómo crear una aplicación que permite almacenar imágenes en un bucket de Amazon S3 utilizando funciones lambda y API Gateway. Este proceso te permitirá generar URLs firmadas para que los usuarios puedan cargar imágenes de manera segura.
+
+#### ¿Cómo construir una función Lambda para firmar URLs?
+
+La función Lambda es un componente crucial en este flujo, ya que genera la URL firmada que permite cargar imágenes al bucket de S3:
+
+- **Importar SDK de Amazon**: Asegúrate de incluir el SDK de Amazon para crear un cliente de S3.
+- **Versión de firma**: Utiliza el 'signature version 4'; permite firmar URLs, lo que es esencial para la seguridad de la aplicación.
+- **Manejador (Handler)**: Define una función asíncrona que actúe como manejador, utilizando el objeto event y context.
+- **Parámetros URL**: Extrae el nombre del archivo del event dentro de queryStringParameters para que S3 reciba el nombre adecuado.
+- **Generación de URL firmada**: Usa el método putObject del cliente S3 para determinar el método que se empleará con esa URL, especificando el key, el bucket y el tiempo de expiración.
+
+```js
+const AWS = require('aws-sdk');
+const s3 = new AWS.S3({
+  signatureVersion: 'v4',
+});
+
+exports.handler = async (event) => {
+  const filename = event.queryStringParameters.filename;
+  const signedURL = s3.getSignedUrl('putObject', {
+    Bucket: process.env.BUCKET,
+    Key: `upload/${filename}`,
+    Expires: 300,
+  });
+  
+  return {
+    statusCode: 200,
+    body: signedURL,
+  };
+};
+```
+
+#### ¿Cómo configurar el archivo `serverless.yaml`?
+
+El archivo `serverless.yaml` es fundamental para describir la infraestructura serverless de tu aplicación:
+
+- **Variables de entorno**: Define las variables dentro del proveedor con un nuevo key llamado environment donde se configurará, por ejemplo, el bucket.
+
+```javascript
+provider:
+  environment:
+    BUCKET: nombreDelBucket
+```
+
+- **Definición de funciones Lambda**: Crea una nueva función lambda en el archivo para firmar URLs, definiendo su handler y otros parámetros.
+- **Eventos y parámetros HTTP**: Usa un evento HTTP tipo GET en el que especifiques query strings necesarios, como `filename`.
+
+```javascript
+functions:
+  signedURL:
+    handler: signedURL.handler
+    events:
+      - http:
+          path: signedURL
+          method: get
+          request:
+            parameters:
+              querystrings:
+                filename: true
+```
+
+#### ¿Cómo otorgar permisos adecuados a las funciones?
+
+Para asegurar que tu función pueda interactuar con S3:
+
+- **Permisos IAM**: Añade permisos al rol de la función lambda para interactuar con el bucket S3, asegurándote de especificar el ARN del bucket.
+
+```javascript
+iamRoleStatements:
+  - Effect: 'Allow'
+    Action:
+      - 's3:*'
+    Resource: 
+      - 'arn:aws:s3:::nombreDelBucket/*'
+```
+
+Esta configuración de permisos es básica para este tutorial, pero deberías ajustarla a solo los permisos necesarios para mejorar la seguridad.
+
+#### ¿Cómo probar la URL firmada con Postman?
+
+Después de desplegar tu aplicación, es importante verificar su funcionalidad:
+
+1. **Crear un request GET**: Usa Postman para enviar un request GET a tu endpoint de firma, asegurándote que incluya el parámetro filename.
+2. **Verificar respuesta**: Debe devolver una URL larga, lo que indica que fue firmada correctamente.
+3. **Subir una imagen**: Utiliza la URL firmada para un request PUT en Postman, adjuntando la imagen en el body -> Binary.
+
+### Conclusiones y recomendaciones de buenas prácticas
+
+- **Seguridad de URLs**: Las URLs firmadas proporcionan transacciones seguras y limitan el tiempo de accesibilidad, lo que aumenta la seguridad del bucket.
+- **Documentación Serverless**: Familiarízate con la documentación oficial de Serverless Framework para modelos de permisos más detallados.
+- **Optimización de permisos**: Ajusta los permisos del bucket S3 y de la función lambda para mantener la seguridad de tu aplicación siguiendo las mejores prácticas de AWS.
+
+Estas instrucciones te permitirán construir una aplicación robusta que capitaliza los servicios serverless de AWS, proporcionando a tus usuarios una experiencia segura y eficiente al manejar almacenamiento de imágenes. ¡Continúa practicando y explorando para perfeccionar tus habilidades!
 
 
 
