@@ -112,7 +112,7 @@ functions:
           method: DELETE
 
   signedURL:
-    handler: signedurl/handler.handler
+    handler: signedurl/handler.signedS3URL
     package:
       patterns:
       - "signedurl/handler.js"

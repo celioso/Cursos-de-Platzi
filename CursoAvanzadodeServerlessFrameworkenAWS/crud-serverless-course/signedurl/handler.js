@@ -1,21 +1,20 @@
-const AWS = require('aws-sdk');
-const s3 = new AWS.S3({
-  signatureVersion: 'v4',
-});
+const AWS = require("aws-sdk")
 
-exports.handler = async (event) => {
-  // Obtener el nombre del archivo desde el query string
-  const filename = event.queryStringParameters.filename;
+const s3 = new AWS.S3({ signatureVersion: 'v4' })
 
-  // Generar la URL firmada para subir el archivo al bucket
-  const signedURL = s3.getSignedUrl('putObject', {
-    Bucket: process.env.BUCKET, // Aquí el bucket se toma del entorno
-    Key: `upload/${filename}`,  // Ruta dentro del bucket
-    Expires: 300,               // URL expira en 5 minutos
-  });
-  
-  return {
-    statusCode: 200,
-    body: signedURL,
-  };
-};
+const signedS3URL = async (event, context) => {
+    const filename = event.queryStringParameters.filename
+    const signedUrl = await s3.getSignedUrlPromise("putObject", {
+        Key: `upload/${filename}`,
+        Bucket: process.env.BUCKET,
+        Expires: 300,
+      });
+    return {
+        "statusCode": 200,
+        "body": JSON.stringify({ signedUrl })
+    }
+}
+
+module.exports = {
+    signedS3URL
+}
