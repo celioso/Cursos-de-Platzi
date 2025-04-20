@@ -120,6 +120,19 @@ functions:
       - httpApi:
           path: /signedurl
           method: GET
+          #cors: true # Habilita CORS si necesitas acceder desde un navegador
+
+  thumbnailGenerator:
+    handler: thumbnail/handler.thumbnailGenerator
+    package:
+      patterns:
+      - "thumbnail/handler.js"
+    events:
+      - s3:
+        bucket: ${self:service}-customerTable-${sls:stage}
+        event: s3:ObjectCreated:*
+        rules:
+          - prefix: uploads/
 
 resources:
   Resources:

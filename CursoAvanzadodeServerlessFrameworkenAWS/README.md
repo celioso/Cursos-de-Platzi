@@ -807,6 +807,131 @@ Después de desplegar tu aplicación, es importante verificar su funcionalidad:
 
 Estas instrucciones te permitirán construir una aplicación robusta que capitaliza los servicios serverless de AWS, proporcionando a tus usuarios una experiencia segura y eficiente al manejar almacenamiento de imágenes. ¡Continúa practicando y explorando para perfeccionar tus habilidades!
 
+**Nota**: toca instalar `npm install @aws-sdk/client-s3 @aws-sdk/s3-request-presigner`
+
+usar este codigo para la firma 
+
+```js
+const { getSignedUrl } = require('@aws-sdk/s3-request-presigner');
+const { S3Client, GetObjectCommand } = require('@aws-sdk/client-s3');
+
+const s3Client = new S3Client();
+
+module.exports.signedS3URL = async (event) => {
+  try {
+    const bucketName = 'bucket-serverless-course-54963217'; // Reemplaza con el nombre de tu bucket
+    const filename = event.queryStringParameters?.filename;
+
+    if (!filename) {
+      return {
+        statusCode: 400,
+        body: JSON.stringify({ message: 'El parámetro filename es requerido.' }),
+      };
+    }
+
+    const command = new GetObjectCommand({ Bucket: bucketName, Key: filename });
+    const signedUrl = await getSignedUrl(s3Client, command, { expiresIn: 360 }); // La URL expira en 1 hora (3600 segundos)
+
+    return {
+      statusCode: 200,
+      body: JSON.stringify({ signedUrl }),
+    };
+  } catch (error) {
+    console.error('Error al generar la URL firmada:', error);
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ message: 'Error al generar la URL firmada.' }),
+    };
+  }
+};
+```
+
+## Caso de uso: Thumbnail Generator
+
+Perfecto. Vamos a estructurar tu **caso de uso: Thumbnail Generator** paso a paso. Esto normalmente involucra:
+
+### 🎯 Caso de uso: **Thumbnail Generator**
+
+### ✅ **Objetivo**
+Generar automáticamente versiones en miniatura (thumbnails) de imágenes cargadas por el usuario en una aplicación web o móvil, y almacenarlas en un bucket S3 para su rápida visualización.
+
+### 🧩 **Flujo típico del proceso**
+
+1. **Subida de imagen original**
+   - El cliente (web o móvil) sube la imagen a S3 mediante una URL prefirmada (usando `PUT` o `POST`).
+
+2. **Generación de miniaturas**
+   - Un servicio backend detecta la nueva imagen (usando una lambda disparada por evento `s3:ObjectCreated`).
+   - La función Lambda descarga la imagen original.
+   - Redimensiona la imagen (por ejemplo, 150x150, 300x300, etc.).
+   - Guarda las miniaturas redimensionadas en ubicaciones específicas de S3 (por ejemplo: `thumbnails/150x150/imagen.jpg`).
+
+3. **Retorno de URLs**
+   - Se actualiza una base de datos o se notifican los sistemas del frontend con las nuevas URLs de las miniaturas.
+
+### 🧪 Tecnologías involucradas (ejemplo AWS)
+
+| Componente              | Tecnología recomendada                |
+|-------------------------|----------------------------------------|
+| Subida de imagen        | S3 con URL prefirmada (`PUT`)         |
+| Procesamiento           | Lambda + Node.js o Python             |
+| Redimensionamiento      | `sharp` (Node.js) o `Pillow` (Python) |
+| Almacenamiento          | Amazon S3                             |
+| Orquestación (opcional) | Step Functions / SQS / EventBridge    |
+| Acceso desde el cliente | CloudFront (caché de thumbnails)      |
+
+### 📦 Ejemplo estructura en S3
+
+```
+s3://mi-app-uploads/
+├── originals/
+│   └── usuario123/imagen.jpg
+├── thumbnails/
+│   └── usuario123/
+│       ├── 150x150/imagen.jpg
+│       └── 300x300/imagen.jpg
+```
+
+### 🛠️ Lambda (Node.js + Sharp) ejemplo básico
+
+```js
+const AWS = require("aws-sdk");
+const S3 = new AWS.S3();
+const sharp = require("sharp");
+
+exports.handler = async (event) => {
+  const bucket = event.Records[0].s3.bucket.name;
+  const key = decodeURIComponent(event.Records[0].s3.object.key.replace(/\+/g, ' '));
+
+  const image = await S3.getObject({ Bucket: bucket, Key: key }).promise();
+  const sizes = [150, 300];
+
+  await Promise.all(sizes.map(async (size) => {
+    const resized = await sharp(image.Body)
+      .resize(size, size)
+      .toBuffer();
+
+    const newKey = key.replace("originals/", `thumbnails/${size}x${size}/`);
+    await S3.putObject({
+      Bucket: bucket,
+      Key: newKey,
+      Body: resized,
+      ContentType: "image/jpeg",
+    }).promise();
+  }));
+
+  return { status: "thumbnails created" };
+};
+```
+
+### ✅ Buenas prácticas
+
+- Usa `Content-Type` correcto (`image/jpeg`, `image/png`).
+- Asegúrate de que los objetos creados sean públicos o accesibles mediante CloudFront (si se requiere visualización).
+- Usa URL prefirmada con `PUT` para uploads desde el frontend.
+- Elimina automáticamente imágenes antiguas si el espacio es crítico (lifecycle rules).
+
+
 
 
 

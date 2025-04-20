@@ -1,20 +1,32 @@
-const AWS = require("aws-sdk")
+const { getSignedUrl } = require('@aws-sdk/s3-request-presigner');
+const { S3Client, GetObjectCommand } = require('@aws-sdk/client-s3');
 
-const s3 = new AWS.S3({ signatureVersion: 'v4' })
+const s3Client = new S3Client({ region: 'us-east-1' });
 
-const signedS3URL = async (event, context) => {
-    const filename = event.queryStringParameters.filename
-    const signedUrl = await s3.getSignedUrlPromise("putObject", {
-        Key: `upload/${filename}`,
-        Bucket: process.env.BUCKET,
-        Expires: 300,
-      });
-    return {
-        "statusCode": 200,
-        "body": JSON.stringify({ signedUrl })
+module.exports.signedS3URL = async (event) => {
+  try {
+    const bucketName = 'bucket-serverless-course-54963217'; // Reemplaza con el nombre de tu bucket
+    const filename = event.queryStringParameters?.filename;
+
+    if (!filename) {
+      return {
+        statusCode: 400,
+        body: JSON.stringify({ message: 'El parámetro filename es requerido.' }),
+      };
     }
-}
 
-module.exports = {
-    signedS3URL
-}
+    const command = new GetObjectCommand({ Bucket: bucketName, Key: `update/${filename}` });
+    const signedUrl = await getSignedUrl(s3Client, command, { expiresIn: 300 }); // La URL expira en 5 minutos (300 segundos)
+
+    return {
+      statusCode: 200,
+      body: JSON.stringify({ signedUrl }),
+    };
+  } catch (error) {
+    console.error('Error al generar la URL firmada:', error);
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ message: 'Error al generar la URL firmada.' }),
+    };
+  }
+};
