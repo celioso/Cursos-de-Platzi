@@ -129,7 +129,7 @@ functions:
       - "thumbnail/handler.js"
     events:
       - s3:
-        bucket: ${self:service}-customerTable-${sls:stage}
+        bucket: ${self:service}-customerTable-${sls:stage} # ${env:BUCKET} # Usando la variable de entorno para el bucket S3
         event: s3:ObjectCreated:*
         rules:
           - prefix: uploads/
