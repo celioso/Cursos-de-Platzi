@@ -1,5 +1,5 @@
 const { getSignedUrl } = require('@aws-sdk/s3-request-presigner');
-const { S3Client, GetObjectCommand } = require('@aws-sdk/client-s3');
+const { S3Client, PutObjectCommand } = require('@aws-sdk/client-s3');
 
 const s3Client = new S3Client({ region: 'us-east-1' });
 
@@ -15,7 +15,7 @@ module.exports.signedS3URL = async (event) => {
       };
     }
 
-    const command = new GetObjectCommand({ Bucket: bucketName, Key: `update/${filename}` });
+    const command = new PutObjectCommand({ Bucket: bucketName, Key: `uploads/${filename}` });
     const signedUrl = await getSignedUrl(s3Client, command, { expiresIn: 300 }); // La URL expira en 5 minutos (300 segundos)
 
     return {

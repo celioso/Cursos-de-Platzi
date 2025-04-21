@@ -26,15 +26,16 @@ provider:
             - 's3:PutObject'
             - 's3:DeleteObject'
             - 's3:ListBucket'
-          Resource: arn:aws:s3:::${self:service}-customer-bucket-${sls:stage}/*
+          Resource: arn:aws:s3:::bucket-serverless-course-54963217/*
+          
   environment:
     DYNAMODB_CUSTOMER_TABLE: ${self:service}-customerTable-${sls:stage}
     BUCKET: bucket-serverless-course-54963217
 
 
-plugins:
-  - serverless-offline
-  - serverless-dynamodb-local
+#plugins:
+#  - serverless-offline
+#  - serverless-dynamodb-local
 
 package:
   individually: true
@@ -122,17 +123,19 @@ functions:
           method: GET
           #cors: true # Habilita CORS si necesitas acceder desde un navegador
 
-  thumbnailGenerator:
+  thumbGenarator:
     handler: thumbnail/handler.thumbnailGenerator
     package:
       patterns:
       - "thumbnail/handler.js"
+      - "mode_modules/**"
     events:
       - s3:
-        bucket: ${self:service}-customerTable-${sls:stage} # ${env:BUCKET} # Usando la variable de entorno para el bucket S3
+        bucket: bucket-serverless-course-54963217
         event: s3:ObjectCreated:*
         rules:
           - prefix: uploads/
+          
 
 resources:
   Resources:

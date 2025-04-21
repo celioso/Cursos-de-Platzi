@@ -931,6 +931,8 @@ exports.handler = async (event) => {
 - Usa URL prefirmada con `PUT` para uploads desde el frontend.
 - Elimina automáticamente imágenes antiguas si el espacio es crítico (lifecycle rules).
 
+[Tutorial: Using an Amazon S3 trigger to create thumbnail images](https://docs.aws.amazon.com/lambda/latest/dg/with-s3-tutorial.html)
+
 
 
 
