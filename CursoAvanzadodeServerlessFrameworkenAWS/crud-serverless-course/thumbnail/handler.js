@@ -20,7 +20,7 @@ const resizeImage = async (imageBody, width, height) => {
     .toBuffer();
 
   await S3.putObject({
-    Bucket: 'processed-images-bucket',
+    Bucket: 'bucket-serverless-course-54963217',
     Key: `resized-${width}x${height}-${Date.now()}.jpg`,
     Body: buffer
   }).promise();
