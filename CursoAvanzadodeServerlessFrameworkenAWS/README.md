@@ -933,13 +933,916 @@ exports.handler = async (event) => {
 
 [Tutorial: Using an Amazon S3 trigger to create thumbnail images](https://docs.aws.amazon.com/lambda/latest/dg/with-s3-tutorial.html)
 
+## Creando y desplegando una lambda layer
 
+Perfecto, crear y desplegar una **Lambda Layer** en Serverless Framework es útil cuando quieres reutilizar código o dependencias (como librerías de Node.js o Python) en múltiples funciones Lambda.
 
+### 🚧 1. Estructura del proyecto
 
+Aquí tienes una estructura recomendada:
 
+```
+my-service/
+├── layers/
+│   └── sharpLib/
+│       └── nodejs/
+│           └── node_modules/
+│               └── sharp/
+├── handler.js
+├── serverless.yml
+└── package.json
+```
 
+> 🔁 `sharp` es solo un ejemplo. Puedes incluir cualquier dependencia aquí.
 
+### 🧩 2. Instala la dependencia en el `layer`
 
+```bash
+mkdir -p layers/sharpLib/nodejs
+cd layers/sharpLib/nodejs
+npm init -y
+npm install sharp
+```
+
+### ⚙️ 3. Agrega la Layer en `serverless.yml`
+
+```yaml
+service: thumbnail-layer-service
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  region: us-east-1
+
+layers:
+  sharpLib:
+    path: layers/sharpLib
+    name: sharp-layer
+    description: "Layer que incluye la librería sharp"
+    compatibleRuntimes:
+      - nodejs18.x
+
+functions:
+  resizeImage:
+    handler: handler.resize
+    layers:
+      - { Ref: SharpLibLambdaLayer }  # usar el nombre de la Layer declarado arriba
+```
+
+### ✨ 4. Usa la librería en `handler.js`
+
+```js
+const sharp = require('sharp');
+
+module.exports.resize = async () => {
+  const resized = await sharp('input.jpg').resize(100, 100).toBuffer();
+  console.log("Imagen redimensionada");
+};
+```
+
+### 🚀 5. Despliega con Serverless
+
+```bash
+serverless deploy
+```
+
+### 🧪 6. Verifica
+
+Después del despliegue:
+
+- Ve a AWS Lambda.
+- Busca la función.
+- Asegúrate de que la layer aparece conectada.
+- Puedes probarla desde la consola con una imagen de prueba en `/tmp/`.
+
+### Resumen
+
+#### ¿Cómo optimizar peso usando Lambda Layers en AWS S3?
+
+La optimización de recursos en AWS es crucial para mejorar el rendimiento y reducir costos, especialmente al trabajar con funciones Lambda. En esta sesión, abordaremos cómo emplear Lambda Layers para optimizar el peso de los microservicios en Amazon Web Services, específicamente utilizando Node.js. A través de esta técnica, podemos minimizar la carga de dependencias en nuestras funciones Lambda, asegurando eficacia y funcionalidad sin comprometer la calidad del servicio.
+
+#### ¿Cómo definir eventos S3 eficientemente?
+
+- **Identificación de prefijos específicos**: Es vital definir nuestras reglas de eventos S3 para activar cuando los archivos sean cargados en carpetas particulares, como `Upload`. Esto asegura que nuestras funciones solo se activen cuando y donde lo necesitamos.
+- **Comprobación de la compilación**: Al crear o modificar eventos, siempre es recomendable validar que la configuración funciona correctamente antes de implementar cambios en producción.
+
+#### ¿Qué es una Lambda Layer y por qué usarla?
+Una Lambda Layer es un recurso en AWS que nos permite compartir librerías, configuraciones o cualquier contenido entre varias funciones Lambda. Veamos por qué es beneficioso:
+
+- **Reducción del tamaño de implementación**: Al trasladar las dependencias a una Layer, reducimos el tamaño del paquete de implementación de nuestro servicio Lambda.
+- **Reutilización**: Facilita compartir librerías entre diferentes funciones Lambda, evitando redundancias.
+- **Actualización centralizada**: Permite actualizar una sola vez las dependencias y reflejar estos cambios en todas las funciones relacionadas.
+
+#### Creación de una Lambda Layer paso a paso
+
+Vamos a detallar el proceso de creación de una Lambda Layer con Node.js y el uso de AWS CLI.
+
+1. **Estructura de directorios:**
+
+ - Colocamos las dependencias de Node.js en `nodejs/node_modules`.
+ 
+2. **Comandos necesarios:**
+
+ - Usamos Bash Scripting para instalar y mover dependencias.
+ 
+```bash
+npm install --only=prod o npm install --production --arch=x64 --plataform=linux
+mkdir -p nodejs
+mv node_modules nodejs/
+```
+
+3. **Compresión a ZIP:**
+
+ - Comprimimos todo en un archivo `.zip` para su carga.
+ 
+`zip -r nodejs.zip nodejs`
+
+4. **Publicar la Layer en AWS:**
+
+ - Usamos el CLI de AWS para subir y publicar la Layer.
+ 
+`aws lambda publish-layer-version --layer-name my-first-layer --description "My first layer" --license-info "MIT" --zip-file fileb://nodejs.zip`
+
+#### Integración de Lambda Layers con Serverless Framework
+
+Para quienes gestionan sus proyectos con Serverless Framework, integrar las Layers es un proceso que puede simplificarse:
+
+- **Declaración en `serverless.yaml`**:
+
+ - Añadir la sección layers especificando compatibilidades de runtime.
+ 
+```yaml
+layers:
+  base:
+    path: nodejs.zip
+    compatibleRuntimes:
+      - nodejs14.x 
+```
+
+- **Referencias a Layers en funciones Lambda:**
+
+ - Se puede definir el uso de Layers dentro de cada función.
+ 
+```yaml
+functions:
+  myFunction:
+    handler: handler.myHandler
+    layers:
+      - { Ref: MyLayer }
+```
+
+**Validación y pruebas finales**
+
+Después de implementar Layers, es esencial validar que todo funciona correctamente:
+
+1. **Pruebas en entorno de desarrollo**: Generar URLs firmadas y cargar archivos, asegurando que se crean y visualizan en diferentes tamaños.
+2. **Revisión en consola de AWS**: Corroborar desde la consola que las funciones están usando la Layer adecuada.
+
+#### ¿Cómo automatizar la creación de Layers con GitHub Actions?
+
+Aunque el proceso manual nos ofrece control detallado, la automatización nos permite agilizar el flujo de trabajo y minimizar errores humanos. En próximas clases, exploraremos cómo emplear GitHub Actions para automatizar completamente la creación y publicación de Lambda Layers en AWS.
+
+Este enfoque no solo optimiza recursos, sino también tiempos de desarrollo y mantenimiento, permitiendo al personal técnico centrarse en tareas más complejas e innovadoras. ¡Sigue adelante y no pierdas la oportunidad de profundizar en estas buenas prácticas para Cloud Computing!
+
+[Creating and deleting layers in Lambda](https://docs.aws.amazon.com/lambda/latest/dg/creating-deleting-layers.html#layers-create)
+
+[publish-layer-version](https://docs.aws.amazon.com/cli/latest/reference/lambda/publish-layer-version.html)
+
+## Actualizando lambda layer con CICD
+
+¡Perfecto! Para actualizar una **Lambda Layer con CI/CD** (por ejemplo con GitHub Actions), te muestro cómo automatizar todo el proceso desde commit hasta deploy.
+
+### ✅ Estructura general del proyecto
+
+```
+/layer
+  /nodejs
+    /node_modules
+    package.json
+    ...
+/thumbnail
+  handler.js
+serverless.yml
+package.json
+.github/
+  workflows/
+    deploy.yml  <-- CI/CD aquí
+```
+
+### 🧱 Paso 1: Asegura que el `layer` esté correctamente definido en `serverless.yml`
+
+```yaml
+layers:
+  sharpLayer:
+    path: layer
+    description: "Sharp image processing layer"
+    compatibleRuntimes:
+      - nodejs18.x
+```
+
+Y que tu función lo use:
+
+```yaml
+functions:
+  thumbnailGenerator:
+    handler: thumbnail/handler.thumbnailGenerator
+    layers:
+      - { Ref: SharpLayerLambdaLayer }
+```
+
+### ⚙️ Paso 2: GitHub Actions (`.github/workflows/deploy.yml`)
+
+```yaml
+name: Deploy Lambda Layer & Function
+
+on:
+  push:
+    branches:
+      - main  # o la rama que uses para producción
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v3
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: 18
+
+    - name: Install dependencies
+      run: |
+        cd layer/nodejs
+        npm install
+        cd ../../
+
+    - name: Package layer
+      run: |
+        cd layer
+        zip -r ../layer.zip nodejs
+        cd ..
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v2
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: us-east-1  # cámbialo si usas otra región
+
+    - name: Deploy with Serverless
+      run: npx serverless deploy
+```
+
+### 🔐 Paso 3: Configura tus secretos en GitHub
+
+En tu repositorio de GitHub, ve a **Settings > Secrets > Actions** y agrega:
+
+- `AWS_ACCESS_KEY_ID`
+- `AWS_SECRET_ACCESS_KEY`
+
+### 📦 Recomendación adicional
+
+Evita subir el `node_modules` al repo. GitHub Actions lo reinstalará y zippeará por ti. Asegúrate de agregar `.gitignore`:
+
+```
+layer/nodejs/node_modules/
+layer.zip
+```
+
+### Resumen
+
+#### ¿Cómo automatizar tus procesos con GitHub Actions?
+
+En este curso, exploramos cómo usar GitHub Actions para simplificar diversas tareas de desarrollo, especialmente al trabajar con el Serverless Framework y AWS Lambda Layers. A través de estas lecciones, no solo aprendes a optimizar procesos manuales repetitivos, sino que también mejoras en agilidad y calidad en tus proyectos de desarrollo. Es una oportunidad perfecta para profundizar en el mundo de DevOps y la automatización de flujos de trabajo.
+
+#### ¿Cómo referenciar múltiples Lambda Layers en Serverless Framework?
+
+Uno de los beneficios al usar Serverless Framework es su habilidad de gestionar Lambda Layers de manera eficiente. Al hacer referencia a una misma Lambda Layer, garantizas uniformidad en tus recursos, pero a veces necesitas manejar múltiples Layers para diferentes funciones, como:
+
+- **ProcDependencies**: Dependencias esenciales que son comunes entre los proyectos.
+- **ProcDependencies asociadas a clientes**: Para funciones que se conectan específicamente a servicios de clientes.
+- **ProcDependencies Processing**: Layers encargadas de procesar tareas en segundo plano.
+- ProcDatabaseDependencies: Dependencias de gestión de base de datos.
+
+Asegúrate siempre de mantener el número de Layers bajo control, hasta un máximo de cinco para evitar complicaciones.
+
+#### ¿Cuál es el rol de GitHub Actions en la creación y manejo de Lambda Layers?
+
+GitHub Actions es clave en la automatización del flujo de trabajo, al gestionar no solo los procesos de build y test, sino también la creación de Lambda Layers. Aquí hay un resumen sobre cómo se estructura un workflow típico:
+
+```yaml
+name: Node.js CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '14'
+    - run: npm install
+    - run: npm run build
+```
+
+#### ¿Cómo implementar el proceso automático de despliegue y artefactos?
+
+El proceso de despliegue en GitHub Actions implica cargar y descargar artefactos. Estos se almacenan temporalmente entre los diferentes jobs para facilitar su reutilización:
+
+1. **Carga de Artefactos**: Después de empaquetar las dependencias en un archivo Node.js.zip, este se carga como un artefacto temporal.
+2. **Descarga de Artefactos**: En el siguiente job, el artefacto se descarga en un directorio específico en el que será necesario usarlo.
+
+#### ¿Cómo validar y depurar GitHub Actions?
+
+Al crear un pull request, los Actions verifican automáticamente los tests y construcciones de layers antes de continuar con el despliegue. Si algo falla, GitHub Actions te proporciona un punto de reinicio, permitiendo ejecutar el job fallido sin necesidad de reiniciar todo el proceso:
+
+- **Errores de Configuración**: Asegúrate de configurar las credenciales y variables de entorno necesarias en la sección de secretos de GitHub.
+- **Validación de CI/CD**: Monitoriza el estado de los jobs y ajusta las configuraciones en el repositorio según sea necesario para mantener el flujo de trabajo eficiente.
+
+#### ¿Cómo asegurar la adecuación del proyecto tras múltiples despliegues?
+
+Después del despliegue exitoso, puedes asegurar que tu proyecto está utilizando la última versión de las Lambda Layers gracias a CloudFormation. CloudFormation se ocupa de gestionar las actualizaciones y asegurarte de que tu código siempre refiera a la versión más reciente.
+
+Al dominar estas técnicas y herramientas, te preparas para enfrentar proyectos de manera más eficiente y profesional. ¡La automatización con GitHub Actions no solo mejora el flujo de trabajo sino que también eleva las posibilidades de éxito en tus implementaciones de código!
+
+## Formas de asegurar una app serverless
+
+¡Buena pregunta! Asegurar una aplicación serverless en AWS (como una basada en Lambda, API Gateway, S3, DynamoDB, etc.) requiere pensar en varios niveles: acceso, datos, red, ejecución, y monitoreo.
+
+Aquí van **formas clave de asegurar una app serverless**, organizadas por categoría:
+
+### 🔐 1. **Autenticación y Autorización**
+
+- **Usa Amazon Cognito** o **JWT (JSON Web Tokens)** para autenticar usuarios.
+- **Protege rutas en API Gateway** con:
+  - Autorizadores Lambda personalizados.
+  - Autorizadores Cognito.
+- **Controla el acceso con políticas IAM bien definidas**, mínimas y específicas.
+
+### 📦 2. **Permisos mínimos (Principio de menor privilegio)**
+
+- Define **roles IAM** por función Lambda con **solo los permisos que necesitan**.
+- No des acceso de escritura/lectura a todos los buckets si solo se necesita uno.
+
+Ejemplo:
+
+```yml
+iamRoleStatements:
+  - Effect: Allow
+    Action:
+      - s3:GetObject
+      - s3:PutObject
+    Resource: arn:aws:s3:::tu-bucket-seguro/*
+```
+
+### 🧱 3. **Validación de entrada y sanitización**
+
+- Valida toda entrada de usuarios en la capa más cercana (API Gateway, Lambda).
+- Usa librerías como `Joi`, `Yup`, o `Zod` para validar esquemas de entrada.
+- Evita inyecciones (SQL, NoSQL, etc.).
+
+### 🔒 4. **Cifrado y privacidad**
+
+- **Cifra los datos en tránsito (HTTPS)**: todas las llamadas API deben ir por HTTPS.
+- **Cifra datos en reposo**:
+  - Usa KMS para cifrar objetos en S3.
+  - Habilita cifrado en DynamoDB, RDS, SQS, etc.
+- Usa variables de entorno cifradas para secretos y claves.
+
+### 🔍 5. **Monitoreo y auditoría**
+
+- Activa **AWS CloudTrail** para rastrear actividad de usuarios y servicios.
+- Usa **Amazon CloudWatch Logs y Metrics** para monitorear tus Lambdas.
+- Implementa **alertas** ante comportamientos anómalos.
+
+### 🛡️ 6. **Protección contra DoS y abuso**
+
+- Usa **API Gateway Throttling** para limitar la cantidad de peticiones por IP o usuario.
+- Configura **AWS WAF** (Web Application Firewall) para filtrar ataques comunes (SQLi, XSS).
+- Usa **Shield o Shield Advanced** para protección DDoS si es necesario.
+
+### 🧪 7. **Pruebas y análisis estático**
+
+- Haz pruebas de seguridad automáticas (SAST/DAST) usando herramientas como:
+  - `npm audit`, `bandit` (Python), `checkov` (Infra).
+  - SonarQube, Snyk, etc.
+- Revisa y escanea tus dependencias y layers.
+
+### 🧰 8. **Seguridad en el pipeline CI/CD**
+
+- No guardes secretos en código o repositorios.
+- Usa AWS Secrets Manager o Parameter Store.
+- Configura GitHub Actions / GitLab CI / CodePipeline para desplegar con seguridad.
+
+### ⚙️ 9. **Auditoría de recursos expuestos**
+
+- Usa **AWS Config** y **Security Hub** para identificar recursos públicos (como buckets S3 mal configurados).
+- Verifica los permisos de buckets, Lambdas, APIs, etc.
+
+### 🚨 10. **Gestión de errores y manejo seguro**
+
+- No devuelvas errores internos al usuario final.
+- Maneja excepciones con logging seguro (sin exponer secretos).
+- Usa middlewares para sanitizar respuestas de error.
+
+### Resumen
+
+#### ¿Cómo asegurar nuestra aplicación serverless con API Gateway?
+
+Cada vez que construimos una aplicación, la seguridad es un pilar fundamental que debemos asegurarnos de abordar. Cuando trabajamos con aplicaciones serverless en AWS, uno de nuestros más grandes aliados es el API Gateway. Este servicio no solo facilita la creación y gestión de API, sino que también provee mecanismos importantes para proteger nuestros recursos. Vamos a explorar dos formas principales de seguridad que API Gateway ofrece: el uso de API keys y los custom authorizers.
+
+#### ¿Qué son las API keys y cómo las usamos?
+
+Las API keys son cadenas alfanuméricas que API Gateway proporciona para asegurar las peticiones a nuestra aplicación serverless. Este método es simple pero eficaz, pues la clave funciona como una llave que permite el acceso solo si coincide con la almacenada en el sistema, garantizando así que nuestras funciones Lambda solo sean invocadas por usuarios autorizados.
+
+- **Similitud con otros servicios**: Al igual que muchas API de terceros, AWS también emplea este sistema de llaves de acceso.
+- **Configuración**: Las API keys en API Gateway pueden tener diferentes atributos y configuraciones para adaptarse a nuestras necesidades particulares.
+
+#### ¿Qué son y cómo funcionan los custom authorizers?
+
+Los custom authorizers son piezas más avanzadas para autenticación y autorización en API Gateway. Estos nos permiten utilizar una Lambda personalizada, dándonos la flexibilidad para implementar lógicas de negocio específicas para validar y autenticar usuarios.
+
+- **Uso de JSON Web Tokens (JWT)**: Estos tokens proporcionan atributos adicionales como fecha de expiración y el sujeto al que se le asignaron, ofreciendo una capa extra de seguridad.
+- **Validez versátil**: Más allá de autenticar usuarios y contraseñas, los custom authorizers permiten la creación de reglas de acceso basadas en roles de usuario y características específicas de organizaciones, lo que resulta en soluciones altamente personalizables.
+
+#### ¿Cómo se compara AWS Cognito con estas herramientas?
+AWS Cognito se integra dentro del ecosistema serverless de AWS como una potente opción para gestionar usuarios. Este servicio permite la creación de pools de usuarios y ofrece funcionalidades como single sign-on, que son esenciales para aplicaciones complejas que requieren una gestión más robusta de autenticación y autorización.
+
+- **Integración con otras aplicaciones**: Cognito permite una fácil integración con múltiples aplicaciones, facilitando la expansión y gestión centralizada de usuarios.
+- **Amplias características**: Además de la autenticación básica, Cognito soporta características avanzadas como la federación de identidades, lo que extiende su alcance y funcionalidad.
+
+Continúa explorando y aplicando estas estrategias de seguridad en tu próxima implementación. La seguridad no es solo indispensable, es fundamental para cumplir con las mejores prácticas del AWS Well-Architected Framework y asegurar el éxito y la resiliencia de tus aplicaciones serverless. ¡No dejes de aprender y avanza hacia prácticas seguras y bien estructuradas!
+
+**Lecturas recomendadas**
+
+[https://docs.aws.amazon.com/wellarchitected/latest/security-pillar/wellarchitected-security-pillar.pdf](https://docs.aws.amazon.com/wellarchitected/latest/security-pillar/wellarchitected-security-pillar.pdf)
+[serverless_framework_produccion](https://github.com/platzi/serverless_framework_produccion)
+
+## Autorizando usando APIKEYs
+
+¡Genial! En `httpApi` (que usa **API Gateway v2**), las **API Keys no son compatibles directamente**, a diferencia de `restApi`. Sin embargo, te muestro **alternativas funcionales para proteger tu `httpApi` con algo similar a API Keys**, usando autenticación **custom**:
+
+### ✅ Alternativa: Protección con un *Lambda Authorizer* (tipo `REQUEST`)
+
+Con esta opción puedes verificar tú mismo una API Key (por ejemplo, en el header `x-api-key`).
+
+### 🧰 Paso a paso para implementar un "API Key" en `httpApi`
+
+#### 1. Crea un `Lambda Authorizer`
+
+```js
+// authorizer.js
+exports.handler = async (event) => {
+  const apiKey = event.headers['x-api-key'];
+  const validApiKey = 'mi-api-key-secreta';
+
+  if (apiKey === validApiKey) {
+    return {
+      isAuthorized: true,
+    };
+  } else {
+    return {
+      isAuthorized: false,
+    };
+  }
+};
+```
+
+#### 2. Configura el `httpApi` con el Lambda Authorizer en `serverless.yml`
+
+```yml
+functions:
+  authorizer:
+    handler: authorizer.handler
+
+  getUsers:
+    handler: handler.getUsers
+    events:
+      - httpApi:
+          path: /users
+          method: get
+          authorizer:
+            name: authorizer
+```
+
+#### 3. Resultado
+
+Ahora cualquier request a `/users` necesitará el header:
+
+```http
+x-api-key: mi-api-key-secreta
+```
+
+Si no se envía o es incorrecto, API Gateway **rechaza la solicitud** automáticamente con un `403 Forbidden`.
+
+### 🧠 Nota
+
+Esto **no es una API Key nativa**, pero **cumple el mismo propósito**: permitir acceso sólo a quien tenga una clave secreta. Además, puedes:
+
+- Rotar la clave fácilmente
+- Validar múltiples claves
+- Registrar uso por IP o por usuario
+
+### Resumen
+
+#### ¿Cómo usar API Keys en un proyecto Serverless con seguridad?
+
+Implementar técnicas de autenticación robustas es fundamental a la hora de manejar aplicaciones que interactúan con servicios API. Una de estas técnicas es el uso de las API keys, que son llaves alfanuméricas utilizadas para validar si un usuario puede o no acceder a un recurso. Esta clase explora cómo configurar y utilizar API keys en proyectos que emplean el Serverless Framework.
+
+#### ¿Cómo definir un endpoint como privado en Serverless?
+
+Para garantizar que solo los usuarios autorizados puedan acceder a un recurso, es necesario configurar el endpoint como privado. En Serverless Framework, esta configuración se realiza de la siguiente manera:
+
+```yaml
+functions:
+  getUsers:
+    handler: handler.getUsers
+    events:
+      - http:
+          path: users
+          method: get
+          private: true
+```
+
+Al establecer la propiedad `private` en `true`, se indica que cada acceso al endpoint debe pasar por una validación con el API key.
+
+#### ¿Cómo configurar API keys en Serverless Framework?
+
+Para activar el uso de API keys, primero, debes definirlos en la sección del `provider` dentro del `serverless.yml`. Aquí es donde se asocia el API Gateway con las API keys necesarias.
+
+```yaml
+provider:
+  name: aws
+  apiGateway:
+    apiKeys:
+      - nombreDeMiAPIKey
+```
+
+Una vez configurado, al desplegar con Serverless Framework, se asegura de que solo las peticiones que incluyan el API key válido podrán acceder a los recursos privados que has establecido.
+
+#### Uso de Git y CI/CD para despliegue automático
+
+La automatización en los procesos de desarrollo es crucial para ahorrar tiempo y minimizar errores. Utilizando herramientas como Git y servicios de CI/CD, como GitHub Actions, puedes implementar cambios automáticamente. Simplemente realiza un `commit` y un `push` hacia tu repositorio, y tu configuración hará el resto.
+
+#### ¿Qué ocurrirá tras el despliegue?
+
+Luego de haber realizado un `push`, GitHub Actions se encargará de verificar los cambios y ejecutar los flujos de construcción y prueba, que incluyen:
+
+- Validación de que los endpoints ahora requieren API keys.
+- Automatización de la configuración de las lambda layers.
+- Despliegue de los cambios en las funciones de AWS Lambda y sus eventos asociados.
+
+#### Uso de API keys en Postman
+
+Para verificar que la autenticación con API keys funciona correctamente, puedes utilizar Postman para realizar peticiones a tu API. Debes asegurarte de incluir el header correcto en tus peticiones:
+
+`x-api-key: <tu_valor_de_api_key>`
+
+#### ¿Qué ocurre si no se incluye el API key?
+
+Si intentas acceder a un recurso sin el API key correcto, obtendrás una respuesta de error `403 Forbidden`. Esto indica que el acceso está restringido hasta que se valide con una API key autorizada.
+
+#### Procedimientos adicionales y automatización
+
+Serverless Framework, junto al uso de API keys, permite una automatización casi total en la protección y administración de tus endpoints. Sin embargo, también es posible realizar ciertas configuraciones manuales si la situación lo amerita. Para una configuración manual en la consola de AWS:
+
+1. Accede a la sección de API Gateway.
+2. Elige el API correspondiente.
+3. Administra las API keys: puedes importar o crear nuevas según tus necesidades.
+
+La integración de API keys y las características automáticas de Serverless Framework ofrecen una solución eficaz y eficiente para manejar los requerimientos de seguridad en aplicaciones serverless. Esta herramienta no solo facilita la gestión de acceso, sino que también asegura una implementación centralizada y controlada de tus servicios.
+
+## Usando parámetros de systems manager
+
+¡Perfecto! Usar **AWS Systems Manager Parameter Store** es una excelente forma de **manejar parámetros de configuración sensibles o reutilizables** en una aplicación serverless (como contraseñas, tokens, nombres de tabla, etc.).
+
+Aquí te explico cómo usarlo paso a paso 👇
+
+### 🛠️ Paso 1: Crear un parámetro en SSM
+
+Puedes hacerlo desde la consola de AWS:
+
+1. Ve a **Systems Manager > Parameter Store**
+2. Clic en **Create parameter**
+3. Llena los datos:
+   - **Name**: `/app-name/db-password`
+   - **Type**: SecureString (si es secreto) o String (si no)
+   - **Value**: `miSuperPassword123`
+
+O desde la terminal con AWS CLI:
+
+```bash
+aws ssm put-parameter \
+  --name "/app-name/db-password" \
+  --value "miSuperPassword123" \
+  --type SecureString
+```
+
+### 🧬 Paso 2: Referenciar el parámetro en `serverless.yml`
+
+```yml
+provider:
+  name: aws
+  runtime: nodejs18.x
+  environment:
+    DB_PASSWORD: ${ssm:/app-name/db-password~true}
+```
+
+- `~true` se usa para que Serverless **descifre SecureString** automáticamente.
+- Esto inyectará el valor como variable de entorno `process.env.DB_PASSWORD`.
+
+### 📦 Paso 3: Usarlo en tu código Lambda
+
+```js
+exports.handler = async () => {
+  const dbPassword = process.env.DB_PASSWORD;
+
+  console.log('La contraseña de la base de datos es:', dbPassword);
+  // Aquí puedes usarla para conectarte a RDS, Mongo, etc.
+};
+```
+
+### 🧾 Tip: Permisos para acceder al parámetro
+
+Asegúrate de que tu función Lambda tenga permisos para leer el parámetro. Puedes añadir esto en el `serverless.yml`:
+
+```yml
+provider:
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - ssm:GetParameter
+            - ssm:GetParameters
+          Resource: arn:aws:ssm:${self:provider.region}:*:parameter/app-name/*
+```
+
+### Resumen
+
+#### ¿Qué es un Custom Authorizer y por qué usarlo?
+
+Un **Custom Authorizer** en AWS es una herramienta poderosa utilizada para manejar la autenticación de peticiones a nuestras APIs. A diferencia de un API Key, el Custom Authorizer nos permite implementar lógica personalizada, como verificar tokens JWT u otras estrategias más complejas de autenticación.
+
+#### ¿Cuál es la diferencia entre API Key y Custom Authorizer?
+
+A continuación se destacan las diferencias fundamentales:
+
+- **API Key**:
+
+ - Es una cadena de texto fija.
+ - No permite lógica adicional.
+ - No cambia en el tiempo.
+ - No tiene capacidad para validar reglas de negocio.
+
+- **Custom Authorizer**:
+
+ - Admite lógica personalizada.
+ - Puede validar tokens JWT u otras estrategias.
+ - Mayor flexibilidad para autorizaciones complejas.
+
+#### ¿Cómo proteger secretos en AWS?
+
+Es crítico mantener los secretos seguros cuando trabajamos en un entorno de producción. Un error común es incluir secretos directamente en el código fuente, lo que permite que la información sensible sea expuesta. Afortunadamente, AWS ofrece métodos para gestionar esta información de forma segura usando AWS Systems Manager Parameter Store.
+
+#### ¿Qué es y cómo usar AWS Systems Manager Parameter Store?
+
+AWS Systems Manager Parameter Store es un servicio que permite almacenar parámetros, incluyendo cadenas de texto, de forma segura. Aquí se muestra cómo proceder:
+
+1. **Crear un nuevo parámetro**:
+
+ - Navegar a la consola de AWS.
+ - Buscar y seleccionar el servicio "Systems Manager".
+ - Acceder a la opción "Parameter Store".
+ - Crear un nuevo parámetro con un nombre específico, por ejemplo, `secretEch`.
+ - Asignar un valor secreto a dicho parámetro.
+
+2. **Definir el tipo de dato**:
+
+ - Seleccionar SecureString para cifrar el parámetro con las claves de Amazon.
+ - Crear el parámetro, asegurando que sólo usuarios con el rol adecuado puedan acceder a él.
+
+#### ¿Cómo integrar Parameter Store en el código del proyecto?
+
+Una vez que los secretos están almacenados de manera segura en Parameter Store, integrarlos en nuestro proyecto es simple. Aquí te explicamos cómo:
+
+- En el archivo `serverless.yaml`, utiliza la sintaxis de Serverless Framework para llamar a los secretos desde Parameter Store:
+
+```yaml
+environment:
+    SECRET_ECH: ${ssm:/path/to/parameter}
+```
+
+- Esta variable estará disponible para usarse en todas las funciones Lambda de la aplicación.
+
+Con la combinación de Parameter Store y Custom Authorizers, no solo podemos gestionar accesos y autenticar usuarios con lógica personalizada, sino también garantizar que la información sensible esté siempre protegida. En el próximo paso, se procederá a configurar el Custom Authorizer utilizando este método seguro de manejo de secretos.
+
+#### Referencias adicionales:
+
+**AWS Systems Manager Parameter Store**: [Documentación Oficial](https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-parameter-store.html "Documentación Oficial")
+**AWS Lambda Authorizer**: [Guía de Usuario](https://docs.aws.amazon.com/apigateway/latest/developerguide/apigateway-use-lambda-authorizer.html "Guía de Usuario")
+
+Mantener la seguridad de las aplicaciones y el control sobre la autenticación de los datos son aspectos esenciales en el desarrollo de software moderno. Aprovecha estas herramientas de AWS para garantizar que tu información esté protegida y tu arquitectura sea efectiva. ¡Sigue explorando y aprende más sobre estas potentes funcionalidades!
+
+## Creamos un Custom Authorizer
+
+¡Sí! Vamos a crear paso a paso un **Custom Authorizer** para `HTTP API` (v2) usando **Lambda Authorizer** en Serverless Framework. Esto te permitirá proteger rutas verificando, por ejemplo, una API Key personalizada.
+
+### ✅ 1. **Estructura del Proyecto**
+
+```
+custom-authorizer-httpapi/
+│
+├── authorizer.js        # Lambda Authorizer
+├── handler.js           # Función protegida
+└── serverless.yml       # Configuración Serverless
+```
+
+### ✅ 2. `authorizer.js` – Lambda Authorizer
+
+```js
+module.exports.handler = async (event) => {
+  const apiKey = event.headers['x-api-key'];
+  const validKey = 'mi-api-key-super-secreta';
+
+  if (apiKey === validKey) {
+    return {
+      isAuthorized: true,
+      context: {
+        user: 'admin',
+      },
+    };
+  }
+
+  return {
+    isAuthorized: false,
+  };
+};
+```
+
+### ✅ 3. `handler.js` – Función protegida
+
+```js
+module.exports.getSecret = async (event) => {
+  return {
+    statusCode: 200,
+    body: JSON.stringify({
+      message: 'Acceso concedido 🎉',
+      usuario: event.requestContext.authorizer?.user,
+    }),
+  };
+};
+```
+
+### ✅ 4. `serverless.yml` – Configuración
+
+```yaml
+service: custom-authorizer-httpapi
+
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  region: us-east-1
+
+functions:
+  authorizer:
+    handler: authorizer.handler
+
+  getSecret:
+    handler: handler.getSecret
+    events:
+      - httpApi:
+          path: /secreto
+          method: get
+          authorizer:
+            name: authorizer
+            type: request  # Esto define que es un Lambda Authorizer
+
+plugins:
+  - serverless-offline
+```
+
+### ✅ 5. Deploy
+
+```bash
+sls deploy
+```
+
+### ✅ 6. Probar
+
+**Con cURL:**
+
+```bash
+curl https://<tu-endpoint>/secreto -H "x-api-key: mi-api-key-super-secreta"
+```
+
+**Respuesta esperada:**
+
+```json
+{
+  "message": "Acceso concedido 🎉",
+  "usuario": "admin"
+}
+```
+
+### Resumen
+
+#### ¿Cómo configurar un Custom Authorizer en AWS?
+
+Integrar sistemas de autorización personalizados en tus aplicaciones en la nube puede ofrecer ventajas significativas en términos de seguridad y flexibilidad. En esta guía, exploraremos cómo implementar un Custom Authorizer en AWS utilizando Lambda y Serverless Framework, permitiéndote crear tus propias reglas de negocio para controlar el acceso a tus recursos.
+
+#### ¿Qué es un Custom Authorizer?
+
+Un Custom Authorizer es una función Lambda que verifica y decide si una petición a una API Gateway debería ser autorizada. Puedes definir tu lógica personalizada para validar tokens y comprobar identidades, proporcionando un nivel de seguridad adaptado a tus necesidades. Esto es especialmente útil si buscas un sistema que no se limite a las API Keys o JWTs predeterminados.
+
+#### ¿Cómo crear la lógica de autorización?
+
+La lógica de un Custom Authorizer en AWS se basa en extraer y validar un token de autorización desde la petición entrante. Aquí está el fragmento esencial de código utilizado para este proceso:
+
+```javascript
+const handler = async (event) => {
+    const secret = 'NuestraVariableSecreta'; // sustituir por el método de obtención segura
+    const currentTime = new Date();
+    const hour = currentTime.getUTCHours();
+    const minute = currentTime.getUTCMinutes();
+    
+    const token = event.authorizationToken;
+    const validToken = `Bidder ${secret}${hour}${minute}`;
+
+    if (token === validToken) {
+        return {
+            principalId: 'user',
+            policyDocument: {
+                Version: '2012-10-17',
+                Statement: [{
+                    Action: 'execute-api:Invoke',
+                    Effect: 'Allow',
+                    Resource: '*'
+                }]
+            }
+        };
+    } else {
+        throw new Error('Unauthorized');
+    }
+};
+
+export { handler }
+```
+
+#### ¿Cómo integrar un Custom Authorizer en Serverless Framework?
+
+Para configurar el Custom Authorizer en Serverless Framework, debes añadir la función a tu archivo serverless.yaml:
+
+```yaml
+functions:
+  authorize:
+    handler: authorizer.handler
+  createUser:
+    handler: users.create
+    events:
+      - http:
+          path: users/create
+          method: post
+          authorizer: authorize
+```
+
+#### ¿Cómo proteger una Lambda con un Custom Authorizer?
+
+El próximo paso es asociar tu Custom Authorizer a la función que deseas proteger. Esto se logra especificando el authorizer en el evento de la función en `serverless.yaml`. Aquí usamos un sistema de caché para optimizar las llamadas repetidas evitando que una Lambda sea ejecutada excesivamente.
+
+#### ¿Cómo probar la implementación?
+
+Para verificar que tu sistema de autorización se comporta como esperas, realiza una petición POST al endpoint protegido con un cuerpo JSON adecuado. Asegúrate de incluir el token correcto en los headers de la petición:
+
+1. Crear una request de prueba en Postman.
+2. Añadir el header de autorización requerido: `Authorization: Bidder tuSecretoHoraMinuto`.
+3. Verifica que el API Gateway responde correctamente, autorizando o denegando la petición según corresponda.
+
+#### Recomendaciones adicionales
+
+- Asegúrate de manejar adecuadamente tu secreto y otros datos sensibles.
+- Implementa monitoreo y logging para rastrear problemas y accesos no autorizados.
+- Considera el uso de parámetros de tiempo más largos o cortos según la sensibilidad de tus datos.
+
+¿Listo para mejorar la seguridad de tus aplicaciones? ¡Explora la creación de tus propios Custom Authorizers y adapta las reglas de negocio a tus necesidades específicas!
+
+**Lecturas recomendadas**
+
+[handler.js - Google Drive](https://drive.google.com/file/d/1UIfsZRWLyoQBu4il_VmP3_LI2HihHOr6/view?usp=share_link "handler.js - Google Drive")
 
 
 

@@ -9,6 +9,12 @@ provider:
   name: aws
   runtime: nodejs20.x
   region: us-east-1
+  httpApi:
+    authorizers:
+      custom-authorizer:
+        type: request
+        functionName: custom-authorizer
+        resultTtlInSeconds: 15
   iam:
     role:
       statements:
@@ -26,11 +32,11 @@ provider:
             - 's3:PutObject'
             - 's3:DeleteObject'
             - 's3:ListBucket'
-          Resource: arn:aws:s3:::bucket-serverless-course-54963217/*
-          
+          Resource: arn:aws:s3:::bucket-serverless-course-54963217/*        
   environment:
     DYNAMODB_CUSTOMER_TABLE: ${self:service}-customerTable-${sls:stage}
     BUCKET: bucket-serverless-course-54963217
+    SECRET_EGG: ${ssm:/SECRET_EGG}
 
 
 #plugins:
@@ -58,6 +64,13 @@ custom:
       noStart: true
 
 functions:
+
+  custom-authorizer:
+    handler: authorizer/handler.authorize
+    package:
+      patterns:
+      - "authorizer/handler.js"
+
   hello-world:
     handler: hello-world/handler.hello
     package:
@@ -77,14 +90,14 @@ functions:
       - httpApi:
           path: /users/{id}
           method: GET
+          authorizer: custom-authorizer 
 
   create-users:
     handler: createUsers/handler.createUsers
     package:
       patterns:
       - "createUsers/handler.js"
-      - "node_modules/**"
-    
+      - "node_modules/**"  
     events:
       - httpApi:
           path: /users
@@ -125,18 +138,28 @@ functions:
 
   thumbnailGenerator:
     handler: thumbnail/handler.thumbnailGenerator
+    layers:
+      - { Ref: BaseLambdaLayer }
     package:
       patterns:
         - "thumbnail/handler.js"
-        - "node_modules/**"
     events:
       - s3:
           bucket: bucket-serverless-course-54963217
           event: s3:ObjectCreated:*
+          existing: true
           rules:
             - prefix: uploads/
-          existing: true
-          
+
+layers:
+  base:
+    name: "pro-dependencies"
+    compatibleRuntimes:
+      - "nodejs20.x"
+    package:
+      artifact: nodejs.zip
+      #artifact: app/nodejs.zip
+
 resources:
   Resources:
     usersTable:
