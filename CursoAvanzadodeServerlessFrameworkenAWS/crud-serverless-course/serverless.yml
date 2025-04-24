@@ -14,6 +14,7 @@ provider:
       custom-authorizer:
         type: request
         functionName: custom-authorizer
+        identitySource: $request.header.Authorization
         resultTtlInSeconds: 15
   iam:
     role:
@@ -32,16 +33,28 @@ provider:
             - 's3:PutObject'
             - 's3:DeleteObject'
             - 's3:ListBucket'
-          Resource: arn:aws:s3:::bucket-serverless-course-54963217/*        
+          Resource: arn:aws:s3:::bucket-serverless-course-54963217/* 
+        - Effect: Allow
+          Action:
+            - sqs:SendMessage
+            - sqs:ReceiveMessage
+            - sqs:DeleteMessage
+            - sqs:GetQueueAttributes
+          Resource:
+            - Fn::GetAtt: [SQSQueue, Arn]       
   environment:
     DYNAMODB_CUSTOMER_TABLE: ${self:service}-customerTable-${sls:stage}
     BUCKET: bucket-serverless-course-54963217
-    SECRET_EGG: ${ssm:/SECRET_EGG}
+    SECRET_EGG: ${ssm:/SECRET_EGG, 'default-secret'}
+
+    SQS_QUEUE_URL:
+      Ref: SQSQueue
 
 
 #plugins:
 #  - serverless-offline
 #  - serverless-dynamodb-local
+
 
 package:
   individually: true
@@ -64,7 +77,6 @@ custom:
       noStart: true
 
 functions:
-
   custom-authorizer:
     handler: authorizer/handler.authorize
     package:
@@ -150,7 +162,21 @@ functions:
           existing: true
           rules:
             - prefix: uploads/
+#SQS
+  sendToQueue:
+    handler: likeuser/handler.likeuser
+    events:
+      - httpApi:
+          path: /likeuser
+          method: POST
 
+  processQueue:
+    handler: likeuser/handler.processQueue
+    events:
+      - sqs:
+          arn:
+            Fn::GetAtt: [SQSQueue, Arn]
+# fin SQS
 layers:
   base:
     name: "pro-dependencies"
@@ -200,6 +226,11 @@ resources:
                 - - "arn:aws:s3:::"
                   - !Ref S3Bucket
                   - "/*"
+# sqs
+    SQSQueue:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: sqs-queue  # este sí es el nombre visible de la cola
 
   Outputs:
     PublicBucketName:
@@ -219,3 +250,8 @@ resources:
       Value: !GetAtt S3Bucket.WebsiteURL
       Export:
         Name: PublicBucketWebsiteURL
+
+    QueueArn:
+      Description: "ARN de la cola SQS"
+      Value:
+        Fn::GetAtt: [SQSQueue, Arn]

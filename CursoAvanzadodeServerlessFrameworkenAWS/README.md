@@ -1844,14 +1844,715 @@ Para verificar que tu sistema de autorización se comporta como esperas, realiza
 
 [handler.js - Google Drive](https://drive.google.com/file/d/1UIfsZRWLyoQBu4il_VmP3_LI2HihHOr6/view?usp=share_link "handler.js - Google Drive")
 
+## Porque son buenas algunas funcionalidades asíncronas
+
+Las funcionalidades **asíncronas** son buenas (y a menudo necesarias) en muchos contextos de programación moderna, especialmente en aplicaciones web, móviles y servicios en la nube. Aquí te explico **por qué son útiles** con ejemplos sencillos:
+
+### 🌟 **1. No bloquean el hilo principal**
+Cuando una tarea tarda en completarse (como leer un archivo, consultar una base de datos o hacer una petición HTTP), si fuera **sincrónica**, el programa se detendría esperando.  
+Con la **asincronía**, el programa puede seguir haciendo otras cosas mientras espera la respuesta.
+
+📦 **Ejemplo real:**  
+Una API que consulta usuarios en una base de datos puede seguir respondiendo a otras peticiones sin esperar a que esa consulta termine.
+
+### ⚡ **2. Mejoran el rendimiento y la escalabilidad**
+En aplicaciones como servidores web (por ejemplo, usando Node.js), usar funciones asíncronas permite **atender más usuarios al mismo tiempo** sin necesidad de crear un nuevo hilo por cada petición.
+
+📶 **Ejemplo:**  
+Si haces muchas solicitudes a diferentes servicios (como S3, DynamoDB, o APIs externas), puedes lanzarlas al mismo tiempo con `Promise.all()` y esperar sus resultados sin bloquear el sistema.
+
+### 🧠 **3. Más naturales para operaciones de red o disco**
+Las operaciones de red o acceso a archivos suelen ser lentas. La asincronía refleja cómo sucede realmente en el mundo físico: tú **esperas** a que llegue algo, pero mientras tanto puedes hacer otra cosa.
+
+📜 **Ejemplo:**  
+Leer archivos grandes con `fs.promises.readFile()` en lugar de `fs.readFileSync()` evita que se detenga todo el proceso mientras se carga el archivo.
+
+### 🛠️ **4. Uso moderno con async/await**
+El patrón `async/await` hace que el código asíncrono sea **fácil de escribir y leer**, casi como si fuera sincrónico.
+
+```js
+const getData = async () => {
+  const response = await fetch('https://api.com/data');
+  const data = await response.json();
+  return data;
+};
+```
+
+### Resumen
+
+####¿Por qué es fundamental el asincronismo en aplicaciones modernas? 
+
+El asincronismo es clave en el desarrollo de aplicaciones modernas, promoviendo optimización y eficiencia. Aunque muchos temen que esto pueda ralentizar sus aplicaciones, el asincronismo se centra en la optimización y en delegar tareas para evitar bloqueos y mejorar las prácticas de desarrollo. Para comprenderlo mejor, exploremos casos de uso donde AWS Lambda y otras tecnologías permiten que los procedimientos sean asincrónicos mejorando el rendimiento.
+
+#### ¿Cuáles son los casos de uso comunes del asincronismo?
+
+Uno de los usos más comunes del asincronismo es cuando múltiples Lambdas acceden a una base de datos para modificar registros. Este enfoque minimiza el riesgo de saturar el sistema, permitiendo un flujo de trabajo más eficiente en el backend. Además, aplicaciones de pago y redes sociales también utilizan el procesamiento asincrónico para gestionar grandes volúmenes de tráfico sin comprometer la velocidad o el rendimiento de la aplicación.
+
+#### ¿Cómo integra AWS el asincronismo?
+
+Para gestionar el asincronismo de manera efectiva, AWS ofrece conceptos como el **reserve concurrency** y el **provision concurrency**. Estos permiten controlar la cantidad de Lambdas que pueden ejecutarse en paralelo, asegurando que no se sobrecargue el sistema. Además, AWS tiene servicios como RDS Proxy que ayudan a conectar múltiples Lambdas a bases de datos que no están diseñadas para manejar conexiones concurrentes de gran escala.
+
+#### ¿Qué es el reserve concurrency?
+
+El reserve concurrency en AWS Lambda establece cuántas instancias de una función Lambda pueden ejecutarse en paralelo. Por ejemplo, al procesar imágenes en un bucket de S3, se puede establecer un límite de tres Lambdas para cambiar el tamaño de imágenes simultáneamente. Esto ayuda a evitar que se sature Lambda y se alcancen sus límites predeterminados.
+
+#### ¿Cómo funciona el provision concurrency?
+
+El provision concurrency actúa como un equipo de respaldo en AWS Lambda. Cuando una Lambda está al límite, el provision concurrency proporciona Lambdas adicionales que están listas para atender nuevas peticiones, asegurando un flujo ininterrumpido de procesamiento. Esto es esencial en aplicaciones donde puede haber cambios abruptos en la demanda, garantizando un manejo eficiente de la carga.
+
+#### ¿Qué servicios adicionales complementan el desarrollo asincrónico?
+
+Aparte de S3 y SQS, AWS ofrece diversos servicios que facilitan la creación de aplicaciones asincrónicas robustas:
+
+- **CloudWatch**: Permite monitorear y responder a eventos automáticamente.
+- **EventBridge**: Facilita la creación y gestión de eventos personalizados.
+- **DynamoDB**: Ofrece almacenamiento rápido y no relacional con eventos asincrónicos.
+- **RDS**: Compatible con el uso de lambdas y RDS Proxy para mejorar la gestión de conexiones a bases de datos.
+- **Autoscaling Group**: Ajusta dinámicamente la capacidad a las necesidades en tiempo real.
+
+#### ¿Cómo asegurarse de que el frontend y backend sean compatibles?
+
+Para aprovechar el asincronismo, es crucial asegurar que los componentes del frontend y backend sean totalmente compatibles. Un enfoque asincrónico incorrecto puede causar cuellos de botella y afectar negativamente el rendimiento de la plataforma. Por lo tanto, es esencial decidir estratégicamente qué procesos pueden ser asincrónicos y hacer ajustes según las necesidades del negocio.
+
+Con el crecimiento continuo de tecnologías modernas, seguir aprendiendo y explorar distintas formas de integrar asincronismo es vital para crear aplicaciones eficientes y escalables.
+
+## Desarrollando usando plugins y SQS
+
+Implementar asincronismo con **AWS Lambda** puede mejorar significativamente el **rendimiento, la escalabilidad y la resiliencia** de tus aplicaciones. Aquí te explico cómo y por qué hacerlo, además de **formas comunes de implementarlo**:
+
+### ✅ ¿Por qué usar asincronismo con Lambda?
+
+1. **Mejor rendimiento**  
+   - Permite responder rápidamente a eventos sin esperar a que se completen tareas pesadas.
+   - Ejemplo: subir una imagen y procesarla (hacer el resize) en segundo plano.
+
+2. **Mayor escalabilidad**  
+   - AWS maneja automáticamente la ejecución de múltiples funciones en paralelo.
+
+3. **Mayor resiliencia**  
+   - Si un proceso falla, puedes reintentar automáticamente o enviar los errores a una Dead Letter Queue (DLQ).
+
+### 🚀 ¿Cómo implementar asincronismo con AWS Lambda?
+
+#### 1. **Usar SQS (Simple Queue Service)**  
+Ideal para colas de trabajo asincrónicas.
+
+```yaml
+functions:
+  processMessage:
+    handler: handler.process
+    events:
+      - sqs:
+          arn:
+            Fn::GetAtt: [MyQueue, Arn]
+```
+
+**Ventajas:**
+- Desacopla servicios.
+- Controla el ritmo de procesamiento (throttling).
+- Escala automáticamente.
+
+#### 2. **Activar Lambda asincrónicamente desde otros Lambdas (Event Invocation)**
+
+En código JS/Python puedes llamar a otra Lambda sin esperar respuesta:
+
+```js
+const AWS = require('aws-sdk');
+const lambda = new AWS.Lambda();
+
+await lambda.invoke({
+  FunctionName: 'my-other-function',
+  InvocationType: 'Event', // <--- ASINCRÓNICO
+  Payload: JSON.stringify({ foo: 'bar' })
+}).promise();
+```
+
+#### 3. **Usar S3 + Lambda**  
+Subes un archivo a S3 y se dispara una Lambda para procesarlo:
+
+```yaml
+functions:
+  processImage:
+    handler: handler.resizeImage
+    events:
+      - s3:
+          bucket: my-upload-bucket
+          event: s3:ObjectCreated:*
+```
+
+#### 4. **Usar EventBridge o SNS**  
+Para emitir eventos y que múltiples servicios reaccionen.
+
+```yaml
+functions:
+  handleEvent:
+    handler: handler.handle
+    events:
+      - eventBridge:
+          pattern:
+            source:
+              - "my.custom.source"
+```
+
+### 🧰 Plugins útiles para desarrollo local asincrónico
+
+- `serverless-offline`
+- `serverless-offline-sqs`
+- `serverless-s3-local`
+- `serverless-plugin-simulate`
+
+### 🎯 Buenas prácticas
+
+- Usa DLQ (Dead Letter Queue) para manejar errores.
+- Aplica `batchSize` en SQS si manejas cargas grandes.
+- Monitoriza con CloudWatch Logs y X-Ray.
+- Evita funciones Lambda que corren más de 15 minutos (usa Step Functions si es necesario).
+
+### Resumen
+
+#### ¿Cómo implementar asincronismo con AWS Lambda para mejorar el rendimiento de tus aplicaciones?
+
+Integrar asincronismo en tus aplicaciones mejora significativamente su rendimiento, especialmente en tareas intensivas como la actualización de bases de datos. En este caso de uso, aprenderemos cómo sumar "likes" asincrónicamente a usuarios en una aplicación, utilizando servicios de AWS, tales como API Gateway, SQS y Lambda.
+
+#### ¿Cuál es el flujo arquitectónico de la aplicación?
+
+Para no saturar las bases de datos y respetar los límites de Lambda, utilizaremos una arquitectura enfocada en servicios asincrónicos. Aquí está cómo se estructura:
+
+1. **API Gateway**: Este endpoint recibe la petición desde el cliente con el ID del usuario al que se le sumarán los likes.
+2. **SQS (Simple Queue Service)**: Almacena de manera temporal las peticiones en una cola, garantizando que los datos sean procesados sin perderse.
+3. **Lambda**: Será configurada para procesar las solicitudes de la cola de SQS, asegurando que sólo una instancia de Lambda esté activa al tiempo.
+
+La conexión es directa desde API Gateway a SQS, sin pasar por una Lambda intermedia, optimizando el flujo de datos y protegiendo tu base de datos para que no se sobrecargue.
+
+#### ¿Cómo configurar plugins para optimizar la conexión API Gateway- SQS?
+
+Gracias a la flexibilidad del framework serverless, se pueden usar plugins disponibles que facilitan el uso de AWS. Para conectar API Gateway a SQS:
+
+1. **Buscar el plugin** adecuado que permita las conexiones necesarias. Un ejemplo es un plugin capaz de interactuar con cualquier recurso de Amazon, pero en este caso busca explícitamente SQS.
+
+2. **Instalación del plugin**: Se realiza instalando la dependencia desde la terminal y configurando el archivo `serverless.yml`:
+
+```yaml
+plugins:
+  - serverless-apigateway-service-proxy
+
+custom:
+  apiGatewayServiceProxies:
+    - sqs:
+        path: /like
+        method: post
+        queueName: likeQueue
+        cors: true
+        responseMessage: "Success"
+```
+
+3. **Plugins adicionales**: Considera el plugin Lift que permite crear colas y asignar Lambdas sin necesidad de escribir mucho código. Incluye configuraciones como batch size para controlar cuántos mensajes procesa la Lambda simultáneamente.
+
+#### ¿Cómo crear y configurar la Lambda Worker?
+
+La Lambda Worker es responsable de procesar las peticiones almacenadas en la cola. Aquí te mostramos los pasos esenciales:
+
+1. **Crear el handler**: Define una función en un archivo `handler.js` dentro de una carpeta dedicada, por ejemplo:
+
+```javascript
+module.exports.handler = async (event) => {
+  console.log(event);
+  // Lógica para sumar likes vendrá después
+};
+```
+
+2. **Configurar el worker en `serverless.yml`**: Aquí es donde se define la función Lambda, su handler y otras configuraciones necesarias:
+
+```yaml
+constructs:
+  likeQueue:
+    type: queue
+    batchSize: 1
+    worker:
+      handler: likeUser/handler.handler
+      package:
+        exclude:
+          - '**'
+        include:
+          - likeUser/** 
+      reservedConcurrency: 1
+```
+
+3. **Deploy de la aplicación**: Usa comandos de serverless framework para implementar y verificar los cambios.
+
+#### ¿Cómo probar el sistema asincrónico?
+
+Después de haber configurado e implementado la arquitectura, es crucial probarla para verificar su correcto funcionamiento:
+
+1. **Enviar una petición POST a través de Postman** con el body requerido, asegurándote que el endpoint API Gateway responde correctamente.
+
+2. **Comprobar logs de la Lambda Worker** para asegurarte de que está procesando los mensajes. Utiliza la línea de comando de serverless framework para ver directamente los logs.
+
+Con esta aplicación, serás capaz de manejar procesos asincrónicos de manera efectiva, optimizando tiempos de respuesta y asegurando la consistencia de tu aplicación. ¡Sigue explorando y aprendiendo sobre más funcionalidades avanzadas!
+
+[serverless apigateway service proxy](https://www.serverless.com/plugins/serverless-apigateway-service-proxy#sqs)
+
+[serverless lift](https://www.serverless.com/plugins/serverless-lift)
+
+## Creamos nuestra lambda user like
+
+¡Perfecto! Vamos a crear una Lambda llamada `userLike` que se conecte a una cola SQS (`sqs-queue`) para enviar un mensaje cuando un usuario "likea" algo.
+
+Te armo todo: función Lambda, configuración en `serverless.yml`, permisos e integración con SQS. Usaremos Node.js como runtime, pero si estás usando Python u otro, dime y lo ajustamos.
+
+### ✅ Paso 1: `serverless.yml`
+
+```yaml
+service: crud-serverless-course
+frameworkVersion: '4'
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+  region: us-east-1
+  stage: dev
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - sqs:SendMessage
+          Resource:
+            Fn::GetAtt: [SQSQueue, Arn]
+
+functions:
+  userLike:
+    handler: src/userLike.handler
+    events:
+      - http:
+          path: like
+          method: post
+          cors: true
+
+resources:
+  Resources:
+    SQSQueue:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: sqs-queue
+
+plugins:
+  - serverless-offline
+
+custom:
+  serverless-offline:
+    httpPort: 3000
+```
+
+### ✅ Paso 2: Código Lambda `src/userLike.js`
+
+```js
+const AWS = require('aws-sdk');
+const sqs = new AWS.SQS();
+
+const QUEUE_URL = process.env.SQS_QUEUE_URL || ''; // Puedes inyectarlo desde env
+
+module.exports.handler = async (event) => {
+  try {
+    const body = JSON.parse(event.body);
+
+    const params = {
+      QueueUrl: QUEUE_URL,
+      MessageBody: JSON.stringify({
+        userId: body.userId,
+        likedItem: body.itemId,
+        timestamp: new Date().toISOString()
+      }),
+    };
+
+    await sqs.sendMessage(params).promise();
+
+    return {
+      statusCode: 200,
+      body: JSON.stringify({ message: 'Like enviado a la cola con éxito' }),
+    };
+  } catch (err) {
+    console.error(err);
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ message: 'Error enviando like' }),
+    };
+  }
+};
+```
+
+### ✅ Paso 3: Agrega esta variable de entorno para facilitar el uso
+
+En el `provider.environment` de tu `serverless.yml`:
+
+```yaml
+environment:
+  SQS_QUEUE_URL:
+    Ref: SQSQueue
+```
+
+### Resumen
+
+#### ¿Cómo se suma likes de manera asíncrona y segura en una aplicación?
+
+Sumar likes a una aplicación es una funcionalidad común en las redes sociales y otras plataformas interactivas. Sin embargo, hacerlo de manera eficiente y segura requiere de un enfoque cuidadoso, especialmente cuando se trata de una base de datos que debe manejar grandes volúmenes de tráfico. En esta sección, exploraremos cómo implementar una lógica para sumar likes de forma asíncrona utilizando una función Lambda y Amazon DynamoDB.
+
+#### ¿Qué es DynamoDB y por qué usarlo?
+Amazon DynamoDB es una base de datos NoSQL que ofrece características poderosas para manejar grandes volúmenes de datos con rapidez y eficiencia.
+
+- **Escalabilidad**: DynamoDB está diseñado para manejar cualquier cantidad de tráfico de lectura y escritura.
+- **Eficiencia**: Ofrece métodos para realizar actualizaciones atómicas y operaciones complejas con facilidad.
+- **Resiliencia**: Es conocido por su capacidad para manejar particiones y fallos de nodos sin pérdida de datos.
+
+### ¿Cómo funciona la Lambda para sumar likes?
+
+La función Lambda que crearemos será la encargada de recibir solicitudes y actualizarlas en DynamoDB. A continuación, se detalla el proceso paso a paso:
+
+1. **Requerimiento del SDK de Amazon**
+
+Primero, requerimos el SDK de Amazon, esencial para interactuar con DynamoDB desde la función Lambda:
+
+```javascript
+const AWS = require('aws-sdk');
+const dynamoDB = new AWS.DynamoDB.DocumentClient();
+```
+
+2. Manejo del parámetro "sleep"
+
+Incluimos una función `sleep` para controlar la espera entre las operaciones:
+
+```javascript
+const sleep = (milliseconds) => {
+  return new Promise(resolve => setTimeout(resolve, milliseconds));
+};
+```
+
+3. **Extracción del body de la solicitud**
+
+Desde el cuerpo de la solicitud POST se extrae el ID que identificará al usuario en la base de datos:
+
+`const { id } = JSON.parse(event.body);`
+
+4. **Actualización en DynamoDB**
+
+Usamos la capacidad de DynamoDB para incrementar de manera segura el número de likes:
+
+```javascript
+await dynamoDB.update({
+  TableName: 'TablaDeUsuarios',
+  Key: { id },
+  UpdateExpression: 'ADD likes :inc',
+  ExpressionAttributeValues: { ':inc': 1 }
+}).promise();
+```
+
+#### ¿Cómo se gestionan las pruebas del sistema?
+
+Después de implementar la función Lambda, es crucial probar su funcionalidad para asegurar su correcto funcionamiento y eficiencia.
+
+#### Uso de herramientas para probar las Lambdas
+
+- **Serverless Framework**: nos ayuda a desplegar y gestionar nuestras funciones sin problemas de peso excesivo gracias a su configuración de ignorar archivos no necesarios.
+- **Postman**: Permite enviar solicitudes HTTP para comprobar que la lógica de actualización de likes es correcta y eficiente.
+
+#### Pruebas y validaciones
+
+Realizamos pruebas simulando el envío de múltiples "likes" para detectar cómo se comporta la base de datos bajo carga y verificar la resiliencia del sistema.
+
+#### ¿Cuáles son los beneficios de esta implementación?
+
+Esta aplicación de likes asíncrona y segura proporciona varios beneficios:
+
+- **Desacoplamiento**: El uso de colas para gestionar likes desacopla la suma de la carga directa en la base de datos.
+- **Optimización de recursos**: La aplicación no colapsa ante grandes volúmenes de tráfico y aprovecha la eficiencia de DynamoDB.
+- **Mejores prácticas de desarrollo**: Obtener una aplicación mejor diseñada y que sigue patrones modernos y seguros.
+
+Con esta lógica y tecnología, podrás ofrecer una experiencia fluida y eficiente para los usuarios mientras mantienes tu sistema seguro y estable. Continúa explorando y mejorando tus conocimientos de programación en AWS y desarrollo de aplicaciones escalables y confiables. ¡Buen aprendizaje!
+
+## Como crear un custom domain name
+
+Cuando hablamos de aplicaciones web alojadas en la nube tenemos múltiples opciones para exponer nuestras apps, lo mejor es usar un nombre de dominio memorable y de fácil escritura para que nuestros usuarios y consumidores puedan acceder a nuestra lógica sin problema alguno.
+
+[AWS Route 53](https://aws.amazon.com/route53/ "AWS Route 53") es el servicio de DNS de AWS, este nos ayuda a gestionar nuestros dominios, aqui podremos configurar diferentes tipos de registros A, CNAME, TXT, entre otros para que nuestros servicios sean visibles y accesibles.
+
+![Amazon Router 53](images/AmazonRouter53.png)
+
+A lo largo de este curso de Serverless Framework en AWS creamos diferentes funciones lambda que son accesibles mediante un dominio que API Gateway nos entrega, este dominio lo puedes encontrar en los detalles de cada Stage del tu API. Sin embargo estos APIs tienen una URL que no sigue una convención de nombres y ademas entrega algo de información sensible ante posibles usuarios mal intencionados, como dar detalles del Cloud Provider que usas y la región en la que alojas tus servicios, adicionalmente usar la URL de API Gateway directamente en tus consultas desde internet puede indicar que posiblemente no tienes una protección a nivel de CDN y Cache, estas ultimas las puedes lograr usando servicios como Cloudfront para disponer tus APIs en los Edge Location de AWS o incluso usando servicios de terceros como Cloudflare para proteger tus endpoints.
+
+Vamos a configurar el Custom Domain Name para que resuelva los llamados HTTP a nuestro API mediante la URL [slscourse.platzi.com](http://slscourse.platzi.com/ "slscourse.platzi.com").
+
+A continuación vas a encontrar una guia detallada de como crear un Custom Domain Name y enlazarlo a un API Gateway para que tus endpoints tengan mejores practicas a nivel de seguridad y cache. En esta guia vamos a usar AWS API Gateway que es el servicio que nos permite exponer nuestra logica de negocio y Cloudflare como capa de CDN y DNS.
+
+**Paso 1: Creación del certificado en AWS ACM**
+
+Entramos a AWS Certificate Manager (ACM) y solicitamos un certificado, en mi caso es la opción de **Request a Certificate**
+
+![aws Certificate Manager](images/AwsCertificateManager.png)
+
+Posteriormente, nos preguntara por el tipo de certificado (Publico o Privado), en nuestro caso dado que no tenemos ningun Certificate Authority (CA) privado, seleccionamos la primera opcion
+
+![Request Certificate](images/RequestCertificate.png)
+
+A continuación, podras completar la información asociada al nombre de dominio, el metodo de validación y el algoritmo de encripción. En este caso nuestro FQDN sera el asociado al curso de Serverless Framework en AWS (slscourse.platzi.com). El metodo de validación sera mediante DNS, el cual exige tener control sobre nuestro nombre de dominio, esto para poder crear registros que permitan validar que es un dominio de nuestra propiedad. Finalmente, en cuanto al algoritmo de encripción, AWS usa por defecto para ACM el algoritmo RSA 2048, te dejamos la [documentación donde puedes encontrar mas información](https://docs.aws.amazon.com/acm/latest/userguide/acm-certificate.html#algorithms "documentación donde puedes encontrar mas información") sobre las características de cada algoritmo y de los certificados ACM.
+
+![Request Public Certificate](images/RequestPublicCertificate.png)
+
+![Key Algorithm](images/KeyAlgorithm.png)
+
+**Nota**: Al final de la pagina encontraras una sección de Tags, estos te van a permitir definir etiquetas que son de utilidad en diferentes aspectos, tales como inventario de recursos, costos asociados, entre otros. Como buena practica te recomendamos crear Tags que te permitan diferenciar los proyectos a los que se asociada cada recurso, recuerda que como buena practica entre mas segregados puedas tener tus recursos o puedas visualizarlos mejor, asi podras tener una vista global de tu infraestructura (Propietario o Owner, Proyecto o Vertical, Centro de costos, entre otros.)
+
+Despues de presionar el boton de Request, podemos ver que AWS nos informa el estado del certificado y la información necesaria para poder crear los registros CNAME en nuestro gestor de DNS.
+
+![Certificates](images/Certificates.png)
+
+**Paso 1.5: Validación del nombre de dominio con DNS**
+
+La validación podemos lograrla agregando un registro CNAME en nuestro gestor de DNS, al entrar al certificado que tiene Status Pendiente de validación (Pending Validation) vemos los siguientes detalles.
+
+![Certificates 1](images/Certificates1.png)
+
+Debemos copiar el nombre y el valor del CNAME, y los registramos en el DNS (En nuestro caso sera Cloudflare).
+
+![CDNSRecord](images/CDNSRecord.png)
+
+Después de aproximadamente 5 o 10 minutos ya debe haberse replicado el registro CNAME en los multiples DNS y AWS ya mostrara nuestro certificado como Issued (Emitido).
+
+![DNS y AWS](images/DNSyAWS.png)
+
+**Paso 2: Creación del Custom Domain Name en AWS**
+
+Después de tener nuestro certificado validado/issued ya puedes usarlo en la creación de un Custom Domain Name, para esto entramos a API Gateway, click en el submenu de **Custom domain names**, presionamos el boton **Create**.
+
+![Custom Domain Name](images/CustomDomainName.png)
+
+Al presionar la opcion Create, podremos completar la información asociada a nuestro nombre de dominio y certificado (Creado previamente).
+
+En esta vista notaras dos formas de configurar nuestro endpoint, uno de forma regional y otro optimizado en el borde (Edge Optimized). El primero sera un endpoint que AWS usara para apuntar a recursos especificos en una región, y el segundo sera accesible mediante una distribución de Cloudfront directamente desde los Edge Location de la infraestructura de AWS. Cada uno tiene diferentes ventajas y desventajas, pero deberíamos escoger el que mas convenga dependiendo del caso de uso. En nuestro ejemplo, seleccionaremos un endpoint de tipo Regional, el cual nos va a permitir a futuro agregar compatibilidad multi-region a nuestra aplicación, y [generar políticas de enrutamiento basado en latencia](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/routing-policy-latency.html "generar políticas de enrutamiento basado en latencia").
+
+![Custom Domain Name](images/CreateDomainName1.png)
+
+![tag](images/tag.png)
+
+Después de presionar el botón Create domain name podremos ver el dominio personalizado creado y asociado a nuestro certificado. De esta vista es importante resaltar el valor de API Gateway domain name, el que inicia con “d-….”
 
 
+```bash
+**API Gateway domain name:**
+[d-by0ua7r9w4.execute-api.us-east-1.amazonaws.com](http://d-by0ua7r9w4.execute-api.us-east-1.amazonaws.com/)
+```
+![Custom Domain Names](images/CreateDomainNames.png)
+
+Después de tener configurado nuestro Custom Domain, debemos hacer un mappeo de nuestro dominio a nuestro API Gateway, esto lo logramos mediante la sección de API Mappings.
+
+![API Mappings](images/APIMappings.png)
+
+Aqui debemos presionar la opcion Configure API mappings, y posteriormente podremos seleccionar nuestro API, el Stage, y de forma opcional
+
+**Paso 4: Configurar nuestro nombre de Dominio**
+
+Hasta este momento ya hemos creado nuestro certificado, hemos creado un nombre de dominio personalizado (Custom Domain Name), sin embargo este dominio sigue sin ser disponible desde internet. Esto por que ningún servidor de DNS del mundo sabe a donde debe dirigir cada peticion cuando entremos a slscourse.platzi.com. Recuerda que la configuracion que hicimos fue solo para validar el certificado, sin embargo no hemos configurado ningún registro DNS para enviar trafico a nuestro **Custom Domain Name**.
+
+Para esto debemos crear un registro CNAME en nuestro DNS apuntando **slscourse** a la ruta del API Gateway domain name, es el valor que inicia con “d-”
+
+```bash
+**Registro CNAME**
+**Name**: slscourse
+**Value**: [d-by0ua7r9w4.execute-api.us-east-1.amazonaws.com](http://d-by0ua7r9w4.execute-api.us-east-1.amazonaws.com/)
+**TTL**: Auto
+***Proxy status**: Esta propiedad solo aplica si usas Cloudflare*
+```
+
+![CNAME](images/CNAME.png)
+
+**Nota**: La propiedad **Proxy status: Proxied** nos permite definir que Cloudflare aplicara todas las capas de seguridad y cache a cualquier usuario que intente acceder a nuestro target mediante slscourse.platzi.com
+
+**Paso 5: Enlazar API Gateway**
+
+Esto lo vamos a ver con mas detalle en la siguiente clase, en la cual vamos a aprender como usar Custom Domain Names para nuestro proyecto.
+
+El paso de enlazar es relativamente corto y sencillo, despues de tener nuestro dominio configurado y el custom domain name creado, debemos hacer un mapeo para enlazar nuestro API Gateway a una ruta de nuestra preferencia. Esto lo logramos mediante la opción **Configure API mappings**, y luego **Add new mapping** (agregar un nuevo mapping) y save (Guardar)
+
+![Configure API mappings](images/ConfigureAPImappings.png)
+
+![Add new mapping](images/Addnewmapping.png)
+
+Con esta configuración todos los llamados que hagamos a [slscourse.platzi.com/api/users/](http://slscourse.platzi.com/api/users/ "slscourse.platzi.com/api/users/") seran atentidos mediante nuestro API Gateway y todas las lambdas desarrolladas hasta este momento serán accesibles mediante ese nombre de dominio.
+
+En la siguiente clase veras una explicación mas a detalle de como lograr esta configuración, tambien realizaremos pruebas con Postman, validando que los API Keys sigan siendo validos mediante el Custom Domain Name.
+
+En esta clase de lectura hemos configurado este dominio personalizado para que nuestros recursos sean accedidos mediante el path: /api/, en la próxima clase configuraremos este nombre de dominio mediante un plugin de Serverless Framework, también usaremos un mapeo totalmente diferente para que notes la flexibilidad de estos nombres de dominio y los mappings.
+
+![meme](images/meme.png)
+
+## Custom domain names para nuestro proyecto
+
+¡Buenísimo! Para configurar un **custom domain** (nombre de dominio personalizado) en tu proyecto con Serverless Framework, vamos a usar el plugin oficial `serverless-domain-manager`. Esto te permitirá mapear tu API Gateway (por ejemplo `https://xxxxx.execute-api.amazonaws.com/dev`) a algo más bonito como `https://api.tudominio.com`.
+
+### ✅ Requisitos
+
+1. Tener un dominio registrado en Route 53 (u otro proveedor pero con validación de certificado).
+2. Tener un certificado SSL válido en AWS Certificate Manager (preferiblemente en la **región us-east-1**).
+3. El dominio apuntando a un API Gateway o a una distribución de CloudFront si usas HTTP API.
+
+### ✅ 1. Instalar el plugin
+
+```bash
+npm install serverless-domain-manager --save-dev
+```
 
 
+### ✅ 2. Configurar en `serverless.yml`
 
+Agrega esto al final de tu archivo:
 
+```yaml
+plugins:
+  - serverless-domain-manager
 
+custom:
+  customDomain:
+    domainName: api.tudominio.com
+    basePath: ''         # o 'v1', etc.
+    stage: ${sls:stage}
+    createRoute53Record: true
+    endpointType: 'regional'  # puede ser 'edge' si estás usando certificados globales
+    certificateName: '*.tudominio.com'  # debe coincidir exactamente con el certificado de ACM
+```
 
+### ✅ 3. Comandos útiles
+
+**Crear el dominio personalizado en API Gateway:**
+
+```bash
+npx serverless create_domain
+```
+
+**Desplegar normalmente después:**
+
+```bash
+npx serverless deploy
+```
+
+**Eliminar el dominio personalizado:**
+
+```bash
+npx serverless delete_domain
+```
+
+### ✅ Consideraciones
+
+- Si usas `endpointType: edge`, **el certificado debe estar en `us-east-1`**.
+- `createRoute53Record: true` crea un registro A o CNAME automáticamente en Route 53.
+- Puedes tener múltiples dominios por stage usando interpolación.
+
+### Resumen
+
+#### ¿Cómo completar la integración de un proyecto serverless con diversas herramientas?
+
+Al haber completado la integración con AWS SQS, Lambda, buckets en S3, eventos, y API Gateway, hemos llegado al corazón de un ecosistema serverless. Este tipo de arquitectura te permite crear aplicaciones más escalables y eficientes, aprovechando plataformas como AWS para gestionar automáticamente la infraestructura. Un aspecto crucial es asegurar nuestro proyecto, utilizando recursos como Custom Authorizer y API Keys en API Gateway, asegurando así que solo usuarios autorizados puedan acceder a nuestros servicios.
+
+#### ¿Qué son los Custom Domain Names y por qué son útiles?
+
+Los Custom Domain Names son nombres de dominio personalizados que te permiten asociar tu API a un nombre de dominio amigable y reconocible, en lugar de las complejas URLs públicas que se generan por defecto. Esto no solo mejora la presentación profesional de tu servicio, sino que también facilita a los usuarios recordar cómo acceder a tus recursos. En este proyecto, hemos configurado un nombre de dominio personalizado como `SLSCoursePlatzi.com` para acceder fácilmente a los recursos gestionados detrás de API Gateway.
+
+### ¿Cómo configurar un API Mapping con un Custom Domain Name?
+
+El API Mapping se ajusta para que el dominio personalizado esté conectado con el API deseado. Esto es crucial ya que permite definir rutas específicas para acceder a los recursos de la API. Para configurar un API Mapping:
+
+1. Accede a la sección de API Mappings en AWS.
+2. Selecciona "Configure API Mappings" y agrega un nuevo Mapping.
+3. Selecciona el API y el Stage correspondiente. Si tienes múltiples Stages, como QA o Producción, estos aparecerán aquí.
+4. Define un "Path" o ruta, que será un reemplazo de cualquier jefe de ruta predeterminado como "/dev". Este paso es opcional pero recomendado para ordenar mejor tus rutas.
+
+#### Ejemplo de configuración de API Mapping
+
+```bash
+Dominio personalizado: SLSCoursePlatzi.com
+Ruta/Path: /API
+Final: SLSCoursePlatzi.com/API/Users/{userID}
+```
+
+#### ¿Cómo automatizar la configuración de un Custom Domain Name con Serverless Framework?
+
+Para eliminar la necesidad de configuraciones manuales y clics innecesarios, podemos utilizar el plugin Serverless Domain Manager en Serverless Framework:
+
+1. **Instalación del plugin**: En tu proyecto, ejecuta `npm install serverless-domain-manager --savedev`.
+2. **Configuración del plugin en Serverless:**
+ - Incluye el plugin en la sección de `plugins` del archivo `serverless.yml`.
+ - Añade la configuración necesaria bajo la sección custom:
+ 
+```bash
+custom:
+  customDomain:
+    domainName: sls-course.platzi.com
+    stage: dev
+    basePath: mapping
+    endpointType: EDGE
+```
+
+3. **Despliegue con Serverless**: Ejecuta `sls deploy` para desplegar tu configuración.
+
+Este flujo de trabajo asegura que tu aplicación esté lista para el movimiento y que las configuraciones sean reproducibles y coherentes en tus despliegues futuros.
+
+#### ¿Cómo verificar la integración en Postman?
+
+Una vez configurado, es esencial validar el funcionamiento correcto de nuestros endpoints y mappings. Usamos herramientas como Postman para garantizar que la API responde correctamente:
+
+- Configura Postman con la URL base del dominio personalizado.
+- Asegúrate de incluir el header x-APIKey con el valor de la API Key correspondiente para autenticar tus peticiones.
+- Envía una solicitud para verificar la respuesta esperada, el recurso debería devolver los datos correctos utilizando el nuevo mapping configurado.
+
+Este enfoque no solo ordena y optimiza tus APIs, sino que también incrementa la seguridad y profesionalismo de tus servicios serverless. Aprende y practica estos procesos para convertirte en un experto en arquitecturas nativas de la nube. ¡Sigue avanzando!
+
+[serverless domain manager](https://www.serverless.com/plugins/serverless-domain-manager)
+
+## Clase grupal: Hablando desde nuestra experiencia
+
+### ¿Cuál ha sido un gran desafío al trabajar con serverless en AWS?
+
+Cuando hablamos de serverless en AWS, inicialmente parece una solución perfecta por su capacidad de escalar. Sin embargo, uno de los mayores dolores de cabeza es la gestión de direcciones IP. En una experiencia particular, se requirió alojar una aplicación dentro de una red con un rango muy limitado de IPs. La naturaleza serverless de AWS Lambda, que permite escalar casi infinitamente, resultó en un colapso de la red por falta de IPs disponibles. Este tipo de problema subraya la importancia de comprender los límites de la infraestructura cloud y asegurarse de planificar adecuadamente la escalabilidad.
+
+### ¿Cuándo no deberías usar serverless para una aplicación?
+
+Aunque serverless ofrece ventajas significativas, no siempre es la mejor opción. En aplicaciones que requieren procesamiento constante de grandes volúmenes de datos, como tareas de ETL, puede que serverless no sea eficiente por la forma en que se factura según el uso. Estos procesos pueden demandar más recursos si se realizan con Lambdas, lo cual no es rentable comparado con instancias dedicadas de S2 que podrían ejecutar dichas tareas más rápido. Por tanto, en aplicaciones de procesamiento intensivo y continuo, la inversión en instancias dedicadas podría ser una decisión más económica y eficiente.
+
+### ¿Dónde buscar información fiable sobre serverless?
+
+Curar una lista de fuentes confiables para mantenerse al día sobre serverless es esencial para un desarrollador. Algunos recursos recomendados incluyen:
+
+- **Serverless First** y **Serverless Land**: Sitios web enfocados en tecnologías serverless.
+- **Medium**: Plataforma repleta de artículos sobre tecnología que a menudo alberga discusiones actuales y experiencias en primera persona.
+- **Twitter**: Seguir a expertos de la industria que frecuentemente comparten noticias y actualizaciones.
+- **Platzi**: Cursos y foros que ofrecen información actualizada y foros de discusión sobre mejores prácticas y desarrollos en serverless.
+
+Estas fuentes proporcionan no solo teorías, sino también aplicaciones prácticas y casos de uso que enriquecen el conocimiento técnico.
+
+### ¿Cómo manejar una aplicación serverless en producción?
+
+Para que una aplicación serverless funcione óptimamente en producción, es crucial integrar múltiples herramientas y procesos:
+
+- **GitHub Actions**: Permiten gestionar despliegues hacia diferentes entornos (Dev, QA, UAT, Prod).
+- **Monitoring y Observability**: Herramientas para analizar el rendimiento.
+- **CICD** (Integración y entrega continua): Proveer flujos automáticos de entrega y actualizaciones sin interrupciones visibles para el usuario.
+- **Buenas prácticas de infraestructura**: Estas son clave tanto en paradigmas tradicionales como modernos y deben ser personalizadas para serverless.
+
+Además, es fundamental evaluar las soluciones serverless específicas para asegurar compatibilidad con prácticas generales de la industria.
+
+### ¿Existen otras herramientas que complementen el ecosistema serverless?
+
+Serverless no reemplaza a tecnologías existentes como Kubernetes, pero puede coexistir con ellas para lograr un ecosistema robusto. Por ejemplo, Kubernetes maneja contenedores que podrían ser ideales para microservicios que requieren una escala constante, mientras que serverless puede encargarse de servicios que reaccionan a eventos esporádicos. Esta convivencia entre herramientas representa un avance evolutivo, más que un reemplazo, destacando la importancia de elegir lo mejor de ambas tecnologías según el caso de uso particular.
+
+### ¿Cómo comparar serverless framework con Terraform o CloudFormation?
+
+Cada herramienta en el ecosistema de la nube tiene sus fortalezas y ideales aplicaciones. Serverless framework permite integrar el desarrollo de código con la infraestructura directamente, disminuyendo la distancia entre dev y ops. Sin embargo, Terraform es otra opción sólida para aprovisionar y gestionar infraestructura más tradicional en la nube, aunque no es ideal para gestionar código serverless directamente. En un ambiente mixto, puede ser útil combinar serverless framework para manejar funciones Lambda y Terraform para arquitecturas de infraestructura más amplia, como clústeres de Kubernetes. Esta sinergia permite aprovechar las fortalezas de cada herramienta.
+
+William, Invitamos a los desarrolladores a experimentar con diversas herramientas sin encasillarse, eligiendo aquellas que mejor se adapten a sus necesidades aunque serverless sea tentador. ¡Exploren, prueben y sigan aprendiendo!
+
+**Lecturas recomendadas**
+
+[Curso de Introducción a AWS: Fundamentos de Cloud Computing - Platzi](https://platzi.com/cursos/aws-fundamentos/ "Curso de Introducción a AWS: Fundamentos de Cloud Computing - Platzi")
+
+[Curso de Serverless Framework en AWS - Platzi](https://platzi.com/cursos/serverless/ "Curso de Serverless Framework en AWS - Platzi")
 
 
 
