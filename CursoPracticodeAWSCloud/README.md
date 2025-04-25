@@ -1001,3 +1001,74 @@ Recuerda que para encontrar tu IP pública puedes entrar a [whatismyip.com](http
 **Lecturas recomendadas**
 
 [What Is My IP? Shows your real IP - IPv4 - IPv6 - WhatIsMyIP.com®](https://www.whatismyip.com/)
+
+## ¿Qué es Lambda y Serverless?
+
+¡Buena pregunta! Vamos por partes y con ejemplos simples 👇
+
+### 🚀 **¿Qué es AWS Lambda?**
+
+**AWS Lambda** es un servicio de computación **Serverless** de Amazon que te permite ejecutar código **sin tener que preocuparte por servidores**. Solo escribes tu función, la subes, y Lambda se encarga del resto:
+
+- No tienes que crear ni administrar servidores.
+- Solo pagas por el tiempo que tu código se ejecuta (¡por milisegundos!).
+- Escala automáticamente, desde 1 llamada hasta millones.
+
+### Ejemplo:
+Supón que subes una imagen a un bucket S3, y quieres generar una miniatura automáticamente.
+
+✅ Puedes conectar ese evento a una función Lambda que:
+- Reciba la imagen
+- Cree la miniatura
+- La suba a otro bucket
+
+### 🌩️ **¿Qué es Serverless?**
+
+"Serverless" (sin servidor) **no significa que no haya servidores**, sino que tú **no tienes que administrarlos**.
+
+### Ventajas del enfoque Serverless:
+- ⛅ **Escala automáticamente**
+- 💸 **Pago por uso** (cero uso = cero pago)
+- 🧼 **Sin mantenimiento de servidores**
+- ⚡ **Implementación rápida y modular**
+
+### 🎯 ¿Dónde encaja Lambda en Serverless?
+
+Lambda es **una de las piezas clave** del ecosistema Serverless de AWS. Otras herramientas serverless que suelen trabajar con Lambda:
+
+- **API Gateway** (para exponer funciones como APIs REST/HTTP)
+- **S3** (para subir archivos que pueden disparar Lambdas)
+- **SQS/SNS** (mensajería asincrónica entre funciones)
+- **DynamoDB** (base de datos serverless)
+
+### Resumen
+
+Lambda es un proyecto de AWS muy relacionado con el concepto de [Serverless](https://platzi.com/blog/serverless-el-inicio-de-una-revolucion/ "Serverless"), dejar la administración de tus servidores en manos de Amazon para solo encargarte de las funciones de código que ejecutara tu aplicación.
+
+#### ¿Qué son?
+
+Imagina lambda como un lugar donde puedes ejecutar funciones de tu código.
+
+##### Serverless
+
+No existe un servidor como vimos en EC2, es decir, solo está el código en lamba y AWS se encarga de ejecutarlo cuando necesites.
+
+Profundiza sobre [qué es serverless framework](https://platzi.com/blog/introduccion-a-serverless-framework/ "qué es serverless framework").
+
+##### Lenguajes soportados
+
+Puedes programar funciones lamba en Nodejs (JavaScript), Python, Java (8), C# (.Net Core) y Go.
+
+Recuerda tener en cuenta los siguientes puntos:
+
+- **Memoria**: Mínima de 128MB, máxima 3000MB con incrementos de 64MB.
+- **Límites de ejecución y espacio**: Puedes correr tu aplicación hasta 300 segundos y tienes un /tmp limitado a 512MB.
+- **Ejecución paralela**: Esta limitada a 1000 ejecuciones concurrentes (a un mismo tiempo), no tiene límite en ejecuciones secuenciales (una detrás de otra).
+
+#### Ventajas de Lambda:
+
+- **Seguridad**: Al ser una infraestructura compartida, no tienes que preocuparte de seguridad: AWS maneja todo.
+- **Performance**: AWS está monitoreando constantemente la ejecución de tus funciones y se encarga de que siempre tenga el mejor performance.
+- **Código aislado**: Tu código, aún estando en una infraestructura compartida, corre en un ambiente virtual exclusivo, aislado de las demás ejecuciones lamba.
+
+Recuerda que AWS te regala 1 millón de peticiones lamba gratis el primer año.
