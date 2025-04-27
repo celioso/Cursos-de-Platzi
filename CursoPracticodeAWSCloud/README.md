@@ -1456,3 +1456,5 @@ Existen dos grandes opciones para almacenamiento en AWS:
 - **Glacier**: Es un servicio de almacenamiento en la nube para archivar datos y realizar copias de seguridad a largo plazo.
 
 Con S3, AWS te permite guardar archivos en su plataforma, de tal forma, tus instancias EC2, Lamba u otras son efímeras y puedes borrarlas sin preocupación alguna. Tambien te permite hacer respaldos en tiempo prácticamente real en otras regiones de AWS.
+
+1
