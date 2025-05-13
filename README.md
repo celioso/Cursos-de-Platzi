@@ -192,8 +192,8 @@
 
 - [Curso Práctico de AWS: Roles y Seguridad con IAM](CursoPracticodeAWSRolesySeguridadconIAM)
 - [Curso Práctico de AWS: Cómputo con EC2](CursoPracticodeAWSComputoconEC2)
+- [Curso Práctico de AWS Cloud](CursoPracticodeAWSCloud)
 
-Curso Práctico de AWS Cloud
 Curso Práctico de Cloud Computing con AWS
 
 - [Curso Práctico de Storage en AWS](CursoPracticodeStorageenAWS)
@@ -222,5 +222,4 @@ Curso de Infraestructura Como Código en AWS
 
 ## CLOUD SERVICES
 
-- [Curso Basico de Django](CursoBasicodeDjango)
 - [Curso Basico de Django](CursoBasicodeDjango)
