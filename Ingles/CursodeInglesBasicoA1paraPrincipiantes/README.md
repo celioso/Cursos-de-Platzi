@@ -456,3 +456,175 @@ Refinar tu descripción personal te permitirá conectarte mejor con tu audiencia
 - **Amistades**: My best friends are John and Carolina.
 
 Practicar estas descripciones puede aumentar tu confianza al usar el inglés. Además, al personalizar y ampliar estas expresiones, te presentarás de manera genuina y atractiva. ¡Anímate a escribir tus propias descripciones! Con el tiempo, notarás cómo tu habilidad para comunicarte mejora, y te sentirás más cómodo expresándote en inglés.
+
+## Conversación en Español: Deletreo y Presentación Personal
+
+### ¿Cómo mejorar tu inglés practicando con preguntas básicas?
+
+¡Hola a todos! Aprender inglés puede parecer desafiante, pero una excelente manera de comenzar es practicando preguntas básicas y respuestas. Esta técnica no solo mejora tu vocabulario, sino que también te ayuda a familiarizarte con la estructura del idioma. Hoy exploraremos cómo puedes practicar el alfabeto, deletreo, números y preguntas personales simples, esenciales para cualquier principiante.
+
+### ¿Cuál es el beneficio de practicar el deletreo?
+
+Dominio del deletreo es fundamental en inglés. Permite una correcta comprensión y comunicación efectiva en conversaciones cotidianas. Cuando alguien pregunta "What's your name?" (¿Cómo te llamas?), no solo respondes con tu nombre, sino también cómo deletrearlo. Practicar esto te ayudará:
+
+- Mejorar tu habilidad para reconocer letras en inglés.
+- Facilitar la comunicación en situaciones con ruido o cuando hay una barrera del idioma.
+- Construir una base sólida para avanzar a niveles más complejos del idioma.
+
+Ejemplos prácticos:
+
+- *Laura se deletrea como L-A-U-R-A*.
+- *Diego se deletrea como D-I-E-G-O*.
+
+### ¿Por qué es importante conocer los números en inglés?
+
+Los números son vitales para una amplia gama de situaciones, desde expresar tu edad hasta entender direcciones o cantidades en diferentes contextos. Responder a preguntas como "How old are you?" (¿Cuántos años tienes?) te permite practicar:
+
+- Diferentes formas de expresar números en inglés.
+- Formar frases con más seguridad al hablar de ti mismo.
+- Incrementar tu fluidez al relacionar números con contextos reales, como edad o fechas.
+
+### Ejemplos prácticos:
+
+- "I am 28 years old" (Tengo 28 años).
+- "I am 22 years old" (Tengo 22 años).
+
+### ¿Cómo enriquecer tu vocabulario hablando de tus preferencias?
+
+Hablar sobre tus preferencias personales es una forma efectiva de enriquecer tu vocabulario y hacerlo más relevante para tus intereses. Al contestar preguntas como "What's your favorite food?" (¿Cuál es tu comida favorita?) o "What's your favorite animal?" (¿Cuál es tu animal favorito?), puedes aprender palabras nuevas y ampliar tu léxico de manera significativa.
+
+- Introducir palabras relacionadas con gustos y preferencias.
+- Adaptar el vocabulario aprendido a conversaciones reales.
+- Mejorar la comprensión al escuchar a otros hablar sobre sus preferencias.
+
+Ejemplos prácticos:
+
+- "My favorite food is ice cream" (Mi comida favorita es el helado).
+- "My favorite animal is the lion" (Mi animal favorito es el león).
+
+No olvides que practicar estas preguntas también te ayuda a sentirte más confiado al interactuar en inglés. Así que, ¿por qué no responder a estas preguntas tú mismo? ¡Escribe tus respuestas en la sección de comentarios y sigue practicando! ¡Nos vemos la próxima vez!
+
+## Descripciones en inglés usando "his", "her" y "their"
+
+### ¿Cómo describir a tus amigos y objetos en inglés?
+
+Dominando el arte de las descripciones personales, aprenderás a realizar presentaciones más precisas y efectivas en inglés. Esto no solo enriquecerá tus habilidades lingüísticas, sino que también te permitirá conectar mejor con los demás. En este recorrido, exploraremos cómo utilizar estructuras gramaticales básicas para describir personas, objetos y más.
+
+#### ¿Cómo usar "is" y "are" correctamente?
+
+El uso correcto de is y are es fundamental para describir atributos en inglés. Continuamente nos encontramos con la elección entre estas dos formas del verbo "ser o estar". Aquí está la guía:
+
+**Singular (is)**: Utiliza is cuando hables de un solo objeto o individuo. Ejemplo: "My favorite color is black."
+**Plural (are)**: Usa are para describir varios objetos o individuos. Ejemplo: "My favorite colors are black and white."
+
+### Describiendo amigos: el ejemplo de John y Carolina
+
+Veamos cómo utilizar pronombres posesivos para hablar sobre nuestros amigos:
+
+- **John**: Es un hombre. Usamos his para sus descripciones.
+ - Ejemplo en singular: "His favorite color is red."
+ - Ejemplo en plural: "His favorite colors are red and blue."
+- **Carolina**: Es mujer. Utilizamos her para describirla.
+ - Ejemplo en singular: "Her favorite color is pink."
+ - Ejemplo en plural: "Her favorite colors are pink and purple."
+ 
+### ¿Cómo describir objetos y animales?
+
+Al describir cosas o animales, usamos its. Este pronombre es clave:
+
+- Descripción singular: "Its favorite food is chicken."
+- Descripción plural: "Its favorite foods are chicken and fruits."
+
+### ¿Cómo referirse a un grupo con "their"?
+
+Cuando hablamos en plural acerca de varias personas o cosas:
+
+- Para John y Carolina juntos, usamos their.
+ - Ejemplo singular: "Their favorite app is YouTube."
+ - Ejemplo plural: "Their favorite apps are YouTube and Instagram."
+ 
+### Usando "your" y "our" en descripciones
+
+Estos pronombres son esenciales para conectarte directamente con otra persona:
+
+- **Your**: Hablando de ti. Ejemplo: "Your favorite teacher is me."
+- **Our**: Incluyéndote a ti y a mí. Ejemplo: "Our favorite language is English."
+
+En esta guía, hemos explorado cómo usar distintas estructuras y pronombres para enriquecer nuestra expresión verbal al describir a amigos y objetos. Al dominar estos elementos, no solo mejorarás tu gramática, sino que tu capacidad de comunicación en inglés se ampliará considerablemente. ¡Invita a tus amigos a practicar contigo y comprueba cómo estas habilidades se vuelven naturales!
+
+## Preguntas en inglés sobre personas y sus roles
+
+### ¿Quién es tu mejor amigo y cómo preguntar sobre personas en inglés?
+
+A menudo, aprender un nuevo idioma nos lleva a situaciones cotidianas donde podemos practicar lo aprendido. Preguntar y hablar sobre amigos y personas que nos rodean permite no solo practicar el idioma, sino también compartir detalles significativos de nuestra vida. Aquí te enseñaremos cómo formular preguntas simples sobre personas en inglés y cómo responderlas con confianza.
+
+### ¿Cómo formular preguntas sobre personas?
+
+En inglés, la palabra who es clave cuando queremos hacer preguntas sobre personas. Es una pregunta directa y esencial en cualquier conversación cotidiana. A continuación, te mostramos cómo usarla con ejemplos prácticos:
+
+- **Singular**: Usa is para referirte a una sola persona.
+
+ - Who is John? – ¿Quién es John?
+ - Who is a singer? – ¿Quién es cantante?
+ 
+- **Plural**: Usa are cuando te refieres a más de una persona.
+
+ - Who are my best friends? – ¿Quiénes son mis mejores amigos?
+
+### Ejemplos prácticos con situaciones reales
+
+Practicar con ejemplos puede facilitar mucho el aprendizaje. Aquí te presentamos algunas situaciones que podrías encontrar en conversaciones cotidianas:
+
+- *Who is an online teacher?* – ¿Quién es profesor en línea?
+- *Who is 30 years old?* – ¿Quién tiene 30 años?
+
+Estos ejemplos no solo mejorarán tu habilidad para formular preguntas, sino que también te ayudarán a entender respuestas comunes que podrías oír durante una conversación.
+
+### Respondiendo con confianza
+
+Al responder, puedes ser directo y especificar la información:
+
+- *Who is an actor?* – John es un actor.
+- *Who are tennis fans?* – John y Caro son aficionados al tenis.
+
+Estos ejemplos te ayudan a proporcionar respuestas claras y directas. Al practicar, te familiarizas con la estructura de las frases y te preparas mejor para interacciones reales.
+
+### Practica y mejora
+
+Como una actividad adicional, intenta responder estas preguntas tú mismo:
+
+- *Who is your best friend?*
+- *Who is your favorite artist?*
+- *Who is your favorite teacher?*
+
+Responder a estas preguntas no solo te ayuda a consolidar tu aprendizaje, sino que también te prepara para hablar sobre tus intereses y conexiones personales en inglés.
+
+Este acercamiento al aprendizaje te permite entender mejor la gramática y te da la confianza necesaria para usar el inglés en conversaciones diarias. Sigue practicando, y verás cómo tu habilidad para hacer y responder preguntas sobre personas mejora notablemente. ¡Continúa motivado y no dejes de aprender!
+
+## Proyecto Final: Presentación Personal en Inglés A1
+
+### ¿Cómo introducirte eficazmente en inglés?
+
+Aprender inglés no es solo un desafío, sino una oportunidad de abrir puertas a nuevas culturas, empleos y experiencias. En esta sesión final del curso, exploramos ejemplos simples y claros de presentaciones personales que te permitirán comunicarte con confianza y hacer conexiones significativas.
+
+### ¿Qué dicen otros estudiantes de Platzi?
+
+Es inspirador ver cómo otros estudiantes, al igual que tú, han avanzado en su aprendizaje y se presentan con seguridad. Por ejemplo, Anna, una estudiante de nivel A1, se describe a sí misma dibujando una imagen clara de quién es: "Anna tiene 28 años, su comida favorita es el sushi, y su animal favorito es su gato, Garfield". Con estos datos, podemos ver que una presentación efectiva incluye:
+
+- **Nombre y edad**: Permite a las personas conocer datos esenciales desde el primer momento.
+- **Gustos personales**: Compartir detalles, como comidas y animales favoritos, ayuda a crear una conexión personal.
+
+### ¿Cómo puedes aplicar este aprendizaje?
+
+Siguiendo el ejemplo de Juan, otro estudiante de 37 años y productor de video, podemos estructurar nuestra presentación de manera sencilla. Él comparte que su comida favorita es la pizza y que su animal preferido es el león. Así que puedes formular tu auto-presentación siguiendo estos pasos:
+
+1. **Identifica quién eres**: "Hola, soy [tu nombre]".
+2. **Menciona tu edad**: "Tengo [tu edad] años".
+3. **Describe tu ocupación**: "Soy [tu ocupación]".
+4. Comparte tus gustos: "Mi comida favorita es [tu comida favorita] y mi animal favorito es [tu animal favorito]".
+
+### ¿Por qué es importante practicar estos detalles?
+
+El lenguaje es una herramienta poderosa de conexión. Al saber cómo presentarte con facilidad en inglés, no solo estás mostrando competencia lingüística, sino también abriendo la puerta a empatizar y conectar con personas de diversas partes del mundo. Es esencial practicar para ganar fluidez, y este ejercicio práctico se convierte en una excelente manera de comenzar.
+
+Ahora que has aprendido este formato y ejemplos, es tu turno. Practica tu presentación en inglés y continúa avanzando en tu aprendizaje. ¡Recuerda que cada pequeño paso te acerca más a tu meta final!
