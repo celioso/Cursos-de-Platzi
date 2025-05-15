@@ -21,7 +21,7 @@ def main():
     persona = Persona('David')
     persona.avanza()
 
-    ciclista = Ciclista('Daniel')
+    ciclista = Ciclista('Juan')
     ciclista.avanza()
 
 
