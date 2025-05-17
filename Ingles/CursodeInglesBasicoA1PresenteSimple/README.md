@@ -977,4 +977,685 @@ Por ejemplo, en la pregunta "Where ____ she?", la respuesta correcta es "is" por
 
 Si la pregunta fuera "Where ____ she work?", entonces la respuesta sería "does" porque incluye la acción "work".
 
-Las preguntas con "where" son fundamentales para obtener información sobre lugares y ubicaciones en inglés. Dominar su estructura te permitirá comunicarte con mayor fluidez y precisión. Recuerda siempre identificar si estás usando el verbo "to be" o un verbo de acción para determinar la estructura correcta. ¿Qué otros tipos de preguntas WH te gustaría aprender? ¡Comparte tus dudas en los comentarios!s
+Las preguntas con "where" son fundamentales para obtener información sobre lugares y ubicaciones en inglés. Dominar su estructura te permitirá comunicarte con mayor fluidez y precisión. Recuerda siempre identificar si estás usando el verbo "to be" o un verbo de acción para determinar la estructura correcta. ¿Qué otros tipos de preguntas WH te gustaría aprender? ¡Comparte tus dudas en los comentarios!
+
+## Preguntas con "when" para tiempos y fechas en inglés
+
+La comprensión de las preguntas con "when" en inglés es fundamental para comunicarnos efectivamente sobre tiempo y fechas. Estas preguntas nos permiten obtener información específica sobre cuándo ocurren eventos, actividades o situaciones, siendo una herramienta esencial para la comunicación cotidiana en inglés.
+
+### ¿Cómo usar "when" para preguntar sobre tiempo?
+
+El uso de "when" (cuándo) es esencial cuando necesitamos información relacionada con el tiempo o fechas. Este tipo de preguntas son abiertas, lo que significa que no se responden con un simple "sí" o "no", sino que requieren información específica.
+
+Cuando utilizamos "when" con el verbo "to be" (ser/estar), la estructura es bastante sencilla:
+
+1. Comenzamos con "when"
+2. Seguimos con el verbo "to be" (am, is, are)
+3. Luego colocamos el sujeto
+4. Terminamos con signo de interrogación
+
+### Algunos ejemplos prácticos son:
+
+- When is the party? (¿Cuándo es la fiesta?) - It's tomorrow (Es mañana)
+- When is your birthday? (¿Cuándo es tu cumpleaños?) - My birthday is on March 1 o It's on March 1
+- When is your exam? (¿Cuándo es tu examen?) - It's this afternoon o My exam is this afternoon
+
+**Es importante notar** que al responder sobre cosas (no personas), podemos usar "it" para referirnos al sujeto de la pregunta. Por ejemplo, cuando respondemos sobre una fiesta, un cumpleaños o un examen, podemos decir "it's..." porque nos referimos a objetos o eventos, no a personas.
+
+### ¿Cómo formular preguntas con "when" usando otros verbos?
+
+También podemos crear preguntas con "when" utilizando verbos diferentes al "to be". En estos casos, la estructura cambia ligeramente:
+
+1. Comenzamos con "when"
+2. Seguimos con el auxiliar "do" o "does" (do para I, you, we, they; does para he, she, it)
+3. Luego colocamos el sujeto
+4. Después el verbo en su forma base
+5. El complemento
+6. Terminamos con signo de interrogación
+
+Veamos algunos ejemplos:
+
+- When does the movie start? (¿Cuándo empieza la película?) - It starts in one hour (Empieza en una hora)
+- When do you have class? (¿Cuándo tienes clase?) - I have class today (Tengo clase hoy)
+- When do you watch TV? (¿Cuándo ves televisión?) - I watch TV at night (Veo televisión por la noche)
+
+**Es fundamental recordar** que en las preguntas, el verbo principal siempre va en su forma base (sin conjugar). Por ejemplo, decimos "When does he study?" y no "When does he studies?". Sin embargo, en las respuestas afirmativas, sí debemos conjugar el verbo correctamente: "He studies English in the morning".
+
+### ¿Cuáles son los errores comunes al formular preguntas con "when"?
+
+Al formular preguntas con "when", es común cometer algunos errores, especialmente relacionados con la elección del auxiliar correcto. Veamos un ejemplo:
+
+Para completar la pregunta: "When ____ you eat lunch?", tenemos tres opciones: do, are, does.
+
+La respuesta correcta es **do**, porque:
+
+- Estamos usando un verbo diferente al "to be" (eat)
+- La pregunta es sobre "you" (tú/usted), por lo que usamos "do" y no "does" (que se usaría con he, she, it)
+- "Are" sería incorrecto porque es parte del verbo "to be" y aquí estamos usando "eat"
+
+Por lo tanto, la pregunta correcta es: "When do you eat lunch?" (¿Cuándo almuerzas?)
+
+**Recuerda siempre** que la elección entre "do" y "does" depende del sujeto de la pregunta, no del complemento. Y que en las preguntas con otros verbos diferentes al "to be", siempre necesitamos estos auxiliares.
+
+Las preguntas con "when" son herramientas poderosas para obtener información sobre tiempo y fechas en inglés. ¿Tienes alguna duda sobre cómo formular estas preguntas? ¡Comparte tus experiencias o consultas en los comentarios!
+
+## Preguntas en inglés con "who" y el verbo "to be"
+
+La comprensión de las preguntas con "who" en inglés es fundamental para mantener conversaciones básicas y conocer a nuevas personas. Estas estructuras interrogativas nos permiten obtener información sobre identidades, lo cual resulta esencial en situaciones sociales y profesionales. Dominar este tipo de preguntas te ayudará a desenvolverte con mayor confianza en entornos donde se habla inglés.
+
+### ¿Cómo formular preguntas con "who" en inglés?
+
+Las preguntas con "who" (quién/quiénes) se utilizan para obtener información sobre personas. La estructura básica de estas preguntas sigue un patrón específico que es importante dominar para comunicarse correctamente en inglés.
+
+Para formar estas preguntas, debemos seguir la siguiente estructura:
+
+- Comenzar con la palabra interrogativa "who"
+- Añadir el verbo "to be" conjugado (is, am, are)
+- Incluir el sujeto
+- Terminar con signo de interrogación
+
+**Esta estructura es esencial** para formular preguntas correctamente cuando queremos identificar a personas.
+
+### Ejemplos prácticos de preguntas con "who"
+
+Veamos algunos ejemplos que ilustran cómo utilizar "who" en diferentes contextos:
+
+- Who is she? (¿Quién es ella?)
+
+ - Oh, she is Mary. (Oh, ella es Mary.)
+ 
+- Who are they? (¿Quiénes son ellos/ellas?)
+
+ - They are my friends. (Son mis amigos.)
+ - They are my coworkers. (Son mis compañeros de trabajo.)
+
+- Who is this? (¿Quién es este/esta?)
+
+ - This is Jess. You know Jess. (Este/Esta es Jess. Conoces a Jess.)
+ 
+Estos ejemplos muestran cómo la estructura se adapta según el sujeto de la pregunta, manteniendo siempre el mismo patrón básico.
+
+### ¿Cómo elegir la forma correcta del verbo "to be"?
+
+Un aspecto crucial al formular preguntas con "who" es seleccionar la forma correcta del verbo "to be". Esto depende del sujeto al que nos referimos en la pregunta.
+
+Por ejemplo, si analizamos la pregunta: Who ____ you? (¿Quién eres tú?), tenemos varias opciones:
+
+- Who do you?
+- Who are you?
+- Who is you?
+
+**La respuesta correcta es "Who are you?"** porque:
+
+1. No hay una acción adicional en la oración (lo que descarta "do")
+2. El sujeto es "you", que requiere "are" como forma del verbo "to be"
+3. "Is" no es correcto porque la pregunta se refiere a "you" (segunda persona)
+
+Es importante recordar que si quisiéramos usar "do" en preguntas con "who", necesitaríamos añadir una acción adicional. Sin embargo, este es un tema más avanzado que se abordará en cursos posteriores.
+
+### ¿En qué situaciones utilizamos preguntas con "who"?
+
+Las preguntas con "who" son extremadamente útiles en diversas situaciones cotidianas:
+
+- **Presentaciones**: Cuando conoces a alguien nuevo y quieres saber quién es.
+- **Entornos laborales**: Para identificar a compañeros o personas en una reunión.
+- **Situaciones sociales**: Cuando necesitas identificar a personas en fotos o a distancia.
+- **Conversaciones telefónicas**: Para confirmar con quién estás hablando.
+
+Dominar estas estructuras te permitirá desenvolverte con mayor naturalidad en contextos donde necesites identificar o preguntar por personas.
+
+La práctica constante de estas estructuras te ayudará a interiorizarlas y utilizarlas de manera fluida en tus conversaciones en inglés. Recuerda que la clave está en identificar correctamente el sujeto para elegir la forma adecuada del verbo "to be". ¿Has tenido la oportunidad de utilizar estas preguntas en alguna situación real? Comparte tu experiencia en los comentarios.
+
+## Preguntas con "why" y respuestas con "because" en inglés
+
+La comprensión de las preguntas con "why" en inglés es fundamental para mantener conversaciones fluidas y obtener información sobre razones y motivaciones. Estas preguntas nos permiten profundizar en las explicaciones detrás de acciones, decisiones y situaciones, enriqueciendo nuestra capacidad comunicativa en el idioma inglés. Dominar este tipo de preguntas te ayudará a expresarte con mayor precisión y entender mejor el contexto de las conversaciones.
+
+### ¿Cómo utilizamos "why" para formular preguntas?
+
+"Why" es una palabra interrogativa que utilizamos cuando necesitamos entender razones o explicaciones. A diferencia de las preguntas que se responden con sí o no, las preguntas con "why" requieren respuestas abiertas y explicativas. Estas preguntas son esenciales cuando no comprendemos algo y necesitamos más información.
+
+Por ejemplo:
+
+- Why are you here? (¿Por qué estás aquí?)
+- Respuesta: Because I have class. (Porque tengo clase.)
+
+**Un aspecto importante** de las preguntas que comienzan con "why" es que generalmente se responden utilizando "because" (porque), ya que estamos proporcionando una explicación o razón.
+
+Otros ejemplos:
+
+- Why is she so happy? (¿Por qué está tan feliz?)
+
+- Respuesta: Because it's her birthday. (Porque es su cumpleaños.)
+
+- Why is it cold? (¿Por qué hace frío?)
+
+- Respuesta: Because it's winter. (Porque es invierno.)
+
+### ¿Cómo formar preguntas con "why" y el verbo "to be"?
+
+La estructura básica para formar estas preguntas es:
+
+1. Comenzamos con "why"
+2. Seguimos con el verbo "to be" (am, is, are)
+3. Luego colocamos el sujeto
+4. Finalizamos con el complemento y el signo de interrogación
+
+Por ejemplo:
+
+- Why are you so angry? (¿Por qué estás tan enojado?)
+- Respuesta: Because I'm tired. I want to go home. (Porque estoy cansado. Quiero ir a casa.)
+
+En esta estructura, "are" es la forma del verbo "to be" que corresponde al sujeto "you".
+
+### ¿Cómo formular preguntas con "why" y otros verbos de acción?
+
+También podemos crear preguntas con "why" utilizando verbos diferentes al "to be". En estos casos, necesitamos usar los auxiliares "do" o "does" dependiendo del sujeto.
+
+La estructura es:
+
+1. Comenzamos con "why"
+2. Seguimos con "do" o "does" (dependiendo del sujeto)
+3. Luego colocamos el sujeto
+4. Después el verbo en su forma base
+5. Finalizamos con el complemento y el signo de interrogación
+
+Ejemplos:
+
+- Why do you like pizza? (¿Por qué te gusta la pizza?)
+
+- Respuesta: Because it's delicious. (Porque es deliciosa.)
+
+- Why does he watch TV? (¿Por qué ve televisión?)
+
+- Respuesta: Because he is bored. (Porque está aburrido.)
+
+- Why do you go to school? (¿Por qué vas a la escuela?)
+
+- Respuesta: Because I like to study. (Porque me gusta estudiar.)
+
+### ¿Cuándo usar "do" y cuándo usar "does"?
+
+**La regla es simple:**
+
+- Usamos "does" con los sujetos: he, she, it (tercera persona del singular)
+- Usamos "do" con los sujetos: I, you, we, they (primera y segunda persona, y plurales)
+
+Por ejemplo:
+
+- Why do you have a dog? (¿Por qué tienes un perro?)
+- Respuesta: Because I love animals. (Porque amo a los animales.)
+
+En este caso, la estructura es:
+
+- "Why" (palabra interrogativa)
+- "do" (auxiliar correspondiente al sujeto "you")
+- "you" (sujeto)
+- "have" (verbo en forma base)
+- "a dog" (complemento)
+
+### ¿Cómo identificar la forma correcta en una pregunta con "why"?
+
+Veamos un ejemplo práctico: Why _____ he study English?
+
+Las opciones son: do, is, does.
+
+La respuesta correcta es "does" porque:
+
+- No es "do" ya que la pregunta es sobre "he" (tercera persona singular), no sobre "you", "we" o "they".
+- No es "is" porque tenemos un verbo de acción diferente ("study"), no el verbo "to be".
+- "Does" es la opción correcta porque la pregunta es sobre "he" (tercera persona singular) y tenemos un verbo de acción.
+
+Por lo tanto, la pregunta correcta es: Why does he study English? (¿Por qué estudia inglés?)
+
+Las preguntas con "why" son herramientas poderosas para obtener explicaciones y profundizar en las razones detrás de acciones y situaciones. Dominar su estructura te permitirá comunicarte con mayor fluidez y precisión en inglés. ¿Y tú? Why do you study English? Comparte tus razones y practica la estructura que acabamos de aprender.
+
+## Preguntas en Inglés con "What": Uso y Estructura Básica
+
+La capacidad de formular preguntas correctamente en inglés es fundamental para mantener conversaciones fluidas y obtener la información que necesitamos. Las palabras interrogativas o "WH questions" son herramientas esenciales que nos permiten estructurar preguntas de manera efectiva según el tipo de información que buscamos. Dominar estas estructuras te ayudará a comunicarte con mayor confianza y naturalidad en situaciones cotidianas.
+
+### ¿Cómo usar "what" para formular preguntas en inglés?
+
+"What" es una palabra interrogativa que utilizamos para solicitar información general, especialmente relacionada con cosas o acciones. Esta palabra nos permite hacer preguntas abiertas que invitan a respuestas detalladas, lo que la convierte en una herramienta perfecta para iniciar conversaciones o conocer mejor a otras personas.
+
+### ¿Cuál es la estructura correcta para preguntas con "what" y el verbo "to be"?
+
+Cuando formulamos preguntas con "what" y el verbo "to be", debemos seguir una estructura específica:
+
+1. "What" al inicio de la pregunta
+2. Verbo "to be" (am, is, are)
+3. Sujeto
+4. Signo de interrogación
+
+**Ejemplos prácticos:**
+
+- What is your favorite food? (¿Cuál es tu comida favorita?)
+ - I love cheese (Me encanta el queso)
+- What are your hobbies? (¿Cuáles son tus pasatiempos?)
+ - I like to play the guitar and watch movies (Me gusta tocar la guitarra y ver películas)
+- What is your job? (¿Cuál es tu trabajo?)
+ - I'm a teacher (Soy profesor)
+
+Estas preguntas son muy abiertas y generales, perfectas para iniciar conversaciones y conocer mejor a las personas con las que hablamos.
+
+### ¿Cómo formular preguntas con "what" y otros verbos de acción?
+
+Cuando queremos formular preguntas con "what" y verbos diferentes al verbo "to be", necesitamos utilizar los auxiliares "do" o "does". La estructura es la siguiente:
+
+1. "What" al inicio
+2. "Do" o "does" (dependiendo del sujeto)
+3. Sujeto
+4. Verbo en forma base (sin conjugar)
+5. Complemento
+6. Signo de interrogación
+
+**Ejemplos prácticos:**
+
+- What does she drink? (¿Qué bebe ella?)
+ - She drinks coffee (Ella bebe café)
+- What do you eat for dinner? (¿Qué comes para la cena?)
+ - I eat pizza (Como pizza)
+- What do you study? (¿Qué estudias?)
+ - I study marketing (Estudio marketing)
+
+**Es importante recordar** que en las preguntas, el verbo principal siempre va en su forma base (sin la "s" de tercera persona), mientras que en las respuestas afirmativas para tercera persona (he, she, it) sí debemos añadir la "s".
+
+### ¿Cómo elegir la palabra interrogativa correcta según el contexto?
+
+Seleccionar la palabra interrogativa adecuada depende del tipo de información que estamos buscando. Cada palabra tiene un propósito específico:
+
+- When: para preguntar sobre tiempo
+ - When do you go to school? (¿Cuándo vas a la escuela?)
+- Where: para preguntar sobre ubicación
+ - Where does she work? (¿Dónde trabaja ella?)
+- Who: para preguntar sobre personas
+ - Who is your best friend? (¿Quién es tu mejor amigo/a?)
+- What: para preguntas generales sobre información
+ - What is your favorite color? (¿Cuál es tu color favorito?)
+ 
+### ¿Cómo evitar errores comunes al formular preguntas?
+
+Un error frecuente es confundir cuándo usar "do/does" y cuándo no es necesario. **Recuerda**: con el verbo "to be" no necesitamos auxiliares, mientras que con otros verbos de acción sí debemos usar "do" o "does".
+
+**Incorrecto**: What do is your job? Correcto: What is your job?
+
+Otro error común es usar la forma conjugada del verbo después de "do/does":
+
+**Incorrecto**: What does she drinks? Correcto: What does she drink?
+
+Dominar estas estructuras te permitirá formular preguntas con naturalidad y fluidez, mejorando significativamente tu capacidad para comunicarte en inglés. La práctica constante es clave para interiorizar estas reglas y utilizarlas de manera automática en tus conversaciones diarias.
+
+Las "WH questions" son herramientas poderosas para obtener información específica y mantener conversaciones interesantes en inglés. ¿Cuál de estas preguntas te resulta más útil en tu día a día? Comparte tus experiencias y practica formulando tus propias preguntas en la sección de comentarios.
+
+## Práctica de Rutinas Diarias en Español
+
+Las actividades diarias son una parte fundamental de nuestra rutina y poder hablar sobre ellas en inglés es esencial para mantener conversaciones cotidianas. Dominar el uso de oraciones afirmativas, negativas y preguntas te permitirá expresar con claridad lo que haces y no haces durante el día, desde el desayuno hasta la hora de dormir.
+
+### ¿Cómo hablar sobre nuestras rutinas diarias en inglés?
+
+Cuando conversamos sobre nuestras actividades cotidianas, necesitamos utilizar diferentes estructuras gramaticales para expresarnos correctamente. En las conversaciones presentadas, podemos observar cómo se formulan preguntas específicas sobre actividades diarias y cómo responderlas de manera apropiada.
+
+Las seis preguntas clave que se practican en estas conversaciones son:
+
+- Where do you eat breakfast? (¿Dónde desayunas?)
+- Do you make/cook your breakfast? (¿Preparas/cocinas tu desayuno?)
+- When do you go to the gym? (¿Cuándo vas al gimnasio?)
+- Do you walk to work? (¿Caminas al trabajo?)
+- What do you eat for dinner? (¿Qué comes para cenar?)
+- Do you read at night? (¿Lees por la noche?)
+
+Estas preguntas nos permiten practicar diferentes estructuras y vocabulario relacionado con nuestras rutinas diarias.
+
+### Estructuras para hablar sobre actividades cotidianas
+
+Para hablar sobre nuestras actividades diarias en inglés, es importante dominar tres tipos de estructuras:
+
+1. **Oraciones afirmativas**: Usadas para expresar lo que hacemos.
+
+- I eat breakfast at home.
+- I go to the gym in the morning.
+- I drive to work.
+
+2. **Oraciones negativas**: Utilizadas para expresar lo que no hacemos.
+
+- I don't go to the gym.
+- I don't cook my breakfast.
+- I don't have dinner.
+
+3. **Preguntas y respuestas**: Para obtener información o responder sobre actividades.
+
+- Where do you eat breakfast? I eat breakfast at the office.
+- Do you read at night? Yes, I do. / No, I don't.
+
+**Es importante nota**r que en las respuestas cortas afirmativas o negativas, utilizamos el auxiliar "do" con el pronombre correspondiente: Yes, I do o No, I don't.
+
+### Ejemplos de conversaciones sobre rutinas diarias
+
+Veamos algunos ejemplos de las conversaciones presentadas para entender mejor cómo se aplican estas estructuras:
+
+**Conversación con Taffy:**
+
+- Where do you eat breakfast? - I eat breakfast at home.
+- Do you make your breakfast? - Yes, I do.
+- When do you go to the gym? - I don't go to the gym.
+- Do you walk to work? - No, I don't. I drive.
+- What do you eat for dinner? - I eat chicken salad.
+- Do you read at night? - Yes, I do.
+
+**Conversación con Nico:**
+
+- Where do you eat breakfast? - I eat breakfast at home.
+- Do you cook your breakfast? - Yes, I do.
+- When do you go to the gym? - I go to the gym in the morning.
+- Do you walk to work? - No, I don't. I take a taxi.
+- What do you eat for dinner? - I eat a sandwich.
+- Do you read at night? - No, I don't.
+
+**Conversación con Isa:**
+
+- Where do you eat breakfast? - I eat breakfast at the office.
+- Do you cook your breakfast? - No, I don't.
+- When do you go to the gym? - I go to the gym at night.
+- Do you walk to work? - No, I don't. I drive.
+- What do you eat for dinner? - I don't have dinner.
+- Do you read at night? - Yes, I do.
+
+### ¿Cómo formar preguntas sobre actividades diarias?
+
+Para formar preguntas sobre actividades diarias en inglés, utilizamos principalmente dos estructuras:
+
+### Preguntas con palabras interrogativas (Wh-questions)
+
+Estas preguntas comienzan con palabras como where, when, what, who, how, etc., y buscan información específica:
+
+- Where do you eat breakfast? (¿Dónde desayunas?)
+- When do you go to the gym? (¿Cuándo vas al gimnasio?)
+- What do you eat for dinner? (¿Qué comes para cenar?)
+
+La estructura es: **Palabra interrogativa + do/does + sujeto + verbo principal + complementos**
+
+### Preguntas de sí o no (Yes/No questions)
+
+Estas preguntas comienzan con el auxiliar do/does y pueden responderse con "sí" o "no":
+
+- Do you make your breakfast? (¿Preparas tu desayuno?)
+- Do you walk to work? (¿Caminas al trabajo?)
+- Do you read at night? (¿Lees por la noche?)
+
+La estructura es: **Do/Does + sujeto + verbo principal + complementos**
+
+**Recuerda que** para responder a estas preguntas de manera corta, usamos:
+
+- Yes, I do. / No, I don't.
+- Yes, he/she does. / No, he/she doesn't.
+
+Dominar estas estructuras te permitirá mantener conversaciones fluidas sobre tus actividades diarias y comprender lo que otros te cuentan sobre sus rutinas.
+
+Las actividades cotidianas forman parte esencial de nuestras conversaciones en cualquier idioma. Practicar estas seis preguntas te ayudará a mejorar tu fluidez en inglés y a expresar con claridad lo que haces durante el día. ¿Te animas a responder estas preguntas sobre tu rutina diaria en los comentarios? Compartir tus respuestas es una excelente manera de practicar y mejorar tu inglés.
+
+## Presente Simple en Inglés: Afirmaciones, Negaciones y Preguntas
+
+El presente simple en inglés es una herramienta fundamental para expresar acciones habituales, hechos generales y rutinas diarias. Dominar este tiempo verbal te permitirá comunicarte efectivamente en situaciones cotidianas, describir tus actividades regulares y hablar sobre otras personas. A continuación, exploraremos en detalle cómo formar oraciones afirmativas, negativas y preguntas en presente simple, con ejemplos claros y prácticos para cada caso.
+
+### ¿Cómo formar oraciones afirmativas en presente simple?
+
+Las oraciones afirmativas en presente simple siguen una estructura básica, pero es importante recordar que existen diferencias dependiendo del sujeto que utilices.
+
+### Reglas para sujetos I, you, we, they
+
+Cuando utilizamos estos sujetos, el verbo se mantiene en su forma base sin cambios:
+
+- I speak English. (Yo hablo inglés)
+- You speak English. (Tú hablas inglés)
+- We speak English. (Nosotros hablamos inglés)
+- They speak English. (Ellos hablan inglés)
+
+### Reglas para tercera persona del singular (he, she, it)
+
+Cuando el sujeto es he, she o it, debemos añadir -s al final del verbo:
+
+- He speaks English. (Él habla inglés)
+- She speaks English. (Ella habla inglés)
+- It speaks English. (Eso habla inglés)
+
+Es importante recordar que esta regla solo aplica en oraciones afirmativas con estos sujetos específicos. Un error común es añadir -s con otros sujetos, como en "You likes hamburgers", cuando lo correcto es "You like hamburgers".
+
+### ¿Cómo formar oraciones negativas en presente simple?
+
+Para formar oraciones negativas, necesitamos utilizar los auxiliares "do not" o "does not", que comúnmente se contraen como "don't" y "doesn't".
+
+### Negaciones con I, you, we, they
+
+Con estos sujetos utilizamos don't + verbo en forma base:
+
+- I **don't** speak English. (Yo no hablo inglés)
+- You **don't** speak English. (Tú no hablas inglés)
+- We **don't** speak English. (Nosotros no hablamos inglés)
+- They **don't** speak English. (Ellos no hablan inglés)
+
+### Negaciones con he, she, it
+
+Con la tercera persona del singular utilizamos **doesn't + verbo en forma base**:
+
+- He **doesn't** speak English. (Él no habla inglés)
+- She **doesn't** speak English. (Ella no habla inglés)
+- It **doesn't** speak English. (Eso no habla inglés)
+
+**Nota importante**: Cuando usamos "doesn't", el verbo principal vuelve a su forma base, sin la -s final. Un error común es decir "He doesn't speaks English", cuando lo correcto es "He doesn't speak English".
+
+### ¿Cómo formular preguntas en presente simple?
+
+Las preguntas en presente simple requieren el uso de los auxiliares "do" o "does" al inicio de la oración.
+
+### Preguntas con I, you, we, they
+
+Para estos sujetos utilizamos do + sujeto + verbo en forma base:
+
+- **Do I** speak English? (¿Hablo yo inglés?)
+- **Do you** speak English? (¿Hablas tú inglés?)
+- **Do we** speak English? (¿Hablamos nosotros inglés?)
+- **Do they** speak English? (¿Hablan ellos inglés?)
+
+### Preguntas con he, she, it
+
+Con la tercera persona del singular utilizamos does + sujeto + verbo en forma base:
+
+- **Does he** speak English? (¿Habla él inglés?)
+- **Does she** speak English? (¿Habla ella inglés?)
+- **Does it** speak English? (¿Habla eso inglés?)
+
+**Recuerda**: Al igual que en las oraciones negativas, cuando usamos "does" para formular preguntas, el verbo principal debe estar en su forma base, sin la -s final. Por ejemplo, "Does she swim?" es correcto, mientras que "Does she swims?" es incorrecto.
+
+### Respuestas cortas a preguntas de sí o no
+
+Las respuestas cortas siguen un patrón específico:
+
+- Respuestas afirmativas: Yes, sujeto + do/does
+
+ - Yes, I do. / Yes, you do. / Yes, we do. / Yes, they do.
+ - Yes, he does. / Yes, she does. / Yes, it does.
+
+- Respuestas negativas: No, sujeto + don't/doesn't
+
+ - No, I don't. / No, you don't. / No, we don't. / No, they don't.
+ - No, he doesn't. / No, she doesn't. / No, it doesn't.
+ 
+Dominar el presente simple te permitirá expresarte con mayor fluidez y precisión en inglés. Recuerda practicar regularmente formando oraciones afirmativas, negativas y preguntas con diferentes sujetos. Los ejercicios disponibles en la sección de recursos te ayudarán a consolidar estos conocimientos y a evitar errores comunes. ¡Comparte tus dudas y experiencias en la sección de comentarios para seguir aprendiendo juntos!
+
+## Rutina Diaria: Práctica del Presente Simple en Inglés
+
+El present simple es un tiempo verbal fundamental en inglés que nos permite hablar sobre nuestras rutinas diarias y hábitos. Dominar este tiempo verbal te ayudará a comunicarte efectivamente en situaciones cotidianas, describiendo tanto tus actividades como las de otras personas. A continuación, exploraremos cómo utilizar correctamente el presente simple para hablar sobre rutinas diarias, con especial atención a la tercera persona del singular.
+
+### ¿Cómo expresar tu rutina diaria en inglés?
+
+El presente simple es el tiempo verbal ideal para hablar sobre las actividades que realizamos regularmente. Para construir oraciones afirmativas en primera persona, simplemente usamos el sujeto seguido del verbo en su forma base. Por ejemplo:
+
+- I cook breakfast in the morning (Cocino el desayuno por la mañana)
+- I take a shower (Me ducho)
+- I go to work (Voy al trabajo)
+
+Para formar oraciones negativas, necesitamos el auxiliar don't (contracción de do not) seguido del verbo en su forma base:
+
+- I don't read in the morning (No leo por la mañana)
+- I don't watch TV (No veo televisión)
+- I don't go to the gym (No voy al gimnasio)
+
+Para preguntas, comenzamos con el auxiliar do seguido del sujeto y el verbo:
+
+- Do you read? (¿Lees?)
+- Do you watch TV? (¿Ves televisión?)
+- Do you go to the gym in the morning? (¿Vas al gimnasio por la mañana?)
+
+**Es importante organizar tu rutina por momentos del día** para que tu descripción sea clara y ordenada. Puedes dividirla en mañana, mediodía y noche.
+
+### ¿Qué actividades realizamos en diferentes momentos del día?
+
+Podemos describir nuestras actividades según el momento del día:
+
+**Por la mañana:**
+
+- I cook breakfast (Cocino el desayuno)
+- I take a shower (Me ducho)
+- I go to work (Voy al trabajo)
+
+**Al mediodía:**
+
+- I buy my lunch (Compro mi almuerzo)
+- I watch TV (Veo televisión)
+- I drink coffee (Bebo café)
+
+**Por la noche:**
+
+- I call my friends (Llamo a mis amigos)
+- I read a book (Leo un libro)
+- I eat dinner (Ceno)
+
+### ¿Cómo hablar de la rutina de otras personas?
+
+Cuando hablamos de la rutina de otra persona, usamos la tercera persona del singular (he, she, it), lo que requiere añadir una "-s" o "-es" al final del verbo en oraciones afirmativas. Este es un punto gramatical crucial en inglés.
+
+### ¿Cómo cambia el verbo en tercera persona?
+
+Observemos cómo se transforman las oraciones cuando hablamos de Jess (tercera persona):
+
+- Jess brushes his teeth (Jess se cepilla los dientes)
+- He doesn't sleep late (Él no duerme hasta tarde)
+- He eats breakfast (Él desayuna)
+- He doesn't cook breakfast (Él no cocina el desayuno)
+
+Para formar oraciones negativas en tercera persona, usamos doesn't (contracción de does not) en lugar de don't:
+
+Afirmativo: He drinks coffee
+Negativo: He doesn't drink tea
+
+Algunos ejemplos adicionales de la rutina de Jess:
+
+**Por la mañana:**
+
+- He brushes his teeth (Él se cepilla los dientes)
+- He eats breakfast (Él desayuna)
+- He drinks coffee (Él bebe café)
+
+**Al mediodía:**
+
+- He sleeps a little (Él duerme un poco)
+- He walks (Él camina)
+- He works (Él trabaja)
+
+**Por la noche:**
+
+- He exercises (Él hace ejercicio)
+- He plays video games (Él juega videojuegos)
+- He goes to sleep (Él se va a dormir)
+
+### ¿Qué errores debemos evitar?
+
+Un error común es olvidar añadir la "-s" en la tercera persona singular:
+
+- Incorrecto: He drink coffee
+- Correcto: He drinks coffee
+
+Otro error es usar don't en lugar de doesn't para negaciones:
+
+- Incorrecto: He don't watch TV
+- Correcto: He doesn't watch TV
+
+Practicar estos patrones te ayudará a dominar el presente simple y a comunicarte con mayor fluidez en inglés. **Recuerda que la práctica constante es clave** para interiorizar estas estructuras gramaticales.
+
+Ahora es tu turno de practicar describiendo tu rutina diaria y la de algún amigo o familiar. No olvides utilizar correctamente la tercera persona del singular cuando hables de otras personas. Comparte tus ejemplos en los comentarios y continúa practicando este importante tema gramatical.
+
+## Hablar de la Rutina Diaria en Inglés: Presente Simple y Preguntas
+
+La capacidad de hablar sobre tu vida diaria en inglés es una habilidad fundamental que abre puertas a conexiones personales y profesionales más profundas. Dominar el presente simple te permite expresar rutinas, hábitos y verdades generales, construyendo así las bases para una comunicación efectiva en situaciones cotidianas. Con estas herramientas lingüísticas, podrás desenvolverte con mayor confianza en conversaciones del día a día.
+
+### ¿Cómo utilizar el presente simple para hablar de tu rutina diaria?
+
+El presente simple es el tiempo verbal perfecto para describir acciones habituales o rutinas que realizas regularmente. **Esta estructura gramatical te permite comunicar aspectos fundamentales de tu vida cotidiana** de manera clara y directa.
+
+Algunos ejemplos básicos incluyen:
+
+- I eat breakfast at 7 AM (Desayuno a las 7 de la mañana)
+- I go to work by bus (Voy al trabajo en autobús)
+- She studies English every day (Ella estudia inglés todos los días)
+
+La estructura es sencilla: sujeto + verbo en presente. Sin embargo, recuerda que para la tercera persona del singular (he, she, it), debes añadir una "s" al final del verbo: He works, She eats, It rains.
+
+### ¿Cómo formar oraciones negativas con don't y doesn't?
+
+Para expresar lo que no haces o lo que alguien no hace habitualmente, **utilizamos las formas negativas del presente simple** con los auxiliares "don't" y "doesn't".
+
+- Para la primera y segunda persona (I, you, we, they): **don't + verbo**
+
+ - I don't drink coffee (No bebo café)
+ - We don't work on Sundays (No trabajamos los domingos)
+
+- Para la tercera persona (he, she, it): **doesn't + verbo**
+
+ - She doesn't watch TV (Ella no ve televisión)
+ - He doesn't eat meat (Él no come carne)
+ 
+Es importante recordar que cuando usamos "doesn't", el verbo principal vuelve a su forma base sin la "s" final.
+
+### ¿Cómo formular preguntas para conocer a los demás?
+
+**Las preguntas son herramientas poderosas para establecer conexiones** y aprender sobre las personas que te rodean. En el presente simple, las preguntas se forman con los auxiliares "do" y "does".
+
+Para preguntas generales (sí/no):
+
+- Do you work in the morning? (¿Trabajas por la mañana?)
+- Does she live nearby? (¿Ella vive cerca?)
+
+Para preguntas con palabras interrogativas:
+
+- What do you eat for lunch? (¿Qué comes para el almuerzo?)
+- Where does he study? (¿Dónde estudia él?)
+- How do they get to work? (¿Cómo llegan ellos al trabajo?)
+
+### ¿Dónde puedes practicar el presente simple en situaciones reales?
+
+La práctica constante es clave para mejorar tus habilidades en inglés. **Busca oportunidades para utilizar el presente simple en contextos cotidianos**, tanto en el trabajo como en casa.
+
+### En el entorno laboral
+
+El trabajo ofrece numerosas oportunidades para practicar el inglés, especialmente cuando hablas sobre:
+
+- Tus responsabilidades: I answer emails every morning (Respondo correos electrónicos todas las mañanas)
+- Tus tareas diarias: I help customers with their problems (Ayudo a los clientes con sus problemas)
+- Tu horario: I don't work on weekends (No trabajo los fines de semana)
+
+También puedes iniciar conversaciones con tus compañeros mediante preguntas como:
+
+- Where do you live? (¿Dónde vives?)
+- Do you like your job? (¿Te gusta tu trabajo?)
+- What time do you usually arrive at the office? (¿A qué hora sueles llegar a la oficina?)
+
+### En casa con familia y amigos
+
+El entorno familiar es ideal para practicar en un ambiente relajado:
+
+- Habla sobre tu rutina: I cook dinner at 7 PM (Cocino la cena a las 7 de la tarde)
+- Pregunta sobre sus hábitos: Do you exercise in the morning? (¿Haces ejercicio por la mañana?)
+- Comenta sobre preferencias: My sister doesn't eat vegetables (Mi hermana no come verduras)
+
+**La consistencia en la práctica es fundamental para ver progreso**. Intenta incorporar el presente simple en tus conversaciones diarias, y poco a poco notarás cómo mejora tu fluidez y confianza al hablar inglés.
+
+El dominio del presente simple es solo el comienzo de tu viaje en el aprendizaje del inglés. Con estas bases sólidas, podrás seguir construyendo tu conocimiento y expandiendo tus habilidades comunicativas. ¡Continúa practicando y verás resultados sorprendentes en tu capacidad para expresarte en inglés!
