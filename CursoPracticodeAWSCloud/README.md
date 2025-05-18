@@ -1457,4 +1457,348 @@ Existen dos grandes opciones para almacenamiento en AWS:
 
 Con S3, AWS te permite guardar archivos en su plataforma, de tal forma, tus instancias EC2, Lamba u otras son efímeras y puedes borrarlas sin preocupación alguna. Tambien te permite hacer respaldos en tiempo prácticamente real en otras regiones de AWS.
 
-1
+## Subida y Hosting de Sitios Web Estáticos en AWS S3
+
+### ¿Cómo subir contenido a S3 y crear un sitio web estático?
+
+En el vasto ecosistema de servicios que ofrece Amazon Web Services (AWS), S3 es uno de los más versátiles y esenciales. No solo puedes almacenar archivos, sino también crear sitios web estáticos fácilmente. Esta guía es para aquellos que desean emprender el camino de explorar esta útil herramienta, logrando no solo almacenar datos, sino también compartirlos con el mundo.
+
+### ¿Cómo se crea un bucket en S3?
+
+Comencemos por abrir la consola de AWS, donde puedes encontrar el servicio S3 bajo la sección de "storage". Siguen estos pasos:
+
+1. **Creación del bucket**: Si un bucket relacionado con Elastic Beanstalk aparece, es porque lo utilizaste anteriormente. Si no, simplemente crea uno nuevo. Recuerda:
+
+- Elige un nombre único que respete las reglas de nombres de dominios (sin caracteres especiales como @, #, espacios, etc.).
+- Selecciona la región donde se ubicará el bucket.
+
+2. **Configuraciones adicionales**: Hay varias opciones al crear un bucket, como:
+
+- **Versionado**: Permite guardar múltiples versiones de cada archivo en el bucket.
+- **Logs de acceso**: Puedes activar la generación de registros de acceso para monitorizar qué archivos se solicitan.
+- **Encriptación**: S3 también ofrece cifrado automatizado para mayor seguridad.
+
+3. Establecer permisos: La configuración predeterminada del bucket es privada, pero puedes hacer que los archivos sean públicos. Una advertencia aparecerá, señalando el riesgo de publicarlas.
+
+### ¿Cómo subir archivos en S3?
+
+Una vez creado el bucket, proceder a cargar archivos es un proceso simple. Supongamos que tienes un proyecto con un archivo index.html y una imagen:
+
+1. Inicia sesión en el bucket y selecciona "Añadir archivos".
+2. Carga ambos archivos: el index.html y la imagen.
+3. Los archivos podrán configurar sus permisos para hacerlos públicos después de la carga.
+
+### ¿Cómo configurar un hosting web estático?
+
+S3 ofrece la opción de activar el hosting estático directamente en las propiedades del bucket:
+
+1. **Activación del hosting estático**: Dirígete a la sección de hosting estático en las propiedades del bucket.
+2. **Configuración de archivos de índice**: Indica el archivo que actuará como el index.html.
+3. **Guardar cambios**: Una vez guardados los cambios, tu sitio estará listo para ser publicado con una URL generada por AWS, aunque algo compleja.
+
+### ¿Cómo habilitar replicación entre regiones?
+
+La replicación en S3 es una función poderosa para asegurar que los datos estén disponibles en múltiples ubicaciones geográficas:
+
+1. En "Propiedades", selecciona la opción de replicación.
+2. Crear un nuevo bucket en otra región, como Oregón si actualmente trabajas en Ohio.
+3. Selecciona el rol adecuado y guarda las configuraciones.
+
+### Puntos a considerar para mejorar la experiencia con S3
+
+- **Diversificación del sitio**: La herramienta AWS Route 53 te permitirá crear un alias para la URL generada, personalizando el acceso.
+- **Versionado**: Actualizar tu sitio en diferentes buckets facilita cambios y revertir a versiones anteriores si necesario.
+
+AWS S3 no solo es eficiente para almacenar datos, sino que ofrece un enfoque unificado al crear, gestionar y replicarse como un hosting estático. Ya sea para proyectos pequeños o escala mayor, S3 se presenta como una solución robusta. Sigue explorando y practicando. ¡Cada paso te acerca más a dominar AWS!
+
+**Lecturas recomendadas**
+
+[aws-platzi-python/templates at master · mauropm/aws-platzi-python · GitHub](https://github.com/mauropm/aws-platzi-python/tree/master/templates)
+
+## Almacenamiento Económico en Glacier para Archivos Históricos
+
+AWS tiene un tipo de almacenamiento más económico, pero también más lento que S3 llamado Glacier. Es una muy buena opción si tienes que guardar algún tipo de archivo histórico, como documentos de transacciones de años pasados.
+
+Glacier podrá entregarte tus datos y/o archivos con tiempos de entre 2 y 15 minutos por archivo.
+
+## Bases de Datos en Amazon RDS: Motores y Prestaciones Principales
+
+Amazon RDS (Relational Database Service) es un servicio administrado de base de datos que permite configurar, operar y escalar bases de datos relacionales en la nube de forma sencilla. A continuación te explico los **motores disponibles** y las **prestaciones principales** que ofrece:
+
+### 🔧 **Motores de Base de Datos Compatibles en Amazon RDS**
+
+Amazon RDS soporta los siguientes motores de bases de datos populares:
+
+1. **Amazon Aurora**  
+   - Compatible con MySQL y PostgreSQL.
+   - Rendimiento hasta 5 veces mayor que MySQL y 3 veces mayor que PostgreSQL.
+   - Alta disponibilidad y recuperación automática.
+
+2. **MySQL**  
+   - Versión tradicional del motor relacional de código abierto más usado.
+   - Fácil migración a Aurora si se desea mejorar el rendimiento.
+
+3. **PostgreSQL**  
+   - Motor avanzado con fuerte soporte para funciones complejas, extensiones y cumplimiento de estándares SQL.
+
+4. **MariaDB**  
+   - Variante de MySQL enfocada en el rendimiento y la compatibilidad.
+
+5. **Oracle**  
+   - Soporta características empresariales, requiere licencia de Oracle (o uso con licencia incluida en RDS).
+
+6. **Microsoft SQL Server**  
+   - Compatible con versiones Express, Web, Standard y Enterprise.
+   - Permite integración con herramientas Microsoft (como SSMS y Active Directory).
+
+### 🚀 **Prestaciones Principales de Amazon RDS**
+
+1. **Administración Simplificada**
+   - No necesitas gestionar hardware, parches o respaldos manuales.
+
+2. **Escalabilidad Automática**
+   - Puedes escalar el almacenamiento y la capacidad de cómputo verticalmente con pocos clics o de forma automática.
+
+3. **Alta Disponibilidad y Réplicas**
+   - Opciones de Multi-AZ (zonas de disponibilidad) para tolerancia a fallos.
+   - Réplicas de lectura para mejorar el rendimiento de consultas.
+
+4. **Seguridad**
+   - Cifrado en reposo y en tránsito.
+   - Integración con AWS IAM y Amazon VPC.
+   - Autenticación mediante Kerberos (para algunos motores).
+
+5. **Backups Automáticos**
+   - Snapshots automáticos y manuales.
+   - Recuperación punto en el tiempo.
+
+6. **Monitoreo y Mantenimiento**
+   - Integración con Amazon CloudWatch, EventBridge y métricas RDS.
+   - Mantenimiento automático con opción de ventanas definidas por el usuario.
+
+### 📊 Casos de Uso Comunes
+
+- Aplicaciones web y móviles que requieren una base de datos confiable.
+- Migración de bases de datos on-premise a la nube.
+- Aplicaciones empresariales con alta disponibilidad y cumplimiento de normativas.
+
+**Resumen**
+
+AWS creó un producto llamado RDS que optimiza el funcionamiento de un motor de bases de datos. Este servicio incluye mantenimiento a tu base de datos, respaldos diarios, optimización para tu tipo de uso, etc.
+
+RDS tiene varias opciones de motores de bases de datos, como: Aurora PG, Aurora MySQL, MySQL, MariaDB, PostgreSQL, Oracle y Microsoft SQL Server.
+
+Recuerda que AWS te da 750 horas de servicio gratis de RDS, incluyendo cualquiera de los motores de bases de datos.
+
+## Administración de RDS Postgres en AWS: Seguridad y Optimización
+
+Administrar **RDS PostgreSQL** en AWS requiere buenas prácticas tanto en **seguridad** como en **optimización de rendimiento**. Aquí tienes una guía clara y estructurada sobre ambos aspectos:
+
+### 🔐 **Seguridad en RDS PostgreSQL**
+
+### 1. **Control de Acceso con IAM y VPC**
+- **Acceso a nivel de red (VPC + Security Groups):**
+  - Asegúrate de que tu instancia RDS esté en una **VPC privada**.
+  - Usa **Security Groups** para permitir solo el tráfico desde IPs o instancias autorizadas (por ejemplo, tu aplicación backend).
+- **IAM para gestión (no para conexión directa):**
+  - Usa **IAM roles** para permitir o denegar acceso a acciones administrativas sobre RDS (ej. backups, snapshots).
+
+### 2. **Autenticación Segura**
+- **Autenticación tradicional con usuarios y contraseñas.**
+- **IAM database authentication** *(opcional)*:
+  - Permite autenticarse con credenciales temporales de IAM, eliminando contraseñas estáticas.
+
+### 3. **Cifrado**
+- **En reposo:** habilita **cifrado de almacenamiento** con KMS al crear la instancia.
+- **En tránsito:** habilita **SSL** en la conexión al RDS PostgreSQL.
+
+### 4. **Gestión de Usuarios**
+- Crea usuarios con privilegios mínimos necesarios.
+- Evita usar el usuario `postgres` para aplicaciones.
+- Usa `pg_roles` y `pg_hba.conf` (configurado por AWS internamente) para roles específicos si es necesario.
+
+### 5. **Auditoría**
+- Activa los **logs de auditoría** y consúltalos a través de CloudWatch.
+- Usa **Amazon RDS Enhanced Monitoring** y **CloudTrail** para seguimiento de operaciones.
+
+### ⚙️ **Optimización de Rendimiento en RDS PostgreSQL**
+
+### 1. **Instancia y Almacenamiento**
+- Usa **tipos de instancia adecuados** (ej. `db.m6g`, `db.r6g`) según carga de trabajo.
+- Activa **autoscaling de almacenamiento** si esperas crecimiento de datos.
+- Usa **storage tipo GP3 o IO1** si necesitas alto rendimiento de IOPS.
+
+### 2. **Parámetros del Servidor**
+- Usa el **Parameter Group** para ajustar:
+  - `work_mem`, `shared_buffers`, `maintenance_work_mem`, `autovacuum_*`
+- Ejemplo: para cargas intensivas de lectura, aumenta `work_mem` para mejorar performance de joins y sorts.
+
+### 3. **Índices y VACUUM**
+- Crea **índices adecuados** para las consultas más frecuentes.
+- Asegúrate de que el **autovacuum** esté bien configurado.
+- Revisa periódicamente los `bloat` (inflamiento de tablas) con herramientas como `pg_stat_user_tables`.
+
+### 4. **Logging de Consultas Lentas**
+- Activa `log_min_duration_statement` para identificar consultas lentas.
+- Usa **Performance Insights** para analizar métricas de uso de CPU, I/O y wait events.
+
+### 5. **Replicación y Escalabilidad**
+- Usa **Read Replicas** para distribuir carga de lectura.
+- Considera Amazon Aurora PostgreSQL si necesitas **autoescalado** y mejor rendimiento.
+
+### ✅ Recomendaciones Finales
+
+| Aspecto              | Acción recomendada                                 |
+|----------------------|-----------------------------------------------------|
+| **Acceso seguro**    | VPC privada + IAM + SSL                             |
+| **Auditoría**        | Logs + CloudWatch + RDS Performance Insights        |
+| **Performance**      | Ajustes de memoria + índice + autovacuum            |
+| **Alta disponibilidad** | Multi-AZ o Aurora PostgreSQL                     |
+| **Mantenimiento**    | Configurar ventana de mantenimiento y backups       |
+
+### Resumen
+
+AWS implementa el motor de PostgreSQL (RDS PG) en una instancia optimizada para correr con la máxima eficacia.
+
+RDS PG incluye, por omisión, **tareas de optimización** como vacuum, recuperación de espacio en el disco duro y planificación de queries. Tambien te permite hacer **respaldos** diarios (o incluso más seguido) de tu base de datos.
+
+Otras ventajas de RDS PG son:
+
+- **Cifrado** a tu elección, tu base de datos puede estar cifrada en disco duro
+- **Migración asistida**: RDS PG tiene mecanismos que te ayudan a migrar tu información en caso de que tu ya cuentes con una base de datos con otro proveedor.
+- **Alta disponibilidad**: RDS PG te permite fácilmente configurar un ambiente de alta disponibilidad al ofrecerte diversas zonas para tu base de datos.
+
+Recuerda que Amazon RDS provee de seguridad por omisión tan alta que no podrás conectarte a tu DB hasta que explícitamente lo permitas.
+
+## Creación y Configuración de Bases de Datos en Amazon RDS
+
+Claro, aquí tienes una guía paso a paso para la **creación y configuración de bases de datos en Amazon RDS**, enfocada en buenas prácticas y aplicable a motores como **PostgreSQL**, **MySQL**, **MariaDB**, **Oracle** y **SQL Server**.
+
+### 🏗️ **1. Crear una Base de Datos en Amazon RDS**
+
+### 🔹 Paso 1: Iniciar la creación
+- Ve a la consola de AWS > **RDS > Databases > Create database**
+- Selecciona el modo de creación:
+  - **Standard Create** (recomendado para control completo)
+
+### 🔹 Paso 2: Elegir el motor de base de datos
+- PostgreSQL, MySQL, MariaDB, Oracle o SQL Server
+- Ejemplo: **PostgreSQL**
+
+### 🔹 Paso 3: Configurar detalles de la instancia
+- **Nombre de la instancia**: `mibasededatos`
+- **Credenciales del administrador**:
+  - Usuario maestro (ej. `admin`)
+  - Contraseña segura (o genera automáticamente con Secrets Manager)
+
+### 🔹 Paso 4: Elegir tipo de instancia
+- Elige según carga de trabajo:
+  - **t4g.micro / db.t3.micro** para desarrollo/pruebas
+  - **db.m6g / db.r6g** para producción
+
+### 🔹 Paso 5: Configurar almacenamiento
+- Tipo: **General Purpose (gp3)** o **Provisioned IOPS (io1)** si necesitas rendimiento alto
+- Tamaño inicial (ej. 20 GiB) + opción de **autoscaling** del almacenamiento
+
+### 🔒 **2. Configurar conectividad y seguridad**
+
+### 🔹 Red
+- Selecciona una **VPC privada** (recomendado)
+- Habilita o desactiva el acceso público (según si se accede desde internet)
+
+### 🔹 Grupo de seguridad
+- Crea o selecciona un **Security Group** que permita tráfico desde IPs autorizadas (ej. tu servidor de aplicación)
+
+### 🔹 Opciones avanzadas de seguridad
+- **Habilitar cifrado en reposo** con KMS (marcar si es necesario)
+- **Autenticación con IAM** (opcional, para conexiones sin contraseña)
+
+### ⚙️ **3. Configuración adicional**
+
+### 🔹 Opciones de base de datos
+- Nombre de base de datos inicial (ej. `appdb`)
+- Puerto por defecto: PostgreSQL (5432), MySQL (3306), etc.
+
+### 🔹 Backup y mantenimiento
+- Configura backups automáticos (recomendado: 7 días)
+- Configura ventana de mantenimiento y backups automáticos
+
+### 🔹 Monitoreo
+- Habilita **Enhanced Monitoring** y **Performance Insights** si es posible
+
+### 🧪 **4. Finalizar y lanzar**
+- Revisa toda la configuración
+- Haz clic en **Create database**
+
+La creación tomará unos minutos.
+
+
+### ✅ **5. Acceder a la base de datos**
+
+Una vez creada:
+1. Ve a la consola > selecciona la base de datos
+2. Copia el **endpoint DNS** y el **puerto**
+3. Usa un cliente como **pgAdmin**, **DBeaver**, **MySQL Workbench** o **psql**:
+   ```bash
+   psql -h <endpoint> -U admin -d appdb -p 5432
+   ```
+
+### 🧰 **6. Recomendaciones adicionales**
+
+| Elemento                 | Recomendación                            |
+|--------------------------|------------------------------------------|
+| Seguridad                | No usar el usuario maestro en la app     |
+| Backups                  | Activar + probar restauración            |
+| Rendimiento              | Crear índices, activar logging de lentas|
+| Escalabilidad            | Habilitar replicas de lectura si es necesario |
+| Alta disponibilidad      | Usar opción Multi-AZ                    |
+
+### Resumen
+
+### ¿Cómo crear una base de datos en Amazon RDS?
+
+Crear una base de datos en Amazon RDS es una tarea sencilla que puedes lograr en pocos pasos, y te ofrece una base sólida para experimentar con datos en un entorno seguro. A continuación, te guiaré paso a paso en el proceso, incluyendo configuraciones y consideraciones importantes.
+
+### ¿Qué es RDS y cómo accedemos a él?
+
+Amazon Relational Database Service (RDS) es un servicio gestionado por Amazon Web Services que facilita la configuración, operación y escalabilidad de bases de datos en la nube. Para comenzar, accede a la consola de Amazon Web Services y escribe "RDS" en la barra de búsqueda. Haz clic en el servicio para ingresar.
+
+### ¿Cómo crear la base de datos en RDS?
+
+Con el acceso al servicio RDS, sigue estos pasos para crear una base de datos:
+
+1. **Seleccionar 'DB Instances**': Una vez en la pantalla principal de RDS, haz clic en 'DB Instances' y luego selecciona 'Crear una base de datos'.
+
+2. **Configuración inicial:**
+
+- **Opciones de tipo de base de datos**: Si tu objetivo es experimentar sin costo, asegúrate de seleccionar bases de datos gratuitas.
+- **Motor de base de datos**: Elige Postgres, que es una de las opciones más usadas y versátiles para manejar proyectos.
+
+3. Configuración de la instancia:
+
+- Se te asignará una instancia por defecto, pero puedes elegir otra si tus necesidades son diferentes. Cambiar la instancia afectará los costos.
+- **Nombre y usuario**: Define el nombre para tu base de datos, por ejemplo, "platzidB", y un usuario con el mismo identificador.
+
+4. Accesibilidad y seguridad:
+
+- Habilita la opción de que sea "accesible públicamente" aún si se requiere un paso adicional en el grupo de seguridad más adelante.
+- Configura los puertos y nombre de la base de datos. El puerto por defecto para Postgres suele ser 5432.
+
+### ¿Cómo optimizar la base de datos para producción?
+
+Si en el futuro planeas usar tu base de datos en un entorno de producción, considera lo siguiente:
+
+- **Ajustes de almacenamiento**: Aunque la opción gratuita ofrece veinte gigas, analiza si necesitas más y prepárate para ajustar.
+- **Mantenimiento y backups**:
+ - Configura ventanas de mantenimiento cuando la base de datos no esté en uso frecuente, como de madrugada.
+ - Establece políticas de backup regulares para prevención contra pérdidas de datos.
+
+### ¿Por qué es importante deshabilitar las actualizaciones automáticas?
+
+Deshabilitar las actualizaciones automáticas puede evitar interrupciones no planeadas. Realiza manualmente las actualizaciones en momentos propicios, y siempre haz un backup antes de efectuar un cambio significativo. Así, podrías restaurar el estado previo si algo falla.
+
+### ¿Cuánto tiempo toma la creación de la base de datos?
+
+Una vez configurada toda la información, Amazon RDS comenzará a crear la base de datos. Aunque el estado podría cambiar a "lista", puede tomar entre 5 a 10 minutos adicionales para que esté completamente operativa.
+
+Crear y gestionar bases de datos en Amazon RDS es un proceso que, aunque puede parecer complejo al principio, se vuelve mucho más intuitivo con práctica. ¡Anímate a experimentar y descubre todas las posibilidades que te ofrece este potente recurso!
