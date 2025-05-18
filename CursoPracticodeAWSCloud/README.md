@@ -1802,3 +1802,5 @@ Deshabilitar las actualizaciones automáticas puede evitar interrupciones no pla
 Una vez configurada toda la información, Amazon RDS comenzará a crear la base de datos. Aunque el estado podría cambiar a "lista", puede tomar entre 5 a 10 minutos adicionales para que esté completamente operativa.
 
 Crear y gestionar bases de datos en Amazon RDS es un proceso que, aunque puede parecer complejo al principio, se vuelve mucho más intuitivo con práctica. ¡Anímate a experimentar y descubre todas las posibilidades que te ofrece este potente recurso!
+
+21
