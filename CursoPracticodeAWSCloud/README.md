@@ -1803,4 +1803,1291 @@ Una vez configurada toda la información, Amazon RDS comenzará a crear la base 
 
 Crear y gestionar bases de datos en Amazon RDS es un proceso que, aunque puede parecer complejo al principio, se vuelve mucho más intuitivo con práctica. ¡Anímate a experimentar y descubre todas las posibilidades que te ofrece este potente recurso!
 
-21
+## Migración de Bases de Datos PostgreSQL a AWS usando Dump
+
+Claro, aquí tienes una guía básica para realizar la **migración de una base de datos PostgreSQL a AWS (usualmente a Amazon RDS para PostgreSQL)** usando el método de **dump**:
+
+### 1. Preparativos
+
+* **Acceso a la base de datos origen (local o en otro servidor)**: Debes tener usuario y contraseña con permisos para hacer dump (exportar).
+* **Base de datos destino en AWS RDS PostgreSQL** creada y accesible (con endpoint, usuario y contraseña).
+* **Herramientas necesarias**: `pg_dump` y `psql` instalados en tu máquina local o servidor donde harás la migración.
+
+### 2. Exportar la base de datos origen con `pg_dump`
+
+`pg_dump` genera un volcado (dump) de la base de datos en formato SQL o personalizado.
+
+Ejemplo para crear un dump en formato SQL:
+
+```bash
+pg_dump -h origen_host -U usuario_origen -d nombre_basedatos_origen -F p -f dump.sql
+```
+
+* `-h`: Host donde está la base de datos origen.
+* `-U`: Usuario de la base de datos.
+* `-d`: Nombre de la base de datos a exportar.
+* `-F p`: Formato plain (SQL).
+* `-f`: Archivo donde guardar el dump.
+
+Si quieres comprimir el dump:
+
+```bash
+pg_dump -h origen_host -U usuario_origen -d nombre_basedatos_origen -F c -f dump.backup
+```
+
+* `-F c`: Formato custom, útil para restaurar con `pg_restore`.
+
+### 3. Crear la base de datos destino en AWS RDS (si no existe)
+
+Conéctate a AWS RDS (usando `psql` o consola) y crea la base de datos vacía:
+
+```sql
+CREATE DATABASE nombre_basedatos_destino;
+```
+
+### 4. Importar el dump en AWS RDS
+
+#### a) Si el dump es en formato SQL (plain):
+
+Usa `psql` para importar directamente:
+
+```bash
+psql -h aws_rds_endpoint -U usuario_destino -d nombre_basedatos_destino -f dump.sql
+```
+
+#### b) Si el dump está en formato custom (`.backup`):
+
+Usa `pg_restore`:
+
+```bash
+pg_restore -h aws_rds_endpoint -U usuario_destino -d nombre_basedatos_destino -v dump.backup
+```
+
+### 5. Verificar la migración
+
+* Conéctate a la base de datos AWS RDS y verifica tablas, datos y funciones.
+* Revisa permisos y roles si es necesario.
+
+
+### Consejos adicionales
+
+* Configura adecuadamente el grupo de seguridad de RDS para permitir conexión desde tu IP.
+* Puedes usar `--no-owner` y `--no-privileges` en `pg_dump` si quieres evitar conflictos con roles.
+* Si la base de datos es muy grande, considera usar AWS Database Migration Service (DMS) para migración en vivo.
+* Asegúrate de tener backups antes de hacer migraciones.
+
+**recursos**
+
+[https://github.com/mauropm/aws-platzi-python](https://github.com/mauropm/aws-platzi-python)
+
+## Rendimiento y ventajas de Amazon Aurora PostgreSQL
+
+Amazon Aurora PostgreSQL es una versión administrada y optimizada de PostgreSQL ofrecida por AWS, diseñada para ofrecer **mayor rendimiento, escalabilidad y disponibilidad** en comparación con una instalación tradicional de PostgreSQL.
+
+### 🚀 **Ventajas clave de Amazon Aurora PostgreSQL**
+
+### 1. **📈 Rendimiento Mejorado**
+
+* Hasta **3 veces más rápido** que PostgreSQL estándar.
+* Usa una arquitectura de almacenamiento distribuido y tolerante a fallos.
+* **Almacenamiento en paralelo** y ejecución eficiente de consultas.
+* Optimización automática de caché, índices y uso de CPU.
+
+### 2. **🔄 Escalabilidad Automática**
+
+* El almacenamiento se escala automáticamente de 10 GB hasta 128 TB, sin tiempo de inactividad.
+* Soporte para hasta **15 réplicas de lectura** con baja latencia.
+* Posibilidad de usar **Aurora Serverless v2**, que escala automáticamente la capacidad según la carga.
+
+### 3. **🔒 Alta Disponibilidad y Recuperación**
+
+* Multi-AZ (zonas de disponibilidad): replica automáticamente en 3 zonas para tolerancia a fallos.
+* **Failover automático** en menos de 30 segundos.
+* Backups automáticos, snapshots manuales y punto de recuperación temporal (PITR).
+
+### 4. **🛡️ Seguridad**
+
+* Cifrado en reposo con KMS y en tránsito con SSL.
+* Integración con IAM y VPC para control de acceso detallado.
+* Compatible con grupos de seguridad, ACLs, y opciones de autenticación externa.
+
+### 5. **🛠️ Compatibilidad con PostgreSQL**
+
+* Compatible con muchas extensiones de PostgreSQL como `PostGIS`, `pg_stat_statements`, `uuid-ossp`, etc.
+* Puedes migrar desde PostgreSQL sin modificar tu aplicación.
+
+### 6. **💰 Costo-Eficiencia**
+
+* Pagas solo por lo que usas (por hora o por capacidad consumida con Aurora Serverless).
+* Menor carga operativa: no necesitas gestionar backups, replicación ni mantenimiento de instancias.
+
+### 🧪 Casos de uso comunes
+
+* Aplicaciones web escalables.
+* Análisis de datos con alto rendimiento.
+* Reemplazo de bases de datos on-premise.
+* Backends para aplicaciones móviles y microservicios.
+
+### 📊 Comparación rápida: PostgreSQL vs Aurora PostgreSQL
+
+| Característica           | PostgreSQL en EC2/RDS | Aurora PostgreSQL         |
+| ------------------------ | --------------------- | ------------------------- |
+| Rendimiento              | Estándar              | Hasta 3x más rápido       |
+| Escalabilidad de Storage | Manual                | Automática hasta 128 TB   |
+| Réplicas de lectura      | Limitadas             | Hasta 15                  |
+| Recuperación rápida      | Manual                | Failover automático       |
+| Administración           | Semi-manual           | Totalmente gestionada     |
+| Serverless disponible    | No                    | Sí (Aurora Serverless v2) |
+
+### Resumen
+
+Aurora PG es una nueva propuesta en bases de datos, AWS toma el motor de Postgres, instancias de nueva generación, optimizaciones varias en el kernel/código y obtiene un Postgres 3x más rápido.
+
+Aurora PG es compatible con `Postgres 9.6.x.`
+
+Antes de migrar a Aurora PG debes considerar los siguientes puntos:
+
+- Usar Aurora RDS PG **no es gratis** en ningún momento.
+- AWS RDS PG es **eficiente** por varias razones:
+ - Modificaciones al código mismo del motos de bases de datos.
+ - Instancias de última generación.
+- Aurora PG estará por omisión en una configuración de alta disponibilidad con distintas zonas, es decir, en 3 centros de datos a un mismo tiempo.
+
+## Creación y gestión de bases de datos en Aurora PostgreSQL
+
+La **creación y gestión de bases de datos en Amazon Aurora PostgreSQL** combina lo mejor de la compatibilidad con PostgreSQL y las ventajas de una base de datos totalmente administrada por AWS. Aquí tienes una guía práctica paso a paso sobre cómo crear, administrar y optimizar tu base de datos en Aurora PostgreSQL.
+
+### 🏗️ **1. Creación de una Base de Datos Aurora PostgreSQL**
+
+### 🔹 Opción 1: Desde la Consola de AWS
+
+1. Ve a **RDS > Bases de datos > Crear base de datos**.
+2. Selecciona:
+
+   * **Motor**: Aurora
+   * **Edición**: Aurora PostgreSQL-Compatible Edition
+3. Escoge el modo de aprovisionamiento:
+
+   * **Provisión estándar** (instancias dedicadas) o
+   * **Aurora Serverless v2** (escalado automático)
+4. Configura:
+
+   * Nombre del clúster
+   * Nombre de usuario maestro y contraseña
+   * Parámetros de red (VPC, subredes, grupo de seguridad, etc.)
+   * Configuraciones adicionales como backups, monitoreo, rendimiento, etc.
+5. Clic en **Crear base de datos**.
+
+### 🔹 Opción 2: Usando AWS CLI
+
+```bash
+aws rds create-db-cluster \
+  --db-cluster-identifier mi-cluster-aurora \
+  --engine aurora-postgresql \
+  --master-username admin \
+  --master-user-password TuPasswordSegura123 \
+  --vpc-security-group-ids sg-12345678 \
+  --db-subnet-group-name mi-subnet-group
+```
+
+Luego creas la instancia:
+
+```bash
+aws rds create-db-instance \
+  --db-instance-identifier mi-instancia-aurora \
+  --db-cluster-identifier mi-cluster-aurora \
+  --engine aurora-postgresql \
+  --db-instance-class db.r6g.large
+```
+
+### ⚙️ **2. Gestión de la Base de Datos**
+
+### 🔒 Seguridad
+
+* Usa **grupos de seguridad VPC** para controlar el tráfico.
+* Habilita **cifrado en reposo y en tránsito** (SSL/TLS).
+* Integra con **IAM para autenticación** y control de acceso.
+
+### 🔁 Backups y recuperación
+
+* Aurora realiza **backups automáticos continuos** hasta por 35 días.
+* Puedes crear **snapshots manuales** y clonarlos.
+* Usa la recuperación a un punto en el tiempo (PITR) si ocurre un error lógico.
+
+### 🔎 Monitoreo
+
+* Habilita **Enhanced Monitoring** y **Performance Insights**.
+* Usa **CloudWatch Logs** para auditoría y diagnóstico.
+
+### 🔄 Escalabilidad
+
+* Añade **réplicas de lectura** para distribuir la carga.
+* Cambia de instancia primaria a réplica en caso de mantenimiento o fallos.
+* Usa **Aurora Global Databases** si necesitas replicación entre regiones.
+
+### 🧪 **3. Operaciones Comunes**
+
+### 📥 Conexión a la base de datos
+
+```bash
+psql -h <endpoint> -U <usuario> -d <nombre_bd> -p 5432
+```
+
+### 📂 Crear una base de datos adicional
+
+```sql
+CREATE DATABASE mi_nueva_bd;
+```
+
+### 👤 Crear usuarios y asignar roles
+
+```sql
+CREATE USER mario WITH PASSWORD 'seguro123';
+GRANT CONNECT ON DATABASE mi_nueva_bd TO mario;
+```
+
+### ⚙️ Configurar parámetros personalizados
+
+Usa un **DB Parameter Group** en la consola de RDS y asócialo al clúster Aurora.
+
+### 📌 Recomendaciones Finales
+
+* ✅ Usa **Aurora Serverless v2** si tienes cargas variables o impredecibles.
+* ✅ Siempre activa la autenticación SSL.
+* ✅ Usa **réplicas de lectura** para consultas intensivas.
+* ✅ Automatiza tareas con **AWS Backup** y **EventBridge** para tareas programadas.
+* ✅ Supervisa el uso con **CloudWatch y Performance Insights** para detectar cuellos de botella.
+
+### Resumen
+
+####¿Cómo crear una base de datos en Amazon Aurora compatible con PostgreSQL?
+
+Crear una base de datos en Amazon Aurora compatible con PostgreSQL es un proceso sencillo pero poderoso, que permite aprovechar al máximo las ventajas que ofrece esta plataforma. A continuación, te guiaré a través de los pasos esenciales para configurar tu base de datos desde la consola de Amazon RDS.
+
+#### Configuración inicial de la base de datos
+
+1. **Selecciona el servicio adecuado**: Accede a la consola de RDS de Amazon y elige crear una nueva instancia de base de datos. Asegúrate de seleccionar Amazon Aurora y luego opta por la compatibilidad con PostgreSQL.
+
+2. **Elegir versión y tamaño**: Es importante destacar que Aurora PostgreSQL no es parte del nivel gratuito de AWS. La versión de uso común es PostgreSQL 9.6, que ofrece ventajas como un almacenamiento elástico de hasta 64 TB y es hasta tres veces más rápida que una instancia normal de RDS PostgreSQL.
+
+3. **Especifica el hardware**: Aunque no es gratuito, la opción más económica de Aurora PostgreSQL viene equiparada con dos CPUs y 15 GB de RAM, lo cual proporciona un rendimiento significante desde el primer momento.
+
+### Creación de la base de datos
+
+- **Réplica automática**: Aurora creará automáticamente copias de seguridad en diferentes zonas dentro de la misma región, proporcionando redundancia y protección contra fallos. Este sistema inteligente actuará mediante el DNS dinámico, redirigiendo tráficos si alguna copia falla.
+
+- **Identificación y credenciales**: Define el nombre de la base de datos (ej., PlatziDB2), asigna un nombre de usuario y una contraseña, evitando caracteres especiales problemáticos como comillas y barras.
+
+- **Accesibilidad y cifrado**: Configura si la base de datos es accesible públicamente y habilita el cifrado de datos y los respaldos automáticos para maximizar la seguridad.
+
+#### Gestión y seguridad de conexiones
+
+- **Políticas de seguridad**: Una vez creada, personaliza el grupo de seguridad para definir quiénes pueden conectarse a la base de datos. Para un acceso más abierto, permite conexiones desde cualquier IP, o limita el acceso a IPs específicas de oficina o casa.
+
+- **Monitoreo y actualizaciones**: Deshabilitar actualizaciones automáticas te permite mantener el control absoluto sobre los cambios en la base de datos, evitando interrupciones no planificadas.
+
+#### ¿Cómo insertar datos en la base de datos Aurora PostgreSQL?
+
+Una vez que tu base de datos está creada y configurada correctamente, el siguiente paso es comenzar a poblarla con datos útiles. A continuación te mostramos cómo hacerlo.
+
+#### Conexión e inserción de datos
+
+1. **Conectar a la base de dato**s: Usa herramientas de conexión, como una consola SSH, y actualiza el host con el nuevo endpoint de Aurora PostgreSQL. Asegúrate de ingresar el usuario y la contraseña correctos.
+
+2. **Importar SQL**: Descarga y carga un archivo de volcado de PostgreSQL para poblar la base de datos. Esto se puede hacer con el comando wget seguido del URL del archivo, y luego cargándolo con los comandos psql.
+
+3. **Verificación de tablas**: Usa el comando \dt para listar las tablas en la base de datos y confirmar que tu importación fue exitosa.
+
+#### Migración entre RDS PostgreSQL y Aurora PostgreSQL
+
+Uno de los grandes beneficios de trabajar con Aurora PostgreSQL es la facilidad para migrar desde una instancia de RDS PostgreSQL. Esto es útil cuando tu aplicación supera la capacidad de una RDS estándar y necesitas una solución más robusta sin cambiar mucho tu infraestructura existente.
+
+- **Simplicidad de migración**: Dado que ambas plataformas son compatibles con PostgreSQL, puedes migrar sin esfuerzo y sin modificar el código, conservando beneficios como redundancia y velocidad.
+
+- Rendimiento y redundancia: Al migrar a Aurora, puedes disfrutar de un aumento significativo en el rendimiento y la seguridad, manteniendo tu servicio operativo incluso en caso de fallos en un centro de datos.
+
+La implementación eficaz de Amazon Aurora compatible con PostgreSQL puede llevar tu gestión de bases de datos al siguiente nivel, brindando robustas funcionalidades en términos de rendimiento y confiabilidad. Si implementas los pasos descritos, podrás manejar tus datos de manera más eficiente y segura.
+
+## Prácticas de Respaldo y Recuperación con Amazon RDS
+
+Las **prácticas de respaldo y recuperación con Amazon RDS** son fundamentales para garantizar la disponibilidad y seguridad de tus datos ante errores humanos, fallos del sistema o ciberataques. A continuación, te presento un resumen completo y práctico sobre cómo realizar respaldos y cómo recuperarse eficientemente en Amazon RDS (incluyendo motores como PostgreSQL, MySQL, MariaDB, Oracle y SQL Server).
+
+### 📦 **1. Tipos de Respaldo en Amazon RDS**
+
+### 🔁 **Backups Automáticos**
+
+* Se habilitan por defecto al crear una instancia.
+* Conservan copias **diarias completas** y **logs de transacciones** (PITR).
+* Se almacenan en S3 gestionado por AWS.
+* Retención: entre **1 y 35 días** (puedes configurarlo).
+* Te permiten restaurar a un **punto exacto en el tiempo** dentro del período de retención.
+
+> ✅ Recomendación: Establece al menos **7 días de retención** para cubrir errores comunes de usuarios.
+
+### 🧩 **Snapshots Manuales**
+
+* Son respaldos completos realizados bajo demanda.
+* Se retienen indefinidamente hasta que los borres manualmente.
+* Pueden ser usados para restaurar una instancia en cualquier momento.
+* Puedes compartir snapshots entre cuentas y regiones.
+
+```bash
+aws rds create-db-snapshot \
+  --db-snapshot-identifier mi-snapshot \
+  --db-instance-identifier mi-instancia
+```
+
+## 🔁 **2. Restauración de una Base de Datos**
+
+### ⏱️ Restaurar a un punto en el tiempo (PITR)
+
+Crea una nueva instancia restaurada desde los backups automáticos:
+
+```bash
+aws rds restore-db-instance-to-point-in-time \
+  --source-db-instance-identifier mi-instancia \
+  --target-db-instance-identifier instancia-restaurada \
+  --restore-time "2025-05-18T15:00:00Z"
+```
+
+> Ideal para recuperar datos antes de un error humano, como una eliminación accidental.
+
+### 💾 Restaurar desde Snapshot Manual
+
+```bash
+aws rds restore-db-instance-from-db-snapshot \
+  --db-instance-identifier instancia-restaurada \
+  --db-snapshot-identifier mi-snapshot
+```
+
+### 🔐 **3. Buenas Prácticas de Respaldo y Recuperación**
+
+### 🔒 Seguridad
+
+* Habilita **cifrado en los snapshots** (en reposo y en tránsito).
+* Usa **KMS (AWS Key Management Service)** para cifrado personalizado.
+* Configura políticas de acceso (IAM) para controlar quién puede crear/borrar snapshots.
+
+### 🌐 Replicación y Alta Disponibilidad
+
+* Usa la opción **Multi-AZ** para recuperación automática ante fallos.
+* Replica snapshots a **otras regiones** para DR (Disaster Recovery):
+
+```bash
+aws rds copy-db-snapshot \
+  --source-db-snapshot-identifier arn:snapshot:region:mi-snapshot \
+  --target-db-snapshot-identifier mi-snapshot-copia \
+  --source-region us-east-1
+```
+
+### 📅 Automatización con AWS Backup
+
+* Usa **AWS Backup** para centralizar y automatizar respaldos.
+* Permite establecer políticas de retención y copia entre regiones.
+
+### 🧪 4. Validación y Pruebas
+
+> 📌 **Probar regularmente tus planes de recuperación** es tan importante como hacer respaldos.
+
+* Restaura tus snapshots en una instancia de prueba.
+* Valida integridad de datos y funcionalidad de la aplicación.
+* Documenta tiempos estimados de recuperación (RTO y RPO).
+
+### 📋 Ejemplo de Estrategia de Backup
+
+| Tipo               | Frecuencia | Retención | Cifrado  | Objetivo                        |
+| ------------------ | ---------- | --------- | -------- | ------------------------------- |
+| Backup automático  | Diario     | 7 días    | Sí (KMS) | PITR                            |
+| Snapshot manual    | Semanal    | 4 semanas | Sí       | Restauración controlada         |
+| Snapshot replicado | Mensual    | 3 meses   | Sí       | Recuperación ante desastre (DR) |
+
+### Resumen
+
+#### ¿Cuáles son las mejores prácticas para el uso de RDS?
+
+El uso eficiente de Amazon Relational Database Service (RDS) es esencial para cualquier negocio que dependa de bases de datos robustas, ya sea en producción o en análisis. Siempre es recomendable seguir ciertas mejores prácticas para garantizar la integridad y disponibilidad de tus datos.
+
+#### ¿Por qué es crucial realizar respaldos frecuentes?
+
+Realizar respaldos con frecuencia es una estrategia fundamental en la administración de cualquier base de datos. Esto no solo protege contra la pérdida de datos, sino también sirve como un salvavidas en caso de fallas inesperadas del sistema. Considera las siguientes recomendaciones:
+
+- **Frecuencia de los respaldos**: Idealmente, deberías respaldar tus datos diariamente. Esto asegura que, en el peor escenario, solo perderías un día de información. Si tus operaciones son críticas, considera aumentar la frecuencia según tus necesidades.
+- **Formato de los respaldos**: Los respaldos en RDS se guardan como "snapshots", imágenes de la máquina en la que reside tu base de datos. Estas instantáneas permiten restaurar rápidamente una nueva instancia sin complicaciones.
+- **Escenarios especializados**: Si bien el respaldo diario puede ser suficiente para algunas aplicaciones, en sectores como el financiero o de salud, donde se maneja información crítica, es esencial realizar copies de transacciones más frecuentemente.
+
+#### ¿Cómo podemos optimizar la recuperación de datos?
+
+La capacidad de recuperación rápida y eficaz de datos es vital, especialmente en sectores que requieren alta disponibilidad y pérdida mínima de información. Amazon RDS ofrece soluciones diseñadas para tal propósito:
+
+- **Replicación entre regiones**: Con RDS, puedes configurar una réplica en otra región geográfica para asegurar que tienes un respaldo inmediato si algo catastrófico ocurre. Esta "read replica" sincroniza constantemente con la base de datos principal.
+- **Minimización de pérdida de datos**: Dependiendo de la latencia y volumen de información, es posible alcanzar eficiencias donde la pérdida de datos se minimiza a unos pocos minutos. Esto es crucial para servicios financieros, donde la pérdida de información crítica debe ser insignificante.
+
+#### ¿Cómo gestionar eficiente los cambios de DNS?
+
+A la hora de restaurar datos de un snapshot, puedes optar por dos caminos distintos:
+
+- **Cambio de DNS**: Al restaurar una nueva instancia, actualizar el DNS es una solución rápida que garantiza la continuidad sin necesidad de ajustes significativos en las configuraciones del cliente.
+- **Acceso directo a la información restaurada**: En lugar de cambiar el DNS, una opción es obtener la información necesaria desde la nueva instancia restaurada sin editar conexiones existentes. Esto puede ser útil en situaciones donde solo se requiere datos específicos o históricos.
+
+Implementar una estrategia integral de respaldo y recuperación en RDS te asegurará un manejo más seguro y eficiente de tus datos. Incorpora estas prácticas y optimiza el rendimiento y disponibilidad de tus sistemas, garantizando así la continuidad de tu negocio frente a cualquier eventualidad.
+
+## Gestión de DNS y dominios con Amazon Route 53
+
+La **gestión de DNS y dominios con Amazon Route 53** es una parte clave en la arquitectura de aplicaciones modernas en AWS. Route 53 es un servicio altamente disponible y escalable que te permite registrar dominios, gestionar registros DNS y configurar enrutamiento inteligente de tráfico.
+
+### 🌐 ¿Qué es Amazon Route 53?
+
+Amazon Route 53 es un **servicio de DNS (Domain Name System)** administrado por AWS que proporciona:
+
+* **Registro de dominios**.
+* **Resolución DNS pública y privada**.
+* **Balanceo geográfico o por latencia**.
+* **Monitoreo del estado de recursos (health checks)**.
+* **Integración con AWS para dominios personalizados de servicios como API Gateway, S3, ELB, etc.**
+
+### 🛠️ Funciones Principales de Route 53
+
+### 1. ✅ **Registro de Dominios**
+
+Puedes registrar dominios directamente desde la consola de AWS.
+
+```bash
+aws route53domains register-domain \
+  --domain-name mi-sitio.com \
+  --duration-in-years 1 \
+  --admin-contact file://contact.json \
+  --registrant-contact file://contact.json \
+  --tech-contact file://contact.json
+```
+
+> 📌 Puedes transferir dominios existentes a Route 53 si ya los tienes con otro proveedor.
+
+### 2. 🧭 **Gestión de Zonas Hosted Zones**
+
+Una **hosted zone** es un contenedor para registros DNS de un dominio.
+
+#### Crear una zona hospedada:
+
+```bash
+aws route53 create-hosted-zone \
+  --name mi-sitio.com \
+  --caller-reference "$(date +%s)"
+```
+
+#### Tipos comunes de registros:
+
+| Tipo  | Uso                                    |
+| ----- | -------------------------------------- |
+| A     | Apunta a una dirección IP IPv4         |
+| AAAA  | Apunta a una IP IPv6                   |
+| CNAME | Alias a otro nombre (no raíz)          |
+| MX    | Correo electrónico                     |
+| TXT   | Verificación de dominio (SPF, DKIM)    |
+| NS    | Nameservers (automático al crear zona) |
+
+### 3. 🚦 **Routing Policies (Políticas de Enrutamiento)**
+
+| Tipo                  | Descripción                                            |
+| --------------------- | ------------------------------------------------------ |
+| **Simple**            | Apunta a una única IP o nombre                         |
+| **Weighted**          | Balanceo por peso entre varios recursos                |
+| **Latency-based**     | Redirige al recurso con menor latencia                 |
+| **Geolocation**       | Basado en la ubicación del cliente                     |
+| **Failover**          | Enrutamiento activo/pasivo con health checks           |
+| **Multivalue Answer** | Devuelve múltiples valores A o AAAA con disponibilidad |
+
+> Ejemplo: Puedes redirigir usuarios en Sudamérica a una instancia EC2 en São Paulo y usuarios en Europa a Frankfurt.
+
+### 4. 💡 **Health Checks**
+
+Permiten monitorear el estado de endpoints HTTP/HTTPS/TCP.
+
+* Si un recurso está caído, puedes redirigir tráfico a un recurso alterno.
+* Puedes usarlos en conjunto con políticas **failover** o **multivalue**.
+
+### 5. 🔒 **DNS Privado con VPC**
+
+Route 53 puede actuar como DNS interno de una **VPC**:
+
+* Solo accesible dentro de tu red privada.
+* Ideal para microservicios internos, bases de datos, etc.
+
+```bash
+aws route53 create-hosted-zone \
+  --name miapp.local \
+  --vpc VPCRegion=us-east-1,VPCId=vpc-abc123 \
+  --hosted-zone-config Comment="DNS privado",PrivateZone=true
+```
+
+### 6. 📦 Integración con Otros Servicios AWS
+
+* **CloudFront**: asociar nombres personalizados.
+* **API Gateway**: dominios personalizados con SSL.
+* **Elastic Load Balancer (ELB)**: usar registros alias.
+* **S3**: para sitios web estáticos.
+* **ACM**: para certificados SSL/TLS validados por DNS.
+
+### 🔐 Seguridad y Mejores Prácticas
+
+* Usa **MFA** en la cuenta raíz.
+* **Bloquea transferencias de dominio** si no estás migrando.
+* Configura registros **CAA** para autorizar certificados SSL de ciertas entidades.
+* Usa **CloudTrail** para auditar cambios en dominios y zonas.
+
+### ✅ Caso de uso típico
+
+1. Registrar dominio: `miempresa.com`
+2. Crear zona hospedada.
+3. Configurar registros A/CNAME para apuntar a:
+
+   * un ELB (`myapp-123456.elb.amazonaws.com`)
+   * un bucket S3 (`miempresa.com.s3-website-us-east-1.amazonaws.com`)
+4. Validar dominio en ACM para emitir certificado TLS.
+5. Apuntar dominio personalizado en CloudFront o API Gateway
+
+### Resumen
+
+Existen muchos servicios de redes en AWS, uno de los más interesantes es Route 53.
+
+AWS te permite tener un DNS muy avanzado a tu disposición, con el podrás hacer subdominios asignados a instancias y verlos reflejados en segundos.
+
+**Route 53** está disponible en todas las regiones de AWS, por lo que funcionará excelente aún en caso de que alguna de las regiones se pierda.
+
+## Gestión de Usuarios y Recursos en Amazon AWS
+
+La **Gestión de Usuarios y Recursos en Amazon AWS** es esencial para administrar de forma segura quién tiene acceso a qué servicios y cómo se utilizan los recursos en la nube. Esta gestión gira principalmente en torno a **AWS Identity and Access Management (IAM)**, pero también involucra herramientas como **AWS Organizations**, **AWS Resource Groups** y **etiquetado (tagging)** de recursos.
+
+### 🧑‍💼 1. Gestión de Usuarios con IAM (Identity and Access Management)
+
+### ✅ ¿Qué es IAM?
+
+AWS IAM te permite crear y gestionar **usuarios, grupos, roles y políticas** para controlar el acceso a los recursos de AWS.
+
+### 🧾 Elementos clave de IAM:
+
+* **Usuarios**: Identidades permanentes para personas u otros servicios.
+* **Grupos**: Colecciones de usuarios que comparten permisos.
+* **Roles**: Identidades temporales usadas por servicios o usuarios externos (como federación o acceso entre cuentas).
+* **Políticas**: JSONs que definen permisos (acciones, recursos y condiciones).
+
+### 🛡️ Buenas prácticas de seguridad en IAM:
+
+| Práctica                                    | Descripción                                       |
+| ------------------------------------------- | ------------------------------------------------- |
+| 🚫 No usar la cuenta raíz                   | Solo para tareas excepcionales. Protege con MFA.  |
+| 🔐 Activar MFA                              | Obligatorio para usuarios con permisos sensibles. |
+| 📄 Usar políticas con privilegios mínimos   | “Menos es más” para evitar accesos indebidos.     |
+| ⏳ Usar roles temporales                     | Especialmente en entornos productivos.            |
+| 🧪 Revisar permisos con IAM Access Analyzer | Detecta accesos no intencionales.                 |
+
+### 🗃️ 2. Gestión de Recursos con Etiquetas (Tags)
+
+### ¿Qué son las etiquetas?
+
+Son **pares clave-valor** que puedes asignar a casi cualquier recurso en AWS (EC2, S3, RDS, Lambda, etc.).
+
+### ¿Para qué sirven?
+
+* **Organización** por proyecto, entorno, dueño, etc.
+* **Filtrado** y agrupación de recursos en la consola.
+* **Control de costos** (Cost Explorer puede agrupar por tags).
+* **Aplicar políticas IAM basadas en tags**.
+
+```json
+{
+  "Resource": "arn:aws:ec2:us-east-1:123456789012:instance/*",
+  "Condition": {
+    "StringEquals": {
+      "aws:RequestTag/project": "mi-app"
+    }
+  }
+}
+```
+
+### 🏢 3. Gestión de Cuentas con AWS Organizations
+
+### ¿Qué es AWS Organizations?
+
+Permite **agrupar varias cuentas AWS** bajo una jerarquía centralizada y aplicar políticas de control (SCPs).
+
+### Beneficios:
+
+* **Control centralizado** de facturación y acceso.
+* **Separación por entornos** (producción, desarrollo, testing).
+* **Aplicación de políticas restrictivas** a nivel de cuenta o unidad organizativa.
+* **Consolidación de costos**.
+
+### 🧰 4. Resource Groups
+
+Permiten **agrupar recursos de distintos tipos** (EC2, RDS, Lambda, etc.) bajo un mismo conjunto lógico, usualmente con tags comunes.
+
+* Filtra recursos fácilmente.
+* Aplica acciones sobre múltiples recursos.
+* Útil para administración a escala.
+
+### 📊 5. Monitoreo y Auditoría
+
+| Servicio                | Uso                                                                 |
+| ----------------------- | ------------------------------------------------------------------- |
+| **CloudTrail**          | Audita toda la actividad (quién hizo qué, cuándo y desde dónde).    |
+| **IAM Access Analyzer** | Revisa quién puede acceder a tus recursos desde fuera de tu cuenta. |
+| **Config**              | Historiza configuraciones de recursos y detecta cambios.            |
+| **CloudWatch Logs**     | Monitorea y genera alertas sobre comportamiento del sistema.        |
+
+### 🧠 Ejemplo de flujo para una empresa:
+
+1. Se crean **cuentas independientes** para cada departamento con **AWS Organizations**.
+2. En cada cuenta:
+
+   * Se crean **grupos IAM** como "developers", "ops", etc.
+   * Cada grupo tiene permisos limitados a sus recursos (por tags o por servicios).
+   * Se crean **roles con MFA obligatorio** para acciones administrativas.
+3. Todos los recursos se etiquetan por proyecto, entorno y dueño.
+4. Se usan **SCPs** para evitar creación de ciertos servicios fuera de política.
+5. Se audita actividad con CloudTrail y se revisa mensualmente con Access Analyzer.
+
+### Resumen
+
+Existen muchas herramientas de administración en AWS muy útiles, las siguientes tres son las más importantes:
+
+1. **IAM** te permite administrar todos los permisos de acceso de usuarios y máquinas sobre máquinas.
+
+2. **CloudWatch** te mostrará diversos eventos relacionados con tu infraestructura o servidores, para tener un lugar centralizado de logs e información.
+
+3. **Cloudtrail** es una herramienta de auditoria que permite ver quién o qué hizo que actividad en tu cuenta de AWS.
+
+Cada uno de los productos de AWS tienen diversas alternativas para acceder a más logs, estas opciones cuentan con almacenamiento histórico y hacen un gran trabajo al tratar la información para auditar actividades y deshabilitar usuario.
+
+## Creación y Configuración de Usuarios IAM Programáticos en AWS
+
+La **creación y configuración de usuarios IAM programáticos en AWS** es fundamental cuando deseas que aplicaciones, scripts o herramientas externas accedan a tus servicios de AWS de manera segura, sin necesidad de iniciar sesión en la consola.
+
+### 🔐 ¿Qué es un usuario IAM programático?
+
+Un **usuario IAM programático** es un usuario que no necesita acceso a la consola web de AWS, sino que se autentica y opera mediante **credenciales de acceso** (Access Key ID y Secret Access Key) para utilizar servicios como S3, EC2, DynamoDB, etc., vía CLI, SDKs o APIs.
+
+### ✅ Pasos para crear y configurar un usuario IAM programático
+
+### 1. **Accede a la consola de IAM**
+
+Ve a: [https://console.aws.amazon.com/iam](https://console.aws.amazon.com/iam)
+
+### 2. **Crea un nuevo usuario IAM**
+
+* Ir a **Users (Usuarios)** → clic en **“Add user” (Agregar usuario)**
+* Asigna un nombre (ej. `app-user-s3`)
+* **Selecciona solo acceso programático** (✔ *Access key - Programmatic access*)
+
+### 3. **Asignar permisos**
+
+Tienes tres opciones:
+
+#### a. **Adjuntar directamente políticas existentes**
+
+Selecciona una política como:
+
+* `AmazonS3ReadOnlyAccess`
+* `AmazonDynamoDBFullAccess`
+* O crea una política personalizada
+
+#### b. **Agregar al grupo con permisos**
+
+Si tienes un grupo predefinido (ej. `developers-s3-access`), agrégalo al grupo.
+
+#### c. **Crear política personalizada**
+
+Ejemplo para acceso limitado a un bucket S3:
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": ["s3:PutObject", "s3:GetObject"],
+      "Resource": "arn:aws:s3:::mi-bucket/*"
+    }
+  ]
+}
+```
+
+### 4. **Revisar y crear**
+
+* Revisa la configuración
+* Haz clic en **“Create user”**
+
+### 5. **Guardar credenciales**
+
+Se mostrará:
+
+* `Access Key ID`
+* `Secret Access Key`
+
+⚠️ **Guárdalas de inmediato** (descarga el `.csv` o copia manualmente). El Secret Access Key **no se vuelve a mostrar**.
+
+### 6. **Usar las credenciales programáticamente**
+
+#### a. Con AWS CLI:
+
+```bash
+aws configure
+```
+
+Introduce el `Access Key ID`, `Secret Access Key`, región y formato de salida.
+
+#### b. Variables de entorno:
+
+```bash
+export AWS_ACCESS_KEY_ID=AKIAXXXXXXXXX
+export AWS_SECRET_ACCESS_KEY=abc123xxxxxxxx
+```
+
+#### c. En tu código (Python con `boto3`):
+
+```python
+import boto3
+
+s3 = boto3.client(
+    's3',
+    aws_access_key_id='AKIAXXXXXX',
+    aws_secret_access_key='abc123XXXXX'
+)
+s3.list_buckets()
+```
+
+### 🛡️ Buenas prácticas de seguridad
+
+| Práctica                    | Recomendación                                 |
+| --------------------------- | --------------------------------------------- |
+| 🔐 Rotación de claves       | Cambia cada 90 días                           |
+| 🧹 Elimina claves no usadas | Revisa su uso en IAM                          |
+| 🧾 Usa permisos mínimos     | Evita políticas `*:*`                         |
+| 🔍 Monitorea con CloudTrail | Audita el uso del usuario                     |
+| 🤝 Considera usar roles     | Para cargas en EC2, Lambda o EKS (más seguro) |
+
+### Resumen
+
+#### ¿Cómo utilizar IAM para gestionar usuarios en AWS?
+
+La gestión de usuarios en Amazon Web Services (AWS) mediante IAM (Identity and Access Management) es fundamental para mantener la seguridad y el manejo adecuado de recursos en la nube. Al crear usuarios, grupos y claves de acceso, puedes controlar quién tiene acceso a qué recursos y cómo interactúan con ellos. A continuación, te describimos cómo puedes crear un usuario programático y gestionar sus permisos.
+
+#### ¿Qué es un acceso programático y para qué se usa?
+
+El acceso programático se refiere a la capacidad de interactuar con AWS mediante la línea de comandos o programas externos, en lugar de hacerlo a través de la consola web. Esto es especialmente útil para:
+
+- Automatizar tareas repetitivas.
+- Integrar servicios de AWS en aplicaciones.
+- Ejecutar scripts o aplicaciones que necesitan acceder a AWS.
+
+#### ¿Cómo crear un usuario programático en IAM?
+
+Para crear un usuario programático en AWS, sigue estos pasos:
+
+1. **Accede a la consola IAM**: Inicia sesión en tu cuenta de AWS y navega a la sección de seguridad, identidad y cumplimiento, y luego a IAM.
+
+2. **Crea un usuario nuevo**: Selecciona "Crear usuario" y asigna un nombre; en este ejemplo, usaremos "Platzi key".
+
+3. **Define el tipo de acceso**: Especifica que el acceso será programático.
+
+4. Establece permisos:
+
+ - Crea un grupo (por ejemplo, "Platzigrupo").
+ - Asigna políticas de permisos, como que el grupo tenga acceso a S3 para lectura/escritura.
+
+5. Revisa y crea el usuario: AWS ofrecerá un resumen con la opción de descargar una key de acceso y un secreto, elementos necesarios para la conexión programática.
+
+#### ¿Por qué es importante el access key y el secret key?
+
+Una vez creado el usuario, AWS proporciona un `access key` y un `secret key`. Estos son esenciales para establecer conexiones de manera segura con los servicios de AWS desde aplicaciones externas. Es crucial guardar esta información de forma segura, ya que AWS no permite ver el secret key una vez cerrada la ventana inicial de creación. Se recomienda guardar esta información en un archivo CSV, enviarla por correo, o almacenarla en una USB.
+
+#### ¿Cómo probar el acceso programático con aplicaciones externas?
+
+Para demostrar la funcionalidad del usuario programático, se puede utilizar la aplicación Cyberduck para conectarse a AWS S3:
+
+1. **Descarga e instala Cyberduck**: Disponible para Windows y Mac, permite gestionar archivos en la nube.
+
+2. **Configura una conexión**:
+
+ - Abre Cyberduck y selecciona S3 como el tipo de conexión.
+ - Ingresa el access key y el secret key cuando sea solicitado.
+
+3. **Verifica la conexión**: Podrás ver y gestionar los recursos disponibles en tu bucket S3, como subir o descargar archivos, y realizar otras acciones.
+
+#### ¿Cuáles son las recomendaciones para gestionar las claves de acceso?
+
+1. **Seguridad primero**: Almacena siempre tus claves de acceso de manera segura, evitando posibles filtraciones o pérdidas.
+
+2. **Cierre de sesión y copias de seguridad**: Realiza copias de seguridad del archivo CSV con las claves, y almacénalas en un lugar seguro.
+
+3. **Acceso controlado**: Considera crear cuentas individuales para cada persona que necesite acceso, con permisos específicos según su rol.
+
+Utilizar IAM de manera correcta y segura permite una gestión efectiva de los recursos y usuarios dentro de AWS. Experimenta con estos pasos para comprender mejor cómo gestionar usuarios y sus accesos, asegurando así el correcto funcionamiento de tus aplicaciones en la nube. ¡Sigue así y continúa explorando las posibilidades que AWS te ofrece!
+
+## Monitoreo de Actividades en AWS con Cloudwatch
+
+El **monitoreo de actividades en AWS con Amazon CloudWatch** es clave para observar, registrar y reaccionar ante eventos y métricas que afectan el rendimiento y seguridad de tus recursos en la nube. A continuación, te explico sus componentes principales, cómo funciona y cómo usarlo de manera efectiva.
+
+### 🎯 ¿Qué es Amazon CloudWatch?
+
+Es un **servicio de monitoreo** nativo de AWS que recopila datos de rendimiento en tiempo real (métricas, logs, eventos y alarmas) de servicios como EC2, Lambda, RDS, DynamoDB, S3, entre otros.
+
+### 🧱 Componentes principales de CloudWatch
+
+| Componente         | Función                                                                          |
+| ------------------ | -------------------------------------------------------------------------------- |
+| **Métricas**       | Valores numéricos (ej. CPU, memoria, latencia) recolectados cada 1 o 5 min       |
+| **Logs**           | Archivos de eventos generados por tus apps o servicios (ej. errores, peticiones) |
+| **Alarmas**        | Permiten reaccionar ante condiciones críticas (ej. CPU > 80%)                    |
+| **Dashboards**     | Visualizaciones personalizadas de métricas en tiempo real                        |
+| **Events / Rules** | Automatización basada en eventos (ej. reiniciar instancia EC2 si falla)          |
+
+### 🔧 ¿Qué puedes monitorear con CloudWatch?
+
+| Servicio         | Ejemplo de Métricas                        |
+| ---------------- | ------------------------------------------ |
+| **EC2**          | Uso de CPU, disco, red, estado del sistema |
+| **RDS / Aurora** | Latencia, conexiones, uso de CPU/disco     |
+| **Lambda**       | Duración, invocaciones, errores            |
+| **DynamoDB**     | Read/Write Capacity, ThrottledRequests     |
+| **API Gateway**  | Conteo de solicitudes, errores, latencia   |
+| **S3**           | Bytes almacenados, peticiones, errores     |
+
+### ✅ Ejemplo de flujo de monitoreo
+
+1. **Recopilación de métricas:**
+   AWS genera métricas por defecto. Puedes enviar métricas personalizadas usando SDK o CLI.
+
+2. **Creación de alarmas:**
+   Ejemplo: Si `CPUUtilization > 80%` por 5 minutos, envía notificación SNS.
+
+3. **Visualización con dashboards:**
+   Crea gráficos personalizados para múltiples métricas en una sola vista.
+
+4. **Reacción automatizada:**
+   Usa **CloudWatch Events o Alarm Actions** para:
+
+   * Reiniciar instancias
+   * Llamar a una Lambda
+   * Escalar grupos de Auto Scaling
+   * Notificar por correo o Slack vía SNS
+
+### 📦 Logs con CloudWatch Logs
+
+Puedes enviar logs desde:
+
+* **EC2** (mediante CloudWatch Agent)
+* **Lambda** (logs automáticos)
+* **ECS, Fargate** (con FireLens)
+* **Aplicaciones personalizadas** (SDK)
+
+Ejemplo: Enviar logs de una app en EC2:
+
+```bash
+sudo yum install amazon-cloudwatch-agent
+sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-config-wizard
+```
+
+### 📊 Crear una alarma con AWS Console
+
+1. Ir a CloudWatch > Alarms > Create Alarm
+2. Seleccionar la métrica (ej. CPU de EC2)
+3. Configurar condición (ej. > 80%)
+4. Añadir acción: enviar notificación SNS o ejecutar Lambda
+5. Crear
+
+### 🧠 Buenas prácticas
+
+* **Crear dashboards por ambiente** (producción, pruebas)
+* **Usar etiquetas (tags)** para filtrar métricas por proyecto o equipo
+* **Agrupar logs con filtros métricos** (ej. errores 500 en API)
+* **Configurar retención adecuada** de logs (ej. 30 o 90 días)
+* **Combinar con CloudTrail** para auditar actividades sospechosas
+
+### 🚀 ¿Quieres un ejemplo de monitoreo automático con Terraform o CloudFormation?
+
+Puedo ayudarte a generar el código para:
+
+* Enviar métricas personalizadas
+* Crear una alarma y un SNS topic
+* Automatizar el despliegue de dashboards o CloudWatch Agent
+
+### Resumen
+
+#### ¿Cómo utilizar IAM para gestionar usuarios en AWS?
+
+La gestión de usuarios en Amazon Web Services (AWS) mediante IAM (Identity and Access Management) es fundamental para mantener la seguridad y el manejo adecuado de recursos en la nube. Al crear usuarios, grupos y claves de acceso, puedes controlar quién tiene acceso a qué recursos y cómo interactúan con ellos. A continuación, te describimos cómo puedes crear un usuario programático y gestionar sus permisos.
+
+#### ¿Qué es un acceso programático y para qué se usa?
+
+El acceso programático se refiere a la capacidad de interactuar con AWS mediante la línea de comandos o programas externos, en lugar de hacerlo a través de la consola web. Esto es especialmente útil para:
+
+- Automatizar tareas repetitivas.
+- Integrar servicios de AWS en aplicaciones.
+- Ejecutar scripts o aplicaciones que necesitan acceder a AWS.
+
+#### ¿Cómo crear un usuario programático en IAM?
+
+Para crear un usuario programático en AWS, sigue estos pasos:
+
+1. **Accede a la consola IAM**: Inicia sesión en tu cuenta de AWS y navega a la sección de seguridad, identidad y cumplimiento, y luego a IAM.
+
+2. **Crea un usuario nuevo**: Selecciona "Crear usuario" y asigna un nombre; en este ejemplo, usaremos "Platzi key".
+
+3. **Define el tipo de acceso**: Especifica que el acceso será programático.
+
+4. Establece permisos:
+
+ - Crea un grupo (por ejemplo, "Platzigrupo").
+ - Asigna políticas de permisos, como que el grupo tenga acceso a S3 para lectura/escritura.
+
+5. Revisa y crea el usuario: AWS ofrecerá un resumen con la opción de descargar una key de acceso y un secreto, elementos necesarios para la conexión programática.
+
+#### ¿Por qué es importante el access key y el secret key?
+
+Una vez creado el usuario, AWS proporciona un `access key` y un `secret key`. Estos son esenciales para establecer conexiones de manera segura con los servicios de AWS desde aplicaciones externas. Es crucial guardar esta información de forma segura, ya que AWS no permite ver el secret key una vez cerrada la ventana inicial de creación. Se recomienda guardar esta información en un archivo CSV, enviarla por correo, o almacenarla en una USB.
+
+#### ¿Cómo probar el acceso programático con aplicaciones externas?
+
+Para demostrar la funcionalidad del usuario programático, se puede utilizar la aplicación Cyberduck para conectarse a AWS S3:
+
+1. **Descarga e instala Cyberduck**: Disponible para Windows y Mac, permite gestionar archivos en la nube.
+
+2. **Configura una conexión**:
+
+ - Abre Cyberduck y selecciona S3 como el tipo de conexión.
+ - Ingresa el access key y el secret key cuando sea solicitado.
+
+3. **Verifica la conexión**: Podrás ver y gestionar los recursos disponibles en tu bucket S3, como subir o descargar archivos, y realizar otras acciones.
+
+#### ¿Cuáles son las recomendaciones para gestionar las claves de acceso?
+
+1. **Seguridad primero**: Almacena siempre tus claves de acceso de manera segura, evitando posibles filtraciones o pérdidas.
+
+2. **Cierre de sesión y copias de seguridad**: Realiza copias de seguridad del archivo CSV con las claves, y almacénalas en un lugar seguro.
+
+3. **Acceso controlado**: Considera crear cuentas individuales para cada persona que necesite acceso, con permisos específicos según su rol.
+
+Utilizar IAM de manera correcta y segura permite una gestión efectiva de los recursos y usuarios dentro de AWS. Experimenta con estos pasos para comprender mejor cómo gestionar usuarios y sus accesos, asegurando así el correcto funcionamiento de tus aplicaciones en la nube. ¡Sigue así y continúa explorando las posibilidades que AWS te ofrece!
+
+## Monitoreo de Actividades en AWS con CloudTrail
+
+El **monitoreo de actividades en AWS con AWS CloudTrail** permite auditar, registrar y analizar todas las acciones realizadas en tu cuenta, ya sea por usuarios, servicios o roles. Es fundamental para la **seguridad, cumplimiento y análisis forense** en entornos AWS.
+
+### 🛡️ ¿Qué es AWS CloudTrail?
+
+CloudTrail es un servicio de **auditoría y registro de eventos** que captura todas las **acciones realizadas en la consola de AWS, la CLI, SDKs y APIs**. Guarda estos registros en S3, y se pueden consultar directamente, enviar a CloudWatch Logs, o analizar con Athena.
+
+### 📌 ¿Qué tipo de actividades registra CloudTrail?
+
+CloudTrail graba eventos como:
+
+| Actividad                               | Ejemplo                                               |
+| --------------------------------------- | ----------------------------------------------------- |
+| **Acciones administrativas**            | Crear/Eliminar usuarios IAM, roles, políticas         |
+| **Cambios en recursos**                 | Iniciar/detener instancias EC2, modificar RDS, etc.   |
+| **Acciones automatizadas de servicios** | Auto Scaling, Lambda, CloudFormation                  |
+| **Eventos de autenticación**            | Inicio de sesión, intentos fallidos, cambios de clave |
+
+### 🔍 ¿Cómo funciona?
+
+1. **Registro de eventos:** Cada vez que alguien o algo hace una solicitud a un servicio AWS compatible, CloudTrail registra el evento.
+2. **Almacenamiento en S3:** Los eventos se almacenan en un bucket de Amazon S3.
+3. **Envío a CloudWatch (opcional):** Puedes enviarlos para análisis en tiempo real o activar alarmas.
+4. **Consulta con Athena (opcional):** Realiza consultas SQL a los registros para investigar eventos.
+
+### 🧱 Componentes de CloudTrail
+
+| Componente          | Función                                                                            |
+| ------------------- | ---------------------------------------------------------------------------------- |
+| **Trail**           | Conjunto de configuraciones que define qué eventos registrar y dónde almacenarlos. |
+| **Event history**   | Historial de eventos de los últimos 90 días (sin configuración adicional).         |
+| **S3 Bucket**       | Almacén persistente de eventos (recomendado para auditoría a largo plazo).         |
+| **CloudWatch Logs** | Permite monitoreo y creación de alarmas en tiempo real.                            |
+
+### ✅ Crear un Trail con AWS Console
+
+1. Ir a **CloudTrail > Trails > Create trail**
+2. Nombre del trail: `trail-global`
+3. Marcar **Enable for all regions**
+4. Elegir o crear un **S3 bucket**
+5. (Opcional) Enviar eventos a CloudWatch Logs
+6. Confirmar y crear
+
+### 🧪 Ejemplo de evento CloudTrail (formato JSON)
+
+```json
+{
+  "eventTime": "2025-05-18T17:45:00Z",
+  "eventName": "RunInstances",
+  "awsRegion": "us-east-1",
+  "userIdentity": {
+    "type": "IAMUser",
+    "userName": "admin-user"
+  },
+  "sourceIPAddress": "192.0.2.0",
+  "requestParameters": {
+    "instanceType": "t2.micro"
+  }
+}
+```
+
+### 📊 Integración con Athena para análisis
+
+1. CloudTrail guarda eventos en S3.
+2. Usa **AWS Glue** para catalogar los datos.
+3. Consulta los logs con **Athena**:
+
+```sql
+SELECT eventName, userIdentity.userName, eventTime
+FROM cloudtrail_logs
+WHERE eventName = 'DeleteBucket'
+ORDER BY eventTime DESC
+```
+
+### 🧠 Buenas prácticas con CloudTrail
+
+* **Habilita CloudTrail en todas las regiones** (protección completa).
+* **Protege el bucket S3 de logs** con políticas y cifrado.
+* **Activa el envío a CloudWatch** para alertas inmediatas.
+* **Monitorea eventos sospechosos** como:
+
+  * `ConsoleLogin` fallidos
+  * Creación/eliminación de claves de acceso
+  * Modificación de políticas IAM
+
+### 🚨 Ejemplo de uso: Detección de intentos sospechosos
+
+Puedes configurar una **alarma en CloudWatch** que se dispare si hay varios `ConsoleLogin` fallidos en 10 minutos, y enviar notificación con SNS o ejecutar una Lambda.
+
+### Resumen
+
+#### ¿Qué es CloudTrail y para qué sirve?
+
+CloudTrail es una poderosa herramienta de monitoreo en la plataforma de Amazon Web Services (AWS). Esta herramienta permite rastrear y registrar cada acción o evento que se realiza en tu cuenta de AWS. Imagina que es como tener un detective digital dentro de tu cuenta que te informa sobre quién hizo qué y cuándo. Este recurso es invaluable para la gestión de la seguridad y cumplimiento al ofrecer un registro detallado de las actividades en el entorno de AWS.
+
+#### ¿Cómo utilizar CloudTrail en la consola de AWS?
+
+Al acceder a la consola de AWS, puedes buscar CloudTrail para comenzar a explorar sus capacidades. Al ingresar, tendrás acceso a una visión general de los eventos recientes, incluyendo detalles como el nombre de usuario y el momento del evento. Para una experiencia más enriquecedora, puedes dirigirte a la sección de historial que presenta una interfaz más amigable y detallada para analizar la actividad específica de usuarios individuales.
+
+#### ¿Cómo rastrear actividades específicas de un usuario?
+
+1. **Buscar actividades por usuario**: Por ejemplo, si se creó un usuario llamado "Platziki" para acceder a S3 y subir archivos de manera programática, puedes buscar este usuario en CloudTrail. Verás eventos como la solicitud de ver la ubicación de un bucket, listar el bucket y la carga de archivos.
+
+2. **Monitoreo de actividades constantes**: Podrás notar actividades constantes como "describe instance health", que monitorean el estado de instancia como parte de Elastic Beanstalk. Esto verifica regularmente si las instancias están activas, lo cual es crucial para mantener la aplicación funcionando correctamente.
+
+3. **Análisis de cambios en configuraciones**: Si realizas cambios en Elastic Beanstalk —por ejemplo, pasar de un solo nodo a un sistema multinodo con balanceadores de carga—, CloudTrail te mostrará detalles de estos cambios, registrando alteraciones en configuraciones y grupos de autoescalamiento, entre otras acciones.
+
+#### ¿Qué información adicional ofrece CloudTrail sobre las instancias?
+
+Además de las actividades programáticas, CloudTrail puede ofrecer datos sobre instancias EC2 y sus AMIs (Amazon Machine Images) específicas:
+
+- Creación de imágenes e instancias: Podrás ver entradas que registran actividades como la creación de nuevas imágenes (AMIs) y la ejecución de instancias, todos vinculados a la cuenta raíz de AWS.
+
+##### Recomendaciones para aprovechar CloudTrail al máximo
+
+1. **Configura alertas personalizadas**: Utiliza CloudWatch para recibir notificaciones sobre actividades sospechosas o no autorizadas, elevando la seguridad de tu infraestructura.
+
+2. **Auditoría regular**: Realiza auditorías periódicas de los registros para asegurarte de que todas las actividades sean esperadas y autorizadas.
+
+3. **Automatización de respuestas**: Implementa reglas en AWS Lambda para automatizar respuestas a ciertos eventos críticos capturados por CloudTrail.
+
+4. **Educación continua**: Mantente actualizado sobre las mejores prácticas de seguridad en AWS y las nuevas características de CloudTrail.
+
+CloudTrail es una herramienta esencial para cualquier administrador de cuentas en AWS que quiera asegurar la total transparencia y seguridad en sus operaciones. Te aliento a explorar todas sus funcionalidades y continuar aprendiendo para maximizar la eficiencia de tu infraestructura en la nube. ¡Sigue adelante en tu camino de aprendizaje en la gestión de AWS!
+
+## Certificación SSL y Seguridad AWS con GuardDuty
+
+Aquí tienes una guía clara y concisa sobre **Certificación SSL** y el uso de **Amazon GuardDuty** para mejorar la seguridad en AWS:
+
+### 🔐 Certificación SSL en AWS
+
+### ¿Qué es una Certificación SSL?
+
+SSL (Secure Sockets Layer) o TLS (su sucesor) es un protocolo de seguridad que cifra la comunicación entre el navegador del usuario y el servidor web. En AWS, puedes usar certificados SSL para proteger sitios web, aplicaciones y APIs.
+
+### Opciones en AWS:
+
+| Servicio                            | Descripción                                                                                 |
+| ----------------------------------- | ------------------------------------------------------------------------------------------- |
+| **AWS Certificate Manager (ACM)**   | Provisión y administración gratuita de certificados SSL públicos para dominios verificados. |
+| **Certificados privados (ACM PCA)** | Crear una Autoridad Certificadora Privada (CA) para certificados internos.                  |
+| **Importar certificados**           | Puedes cargar certificados SSL/TLS propios desde otras autoridades.                         |
+
+### Usos comunes:
+
+* **Elastic Load Balancer (ELB)**
+* **CloudFront**
+* **API Gateway**
+* **AWS Amplify / App Runner**
+* **Custom Domains con ACM**
+
+### ¿Cómo obtener un certificado SSL con ACM?
+
+1. Ve a **AWS Certificate Manager > Request certificate**
+2. Elige **Public certificate**
+3. Ingresa tu dominio (ej. `example.com`, `*.example.com`)
+4. Verifica el dominio (DNS o Email)
+5. Usa el certificado en CloudFront, ELB, etc.
+
+### 🛡️ Amazon GuardDuty: Detección Inteligente de Amenazas
+
+### ¿Qué es Amazon GuardDuty?
+
+Es un servicio de **detección continua de amenazas** que analiza logs de seguridad para identificar comportamientos maliciosos o no autorizados en tu cuenta de AWS.
+
+### ¿Qué analiza GuardDuty?
+
+| Fuente de datos               | Ejemplos analizados                             |
+| ----------------------------- | ----------------------------------------------- |
+| **VPC Flow Logs**             | Tráfico de red sospechoso                       |
+| **AWS CloudTrail**            | Acciones API no autorizadas o inusuales         |
+| **DNS Logs**                  | Consultas DNS maliciosas o inesperadas          |
+| **EKS Audit Logs (opcional)** | Actividades sospechosas en clústeres Kubernetes |
+
+### 🔎 Ejemplos de amenazas detectadas
+
+| Tipo de amenaza                           | Descripción                                               |
+| ----------------------------------------- | --------------------------------------------------------- |
+| `UnauthorizedAccess:IAMUser/ConsoleLogin` | Intento de inicio de sesión sospechoso                    |
+| `Recon:EC2/PortProbeUnprotectedPort`      | Escaneo de puertos en instancias EC2                      |
+| `CryptoCurrency:EC2/BitcoinTool.B!DNS`    | Minería de criptomonedas detectada en EC2                 |
+| `Persistence:EC2/MetadataDNSRebind`       | Técnica para acceder a metadatos EC2 mediante ataques DNS |
+
+### 🚀 ¿Cómo habilitar GuardDuty?
+
+1. Ve a **Amazon GuardDuty > Enable GuardDuty**
+2. Selecciona la región o activa en todas las regiones
+3. (Opcional) Integra con **AWS Organizations** para múltiples cuentas
+4. Visualiza los hallazgos en el panel
+
+### 🧠 Buenas prácticas combinadas
+
+| Práctica               | Acción recomendada                                                                |
+| ---------------------- | --------------------------------------------------------------------------------- |
+| **Seguridad SSL**      | Usa ACM para emitir certificados y habilita HTTPS en servicios públicos           |
+| **Monitoreo continuo** | Habilita GuardDuty y configura notificaciones vía Amazon SNS                      |
+| **Automatización**     | Crea reglas que activen AWS Lambda ante hallazgos críticos                        |
+| **Cumplimiento**       | Guarda certificados y eventos de GuardDuty en S3 con cifrado y acceso restringido |
+
+### 📦 Extra: Integración con otros servicios
+
+* **AWS Security Hub**: Agrega hallazgos de GuardDuty con otros servicios de seguridad.
+* **Amazon Detective**: Investiga hallazgos de GuardDuty en profundidad.
+* **AWS Config**: Audita configuraciones que puedan afectar la seguridad SSL.
+
+### Resumen
+
+Existen varias herramientas de seguridad en AWS. Vamos a ver las más importantes:
+
+**Certificate Manager**: AWS te permite crear nuevos certificados cuando necesites (o importar alguno que ya tengas) y te sera fácil usarlos en balanceadores de cargas.
+
+**GuardDuty**: AWS permite que hagas una auditoria constante de todos los intentos de conexiones que tienen tus equipos de computo.
+
+## Monitoreo de Seguridad en AWS con Good Duty
+
+Parece que te refieres a **Amazon GuardDuty** (a veces confundido como “Good Duty”). Aquí tienes una guía clara y práctica sobre el **Monitoreo de Seguridad en AWS con Amazon GuardDuty**:
+
+### 🔍 ¿Qué es Amazon GuardDuty?
+
+**Amazon GuardDuty** es un servicio administrado de seguridad que **detecta amenazas y actividades maliciosas** en tu cuenta de AWS. Usa inteligencia artificial, aprendizaje automático y fuentes de amenazas de AWS para **identificar comportamientos sospechosos** sin que tengas que instalar o configurar software adicional.
+
+### 🧩 ¿Qué monitorea GuardDuty?
+
+| Fuente de datos               | Ejemplos de lo que analiza                            |
+| ----------------------------- | ----------------------------------------------------- |
+| **CloudTrail**                | Actividad sospechosa con las APIs de AWS              |
+| **VPC Flow Logs**             | Tráfico de red inusual o hacia direcciones maliciosas |
+| **DNS Logs**                  | Consultas DNS hacia dominios maliciosos               |
+| **EKS Audit Logs (opcional)** | Actividad sospechosa en clústeres Kubernetes          |
+
+### ⚠️ Tipos de hallazgos comunes
+
+| Categoría                 | Ejemplo de hallazgo                                    |
+| ------------------------- | ------------------------------------------------------ |
+| **Reconocimiento**        | `PortProbeUnprotectedPort` — escaneo de puertos        |
+| **Acceso no autorizado**  | `UnauthorizedAccess:IAMUser/ConsoleLogin`              |
+| **Ransomware/Minado**     | `CryptoCurrency:EC2/BitcoinTool.B!DNS`                 |
+| **Persistencia**          | `EC2/MetadataDNSRebind` — acceso indebido a metadatos  |
+| **Exfiltración de datos** | `S3/AnomalousBehavior` — actividad no común en buckets |
+
+### ✅ ¿Cómo activar Amazon GuardDuty?
+
+1. Ve a la consola de AWS.
+2. Busca **GuardDuty**.
+3. Haz clic en **"Enable GuardDuty"**.
+4. (Opcional) Actívalo en todas las regiones y configura integración con **AWS Organizations** para múltiples cuentas.
+5. Revisa los hallazgos en el panel.
+
+### 🔐 ¿Cómo responde a amenazas?
+
+GuardDuty **no actúa por sí solo**. Puedes automatizar respuestas con:
+
+* **AWS Lambda**: ejecutar acciones (ej. apagar una instancia EC2 sospechosa).
+* **Amazon SNS**: enviar notificaciones por email, SMS, etc.
+* **AWS Security Hub**: centralizar hallazgos con otros servicios.
+* **Amazon EventBridge**: crear reglas para actuar según el tipo de hallazgo.
+
+### 🎯 Buenas prácticas
+
+| Recomendación                                | Detalle                                       |
+| -------------------------------------------- | --------------------------------------------- |
+| Habilita en todas las regiones               | Para detectar amenazas globales               |
+| Integra con AWS Organizations                | Monitoreo centralizado para múltiples cuentas |
+| Revisa hallazgos regularmente                | Clasifica y prioriza los más críticos         |
+| Automatiza respuestas con Lambda/EventBridge | Para reducir el tiempo de reacción            |
+| Exporta hallazgos a S3                       | Para cumplimiento y auditoría                 |
+
+### 🧠 Ejemplo de uso
+
+**Escenario**: GuardDuty detecta `UnauthorizedAccess:EC2/SSHBruteForce`.
+
+**Respuesta automática**:
+
+1. EventBridge detecta el hallazgo.
+2. Llama a una Lambda.
+3. Lambda detiene la instancia comprometida y bloquea la IP en NACLs o Security Groups.
+
+### Resumen
+
+#### ¿Qué es Good Duty y cómo puede mejorar la seguridad en la nube de Amazon?
+
+Good Duty es un potente sistema de Amazon diseñado para mejorar la seguridad de tus recursos en la nube. Proporciona información detallada sobre quién intenta conectarse a tus recursos, como servidores y bases de datos. Al utilizar Good Duty, puedes estar al tanto de los accesos no autorizados y las posibles amenazas a tus recursos.
+
+####¿Cómo empezar a usar Good Duty?
+
+Para comenzar a usar Good Duty, accede a la consola de Amazon Web Services (AWS) y sigue estos pasos básicos:
+
+1. Escribe `GuardDuty` en la barra de búsqueda de la consola de AWS y selecciona el servicio.
+2. Haz clic en "Get Started" para activar Good Duty.
+3. Otorga los permisos necesarios para que Good Duty pueda monitorear las actividades de tu cuenta.
+
+Al iniciar Good Duty, no verás información inmediatamente. Sin embargo, el sistema comenzará a escanear tus sistemas y conexiones para ofrecerte datos relevantes sobre actividades sospechosas.
+
+#### ¿Qué tipo de ataques pueden detectarse con Good Duty?
+
+Good Duty es eficaz para identificar varios tipos de ataques, incluyendo:
+
+- **Escaneo de puertos**: Identificación de intentos de escaneo de puertos abiertos, lo cual puede indicar preparaciones para un ataque.
+
+- **Ataques de fuerza bruta**: Detección de ataques por diccionario que buscan acceder a través de SSH (Secure Shell). Amazon protege las conexiones SSH mediante el uso de claves, por lo que los ataques de fuerza bruta son inútiles sin la clave correcta.
+
+- **Script kiddies**: Identificación de intentos de acceso automatizados a través de scripts, conocidos como ataques de "script kiddie", que prueban la seguridad del sistema buscando vulnerabilidades.
+
+#### ¿Qué hacer en caso de detectar un ataque con problemas de alta severidad?
+
+Si Good Duty detecta un ataque con alta severidad, actúa rápidamente siguiendo estas recomendaciones:
+
+1. **Pausar la instancia afectada**: Evalúa la situación sin interrupciones adicionales.
+2. **Revisar el respaldo más reciente**: Asegúrate de que tus datos estén protegidos.
+3. **Eliminar la IP pública afectada**: Para prevenir más ataques, retira cualquier IP pública comprometida.
+4. **Crear una nueva instancia segura**: Utiliza la IP interna para conectar y restaurar la seguridad desde dentro de Amazon si es necesario.
+5. **Realizar un análisis detallado**: Determina el alcance del ataque y realiza un seguimiento de las actividades sospechosas.
+
+#### ¿Con qué frecuencia debes revisar los hallazgos de Good Duty?
+
+Para mantener la seguridad de tus recursos en Amazon, revisa periódicamente los hallazgos de Good Duty. Puedes optar por un seguimiento semanal o mensual, dependiendo de tu nivel de uso y las amenazas potenciales que enfrentas. Este hábito de revisión regular te ayudará a:
+
+- Restablecer snapshots de seguridad antes de cualquier intrusión exitosa.
+- Entender la naturaleza de los ataques y responder oportunamente a las amenazas.
+
+Al mantener Good Duty bajo constante supervisión, garantizas la protección continua de tus recursos y te aseguras de tomar medidas proactivas para mitigar posibles ataques. Por último, archiva los hallazgos una vez revisados para mantener la claridad en momentos de auditoría y revisión futuras.
