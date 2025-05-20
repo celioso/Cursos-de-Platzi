@@ -3223,3 +3223,409 @@ Algunas aplicaciones prácticas incluyen:
 - **Seguridad y control de acceso**: Podría utilizarse para sistemas de seguridad que detectan rostros y emociones en tiempo real.
 
 Amazon Recognition es, sin duda, una herramienta poderosa con aplicaciones diversas que facilitan tanto la automatización como el análisis de contenido visual. Con su ayuda, es posible transformar la manera en que interactuamos y entendemos el mundo visual que nos rodea. Si estás interesado en la inteligencia artificial y el procesamiento de imágenes, explorar Amazon Recognition podría aportar grandes beneficios a tus proyectos.
+
+## Creación y Configuración de Postgrex en Amazon RDS
+
+Aquí tienes una guía detallada para la **Creación y Configuración de PostgreSQL en Amazon RDS** (a menudo se le llama "Postgrex" de forma informal, pero el nombre correcto del motor es **PostgreSQL**):
+
+### 🛠️ Creación y Configuración de PostgreSQL en Amazon RDS
+
+### 📌 ¿Qué es Amazon RDS?
+
+Amazon RDS (Relational Database Service) es un servicio administrado por AWS para bases de datos relacionales como PostgreSQL, MySQL, MariaDB, Oracle y SQL Server.
+
+### ✅ Paso a Paso para Crear PostgreSQL en RDS
+
+#### 1. **Ingresar a la Consola de AWS**
+
+* Ir a: [https://console.aws.amazon.com](https://console.aws.amazon.com)
+* Buscar "RDS" en el buscador superior.
+
+#### 2. **Crear una Nueva Instancia**
+
+* Clic en **"Create database"**.
+* Elegir método: `Standard create`.
+* Elegir motor de base de datos: **PostgreSQL**.
+* Seleccionar la versión de PostgreSQL que desees (por ejemplo, 15.3).
+
+#### 3. **Configurar la Instancia**
+
+* **DB instance identifier**: Un nombre para tu instancia (ej. `pg-rds-demo`).
+* **Master username**: Nombre del usuario administrador (ej. `admin`).
+* **Master password**: Contraseña segura.
+* Puedes habilitar la autenticación IAM si deseas manejar usuarios con roles de AWS.
+
+#### 4. **Seleccionar Tipo de Instancia**
+
+* Clase de instancia: ej. `db.t3.micro` (apto para pruebas, elegible para capa gratuita).
+* Almacenamiento: general SSD (gp2 o gp3).
+* Configura el tamaño inicial del disco y habilita el escalado si lo deseas.
+
+#### 5. **Configuración de Conectividad**
+
+* VPC: usa una VPC existente o crea una nueva.
+* Subnet group y zona de disponibilidad: puedes dejar los valores predeterminados.
+* **Public access**: Elige “Yes” si deseas acceder desde internet, o “No” si será privada.
+* Configura el **grupo de seguridad** para permitir tráfico desde tu IP pública en el puerto **5432** (PostgreSQL).
+
+#### 6. **Opciones Adicionales**
+
+* Habilitar backups automáticos.
+* Configurar monitoreo con CloudWatch.
+* Activar mantenimiento automático si deseas actualizaciones programadas.
+
+#### 7. **Crear la Base de Datos**
+
+* Clic en “Create database”.
+* Espera unos minutos hasta que el estado esté en **“Available”**.
+
+### 🔌 Conexión a PostgreSQL en RDS
+
+#### Desde línea de comandos:
+
+```bash
+psql -h tu-endpoint.rds.amazonaws.com -U admin -d postgres
+```
+
+#### Desde Python con `psycopg2`:
+
+```python
+import psycopg2
+
+conn = psycopg2.connect(
+    host="tu-endpoint.rds.amazonaws.com",
+    database="postgres",
+    user="admin",
+    password="tu-contraseña"
+)
+```
+
+### 🔒 Seguridad Recomendaciones
+
+* Usa **grupos de seguridad** para restringir IPs.
+* Cifra en tránsito con **SSL/TLS**.
+* Habilita **cifrado en reposo** (KMS).
+* Configura copias automáticas y **multi-AZ** para alta disponibilidad.
+
+### 📊 Buenas Prácticas
+
+* Habilita métricas de CloudWatch (CPU, IOPS, conexiones).
+* Usa parámetros personalizados con **parameter groups** si necesitas cambiar configuraciones como `work_mem`, `max_connections`, etc.
+* Realiza pruebas de rendimiento y escalabilidad si tu carga de trabajo crecerá.
+
+### Resumen
+
+#### ¿Cómo crear un servicio de PostgreSQL en RDS?
+
+Si estás buscando una manera sencilla y efectiva de gestionar bases de datos a través de la nube, utilizar RDS de Amazon para crear un servicio de PostgreSQL puede ser una excelente opción. A continuación, te guiaré a través del proceso para configurar y crear una instancia de PostgreSQL en RDS, asegurando que puedas aprovechar al máximo las características de este servicio.
+
+#### ¿Cómo comienzo con la configuración de RDS en Amazon?
+
+Para iniciar, lo primero que deberás hacer es acceder a la consola de Amazon. Busca el servicio RDS en la consola. Esto te redirigirá a una pantalla donde podrás empezar a configurar una nueva instancia de base de datos.
+
+Una recomendación útil si estás comenzando y deseas experimentar sin incurrir en costos adicionales es seleccionar las opciones gratuitas que Amazon ofrece. Esto te permitirá familiarizarte con el servicio sin preocupaciones financieras.
+
+#### ¿Cuál es la importancia de escoger la versión correcta de PostgreSQL?
+
+La elección de la versión de PostgreSQL es crucial, especialmente si ya cuentas con una base de datos existente que buscas migrar. Asegúrate de que la versión que selecciones en RDS sea compatible con la que ya tienes, lo que facilitará el proceso de migración y evitará problemas de compatibilidad. Si estás comenzando una nueva base de datos, opta por la versión más reciente compatible con tus necesidades.
+
+#### ¿Cómo configurar los detalles de la instancia de base de datos?
+
+Una vez elegida la versión, deberás configurar los detalles básicos de la instancia:
+
+1. **Nombre de la instancia y base de datos**: Se recomienda utilizar nombres fáciles de recordar y consistentes. Por ejemplo, "testplatzi2".
+2. **Nombre del usuario maestro**: Utiliza un nombre sencillo, idéntico o similar al de la instancia, para ahorrar tiempo y evitar confusiones.
+3. **Password**: Para garantizar la seguridad, usa un generador de contraseñas para crear un password fuerte y apúntalo en un lugar seguro.
+
+Esta planificación meticulosa te ayudará a evitar confusiones futuras y garantizará que los datos sensibles estén protegidos.
+
+#### ¿Qué configuraciones adicionales están disponibles?
+
+Amazon RDS ofrece una serie de configuraciones avanzadas que puedes considerar:
+
+- **Cifrado**: Aunque e inicialmente puede no estar disponible en el modo gratuito, el cifrado es esencial cuando deseas proteger tus datos en entornos de producción.
+- **Copias de seguridad**: Configura la frecuencia de backups según tus necesidades para proteger tus datos.
+- **Monitoreo**: Decide si necesitas monitorear la base de datos y configurar alertas según el rendimiento o requisitos específicos.
+
+Luego de ajustar estas configuraciones, procede a crear la base de datos. RDS te confirmará la creación y te permitirá ver los detalles de la instancia.
+
+#### ¿Cómo conectar la base de datos a otras instancias de Amazon o desde tu computadora?
+
+Inicialmente, la conexión solo será posible desde instancias creadas dentro de Amazon. Sin embargo, puedes modificar la configuración para permitir conexiones desde tu computadora local o cualquier otra ubicación externa. Este paso es esencial para desarrollar aplicaciones que dependan de la base de datos y para el acceso conveniente de desarrolladores y administradores desde múltiples ubicaciones.
+
+Con estos conocimientos, estarás preparado para implementar y gestionar un servicio de PostgreSQL en Amazon RDS de manera eficiente. Si tienes curiosidad o necesitas asistencia adicional, continúa explorando recursos y herramientas que te ayuden a expandir tu dominio en bases de datos en la nube. ¡Feliz aprendizaje y buena suerte en tus proyectos!
+
+[Generador de password](https://getmypassword.com/)
+
+## Conexión y Gestión de Datos en RDS con PostgreSQL
+
+Con gusto, aquí tienes un resumen claro y práctico sobre **Conexión y Gestión de Datos en Amazon RDS con PostgreSQL**:
+
+### 🔗 **Conexión y Gestión de Datos en RDS con PostgreSQL**
+
+### 🛠️ 1. **Creación de la Instancia RDS (PostgreSQL)**
+
+Desde la consola de AWS:
+
+* Ve a **RDS > Crear base de datos**
+* Elige **PostgreSQL**
+* Selecciona “**Solo configuración básica**” (si es para pruebas)
+* Define:
+
+  * Usuario administrador (`masterusername`)
+  * Contraseña
+  * Puerto (por defecto 5432)
+  * Nombre de la base de datos inicial (opcional)
+* Asegúrate de:
+
+  * Habilitar el acceso público si vas a conectarte desde tu PC
+  * Seleccionar un grupo de seguridad que permita conexiones entrantes en el puerto 5432
+
+### 💻 2. **Conexión desde tu PC**
+
+#### 🧱 Requisitos:
+
+* Tener instalado `psql` (cliente de PostgreSQL)
+* Tener la IP pública o DNS de la instancia RDS
+
+#### 🧪 Comando para conectarse:
+
+```bash
+psql -h <host> -U <usuario> -d <nombre_basedatos> -p 5432
+```
+
+**Ejemplo:**
+
+```bash
+psql -h database-1.abc123xyz.us-east-1.rds.amazonaws.com -U admin -d postgres -p 5432
+```
+
+> Si no creaste una base específica, usa `postgres` como nombre.
+
+### 🔐 3. **Seguridad y acceso**
+
+* Revisa el grupo de seguridad (Security Group) asociado a la instancia RDS:
+
+  * Asegúrate de tener una regla de entrada que permita el tráfico al **puerto 5432** desde tu IP pública.
+* Revisa que la opción **"acceso público"** esté habilitada.
+
+### 📂 4. **Gestión de Datos**
+
+#### ✅ Crear tabla:
+
+```sql
+CREATE TABLE empleados (
+    id SERIAL PRIMARY KEY,
+    nombre TEXT,
+    cargo TEXT,
+    salario NUMERIC
+);
+```
+
+#### ✅ Insertar datos:
+
+```sql
+INSERT INTO empleados (nombre, cargo, salario) VALUES
+('Mario Vargas', 'Ingeniero', 4200),
+('Ana Pérez', 'Diseñadora', 3700);
+```
+
+#### ✅ Consultar datos:
+
+```sql
+SELECT * FROM empleados;
+```
+
+#### ✅ Exportar/Importar datos:
+
+* **Importar archivo SQL:**
+
+```bash
+psql -h <host> -U <usuario> -d <bd> -f archivo.sql
+```
+
+* **Exportar (dump):**
+
+```bash
+pg_dump -h <host> -U <usuario> -d <bd> > respaldo.sql
+```
+
+### 🧹 5. **Buenas prácticas**
+
+* **Habilita backups automáticos**
+* **Monitorea el rendimiento con CloudWatch**
+* **Activa alertas de espacio y carga**
+* **Usa roles IAM si accedes desde Lambda o EC2**
+* **Configura mantenimiento automático en horarios nocturnos**
+
+### Resumen
+
+#### ¿Cómo conectarse a una instancia de RDS en Postgres?
+
+Conectar a una instancia de RDS (Amazon Relational Database Service) en Postgres puede parecer complicado al principio, pero con los pasos correctos, esta tarea se vuelve sencilla. En este apartado, aprenderás cómo realizar esta conexión y a verificar los datos necesarios para lograrlo.
+
+Para empezar, accede a la consola de Amazon y navega hasta tu instancia de RDS. Aquí, en la sección "Connect", encontrarás un "endpoint", que es esencial para tu conexión.
+
+1. **Descarga de Software**:
+
+ - Descarga e instala PGAdmin, una herramienta gráfica de administración para bases de datos Postgres.
+
+2. **Configuración en PGAdmin**:
+
+ - Usa el nombre de tu instancia, nombre de usuario y contraseña que configuraste en Amazon RDS.
+ - Copia el "endpoint" obtenido de la consola y configúralo como el "host" en PGAdmin.
+ - Asegúrate de usar el puerto correcto (generalmente 5432) y la base de datos a la que deseas conectarte.
+
+3. **Errores comunes al conectar**:
+
+ - Si experimentas errores, una causa frecuente es que el servidor no está escuchando en el puerto indicado.
+ 
+#### ¿Cómo modificar la configuración de tu instancia para permitir conexiones?
+
+Para facilitar las conexiones externas a tu instancia de RDS, es necesario modificar ciertos parámetros que inicialmente restringen las conexiones solo a la red de Amazon.
+
+1. **Hacer pública la instancia**:
+
+ - En la consola de RDS, selecciona la instancia y elige la opción de modificar.
+ - Cambia la configuración para que la instancia sea accesible públicamente.
+
+2. **Editar el grupo de seguridad**:
+
+ - Utiliza el grupo de seguridad de tu instancia para permitir conexiones desde direcciones IP externas.
+ - En la sección "Inbound", modifica las reglas para permitir conexiones desde cualquier IP o limita a direcciones específicas para mayor seguridad.
+
+3. **Monitorear cambios**:
+
+ - Recarga la página de la consola para verificar que los cambios están aplicados y que la base de datos es ahora accesible.
+
+#### ¿Cómo crear y administrar tablas con SQL en PGAdmin?
+
+Una vez establecida la conexión con tu base de datos, el siguiente paso es comenzar a crear y administrar tablas, lo cual se realiza utilizando SQL (Structured Query Language).
+
+1. **Apertura del editor SQL**:
+
+ - Utiliza el ícono de SQL en PGAdmin para abrir una ventana donde puedas introducir comandos y ejecutar queries.
+
+2. **Creación de tablas**:
+
+ - Copia y pega el script SQL necesario para crear una nueva tabla. Un ejemplo básico:
+ 
+```sql
+CREATE TABLE films (
+    code CHAR(5),
+    title VARCHAR(40),
+    did INTEGER,
+    date_prod DATE,
+    kind VARCHAR(10),
+    len INTERVAL HOUR TO MINUTE
+);
+```
+
+3. **Inserción de datos**:
+
+ - Una vez creada la tabla, inserta datos usando el siguiente tipo de query:
+ 
+```sql
+INSERT INTO films (code, title, did, date_prod, kind, len)
+VALUES ('12345', 'Nombre de la película', 1, '2023-10-12', 'Drama', '02:00');
+```
+
+4. **Consulta de datos**:
+
+ - Para verificar que los datos se insertaron correctamente, usa un SELECT:
+ 
+`SELECT * FROM films;`
+
+Recuerda que la práctica constante y la familiarización con SQL te ayudarán a gestionar eficientemente tus bases de datos en RDS. No dudes en consultar recursos adicionales o tutoriales más detallados para seguir avanzando en tus habilidades. ¡Sigue adelante y mejora tu dominio sobre bases de datos!
+
+## Fundamentos de Amazon: Opciones y Servicios Básicos
+
+Claro, aquí tienes una guía clara y resumida sobre los **Fundamentos de Amazon Web Services (AWS): Opciones y Servicios Básicos**:
+
+### 🧭 **Fundamentos de Amazon AWS: Opciones y Servicios Básicos**
+
+### ☁️ ¿Qué es AWS?
+
+Amazon Web Services (AWS) es la plataforma de computación en la nube de Amazon. Proporciona más de 200 servicios integrales de infraestructura y plataforma bajo demanda, pagando solo por lo que usas.
+
+---
+
+### 🧱 **Principales Categorías de Servicios**
+
+| Categoría                     | Servicio Clave | Descripción breve                                     |
+| ----------------------------- | -------------- | ----------------------------------------------------- |
+| **Cómputo**                   | **EC2**        | Servidores virtuales escalables                       |
+|                               | Lambda         | Computación sin servidor (serverless)                 |
+| **Almacenamiento**            | S3             | Almacenamiento de objetos (archivos)                  |
+|                               | EBS            | Discos duros para EC2                                 |
+|                               | Glacier        | Almacenamiento a largo plazo y bajo costo             |
+| **Bases de Datos**            | RDS            | Bases de datos relacionales (MySQL, PostgreSQL, etc.) |
+|                               | DynamoDB       | Base de datos NoSQL rápida y escalable                |
+| **Red y Entrega**             | VPC            | Red privada virtual                                   |
+|                               | Route 53       | Sistema DNS y gestión de dominios                     |
+|                               | CloudFront     | Red de distribución de contenido (CDN)                |
+| **Gestión de Usuarios**       | IAM            | Gestión de usuarios, roles y políticas de acceso      |
+| **Herramientas de Monitoreo** | CloudWatch     | Supervisión y métricas de servicios                   |
+|                               | CloudTrail     | Auditoría y registro de actividades de cuenta         |
+
+### 🔐 **Seguridad y Acceso**
+
+* **IAM (Identity and Access Management)**: Define usuarios, permisos y políticas para acceso controlado.
+* Autenticación multifactor (MFA)
+* Políticas de acceso granular (por servicio, acción, recurso)
+
+### 🧰 **Herramientas de Gestión**
+
+* **AWS Management Console**: Interfaz gráfica web.
+* **AWS CLI**: Línea de comandos para automatización.
+* **AWS SDKs**: Librerías para programar en Python, Node.js, Java, etc.
+
+### 🧪 **Modelos de Uso Común**
+
+| Escenario           | Servicios involucrados     |
+| ------------------- | -------------------------- |
+| Sitio web estático  | S3 + CloudFront + Route 53 |
+| Web app dinámica    | EC2 / Lambda + RDS + S3    |
+| Big Data / Análisis | EMR, Athena, Redshift      |
+| IoT                 | AWS IoT Core               |
+| Machine Learning    | SageMaker, Rekognition     |
+
+### 📈 **Ventajas de AWS**
+
+* Escalabilidad automática
+* Alta disponibilidad y redundancia
+* Paga solo por lo que usas
+* Seguridad de nivel empresarial
+* Presencia global con regiones y zonas de disponibilidad
+
+### Resumen
+
+####¿Qué aprendimos en el curso básico de Amazon?
+
+El curso que acabamos de terminar nos proporcionó una introducción esencial a los fundamentos de Amazon como plataforma. Con más de cincuenta servicios y opciones disponibles, Amazon es un ecosistema en constante evolución, y este curso fue solo el primer paso hacia un entendimiento más amplio.
+
+#### ¿Qué sigue después de este curso?
+
+Amazon es una plataforma vasta y compleja, y este curso apenas desentrañó la superficie de lo que se puede lograr con ella. Planificamos continuar con más cursos que profundizarán en temas específicos y funcionalidades avanzadas. Estos futuros cursos explorarán:
+
+- Servicios adicionales que Amazon ofrece.
+- Mejoras en la integración de servicios para optimizar operaciones.
+- Cómo adaptarse a las constantes actualizaciones tecnológicas de Amazon.
+
+#### ¿Cómo podemos mejorar juntos?
+
+Estamos comprometidos en el aprendizaje continuo y en la mejora de nuestros cursos. Tu participación y feedback son fundamentales para nosotros. Aquí algunas formas en las que puedes contribuir:
+
+- **Comentarios**: No dudes en dejar tus preguntas, dudas, o sugerencias de mejora en la sección de comentarios de nuestro curso. Estamos aquí para ayudarte y para asegurarnos de que tengas una experiencia de aprendizaje efectiva.
+- **Sugerencias de contenido**: Cuéntanos qué servicios de Amazon te gustaría explorar en profundidad en futuros cursos. Tu opinión nos ayuda a diseñar contenido relevante y útil.
+- **Redes sociales**: Comparte tus logros y la obtención de tu certificado con nosotros en redes como Twitter o Facebook.
+
+#### ¿Por qué es importante seguir aprendiendo?
+
+El mundo digital y las plataformas como Amazon están en constante cambio. Aprender y adaptarse a estas evoluciones es crucial para mantenerse competitivo. Al continuar con tu educación en esta área, te aseguras de:
+
+- Estar al día con las últimas tendencias y novedades tecnológicas.
+- Potenciar tu perfil profesional con habilidades actualizadas.
+- Aprovechar nuevas oportunidades que surgen con cada innovación tecnológica.
+
+Te animamos a que sigas aprendiendo con nosotros, aportes tus ideas y, en conjunto, descubramos todo lo que Amazon tiene para ofrecer. ¡Emprendamos este viaje de conocimiento juntos!
