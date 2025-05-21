@@ -193,9 +193,7 @@
 - [Curso Práctico de AWS: Roles y Seguridad con IAM](CursoPracticodeAWSRolesySeguridadconIAM)
 - [Curso Práctico de AWS: Cómputo con EC2](CursoPracticodeAWSComputoconEC2)
 - [Curso Práctico de AWS Cloud](CursoPracticodeAWSCloud)
-
-Curso Práctico de Cloud Computing con AWS
-
+- [Curso Práctico de Cloud Computing con AWS](CursoPracticodeCloudComputingconAWS)
 - [Curso Práctico de Storage en AWS](CursoPracticodeStorageenAWS)
 - [Curso Práctico de Bases de Datos en AWS](CursoPracticodeBasesdeDatosenAWS)
 
