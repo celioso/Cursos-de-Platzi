@@ -1041,3 +1041,1200 @@ Si buscabas "Lysel", muy probablemente te referías a **Amazon Lightsail**. Es u
 El marketplace de **Lightsail** te permite elegir entre Linux y Windows, siendo esta opción la manera más económica de tener Windows de todos los servicios de Amazon.
 Puedes instalar el SO más aplicaciones como Wordpress o Node.js; también puedes decidir por inicializar la imagen sólo con el sistema operativo, teniendo muchas opciones en la familia de Linux.
 Instalar todos los parches de seguridad o actualizaciones es tu responsabilidad al igual que en **EC2**.
+
+## Comparativa de Dicel vs EC2: Costos y Beneficios para Proyectos
+
+Parece que hubo una confusión con el nombre: **“Dicel” no es un servicio oficial de AWS**. Probablemente estás refiriéndote nuevamente a **Amazon Lightsail**, ya que muchos usuarios lo confunden con nombres como “Lysel”, “Dicel”, etc.
+
+Así que haremos una comparativa clara y útil entre:
+
+> ✅ **Amazon Lightsail** (VPS simplificado)
+> 🔄 **Amazon EC2** (Elastic Compute Cloud, más avanzado)
+
+
+### 🧾 Comparativa: **Amazon Lightsail vs Amazon EC2**
+
+| Característica                     | **Amazon Lightsail**                             | **Amazon EC2**                                    |
+| ---------------------------------- | ------------------------------------------------ | ------------------------------------------------- |
+| 🛠️ Configuración inicial          | Muy sencilla, ideal para principiantes           | Compleja, requiere experiencia técnica            |
+| 💸 Precios                         | Fijos (desde \$3.50/mes)                         | Variables por uso (pago por hora/segundo)         |
+| 📈 Escalabilidad                   | Limitada, ideal para proyectos pequeños/medianos | Escalable a nivel empresarial                     |
+| 🧱 Recursos personalizables        | Planes fijos (RAM, CPU, SSD predefinidos)        | Totalmente personalizable (instancias, storage)   |
+| 📡 Dirección IP estática           | Incluida fácilmente                              | Requiere configuración de Elastic IP              |
+| 🔧 Acceso al sistema               | SSH / navegador / llaves .pem                    | SSH / llaves .pem                                 |
+| 📦 Imágenes preinstaladas          | WordPress, LAMP, Node.js, etc.                   | AMIs básicas, tú eliges e instalas lo que quieras |
+| 📊 Monitoreo                       | Básico                                           | Avanzado con CloudWatch                           |
+| 🔐 Seguridad                       | Firewall básico en Lightsail                     | Control completo vía Grupos de Seguridad y IAM    |
+| 🔁 Snapshots                       | Manuales y automáticos disponibles               | Volúmenes EBS con snapshots                       |
+| ☁️ Integración con otros servicios | Limitada                                         | Total con todo el ecosistema AWS                  |
+| 🧑 Público ideal                   | Freelancers, emprendedores, pequeñas empresas    | Empresas medianas y grandes, desarrolladores pro  |
+
+### 💰 **Comparativa de costos** (Referencia: mayo 2025)
+
+### 🔹 **Amazon Lightsail** (Precios fijos mensuales)
+
+| Plan             | RAM    | CPUs | SSD   | Transferencia | Precio     |
+| ---------------- | ------ | ---- | ----- | ------------- | ---------- |
+| Básico           | 512 MB | 1    | 20 GB | 1 TB          | \$3.50/mes |
+| Medio            | 1 GB   | 1    | 40 GB | 2 TB          | \$5/mes    |
+| Alto rendimiento | 4 GB   | 2    | 80 GB | 4 TB          | \$20/mes   |
+
+### 🔸 **Amazon EC2** (Pago por uso)
+
+Ejemplo con instancia t3.micro (en free tier o uso bajo):
+
+* \$0.0104/hora = \~\$7.50/mes si está encendida 24/7
+* Sin contar EBS (almacenamiento), tráfico, IP elástica, etc.
+
+### ✅ ¿Cuál te conviene?
+
+| Necesidad                                               | Recomendación            |
+| ------------------------------------------------------- | ------------------------ |
+| Quiero lanzar un sitio rápido y barato                  | **Lightsail**            |
+| Quiero tener control total y escalar con microservicios | **EC2**                  |
+| No quiero pensar en precios variables                   | **Lightsail**            |
+| Necesito alta disponibilidad y balanceo de carga        | **EC2** con Auto Scaling |
+| Quiero aprender a usar AWS de forma profesional         | **EC2**                  |
+
+### Resumen
+
+Esto es lo que te ofrece Lightsail:
+
+- El costo de los CPUs depende del número que elijas.
+- Tienes almacenamiento SSD.
+- Te ofrece Networking y transferencia de datos.
+- Incluye manejo de DNS.
+- Tienes una IP estática asignada a ti.
+- Tienes acceso a otros servicios de **AWS**
+
+En una comparativa de costos, el plan más económico de Lightsail ofrece por $3.50 1 TB de transferencia mientras que la misma capacidad en **EC2** puede salir por más de $90. Sigue aprendiendo con [cursos de AWS](https://platzi.com/ruta/aws/ "cursos de AWS").
+
+## Creación y Configuración de un VPS con Ubuntu
+
+¡Perfecto! A continuación te presento una **guía paso a paso para crear y configurar un VPS con Ubuntu en AWS**, usando **Amazon Lightsail**, que es ideal para crear un VPS de manera sencilla y económica.
+
+### ✅ **Guía: Crear y Configurar un VPS con Ubuntu en Amazon Lightsail**
+
+### 🧩 **Paso 1: Accede a AWS y abre Lightsail**
+
+1. Inicia sesión en tu cuenta de AWS: [https://aws.amazon.com/](https://aws.amazon.com/)
+2. En el buscador de servicios escribe **Lightsail** y selecciónalo.
+3. Haz clic en **“Create Instance” (Crear instancia)**.
+
+### 🛠️ **Paso 2: Configura la instancia VPS**
+
+1. **Ubicación del servidor:** Selecciona la región donde quieres desplegar tu VPS.
+2. **Sistema Operativo:**
+
+   * Selecciona **Linux/Unix**
+   * Escoge **Ubuntu 22.04 LTS** o la versión que necesites.
+3. **Blueprint (imagen base):**
+
+   * Escoge **OS Only** → **Ubuntu**.
+4. **Plan de instancia:**
+
+   * Elige un plan, por ejemplo:
+
+     * 512MB RAM, 1 vCPU, 20 GB SSD → \$3.50/mes
+     * Puedes cambiarlo después si necesitas más recursos.
+5. **Nombre de la instancia:** Asigna un nombre como `mi-vps-ubuntu`.
+
+### 🔐 **Paso 3: Accede por SSH**
+
+1. Una vez creada, entra a tu instancia desde Lightsail:
+
+   * Haz clic en tu VPS → Clic en **“Connect using SSH”**.
+   * Se abrirá una terminal en el navegador.
+2. Opcional: También puedes conectar usando un cliente SSH como PuTTY o Terminal de Linux/macOS:
+
+   ```bash
+   ssh -i ~/.ssh/LightsailDefaultPrivateKey.pem ubuntu@TU_IP_PUBLICA
+   ```
+
+### ⚙️ **Paso 4: Configura tu sistema Ubuntu**
+
+1. Actualiza los paquetes:
+
+   ```bash
+   sudo apt update && sudo apt upgrade -y
+   ```
+2. Instala paquetes básicos:
+
+   ```bash
+   sudo apt install git curl unzip build-essential -y
+   ```
+
+### 🌐 **Paso 5: Instala un servidor web (opcional)**
+
+Por ejemplo, para instalar Apache:
+
+```bash
+sudo apt install apache2 -y
+sudo systemctl start apache2
+sudo systemctl enable apache2
+```
+
+Ahora abre tu navegador y visita tu IP pública. Verás la página de bienvenida de Apache.
+
+### 🧱 **Paso 6: Configura un firewall (opcional)**
+
+Puedes permitir solo tráfico esencial:
+
+```bash
+sudo ufw allow OpenSSH
+sudo ufw allow http
+sudo ufw allow https
+sudo ufw enable
+```
+
+### 📎 **Paso 7: Asocia una IP estática (recomendado)**
+
+1. En Lightsail → pestaña **Networking**.
+2. Asigna una **Static IP** a tu instancia para que no cambie.
+
+### 🎯 ¿Y luego qué?
+
+Puedes ahora:
+
+* Instalar tu aplicación web (Node.js, Python, Django, PHP, etc.)
+* Montar un WordPress
+* Configurar un dominio con DNS
+* Subir tu código con Git o FTP
+
+### Resumen
+
+Esto es lo que te ofrece Lightsail:
+
+- El costo de los CPUs depende del número que elijas.
+- Tienes almacenamiento SSD.
+- Te ofrece Networking y transferencia de datos.
+- Incluye manejo de DNS.
+- Tienes una IP estática asignada a ti.
+- Tienes acceso a otros servicios de **AWS**
+
+En una comparativa de costos, el plan más económico de Lightsail ofrece por $3.50 1 TB de transferencia mientras que la misma capacidad en **EC2** puede salir por más de $90. Sigue aprendiendo con [cursos de AWS](https://platzi.com/ruta/aws/ "cursos de AWS").
+
+## Instalación de Proyecto en Instancia Lysel con Apache y Git
+
+¡Perfecto! Aquí tienes una **guía paso a paso para instalar un proyecto web en una instancia de Amazon Lightsail con Ubuntu, Apache y Git**.
+
+### 🛠️ **Requisitos previos**
+
+* Tener una instancia de **Amazon Lightsail con Ubuntu** creada.
+* Acceso SSH a la instancia (puedes usar el navegador o tu terminal).
+* Tener un repositorio de Git con tu proyecto web.
+
+### ✅ **Paso 1: Conectarse a la instancia**
+
+Conéctate vía SSH desde la consola de Lightsail:
+
+1. Ve al panel de Lightsail.
+2. Haz clic en tu instancia.
+3. Haz clic en **"Connect using SSH"**.
+
+### 🧱 **Paso 2: Instalar Apache y Git**
+
+```bash
+sudo apt update && sudo apt upgrade -y
+sudo apt install apache2 git -y
+```
+
+Verifica que Apache esté funcionando:
+
+```bash
+sudo systemctl status apache2
+```
+
+Si no está activo, arráncalo:
+
+```bash
+sudo systemctl start apache2
+sudo systemctl enable apache2
+```
+
+Abre tu navegador y visita la **IP pública de tu instancia**, deberías ver la página de bienvenida de Apache.
+
+### 📁 **Paso 3: Clonar tu proyecto desde Git**
+
+Ve al directorio raíz de Apache (usualmente `/var/www/html`), limpia el contenido, y clona tu repo:
+
+```bash
+cd /var/www/html
+sudo rm -rf *
+sudo git clone https://github.com/tu_usuario/tu_repo.git .
+```
+
+> 🔁 Reemplaza `https://github.com/tu_usuario/tu_repo.git` por tu URL real.
+
+### 🔒 **Paso 4: Asignar permisos**
+
+```bash
+sudo chown -R www-data:www-data /var/www/html
+sudo chmod -R 755 /var/www/html
+```
+
+### 🌐 **Paso 5: Verifica tu sitio web**
+
+Abre tu navegador y accede a la IP pública de tu instancia:
+
+```
+http://TU_IP_PUBLICA
+```
+
+Tu sitio debería mostrarse.
+
+### 🔧 **Opcional: Habilitar un dominio personalizado**
+
+1. Apunta tu dominio a la IP estática de Lightsail (configura DNS).
+2. Configura un VirtualHost en Apache para usar el dominio.
+
+### Resumen
+
+Instalar un proyecto en **Lightsail** es muy parecido al procedimiento que se realiza en **EC2**.
+
+Cosas a tener en cuenta al momento de instalar tu proyecto con **Lightsail**:
+
+- Si estás en Windows, deberás usar un software como MobaXterm para tener una terminal que se conecte por SSH.
+- Recuerda hacerte administrador con el comando “sudo su”
+- Recuerda hacer update con el comando “apt-get update” porque es una instancia nueva y no tiene en memoria caché las direcciones desde dónde debe tomar el software. Si el proyecto se instala sin hacer esto, fallará.
+- El comando para instalar el software es “sudo apt install apache2 git libapache2-mod-php -y”.
+- La URL del proyecto es “[https://github.com/mauropm/quotes-generator](https://github.com/mauropm/quotes-generator%E2%80%9D "https://github.com/mauropm/quotes-generator")”.
+
+Configurar todo lo que esté en la red de Amazon es súper veloz, dándole más ventajas a la instalación de proyectos en **Lightsail**.
+
+## Instalación de bases de datos en Amazon LightSail
+
+Aquí tienes una guía clara para la **instalación y configuración de bases de datos en Amazon Lightsail**, incluyendo opciones integradas y la configuración manual si prefieres instalar el motor en tu propia instancia.
+
+### ✅ **Opción 1: Usar el servicio administrado de bases de datos de Lightsail (recomendado)**
+
+Amazon Lightsail ofrece instancias de base de datos preconfiguradas y administradas (MySQL, PostgreSQL).
+
+### 🔧 Paso a paso:
+
+1. Ve a [https://lightsail.aws.amazon.com](https://lightsail.aws.amazon.com).
+2. Haz clic en **“Bases de datos”** > **“Crear base de datos”**.
+3. Elige el motor: **MySQL** o **PostgreSQL**.
+4. Selecciona la versión, zona, plan y nombre.
+5. Espera a que el estado diga “Disponible”.
+
+### 🔐 Datos que obtendrás:
+
+* **Host** (endpoint).
+* **Puerto** (por defecto 3306 MySQL, 5432 PostgreSQL).
+* **Usuario y contraseña principal**.
+
+### 🔌 Conexión desde tu instancia:
+
+Ejemplo para MySQL:
+
+```bash
+sudo apt install mysql-client -y
+mysql -h TU_ENDPOINT -u usuario -p
+```
+
+### ✅ **Opción 2: Instalar manualmente una base de datos en una instancia de Lightsail (más flexible)**
+
+Puedes instalar tú mismo **MySQL**, **PostgreSQL** o **MariaDB** en una instancia Ubuntu de Lightsail.
+
+### 🔧 Paso a paso para instalar **MySQL Server** en Ubuntu:
+
+```bash
+sudo apt update
+sudo apt install mysql-server -y
+sudo systemctl enable mysql
+sudo systemctl start mysql
+```
+
+### 🔐 Configurar acceso remoto (opcional y con precaución):
+
+1. Edita el archivo:
+
+```bash
+sudo nano /etc/mysql/mysql.conf.d/mysqld.cnf
+```
+
+2. Cambia:
+
+```
+bind-address = 127.0.0.1
+```
+
+por:
+
+```
+bind-address = 0.0.0.0
+```
+
+3. Luego, crea un usuario remoto:
+
+```sql
+sudo mysql -u root
+
+CREATE USER 'admin'@'%' IDENTIFIED BY 'tu_clave_segura';
+GRANT ALL PRIVILEGES ON *.* TO 'admin'@'%' WITH GRANT OPTION;
+FLUSH PRIVILEGES;
+```
+
+4. Reinicia MySQL:
+
+```bash
+sudo systemctl restart mysql
+```
+
+5. Asegúrate de abrir el puerto 3306 en el **firewall de Lightsail**.
+
+### 🔒 Seguridad:
+
+* No uses el usuario root para conexiones remotas.
+* Limita IPs que puedan conectarse a tu base de datos.
+* Usa contraseñas seguras y actualiza regularmente.
+
+### 🚀 ¿Qué opción deberías elegir?
+
+* **Servicio administrado**: fácil de usar, backups automáticos, ideal para producción.
+* **Instancia propia**: mayor control, útil para pruebas o configuraciones personalizadas.
+
+### Resumen
+
+Las bases de datos en **Lightsail** también tienen un costo fijo con la disponibilidad que ofrece Amazon.
+
+Cosas a tener en cuenta al momento de crear tu base de datos:
+
+- **Lightsail** nos ofrece varias versiones de MySQL; si es un proyecto nuevo es recomendado utilizar la más actual. Si es una migración deberemos elegir la versión más cercana a nuestra base de datos existente.
+- **Lightsail** nos propone un password seguro, es recomendable usarlo.
+- Puedes configurar tu base de datos de dos maneras:
+ **Estándar**: Un servidor con una conexión desde afuera.
+ **HA**: Alta disponibilidad, donde tienes dos servidores o más con un load balancer.2
+
+**Lecturas recomendadas**
+
+[Databases in Amazon Lightsail | Lightsail Documentation](https://lightsail.aws.amazon.com/ls/docs/en_us/articles/amazon-lightsail-databases)
+
+## Configuración de Servidores y Software en Línea
+
+La **configuración de servidores y software en línea** se refiere al proceso de **preparar un servidor en la nube (como AWS, Azure, DigitalOcean, Lightsail, etc.)** e instalar y configurar el software necesario para que esté listo para alojar aplicaciones web, servicios o bases de datos. Aquí tienes una **guía paso a paso** general para realizar esta configuración:
+
+---
+
+## 🔧 1. Elección del Proveedor y del Servidor
+
+### Opciones comunes:
+
+* **AWS EC2 / Lightsail**
+* **DigitalOcean Droplets**
+* **Azure Virtual Machines**
+* **Google Cloud Compute Engine**
+
+### Recomendación para principiantes:
+
+✅ **Amazon Lightsail** – Interfaz sencilla y precios fijos.
+
+---
+
+## 🖥️ 2. Creación de la Instancia del Servidor
+
+1. Selecciona el sistema operativo (recomendado: **Ubuntu LTS**).
+2. Define el tamaño de la instancia (RAM, CPU).
+3. Configura el almacenamiento.
+4. Genera o carga una **llave SSH** para acceso seguro.
+5. Lanza el servidor y anota su IP pública.
+
+---
+
+## 🔐 3. Acceso al Servidor (con SSH)
+
+Desde terminal (Linux/macOS) o PuTTY (Windows):
+
+```bash
+ssh -i /ruta/tu_llave.pem ubuntu@IP_DEL_SERVIDOR
+```
+
+---
+
+## 🛠️ 4. Instalación del Software Básico
+
+### Actualización del sistema:
+
+```bash
+sudo apt update && sudo apt upgrade -y
+```
+
+### Instalación de software común:
+
+* **Apache / Nginx** (servidor web)
+* **MySQL / PostgreSQL / MariaDB** (base de datos)
+* **PHP / Node.js / Python** (lenguaje backend)
+* **Git** (control de versiones)
+
+Ejemplo:
+
+```bash
+sudo apt install apache2 php libapache2-mod-php mysql-server git -y
+```
+
+---
+
+## 🌍 5. Configuración del Servidor Web
+
+Para Apache:
+
+```bash
+sudo systemctl enable apache2
+sudo systemctl start apache2
+```
+
+Coloca tu sitio en `/var/www/html`.
+
+---
+
+## 🔐 6. Configuración de Seguridad
+
+* Instalar y configurar **UFW (firewall)**:
+
+```bash
+sudo ufw allow OpenSSH
+sudo ufw allow 'Apache Full'
+sudo ufw enable
+```
+
+* Cambiar puertos por defecto si es necesario.
+* Instalar **certificados SSL con Let's Encrypt**:
+
+```bash
+sudo apt install certbot python3-certbot-apache -y
+sudo certbot --apache
+```
+
+---
+
+## 💾 7. Despliegue del Proyecto
+
+1. Clona desde GitHub:
+
+```bash
+git clone https://github.com/tu_usuario/tu_proyecto.git
+```
+
+2. Configura permisos y rutas.
+3. Reinicia servicios si es necesario:
+
+```bash
+sudo systemctl restart apache2
+```
+
+---
+
+## 📈 8. Monitoreo y Mantenimiento
+
+* Instala **fail2ban** para proteger contra ataques de fuerza bruta.
+* Usa herramientas como **CloudWatch**, **Grafana** o **Netdata** para monitoreo.
+* Programa backups automáticos (con `cron` o herramientas externas).
+
+### Resumen
+
+### ¿Cuál es el reto propuesto en la clase?
+
+Iniciar con el pie derecho en el ámbito de la computación en la nube puede ser un desafío apasionante y lleno de aprendizaje. En la clase que nos ocupa, el objetivo es sencillo pero significativo: te enfrentarás a la tarea de crear una instancia desde cero y configurarla de manera adecuada. Esto te permitirá comprender la estructura y complejidad detrás de la puesta en marcha de un sistema en línea. No te preocupes, con práctica y dedicación, podrás dominar esta habilidad esencial.
+
+### ¿Cómo se configura e instala un servidor?
+
+La configuración e instalación de un servidor requiere seguir una serie de pasos que varían según el sistema operativo y las herramientas seleccionadas. Aquí hay una guía básica que puedes seguir:
+
+1. **Selecciona tu proveedor de nube**: Puedes optar por opciones populares como AWS, Azure o Google Cloud.
+2. **Crea una instancia**: Elige la imagen del sistema operativo que prefieras para tu servidor. Algunas opciones comunes incluyen Ubuntu, CentOS y Windows Server.
+3. **Configura el sistema operativo**:
+ - **Actualiza**: Asegúrate de actualizar el sistema operativo para garantizar que todas las aplicaciones y dependencias estén al día.
+ - **Configura el nombre del host y la red**: Establece un hostname significativo y configura las interfaces de red necesarias.
+4. **Instala el software necesario**: Dependiendo de tus necesidades, podría ser un servidor web como Apache o Nginx, una base de datos como MySQL o PostgreSQL, entre otros.
+5. **Configura el software instalado**: Asegúrate de que el software esté correctamente configurado para cumplir con tus requisitos específicos.
+6. **Asegura tu servidor**: Implementa medidas de seguridad como firewalls, SSH seguro y actualizaciones regulares del sistema.
+
+### ¿Qué debes tener en cuenta al trabajar con bases de datos?
+
+Trabajar con bases de datos en un entorno de servidor requiere atención a varios aspectos que asegurarán su correcto funcionamiento:
+
+1. **Elección del motor de la base de datos**: Define si necesitas uno relacional como MySQL o PostgreSQL, o uno NoSQL como MongoDB.
+2. **Configuración inicial**: Realiza los ajustes necesarios para que la base de datos opere eficientemente, como la asignación de memoria y el número máximo de conexiones.
+3. **Seguridad**: Protege los datos realizando copias de seguridad de manera regular y configurando roles de usuario con permisos específicos.
+4. **Optimización de consultas**: Asegúrate de que las consultas sean eficientes para minimizar el consumo de recursos y mejorar el rendimiento.
+5. **Monitoreo**: Implementa herramientas de monitoreo para detectar cualquier irregularidad en el rendimiento o operación.
+
+Dado que los sistemas de bases de datos son críticos para muchas aplicaciones, la atención a estos detalles garantizará un entorno más seguro y eficiente.
+
+### ¿Por qué es importante practicar la creación de instancias?
+
+Practicar la creación y configuración de instancias en la nube no solamente desarrolla habilidades técnicas, sino que también incrementa tu confianza al enfrentarte a tareas complejas. Esta práctica fomenta una comprensión más profunda de los servicios en la nube, lo cual es invaluable en el campo de la tecnología actual.
+
+1. **Experiencia práctica**: Aprender haciendo es una de las formas más efectivas de adquirir nuevas habilidades.
+2. **Adaptación a escenarios del mundo real**: Familiarizarte con entornos de servidor y sus retos te prepara para enfrentar problemas reales.
+3. **Mejora continua**: Con cada instancia que configuras, mejoras tu habilidad para optimizar y asegurar servidores eficientemente.
+
+La tecnología no se detiene, y como profesional, es crucial que te mantengas al día con las últimas innovaciones. El futuro de la computación está en la nube; adentrarte en este mundo te abrirá puertas hacia un sinfín de oportunidades. ¡No te rindas y sigue aprendiendo!
+
+## Contenedores en Amazon: Registro, Creación y Kubernetes con EKS
+
+Aquí tienes una **guía paso a paso sobre contenedores en Amazon AWS**, cubriendo **registro, creación y despliegue con Kubernetes (EKS)**:
+
+### 🧱 1. ¿Qué son los contenedores?
+
+Los contenedores (como los creados con Docker) encapsulan una aplicación y sus dependencias en un entorno portable. En AWS puedes:
+
+* **Crear imágenes de contenedores (Docker)**
+* **Registrar y almacenar imágenes en ECR (Elastic Container Registry)**
+* **Desplegar y orquestar contenedores con EKS (Elastic Kubernetes Service)**
+
+### 📦 2. Registro de Contenedores con **Amazon ECR**
+
+### a. Crear un repositorio en ECR:
+
+1. Entra a la consola de AWS → Servicio **ECR**.
+2. Clic en “**Create Repository**”.
+3. Define el nombre (ej: `mi-aplicacion`) y crea el repositorio.
+
+### b. Conecta tu CLI a ECR:
+
+```bash
+aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin <ID>.dkr.ecr.us-east-1.amazonaws.com
+```
+
+### c. Construye y sube tu imagen:
+
+```bash
+# Construcción de la imagen Docker
+docker build -t mi-aplicacion .
+
+# Etiquetado con la URL del repositorio
+docker tag mi-aplicacion:latest <ID>.dkr.ecr.us-east-1.amazonaws.com/mi-aplicacion:latest
+
+# Push a ECR
+docker push <ID>.dkr.ecr.us-east-1.amazonaws.com/mi-aplicacion:latest
+```
+
+### ⚙️ 3. Despliegue con **Amazon EKS (Elastic Kubernetes Service)**
+
+### a. Crear un clúster EKS (puedes usar consola o CLI):
+
+Con `eksctl` (fácil):
+
+```bash
+eksctl create cluster \
+  --name mi-cluster \
+  --version 1.29 \
+  --region us-east-1 \
+  --nodegroup-name grupo-nodos \
+  --node-type t3.medium \
+  --nodes 2 \
+  --nodes-min 1 \
+  --nodes-max 3 \
+  --managed
+```
+
+> Necesitas tener `eksctl`, `kubectl`, y `awscli` configurados.
+
+### b. Configura `kubectl`:
+
+```bash
+aws eks --region us-east-1 update-kubeconfig --name mi-cluster
+```
+
+### c. Despliega tu contenedor con Kubernetes:
+
+1. Crea un archivo `deployment.yaml`:
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mi-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: mi-app
+  template:
+    metadata:
+      labels:
+        app: mi-app
+    spec:
+      containers:
+      - name: mi-app
+        image: <ID>.dkr.ecr.us-east-1.amazonaws.com/mi-aplicacion:latest
+        ports:
+        - containerPort: 80
+```
+
+2. Aplica el despliegue:
+
+```bash
+kubectl apply -f deployment.yaml
+```
+
+3. Exponer el servicio:
+
+```bash
+kubectl expose deployment mi-app --type=LoadBalancer --port=80
+```
+
+### d. Verifica:
+
+```bash
+kubectl get all
+```
+
+### 🧩 Extra: Herramientas y Tips
+
+* Usa **IAM roles for service accounts** para limitar el acceso de pods a servicios AWS.
+* Configura **Auto Scaling** para nodos con `Cluster Autoscaler`.
+* Monitorea con **CloudWatch Container Insights** o Prometheus + Grafana.
+
+### Resumen
+
+**ECR** es el servicio que te permite registrar los contenedores a través de Dockerfiles en Amazon.
+Aunque existe **ECR**, no aparece como producto. Es necesario entrar a **ECS** y ya desde ahí encontramos las opciones para entrar al ECR.
+Importante antes de registrar contenedores: Tener instalado el **AWS CLI** y **Docker**, adicionalmente es importante tener instalado Git.
+
+**Lecturas recomendadas**
+
+[ubuntu - Got permission denied while trying to connect to the Docker daemon socket while executing docker stop - Stack Overflow](https://stackoverflow.com/questions/46759268/got-permission-denied-while-trying-to-connect-to-the-docker-daemon-socket-while "ubuntu - Got permission denied while trying to connect to the Docker daemon socket while executing docker stop - Stack Overflow")
+
+[How To Install and Use Docker on Ubuntu 18.04 | DigitalOcean](https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-18-04 "How To Install and Use Docker on Ubuntu 18.04 | DigitalOcean")
+
+## Ejecución de Contenedores Docker con Amazon ECS
+
+Aquí tienes una **guía paso a paso para ejecutar contenedores Docker en Amazon ECS (Elastic Container Service)**, que es la alternativa a EKS cuando quieres usar contenedores sin preocuparte por la administración directa de Kubernetes.
+
+### 🚢 ¿Qué es Amazon ECS?
+
+Amazon ECS (Elastic Container Service) es un **servicio de orquestación de contenedores totalmente administrado**. Permite ejecutar y escalar contenedores Docker fácilmente usando:
+
+* **Fargate** (sin administrar servidores)
+* **EC2** (tú manejas los servidores)
+
+### 🧭 Flujo básico para ejecutar contenedores en ECS
+
+1. ✅ Crear un **repositorio en Amazon ECR**
+2. 🛠️ Crear una **imagen Docker** y subirla
+3. 📦 Definir una **tarea ECS (task definition)**
+4. 🚀 Crear un **servicio ECS** para ejecutar y mantener los contenedores
+5. 🌍 Opcional: Exponer tu aplicación al público con un Load Balancer
+
+### 🧱 Paso a Paso
+
+### 1. Crear el repositorio en Amazon ECR
+
+```bash
+aws ecr create-repository --repository-name mi-aplicacion
+```
+
+> Guarda la URI que retorna, por ejemplo:
+> `<aws_account_id>.dkr.ecr.us-east-1.amazonaws.com/mi-aplicacion`
+
+### 2. Construir y subir la imagen Docker
+
+```bash
+# Login a ECR
+aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin <tu-id>.dkr.ecr.us-east-1.amazonaws.com
+
+# Build y tag
+docker build -t mi-aplicacion .
+docker tag mi-aplicacion:latest <tu-id>.dkr.ecr.us-east-1.amazonaws.com/mi-aplicacion:latest
+
+# Push
+docker push <tu-id>.dkr.ecr.us-east-1.amazonaws.com/mi-aplicacion:latest
+```
+
+### 3. Crear una definición de tarea (Task Definition)
+
+Desde la consola AWS o con JSON:
+
+```json
+{
+  "family": "mi-aplicacion-task",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "256",
+  "memory": "512",
+  "containerDefinitions": [
+    {
+      "name": "mi-aplicacion",
+      "image": "<tu-repo>.dkr.ecr.us-east-1.amazonaws.com/mi-aplicacion:latest",
+      "essential": true,
+      "portMappings": [
+        {
+          "containerPort": 80,
+          "hostPort": 80
+        }
+      ]
+    }
+  ]
+}
+```
+
+Sube esto usando:
+
+```bash
+aws ecs register-task-definition --cli-input-json file://task-definition.json
+```
+
+### 4. Crear un clúster ECS
+
+```bash
+aws ecs create-cluster --cluster-name mi-cluster
+```
+
+### 5. Crear un servicio para ejecutar la tarea
+
+```bash
+aws ecs create-service \
+  --cluster mi-cluster \
+  --service-name mi-servicio \
+  --task-definition mi-aplicacion-task \
+  --desired-count 1 \
+  --launch-type FARGATE \
+  --network-configuration "awsvpcConfiguration={subnets=[subnet-xxxxx],securityGroups=[sg-xxxxx],assignPublicIp=ENABLED}"
+```
+
+> ⚠️ Asegúrate de tener una VPC, subred y grupo de seguridad configurados.
+
+### 6. Exponer al público (opcional)
+
+* Usa **Application Load Balancer (ALB)** en la red de tu ECS.
+* Configura una **regla de escucha (listener rule)** para redirigir al servicio ECS.
+
+### 🧩 Tips Adicionales
+
+* Usa **CloudWatch Logs** para ver el output de tus contenedores.
+* Usa **autoscaling de servicios ECS** para responder a picos de tráfico.
+* Puedes gestionar ECS con la consola, CLI, o infra como código (CDK/Terraform).
+
+### Resumen
+
+**ECS** es toda la infraestructura que te permite correr contenedores de Docker directo en AWS.
+
+- Su ventaja es que no debes poner una máquina con Docker donde encima corran los contenedores. Amazon da la infraestructura pre-hecha y nosotros solo elegimos capacidades.
+- Únicamente se paga por la capacidad solicitada (cCPU, memoria, transferencia de datos).
+- Puedes escalar tu instancia basada en contenedor de manera manual.
+
+Usos clásicos de **ECS**:
+
+- Microservicios.
+- Migración de aplicaciones Legacy al Cloud.
+
+**Lecturas recomendadas**
+
+[Amazon ECR | Amazon Web Services](https://aws.amazon.com/es/ecr/ "Amazon ECR | Amazon Web Services")
+
+[Â¿QuÃ© es Amazon Elastic Container Service? - Amazon Elastic Container Service](https://docs.aws.amazon.com/es_es/AmazonECS/latest/developerguide/Welcome.html "Â¿QuÃ© es Amazon Elastic Container Service? - Amazon Elastic Container Service")
+
+## Implementación de Contenedores en AWS Fargate paso a paso
+
+Aquí tienes una **guía paso a paso para implementar contenedores en AWS Fargate** utilizando ECS (Elastic Container Service), sin necesidad de gestionar servidores. AWS Fargate permite ejecutar contenedores serverless, por lo que es ideal para aplicaciones containerizadas.
+
+### 🔧 **Requisitos Previos**
+
+* Tener una cuenta de AWS
+* Tener instalado:
+
+  * AWS CLI
+  * Docker
+  * `ecs-cli` o utilizar AWS Management Console
+* Una imagen de contenedor disponible (puede estar en [Docker Hub](https://hub.docker.com) o en [Amazon ECR](https://docs.aws.amazon.com/AmazonECR/latest/userguide/what-is-ecr.html))
+
+### 🪜 **Pasos para Implementar Contenedores en AWS Fargate**
+
+### 1. **Crear o subir una imagen de Docker**
+
+```bash
+# Crear imagen local
+docker build -t mi-app .
+
+# (Opcional) Subir a ECR
+aws ecr create-repository --repository-name mi-app
+aws ecr get-login-password | docker login --username AWS --password-stdin <aws_account_id>.dkr.ecr.<region>.amazonaws.com
+docker tag mi-app:latest <aws_account_id>.dkr.ecr.<region>.amazonaws.com/mi-app:latest
+docker push <aws_account_id>.dkr.ecr.<region>.amazonaws.com/mi-app:latest
+```
+
+### 2. **Crear una VPC (si no tienes una)**
+
+Puedes usar la VPC por defecto o crear una nueva con subredes públicas y privadas. Esto se hace desde la consola de AWS: **VPC > Launch VPC Wizard**.
+
+### 3. **Crear un Cluster ECS para Fargate**
+
+Desde la consola:
+
+* Ve a **ECS > Clusters**
+* Click en **Create Cluster**
+* Elige **Networking only (Fargate)**
+* Dale un nombre y crea el cluster
+
+### 4. **Definir una Task Definition (Definición de Tarea)**
+
+Desde la consola:
+
+* Ve a **ECS > Task Definitions**
+* Click en **Create new Task Definition**
+* Elige **FARGATE**
+* Configura:
+
+  * Nombre de la tarea
+  * Rol de ejecución (`ecsTaskExecutionRole`)
+  * Container:
+
+    * Nombre: `mi-app-container`
+    * Image: URI del contenedor en ECR o Docker Hub
+    * Memory: por ejemplo 512 MiB
+    * CPU: por ejemplo 256
+    * Port mappings: por ejemplo `80:80`
+
+### 5. **Crear un Servicio ECS**
+
+Desde la consola:
+
+* Ir a tu Cluster
+* Click en **Create** > **Create Service**
+* Tipo de lanzamiento: **FARGATE**
+* Task Definition: la creada en el paso anterior
+* Número de tareas: mínimo 1
+* Cluster: el que creaste
+* VPC y subredes: selecciona las de tu VPC
+* Seguridad: crea o selecciona un security group con el puerto necesario abierto (por ejemplo, el 80)
+
+### 6. **Configurar Load Balancer (opcional)**
+
+* Si tu app necesita ser pública o balanceada, puedes:
+
+  * Crear un **Application Load Balancer**
+  * Asociarlo a tu servicio
+  * Configurar el target group y listener para que redireccione al puerto del contenedor
+
+### 7. **Verifica el despliegue**
+
+* Entra al ECS Cluster > Service > Tareas
+* Debe estar en estado **RUNNING**
+* Si tienes Load Balancer, ve a la consola de EC2 > Load Balancers y revisa el **DNS name**
+
+### 8. **Accede a tu aplicación**
+
+* Si configuraste un Load Balancer, usa el URL público:
+
+  ```
+  http://<load-balancer-dns-name>
+  ```
+* Si no, puedes usar una IP pública de la subred (si la tarea está en una subred pública)
+
+### 🛡️ Roles necesarios
+
+Asegúrate de que tu rol `ecsTaskExecutionRole` tenga al menos estas políticas:
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "ecr:GetAuthorizationToken",
+        "ecr:BatchCheckLayerAvailability",
+        "ecr:GetDownloadUrlForLayer",
+        "ecr:BatchGetImage",
+        "logs:CreateLogStream",
+        "logs:PutLogEvents"
+      ],
+      "Resource": "*"
+    }
+  ]
+}
+```
+
+### ✅ Ejemplo de archivo `task-definition.json`
+
+```json
+{
+  "family": "mi-app-task",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "256",
+  "memory": "512",
+  "executionRoleArn": "arn:aws:iam::123456789012:role/ecsTaskExecutionRole",
+  "containerDefinitions": [
+    {
+      "name": "mi-app",
+      "image": "123456789012.dkr.ecr.us-east-1.amazonaws.com/mi-app:latest",
+      "portMappings": [
+        {
+          "containerPort": 80,
+          "hostPort": 80,
+          "protocol": "tcp"
+        }
+      ]
+    }
+  ]
+}
+```
+
+Puedes registrar la tarea con:
+
+```bash
+aws ecs register-task-definition --cli-input-json file://task-definition.json
+```
+
+### Resumen
+
+Cosas a tener en cuenta al momento de correr un contenedor:
+
+- **Networking only** está basado en un producto llamado AWS Fargate que nos da la infraestructura de Docker sin tener que preocuparnos por las máquinas base y es el que usaremos en este proyecto.
+- Es necesario crear una tarea relacionada con la imagen de Docker que creamos anteriormente.
+
+## Configuración de Docker en EC2 para Crear Imágenes de Contenedores
+
+**Introducción**
+
+Para poder ejecutar comandos como “docker build” necesitamos configurar nuestro ambiente de docker en una instancia EC2 pequeña.
+
+Configuración de Docker
+- Crea una instancia de EC2 con Ubuntu.
+- Selecciona una instancia de tamaño mínimo (nano, por ejemplo, si tienes una cuenta AWS de mas de un año. - En caso contrario, la t2.micro es la gratuita en tu primer año de servicio (recuerda, únicamente por un año).
+- Una vez que este en estado “Running” conectate a ella.
+- Teclea: a) sudo su b) apt-get update
+- Una vez que termine, corre, como usuario root: a) snap install docker -y b) apt-get install git -y
+- Después de esto, ya podrás hacer: a) git clone https://github.com/mauropm/quotes-generator.git b) cd quotes-generator c) dock build
+
+Con esto, ya podrás hacer imágenes de contenedores y siguiendo las instrucciones de la clase, podrás enviarlo a ECR (El registro de contenedores de AWS).
+
+## Implementación de Kubernetes en Amazon EKS
+
+A continuación se presenta una **guía paso a paso para implementar Kubernetes en Amazon EKS** (Elastic Kubernetes Service), la solución administrada de Kubernetes de AWS. Esta guía abarca desde la configuración de los requisitos previos hasta la verificación de la implementación y el despliegue de aplicaciones en el clúster.
+
+### 🔧 Requisitos Previos
+
+Antes de comenzar, asegúrate de contar con:
+
+* **Cuenta de AWS:** Con permisos administrativos o los permisos necesarios para crear recursos como VPCs, roles IAM, clústeres EKS y grupos de nodos.
+* **AWS CLI:** Configurada y autenticada con tus credenciales.
+* **eksctl:** Una herramienta de línea de comandos que simplifica la creación y gestión de clústeres EKS. Se recomienda [eksctl](https://eksctl.io/), ya que automatiza muchos de los pasos necesarios.
+* **kubectl:** La herramienta de línea de comandos para interactuar con Kubernetes.
+* **IAM Roles y Políticas:** Permisos adecuados para crear y asociar roles a los recursos EKS.
+* (Opcional) **Terraform o CloudFormation:** Si prefieres gestionar la infraestructura como código.
+
+### 🪜 Pasos para Implementar Kubernetes en Amazon EKS
+
+### 1. **Instalar y Configurar Herramientas**
+
+#### a. Instalar AWS CLI
+
+Verifica que tienes instalada la última versión de AWS CLI:
+
+```bash
+aws --version
+```
+
+Si no la tienes, sigue la [guía oficial de instalación](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html).
+
+#### b. Instalar eksctl
+
+Instala eksctl siguiendo las instrucciones de su [documentación oficial](https://eksctl.io/introduction/#installation). Por ejemplo, en sistemas basados en Unix:
+
+```bash
+curl --silent --location "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp
+sudo mv /tmp/eksctl /usr/local/bin
+```
+
+#### c. Instalar kubectl
+
+Asegúrate de tener `kubectl` instalado y actualizado. Puedes instalarlo con:
+
+```bash
+curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+chmod +x kubectl
+sudo mv kubectl /usr/local/bin/
+```
+
+### 2. **Crear el Clúster EKS**
+
+Utilizando **eksctl**, crear un clúster es muy sencillo. Puedes personalizar opciones como la región, versión de Kubernetes, y la cantidad/tamaño de nodos en el grupo de trabajadores.
+
+#### Ejemplo de comando para crear un clúster:
+
+```bash
+eksctl create cluster \
+  --name mi-cluster-eks \
+  --version 1.24 \
+  --region us-east-1 \
+  --nodegroup-name workers \
+  --node-type t3.medium \
+  --nodes 3 \
+  --nodes-min 1 \
+  --nodes-max 4 \
+  --managed
+```
+
+Este comando:
+
+* Crea un clúster llamado `mi-cluster-eks` en la región `us-east-1`.
+* Utiliza la versión especificada de Kubernetes.
+* Configura un grupo de nodos gestionados con instancias `t3.medium` y escalabilidad entre 1 y 4 nodos.
+
+**Nota:** El proceso puede tardar unos 10–20 minutos. Durante la creación, `eksctl` se encargará de crear la VPC, subredes, roles IAM y demás recursos necesarios.
+
+### 3. **Configurar `kubectl` para Conectarse al Clúster**
+
+Una vez completada la creación del clúster, `eksctl` actualiza automáticamente el archivo kubeconfig. Verifica la conexión con:
+
+```bash
+kubectl get svc
+```
+
+Deberías ver la lista de servicios del namespace `default` del clúster.
+
+### 4. **Verificar el Estado del Clúster y Grupos de Nodos**
+
+Para ver el estado de los nodos, ejecuta:
+
+```bash
+kubectl get nodes
+```
+
+La salida deberá listar los nodos que se encuentran en estado `Ready`.
+
+Si deseas más detalles sobre los componentes del clúster:
+
+```bash
+kubectl get pods -A
+```
+
+Esto muestra los pods que se están ejecutando en todos los namespaces, lo cual es útil para revisar los add-ons que EKS instala (por ejemplo, kube-system).
+
+### 5. **Desplegar Aplicaciones en el Clúster**
+
+Con el clúster operativo, puedes desplegar aplicaciones utilizando archivos YAML de Kubernetes.
+
+#### Ejemplo de despliegue de una aplicación NGINX:
+
+1. **Crear un archivo YAML llamado `nginx-deployment.yaml`:**
+
+   ```yaml
+   apiVersion: apps/v1
+   kind: Deployment
+   metadata:
+     name: nginx-deployment
+   spec:
+     replicas: 2
+     selector:
+       matchLabels:
+         app: nginx
+     template:
+       metadata:
+         labels:
+           app: nginx
+       spec:
+         containers:
+         - name: nginx
+           image: nginx:latest
+           ports:
+           - containerPort: 80
+   ```
+
+2. **Aplicar la definición:**
+
+   ```bash
+   kubectl apply -f nginx-deployment.yaml
+   ```
+
+3. **Verificar el despliegue:**
+
+   ```bash
+   kubectl get deployments
+   kubectl get pods
+   ```
+
+#### Exponer la aplicación (opcional)
+
+Para exponer el despliegue a través de un LoadBalancer de AWS:
+
+1. **Crear un servicio tipo LoadBalancer:**
+
+   ```yaml
+   apiVersion: v1
+   kind: Service
+   metadata:
+     name: nginx-service
+   spec:
+     type: LoadBalancer
+     selector:
+       app: nginx
+     ports:
+       - protocol: TCP
+         port: 80
+         targetPort: 80
+   ```
+
+2. **Aplicar el servicio:**
+
+   ```bash
+   kubectl apply -f nginx-service.yaml
+   ```
+
+3. **Obtener la IP o DNS del LoadBalancer:**
+
+   ```bash
+   kubectl get svc nginx-service
+   ```
+
+Una vez asignada la dirección, podrás acceder a NGINX desde el navegador.
+
+### 6. **Administrar y Escalar el Clúster**
+
+#### Escalado de nodos:
+
+Si necesitas ajustar el tamaño del grupo de nodos, puedes usar **eksctl** nuevamente. Por ejemplo, para escalar a 5 nodos:
+
+```bash
+eksctl scale nodegroup --cluster mi-cluster-eks --name workers --nodes 5 --region us-east-1
+```
+
+#### Escalado de aplicaciones:
+
+Modifica el número de réplicas en el despliegue y aplica los cambios:
+
+```bash
+kubectl scale deployment/nginx-deployment --replicas=4
+```
+
+#### Actualizaciones:
+
+* **Actualizar `kubectl`, `eksctl` y versiones de Kubernetes:** Revisa periódicamente las versiones y las notas de lanzamiento de EKS para mantenerte actualizado.
+* **Monitoreo y Logging:** EKS se integra con servicios de AWS como CloudWatch para logs y monitoreo, lo cual es útil para la administración del clúster en producción.
+
+### 7. **Limpieza de Recursos (Opcional)**
+
+Si deseas eliminar el clúster para evitar costos innecesarios, usa:
+
+```bash
+eksctl delete cluster --name mi-cluster-eks --region us-east-1
+```
+
+Esto eliminará el clúster, los grupos de nodos y los recursos asociados creados por eksctl.
+
+### Conclusión
+
+La implementación de Kubernetes en Amazon EKS con la ayuda de **eksctl** y **kubectl** simplifica la creación y gestión del clúster. Al seguir estos pasos podrás:
+
+* Configurar el entorno de EKS de forma automatizada.
+* Administrar y escalar tanto el clúster como las aplicaciones desplegadas.
+* Aprovechar la integración con otros servicios de AWS para monitoreo y seguridad.
+
+### Resumen
+
+- **EKS** es una implementación de Kubernetes en Amazon que no requiere que coordines nodos maestros y esclavos.
+- Te permite crear un ambiente de workers de k8s en **AWS**.
+- Podrás correr contenedores con el dashboard de Kubernetes o cualquier orquestador que quieras usar.
+
+**EKS** va desde poner el nodo maestro de Kubernetes, poner los workers y ya podrás conectarte a la API para correr tareas.
+
+**Lecturas recomendadas**
+
+[Amazon EKS – Servicio de Kubernetes administrado](https://aws.amazon.com/es/eks/)
+
+[Production-Grade Container Orchestration - Kubernetes](https://kubernetes.io/)
