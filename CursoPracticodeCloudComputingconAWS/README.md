@@ -2238,3 +2238,376 @@ La implementación de Kubernetes en Amazon EKS con la ayuda de **eksctl** y **ku
 [Amazon EKS – Servicio de Kubernetes administrado](https://aws.amazon.com/es/eks/)
 
 [Production-Grade Container Orchestration - Kubernetes](https://kubernetes.io/)
+
+## Configuración de kops y creación de clúster Kubernetes en AWS
+
+**Introducción**
+
+kops es una herramienta que nos permite crear y administrar kubernetes (también conocido como k8s) en AWS (y otros clouds). En esta lectura pondremos las instrucciones para configurarlo localmente y crear un cluster de k8s en AWS.
+
+Instrucciones
+Como root, en alguna instancia EC2 pequeña o en su máquina local (estas instrucciones son para linux).
+
+- sudo apt update
+- sudo apt install -y awscli
+- sudo snap install kubectl --classic
+- curl -LO [https://github.com/kubernetes/kops/releases/download/1.7.0/kops-linux-amd64](https://github.com/kubernetes/kops/releases/download/1.7.0/kops-linux-amd64 "https://github.com/kubernetes/kops/releases/download/1.7.0/kops-linux-amd64")
+- chmod +x kops-linux-amd64
+- mv ./kops-linux-amd64 /usr/local/bin/kops
+- Tienen que crear un usuario llamado kops en IAM.
+- Entren en IAM, hagan un nuevo usuario.
+- Configuren esto como acceso programatico.
+- Apunten el Access Key ID y el password.
+- Asígnenle el rol de AdministratorAccess (un rol preconfigurado en AWS IAM).
+- Salvar.
+- Regresen de la consola de AWS a tu consola / terminal, y continúen con lo siguiente:
+- aws config
+- aws iam create-group --group-name kops
+- aws iam attach-group-policy --policy-arn arn:aws:iam::aws:policy/AmazonEC2FullAccess --group-name kops
+- aws iam attach-group-policy --policy-arn arn:aws:iam::aws:policy/AmazonRoute53FullAccess --group-name kops
+- aws iam attach-group-policy --policy-arn arn:aws:iam::aws:policy/AmazonS3FullAccess --group-name kops
+- aws iam attach-group-policy --policy-arn arn:aws:iam::aws:policy/IAMFullAccess --group-name kops
+- aws iam attach-group-policy --policy-arn arn:aws:iam::aws:policy/AmazonVPCFullAccess --group-name kops
+- aws iam add-user-to-group --user-name kops --group-name kops
+- aws s3api create-bucket --bucket s3kopstudominiocom --region us-west-2
+- Antes de ejecutar el próximo comando, anexen lo siguiente a su archivo ~/.bashrc (al final): export AWS_ACCESS_KEY_ID=tuaccesskey export AWS_SECRET_ACCESS_KEY=tusecret export KOPS_STATE_STORE=s3://s3kopstudominiocom export KOPS_CLUSTER_NAME=kops-cluster-tudominio
+- Sálvenlo. Cierren sesión con “exit” y vuelvan a entrar. Ahora si, ejecuta:
+- kops create cluster --name=kops-cluster-tudominio --cloud=aws --zones=us-west-2a --state=s3kopstudominiocom
+- Esta operación puede tardar 20 minutos.
+- Cuando terminen, denle: kubectl apply -f [https://raw.githubusercontent.com/kubernetes/dashboard/master/src/deploy/recommended/kubernetes-dashboard.yaml](https://raw.githubusercontent.com/kubernetes/dashboard/master/src/deploy/recommended/kubernetes-dashboard.yaml "https://raw.githubusercontent.com/kubernetes/dashboard/master/src/deploy/recommended/kubernetes-dashboard.yaml")
+- Con eso, se instalará el dashboard de k8s que vieron en el ejemplo.
+- Loguearse con user admin, y el password se obtiene con: kops get secrets kube --type secret -oplaintext
+- Cuando se conecten, seleccionen anunciarse por token, y el token lo obtienen ejecutando lo siguiente: kops get secrets admin --type secret -oplaintext
+- Con eso, ya podrán dar click en “Create” y poder poner su imagen del contenedor en ECR.
+- Cuando termine de hacer el deployment, encontrarán la url en la sección en el menú llamada “Services”.
+
+**Nota:**
+
+Si estas instrucciones las llevan a cabo en su máquina local, si tecleas kubectl proxy, tendrán el dashboard en la dirección: [https://localhost:8001](https://localhost:8001/ "https://localhost:8001") - Noten que usa https siempre, y que el certificado no es confiable, por lo que tendrán que autorizar a su browser para poder abrirlo. La url completa para el dashboard, utilizando kubectl proxy, es:
+
+[http://localhost:8001/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/#!/login](http://localhost:8001/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/#!/login "http://localhost:8001/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/#!/login")
+
+**Conclusión:**
+
+Esta actividad no es fácil. Kubernetes es un proyecto en construcción, por lo que está en constante cambio todo el tiempo, y evoluciona tan rápido que estas instrucciones podrían volverse obsoletas pronto, por lo que les pido que no desesperen, y que si hay alguna situación que no esté funcionando, pregunten en la sección de comentarios.
+
+## Creación y Ejecución de Dockerfile para Aplicaciones
+
+Aquí tienes una **guía completa y paso a paso** para la **creación y ejecución de un `Dockerfile`** para contenerizar una aplicación, con ejemplos prácticos.
+
+### 🧱 ¿Qué es un Dockerfile?
+
+Un `Dockerfile` es un archivo de texto con instrucciones para construir una imagen Docker personalizada. Describe paso a paso cómo se debe construir esa imagen: sistema base, dependencias, archivos de tu app, comandos, etc.
+
+### 🔧 Requisitos Previos
+
+* Tener instalado [Docker](https://docs.docker.com/get-docker/) en tu sistema.
+* Código fuente de tu aplicación (por ejemplo, una app en Python, Node.js, etc.).
+* Terminal o línea de comandos.
+
+### 📁 Estructura Básica del Proyecto
+
+Ejemplo con una app en Python:
+
+```
+mi_app/
+├── app.py
+├── requirements.txt
+└── Dockerfile
+```
+
+### 📝 Paso 1: Crear el archivo `Dockerfile`
+
+### Ejemplo para una app Python (`app.py`)
+
+#### 📄 `Dockerfile`
+
+```Dockerfile
+# Imagen base oficial de Python
+FROM python:3.10-slim
+
+# Establecer el directorio de trabajo dentro del contenedor
+WORKDIR /app
+
+# Copiar los archivos locales al contenedor
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copiar el resto de los archivos de la app
+COPY . .
+
+# Puerto expuesto (opcional, solo para apps web)
+EXPOSE 5000
+
+# Comando para ejecutar la app
+CMD ["python", "app.py"]
+```
+
+#### 📄 `requirements.txt`
+
+```txt
+flask
+```
+
+#### 📄 `app.py` (ejemplo simple con Flask)
+
+```python
+from flask import Flask
+app = Flask(__name__)
+
+@app.route('/')
+def hello():
+    return 'Hola desde Docker!'
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5000)
+```
+
+### 🏗️ Paso 2: Construir la imagen Docker
+
+Desde la terminal, ubícate en la carpeta donde está el Dockerfile y ejecuta:
+
+```bash
+docker build -t mi_app_python .
+```
+
+> Esto crea una imagen llamada `mi_app_python`.
+
+### 🚀 Paso 3: Ejecutar el contenedor
+
+```bash
+docker run -d -p 5000:5000 --name contenedor_app mi_app_python
+```
+
+* `-d`: modo *detached* (en segundo plano).
+* `-p 5000:5000`: mapea el puerto del contenedor al de tu máquina.
+* `--name`: asigna un nombre al contenedor.
+
+Luego accede desde el navegador a:
+👉 [http://localhost:5000](http://localhost:5000)
+
+### 🔍 Paso 4: Verificar que funciona
+
+Verifica los logs del contenedor:
+
+```bash
+docker logs contenedor_app
+```
+
+Para entrar al contenedor en ejecución:
+
+```bash
+docker exec -it contenedor_app bash
+```
+
+### 🧹 Paso 5: Detener y eliminar
+
+```bash
+docker stop contenedor_app
+docker rm contenedor_app
+docker rmi mi_app_python
+```
+
+### 🎁 Otros ejemplos
+
+### 🔷 Node.js
+
+```Dockerfile
+FROM node:18
+WORKDIR /app
+COPY package*.json ./
+RUN npm install
+COPY . .
+EXPOSE 3000
+CMD ["npm", "start"]
+```
+
+### ✅ Buenas Prácticas
+
+* Usa imágenes oficiales y ligeras (`slim`, `alpine`).
+* Evita copiar archivos innecesarios (usa `.dockerignore`).
+* Usa capas eficientes: primero dependencias, luego código.
+* Etiqueta tus imágenes (`mi_app:v1.0`).
+
+### Resumen
+
+#### ¿Qué es Docker y por qué es importante en el desarrollo de software?
+
+Docker es una herramienta que ha revolucionado el mundo del desarrollo de software al facilitar la creación, despliegue y ejecución de aplicaciones en contenedores. Este enfoque permite que las aplicaciones se ejecuten de manera consistente en cualquier entorno, lo que resuelve el típico problema de “funciona en mi máquina”. Al encapsular una aplicación y todas sus dependencias en un contenedor, Docker garantiza que se pueda ejecutar sin modificaciones en cualquier máquina que tenga Docker instalado.
+
+#### ¿Cómo iniciar con la creación de un Dockerfile?
+
+La creación de un Dockerfile es el primer paso para contenerizar tu aplicación. Un Dockerfile es un archivo de texto que contiene los comandos necesarios para ensamblar una imagen de Docker. Aquí te mostramos un flujo básico para comenzar:
+
+1. **Definir la imagen base**: Selecciona una imagen base que se adecue a las necesidades de tu aplicación. Por ejemplo, si estás trabajando con Node.js, podrías usar `node:14` como tu imagen base.
+
+2. **Copiar el código fuente**: Incluye los archivos de tu aplicación al contenedor usando `COPY` o `ADD`.
+
+3. **Instalar dependencias**: Si tu aplicación necesita bibliotecas externas, asegúrate de instalarlas, normalmente utilizando un sistema de gestión de paquetes como `npm` para `Node.js` o `pip` para Python.
+
+4. **Especificar el comando de ejecución**: Define cuál será el comando que lanzará tu aplicación al ejecutarse en el contenedor. Usualmente, esto se hace con el comando `CMD` o `ENTRYPOINT`.
+
+Aquí tienes un ejemplo básico:
+
+```shell
+# Usar la imagen base Node.js
+FROM node:14
+
+# Crear el directorio de la aplicación
+WORKDIR /usr/src/app
+
+# Copiar archivos necesarios
+COPY package*.json ./
+
+# Instalar dependencias
+RUN npm install
+
+# Copiar el código fuente
+COPY . .
+
+# Exponer el puerto en el que corre la aplicación
+EXPOSE 8080
+
+# Comando de ejecución de la aplicación
+CMD ["node", "app.js"]
+```
+
+#### ¿Cómo publicar y correr tu contenedor en un register?
+
+Una vez que hayas creado tu contenedor Docker, el siguiente paso es subirlo a un registro para manejarlo fácilmente y compartirlo con otros. Los pasos son los siguientes:
+
+1. **Crear una cuenta en un Docker Registry**: Los registros más comunes son Docker Hub o un registry privado.
+
+2. **Etiquetar tu imagen**: Usa d`ocker tag <image_name> <repository>/<image>:<tag>` para etiquetar tu imagen.
+
+3. **Iniciar sesión**: Usa `docker login` para ingresar tus credenciales y conectarte con tu registro.
+
+4. **Subir la imagen**: Con el comando `docker push <repository>/<image>:<tag>` envías tu imagen al registro.
+
+5. **Ejecutar la imagen desde el registro**: En cualquier máquina con Docker, puedes tirar de la imagen usando `docker pull <repository>/<image>:<tag>`. Una vez descargada, la puedes correr con `docker run`.
+
+#### ¿Cuáles son los beneficios de correr aplicaciones con Docker?
+
+**Docker** ofrece una serie de ventajas significativas:
+
+- **Portabilidad mejorada**: Los contenedores se pueden desplegar en cualquier máquina que tenga Docker instalado, sin importar el sistema operativo subyacente.
+
+- **Uso eficiente de recursos**: Los contenedores comparten el kernel del sistema operativo, lo que los hace muy ligeros y fáciles de manejar.
+
+- **Fácil integración continua y despliegue (CI/CD)**: Docker se integra bien con las herramientas de CI/CD, lo que facilita la automatización de pruebas y despliegues.
+
+- **Aislamiento**: Garantiza que una aplicación en un contenedor no afecte a otras aplicaciones en el mismo host.
+
+Empezar con Docker puede ser un poco desalentador al principio, pero con práctica, se convertirá en una herramienta esencial en tu kit de desarrollador. ¡No dudes en experimentar y seguir practicando!
+
+## Introducción a AWS Lambda y la Computación Serverless
+
+Aquí tienes una **introducción clara y completa a AWS Lambda y la computación serverless**, ideal para comprender sus fundamentos, beneficios y cómo empezar a usarla.
+
+### ☁️ ¿Qué es la Computación Serverless?
+
+**Serverless** (sin servidor) no significa que no haya servidores, sino que **tú no administras los servidores**. En lugar de preocuparte por infraestructura, te enfocas únicamente en el código y la lógica de negocio.
+
+Con **serverless**:
+
+* No gestionas servidores ni instancias.
+* Pagas solo por el tiempo de ejecución real de tu código.
+* La escalabilidad es automática.
+
+### ⚙️ ¿Qué es AWS Lambda?
+
+**AWS Lambda** es el servicio serverless de AWS que te permite ejecutar código **sin aprovisionar ni administrar servidores**.
+
+### 🔑 Características clave:
+
+* **Ejecución basada en eventos:** Tu función se ejecuta al recibir un evento (ej. HTTP, carga en S3, mensaje en SQS).
+* **Escala automáticamente** según el tráfico.
+* **Cobra por invocación y duración** (ms).
+* Compatible con muchos lenguajes: **Python, Node.js, Java, Go, .NET, Ruby**.
+
+### 🔄 ¿Cómo Funciona AWS Lambda?
+
+1. **Subes tu código o lo escribes directamente en la consola.**
+2. **Configuras un trigger/evento** (ejemplo: un endpoint API Gateway o una carga en S3).
+3. Cuando el evento ocurre, **AWS ejecuta tu función Lambda**.
+4. **Lambda se detiene automáticamente** una vez termina la ejecución.
+
+### 🔧 Ejemplo Básico: Función Lambda en Python
+
+```python
+def lambda_handler(event, context):
+    name = event.get("name", "Mundo")
+    return {
+        "statusCode": 200,
+        "body": f"¡Hola, {name}!"
+    }
+```
+
+Esta función puede responder a solicitudes HTTP enviadas a través de Amazon API Gateway.
+
+### 🧠 Casos de Uso Comunes
+
+* **APIs sin servidor:** Lambda + API Gateway.
+* **Procesamiento de imágenes:** Lambda + S3.
+* **Automatización:** Lambda como respuesta a eventos de CloudWatch o DynamoDB.
+* **Chatbots, notificaciones, validaciones, etc.**
+
+### 🛠️ Cómo Crear una Función Lambda (pasos básicos)
+
+1. Ve a la consola de AWS → Lambda → “Crear función”.
+2. Elige “Autor desde cero”.
+3. Define:
+
+   * Nombre de la función
+   * Tiempo de ejecución (Node.js, Python, etc.)
+   * Rol de ejecución (permisos IAM)
+4. Escribe o sube tu código.
+5. Configura el **evento trigger** (ejemplo: HTTP mediante API Gateway).
+6. Guarda y prueba.
+
+### 📊 Ventajas de AWS Lambda
+
+✅ No gestionas infraestructura
+✅ Escalado automático
+✅ Paga solo por uso
+✅ Alta disponibilidad
+✅ Integración nativa con otros servicios de AWS
+
+### ⚠️ Consideraciones
+
+* **Tiempo de ejecución máximo:** 15 minutos por ejecución.
+* **Tamaño máximo del paquete:** 50 MB (zipped), 250 MB descomprimido.
+* **Estado efímero:** No almacena datos entre ejecuciones. Usa S3, DynamoDB, etc. para persistencia.
+* **Tiempo de inicio (cold start):** Algunas funciones pueden tardar más en arrancar si no han sido invocadas recientemente.
+
+### 🧪 Herramientas Útiles
+
+* **AWS SAM** (Serverless Application Model): Framework para definir y desplegar apps serverless.
+* **Serverless Framework:** Framework open-source que simplifica el desarrollo y despliegue de funciones serverless (multi-cloud).
+* **AWS CloudFormation/Terraform:** Infraestructura como código.
+
+### 📌 Conclusión
+
+**AWS Lambda y el enfoque serverless** te permiten crear aplicaciones escalables, económicas y fáciles de mantener sin preocuparte por los servidores. Ideal para microservicios, automatización, APIs y tareas event-driven.
+
+### Resumen
+
+Lambda es un producto que implementa la filosofía de **Serverless**, lo cual significa no tener un servidor sino tener funciones que hagan cosas muy específicas (sin embargo sí se usan servidores que administra **AWS** sin que tú pienses en ello). Es código que puede conectarse a una base de datos, servicios web, etc.
+
+En el mundo clásico se tenía un servidor o grupo de servidores corriendo software y teniendo microservicios. El software internamente resolvía todo y todo consistía en llamadas al mismo código. Con **Lambda** el enfoque es más de separar las funciones, ponerlas en diferentes servicios y correremos una parte del código en diferentes *endpoints*.
+
+**Lambda escala automáticamente**: Esto quiere decir que si tu microservicio comienza a usarse más, se te brindarán más recursos para que corra siempre correctamente.
+
+El costo de **Lambda** es atractivo porque AWS te da 1 millón de llamadas gratis por mes y cuando te excedas de eso, el costo es muy bajo.
+
+Lenguajes soportados:
+
+- Node.js (JavaScript)
+- Python
+- Java
+- C#
+- Go
+
+**Lecturas recomendadas**
+
+[AWS Lambda – Preguntas frecuentes](https://aws.amazon.com/es/lambda/faqs/ "AWS Lambda – Preguntas frecuentes")
