@@ -2611,3 +2611,1156 @@ Lenguajes soportados:
 **Lecturas recomendadas**
 
 [AWS Lambda – Preguntas frecuentes](https://aws.amazon.com/es/lambda/faqs/ "AWS Lambda – Preguntas frecuentes")
+
+## Creación y Configuración de Funciones Lambda en AWS
+
+Aquí tienes una **guía completa paso a paso para la creación y configuración de funciones Lambda en AWS**, ya sea desde la consola, CLI o frameworks como Serverless Framework o AWS SAM.
+
+### 🧠 ¿Qué es una Función Lambda?
+
+Una **función Lambda** es una pieza de código que se ejecuta en respuesta a un **evento**, sin necesidad de administrar servidores. Puede activarse por una API REST, una carga en S3, un cambio en DynamoDB, o un evento programado.
+
+### 🛠️ MÉTODO 1: Crear una Función Lambda desde la Consola de AWS
+
+### 🔹 Paso 1: Ir a la consola
+
+1. Inicia sesión en [AWS Console](https://console.aws.amazon.com/)
+2. Ve a **Servicios > Lambda > Crear función**
+
+### 🔹 Paso 2: Configurar la función
+
+* **Nombre de la función**: `miFuncionEjemplo`
+* **Tiempo de ejecución**: elige un lenguaje (ej. Python 3.10, Node.js 18, etc.)
+* **Permisos**:
+
+  * Crea un rol con permisos básicos de Lambda
+  * O usa uno existente con políticas como `AWSLambdaBasicExecutionRole`
+
+### 🔹 Paso 3: Escribir el código
+
+Ejemplo para Python:
+
+```python
+def lambda_handler(event, context):
+    return {
+        'statusCode': 200,
+        'body': '¡Hola desde Lambda!'
+    }
+```
+
+Haz clic en **Deploy (Implementar)**.
+
+### 🔹 Paso 4: Probar la función
+
+1. Haz clic en **"Probar"**
+2. Crea un evento de prueba (puedes dejar el JSON por defecto)
+3. Ejecuta y revisa el resultado
+
+### 🔁 MÉTODO 2: Crear función Lambda desde la CLI (AWS CLI)
+
+### Requisitos:
+
+* Tener [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html) configurado con `aws configure`
+
+### Pasos:
+
+1. Crear un archivo `lambda_function.py`:
+
+```python
+def lambda_handler(event, context):
+    return {
+        "statusCode": 200,
+        "body": "¡Hola desde AWS CLI!"
+    }
+```
+
+2. Empaquetar el código en un ZIP:
+
+```bash
+zip function.zip lambda_function.py
+```
+
+3. Crear la función:
+
+```bash
+aws lambda create-function \
+  --function-name miFuncionCLI \
+  --runtime python3.10 \
+  --role arn:aws:iam::<tu-id-cuenta>:role/<nombre-del-rol> \
+  --handler lambda_function.lambda_handler \
+  --zip-file fileb://function.zip
+```
+
+### ⚙️ MÉTODO 3: Usar Serverless Framework
+
+1. Instalar:
+
+```bash
+npm install -g serverless
+```
+
+2. Crear proyecto:
+
+```bash
+serverless create --template aws-python --path mi-lambda
+cd mi-lambda
+```
+
+3. Editar `handler.py` y `serverless.yml`
+
+4. Desplegar:
+
+```bash
+sls deploy
+```
+
+### 🔁 EVENTOS DISPONIBLES PARA DISPARAR UNA FUNCIÓN LAMBDA
+
+* **API Gateway**: para exponer la función como una API REST/HTTP.
+* **S3**: ejecución cuando se sube un archivo.
+* **DynamoDB Streams**: para cambios en tablas.
+* **EventBridge / CloudWatch Events**: tareas programadas.
+* **SNS / SQS**: mensajes de cola o notificación.
+
+### 🔒 CONFIGURACIONES ADICIONALES
+
+* **Timeout máximo**: hasta 15 minutos
+* **Memoria asignable**: entre 128 MB y 10,240 MB
+* **Variables de entorno**
+* **VPC**: si necesita acceso a RDS u otros recursos internos
+
+### 📦 DEPENDENCIAS
+
+Si necesitas instalar paquetes externos (Python):
+
+```bash
+mkdir python
+pip install requests -t python/
+zip -r layer.zip python
+```
+
+Y lo subes como **Lambda Layer**.
+
+### 🧪 Prueba, Monitoreo y Logs
+
+* **AWS CloudWatch Logs**: cada ejecución genera logs automáticamente.
+* Puedes ver los logs directamente desde la consola Lambda o en CloudWatch.
+
+### ✅ Conclusión
+
+Crear y configurar funciones Lambda es fácil y escalable. Puedes hacerlo desde la consola, CLI o frameworks, y vincularlas a muchos servicios de AWS para construir flujos serverless potentes y económicos.
+
+### Resumen
+
+Cosas a tener en cuenta al momento de configurar una función Lambda:
+
+- La opción de **Blueprints** se refiere a un documento o plano de lo que vas a hacer.
+- Para cada una de las funciones hay que crear un rol que dé acceso a los recursos de **AWS** que nosotros elijamos. Por default, sólo trae unos permisos básicos. La idea es dar el menor número de permisos posibles.
+- Puedes aprender a manejar el CLI [https://aws.amazon.com/es/cli/](https://aws.amazon.com/es/cli/ "https://aws.amazon.com/es/cli/") para otorgar permisos por línea de comandos.
+- La entrada de un **Lambda** es un **API Gateway**.
+
+**Lecturas recomendadas**
+
+[AWS Serverless Application Repository - Amazon Web Services](https://aws.amazon.com/serverless/serverlessrepo/ "AWS Serverless Application Repository - Amazon Web Services")
+
+## Creación de funciones Lambda en AWS con API Gateway
+
+Aquí tienes una **guía paso a paso para crear una función Lambda conectada a Amazon API Gateway**, ideal para exponer una **API REST** usando arquitectura serverless.
+
+### 🌐 ¿Qué vas a lograr?
+
+Crear una función Lambda que responde a solicitudes HTTP a través de una API pública usando **API Gateway**. Por ejemplo:
+
+```http
+GET https://abcd1234.execute-api.us-east-1.amazonaws.com/prod/saludo
+```
+
+### 🧰 Requisitos Previos
+
+* Cuenta de AWS activa.
+* Permisos para crear funciones Lambda, roles IAM y API Gateway.
+* Tener instalada la [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html) o usar la consola web.
+
+### 🚀 PASO A PASO EN LA CONSOLA
+
+### 🔹 1. Crear Función Lambda
+
+1. Ir a [AWS Lambda](https://console.aws.amazon.com/lambda/)
+
+2. Haz clic en **“Crear función”**
+
+3. Selecciona **“Autor desde cero”**
+
+   * Nombre: `saludoLambda`
+   * Tiempo de ejecución: `Python 3.10` o `Node.js 18.x`
+   * Permisos: crear un rol nuevo con políticas básicas
+
+4. Código de ejemplo (`Python`):
+
+```python
+def lambda_handler(event, context):
+    nombre = event.get('queryStringParameters', {}).get('nombre', 'mundo')
+    return {
+        'statusCode': 200,
+        'body': f'¡Hola, {nombre}!'
+    }
+```
+
+Haz clic en **“Implementar”** para guardar los cambios.
+
+### 🔹 2. Crear API Gateway
+
+1. Ir a [Amazon API Gateway](https://console.aws.amazon.com/apigateway)
+
+2. Selecciona **“Crear API” > REST API (antigua)** > **“Crear”**
+
+3. Configura:
+
+   * Nombre: `apiSaludo`
+   * Tipo: **Pública**
+   * Seguridad: abierta por ahora (puedes agregar auth después)
+
+4. Crear recurso:
+
+   * Click en `/` → **“Crear recurso”**
+   * Nombre: `saludo`
+   * Ruta: `/saludo`
+
+5. Crear método:
+
+   * Selecciona el recurso `/saludo`
+   * Haz clic en **“Crear método” → GET**
+   * Integración: selecciona **Lambda Function**
+   * Escribe el nombre: `saludoLambda`
+   * Marca la opción de usar la región correcta
+   * Autoriza el acceso si se solicita
+
+### 🔹 3. Desplegar la API
+
+1. Haz clic en **“Acciones” > “Implementar API”**
+2. Etapa: `prod`
+3. Anota el **endpoint URL** generado, como:
+
+```
+https://abcd1234.execute-api.us-east-1.amazonaws.com/prod/saludo
+```
+
+### 🔹 4. Probar la API
+
+Puedes hacer una solicitud en el navegador o con `curl`:
+
+```bash
+curl "https://abcd1234.execute-api.us-east-1.amazonaws.com/prod/saludo?nombre=Mario"
+```
+
+Respuesta esperada:
+
+```json
+¡Hola, Mario!
+```
+
+### ⚙️ OPCIONAL: Crear con Serverless Framework
+
+1. Instala:
+
+```bash
+npm install -g serverless
+```
+
+2. Crea un proyecto:
+
+```bash
+serverless create --template aws-python --path saludo-lambda-api
+cd saludo-lambda-api
+```
+
+3. Edita `handler.py`:
+
+```python
+def hello(event, context):
+    nombre = event.get('queryStringParameters', {}).get('nombre', 'mundo')
+    return {
+        "statusCode": 200,
+        "body": f"¡Hola, {nombre}!"
+    }
+```
+
+4. Edita `serverless.yml`:
+
+```yaml
+service: saludo-lambda-api
+
+provider:
+  name: aws
+  runtime: python3.10
+  region: us-east-1
+
+functions:
+  saludo:
+    handler: handler.hello
+    events:
+      - http:
+          path: saludo
+          method: get
+```
+
+5. Desplega:
+
+```bash
+sls deploy
+```
+
+6. Probar el endpoint generado en consola al final del despliegue.
+
+### 🧪 Consejos
+
+* Usa **CloudWatch Logs** para depurar errores.
+* Usa **API keys o Cognito** si quieres autenticar la API.
+* Usa **variables de entorno** para almacenar secretos o configuración.
+
+### ✅ Conclusión
+
+Conectar Lambda a API Gateway te permite construir microservicios y APIs REST completamente **serverless**, escalables y económicas. Puedes extenderlo con múltiples rutas, autenticación y validaciones.
+
+### Resumen
+
+El reto de esta clase consiste en crear una función **Lambda** con su **API Gateway** probando con diferentes lenguajes y diferentes códigos. Juega con los **Blueprints** y todas las opciones que tienes para crear funciones.
+
+**Lecturas recomendadas**
+
+[AWS | Lambda - Gestión de recursos informáticos](https://aws.amazon.com/es/lambda/ "AWS | Lambda - Gestión de recursos informáticos")
+
+## Despliegue y Gestión de Aplicaciones con Elastic Beanstalk
+
+Aquí tienes una **guía completa paso a paso** para el **despliegue y gestión de aplicaciones con AWS Elastic Beanstalk**, una de las formas más simples de desplegar aplicaciones web en AWS sin preocuparte demasiado por la infraestructura.
+
+### 🧠 ¿Qué es AWS Elastic Beanstalk?
+
+Elastic Beanstalk (EB) es un **servicio de orquestación de aplicaciones** que te permite desplegar automáticamente aplicaciones web en servicios como **EC2, S3, RDS, Load Balancer, Auto Scaling**, etc., sin tener que configurarlos uno por uno.
+
+### ✅ ¿Qué puedes desplegar?
+
+* Aplicaciones en: **Node.js, Python, Java, .NET, PHP, Ruby, Go, Docker**
+* Aplicaciones monolíticas o con múltiples servicios
+* Con o sin base de datos
+
+### 🧰 Requisitos Previos
+
+1. Tener una **cuenta AWS**
+2. Instalar el **AWS CLI**:
+   [Instrucciones](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html)
+3. Instalar la **Elastic Beanstalk CLI (EB CLI)**:
+   [Instrucciones](https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/eb-cli3-install.html)
+4. Configurar tus credenciales:
+
+```bash
+aws configure
+```
+
+### 🛠️ PASO 1: Preparar tu Aplicación
+
+### Ejemplo en Python (Flask):
+
+```bash
+mkdir app-eb && cd app-eb
+```
+
+1. Crea un archivo `application.py`:
+
+```python
+from flask import Flask
+app = Flask(__name__)
+
+@app.route('/')
+def hello():
+    return "¡Hola desde Beanstalk!"
+```
+
+2. Crea un archivo `requirements.txt`:
+
+```
+Flask==2.2.5
+```
+
+3. Crea el archivo `wsgi.py` (requerido por EB):
+
+```python
+from application import app
+
+if __name__ == "__main__":
+    app.run()
+```
+
+4. Estructura final:
+
+```
+app-eb/
+├── application.py
+├── requirements.txt
+└── wsgi.py
+```
+
+### 🛠️ PASO 2: Inicializar Elastic Beanstalk
+
+```bash
+eb init -p python-3.10 app-eb --region us-east-1
+```
+
+* Elige una clave SSH si deseas acceder a la instancia
+* Esto crea el archivo `.elasticbeanstalk/config.yml`
+
+### 🛠️ PASO 3: Crear un Entorno y Desplegar
+
+```bash
+eb create app-eb-env
+```
+
+Esto:
+
+* Lanza una instancia EC2
+* Configura Load Balancer
+* Instala los paquetes de Python
+* Sube el código
+
+Después de unos minutos:
+
+```bash
+eb open
+```
+
+👉 Te abrirá la aplicación desplegada en tu navegador.
+
+### 🛠️ PASO 4: Actualizar la Aplicación
+
+Haz cambios en tu código y ejecuta:
+
+```bash
+eb deploy
+```
+
+¡Y listo! Se actualiza automáticamente.
+
+### 🔒 PASO 5 (Opcional): Añadir Base de Datos RDS
+
+Puedes añadir una base de datos desde la consola:
+
+1. Ve al entorno en la consola de EB
+2. Selecciona **Configuration > Database**
+3. Elige el tipo de motor (MySQL, PostgreSQL, etc.)
+4. Elastic Beanstalk gestionará el RDS junto con tu aplicación
+
+⚠️ Nota: Si eliminas el entorno, la base de datos se elimina también a menos que la marques como persistente.
+
+### ⚙️ Gestión desde la Consola EB
+
+Desde la consola de Elastic Beanstalk puedes:
+
+* Ver logs
+* Escalar instancias
+* Reiniciar el entorno
+* Configurar variables de entorno
+* Agregar monitoreo (CloudWatch)
+
+### 🔁 Comandos útiles con EB CLI
+
+| Comando        | Acción                    |
+| -------------- | ------------------------- |
+| `eb init`      | Inicializar configuración |
+| `eb create`    | Crear entorno             |
+| `eb deploy`    | Desplegar cambios         |
+| `eb open`      | Abrir en el navegador     |
+| `eb status`    | Ver estado del entorno    |
+| `eb terminate` | Eliminar entorno          |
+| `eb logs`      | Ver logs                  |
+
+### 🧪 Buenas Prácticas
+
+* Usa `.ebextensions` para configuraciones adicionales (por ejemplo, instalar paquetes, crear usuarios, configurar Nginx).
+* Usa Elastic Load Balancer + Auto Scaling para alta disponibilidad.
+* Usa entornos separados para producción y pruebas (`eb create app-env-dev`, `app-env-prod`).
+
+### 📦 Extra: Ejemplo de `.ebextensions` para RDS
+
+```yaml
+# .ebextensions/db.config
+option_settings:
+  aws:elasticbeanstalk:application:environment:
+    DB_HOST: mydb.<region>.rds.amazonaws.com
+    DB_PORT: '3306'
+    DB_USER: admin
+    DB_PASS: mypassword
+```
+
+### ✅ Conclusión
+
+Elastic Beanstalk te permite desplegar, escalar y gestionar tu aplicación sin preocuparte por configurar servidores, balanceadores o escalado manual. Es ideal para desarrolladores que quieren enfocarse en su aplicación y no en la infraestructura.
+
+### Resumen
+
+**Elastic Beanstalk** es una arquitectura para cuando vas a hacer una entrega a producción de un proyecto web que tengas. Su ventaja es que incluye todo lo que necesitas en un sólo paquete:
+
+- Tienes un Endpoint donde puedes a través de Route 53 editar tu dominio.
+- Puedes tener un **Load Balancer**
+- Tienes instancias **EC2** Linux o Windows con soporte a muchos lenguajes.
+
+Maneja las siguientes plataformas:
+
+- Docker
+- Go
+- Java SE
+- Java / Tomcat
+- .NET (sobre Windows)
+- NodeJS
+- PHP
+- Otros
+
+**Elastic Beanstalk** te permite de manera muy fácil hacer un rollback, teniendo una gran flexibilidad para hacer un arreglo.
+Esta arquitectura es auto-escalable dependiendo del tráfico o necesidades.
+
+## Creación de Ambientes en Elastic Beanstalk con PHP
+
+Aquí tienes una guía paso a paso para la **creación de ambientes en AWS Elastic Beanstalk con PHP**, ideal para desplegar tus sitios o aplicaciones web rápidamente en la nube sin gestionar infraestructura manualmente.
+
+### 🧠 ¿Qué es un Ambiente en Elastic Beanstalk?
+
+Un **ambiente** en Elastic Beanstalk es un entorno de ejecución completo que incluye:
+
+* Una instancia EC2 con tu aplicación desplegada
+* Un servidor web configurado automáticamente (Apache para PHP)
+* Un balanceador de carga (si es necesario)
+* Escalabilidad automática y monitoreo
+
+### ✅ Requisitos Previos
+
+* Cuenta de AWS activa
+* Tener la [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html)
+* Tener la [EB CLI](https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/eb-cli3-install.html)
+* Configurar AWS CLI con:
+
+  ```bash
+  aws configure
+  ```
+
+### 🛠️ Paso 1: Crear un Proyecto PHP
+
+1. Crea un directorio para tu app:
+
+```bash
+mkdir app-php-eb && cd app-php-eb
+```
+
+2. Crea un archivo `index.php`:
+
+```php
+<?php
+echo "<h1>¡Hola desde AWS Elastic Beanstalk con PHP!</h1>";
+?>
+```
+
+3. Estructura final:
+
+```
+app-php-eb/
+└── index.php
+```
+
+### 🛠️ Paso 2: Inicializar el Proyecto con EB CLI
+
+```bash
+eb init -p php app-php-eb --region us-east-1
+```
+
+Responde las preguntas:
+
+* Selecciona la región
+* Crea o selecciona una clave SSH (opcional)
+
+Esto genera un archivo `.elasticbeanstalk/config.yml`.
+
+### 🛠️ Paso 3: Crear un Ambiente
+
+```bash
+eb create ambiente-php
+```
+
+Esto:
+
+* Crea el entorno EC2 con Apache y PHP
+* Despliega tu app
+* Configura Elastic Load Balancer si es necesario
+
+Espera unos minutos hasta que diga "Environment is ready".
+
+### 🛠️ Paso 4: Ver tu Aplicación
+
+```bash
+eb open
+```
+
+Se abrirá tu sitio en el navegador.
+Verás:
+
+```html
+¡Hola desde AWS Elastic Beanstalk con PHP!
+```
+
+### 🛠️ Paso 5: Desplegar Cambios
+
+Haz cambios en tus archivos `.php` y luego usa:
+
+```bash
+eb deploy
+```
+
+Elastic Beanstalk empaquetará y redeplegará tu aplicación.
+
+### 🔄 Comandos útiles EB CLI
+
+| Comando        | Acción                         |
+| -------------- | ------------------------------ |
+| `eb init`      | Inicializar proyecto Beanstalk |
+| `eb create`    | Crear ambiente                 |
+| `eb deploy`    | Subir código                   |
+| `eb open`      | Abrir la app en navegador      |
+| `eb status`    | Ver estado del entorno         |
+| `eb logs`      | Ver logs                       |
+| `eb terminate` | Eliminar el entorno            |
+
+### 🧰 Extra: Variables de Entorno
+
+Puedes definir variables de entorno PHP desde la EB CLI:
+
+```bash
+eb setenv DB_HOST=mi-db.rds.amazonaws.com DB_USER=admin DB_PASS=secreto
+```
+
+Y acceder a ellas en PHP así:
+
+```php
+$host = getenv('DB_HOST');
+```
+
+### 🧩 Extra: Archivos `.ebextensions`
+
+Puedes incluir configuraciones adicionales creando un directorio `.ebextensions` con archivos `.config`. Por ejemplo, para instalar extensiones PHP:
+
+```yaml
+# .ebextensions/php.config
+packages:
+  yum:
+    php-mbstring: []
+```
+
+### ✅ Conclusión
+
+Elastic Beanstalk con PHP es una manera **sencilla y profesional** de desplegar sitios PHP escalables en AWS. No necesitas configurar servidores ni manejar despliegues manualmente.
+
+### Resumen
+
+Cosas a tener en cuenta al momento de crear un ambiente:
+
+- Debemos tener nuestra aplicación en un archivo .zip. Si es la primera vez que usas el comando para crear archivos .zip, debes poner esto en la línea de comandos “sudo apt-get install zip -y”.
+- El comando para crear el archivo .zip es “zip -r nombredelzipfile.zip archivos”. Muchos archivos deberán ponerse de forma explícita como los .env
+- En “Version label” es recomendado poner el número de la versión que estamos manejando que nos permite recordar cuando tenemos más archivos y podamos devolvernos en el tiempo a alguna versión en específico si lo requerimos.
+
+## Actualización de Aplicaciones en Elastic Beanstalk
+
+Aquí tienes una guía clara y paso a paso para realizar la **actualización de aplicaciones en AWS Elastic Beanstalk**, ya sea mediante la **EB CLI**, la **consola web**, o incluso **CI/CD automatizado**.
+
+### 🧠 ¿Qué significa "actualizar una aplicación" en Elastic Beanstalk?
+
+Actualizar una aplicación en Elastic Beanstalk implica:
+
+* Subir una nueva versión del código
+* Desplegarlo sobre un entorno existente
+* Aplicar cambios de configuración si es necesario
+
+### ✅ 1. Requisitos Previos
+
+Antes de actualizar:
+
+* Debes tener una aplicación ya desplegada en Elastic Beanstalk.
+* Tener configurada la [EB CLI](https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/eb-cli3-install.html).
+* Tener el código fuente actualizado en tu máquina local.
+
+### 🛠️ 2. Método 1: Actualización desde EB CLI
+
+### 📝 Paso 1: Modifica tu aplicación local
+
+Haz los cambios necesarios en tu código fuente.
+
+### 🚀 Paso 2: Desplegar con `eb deploy`
+
+```bash
+eb deploy
+```
+
+Este comando:
+
+* Empaqueta tu código
+* Crea una nueva versión de la aplicación
+* La despliega en el entorno actual
+
+### ✅ Paso 3: Verifica que todo funcione
+
+```bash
+eb open
+```
+
+### 🖥️ 3. Método 2: Actualización desde la Consola Web de AWS
+
+### Paso 1: Empaqueta tu código
+
+* Crea un archivo `.zip` con el contenido de tu aplicación (sin incluir carpetas como `.git`, `node_modules`, etc.)
+
+```bash
+zip -r app-v2.zip .
+```
+
+### Paso 2: Ve a la Consola de Elastic Beanstalk
+
+1. Abre: [https://console.aws.amazon.com/elasticbeanstalk](https://console.aws.amazon.com/elasticbeanstalk)
+2. Selecciona tu aplicación
+3. Ve a **Application versions**
+4. Haz clic en **Upload**
+5. Carga el archivo `.zip`
+6. Haz clic en **Deploy** y selecciona el entorno
+
+### 🔄 4. Método 3: Automatización con CI/CD (opcional)
+
+Puedes configurar un flujo de CI/CD con GitHub Actions, CodePipeline o GitLab CI que:
+
+* Detecta cambios en tu repositorio
+* Empaqueta y despliega automáticamente a Elastic Beanstalk
+
+Ejemplo básico de GitHub Actions:
+
+```yaml
+name: Deploy to Elastic Beanstalk
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Deploy to EB
+        uses: einaregilsson/beanstalk-deploy@v20
+        with:
+          aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          application_name: "mi-app"
+          environment_name: "mi-entorno"
+          region: "us-east-1"
+          version_label: "v1-${{ github.run_number }}"
+          deployment_package: "app.zip"
+```
+
+### 🧰 Extras útiles
+
+### Ver historial de versiones:
+
+```bash
+eb appversion
+```
+
+### Cambiar a una versión anterior:
+
+```bash
+eb deploy --version label-antiguo
+```
+
+### Ver logs:
+
+```bash
+eb logs
+```
+
+### ✅ Conclusión
+
+Actualizar aplicaciones en Elastic Beanstalk es sencillo, y puedes hacerlo:
+
+* Con un solo comando (`eb deploy`)
+* Desde la consola web
+* O automáticamente con CI/CD
+
+Esto te da **velocidad**, **control de versiones** y **facilidad para revertir** si algo sale mal.
+
+### Resumen
+
+#### ¿Cómo actualizar una versión en Elastic Beanstalk?
+
+Actualizar la versión de una aplicación en Elastic Beanstalk es un proceso clave para asegurar que se tenga siempre la infraestructura más eficiente y segura. En Elastic Beanstalk, se pueden crear varios ambientes para una aplicación, como desarrollo, pruebas, calidad y producción. Tener configuraciones específicas para cada entorno optimiza el flujo de trabajo y minimiza errores.
+
+#### ¿Cómo crear un archivo ZIP para la nueva versión?
+
+Antes de proceder con la actualización, es esencial crear un archivo ZIP con los cambios efectuados en la aplicación. Este archivo contendrá todos los archivos necesarios, como el `index.php` y `Quotes.txt`. A continuación, se muestra cómo hacerlo:
+
+1. Abre el proyecto en tu consola.
+2. Realiza los cambios necesarios en el código, como por ejemplo, actualizar el texto o agregar nuevos autores.
+3. Crea un archivo ZIP que contenga la nueva versión, por ejemplo, Quotes versión 2.
+`zip -r Quotes_v2.zip index.php Quotes.txt`
+
+#### ¿Cómo desplegar la nueva versión?
+
+Una vez que el archivo ZIP está listo, se debe subir y desplegar en Elastic Beanstalk.
+
+1. En la consola de Elastic Beanstalk, haz clic en el botón "Upload and Deploy".
+2. Selecciona el archivo de la nueva versión ZIP y asigna un número de versión nuevo, por ejemplo, 2.0.
+
+El proceso de despliegue puede hacerse de distintas maneras, cada una con sus ventajas y desventajas.
+
+#### ¿Qué tipos de despliegues existen?
+
+Se pueden seleccionar entre despliegues simultáneos o en etapas (Rolling Deployments):
+
+- **Simultáneo**: Actualiza todos los servidores al mismo tiempo, minimizando el tiempo de actualización pero con un mayor riesgo si algo falla.
+- **Rolling**: Actualiza un tercio de los servidores al principio, seguido por los siguientes tercios, hasta completar la actualización. Esto reduce la posibilidad de un fallo total, pero puede afectar a los usuarios si hay un desajuste entre versiones.
+
+#### ¿Cuál es la mejor estrategia de despliegue?
+
+Decidir la mejor estrategia depende de factores como:
+
+1. Horarios de menos tráfico (para minimizar la afectación al usuario).
+2. Configuración y programación de la aplicación.
+
+Recomendamos realizar las actualizaciones fuera de las horas pico o cuando haya menos usuarios activos, por ejemplo, temprano en la mañana o tarde en la noche.
+
+#### ¿Cómo verificar que la actualización fue exitosa?
+
+Una vez que el despliegue ha comenzado, es vital monitorizar los eventos para garantizar que todo se haya actualizado correctamente. En el apartado de "Eventos recientes" verás las notificaciones sobre el estado del despliegue. Si se presenta algún problema, esto queda registrado y puedes tomar acciones correctivas.
+
+Además, al hacer clic en "Health", puedes ver detalles sobre las instancias de EC2, como el tiempo que tomaron en actualizarse y la versión actual implementada. Si todo está en verde y muestra la nueva versión, entonces la actualización fue exitosa.
+
+Elastic Beanstalk facilitan el despliegue al permitir una revisión detallada del estado de tu aplicación. Eso sí, si aún deseas aprender más sobre AWS y Elastic Beanstalk, un curso como el de Introducción a AWS de Platzi podría enriquecer aún más tu conocimiento.
+
+Continúa explorando y aprendiendo más sobre cómo mejorar tus habilidades en manejo de servidores y despliegues. ¡Buena suerte en tus futuras actualizaciones!
+
+**Lecturas recomendadas**
+
+[AWS | Elastic beanstalk para aplicaciones web desarrolladas con Java](https://aws.amazon.com/es/elasticbeanstalk/ "AWS | Elastic beanstalk para aplicaciones web desarrolladas con Java")
+
+## Creación de Aplicaciones en Elastic Beanstalk
+
+Aquí tienes una guía completa para la **creación de aplicaciones en AWS Elastic Beanstalk**, paso a paso, ideal para quienes desean desplegar rápidamente aplicaciones web sin preocuparse por la infraestructura.
+
+### 🧠 ¿Qué es una "aplicación" en Elastic Beanstalk?
+
+En Elastic Beanstalk, una **aplicación** es una colección lógica que contiene:
+
+* Una o más **versiones de código**
+* Uno o más **ambientes de ejecución** (entornos con EC2, balanceadores, RDS, etc.)
+
+### ✅ Requisitos Previos
+
+Antes de comenzar:
+
+* Cuenta de AWS activa
+* AWS CLI y EB CLI instaladas
+* Ejecutar `aws configure` para configurar tus credenciales
+
+### 🛠️ Paso 1: Crear tu proyecto
+
+Ejemplo con una aplicación sencilla (Node.js, PHP, Python, etc.)
+
+### 📁 Estructura básica:
+
+```bash
+mkdir mi-app && cd mi-app
+```
+
+Ejemplo con Node.js:
+
+```javascript
+// index.js
+const http = require('http');
+const port = process.env.PORT || 3000;
+const server = http.createServer((req, res) => {
+  res.end('¡Hola desde Elastic Beanstalk!');
+});
+server.listen(port);
+```
+
+Y su `package.json`:
+
+```json
+{
+  "name": "mi-app",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  }
+}
+```
+
+### 🛠️ Paso 2: Inicializar Elastic Beanstalk
+
+Ejecuta:
+
+```bash
+eb init
+```
+
+### Preguntas comunes:
+
+* Nombre de la aplicación: `mi-app`
+* Plataforma: Elige según tu lenguaje (Node.js, PHP, Python, etc.)
+* Región: por ejemplo `us-east-1`
+* ¿Deseas usar SSH? (opcional, útil para debug)
+
+Esto crea un archivo `.elasticbeanstalk/config.yml`.
+
+### 🛠️ Paso 3: Crear el ambiente de ejecución
+
+```bash
+eb create mi-entorno
+```
+
+Elastic Beanstalk creará:
+
+* Instancia EC2
+* Balanceador de carga (si aplica)
+* Configuración de red, seguridad, monitoreo
+
+Este proceso tarda entre 3–7 minutos.
+
+### 🛠️ Paso 4: Abrir la aplicación
+
+Cuando el entorno esté listo, ejecuta:
+
+```bash
+eb open
+```
+
+Verás tu aplicación corriendo en la URL pública proporcionada por Elastic Beanstalk.
+
+### 🚀 Paso 5: Actualizar tu aplicación (despliegue continuo)
+
+Haz cambios en tu código y usa:
+
+```bash
+eb deploy
+```
+
+Beanstalk empaquetará el código, creará una nueva versión y la aplicará al entorno.
+
+### 🔧 Extras opcionales
+
+### 🧩 Variables de entorno
+
+```bash
+eb setenv DB_USER=admin DB_PASS=secreto
+```
+
+Y luego en tu código:
+
+```js
+const user = process.env.DB_USER;
+```
+
+### 🧰 Archivos `.ebextensions`
+
+Permiten configurar el entorno automáticamente (por ejemplo, instalar paquetes o activar logs).
+
+Ejemplo:
+
+```yaml
+# .ebextensions/01_packages.config
+packages:
+  yum:
+    git: []
+```
+
+### 📌 Comandos útiles EB CLI
+
+| Comando        | Descripción                   |
+| -------------- | ----------------------------- |
+| `eb init`      | Inicializa proyecto Beanstalk |
+| `eb create`    | Crea un nuevo entorno         |
+| `eb open`      | Abre la app en el navegador   |
+| `eb deploy`    | Despliega nueva versión       |
+| `eb logs`      | Muestra logs del entorno      |
+| `eb terminate` | Elimina un entorno            |
+
+### ✅ Conclusión
+
+Elastic Beanstalk te permite crear, desplegar y escalar tus aplicaciones en la nube de forma **rápida y sin gestionar servidores manualmente**. Es ideal para aplicaciones web, APIs y prototipos listos para producción.
+
+### Resumen
+
+##### ¿Qué es Elastic Beanstalk y por qué es importante?
+
+Elastic Beanstalk es un servicio de Amazon Web Services (AWS) que facilita la implementación y el manejo de aplicaciones en la nube. Imagina que quieres poner en marcha tu aplicación web rápidamente, pero sin complicarte con la infraestructura subyacente. Aquí es donde Elastic Beanstalk entra en juego: te permite centrarte en el desarrollo de la aplicación mientras automatiza tareas como la provisión de servidores, balanceo de carga, escalado y monitoreo.
+
+#### ¿Cuáles son los beneficios de usar Elastic Beanstalk?
+
+Usar Elastic Beanstalk ofrece varios beneficios que pueden impactar positivamente en la gestión de tus aplicaciones:
+
+- **Simplicidad y rapidez**: Proporciona un entorno rápidamente desplegable, lo que acelera el lanzamiento de aplicaciones sin tener que preocuparse por la configuración manual de la infraestructura.
+- **Escalabilidad automática**: Elastic Beanstalk ajusta automáticamente la capacidad de las instancias según la demanda.
+- **Integración con otros servicios de AWS**: Se integra fácilmente con otros servicios de AWS, lo que potencia aún más tus aplicaciones a través de bases de datos, almacenamiento, seguridad, etc.
+- **Soporte para múltiples lenguajes y entorno**s: Compatible con una variedad de lenguajes de programación, como Java, .NET, PHP, Node.js, Python, Ruby, Go y Docker.
+
+#### ¿Cuáles son los pasos para crear una aplicación en Elastic Beanstalk?
+
+Implementar una aplicación en Elastic Beanstalk es un proceso relativamente directo gracias a su interfaz amigable. Aquí te presentamos una guía básica para comenzar:
+
+1. **Prepara tu aplicación**: Asegúrate de que está lista para desplegarse, con todos los archivos y configuraciones necesarias.
+2. **Crea un entorno en Elastic Beanstalk**: Inicia sesión en tu consola de AWS, navega hasta Elastic Beanstalk y crea un nuevo entorno. Elige la plataforma adecuada para tu aplicación.
+3. **Despliega tu aplicación**: Sube tu código fuente a Elastic Beanstalk. Puedes hacerlo directamente desde la consola de AWS o usar la CLI de Elastic Beanstalk.
+4. **Configura tu entorno**: Ajusta las configuraciones según tus necesidades, tales como el escalado automático, balanceo de carga y las variables de entorno.
+5. **Monitorea y ajusta**: Utiliza las herramientas de monitoreo integradas para ajustar y optimizar el rendimiento de tus aplicaciones.
+
+#### ¿Cómo pueden los desarrolladores aprovechar al máximo Elastic Beanstalk?
+
+Elastic Beanstalk no solo facilita el despliegue de aplicaciones, sino que también ofrece herramientas para maximizar su potencial. Aquí algunas recomendaciones:
+
+- **Automatización**: Aprovecha las capacidades de escritura de scripts para automatizar procesos repetitivos, lo que disminuye el tiempo gastado en tareas manuales.
+- **Monitoreo proactiv**o: Utiliza CloudWatch para monitorear el rendimiento y establecer alertas que te permita actuar antes de que surja un problema significativo.
+- **Revisar registros**: Access logs y otros registros se pueden utilizar para diagnosticar y solucionar problemas rápidamente, optimizando el tiempo de funcionamiento.
+- **Pruebas y política de rollback**: Implementa pruebas automatizadas y establece políticas de retroceso para asegurarte de que las actualizaciones no interrumpan servicios críticos.
+
+#### ¿Qué desafíos podrías encontrar al usar Elastic Beanstalk?
+
+Aunque Elastic Beanstalk simplifica mucho la gestión de aplicaciones, existen algunos desafíos para tener en cuenta:
+
+- **Configuraciones avanzadas**: Si deseas configuraciones extremadamente detalladas, puede que necesites ir más allá de lo que Elastic Beanstalk ofrece de manera predeterminada.
+- **Costos**: A medida que la aplicación escala, los costos también pueden aumentar rápidamente. Se debe supervisar el uso de recursos para optimizar los gastos.
+- **Dependencia en AWS**: Usar Elastic Beanstalk significa depender del ecosistema AWS, lo cual puede ser una limitación si deseas flexibilidad multicloud en el futuro.
+
+Aunque puede haber obstáculos, con una buena planificación y práctica, Elastic Beanstalk puede transformar significativamente la forma en que gestionas y despliegas aplicaciones en la nube.
+
+Finalmente, te animamos no solo a implementar aplicaciones en Elastic Beanstalk, sino también a experimentar y compartir tu experiencia con otros desarrolladores para obtener retroalimentación valiosa. La comunidad siempre es una gran fuente de aprendizaje y apoyo.
+
+## Servicios y Funcionalidades Actuales de AWS
+
+AWS (Amazon Web Services) ofrece **más de 200 servicios totalmente integrados**, utilizados por millones de empresas y desarrolladores en todo el mundo. A continuación te presento un resumen organizado por **categorías clave** con sus principales servicios y funcionalidades **actualizadas al 2025**:
+
+### ☁️ **1. Cómputo**
+
+Servicios que permiten ejecutar código o instancias de manera escalable.
+
+| Servicio          | Funcionalidad principal                                    |
+| ----------------- | ---------------------------------------------------------- |
+| **EC2**           | Instancias virtuales para cualquier sistema operativo      |
+| **Lambda**        | Ejecuta código sin servidores (serverless)                 |
+| **ECS / Fargate** | Contenedores orquestados (con o sin gestión de servidores) |
+| **EKS**           | Kubernetes administrado por AWS                            |
+| **Lightsail**     | VPS fácil de usar para sitios web y apps pequeñas          |
+| **Batch**         | Procesamiento de trabajos en lotes                         |
+
+### 🗃️ **2. Almacenamiento**
+
+Servicios para guardar y recuperar datos de forma segura.
+
+| Servicio    | Funcionalidad principal                        |
+| ----------- | ---------------------------------------------- |
+| **S3**      | Almacenamiento de objetos escalable y duradero |
+| **EBS**     | Volúmenes de disco para EC2                    |
+| **EFS**     | Sistema de archivos compartido (NFS) para EC2  |
+| **Glacier** | Almacenamiento de archivo de bajo costo        |
+| **FSx**     | File systems compatibles con Windows y Lustre  |
+
+### 🧠 **3. Inteligencia Artificial y Machine Learning**
+
+| Servicio        | Funcionalidad principal                             |
+| --------------- | --------------------------------------------------- |
+| **SageMaker**   | Desarrollo y despliegue de modelos ML               |
+| **Bedrock**     | Acceso a modelos fundacionales (como Claude, Titan) |
+| **Rekognition** | Análisis de imágenes y video                        |
+| **Transcribe**  | Transcripción de audio a texto                      |
+| **Polly**       | Conversión de texto a voz                           |
+| **Comprehend**  | Análisis de texto (sentimientos, entidades, etc.)   |
+
+### 🗄️ **4. Bases de Datos**
+
+| Servicio        | Tipo de base de datos                              |
+| --------------- | -------------------------------------------------- |
+| **RDS**         | Relacional (MySQL, PostgreSQL, Oracle, SQL Server) |
+| **Aurora**      | Motor relacional compatible con MySQL/PostgreSQL   |
+| **DynamoDB**    | Base de datos NoSQL altamente escalable            |
+| **DocumentDB**  | NoSQL tipo MongoDB                                 |
+| **ElastiCache** | Caché en memoria (Redis y Memcached)               |
+| **Neptune**     | Base de datos de grafos                            |
+| **Timestream**  | Base de datos para series temporales               |
+
+### 🌐 **5. Redes y Entrega de Contenido**
+
+| Servicio        | Funcionalidad principal                     |
+| --------------- | ------------------------------------------- |
+| **VPC**         | Redes privadas virtuales                    |
+| **CloudFront**  | CDN (entrega global de contenido)           |
+| **Route 53**    | DNS escalable y balanceo de tráfico         |
+| **API Gateway** | Creación y gestión de APIs REST y WebSocket |
+| **PrivateLink** | Conexión privada entre servicios y VPCs     |
+
+### 🔐 **6. Seguridad e Identidad**
+
+| Servicio                          | Funcionalidad principal                              |
+| --------------------------------- | ---------------------------------------------------- |
+| **IAM**                           | Control de acceso basado en roles                    |
+| **Cognito**                       | Autenticación de usuarios y federación (OAuth, SAML) |
+| **Secrets Manager**               | Gestión segura de secretos y credenciales            |
+| **KMS**                           | Gestión de claves de cifrado                         |
+| **Inspector / GuardDuty / Macie** | Seguridad automatizada y detección de amenazas       |
+
+### 🧰 **7. DevOps e Integración Continua**
+
+| Servicio           | Funcionalidad principal                               |
+| ------------------ | ----------------------------------------------------- |
+| **CodePipeline**   | Orquestación de CI/CD                                 |
+| **CodeBuild**      | Compilación de código                                 |
+| **CodeDeploy**     | Despliegue automático de aplicaciones                 |
+| **CloudFormation** | Infraestructura como código                           |
+| **CDK**            | Infraestructura como código usando lenguajes modernos |
+
+### 📊 **8. Monitoreo, Logging y Observabilidad**
+
+| Servicio       | Funcionalidad principal                 |
+| -------------- | --------------------------------------- |
+| **CloudWatch** | Logs, métricas, alarmas                 |
+| **X-Ray**      | Trazabilidad distribuida para debugging |
+| **AWS Config** | Auditoría de configuraciones            |
+| **CloudTrail** | Registro de actividades en AWS          |
+
+### 📈 **9. Análisis y Big Data**
+
+| Servicio       | Funcionalidad principal                        |
+| -------------- | ---------------------------------------------- |
+| **Athena**     | Consultas SQL sobre datos en S3                |
+| **Redshift**   | Almacenamiento de datos analíticos             |
+| **Kinesis**    | Ingesta y análisis de streaming en tiempo real |
+| **QuickSight** | BI y visualización de datos                    |
+| **Glue**       | ETL (extracción, transformación y carga)       |
+
+### 🏗️ **10. Migración e Híbrido**
+
+| Servicio                | Funcionalidad principal                            |
+| ----------------------- | -------------------------------------------------- |
+| **DMS**                 | Migración de bases de datos                        |
+| **Snowball / Snowcone** | Transferencia física de grandes volúmenes de datos |
+| **Storage Gateway**     | Integración de almacenamiento local y en la nube   |
+| **Outposts**            | Extensión de AWS en centros de datos locales       |
+
+### 🧩 Extras recientes y relevantes (2024-2025)
+
+| Servicio            | Novedades/Funcionalidad                       |
+| ------------------- | --------------------------------------------- |
+| **Amazon Q**        | Asistente de IA para desarrollo y operaciones |
+| **AWS AppComposer** | Entorno visual para construir apps serverless |
+| **PartyRock**       | Plataforma creativa no-code con IA generativa |
+| **Amazon Titan**    | Familia de modelos de IA propia de AWS        |
+
+### ✅ Conclusión
+
+Amazon Web Services es una plataforma **integral, escalable y segura**, ideal para todo tipo de proyectos: desde **startups** hasta **corporaciones globales**. Ofrece servicios para **infraestructura**, **desarrollo de aplicaciones**, **IA**, **análisis de datos**, **DevOps**, y más.
+
+### Resumen
+
+**AWS** está en constante crecimiento, siempre tendrá nuevos servicios o features. No dejes de estar aprendiendo nuevas cosas y capacitandote cada vez más.
+
+Sigue estudiando con [cursos de AWS](https://platzi.com/ruta/aws/ "cursos de AWS").
