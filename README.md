@@ -196,8 +196,7 @@
 - [Curso Práctico de Cloud Computing con AWS](CursoPracticodeCloudComputingconAWS)
 - [Curso Práctico de Storage en AWS](CursoPracticodeStorageenAWS)
 - [Curso Práctico de Bases de Datos en AWS](CursoPracticodeBasesdeDatosenAWS)
-
-Curso de Amazon DynamoDB
+- [Curso de Amazon DynamoDB](CursodeAmazonDynamoDB)
 Curso de Infraestructura Como Código en AWS
 
 ## Fundamentos de Servidores Linux
