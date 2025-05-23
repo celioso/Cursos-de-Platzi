@@ -506,7 +506,9 @@ Ver documentación = `aws help` para filtrar las palabras que deseo ver como dyn
 
 ver las tablas creadas = `aws dynamodb list-tables`
 
-crear una tabla = `aws dynamodb create-table --table-name DynamoDBPrueba --key-schema AttributeName=EstudianteId,KeyType=HASH --attribute-definitions AttributeName=EstudianteId,AttributeType=N --provisioned-throughput ReadCapacityUnits=5,WriteCapacityUnits=5`
+crear una tabla Dinamodb = `aws dynamodb create-table --table-name DynamoDBPrueba --key-schema AttributeName=EstudianteId,KeyType=HASH --attribute-definitions AttributeName=EstudianteId,AttributeType=N --provisioned-throughput ReadCapacityUnits=5,WriteCapacityUnits=5`
+
+crear tabla Personajes = `aws dynamodb create-table --table-name Personajes --key-schema AttributeName=Id,KeyType=HASH --attribute-definitions AttributeName=Id,AttributeType=N --provisioned-throughput ReadCapacityUnits=5,WriteCapacityUnits=5`
 
 crear una tabla con wizard toca instalar aws-cli2 esta [GitHub - aws/aws-cli at v2](https://github.com/aws/aws-cli/tree/v2#installation)
 
@@ -585,3 +587,66 @@ Si tu tabla no está en la región por defecto, agrega el parámetro:
 **Eliminar una tabla desde aws-cli** 
 ver las tablas `aws dynamodb list-tables`
  eliminar tablas se usa `aws dynamodb delete-table --table-name DynamoDBPrueba`
+
+ ## Índices locales
+
+ ### 📘 Índices Locales Secundarios en DynamoDB (LSI – *Local Secondary Index*)
+
+### 🔹 ¿Qué es un índice local secundario (LSI)?
+
+Un **LSI** permite crear **índices alternativos** sobre los datos en una tabla **sin cambiar la clave de partición**. Se utiliza para hacer consultas más eficientes basadas en otros atributos además de la clave principal.
+
+### 🔑 Diferencias clave:
+
+* **LSI** usa **la misma clave de partición** que la tabla base.
+* Te permite crear **una clave de ordenación (sort key)** alternativa.
+* Solo puedes definir LSIs **cuando creas la tabla**.
+* Hasta **5 LSIs por tabla**.
+* **Comparte el almacenamiento** con la tabla principal.
+
+### 📦 Ejemplo: Crear una tabla con un LSI
+
+```bash
+aws dynamodb create-table \
+  --table-name Estudiantes \
+  --attribute-definitions \
+    AttributeName=EstudianteId,AttributeType=S \
+    AttributeName=Curso,AttributeType=S \
+    AttributeName=Nota,AttributeType=N \
+  --key-schema \
+    AttributeName=EstudianteId,KeyType=HASH \
+    AttributeName=Curso,KeyType=RANGE \
+  --local-secondary-indexes '[
+    {
+      "IndexName": "NotaIndex",
+      "KeySchema": [
+        { "AttributeName": "EstudianteId", "KeyType": "HASH" },
+        { "AttributeName": "Nota", "KeyType": "RANGE" }
+      ],
+      "Projection": {
+        "ProjectionType": "ALL"
+      }
+    }
+  ]' \
+  --provisioned-throughput ReadCapacityUnits=5,WriteCapacityUnits=5
+```
+
+### 🔍 Consultar usando el índice
+
+Una vez creado, puedes hacer una consulta usando el índice así:
+
+```bash
+aws dynamodb query \
+  --table-name Estudiantes \
+  --index-name NotaIndex \
+  --key-condition-expression "EstudianteId = :id" \
+  --expression-attribute-values '{":id":{"S":"123"}}'
+```
+
+### 🧠 Proyección en LSI
+
+Con `ProjectionType` decides qué atributos incluir:
+
+* `KEYS_ONLY`: Solo claves primarias e índice.
+* `INCLUDE`: Añades atributos específicos.
+* `ALL`: Todos los atributos de la tabla.

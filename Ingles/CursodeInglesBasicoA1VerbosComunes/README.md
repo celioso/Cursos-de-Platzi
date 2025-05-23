@@ -112,26 +112,3 @@ Es importante notar que respuestas como "No, you have not" son incorrectas en es
 **Archivos de la clase**
 
 [usa--have--para-indicar-pertenencia-1.pdf](https://static.platzi.com/media/public/uploads/usa-_have_-para-indicar-pertenencia-1_991bdacf-cda1-4a4a-b67f-406d8d01d8d9.pdf)
-
-Exercise 1: Write sentences using "have" to express belonging and the following
-vocabulary. Use different personal pronouns (I, you, we, they).
-● Backpack. I have a Backpack.
-● Big house. You have a big house.
-● Homework. we have a lot of Homework.
-● New phone. I have a new phone.
-● Two brothers. we have two brothers
-
-Example: I have a car. → I don’t have a car.
-● I have a dog. = I don't have a dog.
-● They have a computer. = They don't have a computer
-● We have a meeting today. = We don't have a meeting today
-● She has a bicycle. = She doesn't has a bicycle
-● I have a lot of free time = I don't have a lot of free time
-
-Exercise 3: Make questions using "have"
-Example: I have a car. → Do you have a car?
-● I have a pet. = Do I have a pet?
-● We have a house. = Do we have a house?
-● They have a new teacher. = Do They have a new teacher
-● He has a favorite book. = Does he has a faverite book? 
-● She has a lot of friends. = Does she has a lot of friends?
