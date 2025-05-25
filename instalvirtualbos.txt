@@ -1,0 +1,63 @@
+Para instalar **VirtualBox** en Ubuntu, puedes seguir estos pasos. Te muestro dos métodos: uno rápido usando los repositorios de Ubuntu y otro usando el repositorio oficial de Oracle para obtener la última versión.
+
+---
+
+### ✅ **Método 1: Instalación desde los repositorios de Ubuntu (más fácil)**
+
+1. **Abre una terminal** y ejecuta:
+
+   ```bash
+   sudo apt update
+   sudo apt install virtualbox
+   ```
+
+2. (Opcional) Instala el **paquete de extensión** para soporte USB 2.0/3.0, RDP, etc.:
+
+   ```bash
+   sudo apt install virtualbox-ext-pack
+   ```
+
+Este método puede no darte la última versión de VirtualBox, pero es más estable y fácil de mantener con actualizaciones del sistema.
+
+---
+
+### ✅ **Método 2: Instalar la última versión desde el sitio oficial de Oracle**
+
+1. **Importa la clave pública de Oracle:**
+
+   ```bash
+   wget -q https://www.virtualbox.org/download/oracle_vbox_2016.asc -O- | sudo gpg --dearmor -o /usr/share/keyrings/oracle-virtualbox.gpg
+   ```
+
+2. **Agrega el repositorio oficial:**
+
+   ```bash
+   echo "deb [signed-by=/usr/share/keyrings/oracle-virtualbox.gpg] https://download.virtualbox.org/virtualbox/debian $(lsb_release -cs) contrib" | sudo tee /etc/apt/sources.list.d/virtualbox.list
+   ```
+
+3. **Actualiza el índice de paquetes:**
+
+   ```bash
+   sudo apt update
+   ```
+
+4. **Instala la versión más reciente de VirtualBox (por ejemplo, 7.0):**
+
+   ```bash
+   sudo apt install virtualbox-7.0
+   ```
+
+---
+
+### Verifica la instalación
+
+Una vez instalado, puedes lanzar VirtualBox desde el menú de aplicaciones o con el comando:
+
+```bash
+virtualbox
+```
+
+---
+
+¿Quieres instalar también **una máquina virtual Ubuntu o Windows** dentro de VirtualBox? Puedo ayudarte con eso también.
+
