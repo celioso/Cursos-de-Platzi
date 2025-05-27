@@ -1595,3 +1595,909 @@ El despliegue multicuentas con Stax Edit ofrece varias ventajas:
 - **Escalabilidad**: Facilita el crecimiento de la infraestructura, permitiendo agregar recursos y cuentas con flexibilidad.
 
 Con estos pasos, podrás gestionar despliegues de aplicaciones de gran escala en entornos seguros y organizados, lo que es fundamental para el éxito continuo de las aplicaciones empresariales. ¡Adelante, y sigue aprendiendo para mejorar tus habilidades en la gestión de infraestructuras en la nube!
+
+## Uso de Nested Stacks para superar límites en CloudFormation
+
+El **uso de Nested Stacks (stacks anidados)** en AWS CloudFormation es una práctica avanzada que te permite organizar, reutilizar y **superar los límites de tamaño y complejidad** en plantillas de infraestructura. Aquí te explico cómo funcionan, sus ventajas y cuándo usarlos:
+
+### ✅ ¿Qué son los Nested Stacks?
+
+Un **Nested Stack** es un stack que se define como un recurso dentro de otra plantilla principal. Permite dividir una plantilla grande en archivos más pequeños y reutilizables. Cada substack es una plantilla propia que se despliega como parte del stack principal.
+
+### 🎯 ¿Por qué usar Nested Stacks?
+
+### 1. **Superar límites de CloudFormation**
+
+CloudFormation impone los siguientes límites (por defecto):
+
+* Tamaño máximo de plantilla: **1 MB**
+* Número máximo de recursos por stack: **500**
+
+Con Nested Stacks puedes **dividir la lógica en varios archivos**, cada uno con su propio conjunto de recursos.
+
+### 2. **Reutilización de plantillas**
+
+Puedes crear componentes comunes como VPCs, buckets S3, roles IAM, etc., y reutilizarlos en múltiples stacks.
+
+### 3. **Modularidad y mantenibilidad**
+
+Organizas tu infraestructura en módulos lógicos:
+
+* `network.yaml`
+* `database.yaml`
+* `compute.yaml`
+* `app.yaml`
+
+Esto mejora la legibilidad y facilita el mantenimiento.
+
+### 🧱 Ejemplo de uso básico de Nested Stacks
+
+### 📁 Estructura de archivos
+
+```
+main-stack.yaml
+network-stack.yaml
+compute-stack.yaml
+```
+
+### `main-stack.yaml`
+
+```yaml
+AWSTemplateFormatVersion: '2010-09-09'
+Resources:
+  NetworkStack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: https://s3.amazonaws.com/mybucket/network-stack.yaml
+
+  ComputeStack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: https://s3.amazonaws.com/mybucket/compute-stack.yaml
+```
+
+### 🔗 Cómo usar Nested Stacks
+
+1. **Sube las plantillas hijas a un bucket S3** accesible por CloudFormation.
+2. Usa `AWS::CloudFormation::Stack` en la plantilla principal.
+3. Define la propiedad `TemplateURL` apuntando al archivo en S3.
+4. Pasa parámetros si es necesario usando `Parameters`.
+
+### 📌 Buenas prácticas
+
+* Usa nombres descriptivos para los stacks y sus parámetros.
+* Centraliza templates reutilizables en un bucket S3 versionado.
+* Valida individualmente cada substack antes de integrarlo.
+* Documenta dependencias y relaciones entre stacks.
+
+### 🚧 Consideraciones
+
+* Nested Stacks **cuentan como recursos**, así que ten en cuenta el límite de 500 recursos por stack.
+* Si un Nested Stack falla, **todo el stack principal puede revertirse**.
+* Requiere buena gestión de versiones y cambios para evitar problemas de dependencias.
+
+### Resumen
+
+#### ¿Qué son los nested stacks y por qué son necesarios?
+
+Los nested stacks son una importante solución para superar las limitaciones en el uso de AWS Cloud Formation, especialmente cuando debemos administrar una gran cantidad de recursos en un solo stack. La necesidad de utilizarlos surge debido al límite que existe en la cantidad de elementos que podemos manejar: 100 mappings y 200 recursos por stack. Cuando superamos estas cifras, necesitamos un enfoque diferente y es ahí donde entran en juego los nested stacks.
+
+### ¿Cómo funcionan los nested stacks?
+
+Imagina un stack maestro que sirve como un controlador principal que se comunica con varios stacks más pequeños, cada uno manejando menos de 200 recursos. Estos stacks pequeños pueden tener muchos más mappings y ayudas específicas para cada contexto. Esto no solo nos permite superar los límites impuestos por AWS, sino que también organiza y segmenta los recursos de manera efectiva.
+
+#### Ventajas de utilizar nested stacks
+
+Utilizar nested stacks no solo ayuda a superar limitaciones numéricas:
+
+- **Orden y organización**: Al dividir recursos en stacks separados, cada uno tiene su propósito y contexto claro, facilitando el entendimiento y manejo de los recursos.
+- **Facilidad de uso**: Con stacks más pequeños, las operaciones de troubleshooting (resolver problemas) se vuelven más simples y rápidas.
+- **Interacción de recursos**: A través de los outputs, podemos comunicar stacks entre sí, logrando que los recursos interactúen de manera eficiente.
+
+#### ¿Cómo los nested stacks benefician proyectos del día a día?
+
+Cuando gestionamos proyectos complejos que incluyen, por ejemplo, un API Gateway, una función Lambda, un repositorio de código y un DynamoDB, los nested stacks nos permiten desplegar estos recursos de manera eficiente y organizada:
+
+En un escenario sin nested stacks, todos los recursos se despliegan desde una única plantilla, complicando los cambios y la reutilización de recursos. Pero con nested stacks, un stack maestro controla la creación y gestión de stacks individuales para cada componente como Lambda o DynamoDB. Esto permite replicar, modificar y reutilizar componentes fácilmente sin complicaciones.
+
+#### Escenario práctico: Organización de recursos
+
+Un caso práctico es el siguiente: Imagina un proyecto que necesita desplegar recursos alojados en S3. Cada recurso puede manejarse de forma directa mediante su stack, lo que permite una gestión granular y evita sobrecarga en el stack principal. A través de direcciones en la AWS S3, los nested stacks se encargan de manejar cada componente de forma segregada.
+
+#### Implementación de un stack maestro con nested stacks
+
+Un stack maestro típicamente incluye una imagen de cómo debe estructurarse el proyecto, señalando:
+
+- La API y su diseño dentro del stack.
+- La función Lambda y sus dependencias.
+- Integración de DynamoDB como base de datos.
+- Uso de un bucket en S3 como almacenamiento central.
+
+Este enfoque promueve la reutilización de recursos y una implementación flexible, reducida en complejidad.
+
+#### Conclusión: Uso recomendado de nested stacks
+
+Utilizar nested stacks se convierte en una práctica esencial para cualquier proyecto con dimensionamiento considerable. No solo optimiza la gestión de recursos y su reutilización, sino que también contribuye a un diseño claro y ordenado que facilitan el mantenimiento y la escalabilidad. Para explorar más sobre este enfoque, el repositorio del curso ofrece ejemplos donde podrás reemplazar URLs y ajustar stacks a tus necesidades, maximizando el potencial del uso de AWS Cloud Formation en tus proyectos.
+
+## Despliegue de Recursos AWS con CloudFormation para Votan Help
+
+Aquí tienes una guía práctica para el **Despliegue de Recursos AWS con CloudFormation para Votan Help**, una aplicación (hipotética o real) que puede incluir APIs, bases de datos y lógica de negocio en Lambda. El enfoque se basa en **Infraestructura como Código (IaC)** utilizando AWS CloudFormation.
+
+### ✅ Objetivo
+
+Desplegar de forma automatizada los recursos de AWS necesarios para **Votan Help**, incluyendo:
+
+* API Gateway (REST o HTTP)
+* AWS Lambda Functions
+* DynamoDB (para almacenamiento)
+* Roles IAM (permisos)
+* Outputs exportables
+
+### 📦 Estructura de Recursos para Votan Help
+
+```yaml
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Recursos AWS para Votan Help
+
+Parameters:
+  TableName:
+    Type: String
+    Default: VotanHelpTable
+
+Resources:
+
+  ### DynamoDB Table ###
+  VotanHelpTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Ref TableName
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      SSESpecification:
+        SSEEnabled: true
+
+  ### IAM Role for Lambda ###
+  VotanHelpLambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: votan-help-lambda-role
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: votan-help-dynamodb-access
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - dynamodb:*
+                Resource: "*"
+              - Effect: Allow
+                Action:
+                  - logs:*
+                Resource: "*"
+
+  ### Lambda Function ###
+  VotanHelpFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: votan-help-handler
+      Handler: index.handler
+      Role: !GetAtt VotanHelpLambdaRole.Arn
+      Runtime: nodejs18.x
+      Timeout: 10
+      Code:
+        ZipFile: |
+          exports.handler = async (event) => {
+            return {
+              statusCode: 200,
+              body: JSON.stringify({ message: "Votan Help is working!" })
+            };
+          };
+
+  ### API Gateway HTTP API ###
+  VotanHelpApi:
+    Type: AWS::ApiGatewayV2::Api
+    Properties:
+      Name: votan-help-api
+      ProtocolType: HTTP
+      Target: !GetAtt VotanHelpFunction.Arn
+
+  ### API Integration Permission ###
+  LambdaPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Ref VotanHelpFunction
+      Action: lambda:InvokeFunction
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${VotanHelpApi}/*
+
+Outputs:
+  ApiEndpoint:
+    Value: !Sub "https://${VotanHelpApi}.execute-api.${AWS::Region}.amazonaws.com"
+    Export:
+      Name: VotanHelpAPIEndpoint
+  TableName:
+    Value: !Ref VotanHelpTable
+    Export:
+      Name: VotanHelpDynamoDB
+```
+
+### 🚀 Despliegue
+
+1. Guarda el archivo como `votan-help-stack.yaml`
+2. Súbelo a CloudFormation vía consola o CLI:
+
+```bash
+aws cloudformation create-stack \
+  --stack-name votan-help-stack \
+  --template-body file://votan-help-stack.yaml \
+  --capabilities CAPABILITY_NAMED_IAM
+```
+
+### 🛠️ Personalización
+
+Puedes añadir más funcionalidades como:
+
+* Autenticación con Cognito
+* API Gateway con rutas más complejas
+* Otros entornos (dev, prod) mediante parámetros
+
+### Resumen
+
+#### ¿Cómo desplegar recursos en AWS con un Stack?
+
+Aprovechar las capacidades de Amazon Web Services para desplegar aplicaciones y recursos es esencial para cualquier desarrollador. En este laboratorio, centrándonos en el despliegue de Votan Help, aprenderás a usar un Stack para crear y configurar recursos como API Gateway, Lambda y DynamoDB de manera eficiente. La estructura y coordinación de estos elementos es crucial para un proyecto exitoso, y aquí te mostramos cómo lograrlo.
+
+#### ¿Cómo clonar el repositorio de código?
+
+Para empezar, es importante contar con el código fuente correcto. Dirígete a tu repositorio de código y clónalo siguiendo estos pasos:
+
+1. Copia la URL del repositorio.
+2. Abre tu terminal y utiliza el comando git clone seguido de la URL copiada.
+3. Verifica que la clonación haya sido exitosa revisando la estructura de carpetas del repositorio en tu sistema local.
+
+#### ¿Cómo preparar el entorno de AWS S3 para el proyecto?
+
+Amazon S3 es un servicio de almacenamiento de objetos esencial donde se guarda el código y los archivos necesarios para Lambda. Aquí está cómo configurarlo:
+
+1. Accede a la consola de Amazon S3 y crea un bucket si no lo tienes ya. Solo necesitas especificar el nombre.
+2. Una vez creado el bucket, carga el código comprimido de la función Lambda en formato `.zip` o `.pkg`. Este archivo será clave para desplegar la función Lambda.
+
+#### ¿Cómo cargar y configurar el Stack en AWS CloudFormation?
+
+CloudFormation se utiliza para desplegar y manejar múltiples recursos en AWS con un solo template. A continuación, te explicamos cómo hacerlo:
+
+- Copia la URL completa del archivo de template master desde el repositorio de código en S3.
+- Accede a la consola de AWS CloudFormation y selecciona "Crear Stack".
+- Proporciona la URL copiada como el origen de tu template.
+- Completa los campos requeridos, como el nombre del Stack (por ejemplo, `VotaNextMaster`) y detalles específicos del proyecto como el nombre de la tabla de DynamoDB, llave principal, nombre de la función Lambda y bucket S3 donde se almacena el código.
+
+#### ¿Qué aspectos son vitales al crear un Stack?
+
+Durante el proceso de creación del Stack, hay varios aspectos importantes a considerar para evitar errores. Estos incluyen:
+
+- Asegúrate de seleccionar los permisos IaaM necesarios, especialmente al crear roles y políticas.
+- Revisa cada paso antes de continuar para asegurar que los parámetros y configuraciones son correctos.
+- Controla el proceso de despliegue, verificando que cada recurso se crea con éxito a través del estatus de CloudFormation.
+
+#### ¿Cómo verificar que los recursos han sido creados correctamente?
+
+Tras la creación del Stack, es esencial asegurarse de que cada recurso funciona correctamente:
+
+- **Lambd**a: Confirma que la función Lambda está desplegada y configurada para ejecutarse con el runtime adecuado (e.g., Python 3.7). Verifica las políticas y permisos.
+
+- **DynamoDB**: Revisa que la tabla DynamoDB existe y tiene las claves correctas configuradas. Es importante tener lo principal, como cédula de ciudadanía, preparado para consultas.
+
+- **API Gateway**: Verifica la creación de los endpoints en API Gateway, asegurándote de que están correctamente integrados con la función Lambda.
+
+Este enfoque detallado te ofrece la claridad y seguridad necesarias para implementar proyectos en AWS, habilitándote para llevar tus aplicaciones al siguiente nivel con confianza. Investiga más sobre cada componente y sigue practicando para dominar esta herramienta indispensable en el desarrollo en la nube. ¡Adelante, sigue aprendiendo y potenciando tus proyectos!
+
+## Verificación y Pruebas de Recursos en AWS Lambda y API Gateway
+
+Para realizar la **verificación y pruebas de recursos en AWS Lambda y API Gateway**, debes seguir una serie de pasos que aseguran que tanto tus funciones Lambda como tus endpoints de API estén funcionando correctamente. A continuación, te presento una guía clara y estructurada:
+
+### ✅ 1. **Verifica la función Lambda**
+
+#### A. Desde la consola de AWS
+
+1. Ve a la consola de **AWS Lambda**.
+2. Selecciona la función que deseas probar.
+3. Haz clic en **"Test"**.
+4. Crea un evento de prueba con un payload de ejemplo (JSON).
+5. Haz clic en **"Invoke"** o **"Test"**.
+6. Revisa los resultados:
+
+   * **Response body**: La respuesta de tu función.
+   * **Logs**: Verifica errores en el tab de logs.
+
+#### B. Desde la CLI
+
+```bash
+aws lambda invoke \
+  --function-name NOMBRE_FUNCION \
+  --payload '{"key":"value"}' \
+  response.json
+cat response.json
+```
+
+### ✅ 2. **Verifica configuración del trigger de API Gateway**
+
+Si tu Lambda está conectada a una API Gateway:
+
+#### A. En la consola de API Gateway:
+
+1. Ve a **Amazon API Gateway**.
+2. Elige tu API (REST o HTTP).
+3. Verifica:
+
+   * Métodos definidos (GET, POST, etc.).
+   * Integración con Lambda (check en “Integration Request”).
+   * Si hay un stage desplegado (`prod`, `dev`, etc.).
+
+#### B. Asegúrate de haber desplegado la API
+
+En el caso de APIs REST:
+
+* Selecciona **“Actions” → “Deploy API”**
+* Elige o crea un stage (`prod`, `test`, etc.)
+
+### ✅ 3. **Prueba el endpoint de API Gateway**
+
+#### A. Desde el navegador (GET)
+
+```
+https://<api-id>.execute-api.<region>.amazonaws.com/<stage>/<resource>
+```
+
+#### B. Con `curl` (POST o GET)
+
+```bash
+curl -X POST \
+  -H "Content-Type: application/json" \
+  -d '{"key":"value"}' \
+  https://<api-id>.execute-api.<region>.amazonaws.com/<stage>/<resource>
+```
+
+#### C. Desde Postman
+
+1. Crea una nueva solicitud (GET/POST).
+2. Pega la URL del endpoint.
+3. En “Body”, selecciona `raw` → `JSON`, y agrega tu payload.
+
+### ✅ 4. **Consulta logs en CloudWatch**
+
+Si algo no funciona:
+
+1. Ve a **CloudWatch → Logs → Log groups**.
+2. Busca el grupo `/aws/lambda/tu-funcion`.
+3. Revisa las últimas invocaciones para identificar errores.
+
+### 🛠️ Consejos útiles
+
+* Verifica los permisos de la Lambda (`IAM Role`) para asegurarte de que puede ser invocada desde API Gateway.
+* Usa `aws apigateway get-rest-apis` y `get-stages` para verificar despliegues vía CLI.
+* Usa `aws logs tail` para ver logs en tiempo real:
+
+  ```bash
+  aws logs tail /aws/lambda/mi-funcion --follow
+  ```
+
+### Resumen
+
+#### ¿Cómo verificar el funcionamiento de los recursos en AWS?
+
+La comprensión y verificación del funcionamiento de los recursos en AWS es crucial para garantizar una implementación efectiva y obtener resultados óptimos. A menudo, este proceso puede parecer intimidante al principio, pero con un enfoque estructurado y el uso de herramientas adecuadas, cualquier desarrollador puede manejarlo con confianza. En este artículo, te guiaré sobre cómo verificar los recursos de Bota net mediante AWS, utilizando varios servicios como DynamoDB y AWS Lambda.
+
+#### ¿Cómo gestionar y verificar datos en DynamoDB?
+
+Primero, para empezar la verificación, nuestra tarea inicial es acudir a la base de datos DynamoDB. Una vez dentro, es fundamental identificar las tablas creadas, en nuestro caso, la tabla 'Platzi'. Tras esto, accedemos a la sección 'Items' para agregar y gestionar datos, con pasos sencillos pero poderosos que permiten mantener un control total de la información.
+
+- **Agregar elementos**: Ingresar a la tabla y, en la sección de 'Items', crear un nuevo registro.
+- **Campos a considerar**: Se manejan campos como cédula de ciudadanía, nombre, dirección y barrio. Por ejemplo, puede utilizar nombres como Carlos Zambrano y direcciones como Calle One, Two, Three.
+- **Guardar cambios**: Finalmente, presionar el botón Save para registrar todos los datos nuevos.
+
+#### ¿Cómo hacer pruebas con AWS Lambda?
+
+Después de haber registrado los datos en DynamoDB, el siguiente paso es verificar la funcionalidad en AWS Lambda. Este proceso asegura que las funciones Lambda puedan acceder y recuperar datos de DynamoDB de manera eficiente.
+
+- **Crear un evento de prueba**: Asignar un nombre al evento, como "Mi Prueba", y enviar un JSON con la información necesaria, en este caso, el número de cédula.
+- **Probar la función Lambda**: Ejecutar el evento de prueba y verificar la respuesta. Lambda debería devolver la información completa del registro consultado desde DynamoDB.
+
+#### ¿Cómo integrar con API Gateway?
+
+La integración con API Gateway es esencial para ampliar el acceso al mundo exterior. A través de API Gateway puedes exponer tus funciones Lambda y hacerlas accesibles desde aplicaciones externas o clientes web.
+
+- **Configurar el API Gateway**: Verificar que tenga acceso a la función Lambda configurada.
+- **Hacer una solicitud de prueba**: Utilizar herramientas como cURL o Postman para enviar solicitudes hacia la API Gateway. Por ejemplo, un cURL puede enviarse así:
+
+`curl -X POST -H "Content-Type: application/json" -d '{"cédula":"111"}' [API_URL]` en linux
+
+Esta solicitud comprobará que la comunicación entre API Gateway y Lambda sea efectiva y el sistema devuelva los datos esperados correctamente.
+
+#### ¿Qué hacer si quieres profundizar más?
+
+Para aquellos que deseen expandir sus habilidades, es recomendable sumergirse en cursos especializados sobre bases de datos en AWS. Explorar las capacidades de AWS te otorgará una perspectiva más amplia y control sobre la arquitectura de tu aplicación.
+
+Además, anexo a este aprendizaje técnico, recuerda siempre analizar factores como el tiempo de ejecución y la eficiencia de los recursos, ya que AWS cobra en función de la duración y el manejo de la memoria durante la ejecución de las funciones Lambda. ¡Continúa aprendiendo y experimentando para optimizar continuamente tu infraestructura en la nube!
+
+## Despliegue de Recursos con Stacks Anidados en AWS
+
+El **despliegue de recursos con Stacks Anidados (Nested Stacks)** en AWS CloudFormation es una técnica poderosa para organizar y reutilizar plantillas de infraestructura como código (IaC). A continuación te explico en qué consisten, cómo se usan y los beneficios clave:
+
+### 🧩 ¿Qué son los Stacks Anidados en CloudFormation?
+
+Los **Nested Stacks** son stacks definidos dentro de otro stack principal (parent stack) usando el recurso `AWS::CloudFormation::Stack`. Permiten **modularizar** plantillas grandes o complejas dividiéndolas en partes reutilizables.
+
+### ✅ Ventajas de usar Stacks Anidados
+
+* 🔁 **Reutilización**: Puedes usar la misma plantilla en diferentes entornos.
+* 🧼 **Organización**: Mantienes tu infraestructura modular y más legible.
+* 🔍 **Mantenimiento**: Actualizaciones más simples al modificar solo un stack hijo.
+* 📏 **Límites**: Ayudan a superar límites de longitud en plantillas (por línea y tamaño total).
+
+### 📁 Estructura básica de un Nested Stack
+
+### 🧾 Archivo principal (`main-template.yaml`)
+
+```yaml
+AWSTemplateFormatVersion: '2010-09-09'
+Resources:
+  MiStackDynamoDB:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: https://bucket-s3.s3.amazonaws.com/dynamo-template.yaml
+      Parameters:
+        NombreDynamo: MiTabla
+        DynamoAtributo: id
+```
+
+### 🧾 Stack hijo (`dynamo-template.yaml`)
+
+```yaml
+AWSTemplateFormatVersion: '2010-09-09'
+Parameters:
+  NombreDynamo:
+    Type: String
+  DynamoAtributo:
+    Type: String
+Resources:
+  MiTabla:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Ref NombreDynamo
+      AttributeDefinitions:
+        - AttributeName: !Ref DynamoAtributo
+          AttributeType: S
+      KeySchema:
+        - AttributeName: !Ref DynamoAtributo
+          KeyType: HASH
+      BillingMode: PAY_PER_REQUEST
+```
+
+### 🚀 Pasos para el despliegue
+
+1. ✅ **Sube el stack hijo a S3**
+
+   * Usa un bucket accesible desde CloudFormation.
+   * Asegúrate de que el archivo `.yaml` esté en una región compatible.
+
+2. 🏗️ **Despliega el stack principal**
+
+   ```bash
+   aws cloudformation create-stack \
+     --stack-name stack-principal \
+     --template-body file://main-template.yaml \
+     --capabilities CAPABILITY_NAMED_IAM
+   ```
+
+### 🛑 Consideraciones importantes
+
+* Asegúrate de que la URL en `TemplateURL` esté **pública o accesible desde la cuenta de AWS**.
+* Los **parámetros del stack hijo** deben definirse correctamente en el stack principal.
+* Puedes usar **salidas (`Outputs`)** en stacks hijos y exportarlas para otros stacks si usas `Fn::ImportValue`.
+
+### Resumen
+
+#### ¿Cómo desplegar recursos en Stacks anidados?
+
+Desplegar recursos en Stacks anidados es una técnica poderosa que te permite organizar y gestionar tus proyectos con mayor eficiencia y claridad. Imagina tener control sobre funciones Lambda, API Gateway y DynamoDB desde un Stack maestro, logrando así una estructura ordenada y fácil de expandir. Este método te ayuda a reutilizar componentes, lo que es especialmente útil en proyectos de gran escala.
+
+#### ¿Qué es un Stack maestro?
+
+Un Stack maestro en Amazon CloudFormation es un conjunto de recursos agrupados. Permite gestionar múltiples Stacks anidados que son instancias individuales de recursos como bases de datos, funciones Lambda y API Gateway.
+
+- **Componentes del Stack:**
+ - Lambda Function
+ - API Gateway
+ - DynamoDB
+ 
+El Stack maestro facilita el control centralizado de recursos independientes, permitiendo enviar parámetros a cada uno, incluso si son completamente diferentes.
+
+#### ¿Cómo gestionar dependencias con DependsOn?
+
+Al desplegar APIs o bases de datos, es fundamental controlar el orden de creación de los recursos. Utilizando la propiedad `DependsOn`, aseguras que ciertos recursos no se creen antes de que los necesarios estén disponibles, lo cual es esencial para evitar errores y mejorar la eficiencia.
+
+```xml
+Resources:
+  MyApiGateway:
+    Type: AWS::ApiGateway::RestApi
+    Properties: 
+      [Propiedades]
+    DependsOn: MyDynamoDB
+```
+
+#### ¿Cómo estructurar el código para un Stack anidado?
+
+1. **Estructura del Repositorio:**
+
+ - Repositorio con carpeta nested para Stacks anidados.
+ - Código de Lambda en la carpeta lambda_code.
+
+2. Carga del Código:
+
+ - Asegúrate de que el bucket S3 está vaciado y luego sube el nuevo código.
+ - Selección y carga de archivos a través de la consola de AWS S3.
+
+3. **Implementación y Configuración**:
+
+ - Clonar el repositorio usando Git:
+ 
+`git clone [URL del repositorio]`
+
+ - Desplegar el template desde el bucket S3 seleccionando Crear Stack en la consola de CloudFormation.
+ - Proveer detalles como el nombre del Stack y parámetros funcionales específicos.
+
+### ¿Cómo verificar la creación de recursos?
+
+Después de haber creado el Stack maestro y sus Stacks anidados, es crucial verificar que los recursos se hayan creado correctamente.
+
+- **Consola de DynamoDB**: Comprueba la creación correcta de la tabla.
+
+- **Consola de Lambda**: Asegúrate que las funciones se hayan creado y configurado adecuadamente.
+
+- **Consola de API Gateway**: Confirma que las APIs estén conectadas a las funciones Lambda correctas.
+
+Estas verificaciones garantizan que todos los recursos estén listos para su utilización en la aplicación o sistema que estás desarrollando. Además, utilizar Stacks anidados simplifica futuras actualizaciones, permitiendo replicar fácilmente cualquier recurso específico para otros proyectos.
+
+Recuerda siempre optimizar y estructurar tus proyectos considerando la flexibilidad, claridad y reusabilidad de los recursos, lo cual será un valor añadido en tu ámbito profesional. ¡Avanza en tu aprendizaje y mejora continua!
+
+**Nota**: en la carpeta nsted en el archivo master.yml colocar las url de los Template
+
+## Consulta y Verificación de Datos con AWS Lambda y API Gateway
+
+Para **consultar y verificar datos** usando **AWS Lambda y API Gateway**, se sigue un flujo típico de arquitectura sin servidor (serverless). Aquí tienes una guía práctica y paso a paso para hacerlo:
+
+### 🧩 Arquitectura Básica
+
+1. **API Gateway**: expone un endpoint HTTP (ej. `GET /usuario/{id}`).
+2. **AWS Lambda**: función que procesa la solicitud y consulta datos.
+3. **Amazon DynamoDB** (u otra fuente de datos): almacén que se consulta.
+
+### ✅ Paso a Paso para Consulta de Datos
+
+### 1. **Crear la tabla DynamoDB**
+
+Supongamos una tabla con `UserId` como clave primaria.
+
+```yaml
+Resources:
+  UsuariosTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: Usuarios
+      AttributeDefinitions:
+        - AttributeName: UserId
+          AttributeType: S
+      KeySchema:
+        - AttributeName: UserId
+          KeyType: HASH
+      BillingMode: PAY_PER_REQUEST
+```
+
+### 2. **Función Lambda para consultar**
+
+Código (Python 3.12):
+
+```python
+import json
+import boto3
+import os
+
+dynamodb = boto3.resource('dynamodb')
+table = dynamodb.Table(os.environ['TABLE_NAME'])
+
+def lambda_handler(event, context):
+    user_id = event['pathParameters']['id']
+    
+    try:
+        response = table.get_item(Key={'UserId': user_id})
+        item = response.get('Item')
+        if not item:
+            return {
+                'statusCode': 404,
+                'body': json.dumps({'message': 'Usuario no encontrado'})
+            }
+        return {
+            'statusCode': 200,
+            'body': json.dumps(item)
+        }
+    except Exception as e:
+        return {
+            'statusCode': 500,
+            'body': json.dumps({'error': str(e)})
+        }
+```
+
+### 3. **Configurar variables de entorno en Lambda**
+
+En el template de CloudFormation:
+
+```yaml
+Environment:
+  Variables:
+    TABLE_NAME: Usuarios
+```
+
+### 4. **Crear API Gateway (REST o HTTP)**
+
+* Método: `GET`
+* Ruta: `/usuario/{id}`
+* Integración: Lambda Proxy
+
+En CloudFormation (simplificado):
+
+```yaml
+Resources:
+  ApiGateway:
+    Type: AWS::ApiGatewayV2::Api
+    Properties:
+      Name: UsuarioAPI
+      ProtocolType: HTTP
+
+  ApiRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref ApiGateway
+      RouteKey: 'GET /usuario/{id}'
+      Target: !Sub 'integrations/${ApiIntegration}'
+
+  ApiIntegration:
+    Type: AWS::ApiGatewayV2::Integration
+    Properties:
+      ApiId: !Ref ApiGateway
+      IntegrationType: AWS_PROXY
+      IntegrationUri: !Sub arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${LambdaFunctionName}
+      PayloadFormatVersion: '2.0'
+```
+
+### 5. **Permitir que API Gateway invoque Lambda**
+
+```yaml
+LambdaInvokePermission:
+  Type: AWS::Lambda::Permission
+  Properties:
+    Action: lambda:InvokeFunction
+    FunctionName: !Ref LambdaFunction
+    Principal: apigateway.amazonaws.com
+```
+
+### 🧪 Prueba Final
+
+Una vez desplegado:
+
+```bash
+curl https://<tu-api-id>.execute-api.<region>.amazonaws.com/usuario/123
+```
+
+Respuesta esperada:
+
+```json
+{
+  "UserId": "123",
+  "Nombre": "Mario Vargas",
+  "Correo": "mario@example.com"
+}
+```
+
+### Resumen
+
+#### ¿Cómo verificar el funcionamiento de recursos en AWS?
+
+La gestión de recursos en AWS es crucial para maximizar el rendimiento y la eficiencia de los mismos. Empezaremos con comprobar que nuestros recursos en AWS estén funcionando correctamente. Aquí, dirigiremos nuestra atención al uso de AWS Lambda y DynamoDB.
+
+#### ¿Cómo inicializar la tabla DynamoDB?
+
+Para aprovechar al máximo DynamoDB, asegurémonos de ingresar y estructurar correctamente la información. Sigue estos pasos:
+
+1. **Accede a DynamoDB**: Dentro de la consola de AWS, dirígete a DynamoDB.
+2. **Selecciona la tabla**: Elige la tabla donde deseas ingresar los datos.
+3. **Añadir ítems**:
+- Navega a la sección de ítems y selecciona "Crear ítem".
+- Inserta valores de tipo "String" para cada campo:
+ - Nombre: "Pedro Pérez"
+ - Número de cédula: 122,222
+ - Dirección: "Avenida Todo grado 123"
+ - Puesto de votación: "Puesto número 40"
+ 
+4. **Guarda los cambios**: Asegúrate de que todos los datos queden guardados correctamente.
+
+#### ¿Cómo validar los datos con AWS Lambda?
+
+AWS Lambda es una herramienta esencial para ejecutar código en la nube sin aprovisionar servidores. Aquí te explicamos cómo crear y probar una función Lambda para validar los datos:
+
+1. **Crea un nuevo test en Lambda**:
+ - Abre tu función Lambda en la consola.
+ - Dirígete a la opción "Test" en la parte superior derecha.
+ - Borra el contenido sample y crea un nuevo objeto JSON:
+ 
+```json
+{
+  "cedula": "222"
+}
+```
+
+- Nombralo como "MiPrueba".
+
+2. **Ejecuta el test**: Al correr la prueba, recibirás respuesta sobre los datos de Pedro Pérez si estos fueron ingresados correctamente.
+3. **Valida los resultados**: Asegúrate de que toda la información como el nombre, número de cédula, dirección, etc., coincide con los datos ingresados.
+
+#### ¿Cómo realizar la consulta por medio de API Gateway?
+
+Realizar consultas mediante API Gateway posibilita interactuar con DynamoDB fácilmente:
+
+1. **Configuración en API Gateway**:
+- Abre la consola de API Gateway y selecciona el método POST.
+- Crea la estructura del cuerpo para enviar el JSON:
+
+```json
+{
+  "cedula": "222"
+}   
+```
+
+2. **Envía y valida la respuesta**:
+- Asegúrate de que el estado de respuesta sea 200, indicando que todo está en orden.
+
+#### ¿Cómo integrar con herramientas externas como curl y Postman?
+
+Para completar las pruebas, podemos utilizar herramientas externas como curl y Postman:
+
+- **Uso de Curl:**
+
+ - Ejecuta el siguiente comando:
+ 
+`curl -X POST <API_URL> --data '{"cedula":"222"}'`
+
+Este comando enviará la solicitud a la API y mostrará la respuesta recibida.
+
+- **Uso de Postman**:
+
+- Crea una nueva solicitud de tipo `POST`.
+- Adjunta la URL de la API y manda el JSON en el cuerpo de la solicitud.
+- La respuesta confirmará la correcta ejecución de la consulta.
+
+La correcta integración y pruebas asegurarán que los recursos de AWS estén correctamente configurados y funcionando de manera óptima. Al dominar estas herramientas y procesos, puedes asegurar una gestión de datos eficiente en tu aplicación. ¡Sigue explorando y dominando AWS para llevar tus habilidades al siguiente nivel!
+
+## Validación de Arquitecturas con AWS CloudFormation Designer
+
+La **validación de arquitecturas con AWS CloudFormation Designer** es una práctica esencial para asegurar que tu infraestructura como código esté correctamente estructurada antes del despliegue. A continuación te explico cómo funciona y cómo puedes usarla efectivamente:
+
+### ✅ ¿Qué es AWS CloudFormation Designer?
+
+Es una herramienta visual integrada en la consola de AWS que te permite:
+
+* **Diseñar arquitecturas** con componentes de AWS arrastrando y soltando.
+* **Visualizar relaciones** entre recursos (como Lambda, S3, API Gateway, etc.).
+* **Validar plantillas** YAML o JSON.
+* **Editar código y diagrama** en tiempo real.
+
+### 🧰 ¿Cómo Validar una Arquitectura en CloudFormation Designer?
+
+### 🔹 1. Accede a CloudFormation Designer
+
+1. Ve a la consola de AWS.
+2. Navega a **CloudFormation**.
+3. En el panel izquierdo, haz clic en **Designer**.
+
+### 🔹 2. Cargar o crear una plantilla
+
+Puedes:
+
+* Subir una plantilla `.yaml` o `.json`.
+* Escribir directamente en el editor.
+* Arrastrar recursos desde el panel izquierdo.
+
+### 🔹 3. Validar la plantilla
+
+Una vez que hayas construido o cargado tu infraestructura:
+
+✅ Haz clic en el botón **“Actions” → “Validate Template”**.
+
+* Si es válida, verás un mensaje de éxito.
+* Si tiene errores, te mostrará una lista detallada de problemas como:
+
+  * Sintaxis YAML/JSON inválida.
+  * Recursos mal referenciados.
+  * Tipos de recursos inexistentes o con errores.
+
+### 🛠️ Ejemplo de Error Común Detectado
+
+Si tienes:
+
+```yaml
+Resources:
+  MyBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucktName: "my-bucket"  # error: propiedad mal escrita
+```
+
+Designer te marcará:
+**“Unrecognized property 'BucktName'”**, y te dirá la línea exacta.
+
+### 📊 Ventajas de Usar CloudFormation Designer
+
+| Ventaja                           | Descripción                                     |
+| --------------------------------- | ----------------------------------------------- |
+| **Visualización**                 | Ves gráficamente la arquitectura.               |
+| **Detección temprana de errores** | Ahorra tiempo en pruebas.                       |
+| **Edición bidireccional**         | Puedes editar tanto el código como el diagrama. |
+| **Documentación automática**      | Puedes exportar la arquitectura como imagen.    |
+
+### 🎯 Consejos Prácticos
+
+* Usa **nombres descriptivos** para recursos (por ejemplo, `LambdaProcesaOrdenes` en vez de `Lambda1`).
+* Agrupa parámetros y salidas con `Metadata -> AWS::CloudFormation::Interface`.
+* Verifica las **referencias cruzadas** (`!Ref`, `!GetAtt`) estén bien conectadas.
+* Utiliza **Stack anidados** para organizar arquitecturas grandes.
+
+### Resumen
+
+#### ¿Qué es AWS CloudFormation Designer y cómo nos beneficia?
+
+AWS CloudFormation Designer es una herramienta fundamental para arquitectos y desarrolladores de software. Permite crear y visualizar arquitecturas y recursos en AWS de manera gráfica, facilitando la validación de la infraestructura antes de implementarla. La capacidad de mostrar gráficamente los recursos y sus conexiones es crucial para evitar errores costosos y facilitar el trabajo colaborativo. Utilizar CloudFormation Designer es altamente recomendando durante la fase de planificación de cualquier proyecto en la nube.
+
+#### ¿Cómo cargar un stack en AWS CloudFormation Designer?
+
+Para cargar un stack en CloudFormation Designer, necesitas un repositorio con el código de tu proyecto. A continuación, te comparto un proceso básico para llevar a buen término esta tarea:
+
+1. **Clona el repositorio**: Utiliza Git para clonar el repositorio que contiene el código de tu aplicación.
+
+`git clone <url_del_repositorio>`
+
+2. **Accede a AWS Console**: Inicia sesión en tu cuenta de AWS y dirígete a CloudFormation.
+
+3. **Selecciona Designer**: Busca la opción de Designer en el menú superior izquierdo y da click.
+
+4. **Carga tu Stack**:
+
+- Selecciona la opción para cargar un template.
+- Navega a la ubicación de tu stack maestro en el repositorio clonado.
+- Haz click en "Abrir".
+
+5. **Visualiza tu Stack**: Al seleccionar ver en Designer, podrás observar gráficamente la estructura de tu stack. Las conexiones entre los diferentes componentes como Lambda, DynamoDB, y API Gateway se mostrarán para ayudarte a validar la arquitectura deseada.
+
+#### ¿Cómo se diferencian los stack simples y los stack anidados?
+
+La principal diferencia entre stack simples y anidados se encuentra en cómo se organizan y despliegan los recursos:
+
+- **Stack Simple**: Todos los recursos están definidos en un solo template. Esto simplifica la visualización y es útil para proyectos pequeños o cuando deseas ver todas las conexiones en un solo lugar. Sin embargo, esta simplificación puede volverse compleja en proyectos más grandes.
+
+- **Stack Anidado**: Estos utilizan múltiples templates menores que representan diferentes partes de la aplicación. Cada sub-stack es una porción de la aplicación y solo se cargan las relaciones entre ellos al visualizar en Designer. Esto division permite un mayor control y organización.
+
+#### ¿Cuándo usar AWS CloudFormation Designer en proyectos reales?
+
+CloudFormation Designer es ideal para la validación de arquitecturas antes del despliegue. Las visualizaciones gráficas proporcionan una confirmación visual que puede prevenir errores y optimizar configuraciones. Sin embargo, para la creación de templates, es preferible escribir el código directamente. Esto mejora la comprensión del código subyacente y ofrece un mayor control sobre los detalles implementados.
+
+Motiva a los desarrolladores a integrarlo en su flujo de trabajo regular, sobre todo al inicio de un nuevo proyecto, para alinear expectativas con el diseño deseado. ¡Continúa explorando y optimizando tus proyectos con Designer para alcanzar nuevos niveles de éxito en AWS!
