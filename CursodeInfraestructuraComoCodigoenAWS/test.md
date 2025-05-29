@@ -70,7 +70,7 @@
 
 18. **El estado UPDATE_COMPLETE a qué hace referencia?**
     
-**R//=** Rollback completo de un stack o Actualización completa de eliminación de recursos de un stack.
+**R//=** Actualización completa de eliminación de recursos de un stack.
 
 19. **¿Cuáles son las 2 formas de definir una función lambda en Cloudformation?**
     

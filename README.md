@@ -14,6 +14,7 @@
 - [Curso de Django](CursodeDjango)
 - [Curso De FastAPI](CursoDeFastAPI)
 - [Curso De FastAPI parte 2](CursodeFastAPI1)
+- [Curso de Flask](CursodeFlask)
 - [Curso De Introduccion Al Pensamiento Computacional Con Python](CursoDeIntroduccionAlPensamientoComputacionalConPython)
 - [Curso de Complejidad Algorítmica con Python](CursoDePOOyAlgoritmosConPython)
 - [Curso de Estructuras de Datos Lineales con Python](CursodeEstructurasdeDatosLinealesconPython)
