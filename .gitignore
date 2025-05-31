@@ -45,6 +45,7 @@ notebook/models/
 *.log
 *.pot
 *.pyc
+*.sqlite
 __pycache__/
 local_settings.py
 db.sqlite3
