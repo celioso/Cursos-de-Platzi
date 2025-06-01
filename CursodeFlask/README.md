@@ -2082,3 +2082,1143 @@ La refactorización de código es un proceso continuo que mejora la calidad de t
 [gitignore.io - Create Useful .gitignore Files For Your Project](https://gitignore.io/)
 
 [Keyboard shortcuts VS Code](https://code.visualstudio.com/shortcuts/keyboard-shortcuts-windows.pdf)
+
+## Refactorización de Rutas y Blueprints en Flask
+
+Refactorizar rutas usando **Blueprints en Flask** es una buena práctica para organizar tu aplicación en módulos más limpios, reutilizables y escalables.
+
+### ✅ ¿Qué es un Blueprint?
+
+Un **Blueprint** en Flask permite estructurar tu aplicación por componentes (por ejemplo: `notes`, `auth`, `admin`, etc.). Esto te permite separar rutas, formularios y lógica específica de cada parte.
+
+### 🔧 Refactor Paso a Paso
+
+### 📁 Estructura recomendada
+
+```bash
+notes_app/
+│
+├── app.py                 # Crea la app y registra los blueprints
+├── config.py
+├── models.py
+│
+├── notes/                 # Módulo con blueprint
+│   ├── __init__.py        # Define el blueprint
+│   ├── routes.py          # Contiene las rutas
+│   └── templates/         # Plantillas HTML de este módulo
+│       └── note_form.html
+│
+├── templates/
+│   └── home.html
+│
+└── static/
+```
+
+### 1. 📄 `notes/routes.py` – Mueve las rutas
+
+```python
+from flask import Blueprint, render_template, request, redirect, url_for
+from models import db, Note
+
+notes_bp = Blueprint('notes', __name__)
+
+@notes_bp.route("/")
+def home():
+    notes = Note.query.all()
+    return render_template("home.html", notes=notes)
+
+@notes_bp.route("/crear-nota", methods=["GET", "POST"])
+def create_note():
+    if request.method == "POST":
+        title = request.form.get("title", "")
+        content = request.form.get("content", "")
+        note_db = Note(title=title, content=content)
+        db.session.add(note_db)
+        db.session.commit()
+        return redirect(url_for("notes.home"))
+    return render_template("note_form.html")
+
+@notes_bp.route("/editar-note/<int:id>", methods=["GET", "POST"])
+def edit_note(id):
+    note = Note.query.get_or_404(id)
+    if request.method == "POST":
+        note.title = request.form.get("title", "")
+        note.content = request.form.get("content", "")
+        db.session.commit()
+        return redirect(url_for("notes.home"))
+    return render_template("edit_note.html", note=note)
+
+@notes_bp.route("/borrar-note/<int:id>", methods=["POST"])
+def delete_note(id):
+    note = Note.query.get_or_404(id)
+    db.session.delete(note)
+    db.session.commit()
+    return redirect(url_for("notes.home"))
+```
+
+### 2. 📄 `notes/__init__.py` – Exponer el Blueprint
+
+```python
+from .routes import notes_bp
+```
+
+### 3. 📄 `app.py` – Registrar el Blueprint
+
+```python
+from flask import Flask
+from config import Config
+from models import db
+from notes import notes_bp
+
+app = Flask(__name__)
+app.config.from_object(Config)
+
+db.init_app(app)
+
+app.register_blueprint(notes_bp)
+
+# Puedes agregar más blueprints si los necesitas:
+# from auth import auth_bp
+# app.register_blueprint(auth_bp, url_prefix="/auth")
+
+@app.route("/acerca-de")
+def about():
+    return "esto es una app de notas"
+
+@app.route("/contacto", methods=["GET", "POST"])
+def contact():
+    if request.method == "POST":
+        return "Formulario enviado correctamente", 201
+    return "Pagina de contacto"
+
+if __name__ == "__main__":
+    app.run(debug=True)
+```
+
+### ✅ Ventajas
+
+* Separación clara de responsabilidades.
+* Reutilización de rutas y lógicas.
+* Facilidad para escalar a una API REST con múltiples módulos.
+* Se adapta mejor a proyectos grandes.
+
+### Resumen
+
+La organización de aplicaciones Flask a gran escala es fundamental para mantener un código limpio y escalable. Los blueprints son una herramienta poderosa que nos permite estructurar nuestras aplicaciones de manera modular, agrupando rutas y funcionalidades relacionadas. Esta técnica no solo mejora la legibilidad del código, sino que también facilita el mantenimiento y la colaboración en proyectos de mayor envergadura.
+
+#### ¿Qué son los blueprints en Flask y por qué son importantes?
+
+Los blueprints en Flask son una forma de organizar aplicaciones a gran escala, permitiéndonos agrupar endpoints o URLs de acuerdo a su dominio o funcionalidad. Esta modularización facilita enormemente el mantenimiento del código y permite una mejor separación de responsabilidades dentro de nuestra aplicación.
+
+Cuando trabajamos con aplicaciones Flask que crecen en complejidad, mantener todas las rutas en un solo archivo se vuelve inmanejable. Los blueprints nos permiten:
+
+- Organizar el código en módulos lógicos.
+- Reutilizar componentes en diferentes partes de la aplicación.
+- Facilitar la migración de funcionalidades a nuevas aplicaciones.
+- Mejorar la colaboración en equipos de desarrollo.
+
+#### Solucionando el problema de múltiples instancias de SQLAlchemy
+
+Antes de implementar nuestros blueprints, debemos resolver un error común: tener múltiples instancias de SQLAlchemy en nuestra aplicación. Este error se manifiesta con un mensaje que nos pregunta si olvidamos hacer el `init_app`.
+
+El problema ocurre porque estamos instanciando la base de datos en dos lugares diferentes:
+
+```python
+# En models.py
+db = SQLAlchemy()
+
+# En app.py
+db = SQLAlchemy(app)
+```
+
+La solución es mantener una única instancia de SQLAlchemy e inicializarla correctamente:
+
+Eliminar la instancia en app.py
+Importar la instancia desde models.py
+Inicializar la base de datos con la aplicación usando `init_app`
+
+```python
+# En app.py
+from models import db
+
+# Más adelante en el código
+db.init_app(app)
+```
+
+Con esto, SQLAlchemy sabrá a qué base de datos debe conectarse cuando realizamos operaciones como session.add().
+
+#### ¿Cómo implementar blueprints para organizar rutas en Flask?
+
+Para implementar blueprints en nuestra aplicación Flask, seguiremos estos pasos:
+
+#### 1. Crear la estructura de carpetas y archivos
+Primero, creamos una nueva carpeta para nuestro blueprint y un archivo para las rutas:
+
+```
+/notes
+    /routes.py
+```
+
+#### 2. Definir el blueprint
+
+En el archivo routes.py, importamos las dependencias necesarias y creamos nuestro blueprint:
+
+```python
+from flask import Blueprint, render_template, request, redirect, url_for, flash
+from models import Note, db
+
+notes_bp = Blueprint('notes', __name__)
+
+# Aquí irán nuestras rutas
+```
+
+#### 3. Mover las rutas al blueprint
+
+Ahora movemos todas las rutas relacionadas con notas desde app.py a nuestro nuevo archivo routes.py, reemplazando `app` por `notes_bp`:
+
+```python
+@notes_bp.route('/notes')
+def list_notes():
+    notes = Note.query.all()
+    return render_template('notes.html', notes=notes)
+
+@notes_bp.route('/notes/create', methods=['GET', 'POST'])
+def create_note():
+    # Código para crear notas
+```
+
+#### 4. Registrar el blueprint en la aplicación principal
+
+En nuestro archivo app.py, importamos el blueprint y lo registramos:
+
+```python
+from notes.routes import notes_bp
+
+app.register_blueprint(notes_bp)
+```
+
+#### 5. Actualizar las referencias a las URLs
+
+**Uno de los cambios más importantes al usar blueprints es que los nombres de las rutas cambian**. Ahora debemos prefijar el nombre del blueprint:
+
+```python
+# Antes
+url_for('create_note')
+
+# Después
+url_for('notes.create_note')
+```
+
+Debemos actualizar todas las referencias en nuestras plantillas y redirecciones:
+
+```python
+# En redirecciones
+return redirect(url_for('notes.list_notes'))
+
+# En plantillas
+<a href="{{ url_for('notes.edit_note', id=note.id) }}">Editar</a>
+```
+
+#### ¿Cuáles son las ventajas de usar blueprints en proyectos reales?
+
+La implementación de blueprints en proyectos Flask ofrece numerosas ventajas:
+
+- **Organización modular**: Cada blueprint puede tener sus propias rutas, plantillas y archivos estáticos.
+- **Control de acceso**: Podemos asignar permisos específicos a diferentes blueprints, permitiendo que distintos equipos trabajen en diferentes módulos.
+- **Mantenimiento simplificado**: Al tener el código relacionado agrupado, es más fácil realizar cambios y correcciones.
+- **Escalabilidad**: Facilita el crecimiento de la aplicación sin perder la claridad en la estructura del código.
+- **Reutilización**: Los blueprints pueden ser reutilizados en diferentes aplicaciones.
+
+#### Ejemplo práctico: Blueprint para usuarios
+
+Un caso común es crear un blueprint para la gestión de usuarios. Podríamos implementarlo así:
+
+```python
+# En users/routes.py
+from flask import Blueprint, render_template, request, redirect, url_for
+from models import User, db
+
+users_bp = Blueprint('users', __name__)
+
+@users_bp.route('/login', methods=['GET', 'POST'])
+def login():
+    # Lógica de inicio de sesión
+    return render_template('login.html')
+
+@users_bp.route('/register', methods=['GET', 'POST'])
+def register():
+    # Lógica de registro
+    return render_template('register.html')
+```
+
+Y luego registrarlo en nuestra aplicación principal:
+
+```python
+from users.routes import users_bp
+app.register_blueprint(users_bp)
+```
+
+Los blueprints son una herramienta esencial para cualquier desarrollador de Flask que trabaje en aplicaciones de mediana a gran escala. Dominar su implementación te permitirá crear aplicaciones más organizadas, mantenibles y escalables. ¿Has implementado blueprints en tus proyectos? ¡Comparte tu experiencia en los comentarios!
+
+**Lecturas recomendadas**
+
+[Modular Applications with Blueprints — Flask Documentation (3.1.x)](https://flask.palletsprojects.com/en/stable/blueprints/)
+
+## Plantillas Jinja en Flask: Reutilización de Código HTML
+
+En Flask, las **plantillas Jinja** permiten reutilizar código HTML de forma eficiente y ordenada, facilitando el mantenimiento y escalabilidad de tu aplicación. Esto se logra principalmente mediante **plantillas base** y el uso de **bloques** (`{% block %}`) y **herencia** (`{% extends %}`).
+
+### 🧱 1. Crear una plantilla base (`base.html`)
+
+Esta es una plantilla que define la **estructura común** de tu sitio web:
+
+```html
+<!-- templates/base.html -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Mi App{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <header>
+        <h1>Mi Aplicación de Notas</h1>
+        <nav>
+            <a href="{{ url_for('home') }}">Inicio</a>
+            <a href="{{ url_for('about') }}">Acerca de</a>
+            <a href="{{ url_for('contact') }}">Contacto</a>
+        </nav>
+    </header>
+
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Mi Aplicación</p>
+    </footer>
+</body>
+</html>
+```
+
+### 🧩 2. Heredar de la base (`home.html`, `note_form.html`, etc.)
+
+Cada plantilla específica hereda la base y define su propio contenido:
+
+```html
+<!-- templates/home.html -->
+{% extends 'base.html' %}
+
+{% block title %}Inicio - Mi App{% endblock %}
+
+{% block content %}
+    <h2>Notas</h2>
+    <ul>
+        {% for note in notes %}
+            <li>
+                <strong>{{ note.title }}</strong>: {{ note.content }} ({{ note.date.strftime('%Y-%m-%d %H:%M') }})
+            </li>
+        {% endfor %}
+    </ul>
+    <a href="{{ url_for('create_note') }}">Crear nueva nota</a>
+{% endblock %}
+```
+
+### 💡 Ventajas de usar plantillas Jinja con herencia
+
+✅ Reutilizas estructura HTML (evitas duplicación)
+✅ Haces más legible y mantenible tu código
+✅ Separas diseño de la lógica del servidor
+✅ Puedes cambiar el diseño en un solo lugar (`base.html`)
+
+### 📁 Estructura recomendada
+
+```
+notes_app/
+│
+├── app.py
+├── models.py
+├── config.py
+├── templates/
+│   ├── base.html
+│   ├── home.html
+│   ├── note_form.html
+│   ├── edit_note.html
+├── static/
+│   └── styles.css
+```
+
+### Resumen
+
+La implementación de interfaces atractivas y funcionales es un aspecto fundamental en el desarrollo web moderno. Mientras que el backend proporciona la lógica y funcionalidad, el frontend es la cara visible de nuestra aplicación y determina en gran medida la experiencia del usuario. En este contenido, exploraremos cómo mejorar la apariencia de nuestra aplicación Flask utilizando Jinja, un poderoso sistema de plantillas que nos permite organizar y reutilizar nuestro código HTML de manera eficiente.
+
+#### ¿Qué es Jinja y cómo mejora nuestro desarrollo frontend?
+
+Jinja es el manejador de plantillas integrado en Flask que ofrece grandes ventajas para el desarrollo frontend. **Su principal beneficio es evitar la duplicación de código HTML**, permitiéndonos mantener nuestro código organizado en diferentes archivos y reutilizarlo según sea necesario.
+
+Para trabajar con Jinja de manera más eficiente, podemos instalar la extensión "Better Jinja" en nuestro editor de código, lo que facilita la escritura y el autocompletado de código Jinja.
+
+#### Creando una plantilla base con Jinja
+
+El primer paso para implementar Jinja en nuestra aplicación es crear una plantilla base que contendrá la estructura común a todas nuestras páginas:
+
+- Creamos un archivo llamado `base.html` en la carpeta templates
+- Definimos la estructura básica de HTML5
+- Agregamos bloques que serán redefinidos en las plantillas hijas
+
+```html
+<!-- Seleccionamos Jinja HTML como lenguaje -->
+{% block app_notas %}{% endblock %}
+
+<body style="background-color: aqua;">
+    {% block content %}{% endblock %}
+</body>
+```
+
+Los bloques (`{% block nombre %}{% endblock %}`) son áreas que pueden ser sobrescritas por las plantillas que extiendan de esta base.
+
+Extendiendo la plantilla base
+Para utilizar nuestra plantilla base en otras vistas, usamos la directiva `{% extends %}`:
+
+```html
+{% extends "base.html" %}
+
+{% block content %}
+<div>
+    Lorem ipsum dolor sit amet...
+</div>
+{% endblock %}
+```
+
+**Es importante entender que solo el contenido dentro de los bloques definidos será visible** en la página final. Todo el contenido que no esté dentro de un bloque redefinido será ignorado.
+
+#### ¿Cómo implementar elementos comunes en todas las páginas?
+
+Una de las ventajas de usar plantillas base es la capacidad de definir elementos que aparecerán en todas las páginas de nuestra aplicación, como barras de navegación, pies de página o sistemas de mensajes.
+
+#### Sistema de mensajes flash
+
+Para implementar un sistema de mensajes que aparezca en todas las páginas, podemos colocar el código correspondiente en la plantilla base:
+
+```html
+<!-- En base.html, antes del bloque content -->
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, message in messages %}
+            <div class="alert alert-{{ category }}">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+{% endwith %}
+
+{% block content %}{% endblock %}
+```
+
+De esta manera, los mensajes flash se mostrarán en cualquier página que extienda de nuestra plantilla base.
+
+#### Mejorando la apariencia con Tailwind CSS
+
+Para mejorar la apariencia de nuestra aplicación, podemos utilizar frameworks CSS como Tailwind. En nuestra plantilla base mejorada, incluimos:
+
+1. La integración de Tailwind CSS mediante un script
+2. Fuentes personalizadas desde Google Fonts
+3. Una barra de navegación (navbar)
+4. Un sistema de mensajes con colores según la categoría (success, error, warning)
+5. Un contenedor principal con márgenes y padding adecuados
+6. Un pie de página
+
+```html
+<!-- Ejemplo de base.html mejorado -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{% block app_notas %}Notas App{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body class="font-roboto">
+    <nav class="bg-blue-600 text-white p-4">
+        <h1 class="text-xl font-bold">Notas App</h1>
+    </nav>
+    
+    <!-- Sistema de mensajes con colores según categoría -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                {% if category == 'success' %}
+                    <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-4">{{ message }}</div>
+                {% elif category == 'error' %}
+                    <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4">{{ message }}</div>
+                {% elif category == 'warning' %}
+                    <div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-4">{{ message }}</div>
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+    
+    <main class="container mx-auto p-4">
+        {% block content %}{% endblock %}
+    </main>
+    
+    <footer class="bg-gray-200 p-4 text-center text-gray-600">
+        &copy; 2023 Notas App
+    </footer>
+</body>
+</html>
+```
+
+#### ¿Cómo personalizar las vistas específicas de nuestra aplicación?
+
+Una vez que tenemos nuestra plantilla base, podemos personalizar cada vista específica extendiendo de ella y redefiniendo los bloques necesarios.
+
+#### Personalizando la vista de inicio
+
+Para la página principal que muestra la lista de notas, extendemos de la plantilla base y personalizamos el contenido:
+
+```html
+{% extends "base.html" %}
+
+{% block app_notas %}Listado de Notas{% endblock %}
+
+{% block content %}
+<div class="flex justify-between items-center mb-4">
+    <h2 class="text-2xl font-bold">Mis Notas</h2>
+    <a href="{{ url_for('create') }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+        Crear Nota
+    </a>
+</div>
+
+{% if notes %}
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {% for note in notes %}
+            <div class="bg-white shadow-md rounded-lg p-4">
+                <h3 class="text-xl font-bold mb-2">{{ note.title }}</h3>
+                <p class="text-gray-700 mb-4">{{ note.content }}</p>
+                <p class="text-sm text-gray-500">Creada: {{ note.created_at }}</p>
+                <div class="flex justify-end mt-4">
+                    <a href="{{ url_for('edit', id=note.id) }}" class="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-1 px-3 rounded mr-2">
+                        Editar
+                    </a>
+                    <a href="{{ url_for('delete', id=note.id) }}" class="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-3 rounded">
+                        Eliminar
+                    </a>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="bg-gray-100 p-8 text-center rounded-lg">
+        <p class="text-xl text-gray-600">No hay notas disponibles. ¡Crea una nueva!</p>
+    </div>
+{% endif %}
+{% endblock %}
+```
+
+#### Agregando campos a nuestro modelo
+
+Para mejorar nuestra aplicación, podemos agregar un campo de fecha de creación a nuestro modelo de Nota:
+
+```python
+class Note(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(100), nullable=False)
+    content = db.Column(db.Text, nullable=False)
+    created_at = db.Column(db.DateTime, default=db.func.now())
+```
+
+El parámetro `default=db.func.now()` asegura que cada nueva nota tenga automáticamente la fecha y hora actual como su fecha de creación.
+
+La implementación de Jinja en nuestra aplicación Flask nos permite crear interfaces más atractivas y mantener nuestro código organizado y reutilizable. Mediante el uso de plantillas base y bloques, podemos definir elementos comunes y personalizarlos según sea necesario en cada vista específica. Además, la integración con frameworks como Tailwind CSS nos facilita el diseño de interfaces modernas y responsivas. ¿Has implementado Jinja en tus proyectos Flask? Comparte tus experiencias y cómo has mejorado tus formularios con Tailwind en los comentarios.
+
+Lecturas recomendadas
+
+[Jinja — Jinja Documentation (3.1.x)](https://jinja.palletsprojects.com/en/stable/)
+
+[GitHub - platzi/curso-flask](https://github.com/platzi/curso-flask)
+
+[Tailwind CSS - Rapidly build modern websites without ever leaving your HTML.](https://tailwindcss.com/)
+
+## Sistema Básico de Autenticación con Sesiones en Flask
+
+Aquí tienes una **implementación básica de autenticación con sesiones en Flask**. Este ejemplo cubre:
+
+* Registro de usuario.
+* Inicio de sesión.
+* Cierre de sesión.
+* Restricción de rutas a usuarios autenticados.
+
+### 📦 Estructura del proyecto
+
+```
+notes_app/
+│
+├── app.py
+├── models.py
+├── templates/
+│   ├── login.html
+│   ├── register.html
+│   └── dashboard.html
+└── config.py
+```
+
+### 📁 `config.py`
+
+```python
+import os
+
+class Config:
+    SECRET_KEY = os.getenv("SECRET_KEY", "clave-secreta-desarrollo")
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///app.db'
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
+```
+
+### 📁 `models.py`
+
+```python
+from flask_sqlalchemy import SQLAlchemy
+from werkzeug.security import generate_password_hash, check_password_hash
+
+db = SQLAlchemy()
+
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(50), unique=True, nullable=False)
+    password_hash = db.Column(db.String(128), nullable=False)
+
+    def set_password(self, password):
+        self.password_hash = generate_password_hash(password)
+
+    def check_password(self, password):
+        return check_password_hash(self.password_hash, password)
+```
+
+### 📁 `app.py`
+
+```python
+from flask import Flask, render_template, redirect, url_for, request, session, flash
+from models import db, User
+from config import Config
+
+app = Flask(__name__)
+app.config.from_object(Config)
+db.init_app(app)
+
+@app.before_first_request
+def create_tables():
+    db.create_all()
+
+@app.route('/')
+def home():
+    if 'user_id' in session:
+        return redirect(url_for('dashboard'))
+    return redirect(url_for('login'))
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+
+        if User.query.filter_by(username=username).first():
+            flash('El usuario ya existe.')
+            return redirect(url_for('register'))
+
+        user = User(username=username)
+        user.set_password(password)
+        db.session.add(user)
+        db.session.commit()
+
+        flash('Registro exitoso. Inicia sesión.')
+        return redirect(url_for('login'))
+
+    return render_template('register.html')
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        user = User.query.filter_by(username=request.form['username']).first()
+        if user and user.check_password(request.form['password']):
+            session['user_id'] = user.id
+            flash('Inicio de sesión exitoso.')
+            return redirect(url_for('dashboard'))
+        flash('Usuario o contraseña incorrectos.')
+
+    return render_template('login.html')
+
+@app.route('/dashboard')
+def dashboard():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    return render_template('dashboard.html')
+
+@app.route('/logout')
+def logout():
+    session.pop('user_id', None)
+    flash('Has cerrado sesión.')
+    return redirect(url_for('login'))
+
+if __name__ == '__main__':
+    app.run(debug=True)
+```
+
+### 📁 `templates/login.html`
+
+```html
+<h2>Iniciar Sesión</h2>
+<form method="POST">
+  <input type="text" name="username" placeholder="Usuario" required>
+  <input type="password" name="password" placeholder="Contraseña" required>
+  <button type="submit">Entrar</button>
+</form>
+<a href="{{ url_for('register') }}">Registrarse</a>
+```
+
+### 📁 `templates/register.html`
+
+```html
+<h2>Registro</h2>
+<form method="POST">
+  <input type="text" name="username" placeholder="Usuario" required>
+  <input type="password" name="password" placeholder="Contraseña" required>
+  <button type="submit">Registrarse</button>
+</form>
+<a href="{{ url_for('login') }}">Iniciar sesión</a>
+```
+
+### 📁 `templates/dashboard.html`
+
+```html
+<h2>Bienvenido al panel</h2>
+<a href="{{ url_for('logout') }}">Cerrar sesión</a>
+```
+
+### Resumen
+
+La autenticación de usuarios es un componente fundamental en el desarrollo de aplicaciones web modernas. Implementar un sistema que proteja la información personal y garantice que solo usuarios autorizados accedan a determinados recursos es esencial para mantener la seguridad de cualquier plataforma. En este artículo, exploraremos cómo implementar un sistema básico de autenticación en Flask utilizando sesiones, un mecanismo que permite mantener información del usuario a través de diferentes solicitudes HTTP.
+
+#### ¿Cómo funcionan las sesiones en Flask?
+
+Las sesiones en Flask nos permiten almacenar información específica del usuario en cookies del navegador. Esto es particularmente útil cuando necesitamos mantener el estado de autenticación de un usuario mientras navega por nuestra aplicación.
+
+**Las sesiones funcionan de la siguiente manera:**
+
+- Almacenan datos en cookies del navegador del cliente
+- La información se encripta utilizando una clave secreta
+- Permiten acceder a los datos del usuario en diferentes rutas de la aplicación
+- Mantienen la persistencia de la información entre solicitudes HTTP
+
+Es importante destacar que Flask implementa un mecanismo de seguridad mediante la `secret_key`, que encripta la información almacenada en las cookies. Esto previene que, si alguien intercepta estas cookies, no pueda utilizarlas en otro navegador para suplantar la identidad del usuario original.
+
+#### ¿Por qué es importante la secret_key?
+
+La `secret_key` es un componente crítico en la seguridad de las sesiones de Flask. Esta clave se utiliza para:
+
+- Encriptar la información almacenada en las cookies
+- Prevenir ataques de suplantación de identidad
+- Asegurar que las cookies solo funcionen en el navegador del usuario legítimo
+- Proteger datos sensibles que se comparten entre el cliente y el servidor
+
+Sin una `secret_key` adecuada, cualquier persona con acceso a las cookies podría manipular la información y potencialmente acceder a recursos protegidos de la aplicación.
+
+**Implementando un sistema de autenticación básico**
+
+Para implementar nuestro sistema de autenticación, crearemos un nuevo Blueprint en Flask que manejará las rutas de login y logout. Este enfoque nos permite organizar mejor nuestro código y separar la lógica de autenticación del resto de la aplicación.
+
+#### Creación del Blueprint de autenticación
+
+Primero, debemos crear una nueva carpeta para nuestro Blueprint:
+
+```python
+from flask import Blueprint
+
+auth_bp = Blueprint('auth', __name__)
+```
+
+Luego, definimos la ruta de login que aceptará tanto solicitudes GET (para mostrar el formulario) como POST (para procesar la información del usuario):
+
+```python
+from flask import Blueprint, request, render_template, redirect, url_for, flash, session
+
+auth_bp = Blueprint('auth', __name__)
+
+@auth_bp.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        username = request.form['username']
+        
+        if username == 'admin':
+            session['user'] = username
+            return redirect(url_for('notes.home'))
+        else:
+            flash('Usuario no permitido', 'error')
+    
+    return render_template('login.html')
+```
+
+En este código:
+
+1. Verificamos si la solicitud es POST (envío del formulario)
+2. Obtenemos el nombre de usuario del formulario
+3. Validamos si el usuario es válido (en este caso, solo 'admin')
+4. Si es válido, almacenamos el nombre de usuario en la sesión
+5. Redirigimos al usuario a la página principal de notas
+6. Si no es válido, mostramos un mensaje de error
+
+#### Creación del template de login
+
+Para que nuestro sistema funcione, necesitamos crear un template HTML que muestre el formulario de login:
+
+```python
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <h2>Login</h2>
+    <form method="POST">
+        <div class="form-group">
+            <label for="username">Username:</label>
+            <input type="text" name="username" id="username" required>
+        </div>
+        <button type="submit" class="btn">Login</button>
+    </form>
+</div>
+{% endblock %}
+```
+
+#### Registrando el Blueprint en la aplicación principal
+
+Para que nuestro Blueprint funcione, debemos registrarlo en el archivo principal de la aplicación:
+
+```python
+from auth.routes import auth_bp
+
+app.register_blueprint(auth_bp)
+```
+
+**¿Cómo utilizar la información de sesión en otras rutas?**
+
+Una vez que el usuario ha iniciado sesión, podemos acceder a la información almacenada en la sesión desde cualquier otra ruta de la aplicación. Esto nos permite:
+
+- Verificar si el usuario está autenticado
+- Mostrar contenido personalizado basado en el usuario
+- Restringir el acceso a ciertas rutas solo para usuarios autenticados
+- Filtrar información específica para cada usuario
+
+**Es importante recordar** que no debemos almacenar grandes cantidades de información en la sesión. Lo ideal es guardar solo identificadores o datos pequeños que luego nos permitan recuperar información más completa desde nuestra base de datos.
+
+#### Implementando el logout
+
+Para completar nuestro sistema de autenticación, necesitamos una ruta que permita al usuario cerrar sesión. Esta ruta debe:
+
+Eliminar la información del usuario de la sesión
+Redirigir al usuario a la página de login
+Mostrar un mensaje confirmando que se ha cerrado sesión correctamente
+
+```python
+@auth_bp.route('/logout')
+def logout():
+    session.pop('user', None)
+    flash('Has cerrado sesión correctamente', 'success')
+    return redirect(url_for('auth.login'))
+```
+
+La implementación de un sistema de autenticación básico en Flask utilizando sesiones es un primer paso fundamental para proteger la información de los usuarios en nuestra aplicación. Aunque este ejemplo es simple, ilustra los conceptos clave que necesitas entender para desarrollar sistemas más complejos y seguros en el futuro. ¿Has implementado sistemas de autenticación en tus proyectos? Comparte tu experiencia en los comentarios.
+
+**Lecturas recomendadas**
+
+[Sessions in Flask | TestDriven.io](https://testdriven.io/blog/flask-sessions/)
+
+[Client Challenge](https://pypi.org/project/Flask-Session/)
+
+## Validación de Formularios en Flask: Mensajes de Error y Reglas Básicas
+
+En Flask, puedes hacer **validación de formularios** de forma manual o usando extensiones como **Flask-WTF**, que ofrece validación automática, manejo de CSRF y generación de formularios basada en clases.
+
+A continuación te muestro ambas formas:
+
+### ✅ Opción 1: Validación Manual (sin librerías externas)
+
+### HTML (`register.html`)
+
+```html
+<form method="POST">
+  <input type="text" name="username" placeholder="Usuario" required>
+  {% if error_username %}<p style="color: red;">{{ error_username }}</p>{% endif %}
+
+  <input type="password" name="password" placeholder="Contraseña" required>
+  {% if error_password %}<p style="color: red;">{{ error_password }}</p>{% endif %}
+
+  <button type="submit">Registrarse</button>
+</form>
+```
+
+### Flask (`app.py`)
+
+```python
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    errors = {}
+    if request.method == 'POST':
+        username = request.form.get('username', '').strip()
+        password = request.form.get('password', '')
+
+        if not username:
+            errors['error_username'] = "El nombre de usuario es obligatorio."
+        elif User.query.filter_by(username=username).first():
+            errors['error_username'] = "Este usuario ya existe."
+
+        if not password or len(password) < 6:
+            errors['error_password'] = "La contraseña debe tener al menos 6 caracteres."
+
+        if not errors:
+            user = User(username=username)
+            user.set_password(password)
+            db.session.add(user)
+            db.session.commit()
+            flash("Registro exitoso. Inicia sesión.")
+            return redirect(url_for('login'))
+
+    return render_template('register.html', **errors)
+```
+
+### 🧠 Opción 2: Usando Flask-WTF (más ordenado y profesional)
+
+### Instalación
+
+```bash
+pip install flask-wtf
+```
+
+### `forms.py`
+
+```python
+from flask_wtf import FlaskForm
+from wtforms import StringField, PasswordField, SubmitField
+from wtforms.validators import InputRequired, Length
+
+class RegisterForm(FlaskForm):
+    username = StringField("Usuario", validators=[InputRequired(), Length(min=3)])
+    password = PasswordField("Contraseña", validators=[InputRequired(), Length(min=6)])
+    submit = SubmitField("Registrarse")
+```
+
+### `app.py`
+
+```python
+from forms import RegisterForm
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    form = RegisterForm()
+    if form.validate_on_submit():
+        username = form.username.data
+        password = form.password.data
+
+        if User.query.filter_by(username=username).first():
+            flash("El usuario ya existe.")
+            return redirect(url_for('register'))
+
+        user = User(username=username)
+        user.set_password(password)
+        db.session.add(user)
+        db.session.commit()
+        flash("Registro exitoso. Inicia sesión.")
+        return redirect(url_for('login'))
+
+    return render_template('register.html', form=form)
+```
+
+### `register.html`
+
+```html
+<form method="POST">
+  {{ form.hidden_tag() }}
+  {{ form.username.label }}<br>
+  {{ form.username(size=32) }}<br>
+  {% for error in form.username.errors %}
+    <span style="color:red">{{ error }}</span><br>
+  {% endfor %}
+
+  {{ form.password.label }}<br>
+  {{ form.password(size=32) }}<br>
+  {% for error in form.password.errors %}
+    <span style="color:red">{{ error }}</span><br>
+  {% endfor %}
+
+  {{ form.submit() }}
+</form>
+```
+
+### Resumen
+
+La validación de datos es un aspecto fundamental en el desarrollo web que garantiza la integridad y calidad de la información que recibimos de los usuarios. Cuando construimos aplicaciones, especialmente aquellas que permiten la creación de contenido como notas o publicaciones, es crucial implementar mecanismos que verifiquen si los datos ingresados cumplen con nuestros requisitos antes de procesarlos o almacenarlos en la base de datos.
+
+#### ¿Cómo validar información del lado del cliente en Flask?
+
+Cuando desarrollamos aplicaciones web, es común que los usuarios ingresen información que puede no cumplir con nuestros criterios de validez. Por ejemplo, títulos demasiado cortos o contenidos sin suficiente información. **La validación en el lado del servidor es esencial para garantizar que solo se procesen datos que cumplan con nuestros requisitos**.
+
+En Flask, podemos implementar validaciones manuales de manera relativamente sencilla. Estas validaciones se realizan antes de que los datos se guarden en la base de datos, lo que nos permite mostrar mensajes de error apropiados al usuario y evitar el procesamiento de información inválida.
+
+#### Implementación de validaciones básicas en rutas de Flask
+
+Para implementar validaciones básicas en nuestras rutas de Flask, podemos verificar las condiciones directamente en el código de la ruta. Veamos un ejemplo práctico:
+
+```python
+@app.route('/notes/create', methods=['POST'])
+def create_note():
+    title = request.form['title']
+    content = request.form['content']
+    
+    # Validación del título
+    if len(title.strip()) > 10:
+        # El título es válido, continuamos
+        
+        # Validación del contenido
+        if len(content.strip()) > 300:
+            # El contenido es válido, guardamos la nota
+            # Código para guardar la nota en la base de datos
+            flash('La nota fue creada correctamente', 'success')
+            return redirect(url_for('notes'))
+        else:
+            flash('El contenido es muy corto, mínimo 300 caracteres', 'error')
+    else:
+        flash('El título es muy corto, mínimo 10 caracteres', 'error')
+    
+    # Si llegamos aquí, hubo un error de validación
+    return render_template('create_note.html')
+
+```
+En este código, estamos validando dos condiciones:
+
+1. Que el título tenga al menos 10 caracteres (después de eliminar espacios en blanco)
+2. Que el contenido tenga al menos 300 caracteres
+
+**Si alguna de estas condiciones no se cumple, mostramos un mensaje de error al usuario** y volvemos a renderizar el formulario para que pueda corregir la información.
+
+#### Uso del sistema de mensajes flash de Flask
+
+Flask incluye un sistema de mensajes flash que nos permite enviar mensajes entre solicitudes. Estos mensajes se almacenan en la sesión y se muestran en la siguiente solicitud. En nuestro ejemplo, utilizamos este sistema para mostrar mensajes de error o éxito al usuario:
+
+`flash('El título es muy corto, mínimo 10 caracteres', 'error')`
+
+El segundo parámetro ('error') indica el tipo de mensaje, lo que nos permite aplicar estilos diferentes según sea un mensaje de éxito, error, advertencia, etc.
+
+#### Integración con el template HTML
+
+Para que estos mensajes se muestren correctamente, necesitamos incluir el código correspondiente en nuestro template base:
+
+```html
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    {% for category, message in messages %}
+      <div class="alert alert-{{ category }}">
+        {{ message }}
+      </div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+```
+
+Este código recorre todos los mensajes flash y los muestra con la clase CSS correspondiente al tipo de mensaje.
+
+#### ¿Qué alternativas existen para validaciones más complejas?
+
+Aunque la validación manual es útil para casos simples, Flask ofrece integraciones con bibliotecas más potentes para manejar validaciones complejas. Una de las más populares es Flask-WTF, que proporciona una integración entre Flask y WTForms.
+
+Flask-WTF permite definir formularios como clases de Python, con reglas de validación declarativas:
+
+```python
+from flask_wtf import FlaskForm
+from wtforms import StringField, TextAreaField
+from wtforms.validators import DataRequired, Length
+
+class NoteForm(FlaskForm):
+    title = StringField('Título', validators=[
+        DataRequired(message='El título es obligatorio'),
+        Length(min=10, message='El título debe tener al menos 10 caracteres')
+    ])
+    content = TextAreaField('Contenido', validators=[
+        DataRequired(message='El contenido es obligatorio'),
+        Length(min=300, message='El contenido debe tener al menos 300 caracteres')
+    ])
+```
+
+Esta aproximación ofrece varias ventajas:
+
+- **Separación de responsabilidades**: La lógica de validación está separada de la lógica de la ruta
+- **Reutilización**: Podemos usar el mismo formulario en múltiples rutas
+- **Extensibilidad**: Es fácil agregar nuevas reglas de validación
+- **Internacionalización**: Facilita la traducción de mensajes de error
+
+#### Implementación con Flask-WTF
+
+Para utilizar Flask-WTF en nuestras rutas, el código se simplificaría:
+
+```python
+@app.route('/notes/create', methods=['GET', 'POST'])
+def create_note():
+    form = NoteForm()
+    
+    if form.validate_on_submit():
+        # Todos los datos son válidos
+        # Código para guardar la nota en la base de datos
+        flash('La nota fue creada correctamente', 'success')
+        return redirect(url_for('notes'))
+    
+    # Si hay errores de validación, se mostrarán automáticamente en el template
+    return render_template('create_note.html', form=form)
+```
+
+Y en el template:
+
+```html
+<form method="post">
+    {{ form.csrf_token }}
+    
+    <div class="form-group">
+        {{ form.title.label }}
+        {{ form.title(class="form-control") }}
+        {% if form.title.errors %}
+            <div class="errors">
+                {% for error in form.title.errors %}
+                    <span class="error">{{ error }}</span>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+    
+    <div class="form-group">
+        {{ form.content.label }}
+        {{ form.content(class="form-control") }}
+        {% if form.content.errors %}
+            <div class="errors">
+                {% for error in form.content.errors %}
+                    <span class="error">{{ error }}</span>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+    
+    <button type="submit" class="btn btn-primary">Crear nota</button>
+</form>
+```
+
+#### ¿Cómo mejorar la experiencia de usuario con validaciones?
+
+La validación no solo se trata de prevenir datos incorrectos, sino también de proporcionar una buena experiencia de usuario. Algunas prácticas recomendadas incluyen:
+
+1. **Mensajes claros y específicos**: Indicar exactamente qué está mal y cómo corregirlo
+2. **Validación en tiempo real**: Usar JavaScript para validar mientras el usuario escribe
+3. **Preservar los datos válidos**: No obligar al usuario a volver a ingresar información que ya era correcta
+4. **Diseño visual adecuado**: Usar colores, iconos y estilos para distinguir claramente los errores
+5. **Accesibilidad**: Asegurarse de que los mensajes de error sean accesibles para todos los usuarios
+
+**La combinación de validaciones del lado del cliente (JavaScript) y del lado del servidor (Flask) proporciona la mejor experiencia y seguridad**, ya que las validaciones del cliente mejoran la experiencia del usuario mientras que las del servidor garantizan la integridad de los datos.
+
+La validación de datos es un componente esencial en cualquier aplicación web robusta. Implementar validaciones efectivas mejora tanto la experiencia del usuario como la calidad de los datos almacenados. Te invitamos a experimentar con Flask-WTF y otras bibliotecas de validación para mejorar tus aplicaciones. ¿Qué otras reglas de validación consideras importantes para una aplicación de notas? Comparte tus ideas en los comentarios.
+
+**Lecturas recomendadas**
+
+[GitHub - platzi/curso-flask](https://github.com/platzi/curso-flask)
+
+[Form Validation with WTForms — Flask Documentation (3.1.x)](https://flask.palletsprojects.com/en/stable/patterns/wtforms/)
