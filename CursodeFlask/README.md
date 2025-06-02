@@ -3222,3 +3222,400 @@ La validación de datos es un componente esencial en cualquier aplicación web r
 [GitHub - platzi/curso-flask](https://github.com/platzi/curso-flask)
 
 [Form Validation with WTForms — Flask Documentation (3.1.x)](https://flask.palletsprojects.com/en/stable/patterns/wtforms/)
+
+## Pruebas Unitarias en Flask: Creación y Configuración
+
+Para realizar **pruebas unitarias en Flask**, puedes usar el módulo estándar de Python `unittest` junto con las utilidades de prueba de Flask. A continuación te muestro cómo configurar y crear pruebas básicas.
+
+### ✅ 1. Estructura del Proyecto (Ejemplo)
+
+```
+notes_app/
+│
+├── app/
+│   ├── __init__.py
+│   ├── routes.py
+│   ├── models.py
+│   └── forms.py
+│
+├── tests/
+│   ├── __init__.py
+│   └── test_basic.py
+│
+├── config.py
+├── run.py
+└── requirements.txt
+```
+
+### 🛠 2. Configuración del Entorno de Pruebas
+
+### `config.py`
+
+```python
+class Config:
+    SECRET_KEY = 'secret'
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///db.sqlite3'
+    TESTING = False
+
+class TestConfig(Config):
+    TESTING = True
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///:memory:'
+```
+
+### 🧪 3. Código de Prueba: `tests/test_basic.py`
+
+```python
+import unittest
+from app import create_app, db
+from app.models import User
+
+class BasicTestCase(unittest.TestCase):
+    def setUp(self):
+        # Crea una instancia de la app en modo de prueba
+        self.app = create_app('testing')  # usa config TestConfig
+        self.app_context = self.app.app_context()
+        self.app_context.push()
+        db.create_all()
+        self.client = self.app.test_client()
+
+    def tearDown(self):
+        db.session.remove()
+        db.drop_all()
+        self.app_context.pop()
+
+    def test_home_page_loads(self):
+        response = self.client.get('/')
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b'Notas', response.data)
+
+    def test_user_registration(self):
+        response = self.client.post('/register', data={
+            'username': 'testuser',
+            'password': '123456'
+        }, follow_redirects=True)
+        self.assertEqual(response.status_code, 200)
+        user = User.query.filter_by(username='testuser').first()
+        self.assertIsNotNone(user)
+```
+
+### 🧩 4. Crear `create_app()` en `app/__init__.py`
+
+```python
+from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
+from config import Config, TestConfig
+
+db = SQLAlchemy()
+
+def create_app(config_name='default'):
+    app = Flask(__name__)
+    if config_name == 'testing':
+        app.config.from_object(TestConfig)
+    else:
+        app.config.from_object(Config)
+
+    db.init_app(app)
+
+    from .routes import main as main_blueprint
+    app.register_blueprint(main_blueprint)
+
+    return app
+```
+
+### ▶️ 5. Ejecutar las Pruebas
+
+Desde la raíz del proyecto:
+
+```bash
+python -m unittest discover tests
+```
+### Resumen
+
+Las pruebas unitarias son fundamentales en el desarrollo de software moderno, especialmente cuando trabajamos con frameworks como Flask. Estas pruebas nos permiten verificar que nuestro código funciona correctamente y mantiene su integridad a lo largo del tiempo, incluso cuando realizamos modificaciones. Dominar esta técnica no solo mejora la calidad de nuestras aplicaciones, sino que también facilita la implementación de metodologías como la integración continua.
+
+#### ¿Qué son las pruebas unitarias y por qué son importantes?
+
+Las pruebas unitarias son una práctica esencial en el desarrollo de software que consiste en validar que cada componente individual de nuestro código funciona como esperamos. Esto es particularmente importante cuando nuestro código incluye lógica de negocio compleja.
+
+Existen varios beneficios clave al implementar pruebas unitarias:
+
+- **Validación constante**: Nos permiten verificar que el código hace exactamente lo que esperamos.
+- **Seguridad al realizar cambios**: Podemos modificar nuestro código con la confianza de que no estamos rompiendo funcionalidades existentes.
+- **Integración continua**: Las pruebas pueden ejecutarse automáticamente en procesos de CI/CD (Integración Continua/Despliegue Continuo).
+- **Documentación viva**: Las pruebas sirven como documentación ejecutable de cómo debe comportarse nuestro código.
+
+En Flask, tenemos herramientas específicas que nos facilitan la creación de pruebas para validar tanto nuestros modelos como nuestras vistas.
+
+#### ¿Cómo configurar un entorno de pruebas en Flask?
+
+Para implementar pruebas unitarias en Flask, necesitamos configurar adecuadamente nuestro entorno. Esto implica varios pasos importantes:
+
+#### Creación de una configuración específica para pruebas
+
+Lo primero que debemos hacer es crear una configuración específica para nuestras pruebas:
+
+```python
+class TestConfig:
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///test_notes.db'
+    SECRET_KEY = 'test_secret_key'
+    TESTING = True
+```
+
+Esta configuración es similar a la de producción, pero con algunas diferencias clave:
+
+- Utilizamos una base de datos diferente (test_notes.db) para no afectar los datos de producción.
+- Establecemos TESTING = True para que Flask sepa que estamos en modo de prueba.
+- Podemos definir una clave secreta específica para pruebas.
+
+#### Implementación del patrón Application Factory
+
+Para poder cambiar la configuración durante las pruebas, necesitamos implementar el patrón Application Factory:
+
+```python
+def create_app(config_class=Config):
+    app = Flask(__name__)
+    app.config.from_object(config_class)
+    
+    # Aquí va el resto de la configuración de la app
+    # ...
+    
+    return app
+```
+
+Este patrón nos permite crear instancias de nuestra aplicación con diferentes configuraciones, lo que es esencial para las pruebas. En lugar de inicializar la aplicación directamente, creamos una función que la inicializa y la devuelve.
+
+**¿Cómo crear y ejecutar pruebas unitarias en Flask?**
+
+Una vez configurado nuestro entorno, podemos comenzar a escribir pruebas unitarias para nuestros modelos y vistas.
+
+#### Creación de una clase de prueba
+
+Creamos un archivo `test_models.py` con una clase que hereda de `unittest.TestCase`:
+
+```python
+import unittest
+from app import create_app
+from config import TestConfig
+from models import db, Note
+
+class NoteModelTest(unittest.TestCase):
+    def setUp(self):
+        self.app = create_app(TestConfig)
+        self.client = self.app.test_client()
+        
+        with self.app.app_context():
+            db.create_all()
+    
+    def test_create_note(self):
+        with self.app.app_context():
+            note = Note(title="Título", content="Contenido")
+            db.session.add(note)
+            db.session.commit()
+            
+            saved_note = Note.query.first()
+            
+            self.assertEqual(saved_note.title, "Título")
+            self.assertEqual(saved_note.content, "Contenido")
+```
+
+En este ejemplo:
+
+- El método `setUp` se ejecuta antes de cada prueba y configura el entorno necesario.
+- Creamos una instancia de nuestra aplicación con la configuración de prueba.
+- Inicializamos un cliente de prueba que nos permitirá simular solicitudes HTTP.
+- Creamos la estructura de la base de datos dentro del contexto de la aplicación.
+- En `test_create_note`, probamos que podemos crear una nota y que se guarda correctamente en la base de datos.
+
+#### Uso del contexto de aplicación
+
+Un aspecto crucial al trabajar con pruebas en Flask es el uso del contexto de aplicación. Muchas operaciones, como las interacciones con la base de datos, requieren este contexto:
+
+```python
+with self.app.app_context():
+    # Código que requiere el contexto de la aplicación
+    db.create_all()
+    # ...
+```
+
+Sin este contexto, recibiremos errores al intentar acceder a la base de datos u otros recursos de la aplicación.
+
+#### Uso de assertions para validar resultados
+
+Las assertions son el corazón de las pruebas unitarias. Nos permiten verificar que los resultados son los esperados:
+
+`self.assertEqual(saved_note.title, "Título")`
+
+Existen muchos tipos de assertions disponibles:
+
+- `assertEqual`: Verifica que dos valores son iguales
+- `assertTrue/assertFalse`: Verifica que un valor es verdadero o falso
+- `assertIn`: Verifica que un elemento está en una colección
+- `assertRaises`: Verifica que se lanza una excepción específica
+
+#### Ejecución de las pruebas
+
+Para ejecutar nuestras pruebas, utilizamos el módulo `unittest` de Python:
+
+`python -m unittest test_models.py`
+
+Si la prueba es exitosa, veremos un punto por cada prueba que pase. Si falla, veremos un mensaje de error detallado que nos ayudará a identificar el problema.
+
+Las pruebas unitarias son una herramienta poderosa para garantizar la calidad de nuestro código en aplicaciones Flask. Al implementarlas correctamente, podemos desarrollar con mayor confianza y mantener nuestras aplicaciones más robustas a lo largo del tiempo. ¿Has implementado pruebas unitarias en tus proyectos? Comparte tus experiencias y dudas en la sección de comentarios.
+
+## Desarrollo de Microservicios con Flask
+
+El **desarrollo de microservicios con Flask** consiste en estructurar tu aplicación como una colección de pequeños servicios independientes, cada uno enfocado en una funcionalidad específica. Flask, por ser ligero y flexible, es una excelente opción para esto.
+
+### 🔹 ¿Qué es un Microservicio?
+
+Un **microservicio** es una pequeña aplicación autónoma que realiza una tarea concreta y se comunica con otros microservicios a través de una API (usualmente HTTP/REST o gRPC).
+
+### 🧱 Estructura Básica de un Microservicio en Flask
+
+Supongamos un microservicio llamado `users_service`:
+
+```
+users_service/
+├── app.py
+├── routes.py
+├── models.py
+├── config.py
+├── requirements.txt
+└── Dockerfile (opcional)
+```
+
+### 📌 Ejemplo: Microservicio de Usuarios con Flask
+
+#### `app.py`
+
+```python
+from flask import Flask
+from routes import users_bp
+from config import Config
+
+def create_app():
+    app = Flask(__name__)
+    app.config.from_object(Config)
+
+    app.register_blueprint(users_bp)
+
+    return app
+
+if __name__ == "__main__":
+    app = create_app()
+    app.run(debug=True, port=5000)
+```
+
+#### `routes.py`
+
+```python
+from flask import Blueprint, jsonify, request
+
+users_bp = Blueprint('users', __name__)
+
+@users_bp.route("/users", methods=["GET"])
+def get_users():
+    # Simulación de base de datos
+    users = [{"id": 1, "name": "Mario"}, {"id": 2, "name": "Luisa"}]
+    return jsonify(users)
+
+@users_bp.route("/users", methods=["POST"])
+def create_user():
+    data = request.json
+    return jsonify({"message": "Usuario creado", "data": data}), 201
+```
+
+#### `config.py`
+
+```python
+class Config:
+    DEBUG = True
+```
+
+### 📡 Comunicación entre microservicios
+
+Puedes usar HTTP (con `requests`) o colas como RabbitMQ/SQS para comunicarte entre servicios:
+
+```python
+# Desde otro microservicio
+import requests
+
+response = requests.get("http://localhost:5000/users")
+print(response.json())
+```
+
+### ✅ Buenas prácticas
+
+* Usa **Blueprints** para modularizar rutas.
+* Implementa **validaciones y control de errores**.
+* Despliega cada microservicio en un contenedor (Docker).
+* Utiliza un **API Gateway** si tienes múltiples microservicios.
+* Usa **bases de datos independientes** por servicio (eventualmente consistentes).
+* Registra logs y usa herramientas de observabilidad como **Prometheus + Grafana**.
+
+### Resumen
+
+Flask es un framework poderoso y flexible para el desarrollo de aplicaciones web y microservicios en Python. Su simplicidad y capacidad de personalización lo convierten en una herramienta ideal tanto para principiantes como para desarrolladores experimentados. A través de este contenido, exploraremos las ventajas de Flask y cómo puedes seguir mejorando tus habilidades después de dominar los fundamentos.
+
+#### ¿Por qué Flask es ideal para microservicios?
+
+Flask se destaca como una excelente opción para el desarrollo de microservicios debido a su naturaleza minimalista y flexible. **Al ser un framework ligero**, permite utilizar únicamente los recursos necesarios sin cargar código innecesario que podría afectar el rendimiento de tus aplicaciones.
+
+Esta característica es particularmente valiosa en entornos empresariales donde la eficiencia es crucial. Muchos desarrolladores experimentados han implementado Flask en diversas compañías precisamente por su facilidad de configuración y personalización.
+
+La simplicidad de Flask también ofrece ventajas cuando se trabaja con herramientas de inteligencia artificial para autocompletar código. **Al requerir menos tokens para generar sugerencias**, estas herramientas pueden funcionar de manera más eficiente y precisa con aplicaciones Flask.
+
+#### ¿Cómo se integra Flask con otras librerías?
+
+Una de las mayores fortalezas de Flask es su alta capacidad de integración con otras librerías Python. Esto permite extender su funcionalidad según las necesidades específicas de cada proyecto:
+
+- Para el manejo de usuarios, existen librerías especializadas que se integran fácilmente con Flask.
+- El manejo de archivos puede delegarse a librerías externas que simplifican estas operaciones.
+- La creación de APIs RESTful puede implementarse mediante extensiones específicas.
+
+Esta modularidad permite construir aplicaciones robustas sin la sobrecarga de componentes innecesarios, siguiendo el principio de "usar solo lo que necesitas".
+
+#### ¿Cómo mejorar tu aplicación Flask?
+
+Una vez que dominas los fundamentos de Flask, desde la creación de una aplicación simple hasta la estructuración mediante blueprints, puedes implementar mejoras significativas en tus proyectos.
+
+**La optimización del rendimiento** es un área clave para mejorar. Por ejemplo, en una aplicación de notas, implementar paginación puede mejorar significativamente la experiencia del usuario:
+
+```python
+@app.route('/notes')
+def list_notes():
+    page = request.args.get('page', 1, type=int)
+    per_page = 10
+    notes = Note.query.filter_by(user_id=current_user.id)\
+        .order_by(Note.created_at.desc())\
+        .paginate(page=page, per_page=per_page)
+    return render_template('notes.html', notes=notes)
+```
+
+Este enfoque es especialmente útil cuando los usuarios crean muchas notas, ya que cargar todas simultáneamente podría ralentizar la aplicación.
+
+#### ¿Qué otras funcionalidades puedes integrar?
+
+Para llevar tu aplicación Flask al siguiente nivel, considera estas posibilidades:
+
+- Implementar una API RESTful para permitir que otros servicios interactúen con tu aplicación.
+- Añadir autenticación avanzada y manejo de sesiones.
+- Implementar un sistema de caché para mejorar el rendimiento.
+- Crear una interfaz de usuario más dinámica utilizando JavaScript y AJAX.
+
+Estas mejoras no solo enriquecerán tu aplicación, sino que también ampliarán tus habilidades como desarrollador Python.
+
+#### ¿Cómo llevar tu aplicación a producción?
+
+Desarrollar una aplicación localmente es solo el primer paso. **El verdadero desafío comienza cuando necesitas desplegarla en un entorno de producción**.
+
+Para este proceso, es recomendable seguir buenas prácticas de despliegue:
+
+- Configurar variables de entorno para manejar información sensible.
+- Implementar un servidor WSGI como Gunicorn para manejar las solicitudes.
+- Utilizar un servidor proxy como Nginx para mejorar la seguridad y el rendimiento.
+- Configurar un sistema de monitoreo para detectar y resolver problemas rápidamente.
+
+Para profundizar en estos temas, existen recursos especializados como cursos de despliegue de aplicaciones Python que cubren desde la creación de cuentas en AWS hasta la configuración de entornos altamente escalables.
+
+Flask ofrece un camino flexible y potente para el desarrollo web en Python, permitiéndote crear desde simples aplicaciones hasta complejos sistemas distribuidos. **La clave está en seguir aprendiendo y experimentando** con las diversas posibilidades que este framework ofrece. Te animamos a compartir tus proyectos y experiencias en los comentarios, y a continuar explorando el fascinante mundo del desarrollo web con Python y Flask.

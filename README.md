@@ -62,6 +62,7 @@
 - [Curso de Cypress Avanzado](CursoDeCypressAvanzado)
 - [Curso de Pruebas de Usabilidad](CursoDePruebasDeUsabilidad)
 - [Curso de Testing de Videojuegos](CursoDeTestingDeVideojuegos)
+- [Curso de N8N](CursodeN8N)
 
 ## Linux server
 
