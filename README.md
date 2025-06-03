@@ -156,6 +156,67 @@
 - [Curso de AWS Redshift para Manejo de Big Data](CursodeAWSRedshiftparaManejodeBigData)
 - [Curso de Docker: Fundamentos](CursoDeDockerFundamentos)
 
+## Data Scientist con Python
+
+### Fundamentos de programación
+
+- [Curso de Python: Comprehensions, Funciones y Manejo de Errores](CursodePythonComprehensions,FuncionesyManejodeErrores)
+
+### Análisis de datos con Python
+
+- [Curso de Entorno de Trabajo para Ciencia de Datos con Jupyter Notebooks y Anaconda](cursentornotrabajotiencidatosjupyternotebooksanaconda)
+- [Curso de Visualización de Datos para BI](CursodeVisualizaciondeDatosparaBI)
+- [Curso de Python para Ciencia de Datos](CursodePythonparaCienciadeDato)
+
+Curso de Entornos Virtuales con Anaconda y Jupyter
+
+- [Curso de Funciones Matemáticas para Data Science e Inteligencia Artificial](CursodeFuncionesMatemáticasparaDataScienceeInteligenciaArtificial)
+- [Curso de Matemáticas para Data Science: Estadística Descriptiva](CursodeMatemáticasparaDataScienceEstadísticaDescriptiva)
+- [Curso de Matemáticas para Data Science: Probabilidad](CursodeMatemáticasparaDataScienceProbabilidad)
+- [Curso de Análisis Exploratorio de Datos](CursoDeAnálisisExploratorioDeDatos)
+- [Curso de Python: PIP y Entornos Virtuales](CursoDePythonPIPyEntornosVirtuales)
+- [Curso de Configuración Profesional de Entorno de Trabajo para Ciencia de Datos](CursodeConfiguracionProfesionaldeEntornodeTrabajoparaCienciadeDatos)
+- [Curso de Manejo de Datos Faltantes: Detección y Exploración](CursodeManejodeDatosFaltantesDeteccionyExploracion)
+- [Curso de Manejo de Datos Faltantes: Imputación](CursodeManejodeDatosFaltantesImputacion)
+
+
+### Machine learning con Python y bases de datos
+
+Curso de Introducción a Machine Learning
+
+Curso Básico de Cálculo Diferencial para Data Science e Inteligencia Artificial
+
+Curso de Estadística Inferencial para Data Science e Inteligencia Artificial
+
+Curso de Fundamentos de Álgebra Lineal con Python
+
+Curso de Álgebra Lineal Aplicada para Machine Learning
+
+Curso de Regresión Lineal con Python y scikit-learn
+
+Curso de Regresión Logística con Python y scikit-learn
+
+Curso de Decision Trees y Random Forest con Python y scikit-learn
+
+Curso de Clustering con Python y scikit-learn
+
+Curso Profesional de Machine Learning con scikit-learn
+
+Curso de Bases de Datos con SQL
+
+- [Curso Práctico de SQL](CursoPracticodeSQL)
+- [Curso de PostgreSQL Aplicado a Ciencia de Datos](CursodePostgreSQLAplicadoaCienciadeDatos)
+- [Curso de Herramientas de Inteligencia Artificial para Equipos de Datos](CursodeHerramientasdeInteligenciaArtificialparaEquiposdeDatos)
+- [Curso para Crear tus Proyectos de Ciencia de Datos](CursoparaCreartusProyectosdeCienciadeDatos)
+
+Curso de MLOPS: Despliegue de Modelos de Machine Learning
+
+Laboratorio de Machine Learning: Optimización de Modelos
+
+Laboratorio de Machine Learning: Puesta en Producción de Modelos
+
+- [Curso de Redes Neuronales Convolucionales con Python y Keras](CursodeRedesNeuronalesConvolucionalesconPythonyKeras)
+
 ## Certificación de AWS Cloud Practitioner
 
 - [Curso de Introducción a la Nube](CursodeIntroduccionalaNube)
