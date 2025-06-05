@@ -843,3 +843,502 @@ Te animo a importar un dataset en tu herramienta de visualización favorita y a 
 [Data Types - Tableau](https://help.tableau.com/current/pro/desktop/en-us/datafields_typesandroles_datatypes.htm)
 
 [Data types in Power BI Desktop - Power BI | Microsoft Learn](https://learn.microsoft.com/en-us/power-bi/connect-data/desktop-data-types)
+
+## Principios de Diseño de Datos: Estructura y Estética Efectivas
+
+Aquí tienes un resumen claro y profesional sobre los **Principios de Diseño de Datos**, enfocados en lograr una **estructura sólida** y una **estética efectiva**, especialmente útil para paneles, dashboards e informes de Business Intelligence:
+
+### 🎯 **1. Claridad ante todo**
+
+> “Un buen diseño de datos transmite la historia sin que el usuario tenga que pensar demasiado.”
+
+* **Evita el exceso de colores, formas o gráficos innecesarios.**
+* Usa etiquetas claras, títulos descriptivos y leyendas legibles.
+* Prioriza la **legibilidad de los datos** sobre efectos visuales.
+
+### 🧱 **2. Estructura jerárquica**
+
+Organiza la información en niveles visuales para guiar al usuario:
+
+* **Primero**: Métricas clave (KPIs).
+* **Luego**: Comparaciones y tendencias.
+* **Finalmente**: Detalles o desgloses (drill-down).
+
+📐 Usa cuadrículas o alineación consistente para evitar desorden visual.
+
+### 🎨 **3. Estética coherente**
+
+Aplica principios de diseño gráfico en tus visualizaciones:
+
+* **Colores**: Usa una paleta limitada y funcional (colores para alertas, agrupaciones o marcas).
+* **Tipografía**: Usa como máximo dos tipos de letra. Tamaños jerárquicos (título, subtítulo, contenido).
+* **Espaciado**: Deja márgenes y respiración visual entre secciones.
+
+### 📊 **4. Elección apropiada de visualización**
+
+Cada tipo de dato tiene una forma óptima de mostrarse:
+
+| Tipo de dato           | Gráfico recomendado           |
+| ---------------------- | ----------------------------- |
+| Comparaciones          | Barras horizontales           |
+| Evolución en el tiempo | Líneas o áreas                |
+| Proporciones           | Donut, torta (con moderación) |
+| Jerarquías             | Treemap o matriz              |
+| Ubicación geográfica   | Mapas                         |
+
+### 📌 **5. Enfoque en el usuario final**
+
+* Diseña según **el contexto de negocio** y el nivel de análisis del usuario.
+* Añade **filtros, botones o segmentadores (slicers)** si el usuario necesita interactuar.
+* Asegúrate de que los insights principales sean **evidentes en menos de 5 segundos**.
+
+### 🔐 **6. Consistencia con la fuente de datos**
+
+* Refleja fielmente los datos sin alterar su significado.
+* Aplica **formato de números, porcentajes, fechas y monedas** correctamente.
+* Valida siempre que los datos estén actualizados y sin errores.
+
+### 📚 Ejemplo aplicado:
+
+Un **dashboard financiero** efectivo podría incluir:
+
+* En la parte superior: KPIs como ingresos, margen bruto, gastos.
+* Al medio: Gráficos de barras de ingresos por región o producto.
+* Al final: Tablas con detalles exportables o auditables.
+
+### Resumen
+
+#### ¿Cómo transformar la complejidad en claridad en el diseño de datos?
+
+El diseño de datos puede convertir información compleja en una presentación clara y comprensible si se aplica una estructura y estética adecuada. Aquí profundizaremos en los principios fundamentales y técnicas que se deben considerar para lograr un diseño efectivo y atractivo.
+
+#### ¿Cuál es la importancia de la jerarquía de la información?
+
+La jerarquía de la información es esencial para comunicar de manera efectiva. Debemos centrarnos en responder preguntas clave derivadas de entrevistas o análisis previos. Por ejemplo, si se solicitan variables de tiempo en meses, no debe presentarse en días. Esto asegura que la información sea específica y relevante para el usuario.
+
+#### ¿Cómo se integra la jerarquía visual en el diseño?
+
+- **Diseño en F**: Comienza en la parte superior izquierda, permitiendo recorrer la información de manera natural de izquierda a derecha. Esta estructura ayuda a enfocar la atención en elementos esenciales como puntuaciones o información introductoria a lo largo de la parte superior y el lado izquierdo de la interfaz.
+
+- **Diseño en Z**: Inicia también en la parte superior pero sigue una secuencia en forma de Z. Coloca información relevante en la parte superior y final, manteniendo una continuidad en el cuerpo de la presentación para orientar al usuario y responder preguntas al final del recorrido.
+
+#### ¿Qué papel juegan la estética y la tipografía?
+
+La estética en el diseño de datos incluye el uso de color y tipografía:
+
+- **Color**: Debe reflejar la identidad corporativa y las emociones adecuadas, evitando combinaciones que no generen contraste o coherencia visual. Existen herramientas que pueden guiarte en la elección correcta de colores.
+
+- **Tipografía**: Selecciona una fuente legible y juega con estilos como negritas o itálicas para llamar la atención. El espaciado y tamaño deben ser cuidadosamente considerados para mejorar la comprensión.
+
+#### ¿Cómo asegurar la claridad con gráficos y diseños simples?
+
+El diseño debe ser claro y estratégico:
+
+- Evita gráficos complejos.
+- Busca que el lector se sienta cómodo y comprenda la información fácilmente.
+- Usa colores y formas que complementen el mensaje y faciliten la interacción y respuesta a las preguntas del usuario.
+
+#### ¿Qué significa tener diseños accesibles y operables?
+
+Los diseños deben ser accesibles y operables:
+
+- **Accesibilidad**: Implica que los usuarios puedan percibir, usar e interpretar fácilmente el diseño. Complementa con subtítulos o información adicional para mejorar la comprensión del mensaje.
+
+- **Operabilidad**: Si usas elementos dinámicos o filtros, asegúrate de que sean intuitivos y fáciles de usar. Un diseño complejo puede obstaculizar la operabilidad y comprensión.
+
+#### ¿Qué se entiende por robustez en el diseño de datos?
+
+La robustez se refiere a la confianza que el usuario puede tener en la información presentada. Es vital asegurar que la información sea veraz, oportuna y refuerce la credibilidad del diseño. Esto involucra el uso de datos precisos y presentaciones que demuestren fiabilidad, afianzando así la confianza del usuario en los resultados mostrados.
+
+¡Continúa mejorando tus habilidades en diseño de datos! Experimenta con estas técnicas y encuentra el estilo que mejor comunique tu mensaje.
+
+**Lecturas recomendadas**
+
+[Visual Hierarchy: Organizing content to follow natural eye movement patterns | IxDF](https://www.interaction-design.org/literature/article/visual-hierarchy-organizing-content-to-follow-natural-eye-movement-patterns)
+
+## Modelado de Datos y Visualización con Power BI y Excel
+
+Aquí tienes una guía clara y estructurada sobre **Modelado de Datos y Visualización con Power BI y Excel**, dos herramientas fundamentales en proyectos de Business Intelligence:
+
+### 📐 **1. Modelado de Datos: Fundamentos**
+
+El modelado de datos consiste en **organizar y estructurar las tablas y relaciones** de forma lógica para facilitar el análisis.
+
+### 🔹 En Power BI:
+
+* Usa el **modelo de estrella (star schema)**: una tabla de hechos (transacciones) y múltiples tablas de dimensiones (clientes, productos, fechas).
+* Define **relaciones entre tablas**: asegúrate de tener claves primarias y foráneas correctamente conectadas.
+* Usa **Power Query** para limpiar y transformar datos antes de cargarlos al modelo.
+* Implementa **medidas DAX** para KPIs personalizados (por ejemplo: `Total Ventas = SUM(Ventas[Importe])`).
+
+### 🔹 En Excel:
+
+* Usa **Power Pivot** para relacionar múltiples tablas (modelo de datos en Excel).
+* Emplea tablas dinámicas conectadas al modelo.
+* Usa funciones como `XLOOKUP`, `FILTER`, `SUMIFS`, o `GETPIVOTDATA` para análisis.
+
+### 📊 **2. Visualización de Datos: Mejores Prácticas**
+
+Visualizar bien los datos es clave para contar historias claras y generar insights.
+
+### 🔸 Buenas prácticas:
+
+* Usa gráficos adecuados según el tipo de análisis (barras para comparación, líneas para tendencia, mapas para datos geográficos).
+* No sobrecargues visualizaciones: menos es más.
+* Usa **segmentadores (slicers)** y filtros para interactividad.
+* En Power BI, puedes usar botones, bookmarks y tooltips para crear dashboards dinámicos.
+
+### 🔧 **3. Comparación Power BI vs Excel**
+
+| Característica             | Power BI                             | Excel                               |
+| -------------------------- | ------------------------------------ | ----------------------------------- |
+| Volumen de datos           | Muy alto (miles a millones de filas) | Limitado (hasta 1M filas por hoja)  |
+| Relación entre tablas      | Modelo completo con relaciones       | Power Pivot o fórmulas manuales     |
+| Interactividad             | Alta (dashboards, filtros, tooltips) | Limitada                            |
+| Actualización de datos     | Automática con Power BI Service      | Manual o mediante macros/conexiones |
+| Publicación y compartición | Power BI Service / Web               | Email, OneDrive, SharePoint         |
+
+### 🧠 **4. Ejemplo práctico de flujo de trabajo (Power BI)**
+
+1. **Importar datos** desde Excel, SQL Server o Google Sheets.
+2. **Transformar** con Power Query: limpiar, eliminar duplicados, calcular columnas.
+3. **Modelar**: crear relaciones entre tablas, definir medidas DAX.
+4. **Visualizar**: usar paneles, gráficos y slicers.
+5. **Publicar** en Power BI Service para compartir con tu equipo.
+
+### 📁 Recursos útiles
+
+* **Power BI Desktop**: [Descargar gratis](https://powerbi.microsoft.com/es-es/desktop/)
+* **Power Query (Excel)**: Ya incluido en Excel moderno (desde 2016).
+* **Microsoft Learn**: Curso gratuito de [Modelado en Power BI](https://learn.microsoft.com/es-es/training/paths/model-data-power-bi/)
+
+### Resumen
+
+#### ¿Cómo analizar los requerimientos de un stakeholder?
+
+Llegar al punto en el que debemos interpretar y evaluar los requerimientos de un interesado es crucial en proyectos de análisis. En este contexto, se ha recibido un mensaje de Kelly, la supervisora del área de bodega y productos. Nuestro objetivo es descifrar sus requisiciones y adaptarlas en el diseño del proyecto. Es esencial identificar que Kelly necesita una herramienta dinámica para monitorear movimientos de inventario como precio de costo, precio de venta, movimiento de inventario, y cantidades en existencia. Sin duda, esta será una puesta en práctica de todo lo aprendido.
+
+#### ¿Cómo extraer datos desde Excel para análisis en Power BI?
+
+### Paso inicial en Excel
+
+Excel y Power BI comparten muchas similitudes en sus interfaces gráficas. Empezamos abriendo Excel, accediendo a "Obtener datos" desde un archivo Excel. Este archivo servirá como base de datos que podremos modificar.
+
+#### Procesamiento de datos
+
+1. **Abrir y verificar datos**: Seleccionamos el archivo llamado "productos 2024". Antes de cargar, verificamos que la información sea correcta.
+2. **Transformar datos**: Esta interfaz, similar a la de Power BI, nos permitirá clasificar y modelar la información.
+
+#### Clasificación y verificación de datos
+
+- **Tipos de datos:** Identificamos y clasificamos los datos correctos, asegurándonos de tener texto donde se requiera, como en IDs de productos, y convertir a moneda los costos de productos, dado que implican valores monetarios.
+- **Integridad de los datos**: Validamos visualmente que los datos sean correctos, y confirmamos que no existan errores ni vacíos en las columnas.
+
+#### ¿Cómo crear una tabla de dimensiones y hechos?
+
+Las tablas de hechos y dimensiones son fundamentales para organizar y interpretar los datos:
+
+- **Tabla de hechos**: Captura los registros temporales, encontramos fechas y secuencias relevantes.
+- **Tabla de dimensiones**: Comprenderemos las características únicas de los productos. Esto nos permitirá filtrar y manipular la información de manera efectiva.
+
+#### Creación de las tablas
+
+- **Dimensión de los productos**: Creamos una tabla con productos únicos que describe cada artículo con su ID, nombre, categoría, costo, y precio unitario.
+- **Identificación de atributos únicos**: Los atributos como categoría y subcategoría permiten reconocer y diferenciar entre productos con claridad.
+
+#### ¿Cómo verificar integridad y preparar datos para Power BI?
+
+#### Revisión en Power BI
+
+Con las tablas ya consolidadas en Excel, es recomendable realizar una segunda verificación en Power BI:
+
+- **Conexión a la fuente de datos**: A través de "Obtener datos", se selecciona el libro de Excel y se valida en Power BI.
+- **Configuración y validación de datos**: Se ajustan los campos de moneda y fecha según sea necesario, asegurando que sean precisos para análisis ulterior.
+
+#### Nombramiento y relación de tablas
+
+Renombrar las tablas según su función ayuda a clarificar roles dentro del modelado. Por ejemplo:
+
+- **Dimensiones**: Se prefiere prefijar "DM" para demostrar su función de filtro.
+- **Hechos**: Es común anteponer "Fact" para identificar la tabla que captura eventos temporales.
+
+#### ¿Cómo hacer el modelado de datos en Power BI?
+
+Finalmente, en Power BI podemos explorar la relación entre las tablas:
+
+1. **Relación automática**: Power BI intenta relacionar columnas coincidentes. Revisar estas relaciones es vital para un análisis correcto.
+2. **Herramientas de visualización**: El paso final incluye el uso de las opciones de visualización en Power BI, donde se preparará la información visual.
+3. **Analizar las relaciones**: Conectar cuidadosamente las dimensiones y los hechos es crucial para obtener decisiones y responder preguntas de los requerimientos iniciales.
+
+¡Este análisis y modelado de datos nos prepara para responder a las necesidades específicas de Kelly y otros stakeholders con precisión y agilidad!
+
+**Archivos de la clase**
+
+[productos-2023.xlsx](https://static.platzi.com/media/public/uploads/productos_2023_16d794e4-1452-4c6e-aad1-341cc915eeab.xlsx)
+[productos-2024.xlsx](https://static.platzi.com/media/public/uploads/productos_2024_c7f36fa0-a3c6-4a88-b2e7-ab2628687e96.xlsx)
+
+**Lecturas recomendadas**
+
+[Fundamentals of Data Visualization](https://clauswilke.com/dataviz/index.html)
+
+[How to choose the right chart type for your data | The Flourish blog | Flourish | Data Visualization & Storytelling](https://flourish.studio/blog/choosing-the-right-visualisation/)
+
+[503 - Error de servicio no disponible](https://www.amazon.es/Fundamentals-Data-Visualization-Informative-Compelling/dp/1492031089)
+
+## Visualización de Datos en Power BI: Creación de Dashboards Efectivos
+
+Crear dashboards efectivos en **Power BI** es clave para transformar datos en decisiones accionables. Aquí te explico paso a paso cómo diseñar dashboards que sean **claros, útiles y visualmente atractivos**, junto con buenas prácticas y errores comunes a evitar.
+
+### 🎯 **Objetivo de un Dashboard en Power BI**
+
+Un **dashboard** debe responder a preguntas clave del negocio de forma rápida. Su función es **resumir KPIs e insights clave** a través de visualizaciones interactivas.
+
+### 🧱 **1. Componentes clave de un Dashboard efectivo**
+
+* **KPIs principales**: Ventas, costos, márgenes, crecimiento.
+* **Visualizaciones apropiadas**: Gráficos de barras, líneas, tarjetas, tablas, mapas.
+* **Filtros y segmentadores**: Por fecha, categoría, región.
+* **Interactividad**: Slicers, bookmarks, drill-through.
+
+### 🛠️ **2. Pasos para construirlo en Power BI**
+
+### 🔹 Paso 1: Carga y limpieza de datos
+
+* Conecta a tus fuentes (Excel, SQL, Google Sheets).
+* Usa **Power Query** para transformar: eliminar nulos, formatear fechas, crear columnas calculadas.
+
+### 🔹 Paso 2: Modelo de datos
+
+* Diseña un **modelo de estrella** (tabla de hechos + dimensiones).
+* Establece relaciones adecuadas (1:\*).
+* Crea medidas DAX como:
+
+  ```DAX
+  Ventas Totales = SUM(Ventas[Importe])
+  Crecimiento = ([Ventas Totales] - [Ventas Anteriores]) / [Ventas Anteriores]
+  ```
+
+### 🔹 Paso 3: Visualización
+
+* Usa paneles de tarjetas (cards) para KPIs rápidos.
+* Barras para comparaciones.
+* Líneas para tendencias temporales.
+* Mapas para distribución geográfica.
+* Segmentadores (slicers) para filtros rápidos.
+
+### 🔹 Paso 4: Interactividad y diseño
+
+* Aplica **drill-down** y **tooltips personalizados**.
+* Usa colores consistentes por categoría.
+* Evita el uso excesivo de gráficos.
+* Alinea los elementos para orden visual.
+
+### ✅ **3. Mejores prácticas**
+
+| Recomendación                 | Ejemplo o beneficio                          |
+| ----------------------------- | -------------------------------------------- |
+| Usa pocos colores             | Enfoca la atención                           |
+| Agrega leyendas claras        | Ayuda a interpretar sin confusión            |
+| No abuses de filtros          | Filtros bien ubicados mejoran la experiencia |
+| Usa bookmarks para navegación | Simula pestañas y mejora la usabilidad       |
+| Limita texto y ruido visual   | Facilita lectura rápida                      |
+
+### 🚫 **4. Errores comunes a evitar**
+
+* Gráficos innecesarios (ej. pie charts en exceso).
+* Mostrar tablas grandes sin resúmenes.
+* Colores fuertes o muchos colores distintos.
+* KPIs sin contexto ni etiquetas claras.
+* Paneles sin títulos o sin jerarquía visual.
+
+### 📁 **5. Publicación y colaboración**
+
+* **Publica en Power BI Service** para compartir dashboards con otros.
+* Configura actualizaciones automáticas de datos (refrescos).
+* Controla permisos de acceso por rol o grupo.
+
+### 📊 Ejemplo de Estructura de Dashboard
+
+```
+| Ventas Totales | Margen | Ticket Promedio |
+|----------------|--------|-----------------|
+| 📈 Gráfico de línea mensual       |
+| 📊 Gráfico de barras por categoría |
+| 🌍 Mapa por ciudad/región         |
+| 📆 Filtro por fecha | 📦 Filtro por producto |
+```
+
+### Resumen
+
+#### ¿Cómo las dimensiones filtran las tablas de hechos en modelado de datos?
+
+Comprender cómo viajan los datos entre dimensiones y tablas de hechos es fundamental en el modelado de datos. La dimensión tiene el rol vital de filtrar la tabla de hechos, lo que ayuda a organizar y visualizar mejor la información.
+
+- Las dimensiones contienen datos únicos que filtran las tablas de hechos basadas en muchos registros repetidos.
+- Es crucial establecer relaciones de uno a muchos entre dimensiones y tablas de hechos, evitando relaciones de muchos a muchos para evitar errores.
+- Las dimensiones controlan la dirección del flujo de datos para mantener la precisión en los cálculos y reportes.
+
+#### ¿Cómo configuramos el lienzo en Power BI?
+
+Configurar correctamente el lienzo en Power BI es un paso importante para asegurar que la visualización sea efectiva para el público objetivo. El tamaño del lienzo debe adaptarse a la plataforma donde el report se visualizará, haciendo que la experiencia del usuario sea más cómoda y legible.
+
+- Power BI permite establecer tamaños de lienzo estándar o personalizado, como 4:3 o 16:9.
+- La elección debe basarse en el dispositivo donde el stakeholder tenga más probabilidades de ver el informe.
+
+#### ¿Qué tipo de visualizaciones existen en Power BI?
+
+Power BI ofrece una diversidad de opciones gráficas para interpretar datos eficientemente. Conocer qué tipo de gráfico utilizar para cada situación hace que la presentación de datos sea mucho más poderosa y clara.
+
+- **Barras y columnas**: Son ideales para segmentar y agrupar datos.
+- **Línea y área**: Útiles para representar tendencias a través del tiempo.
+- **Pastel o dona**: Perfectas para comparar proporciones dentro de un todo.
+- **Mapas**: Visualizan datos geográficos, resaltando áreas específicas.
+- **Tarjetas y KPI**: Presentan métricas clave de forma inmediata y evidente.
+
+#### ¿Cómo segmentamos datos para darle dinamismo a un informe?
+
+Una de las funcionalidades más poderosas en Power BI es la capacidad de segmentar datos, logrando que los informes sean interactivos y dinámicos. Esta capacidad permite responder eficazmente a preguntas específicas planteadas por los stakeholders.
+
+- **Segmentación por categoría, subcategoría y productos**: Ayuda a visualizar rápidamente las relaciones entre diferentes niveles de datos.
+- **Segmentación temporal**: Permite visualizar cómo varías los datos a lo largo del tiempo, utilizando campos como mes o año.
+- La segmentación proporciona una experiencia de usuario personalizada que puede cambiar dinámicamente conforme a necesidades específicas.
+
+#### ¿Cuáles son las prácticas recomendadas para el diseño de informes?
+
+El diseño de un informe no solo se trata de los datos que contiene, sino también de cómo éstos se presentan al usuario. Utilizar principios de diseño eficazmente puede mejorar enormemente la experiencia del usuario y la comprensión del contenido.
+
+- El diseño en **forma de F** es ideal para visualizar rápidamente datos importantes, distribuyendo la información de arriba a abajo y de izquierda a derecha.
+- Los elementos más vitales deben colocarse al principio del diseño, aprovechando la naturalidad del movimiento ocular.
+- Utilizar tarjetas para datos numéricos claves y gráficos de líneas para monitorear cambios a lo largo del tiempo puede aumentar significativamente la claridad del informe.
+
+Aplicando estos principios y técnicas, los informes en Power BI se vuelven no solo funcionales, sino también atractivos y comprensibles para el público objetivo. Recuerda que el objetivo principal es siempre ofrecer una visión clara y útil de los datos para tomar decisiones informadas.
+
+**Archivos de la clase**
+
+[formulas-dax-visualizacion-dinamica-y-analisis-de-datos-10-11.txt](https://static.platzi.com/media/public/uploads/formulas-dax-visualizacion-dinamica-y-analisis-de-datos-10-11_9751b572-bb2b-42f5-b77d-89e4211799c1.txt)
+[productos-2024.xlsx](https://static.platzi.com/media/files/productos_2024_c7f36fa0-a3c6-4a88-b2e7-ab2628687e96_546f8eea-fadb-44d8-8c53-972d9cdce33c.xlsx)
+[productos-2023.xlsx](https://static.platzi.com/media/files/productos_2023_16d794e4-1452-4c6e-aad1-341cc915eeab_e38b3403-80d1-46af-a7aa-0b238c178d73.xlsx)
+
+**Lecturas recomendadas**
+
+[Fundamentals of Data Visualization](https://clauswilke.com/dataviz/index.html)
+[How to choose the right chart type for your data | The Flourish blog | Flourish | Data Visualization & Storytelling](https://flourish.studio/blog/choosing-the-right-visualisation/)
+[Curso de Power BI - Platzi](https://platzi.com/cursos/powerbi/)
+
+## Mejorando Visualizaciones en Power BI con PowerPoint y ColorHunt
+
+¡Excelente enfoque! Combinar **Power BI**, **PowerPoint** y herramientas como **ColorHunt** te permite mejorar drásticamente la **estética y comunicación visual** de tus dashboards. Aquí te explico cómo aprovechar cada uno para lograr visualizaciones más efectivas, modernas y coherentes.
+
+### 🎨 1. **Usando ColorHunt para definir paletas profesionales**
+
+[**ColorHunt.co**](https://colorhunt.co) es una biblioteca de paletas de colores seleccionadas por diseñadores. Puedes usarla para:
+
+* Crear una **paleta de marca** o tema visual consistente.
+* Reforzar la jerarquía visual (colores fuertes para KPIs, suaves para fondo).
+* Mantener armonía en todo el dashboard.
+
+### 🔹 Cómo usar en Power BI:
+
+1. Entra a [ColorHunt](https://colorhunt.co) y selecciona una paleta.
+2. Copia los **hexadecimales** (ej: `#264653`, `#2a9d8f`, `#e9c46a`, `#f4a261`).
+3. En Power BI:
+
+   * Ve a **"Ver" → "Temas" → "Personalizar tema actual"**.
+   * Pega los códigos hex en la sección de **colores personalizados**.
+   * Guarda el tema y reutilízalo en otros reportes.
+
+✅ **Consejo:** Usa colores oscuros para fondos y colores vibrantes para datos clave.
+
+### 📊 2. **Diseña primero en PowerPoint: estructura, flujo e iconografía**
+
+PowerPoint te ayuda a planificar la **estructura del dashboard** visualmente, antes de implementarlo en Power BI.
+
+### 🔹 Qué puedes diseñar:
+
+* Mockups de layout: dónde irán KPIs, gráficos, filtros.
+* Navegación (botones de bookmarks, pestañas).
+* Íconos personalizados o títulos con formato especial.
+
+### 🔹 Cómo integrarlo:
+
+1. Diseña el layout del dashboard como si fuera una diapositiva.
+2. Exporta íconos o elementos como imágenes (.PNG).
+3. Inserta los elementos en Power BI (botones, íconos, fondos decorativos).
+4. Usa botones en Power BI con **acciones de navegación** (Bookmarks) que imitan pestañas o menús interactivos.
+
+### 🧰 3. **Buenas prácticas de integración**
+
+| Elemento visual               | ColorHunt | PowerPoint | Power BI |
+| ----------------------------- | --------- | ---------- | -------- |
+| Paleta de colores             | ✅         | ✅          | ✅        |
+| Íconos y gráficos SVG         |           | ✅          | ✅        |
+| Layout inicial del dashboard  |           | ✅          |          |
+| Visualización de datos reales |           |            | ✅        |
+| Interacción y filtros         |           |            | ✅        |
+
+### ✨ Ejemplo de paleta moderna desde ColorHunt:
+
+* `#222831` (fondo oscuro)
+* `#393E46` (bordes, subtítulos)
+* `#00ADB5` (KPIs destacados)
+* `#EEEEEE` (texto, etiquetas)
+
+### 🧠 Consejos extra:
+
+* Usa **imágenes SVG** desde PowerPoint para íconos más limpios.
+* Mantén un estilo visual coherente: misma tipografía, tamaños, alineación.
+* Exporta slides desde PowerPoint como **imágenes de fondo** para Power BI si necesitas diseño más elaborado (como marcos, decoraciones).
+
+### Resumen
+
+#### ¿Qué aprendimos en la visualización de datos?
+
+En la clase anterior pudimos aplicar todo lo aprendido durante el curso sobre visualización de datos. Trabajamos con diferentes diseños y modelos en Power BI para responder a las necesidades de un stakeholder. Ahora, en este nuevo módulo, exploraremos cómo hacer nuestras visualizaciones aún más atractivas usando herramientas como PowerPoint para mejorar el background y destacar los datos sin que el fondo robe la atención.
+
+#### ¿Cómo usar PowerPoint para mejorar visualizaciones en Power BI?
+
+PowerPoint es una herramienta potente para crear fondos visuales atractivos y adecuados para tableros en Power BI. Aquí hay pasos importantes para integrarla en nuestro proceso:
+
+1. **Seleccionar una imagen apropiada**: Elegir una imagen que refleje el tema de nuestra visualización. Por ejemplo, si hablamos de inventarios, una imagen de bodega puede funcionar bien.
+
+2. **Ajustar colores y transparencia**: Jugar con los colores y la transparencia de la imagen para que los datos sigan siendo el foco principal. Usar tonos apagados y configurar una transparencia adecuada para hacer el fondo visible sin distraer.
+
+3. **Configurar el tamaño de la diapositiva**: Establecer el tamaño panorámico 16:9 en PowerPoint para que coincida perfectamente con el lienzo de Power BI.
+
+4. **Guardar en formato SVG**: Guardar la diapositiva como archivo SVG (Formato Escalable de Gráficos Vectoriales) para subirlo a Power BI, manteniendo la posibilidad de edición futura guardándola también como archivo de PowerPoint.
+
+#### ¿Cómo aplicar el fondo en Power BI?
+
+Una vez que hemos creado y guardado el fondo en PowerPoint, podemos importarlo a Power BI y ajustarlo para maximizar su impacto visual:
+
+- **Subir el fondo al lienzo en Power BI**: Con el tamaño 16:9 ya configurado, cargar el fondo preparado para embellecer la presentación de los datos.
+
+- **Ajustar las secciones en el lienzo**: Trabajar en secciones individuales, primero enfocándonos, por ejemplo, en los "Cards" y luego aplicando el diseño en otras visualizaciones.
+
+#### ¿Cómo elegir la paleta de colores adecuada?
+
+El uso del color es crucial en la comunicación visual. Herramientas como ColorHunt ofrecen paletas predefinidas que aseguran un buen contraste y un efecto llamativo:
+
+- **Seleccionar colores que hagan match**: Usar colores que complementen el gris del background. Copiar las referencias RGB y aplicarlas en Power BI.
+
+- **Asegurar que los colores resalten la información**: Cada sección debe usar colores que resalten el tipo de dato presentado, mejorando la comprensión y el atractivo visual del tablero.
+
+#### ¿Cómo resaltar la información clave?
+
+Es crucial hacer que nuestros datos destacados sean claros y accesibles:
+
+- **Destacar importancias**: Usar negritas en los valores clave para darles más presencia.
+
+- **Configurar las tarjetas y texto**: Asegurarnos que las tarjetas de datos sean del mismo tamaño, tanto en espacio como en tamaño de fuente, y que refuercen el mensaje de nuestra visualización.
+
+- **Uso correcto de formatos monetarios**: Si estamos trabajando con cifras financieras, configurarlas en el formato correcto, integrando el símbolo monetario correspondiente.
+
+#### ¿Cómo realizar configuraciones finales en nuestro diseño?
+
+Finalmente, es hora de hacer los ajustes que aseguren la efectividad comunicativa de nuestro tablero:
+
+- **Optimizar gráficos para claridad y limpieza**: Desactivar elementos que no aporten, como ejes innecesarios, y utilizar etiquetas para clarificar la información directamente sobre las gráficas.
+
+- **Implementar una estructura de información jerárquica**: Seguir el diseño tipo F, segmentando la información de manera que sea fácil de seguir y responda a las preguntas de los stakeholders claramente.
+
+La integración de estas técnicas en Power BI, con ayuda de PowerPoint, resulta en tableros que no solo son visualmente atractivos, sino que también comunican de manera efectiva la información que nuestros stakeholders necesitan. Con práctica y atención a detalles, tus habilidades de visualización de datos seguirán perfeccionándose. ¡Ánimo y sigue aprendiendo!
