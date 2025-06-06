@@ -1342,3 +1342,835 @@ Finalmente, es hora de hacer los ajustes que aseguren la efectividad comunicativ
 - **Implementar una estructura de información jerárquica**: Seguir el diseño tipo F, segmentando la información de manera que sea fácil de seguir y responda a las preguntas de los stakeholders claramente.
 
 La integración de estas técnicas en Power BI, con ayuda de PowerPoint, resulta en tableros que no solo son visualmente atractivos, sino que también comunican de manera efectiva la información que nuestros stakeholders necesitan. Con práctica y atención a detalles, tus habilidades de visualización de datos seguirán perfeccionándose. ¡Ánimo y sigue aprendiendo!
+
+## Análisis de Series Temporales con Power BI
+
+El **Análisis de Series Temporales** en **Power BI** te permite descubrir patrones, tendencias y estacionalidades en datos distribuidos a lo largo del tiempo. Aquí tienes una guía clara y práctica para hacerlo con eficacia:
+
+### 📅 ¿Qué es una serie temporal?
+
+Una **serie temporal** es una secuencia de datos medidos a lo largo del tiempo, en intervalos regulares: días, semanas, meses, trimestres, años, etc.
+
+**Ejemplos comunes:**
+
+* Ventas mensuales
+* Tráfico web diario
+* Temperaturas por hora
+* Cotizaciones de bolsa
+
+### ⚙️ 1. Preparación de los datos
+
+### ✅ Asegúrate de:
+
+* Tener una columna **Fecha** con formato de fecha (`dd-mm-yyyy` o ISO).
+* No tener fechas duplicadas sin distinción (usa timestamp si es necesario).
+* Ordenar los datos cronológicamente (Power BI puede hacerlo automáticamente).
+
+### 📊 2. Visualizaciones recomendadas
+
+### 📈 Gráfico de líneas
+
+* Ideal para observar **tendencias y fluctuaciones**.
+* En "Visualizaciones", selecciona **Gráfico de líneas**.
+* Arrastra la fecha al eje X y el valor (ventas, visitas, etc.) al eje Y.
+
+### 🔄 Gráfico de áreas
+
+* Similar al de líneas, pero con énfasis visual en el volumen.
+
+### 📆 Tarjetas o gráficos de resumen temporal
+
+* Muestra KPIs como **total acumulado del mes**, **variación intermensual**, etc.
+
+### 🧠 3. Análisis avanzado
+
+### 📌 a. **Descomposición de la serie**
+
+Usa el objeto visual **"Decomposition Tree"** para:
+
+* Analizar valores por dimensión de tiempo (año > trimestre > mes).
+* Explorar jerárquicamente la evolución.
+
+### 📌 b. **Tendencias con DAX**
+
+Puedes crear columnas o medidas con DAX para análisis como:
+
+```DAX
+Tendencia Móvil 3M = AVERAGEX(
+    DATESINPERIOD('Tabla'[Fecha], LASTDATE('Tabla'[Fecha]), -3, MONTH),
+    CALCULATE(SUM('Tabla'[Valor]))
+)
+```
+
+Esto genera un promedio móvil de 3 meses.
+
+### 📌 c. **Comparaciones YoY (Year over Year)**
+
+```DAX
+Ventas YoY = 
+CALCULATE(
+    SUM('Ventas'[Monto]),
+    SAMEPERIODLASTYEAR('Ventas'[Fecha])
+)
+```
+
+Agrega contexto comparativo entre años.
+
+### ⏳ 4. Herramientas de predicción
+
+### 🔍 Línea de tendencia
+
+* En gráficos de líneas, puedes **agregar una línea de tendencia** desde el panel de análisis para estimar patrones.
+
+### 🔮 Forecast (pronóstico)
+
+* Algunos objetos visuales permiten **pronósticos automáticos** (en versión avanzada de Power BI o Power BI Desktop con AI enabled).
+
+### 💡 Buenas prácticas
+
+| Recomendación                  | Detalle                                          |
+| ------------------------------ | ------------------------------------------------ |
+| Normaliza fechas               | Usa jerarquías: año > trimestre > mes > día      |
+| Usa medidas y no columnas      | Mejora la eficiencia y flexibilidad              |
+| Filtra por períodos relevantes | Usa slicers de fecha, botones para navegar       |
+| Observa estacionalidad         | Identifica ciclos anuales, mensuales o semanales |
+| Añade tooltips informativos    | Mejora la interpretación del gráfico             |
+
+### 📁 Ejemplo de panel
+
+**Título:** Análisis de Ventas Mensuales 2023
+**Visuales:**
+
+* Línea de ventas mensuales
+* Gráfico de columnas por trimestre
+* KPI de crecimiento YoY
+* Slicer de años
+* Tabla de comparación mes a mes
+
+### Resumen
+
+#### ¿Qué son las series temporales y cómo transforman el análisis de datos?
+
+Las series temporales son una herramienta poderosa en análisis de datos, revelando patrones y tendencias a lo largo del tiempo. Estas series incorporan un componente temporal en los datasets, permitiendo una interpretación más rica y capaz de responder preguntas críticas para los clientes. Al integrar el tiempo en formatos como años, meses, días, horas y minutos, los analistas de Business Intelligence (BI) pueden diseñar soluciones integrales basadas en datos más enriquecidos.
+
+#### ¿Cómo enriquecen los datos el uso de series temporales?
+
+- **Análisis de causa y efecto**: Permiten realizar análisis sobre datos históricos para identificar causas de tendencias actuales.
+- **Predicciones futuras**: Facilitan la creación de modelos predictivos para imaginar diversos escenarios hipotéticos.
+- Mejora de la visualización: Aporta profundidad al análisis visual, mejorando así la comunicación de tendencias y patrones a los interesados.
+
+#### ¿Cómo se implementan las series temporales en un tablero de Power BI?
+
+Para comprender plenamente el impacto de las series temporales, a continuación se detalla un ejemplo práctico mediante Power BI. Este enfoque se centra en ayudar a una compañía a predecir costos de servicios públicos.
+
+#### Diseño del tablero en Power BI
+
+Comencemos por entender cómo se configura el tablero. El requisito proviene del área de servicios de una compañía que necesita un análisis histórico de gastos públicos para ajustar presupuestos.
+
+#### Estructura del tablero
+
+1. **División por secciones**:
+
+- **Encabezado**: Filtro por servicio (ej. alcantarillado, luz, gas).
+- **Cuerpo**: Tres áreas divididas para consumo, cargo fijo y valor unitario.
+- **Pie**: Área más amplia para mostrar el total de gastos.
+
+2. **Visualizaciones y filtros**:
+
+- Usar gráficos de líneas por su capacidad de interpretación temporal.
+- Configurar filtros de datos de forma lateral para facilitar la selección por el usuario.
+- Implementar mosaicos en los filtros para mejorar la visualización.
+
+#### Proceso de construcción del tablero
+
+- **Configuración de gráficos**:
+
+ - Minuciosamente arrastrar métricas al eje correspondiente (eje Y para la medida, eje X para el tiempo).
+ - Reproducción de configuraciones mediante el uso de la herramienta "copiar estilo".
+
+- **Añadiendo tendencias y predicciones**:
+
+ - Incluir líneas de tendencia para observar direcciones futuras de servicios individuales.
+ - Configurar previsiones de precios y consumo para meses futuros, ajustando duraciones e intervalos de confianza para precisión.
+
+
+#### Conclusiones sobre la aplicación de las series temporales
+
+Gracias a la aplicación de series temporales, es posible resolver preguntas críticas como el desglose de servicios en un tablero dinámico, la inspección de tendencias históricas, y la proyección de comportamientos futuros. Esto permite no solo visualizar datos pasados, sino también anticipar futuros, todo mejorado por un diseño atractivo y funcional que asegura claridad en la toma de decisiones.
+
+#### Invitación al lector
+
+Finalmente, se invita a los lectores a aplicar esta metodología, personalizar sus propios tableros usando herramientas como ColorHund para la estética, y compartir sus experiencias. ¡El poder de los datos está en sus manos! Experimentar, compartir y seguir aprendiendo constantemente.
+
+**Material**
+
+[Formulalas DAX - Domina las series temporales(12.txt)](Análisis de Series Temporales con Power BI)
+
+[ComnsumoServiciosPublicos.xlsx](https://static.platzi.com/media/public/uploads/comnsumoserviciospublicos_4a0f0df9-4e84-4b4f-8837-0aab62e7cc1c.xlsx)
+
+[serviciospublicos.pbix](https://static.platzi.com/media/public/uploads/serviciospublicos_ba361354-833c-47ab-9a7a-412052107212.pbix)
+
+## Visualización de Datos Geoespaciales en Power BI
+
+La **Visualización de Datos Geoespaciales en Power BI** te permite representar información con una dimensión geográfica (como países, ciudades, coordenadas, regiones) en mapas interactivos. Esto es útil para análisis como ubicación de ventas, distribución de clientes o seguimiento de operaciones por territorio.
+
+### 🔍 **¿Qué necesitas para visualizar datos geoespaciales?**
+
+1. **Datos geográficos claros y estructurados**, como:
+
+   * País
+   * Ciudad
+   * Departamento/Estado
+   * Código postal
+   * Coordenadas (Latitud y Longitud)
+
+2. **Asignar categoría de datos geográficos:**
+
+   * En Power BI, selecciona el campo → pestaña **Modelado** → opción **Categoría de datos** (por ejemplo: “Ciudad”, “País”, “Latitud”, “Longitud”).
+
+### 🧭 **Tipos de visualización geoespacial en Power BI**
+
+| Tipo de Mapa                      | Descripción                                                                                    |
+| --------------------------------- | ---------------------------------------------------------------------------------------------- |
+| 🗺 **Mapa (Map)**                 | Muestra ubicaciones como puntos en el mapa usando Bing Maps. Ideal para ciudades, países, etc. |
+| 🌍 **Mapa de formas (Shape Map)** | Muestra áreas geográficas como regiones, países o departamentos. Requiere archivos TopoJSON.   |
+| 📍 **ArcGIS Maps**                | Visualización avanzada con capas, zonas de calor, demografía y geocodificación precisa.        |
+
+### 📌 **Cómo crear un mapa básico**
+
+1. **Inserta la visualización “Mapa”** desde el panel de visualizaciones.
+2. **Arrastra un campo geográfico** al área de **Ubicación (Location)**.
+3. Agrega un campo numérico (como ventas, cantidad, total) al campo **Tamaño (Size)**.
+4. Opcional: Agrega **Leyenda** si quieres distinguir por categoría.
+
+### 🗺 Ejemplo
+
+Supón que tienes esta tabla:
+
+| Ciudad   | Ventas |
+| -------- | ------ |
+| Bogotá   | 120000 |
+| Medellín | 85000  |
+| Cali     | 60000  |
+
+Pasos:
+
+* Asigna “Ciudad” como categoría de datos → “Ciudad”.
+* Inserta un mapa.
+* Pon “Ciudad” en `Location` y “Ventas” en `Size`.
+
+### 🧠 Recomendaciones
+
+* Para datos precisos, usa **coordenadas geográficas** (latitud y longitud).
+* Usa mapas de formas si necesitas representar regiones como departamentos o países con límites definidos.
+* Verifica los nombres de lugares (Power BI usa Bing Maps o ArcGIS para geocodificar).
+
+### Resumen
+
+#### ¿Cómo se integran los datos geoespaciales en Power BI?
+
+Los datos adquieren un valor añadido significativo cuando se integran con información geoespacial. Las dimensiones de tiempo y espacio revelan cómo las organizaciones impactan en diferentes culturas y ciudades a lo largo del tiempo. En Power BI, las ubicaciones geográficas se pueden manejar mediante latitud, longitud y nombres de ubicaciones como ciudades y países. Sin embargo, es crucial tener en cuenta la configuración regional al trabajar con estos datos, ya que diferentes regiones pueden interpretar los formatos de manera distinta, especialmente al utilizar latitud y longitud.
+
+#### ¿Cuáles son los factores importantes a considerar?
+
+- Latitud y longitud: Usadas para indicar ubicaciones precisas en el globo, funcionan como las coordenadas que guían a un punto específico, similar a una dirección postal.
+- Nombres de ciudades y países: Los formatos comunes también incluyen la identificación por nombre de ciudad, departamento o país. Es esencial contar con detalles adicionales como región o país para evitar ambigüedades cuando varias ciudades comparten el mismo nombre.
+- Configuración regional: Tenga cuidado con los separadores de decimales (coma o punto) y nombres similares para ciudades en diferentes países, personalizando vistas para obtener la localización exacta.
+
+#### ¿Cómo cargar y visualizar datos en Power BI?
+
+Power BI permite la conexión a diferentes fuentes de datos, como archivos de Excel, para visualizar datos en tableros. El proceso incluye importar los datos, validar su integridad y configurarlos adecuadamente para visualización geográfica.
+
+#### ¿Cuáles son los pasos para importar un archivo de Excel?
+
+1. Obtener datos del archivo: Seleccione el tipo de archivo, navegue a la carpeta correspondiente y cargue el contenido.
+2. Validar y transformar datos: Verifique que los datos coincidan con sus tipos configurados (texto, número, fecha, etc.) y asegúrese que estén completos y correctamente formateados.
+3. Categorizar columnas geográficas: Asigne categorías como ciudad, país o región para facilitar la ubicación geográfica en visualizaciones.
+
+#### ¿Cómo configurar visualizaciones geográficas?
+
+Power BI ofrece herramientas como el mapa estándar y el mapa coroplético para representar ubicaciones geográficas. Debe seleccionarse la visualización adecuada en función de la información que se desea representar y el dinamismo que se pretende lograr en la interacción con el usuario.
+
+- Mapa estándar: Indicado para representar puntos específicos y se puede ampliar introduciendo medidas como cantidad de transacciones para variar el tamaño del punto.
+- Mapa coroplético: Sombreado que resalta la ubicación, adecuado para visualización estática de áreas geográficas.
+
+#### ¿Cómo diseñar un tablero atractivo y funcional?
+
+La atención al diseño del tablero de Power BI es crítica para la efectividad en la comunicación de insights. Un diseño bien pensado puede guiar al usuario en la exploración espacial y cuantitativa de los datos.
+
+#### ¿Cuáles son las mejores prácticas de diseño?
+
+- **Contraste de fondo**: Utilice un fondo negro para los mapas; resalta la visualización y facilita el contraste.
+- **Ubicación estratégica**: El mapa debe estar en el centro, siendo el elemento principal. Use filtros de ciudad lateralmente para interacción dinámica.
+- **Atractivo visual**: Incluya KPIs o tarjetas informativas en la parte inferior para mostrar estadísticas importantes como el número de clientes en diferentes tipos de negocio.
+- **Dinamismo con filtros**: Configure el mapa y los KPIs para responder dinámicamente a los filtros, permitiendo al usuario ver cambios en tiempo real.
+
+Al implementar estas estrategias, no solo mejora la apariencia y funcionalidad de sus visualizaciones de Power BI, sino que también logra comunicar efectivamente la historia que cuentan sus datos, maximizando el potencial analítico y estratégico de la organización.
+
+**Archivos de la clase**
+
+[formulas-dax-potencia-tus-datos-con-analisis-geoespacial-en-power-bi-13-14.txt](https://static.platzi.com/media/public/uploads/formulas-dax-potencia-tus-datos-con-analisis-geoespacial-en-power-bi-13-14_305b7cb6-f45b-45fd-a7ba-1c3939b9c317.txt)
+[campanas-2023.xlsx](https://static.platzi.com/media/public/uploads/campanas_2023_0da99521-b06b-46b8-9768-2608c22c204a.xlsx)
+[clientes-2023.xlsx](https://static.platzi.com/media/public/uploads/clientes_2023_141c9b5e-a279-4067-a637-a197e6464d79.xlsx)
+[empleados-2023.xlsx](https://static.platzi.com/media/public/uploads/empleados_2023_651b77c5-bd08-400e-8bf5-8de32c5ec21f.xlsx)
+[productos-2023.xlsx](https://static.platzi.com/media/public/uploads/productos_2023_0283115d-d5eb-40cf-8832-11de377023d9.xlsx)
+[ventas-2023.xlsx](https://static.platzi.com/media/public/uploads/ventas_2023_68bb21d4-82b9-4def-ba12-4efdb2732a15.xlsx)
+[airline-delay.xlsx](https://static.platzi.com/media/public/uploads/airline_delay_fa9c1f65-9f64-485b-b6da-dcfbc310f917.xlsx)
+[geolocalizacion.pptx](https://static.platzi.com/media/public/uploads/geolocalizacion_e3f151dc-289c-469e-8f4e-96bf08f788d9.pptx)
+[retrasos-aeropuertos.pbix](https://static.platzi.com/media/public/uploads/retrasos-aeropuertos_c46324f9-95c1-41e6-9aaa-84c913497dde.pbix)
+
+**Lecturas recomendadas**
+
+[The Work of Edward Tufte & Graphics Press](https://www.edwardtufte.com/)
+
+[https://public.tableau.com/?_gl=1*1ib8hh1*_ga*MTgxOTEwNDMzMC4xNzI4NDY2MDgy*_ga_8YLN0SNXVS*MTczMDA2MDAzNy4zMi4xLjE3MzAwNjA1MTkuMC4wLjA](https://public.tableau.com/?_gl=1*1ib8hh1*_ga*MTgxOTEwNDMzMC4xNzI4NDY2MDgy*_ga_8YLN0SNXVS*MTczMDA2MDAzNy4zMi4xLjE3MzAwNjA1MTkuMC4wLjA)
+
+## Visualización de Redes y Nodos en Power BI
+
+La **Visualización de Redes y Nodos en Power BI** permite representar relaciones entre entidades (por ejemplo, personas, dispositivos, organizaciones, etc.) usando **nodos (entidades)** y **aristas (relaciones)**. Esto es especialmente útil para:
+
+* Análisis de redes sociales
+* Relación entre clientes y productos
+* Infraestructura de sistemas o telecomunicaciones
+* Redes de colaboración
+
+### 🧩 ¿Qué necesitas?
+
+Una **estructura de datos en formato de red**, es decir:
+
+### Tabla de Relaciones (Edges):
+
+| Source | Target | Weight (opcional) |
+| ------ | ------ | ----------------- |
+| A      | B      | 5                 |
+| A      | C      | 2                 |
+| B      | D      | 1                 |
+
+### Tabla de Nodos (opcional):
+
+| Node | Attribute (opcional) |
+| ---- | -------------------- |
+| A    | Cliente              |
+| B    | Producto             |
+
+### 🔧 ¿Cómo visualizar redes y nodos en Power BI?
+
+Power BI **no incluye por defecto una visualización de redes**, pero puedes lograrlo de dos formas:
+
+### ✅ Opción 1: Usar **visualizaciones personalizadas (custom visuals)**
+
+1. **Ir a Visualizaciones > Obtener más visualizaciones (Importar desde Marketplace)**
+
+2. Busca e instala alguna de estas:
+
+   * **Network Navigator Chart**
+   * **Force-Directed Graph**
+   * **HTML Viewer + D3.js (avanzado)**
+
+3. Agrega la visualización a tu reporte y configura los campos:
+
+   * `Source`: nodo origen
+   * `Target`: nodo destino
+   * `Weight`: opcional, representa fuerza o cantidad
+   * `Node attributes`: para categorías, colores, tamaño, etc.
+
+### ✅ Opción 2: Usar **R o Python visual** (más avanzado)
+
+Power BI permite usar scripts de Python o R para dibujar gráficos complejos como redes con librerías como:
+
+* `networkx`, `plotly`, `matplotlib` en Python
+* `igraph`, `ggraph`, `ggplot2` en R
+
+> Esta opción es ideal si necesitas personalización avanzada y tienes experiencia con código.
+
+### 🌐 Ejemplo con Network Navigator
+
+Imagina que tienes la siguiente tabla en Power BI:
+
+| Persona | Contacto |
+| ------- | -------- |
+| Ana     | Luis     |
+| Ana     | Marta    |
+| Luis    | Carlos   |
+
+Pasos:
+
+1. Agrega la visualización "Network Navigator Chart".
+2. Coloca "Persona" en **Source** y "Contacto" en **Target**.
+3. Ajusta opciones de diseño como color, tamaño y disposición (layout).
+
+### 💡 Recomendaciones
+
+* Simplifica la red: muchos nodos y enlaces pueden hacerla ilegible.
+* Usa filtros para mostrar solo subgrupos o relaciones relevantes.
+* Usa atributos como categorías, tamaños o colores para enriquecer el análisis.
+
+### Resumen
+
+#### ¿Qué son los nodos y cómo revelan redes ocultas?
+
+Los nodos son una poderosa herramienta para conectar información y revelar relaciones ocultas dentro de una organización. Cuando se habla de nodos, se refiere a puntos de información centralizados que, al unirse con otros nodos, ayudan a identificar conexiones valiosas. Imagina que un nodo es tu empresa; los nodos subyacentes podrían ser clientes, y al agregar productos a la imagen, se forma una red completa que muestra interacciones y flujos dentro del negocio. Esta visión holística permite interpretar relaciones fundamentales para tomar decisiones estratégicas.
+
+#### ¿Cómo se utilizan los nodos en el análisis estratégico?
+
+Identificar relaciones entre nodos permite obtener información esencial para la toma de decisiones. Un caso muy práctico es entender cómo un cliente interactúa con una tienda y sus productos. Esta información puede usarse para:
+
+- Diseñar campañas de marketing efectivas.
+- Determinar los productos que más interesan a un cliente.
+- Crear estrategias para gestión de inventario y catálogo.
+
+Las conexiones entre nodos proporcionan un análisis integral, esencial para crear estrategias que potencien el negocio.
+
+#### ¿Cómo integrar nodos en Power BI para visualizar relaciones?
+
+Power BI no tiene una gráfica de nodos por defecto, pero permite añadir esta funcionalidad. Para visualizar relaciones utilizando nodos, sigue estos pasos:
+
+1. **Selecciona y añade el gráfico de nodos**: Dirígete a la opción de añadir objetos visuales adicionales y selecciona un gráfico de nodos adecuado. En este caso, el de Mac Software.
+2. **Configura las categorías y medidas**: Agrega datos a las categorías del gráfico según la jerarquía requerida. Por ejemplo, primero la ciudad, luego el nombre del cliente, y finalmente los productos.
+3. **Incorpora medidas de ventas**: Estas permitirán que el gráfico de nodos represente visualmente el flujo de información y la interacción de los diferentes nodos.
+
+El gráfico de nodos te proporcionará una representación visual dinámica, ayudándote a responder preguntas críticas para el negocio al conectar distintas variables.
+
+#### ¿Cómo establecer filtros adecuados en Power BI para una mejor visualización?
+
+Configurar filtros ayuda a desglosar y analizar correctamente la información en Power BI. Los filtros básicos incluyen:
+
+1. **Filtro de ciudad**: Para restringir los datos a áreas geográficas específicas, arrastra el campo ciudad al área de filtros.
+2. **Filtro de cliente**: Filtra la información según el cliente para observar las interacciones específicas de cada uno.
+3. **Comprobación de interacción de filtros**: Asegúrate de que los filtros funcionen conjuntamente, por ejemplo, verificando los nombres de clientes para una ciudad en particular.
+
+Estos pasos establecen una visualización clara, mejorando la comprensión de cómo los datos y las relaciones entre ellos impactan el negocio.
+
+#### ¿Cómo determinar la efectividad de las visualizaciones en Power BI?
+
+Después de configurar los nodos y filtros, es crucial evaluar cómo las visualizaciones responden a las preguntas de negocio. Verifica:
+
+- Si las gráficas muestran claramente el flujo de productos y las interacciones del cliente.
+- Si puedes responder preguntas estratégicas como cuál es el producto más vendido en una ciudad determinada.
+
+La efectividad se mide por la capacidad de estas visualizaciones de proporcionar insights que ayuden a mejorar decisiones estratégicas y operativas en la organización.
+
+Mantente motivado y experimenta con las herramientas de análisis de datos; cada práctica te acerca a dominar tu entorno de negocio.
+
+## Visualización de Datos con Tableau: Configuración y Primeros Pasos
+
+La **Visualización de Datos con Tableau** es una forma poderosa y visualmente atractiva de explorar tus datos desde los primeros pasos. A continuación te explico cómo comenzar desde cero:
+
+### 🎯 **¿Qué es Tableau?**
+
+Tableau es una herramienta de **Business Intelligence** para visualizar y analizar datos de forma interactiva y dinámica. Te permite conectar múltiples fuentes de datos y transformarlas en dashboards visuales útiles.
+
+### 🧰 **Paso 1: Instalación y acceso**
+
+1. **Descarga Tableau Public** (gratuita) o usa **Tableau Desktop** (versión completa con prueba gratis de 14 días):
+   👉 [https://www.tableau.com/es-es/products/desktop/download](https://www.tableau.com/es-es/products/desktop/download)
+
+2. **Instálalo** y crea una cuenta si no tienes una.
+
+### 🔌 **Paso 2: Conecta tu fuente de datos**
+
+1. Abre Tableau y haz clic en **“Conectar a datos”**.
+
+2. Elige la fuente:
+
+   * Excel, CSV, Google Sheets
+   * Bases de datos como MySQL, PostgreSQL
+   * Archivos como JSON, PDF, entre otros
+
+3. Una vez conectado, Tableau mostrará una **vista previa de tus datos**.
+
+### 📊 **Paso 3: Crea tu primer dashboard**
+
+1. Arrastra una hoja de cálculo o tabla a la pantalla de trabajo.
+2. Ve a una hoja nueva haciendo clic en “Sheet 1”.
+
+Aquí comienza la visualización:
+
+* **Coloca campos en 'Columns' y 'Rows'**
+* Arrastra dimensiones (categóricas) y medidas (numéricas) al área de trabajo
+* Usa el panel “Show Me” para elegir tipos de gráficos recomendados (barras, líneas, mapas, etc.)
+
+### 🧱 **Paso 4: Diseña visualizaciones**
+
+Ejemplo: Visualizar ventas por región
+
+* Arrastra "Región" a columnas
+* Arrastra "Ventas" a filas
+* Cambia el tipo de gráfico desde “Show Me” o haciendo clic derecho
+
+Puedes usar:
+
+* Filtros → para limitar por año, región, etc.
+* Colores → para codificar por categoría
+* Etiquetas → para mostrar totales o porcentajes
+
+### 🧩 **Paso 5: Crea un Dashboard**
+
+1. Haz clic en la pestaña de **Dashboard**
+2. Arrastra las hojas que creaste
+3. Ajusta el tamaño, filtros interactivos, y agrega títulos
+
+### 💾 **Paso 6: Guardar y compartir**
+
+* Tableau Public → Guarda y publica online
+* Tableau Desktop → Exporta como PDF, imagen o archivo empaquetado (.twbx)
+
+### 📘 Consejos iniciales
+
+* Usa pocos colores y gráficos simples para comenzar.
+* Explora las funciones de **filtros dinámicos**, **mapas geográficos** y **acciones interactivas**.
+* Los campos se dividen en:
+
+  * **Dimensiones**: texto, fechas, categorías
+  * **Medidas**: números que se agregan (SUM, AVG, etc.)
+
+  ### Resumen
+
+#### ¿Qué es Tableau y cómo podemos usarlo eficazmente?
+
+Tableau es una herramienta poderosa para crear visualizaciones interactivas y tableros de datos impactantes. Este software rivaliza con otras herramientas como Power BI, ofreciendo funcionalidades ricas y un enfoque en diseño visual que potencia el análisis de datos. En esta guía, exploraremos el uso de Tableau Public, una versión gratuita para desarrollar nuestras habilidades en visualización de datos.
+
+Las recomendaciones al utilizar Tableau incluyen:
+
+- Descargar Tableau Public desde su sitio web oficial.
+- Usar datos ficticios o públicos para evitar compartir información sensible.
+- Crear una carpeta organizada de datasets para tener todos los datos disponibles al alcance.
+
+####¿Cómo conectar y preparar datos en Tableau?
+
+Una vez que hayas descargado e instalado Tableau Public, el siguiente paso es conectar los datos. Tableau permite conectar datos desde varios orígenes, incluyendo archivos Excel y repositorios centralizados, que es una buena práctica de gobernanza de datos.
+
+1. **Conexión de datos**:
+
+ - Puedes seleccionar entre múltiples opciones, como conectar un archivo Excel.
+ - Asegúrate de que los datos están organizados adecuadamente dentro de las tablas correspondientes.
+
+2. **Selección y relación de tablas**:
+
+ - Selecciona la tabla de registros transaccionales (tabla de hechos) que contiene los datos históricos o que varían con cada transacción.
+ - Arrastra y renombra las tablas para facilitar la referencia.
+ - Establécelas relaciones correctas, asegurándote de configurar la cardinalidad entre las tablas adecuadamente.
+
+3. **Confirmación y corrección de errores**:
+
+ - Verifica que Tableau reconozca todas las tablas y establezca relaciones.
+ - Ajusta manualmente las uniones en caso de errores, como la ausencia de campos en común.
+
+#### ¿Cómo configurar y optimizar las tablas y relaciones?
+
+Para garantizar la precisión en las visualizaciones, es crucial confirmar el tipo de datos y personalizar las configuraciones según los requisitos.
+
+- **Verificación del tipo de datos**:
+
+ - Asegúrate de que cada columna tiene el tipo de dato adecuado (fecha, moneda, texto, etc.).
+ - Realiza los ajustes necesarios para evitar errores de interpretación o visualización.
+
+- **Configuración de roles geográficos**:
+
+Identifique y asigne roles geográficos a columnas con datos de ubicación (ciudades, países).
+Utiliza las opciones de roles geográficos de Tableau para visualizar datos en mapas.
+
+- **Ajuste de cartes de relación**:
+
+ - Determina la cardinalidad en relaciones de mucho a uno, asegurando que las tablas de hechos sean adecuadamente filtradas por las tablas de dimensión.
+ 
+#### ¿Cómo crear visualizaciones atractivas con Tableau?
+
+Tableau facilita la creación de visualizaciones a través de su interfaz intuitiva y opciones de personalización.
+
+1. **Exploración de la interfaz**:
+
+- Reconoce las secciones claves como dimensiones y medidas que organizan tus datos.
+- Las dimensiones permiten filtrar datos y agruparlos, mientras que las medidas generalmente son valores numéricos que se pueden agregar.
+
+2. **Uso del área de marques**:
+
+El área de marques ofrece herramientas para explotar la creatividad: formatear letras, colores, medidas y jerarquías.
+Considera los datos continuos y discretos al elegir el tipo de gráfico.
+
+3. **Creación de gráficos y tablas**:
+
+- Arrastra variables al lienzo para que Tableau sugiera el mejor gráfico basado en los datos.
+- Personaliza aspectos visuales como colores, tamaños de letra y formatos para realzar la claridad y atractivo visual.
+
+4. **Optimización multietiqueta**:
+
+- A diferencia de otras herramientas, Tableau requiere que cada visualización esté en un etiqueta diferente.
+- Desarrolla una planificación visual coherente para responder a las diferentes preguntas de los stakeholders.
+
+Animados por esta introducción sobre Tableau, los estudiantes podrán desarrollar sus habilidades en visualización de datos y crear tableros poderosos y persuasivos. Continúa explorando para perfeccionar y ampliar tus competencias en análisis de datos.
+
+**Lecturas recomendadas**
+
+[Latitud y Longitud - Concepto y ejemplos de coordenadas geográficas](https://concepto.de/latitud-y-longitud/)
+
+[Format Geographic Fields in Tableau - Tableau](https://help.tableau.com/current/pro/desktop/en-us/maps_geographicroles.htm#:~:text=In%20the%20Data%20pane%2C%20click%20the%20data%20type,the%20Data%20pane%3A%20Latitude%20%28generated%29%20and%20Longitude%20%28generated%29)
+
+[Codificación geográfica en el objeto visual de Power BI de Azure Maps - Microsoft Azure Maps | Microsoft Learn](https://learn.microsoft.com/es-es/azure/azure-maps/power-bi-visual-geocode)
+
+## Análisis de Ventas y Estrategias con Tableau y Power BI
+
+El **Análisis de Ventas y Estrategias con Tableau y Power BI** permite a empresas tomar decisiones basadas en datos para optimizar ingresos, identificar patrones de compra y definir acciones efectivas. A continuación te explico cómo aprovechar cada herramienta en este contexto:
+
+### 🎯 Objetivo del Análisis
+
+* Identificar tendencias de ventas.
+* Detectar productos, regiones o canales con mejor rendimiento.
+* Comprender comportamientos de clientes.
+* Evaluar el impacto de campañas o descuentos.
+* Tomar decisiones estratégicas basadas en datos reales.
+
+### 🧰 Herramientas Usadas
+
+### ✅ **Tableau**
+
+* Ideal para **exploración visual rápida**.
+* Potente en manejo de grandes volúmenes de datos.
+* Interacción fluida con mapas, gráficos y dashboards en tiempo real.
+
+### ✅ **Power BI**
+
+* Integración directa con Excel, Microsoft 365 y Azure.
+* Ideal para **modelado de datos**, KPI’s y automatización de reportes.
+* Mejor manejo de DAX (Data Analysis Expressions) para lógica avanzada.
+
+### 📊 ¿Qué tipos de análisis puedes hacer?
+
+### 1. **Análisis de tendencias**
+
+* Visualizar ventas por mes, trimestre o año.
+* Ver líneas de tendencia y estacionalidades.
+
+### 2. **Rendimiento por categoría**
+
+* Comparar ventas por producto, canal o región.
+* Identificar líderes y rezagados.
+
+### 3. **Análisis de clientes**
+
+* RFM: Recencia, Frecuencia y Valor Monetario.
+* Segmentación de clientes: VIP, nuevos, inactivos.
+
+### 4. **Proyecciones y simulaciones**
+
+* Crear escenarios “What if…” para simular precios o descuentos.
+* Aplicar forecasting con modelos predictivos.
+
+### 📈 Ejemplo de Visualizaciones
+
+| Herramienta | Visualización Sugerida   | Finalidad                                     |
+| ----------- | ------------------------ | --------------------------------------------- |
+| Tableau     | Mapa de calor por ciudad | Detectar zonas de alto volumen                |
+| Tableau     | Gráfico de dispersión    | Comparar margen vs volumen por producto       |
+| Power BI    | Tarjetas KPI             | Mostrar ventas totales, meta y % cumplimiento |
+| Power BI    | Segmentación temporal    | Filtro de análisis mensual, trimestral, etc.  |
+
+### 🧱 Diseño de Dashboard Estratégico
+
+* **Filtros principales**: Fecha, Región, Producto, Canal
+* **KPIs destacados**: Ventas totales, crecimiento, tickets promedio, unidades vendidas
+* **Alertas visuales**: Colores para sobrecumplimiento o bajo rendimiento
+* **Narrativa visual**: Contar una historia clara con datos, usando títulos y resúmenes
+
+### 🔄 Flujo de trabajo recomendado
+
+1. **Preparación de datos**
+
+   * Excel, CSV, bases SQL, CRM
+2. **Transformación**
+
+   * Power Query (Power BI) o Data Prep (Tableau)
+3. **Modelado**
+
+   * Relaciones, jerarquías, métricas personalizadas
+4. **Visualización**
+
+   * Crear reportes y dashboards interactivos
+5. **Distribución**
+
+   * Publicar en Tableau Server/Public o Power BI Service
+
+### 🎓 Mejores prácticas
+
+* No sobrecargar dashboards con gráficos innecesarios.
+* Usa colores con intención (verde = bueno, rojo = alerta).
+* Asegura buena calidad de datos (evita duplicados, vacíos).
+* Habilita filtros de usuario (por región, canal, tiempo).
+
+### Resumen
+
+#### ¿Cómo se desarrolla un proyecto de visualización de datos?
+
+Cada proyecto de visualización de datos es único, ya que no siempre contamos con objetivos específicos o preguntas definidas por los clientes. A menudo nos enfrentamos solo a un conjunto de datos, y nuestra misión es descubrir la historia que estos pueden contar. Así, es crucial realizar un análisis preliminar del dataset y formular las preguntas que aportarán valor al cliente. Este proceso siempre está en constante evolución, ya que los datos cambian y se actualizan constantemente.
+
+#### ¿Cuál es el enfoque estratégico para una colaboración exclusiva?
+
+Un enfoque estratégico implica seleccionar un artículo específico que genere exclusividad con el fabricante, abriendo nuevas vías para ventas y negocios. En este caso, se optó por enfocarse en una cámara de fotografía, permitiendo analizar el impacto de diferentes campañas de marketing en sus ventas a lo largo del año. Mediante herramientas de visualización como Tableau, pudimos identificar qué meses fueron los más exitosos y cuáles requirieron mejoras.
+
+#### Estrategias y campañas de ventas
+
+Al analizar las campañas, se destacan meses específicos como julio, noviembre y diciembre por ser los de mayor venta, mientras que agosto, septiembre y octubre representaron una baja. Esta diferenciación es clave para ajustar futuras estrategias y maximizar el impacto de campañas.
+
+#### ¿Cómo evolucionan las ventas a lo largo del tiempo?
+
+La creación de gráficos de series temporales es esencial para observar el comportamiento de las ventas a lo largo de un año. Fluctuaciones en las ventas entre enero y diciembre son evidentes, marcando una baja especialmente en agosto y septiembre. Estos datos permiten entender tendencias y anticipar acciones para ajustar la estrategia.
+
+#### Análisis geográfico de ventas
+
+Es fundamental analizar las ventas de acuerdo a la ubicación de los clientes. Utilizando un tablero que muestra las ciudades con ventas totales por artículo, podemos visualizar la distribución geográfica y ajustar estrategias para concentrarnos en áreas de alto potencial.
+
+#### ¿Cómo diseñar un dashboard eficiente?
+
+La creación de dashboards es esencial para consolidar la información en una visualización única y comprensible. Este proceso se lleva a cabo consolidando diferentes gráficas en un tablero mediante la técnica de arrastre de elementos en Tableau. Incorporar imágenes, descripciones de productos y análisis contextual ayuda a centrar la atención del usuario.
+
+#### Distribución de información en el dashboard
+
+- **Gráfica de ubicación**: Colocada en la parte superior para resaltar la importancia de la geolocalización en las ventas.
+- **Impacto por campaña y series temporales**: Ubicadas en la parte inferior para complementar y soportar la información geográfica.
+
+#### Historias dentro del dashboard
+
+Una característica poderosa es la capacidad de agregar historias a los dashboards, lo que permite contextualizar los datos y añadir narrativas que aporten valor y comprensión a la audiencia.
+
+#### ¿Cómo maximizar las capacidades de visualización?
+
+La creatividad es el límite para llevar nuestras visualizaciones a otro nivel. Explorar herramientas como Tableau y Power BI abre un abanico de posibilidades para mejorar las presentaciones y los análisis de datos. Se promueve ser curioso y explorar otras herramientas en el mercado para ganar experiencia y habilidades en visualización de datos.
+
+Para aquellos interesados en profundizar su manejo de estas herramientas, se recomienda tomar cursos especializados que ofrezcan un enfoque en visualización de datos y su aplicación en el mundo de los negocios.
+
+**Lecturas recomendadas**
+
+[Use the Analytics pane in Power BI Desktop - Power BI | Microsoft Learn](https://learn.microsoft.com/en-us/power-bi/transform-model/desktop-analytics-pane)
+
+[Creating a Forecast - Tableau](https://help.tableau.com/current/pro/desktop/en-us/forecast_create.htm)
+
+## Diseño de Dashboards para Evaluación de Vendedores en BI
+
+Diseñar **Dashboards para Evaluación de Vendedores** en herramientas de **Business Intelligence (BI)** como **Power BI o Tableau** permite medir el desempeño individual y colectivo, detectar áreas de mejora, e incentivar mejores resultados comerciales.
+
+### 🎯 Objetivo del Dashboard
+
+Evaluar el desempeño de cada vendedor con **indicadores clave (KPIs)** claros y visuales, comparando contra metas y entre pares.
+
+### 🧩 Principales Componentes del Dashboard
+
+### 🔢 **KPIs Clave por Vendedor**
+
+* **Ventas totales** (por mes, acumulado, anual)
+* **% de cumplimiento de meta**
+* **Número de clientes atendidos**
+* **Ticket promedio**
+* **Tasa de conversión** (prospectos a ventas)
+* **Margen de ganancia** o rentabilidad
+
+### 📊 **Visualizaciones recomendadas**
+
+| Visualización            | Descripción                   | Propósito                        |
+| ------------------------ | ----------------------------- | -------------------------------- |
+| **Bar Chart horizontal** | Ventas por vendedor           | Comparación directa              |
+| **Gauge Chart**          | % de cumplimiento             | Visual rápido de rendimiento     |
+| **Scatter Plot**         | Eficiencia vs volumen         | Detectar rendimiento equilibrado |
+| **Tabla dinámica**       | Datos detallados por vendedor | Revisión específica y drill-down |
+| **Mapa (opcional)**      | Zonas atendidas               | Ubicación geográfica de ventas   |
+
+### 🛠 Estructura del Dashboard (Diseño sugerido)
+
+```
+┌──────────────────────────────┐
+│      TÍTULO: Evaluación de Vendedores Q2      │
+├──────────────────────────────┤
+│ 🔘 Filtros: Fecha | Región | Producto         │
+├──────────────────────────────┤
+│ KPI Cards:                     │
+│ 🟢 Ventas Totales | 🟠 % Meta | 🔵 Ticket Prom.│
+├──────────────────────────────┤
+│ Gráfico: Ventas por Vendedor (Bar Chart)      │
+├──────────────────────────────┤
+│ Scatter: Conversión vs Ticket Medio           │
+├──────────────────────────────┤
+│ Tabla: Resultados por Vendedor (detalle)      │
+└──────────────────────────────┘
+```
+
+### 🎯 Métricas Clave que debes incluir
+
+| Métrica                 | Fórmula o Fuente                        |
+| ----------------------- | --------------------------------------- |
+| **% Cumplimiento Meta** | (Ventas Realizadas / Meta) × 100        |
+| **Tasa de Conversión**  | (Ventas / Leads Contactados) × 100      |
+| **Ticket Promedio**     | Ventas Totales / Nº de Ventas           |
+| **Clientes Nuevos**     | Conteo por ID único en nuevos registros |
+| **Ventas por Hora**     | Ventas / Horas trabajadas               |
+
+### 🎨 Buenas prácticas de diseño
+
+* **Color por rendimiento**: verde = meta superada, amarillo = cerca, rojo = bajo rendimiento.
+* **Fotos o íconos de cada vendedor** (si es un equipo pequeño).
+* **Filtro por fecha o trimestre** en la parte superior.
+* **Evita sobrecarga visual**, agrupa por secciones.
+* **Interactividad**: clic en vendedor para ver desglose.
+
+### 📥 Fuente de Datos típica
+
+* CRM (HubSpot, Salesforce, Zoho)
+* Excel o Google Sheets de metas mensuales
+* Sistema POS o ERP
+* Manual: archivos CSV de reporte semanal
+
+### 🚀 Casos de uso avanzados
+
+* **Comparación histórica por trimestre o año**
+* **Alertas automáticas** si un vendedor baja del 50%
+* **Proyección de cierre del mes** usando tendencia
+
+### Resumen
+
+#### ¿Cómo plantear un tablero de BI para evaluar el impacto de los vendedores?
+
+Diseñar un tablero de Business Intelligence puede parecer una tarea desafiante, pero con el enfoque y consideración adecuados de aspectos clave, es posible crear visualizaciones poderosas que realmente comuniquen la historia detrás de los datos. En este contexto, veremos cómo abordar el requerimiento de evaluar el impacto de los vendedores en las ventas trimestrales, mensuales y anuales de una compañía, generando además una calificación sobre el cumplimiento de sus metas anuales.
+
+#### ¿Qué información debemos recabar antes de empezar?
+
+Antes de sumergirnos en la creación del tablero, es crucial obtener cierta información contextual que guiará el diseño y formato de nuestro dashboard:
+
+- **Dónde será presentado**: El entorno o plataforma donde será mostrado podría influir en la selección de colores e iluminación.
+- **Público objetivo**: Conocer quién verá el tablero influye en el nivel de detalle necesario.
+- **Jerarquía visual**: Decidir la disposición de elementos y grafías es vital para asegurar que la información fluya de manera lógica y eficiente.
+
+#### ¿Cómo gestionar y limpiar los datos?
+
+Uno de los primeros pasos después de recaudar la información es limpiar y clasificar los datos. Para este ejercicio, los datos fueron obtenidos del departamento de Recursos Humanos y es esencial asegurar la calidad de los datos antes de su visualización:
+
+1. **Limpieza y clasificación**: Revisar y ordenar las tablas y datasets para asegurar la confiabilidad de las visualizaciones.
+2. **Identificación de gráficos adecuados**: Elegir gráficas que mejor representen las ventas anuales, trimestrales y mensuales, y que además llamen la atención de los usuarios.
+
+#### ¿Cómo estructuramos el tablero visualmente?
+
+La disposición visual del tablero puede seguir el esquema en "F", que aprovecha la forma en que los usuarios suelen escanear la información:
+
+1. **Calificación del vendedor**: Colocar en la parte superior izquierda, seguida por datos concretos de ventas.
+2. **Gráfica del comportamiento de ventas**: Usar una gráfica de líneas centralizada y amplia para mostrar la evolución de ventas en el tiempo.
+3. **Ventas totales anuales**: Ubicarlas en la parte superior, dando contexto global.
+4. **Observación de periodos temporales**: Colocar detalles mensuales y trimestrales en la parte inferior, completando el esquema.
+
+#### ¿Cómo aseguramos que las visualizaciones sean efectivas?
+
+Es fundamental que la información pueda ser interpretada de un vistazo:
+
+- **Gráficos temporales**: Usamos eje x para el tiempo (fecha de venta) y eje y para montos mensuales.
+- **Lineas temporales**: Utilizamos una tabla de dimensiones temporales para organizar claramente los datos.
+- **Filtro por vendedor**: Por medio de la herramienta, filtramos por rol para enfocarnos solo en los vendedores.
+
+#### ¿Cómo lograremos que el tablero hable por sí solo?
+
+Finalmente, una vez organizado todo, el último paso es hacer que el tablero sea atractivo y autoexplicativo:
+
+- Elegir un esquema de colores que resalte la información clave.
+- Facilitar la lectura y navegación con una jerarquía de información clara.
+- Asegurar que todas las preguntas del stakeholder sean respondidas visualmente.
+
+Te animo a que pongas en práctica estos pasos para diseñar un tablero que no solo entregue los datos necesarios, sino que además atraiga y retenga la atención de los interesados. Deja en los comentarios tus experiencias, las soluciones que has propuesto para tus interesados, y cómo has diseñado tu tablero.
+
+**Lecturas recomendadas**
+
+[Descubre el poder de la visualización de datos con grafos](https://www.grapheverywhere.com/descubre-el-poder-de-la-visualizacion-de-datos-con-grafos/#:~:text=La%20visualizaci%C3%B3n%20de%20grafos%20utiliza%20elementos%20visuales%20como,se%20muestran%20como%20l%C3%ADneas%20que%20conectan%20los%20nodos.)
