@@ -2174,3 +2174,619 @@ Te animo a que pongas en práctica estos pasos para diseñar un tablero que no s
 **Lecturas recomendadas**
 
 [Descubre el poder de la visualización de datos con grafos](https://www.grapheverywhere.com/descubre-el-poder-de-la-visualizacion-de-datos-con-grafos/#:~:text=La%20visualizaci%C3%B3n%20de%20grafos%20utiliza%20elementos%20visuales%20como,se%20muestran%20como%20l%C3%ADneas%20que%20conectan%20los%20nodos.)
+
+## Análisis de Interacción y Segmentación de Clientes en Power BI
+
+Para realizar un **análisis de interacción y segmentación de clientes en Power BI**, necesitas combinar varias técnicas y fuentes de datos que te permitan entender el comportamiento del cliente. Aquí te explico cómo hacerlo paso a paso:
+
+### 🎯 **Objetivo**
+
+Identificar grupos de clientes con características o comportamientos similares para tomar decisiones más precisas (marketing, retención, ventas cruzadas, etc.).
+
+### 🧩 **1. Recolectar y preparar datos**
+
+**Fuentes comunes:**
+
+* Datos de compras (ventas, fechas, montos)
+* Datos demográficos (edad, ubicación, género)
+* Interacciones (correo, visitas web, soporte)
+* Encuestas de satisfacción o CRM
+
+Asegúrate de tener al menos:
+
+* `ID Cliente`
+* `Fecha de interacción o compra`
+* `Monto`
+* `Canal de contacto`
+* `Ubicación`
+
+### 📊 **2. Crear columnas calculadas para análisis**
+
+Ejemplos en **DAX**:
+
+✅ **Frecuencia de compra**:
+
+```DAX
+Frecuencia = CALCULATE(COUNT('Ventas'[ID_Venta]), ALLEXCEPT('Ventas', 'Ventas'[ID_Cliente]))
+```
+
+✅ **Monto total de compra por cliente**:
+
+```DAX
+TotalCliente = CALCULATE(SUM('Ventas'[Monto]), ALLEXCEPT('Ventas', 'Ventas'[ID_Cliente]))
+```
+
+✅ **Fecha última compra**:
+
+```DAX
+UltimaCompra = CALCULATE(MAX('Ventas'[Fecha]), ALLEXCEPT('Ventas', 'Ventas'[ID_Cliente]))
+```
+
+### 🧠 **3. Segmentar clientes**
+
+Puedes usar segmentaciones como:
+
+| Segmento   | Criterio                                |
+| ---------- | --------------------------------------- |
+| Nuevos     | Primera compra reciente                 |
+| Frecuentes | Compran regularmente                    |
+| Inactivos  | No han comprado en los últimos X meses  |
+| VIP        | Alto gasto total o alto ticket promedio |
+
+Ejemplo de columna calculada para segmentación:
+
+```DAX
+Segmento = 
+SWITCH(TRUE(),
+    [TotalCliente] >= 100000, "VIP",
+    [Frecuencia] >= 5, "Frecuente",
+    [UltimaCompra] < TODAY() - 180, "Inactivo",
+    "Nuevo"
+)
+```
+
+### 📈 **4. Visualizaciones recomendadas**
+
+* **Matriz de segmentación** (Frecuencia vs Monto)
+* **Gráfico de barras por segmentos**
+* **Mapa geográfico de clientes**
+* **Gráfico de dispersión de valor vs frecuencia**
+* **Tabla de clientes con KPI (frecuencia, monto, último contacto)**
+
+### 🧪 Opcional: **Clustering con K-means (Power BI + R o Python)**
+
+Puedes usar el **clustering de K-means** si habilitas el script de R o Python en Power BI para crear segmentos automáticos según comportamiento.
+
+### Resumen
+
+#### ¿Cuál es el enfoque del gran proyecto de integración?
+
+En este momento, nos enfocamos en un gran proyecto que fusiona todos los conocimientos adquiridos: entrevistas, comunicación con stakeholders, diseños y visualizaciones. Dicho proyecto tiene como objetivo resolver un problema real que enfrenta un cliente: el alto abandono en su página web. Los usuarios agregan productos al carrito pero no completan la compra. Además, buscan comprender la interacción de los clientes mediante clics y tiempo de navegación.
+
+#### ¿Cuáles son los stakeholders identificados?
+
+Hemos identificado tres stakeholders cruciales en este proyecto:
+
+1. **Andrea Gutiérrez**: Responsable del área de gerencia y proyección. Ella proporcionará los requerimientos que debemos cumplir.
+2. **Juan Hernández**: Encargado de organizar las bases de datos, y proveer accesos y permisos para acceder a la información necesaria.
+3. **Samuel Torres**: Tiene el requerimiento de recibir un informe detallado sobre el análisis y los resultados que le permita tomar decisiones futuras.
+
+#### ¿Qué demanda Andrea Gutiérrez?
+
+Andrea Gutiérrez, del área de gerencia, tiene tres ejes principales:
+
+1. **Segmentación de clientes**: Analizar clientes recurrentes, nuevos y ocasionales, y su interacción con la aplicación a lo largo del tiempo.
+2. **Comportamiento de clientes por región**: Examinar tendencias de productos y retención según el lugar geográfico.
+3. **Proyección futura**: Utilizar el análisis para predecir la interacción futura de los clientes con la página.
+
+#### ¿Cómo se manejan las conexiones a la base de datos?
+
+En lugar de conexiones simples a tablas de Excel, en la práctica los analistas de BI enfrentan conexiones más complejas, típicamente usando APIs y endpoints. Habitualmente, los administradores de bases de datos proporcionan una URL de conexión y un token de acceso.
+
+#### ¿Cómo se utilizan herramientas como Google Colab?
+
+Utilizando Google Colab o Visual Code, se ejecutan scripts en Python para conectar y extraer los datos necesarios. Google Colab permite correr archivos en máquinas virtuales y guardar los resultados en carpetas de destino específicas. Un acceso correcto a la base de datos producirá los diferentes archivos necesarios para el análisis, como archivos JSON.
+
+#### ¿Cómo se gestionan los archivos JSON?
+
+Los archivos JSON, que contienen datos semiestructurados en formato clave-valor, requieren un manejo especial. Estos archivos proporcionan información relevante como user ID, páginas visitadas, tiempo en segundo plano, clics, y fechas, que luego se importan a Power BI para estructurarlos correctamente.
+
+#### ¿Cómo se transforma y visualiza la información en Power BI?
+
+Una vez los archivos JSON se importan a Power BI, se transforman verificando que cada dato sea el adecuado y correcto. En esta etapa, se establecen los tipos de datos, por ejemplo, convirtiendo user ID a texto y configurando variables de tiempo. La fecha también se ajusta adecuadamente, extrayendo campos necesarios y eliminando horas.
+
+#### ¿Cómo diseñamos los lienzos para visualizaciones efectivas?
+
+El diseño en Power BI adopta una estructura tipo F para atraer la atención del usuario. Las primeras métricas a visualizar son el recuento de usuarios y el promedio de compra. Se utilizan gráficas de líneas y columnas para observar el comportamiento de los segmentos a través del tiempo.
+
+- **Gráfica de líneas**: Muestra el comportamiento de usuarios y segmentos en el tiempo.
+- **Gráfica de columnas agrupadas**: Permite agrupar segmentos y visualizar diferencias a lo largo de los meses.
+
+#### ¿Cómo optimizamos el análisis de segmentación?
+
+Finalmente, para analizar adecuadamente la segmentación de segmentos, se emplean gráficos de dispersión y se integran filtros interactivos (slicers). Estos filtros permiten a los usuarios visualizar clientes frecuentes, ocasionales, recurrentes o nuevos de manera dinámica, mejorando la interactividad de los informes.
+
+Implementar esta configuración ayuda a cumplir con las peticiones de los stakeholders, a la vez que se utiliza una variedad de técnicas visuales—colores, tipografía y diseño—para mejorar la presentación del informe y capturar su atención. ¡Realiza tus propios diseños y comparte los resultados!
+
+**Crear Date:**
+
+¡Perfecto! Ya tienes la tabla de fechas creada con:
+
+```DAX
+Date = CALENDAR(DATE(2020,1,1), DATE(2030,1,1))
+```
+
+Ahora, para crear una jerarquía de **Año > Trimestre > Mes > Día**, sigue estos pasos en **Power BI**:
+
+### 🧩 Paso 1: Agregar columnas a tu tabla de fechas
+
+Selecciona tu tabla `Date` y ve a "Modelado" → "Nueva columna", luego agrega las siguientes:
+
+#### 📆 Año:
+
+```DAX
+Año = YEAR('Date'[Date])
+```
+
+#### 📆 Trimestre:
+
+```DAX
+Trimestre = "Q" & FORMAT('Date'[Date], "Q")
+```
+
+#### 📆 Mes:
+
+```DAX
+Mes = FORMAT('Date'[Date], "MMMM")
+```
+
+> Si prefieres el número del mes para ordenar, también puedes crear:
+
+```DAX
+Mes_Num = MONTH('Date'[Date])
+```
+
+#### 📆 Día:
+
+```DAX
+Día = DAY('Date'[Date])
+```
+
+### 🏗️ Paso 2: Crear la jerarquía
+
+1. En el **panel de campos**, selecciona la tabla `Date`.
+2. Haz clic derecho sobre la columna **Año** > **Crear jerarquía**.
+3. Se creará una jerarquía con "Año" como primer nivel.
+4. Arrastra **Trimestre**, **Mes** y **Día** dentro de esa jerarquía, en ese orden.
+5. Puedes renombrar la jerarquía a algo como `Jerarquía Fecha`.
+
+### 🧠 Consejo Extra (Orden correcto de los meses)
+
+Para que los meses se ordenen correctamente en visuales:
+
+1. Selecciona la columna `Mes`.
+2. En la cinta de opciones: **Modelado** → **Ordenar por columna** → selecciona `Mes_Num`.
+
+
+
+**Archivos de la clase**
+
+[formulas-dax-modulo-aplicaciones-practicas-y-casos-de-uso-18-20.txt](https://static.platzi.com/media/public/uploads/formulas-dax-modulo-aplicaciones-practicas-y-casos-de-uso-18-20_3281262e-f74e-40b3-b441-e24f7067b3fc.txt)
+[carritos-abandonados.json](https://static.platzi.com/media/public/uploads/carritos_abandonados_4518972b-008b-47f8-ba0f-36da20fc7731.json)
+[conversiones.json](https://static.platzi.com/media/public/uploads/conversiones_49ee3e2b-dedc-44d5-b6c5-454709fa453e.json)
+[dias-especiales.json](https://static.platzi.com/media/public/uploads/dias_especiales_69641d15-7f06-4b42-9446-bb2ae91a81c3.json)
+[interacciones.json](https://static.platzi.com/media/public/uploads/interacciones_842b9184-bd46-4d9a-9354-b25d435ddc18.json)
+[transacciones.json](https://static.platzi.com/media/public/uploads/transacciones_c3da1aac-d547-44b1-89dc-df1811e05c53.json)
+[usuarios.json](https://static.platzi.com/media/public/uploads/usuarios_8dd4fff4-8f47-4c37-8dc6-7b2f90fab65e.json)
+
+## Análisis de Comportamiento del Cliente por Ubicación Geográfica
+
+Para realizar un **Análisis de Comportamiento del Cliente por Ubicación Geográfica** en Power BI, sigue estos pasos clave:
+
+### ✅ **1. Requisitos de Datos**
+
+Asegúrate de contar con los siguientes campos en tu dataset:
+
+* **ID del Cliente** (único por cliente)
+* **Ubicación Geográfica**: país, ciudad, región o coordenadas (latitud/longitud)
+* **Fecha de la Compra**
+* **Monto de la Compra / Valor Transaccional**
+* **Categoría del Producto o Servicio** (opcional)
+* **Frecuencia o Número de Compras** (opcional)
+
+### 📊 **2. Crear Mapa Geográfico**
+
+1. Inserta un **mapa** o **mapa de forma** en Power BI.
+2. Arrastra el campo de ubicación (ej. ciudad, país) al área de **Ubicación**.
+3. Arrastra el campo de **Monto Total** o **Frecuencia de Compra** al área de **Tamaño** o **Valores**.
+
+### 🧠 **3. Crear Métricas de Comportamiento del Cliente (DAX)**
+
+Ejemplos de medidas útiles:
+
+#### a. Total Compras por Cliente:
+
+```DAX
+Total Compras = SUM(Ventas[Monto])
+```
+
+#### b. Clientes Únicos por Ciudad:
+
+```DAX
+Clientes Únicos = DISTINCTCOUNT(Clientes[ID_Cliente])
+```
+
+#### c. Frecuencia Promedio de Compra:
+
+```DAX
+Frecuencia Promedio = AVERAGEX(VALUES(Clientes[ID_Cliente]), [Total Compras])
+```
+
+### 📍 **4. Análisis por Segmentos Geográficos**
+
+Utiliza gráficos combinados:
+
+* **Mapa + Segmentadores**: Para filtrar por categorías, periodos, productos.
+* **Mapa de calor o símbolos**: Para identificar zonas con mayor actividad.
+* **Gráficos de barras por región/ciudad**: Complementan el mapa con datos cuantitativos.
+
+---
+
+### 📈 **5. Insights que puedes obtener**
+
+* ¿Qué ciudades generan más ingresos?
+* ¿En qué regiones los clientes compran con mayor frecuencia?
+* ¿Dónde hay mayor retención o abandono?
+* ¿Cómo varían las compras por ubicación a lo largo del tiempo?
+
+### 🧩 Opcional: Integrar Segmentación Demográfica o de Producto
+
+Si tienes datos adicionales, puedes cruzar:
+
+* Segmentos demográficos por ubicación.
+* Preferencias de productos por ciudad.
+* Promedios de ticket por región.
+
+### Resumen
+
+#### ¿Cómo analizar el comportamiento del cliente según su ubicación geográfica?
+
+El análisis del comportamiento del cliente es esencial para entender cómo y por qué los usuarios interactúan con nuestras tiendas, especialmente en el ámbito online. Una de las formas más efectivas de abordar estos análisis es utilizando posiciones geográficas para observar dónde están los clientes y cómo varía su comportamiento según su ubicación. A continuación, exploraremos cómo realizar este análisis de manera eficiente y clara utilizando herramientas de visualización de datos.
+
+#### ¿Cómo estructurar un mapa de clientes?
+
+Para comenzar el análisis del comportamiento del cliente según su ubicación, el primer paso es organizar un mapa donde se puedan ubicar a los clientes. Esto se puede hacer de la siguiente manera:
+
+- **Seleccione una gráfica de mapa**: Esta es ideal para visualizar la distribución geográfica de los clientes.
+- **Organice la información en forma de Z**: Comience con información relevante sobre los clientes en la parte superior del mapa y cruce la mirada hacia la parte inferior para visualizar la intersección de datos clave.
+- **Ubicación de los clientes**: Utilice la tabla de usuarios para arrastrar los datos de 'país' hacia el campo de ubicación. Esto permitirá ver de manera clara dónde está operando cada cliente.
+
+#### ¿Cómo identificar los factores que afectan la conversión?
+
+Identificar por qué los clientes no completan las compras puede guiarnos hacia la optimización de nuestro sitio web y así aumentar la conversión:
+
+1. **Retención del cliente**: Mida el tiempo que un cliente permanece en su página. Una alta tasa de abandono puede indicar un problema en el proceso de compra o falta de atractivo del sitio web.
+2. **Tasa de conversión**: Analice cuántas ventas no se consolidan debido a factores geográficos. Arrastre la 'tasa de conversión' al tamaño de burbuja en el mapa, para que visualmente se manifieste la magnitud de este fenómeno.
+
+#### ¿Cómo utilizar gráficos para conocer mejor al cliente?
+
+Los gráficos son una poderosa herramienta para desglosar información compleja en datos comprensibles:
+
+- **Scorecard**: Ideal para medir el tiempo promedio de retención de los clientes. Cambie de 'suma' a 'promedio' para obtener datos más precisos.
+- **Gráfica de barras**: Utilice estas para observar la cantidad de abandonos por mes. En el eje x, coloque la variable de tiempo y en el eje y, los datos de abandonos.
+- **Gráfico de dispersión**: Perfecto para comparar variables como la tasa de conversión versus las visitas. En el eje x, coloque las visitas, en el eje y las conversiones, y use la leyenda para ubicar el país, proporcionando una visión clara y directa de los patrones de comportamiento.
+
+#### ¿Cómo personalizar la visualización de datos?
+La presentación de los datos no solo debe ser informativa, sino también atractiva y fácil de interpretar. Algunas recomendaciones para mejorar la visualización incluyen:
+
+- **Uso de colores fríos**: Estos ayudan a mantener la atención del espectador a lo largo de la presentación.
+- **Distintas opciones de barras**: Al variar el estilo de las barras, se puede resaltar diferentes aspectos de los datos, ayudando a mantener la atención en puntos clave.
+- **Filtros interactivos**: Permiten al usuario observar cómo cambian los patrones de comportamiento según seleccionen diferentes países en el filtro.
+
+De este modo, podrás diseñar tableros que no solo resuelvan preguntas de tus stakeholders, sino también capturen su atención, proporcionando insights valiosos sobre el comportamiento del cliente según su ubicación geográfica. ¿Te atreves a implementar estas estrategias en tus propios proyectos de análisis de datos?
+
+## Predicción y Análisis de Comportamiento en Carritos de Compras con Power BI
+
+Para realizar una **predicción y análisis de comportamiento en carritos de compras con Power BI**, se puede aplicar una combinación de modelado DAX, visualización avanzada y análisis predictivo. Aquí tienes un enfoque estructurado paso a paso:
+
+### ✅ 1. **Preparación de Datos**
+
+Necesitarás una tabla con los siguientes campos:
+
+| Campo           | Descripción                                      |
+| --------------- | ------------------------------------------------ |
+| ID\_Cliente     | Identificador único del cliente                  |
+| ID\_Producto    | Identificador del producto                       |
+| Fecha\_Agregado | Fecha en la que se agregó el producto al carrito |
+| Fecha\_Compra   | Fecha en que se compró (si se concretó)          |
+| Cantidad        | Número de unidades agregadas                     |
+| Precio          | Precio del producto                              |
+
+### 📊 2. **Análisis de Comportamiento en Carritos**
+
+### a. **Tasa de Conversión de Carrito a Compra**
+
+```DAX
+TasaConversión = 
+DIVIDE(
+    COUNTROWS(FILTER(Carrito, NOT(ISBLANK(Carrito[Fecha_Compra])))),
+    COUNTROWS(Carrito),
+    0
+)
+```
+
+### b. **Tiempo Promedio entre Agregado y Compra**
+
+```DAX
+TiempoPromedio = 
+AVERAGEX(
+    FILTER(Carrito, NOT(ISBLANK(Carrito[Fecha_Compra]))),
+    DATEDIFF(Carrito[Fecha_Agregado], Carrito[Fecha_Compra], DAY)
+)
+```
+
+### c. **Productos Más Abandonados**
+
+```DAX
+Abandono = 
+CALCULATE(
+    COUNTROWS(Carrito),
+    ISBLANK(Carrito[Fecha_Compra])
+)
+```
+
+### 🔮 3. **Predicción de Compra (Modelo Simplificado)**
+
+Power BI por sí solo no hace Machine Learning, pero puedes hacer predicciones básicas con tendencias:
+
+### a. **Tendencia de Conversión por Día/Semana**
+
+Usa visualizaciones con líneas y aplica una **línea de tendencia** (opción nativa en Power BI).
+
+### b. **Clasificación de Probabilidad de Compra (básica con DAX)**
+
+Asigna una probabilidad estimada según comportamiento histórico:
+
+```DAX
+ProbabilidadCompra = 
+SWITCH(
+    TRUE(),
+    Carrito[TiempoEnCarrito] < 1, 0.9,
+    Carrito[TiempoEnCarrito] < 3, 0.6,
+    Carrito[TiempoEnCarrito] < 7, 0.3,
+    0.1
+)
+```
+
+### 🌍 4. **Visualizaciones Sugeridas**
+
+* **Matriz**: Productos por tasa de abandono.
+* **Gráficos de área o líneas**: Evolución del número de carritos vs. compras.
+* **Tarjetas**: KPIs como Tasa de Conversión, Tiempo Promedio.
+* **Segmentadores**: por categoría de producto, usuario, día/hora.
+
+### 🧠 Opcional: Integración con Machine Learning
+
+Para predicciones más avanzadas, puedes:
+
+* Conectar Power BI a **Azure ML**, **Python**, o **R Scripts** para modelos reales.
+* Exportar los datos del carrito a un modelo externo (como XGBoost o Logistic Regression) y retornar probabilidades.
+
+### Resumen
+
+#### ¿Cómo realizar predicciones efectivas en BI?
+
+En el mundo actual de los negocios, recoger datos y analizarlos no es suficiente. Para obtener ventajas competitivas, es esencial poder prever comportamientos y tendencias que nos permitan tomar decisiones estratégicas. En este contexto, el Business Intelligence (BI) se convierte en una poderosa herramienta. Vamos a detallar cómo, utilizando Power BI, podemos realizar predicciones que nos ayuden a mejorar nuestras operaciones y a entender a fondo el comportamiento de nuestros clientes.
+
+#### ¿Cómo calcular la probabilidad de abandono de clientes?
+
+El primer paso es comprender qué tan propensos están los clientes a abandonar nuestra plataforma, lo cual puede significar una pérdida significativa de ingresos. Podemos abordar esto con el uso de scorecards en Power BI. Para realizar esta predicción:
+
+1. **Defina la medida**: Calcule la probabilidad de abandono considerando la cantidad de usuarios que han mostrado intención de compra pero no han completado la transacción. Esto se computa como:
+
+`Probabilidad de abandono = (Cantidad de usuarios abandonados / Cantidad total de usuarios con intención de compra)`
+
+2. **Formateo de resultados**: Cree una medida de porcentaje y dispóngala en formato de datos: de decimal a porcentaje para facilitar la interpretación.
+
+#### ¿Cómo identificar artículos abandonados en el carrito?
+
+Para maximizar las conversiones de ventas, es crucial identificar aquellos productos que frecuentemente se quedan en el carrito de compras sin que el cliente finalice la transacción. Utilice la gráfica de radar en Power BI para esto:
+
+1. **Configuración de gráficos**: En el panel de visualizaciones, seleccione la gráfica de radar. Asigne la categoría de "artículos" y en el eje Y, "cantidad de artículos en carrito".
+2. **Interpretación**: Puede observar cuáles son los artículos más frecuentemente abandonados, como bicicletas o relojes, y trabajar en estrategias específicas para convertir estas oportunidades.
+
+#### ¿Cómo proyectar tendencias futuras de abandono en carritos?
+
+Para adelantarse a posibles comportamientos de los consumidores, es esencial visualizar cómo estas tendencias pueden evolucionar:
+
+1. **Graficar proyecciones en línea**: Utilice gráficos de línea de Power BI. Sobre el eje X, seleccione el campo fecha y para el eje Y, la cantidad de usuarios que interactúan.
+2. **Ajustar visualización**: Simplifique a nivel mensual y anual. Añada una subcategoría por mes para tener una representación clara del comportamiento a lo largo del tiempo.
+3. **Definir previsión**: Al activar la opción de previsión en el formato de la gráfica, obtendrá un cono de proyecciones que muestra cómo podría evolucionar la tasa de abandono.
+
+####  ¿Cómo analizar la interacción futura basada en clics?
+
+La interacción de los usuarios con nuestra página es también un indicador clave para las proyecciones de negocio:
+
+1. **Ejecutar el análisis con gráficos de línea**: Similar al análisis de carritos, coloque la fecha en el eje X y el conteo de clics en el eje Y.
+2. **Proyección de clics futuros**: Aplique la misma técnica de previsión para inferir la frecuencia futura de interacción y ajustarse a los márgenes potenciales de la operación.
+
+En conclusión, Power BI es una herramienta indispensable para quienes buscan ir más allá de la simple presentación de datos. Al convertir los datos en previsiones y medición de tendencias, las empresas pueden tomar decisiones proactivas para mejorar su dirección estratégica. Las técnicas discutidas aquí no solo permiten un conocimiento más profundo del comportamiento del cliente, sino también una optimización continua de la experiencia del usuario y, por ende, de las conversiones. Usa estos métodos y haz de tu abordaje BI un verdadero aliado para el crecimiento de tu negocio.
+
+## Análisis de Clientes por Ubicación Geográfica y Tasa de Conversión
+
+Para realizar un **Análisis de Clientes por Ubicación Geográfica y Tasa de Conversión** en Power BI, puedes combinar visualizaciones geográficas con medidas DAX personalizadas que te permitan entender **dónde se convierten más tus clientes** y cómo varía el comportamiento por región. Aquí tienes un enfoque estructurado y práctico:
+
+### ✅ 1. **Preparación de la Data**
+
+Tu tabla de clientes o carritos debe incluir al menos:
+
+| Campo                  | Descripción                                |
+| ---------------------- | ------------------------------------------ |
+| ID\_Cliente            | Identificador único                        |
+| País / Ciudad / Región | Ubicación geográfica del cliente           |
+| Fecha\_Agregado        | Fecha de cuando agregó producto al carrito |
+| Fecha\_Compra          | Fecha de compra (si existió)               |
+
+### 🧮 2. **Medidas DAX clave**
+
+#### **a. Total de Carritos por Ubicación**
+
+```DAX
+TotalCarritos = COUNTROWS(Carrito)
+```
+
+#### **b. Total de Compras Realizadas**
+
+```DAX
+TotalCompras = 
+CALCULATE(
+    COUNTROWS(Carrito),
+    NOT(ISBLANK(Carrito[Fecha_Compra]))
+)
+```
+
+#### **c. Tasa de Conversión por Ubicación**
+
+```DAX
+TasaConversion = 
+DIVIDE([TotalCompras], [TotalCarritos], 0)
+```
+
+### 🗺️ 3. **Visualización Geoespacial**
+
+#### Usa un **mapa** (Visual tipo “Map” o “Filled Map”) con lo siguiente:
+
+* **Ubicación**: Campo de ciudad o país.
+* **Tamaño** del punto: `TotalCompras`
+* **Color** (saturación): `TasaConversion`
+
+Esto te permitirá visualizar rápidamente:
+
+* Dónde se hacen más compras.
+* En qué zonas la conversión es más baja (muchos carritos, pocas compras).
+
+### 📊 4. **Segmentación y Filtros**
+
+Agrega segmentadores por:
+
+* **Fecha (mes, trimestre)**: para analizar cambios en el tiempo.
+* **Canal de adquisición (si tienes el dato)**: email, web, redes sociales.
+
+### 📌 5. **Insights Posibles a Detectar**
+
+* Zonas con alto tráfico pero baja conversión → problema de UX o logística.
+* Ubicaciones con alta conversión → potencial para campañas personalizadas.
+* Tiempo de conversión distinto entre regiones → posibles barreras locales.
+
+### 🧠 ¿Quieres automatizar este análisis?
+
+Te puedo ayudar a:
+
+* Crear el modelo en Power BI.
+* Conectar fuentes de datos (Excel, SQL, API).
+* Diseñar un dashboard interactivo con filtros y métricas clave.
+
+### Resumen
+
+#### ¿Cómo analizar el comportamiento geográfico de los clientes?
+
+Determinar el comportamiento de los clientes basado en su localización puede ser clave para entender cómo mejorar tus estrategias de negocio. Utilizando un enfoque geográfico, podemos identificar patrones y comportamientos únicos de clientes en diferentes lugares. Así, transformarás la información en decisiones más informadas y estratégicas para tu organización.
+
+#### ¿Cómo se usa un mapa para visualizar datos geográficos?
+
+Para empezar, construyamos un mapa para visualizar dónde residen nuestros clientes en relación con nuestras tiendas. Esto es posible al utilizar las posiciones geográficas disponibles en nuestro dataset. Sigue estos pasos para lograrlo:
+
+1. En el visualizador, selecciona la gráfica de mapa.
+2. Arrastra la ubicación del país desde tu tabla de datos.
+3. Observa cómo los clientes se distribuyen geográficamente.
+
+#### ¿Qué mide la tasa de conversión y cómo se representa en el mapa?
+
+La tasa de conversión es esencial para conocer cuántas ventas no se completan. Representar esta tasa en un mapa nos da una perspectiva del desempeño en diferentes áreas geográficas.
+
+- Ve a la sección de conversión de tu dataset.
+- Selecciona la tasa de conversión y muévela al tamaño de burbuja.
+- Utiliza el tamaño de las burbujas en el mapa para visualizar la magnitud de las conversiones fallidas.
+
+#### ¿Cómo se mide el tiempo de retención del cliente?
+
+Un elemento crucial para entender por qué los clientes abandonan sin finalizar una compra es el tiempo de retención en la página. Esto se puede representar mediante una scorecard:
+
+1. Selecciona la scorecard en tu visualizador.
+2. Lleva el tiempo de retención, medido en segundos, a la scorecard.
+3. Cambia la función de suma a promedio para visualizar el tiempo promedio de retención.
+
+#### ¿Cómo afecta la ubicación a las ventas y los abandonos?
+
+Ahora, observemos cómo la ubicación influye en las ventas y los carritos abandonados. Este análisis se realiza mejor con una gráfica de barras:
+
+- Arrastra la variable de tiempo desde la tabla de abandonos al eje x.
+- Configura para mostrar los abandonos mensuales, eliminando otras unidades de tiempo innecesarias como días o años.
+- Añade los datos de carritos abandonados al eje y.
+
+#### ¿Cómo optimizar el análisis usando gráficos de dispersión y filtros?
+
+Un gráfico de dispersión es ideal para comparar múltiples variables, como porcentajes de conversión y visitas, de forma visualmente comprensible:
+
+1. Selecciona un gráfico de dispersión.
+2. Coloca las transacciones en "valores" para mostrar la magnitud.
+3. Usar el eje x para las visitas y el eje y para las conversiones.
+
+Para un análisis más específico, utiliza filtros por país:
+
+- Configura un filtro de ubicación basado en países.
+- Selecciona diferentes países para examinar cómo varían los comportamientos de los usuarios según su región.
+
+#### ¿Cómo diseñar visualizaciones que capten la atención?
+
+Un diseño atractivo es crucial para mantener la atención del usuario. Utilizar paletas de colores fríos en tus gráficos puede ser útil. Experimenta con diferentes estilos de gráficas, como barras o penta-país, para hacer que la información sea más llamativa.
+
+A estas alturas, deberías tener un tablero completado que refleje de manera adecuada las interacciones, conversiones y retención de los clientes. ¿Cómo planeas mejorar el diseño de tus informes para atraer más a tus usuarios? ¡Comparte tus enfoques y descubrimientos en la sección de comentarios!
+
+## Visualización Avanzada en Business Intelligence: Proyecto Práctico
+
+![Foto](file/photo-1551288049-bebda4e38f71.png)
+
+### Proyecto: Visualización BI Avanzada
+**Objetivo**
+Desarrollar un proyecto de visualización en Business Intelligence (BI) utilizando los conocimientos adquiridos a lo largo de los diferentes módulos del curso. El proyecto debe cumplir con todos los requisitos establecidos.
+
+**Retos del Proyecto**
+### Conjunto de Datos
+
+Como analista de datos, es crucial disponer de fuentes de información fiables para crear escenarios de análisis y aplicar lo aprendido de manera efectiva. Los siguientes son lineamientos esenciales para el proyecto:
+
+- **Segmentación de Datos**: Identificar dentro de tu organización un conjunto de datos que permita realizar segmentaciones detalladas, ya sea de artículos, productos o personas.
+- **Datos de Ubicación**: Utilizar datos geográficos que contengan información relevante sobre ciudades, departamentos o países para facilitar el análisis espacial.
+- **Datos Histórico**s: Garantizar que la fuente de datos incluya información histórica relevante, como ventas de años anteriores, registros de ingreso de personal o datos sobre los gastos de la empresa. Esto servirá de base para realizar análisis de tendencias y comparaciones.
+- **Relaciones Jerárquicas y Multinivel**: Seleccionar una muestra de datos que contenga relaciones jerárquicas y multinivel, como la estructura organizativa de tu empresa o las interacciones entre productos y clientes o entre servicios y vendedores.
+
+### Desafíos en Limpieza, Modelado e Integridad de Datos
+
+- **Limpieza de Datos**: Desarrollar un proceso eficiente para corregir errores, eliminar valores nulos y duplicados, y mejorar la calidad general de los datos antes de utilizarlos para el análisis y la visualización.
+- **Modelado de Datos**: Crear un modelo de datos comprensible y bien estructurado que defina las relaciones entre las diferentes tablas o entidades. El modelo debe facilitar el análisis jerárquico y permitir comparaciones entre segmentos, como productos, clientes y ubicaciones.
+- **Integridad de los Datos**: Asegurar que los datos se mantengan precisos y consistentes a lo largo de todo el proyecto, validando las fuentes y preservando la exactitud durante las transformaciones.
+- **Integración de Datos**: Implementar un método sólido para combinar datos provenientes de múltiples fuentes. El proceso debe manejar diferentes estructuras y formatos, como datos históricos de ventas y registros de empleados, para generar un conjunto de datos unificado y significativo.
+
+#### Requerimientos para el Diseño del Dashboard
+
+- **Mapa Interactivo**: Incluir un mapa geográfico que permita visualizar datos segmentados por ubicación, como ciudades o países. El mapa debe tener capacidades de zoom y clics interactivos para mostrar detalles adicionales, y utilizar colores o gradientes para resaltar las métricas de rendimiento.
+- **Gráfico de Series Temporales**: Mostrar tendencias a lo largo del tiempo con un gráfico de series temporales. Debe permitir el ajuste del rango de fechas y comparaciones entre períodos (como mes a mes o año a año) para facilitar el análisis de patrones estacionales.
+- **Visualización de Nodos y Relaciones**: Implementar un diagrama de nodos para representar las conexiones entre elementos clave, como productos, clientes o servicios. Cada nodo debe mostrar información relevante en hover o clic, como detalles de productos o relaciones cliente-vendedor.
+- **Indicadores Clave de Desempeño (KPI)**: Presentar KPI importantes como total de ventas, crecimiento mensual, y costos relevantes. Los indicadores visuales (como flechas y colores) deben destacar si el rendimiento está dentro de lo esperado o si se requiere acción.
+- **Opciones de Segmentación y Filtros**: Proveer opciones de segmentación que permitan filtrar los datos por categoría, ubicación o rango de tiempo. Los filtros deben aplicarse globalmente en el dashboard para facilitar un análisis detallado por segmento.
+
+#### Preguntas de Análisis de Datos
+
+1. **¿Cuáles son las regiones geográficas con mejor y peor rendimiento en ventas?**
+- Usa el mapa interactivo para identificar las áreas de alto y bajo rendimiento y determinar patrones que puedan impactar las estrategias comerciales.
+2. **¿Cómo han cambiado las ventas y otros indicadores clave a lo largo del tiempo?**
+- Utiliza las series temporales para analizar las tendencias de ventas, observando los picos y caídas, y determinando las causas subyacentes como la estacionalidad o eventos específicos.
+3. **¿Qué productos o servicios están más relacionados con los clientes principales?**
+- Examina el diagrama de nodos para descubrir cómo ciertos productos se asocian con clientes clave, lo cual podría optimizar estrategias de ventas y fidelización.
+4. **¿Cuáles son los KPIs que requieren atención inmediata y por qué?**
+- Revisa los indicadores clave para identificar áreas que no cumplen con los objetivos y analizar qué acciones se pueden tomar para mejorar el desempeño.
+5. **¿Cómo afectan las diferentes segmentaciones (por producto, ubicación, cliente) al rendimiento general del negocio?**
+- Aplica filtros y segmentaciones para entender cómo cada categoría impacta el desempeño total, ayudando a optimizar las estrategias empresariales.
+
+**Notas**: Este ejercicio se proporciona únicamente como una guía para que puedas aplicar lo que has aprendido. Si cuentas con otros tipos de conjuntos de datos o preguntas similares, siéntete libre de usarlos o adaptarlos. El objetivo principal es poner en práctica los conceptos y habilidades adquiridos.

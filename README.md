@@ -167,9 +167,7 @@
 - [Curso de Entorno de Trabajo para Ciencia de Datos con Jupyter Notebooks y Anaconda](cursentornotrabajotiencidatosjupyternotebooksanaconda)
 - [Curso de Visualización de Datos para BI](CursodeVisualizaciondeDatosparaBI)
 - [Curso de Python para Ciencia de Datos](CursodePythonparaCienciadeDato)
-
-Curso de Entornos Virtuales con Anaconda y Jupyter
-
+- [Curso de Entornos Virtuales con Anaconda y Jupyter](CursodeEntornosVirtualesconAnacondayJupyter)
 - [Curso de Funciones Matemáticas para Data Science e Inteligencia Artificial](CursodeFuncionesMatemáticasparaDataScienceeInteligenciaArtificial)
 - [Curso de Matemáticas para Data Science: Estadística Descriptiva](CursodeMatemáticasparaDataScienceEstadísticaDescriptiva)
 - [Curso de Matemáticas para Data Science: Probabilidad](CursodeMatemáticasparaDataScienceProbabilidad)
