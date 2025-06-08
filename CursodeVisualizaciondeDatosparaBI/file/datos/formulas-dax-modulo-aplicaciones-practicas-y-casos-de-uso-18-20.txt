@@ -1,0 +1,38 @@
+Cantidad de Carritos = COUNT(carritos_abandonados[Carrito_ID])
+Cantidad de usuarios abandono = COUNT(conversiones[User_ID])
+Probabilidad de Abandono = ([Cantidad de usuarios abandono]*1)/[Intension de compra]
+Intension de compra = [Usuarios que realziaorn una compra] + [Cantidad de usuarios abandono]
+Usuarios que realziaorn una compra = COUNT(transacciones[User_ID])
+********************************************************************
+Frecuente = 
+COUNTROWS(
+    FILTER(
+        usuarios,
+        usuarios[Segmento] = "Frecuente"
+    )
+) 
+*********************************************************************
+Nuevos = 
+COUNTROWS(
+    FILTER(
+        usuarios,
+        usuarios[Segmento] = "Nuevo"
+    )
+) 
+*********************************************************************
+Ocasional = 
+COUNTROWS(
+    FILTER(
+        usuarios,
+        usuarios[Segmento] = "Ocasional"
+    )
+)
+********************************************************************
+Recurrentes = 
+COUNTROWS(
+    FILTER(
+        usuarios,
+        usuarios[Segmento] = "Recurrente"
+    )
+) 
+**********************************************************************

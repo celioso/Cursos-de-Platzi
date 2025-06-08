@@ -2752,6 +2752,7 @@ A estas alturas, deberías tener un tablero completado que refleje de manera ade
 Desarrollar un proyecto de visualización en Business Intelligence (BI) utilizando los conocimientos adquiridos a lo largo de los diferentes módulos del curso. El proyecto debe cumplir con todos los requisitos establecidos.
 
 **Retos del Proyecto**
+
 ### Conjunto de Datos
 
 Como analista de datos, es crucial disponer de fuentes de información fiables para crear escenarios de análisis y aplicar lo aprendido de manera efectiva. Los siguientes son lineamientos esenciales para el proyecto:

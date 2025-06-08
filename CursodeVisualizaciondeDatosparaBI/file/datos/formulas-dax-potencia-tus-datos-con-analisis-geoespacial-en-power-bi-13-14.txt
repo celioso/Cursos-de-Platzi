@@ -1,0 +1,25 @@
+## Fomulas DAx usadas para el computo
+Calificacion = ((Ventas[Anual])*1)/7000000
+Maximo Meta Trimestral = 1800000
+Maximo Ventas Anual = 7200000 - [Anual]
+Maximo_Ventas_Mensuales = 600000 - Ventas[Ventas Mensuales]
+Meta Anual = 1
+Meta_Faltante_Anual = Medidas[Meta Anual]-Medidas[Calificacion]
+Meta_faltante_Trimestral = [Maximo Meta Trimestral]-Ventas[Ventas Trimestre]
+
+## DAX que te permie que le tablero el mensaje de saludo sea dinamico de acuerdo a la hora aparezca un mensaje
+Saludo = 
+var Hora = hour(now())
+var Saludo=
+SWITCH(
+    true(),
+    Hora >= 0 && Hora < 5, "Buenas Noches",
+    Hora >= 5 && Hora< 12, "Buenos DÃ­as",
+    Hora>= 12 && Hora< 18,"Buenas Tardes",
+    Hora>= 18 && Hora < 24,"Buenas Noches"
+)
+Return
+Saludo
+
+## Transparencia de graficas
+Transparencia = "rgba(255,255,255,0)"
