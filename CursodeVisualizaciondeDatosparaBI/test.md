@@ -79,7 +79,7 @@ d
 URL
 
 e
-Delimitadores de los datos
+Delimitadores de los datos x
 
 
 ¿Cómo se establecen las relaciones entre tablas de hechos y dimensiones?
@@ -96,7 +96,7 @@ c
 Las tablas de hechos contienen la mayor parte de la información, mientras que las dimensiones actúan como filtros.
 
 d
-Ninguna de las anteriores
+Ninguna de las anteriores x
 
 e
 la tabla de dimensión filtra algunos registros en la tabla de hechos x

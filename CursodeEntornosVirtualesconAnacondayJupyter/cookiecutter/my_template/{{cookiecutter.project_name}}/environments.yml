@@ -1,0 +1,12 @@
+name: {{ cookiecutter.project_name }}
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.13
+  - numpy
+  - pandas
+  - matplotlib
+  - pip
+  - jupyter
+  - seaborn
