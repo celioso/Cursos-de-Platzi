@@ -14,7 +14,7 @@
 
 4. **¿Qué elemento hace parte del tipo de datos como atributo?**
    
-**R//=** 
+**R//=** URL
 
 5. **¿Cuál técnica de jerarquía visual es más adecuada para guiar al lector de manera secuencial a través de un diseño de datos?**
     
@@ -26,7 +26,7 @@
 
 7. **¿Cómo se establecen las relaciones entre tablas de hechos y dimensiones?**
     
-**R//=** Todas la anteriores
+**R//=** Las tablas de hechos contienen la mayor parte de la información, mientras que las dimensiones actúan como filtros.
 
 8. **¿Cómo se selecciona la imagen adecuada para el fondo de un tablero?**
     
@@ -76,7 +76,7 @@ c
 Cantidad de caracteres especiales del dato x
 
 d
-URL
+URL *
 
 e
 Delimitadores de los datos x
@@ -93,7 +93,7 @@ b
 La tabla de hechos tiene más datos que la de dimensiones.
 
 c
-Las tablas de hechos contienen la mayor parte de la información, mientras que las dimensiones actúan como filtros.
+Las tablas de hechos contienen la mayor parte de la información, mientras que las dimensiones actúan como filtros. *
 
 d
 Ninguna de las anteriores x

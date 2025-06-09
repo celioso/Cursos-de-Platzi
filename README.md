@@ -180,7 +180,7 @@
 
 ### Machine learning con Python y bases de datos
 
-Curso de Introducción a Machine Learning
+- [Curso de Introducción a Machine Learning](CursodeIntroduccionaMachineLearning)
 
 Curso Básico de Cálculo Diferencial para Data Science e Inteligencia Artificial
 
