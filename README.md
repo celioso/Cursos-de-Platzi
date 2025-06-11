@@ -182,8 +182,7 @@
 
 - [Curso de Introducción a Machine Learning](CursodeIntroduccionaMachineLearning)
 - [Curso Básico de Cálculo Diferencial para Data Science e Inteligencia Artificial](CursoBasicodeCalculoDiferencialparaDataScienceeInteligenciaArtificial)
-
-Curso de Estadística Inferencial para Data Science e Inteligencia Artificial
+- [Curso de Estadística Inferencial para Data Science e Inteligencia Artificial](CursodeEstadisticaInferencialparaDataScienceeInteligenciaArtificial)
 
 Curso de Fundamentos de Álgebra Lineal con Python
 
