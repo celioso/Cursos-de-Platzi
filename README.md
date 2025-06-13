@@ -181,10 +181,10 @@
 ### Machine learning con Python y bases de datos
 
 - [Curso de Introducción a Machine Learning](CursodeIntroduccionaMachineLearning)
+- [Curso de Fundamentos de Machine Learning](CursodeFundamentosdeMachineLearning)
 - [Curso Básico de Cálculo Diferencial para Data Science e Inteligencia Artificial](CursoBasicodeCalculoDiferencialparaDataScienceeInteligenciaArtificial)
 - [Curso de Estadística Inferencial para Data Science e Inteligencia Artificial](CursodeEstadisticaInferencialparaDataScienceeInteligenciaArtificial)
-
-Curso de Fundamentos de Álgebra Lineal con Python
+- [Curso de Fundamentos de Álgebra Lineal con Python](CursodeFundamentosdeAlgebraLinealconPython)
 
 Curso de Álgebra Lineal Aplicada para Machine Learning
 
