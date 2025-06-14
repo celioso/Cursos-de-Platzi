@@ -1294,3 +1294,361 @@ print("Las operaciones son iguales:", equal_check)
 ```
 
 Continuar explorando y practicando estos conceptos profundizará tu comprensión y habilidad en álgebra lineal, preparándote para abordar sistemas de ecuaciones complejos con confianza y eficiencia. ¡Te animo a sumergirte más en este apasionante mundo matemático!
+
+## Comprobación gráfica de sistemas de ecuaciones lineales
+
+¡Perfecto! Visualizar **sistemas de ecuaciones lineales** gráficamente es una excelente forma de entender su solución. Te mostraré cómo hacerlo paso a paso con un ejemplo usando **Python** y **Matplotlib**.
+
+### 🎯 Objetivo:
+
+Graficar dos ecuaciones lineales y mostrar su **punto de intersección**, que representa la **solución del sistema**.
+
+### 📌 Ejemplo de Sistema de Ecuaciones:
+
+$$
+\text{Ecuación 1: } y = 2x + 1  
+$$
+
+$$
+\text{Ecuación 2: } y = -x + 4
+$$
+
+### 🧮 Paso a Paso en Python:
+
+```python
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Valores de x
+x = np.linspace(-10, 10, 200)
+
+# Ecuaciones
+y1 = 2 * x + 1      # y = 2x + 1
+y2 = -1 * x + 4     # y = -x + 4
+
+# Intersección (resolviendo el sistema de ecuaciones)
+# Igualamos: 2x + 1 = -x + 4 => 3x = 3 => x = 1, y = 2(1) + 1 = 3
+x_intersect = 1
+y_intersect = 3
+
+# Gráfico
+plt.figure(figsize=(8,6))
+plt.plot(x, y1, label='y = 2x + 1')
+plt.plot(x, y2, label='y = -x + 4')
+plt.plot(x_intersect, y_intersect, 'ro', label='Intersección (1,3)')
+
+plt.axhline(0, color='black', linewidth=0.5)
+plt.axvline(0, color='black', linewidth=0.5)
+plt.grid(True)
+plt.legend()
+plt.title('Solución Gráfica de un Sistema de Ecuaciones Lineales')
+plt.xlabel('x')
+plt.ylabel('y')
+plt.show()
+```
+
+### 🧠 Interpretación:
+
+* Cada línea representa una ecuación lineal.
+* El **punto rojo** muestra la solución del sistema: el punto donde ambas rectas se cruzan.
+* Si no se cruzan → el sistema **no tiene solución (inconsistente)**.
+* Si son la misma recta → **infinitas soluciones**.
+
+## Matrices Identidad, Inversa y Singular: Propiedades y Cálculo
+
+¡Perfecto! Este es un tema central en **álgebra lineal**, con aplicaciones directas en sistemas de ecuaciones, optimización, computación gráfica y machine learning. Vamos a revisar las **propiedades clave** y cómo se calculan:
+
+### 🔷 1. **Matriz Identidad (𝐼)**
+
+### 🔹 Definición:
+
+Una **matriz cuadrada** donde todos los elementos de la **diagonal principal son 1** y los demás son 0.
+
+### 🔹 Propiedades:
+
+* $A \cdot I = A$
+* $I \cdot A = A$
+* $I^{-1} = I$
+* Es **la unidad** de la multiplicación matricial.
+
+### 🔹 Ejemplo en Python:
+
+```python
+import numpy as np
+
+I = np.eye(3)
+print(I)
+```
+
+### 🔷 2. **Matriz Inversa (𝐴⁻¹)**
+
+### 🔹 Definición:
+
+La matriz inversa de $A$ es otra matriz $A^{-1}$ tal que:
+
+$$
+A \cdot A^{-1} = I
+$$
+
+### 🔹 Solo existe si:
+
+* $A$ es **cuadrada**.
+* $\det(A) \ne 0$ → No es singular.
+
+### 🔹 Propiedades:
+
+* $(A^{-1})^{-1} = A$
+* $(AB)^{-1} = B^{-1}A^{-1}$
+* $(A^T)^{-1} = (A^{-1})^T$
+
+### 🔹 En Python:
+
+```python
+A = np.array([[2, 1], [5, 3]])
+A_inv = np.linalg.inv(A)
+print(A_inv)
+```
+
+### 🔷 3. **Matriz Singular**
+
+### 🔹 Definición:
+
+Una matriz cuadrada que **no tiene inversa**.
+
+### 🔹 Ocurre cuando:
+
+* $\det(A) = 0$
+* Sus filas o columnas son **linealmente dependientes**.
+
+### 🔹 Ejemplo:
+
+```python
+A = np.array([[2, 4], [1, 2]])  # Segunda fila es múltiplo de la primera
+print(np.linalg.det(A))  # Resultado: 0 → matriz singular
+```
+
+### 🔷 4. **Cálculo Rápido del Determinante**
+
+Usado para saber si la matriz tiene inversa.
+
+```python
+np.linalg.det(A)  # Si es 0, es singular
+```
+
+### 📘 Extra: Resolver un Sistema con la Inversa
+
+$$
+AX = B \Rightarrow X = A^{-1}B
+$$
+
+```python
+A = np.array([[2, 1], [5, 3]])
+B = np.array([[5], [13]])
+X = np.linalg.inv(A).dot(B)
+print(X)
+```
+
+### Resumen
+
+#### ¿Qué son las matrices especiales y sus características?
+
+Las matrices especiales juegan un papel crucial en el álgebra lineal y poseen propiedades únicas que las hacen destacarse. Entre ellas, encontramos la matriz identidad, la matriz inversa y la matriz singular. Entender las peculiaridades de cada una es esencial para diversos cálculos y aplicaciones en matemáticas avanzadas.
+
+#### ¿Qué es la matriz identidad?
+
+La matriz identidad es una transformación neutra dentro del contexto de las matrices. En esencia, es una matriz cuadrada en la que todos los elementos de la diagonal principal son unos, y todos los otros elementos son ceros. La función eye de bibliotecas como NumPy nos permite generarla fácilmente. Su peculiaridad es que, al multiplicarla por cualquier vector, este permanece inalterado, similar a como el número uno es el elemento neutro en la multiplicación de números.
+
+```python
+import numpy as np
+
+# Generamos una matriz identidad de dimensión 3x3
+identidad = np.eye(3)
+print(identidad)
+```
+
+#### ¿Qué representa la matriz inversa?
+
+La matriz inversa cumple una función similar al concepto de inverso en la multiplicación usual: cuando una matriz ( A ) se multiplica por su inversa ( A^{-1} ), obtenemos la matriz identidad. Para calcularla, utilizamos funciones específicas, como `np.linalg.inv` de NumPy.
+
+```python
+# Definimos una matriz 3x3
+A = np.array([[1, 0, 0], [0, 1, 0], [0, 0, 1]])
+
+# Calculamos la inversa de la matriz A
+A_inversa = np.linalg.inv(A)
+print(A_inversa)
+```
+
+Sin embargo, es importante destacar que no todas las matrices tienen una inversa. Generalmente, solo las matrices cuadradas que cumplen ciertas condiciones pueden tener esta propiedad.
+
+#### ¿Por qué algunas matrices son singulares?
+
+La matriz singular es especial porque carece de inversa. Esto sucede cuando determinantes de la matriz son cero, indicando que la matriz es "degenerada". Intentar calcular la inversa de una matriz singular generará un error, como en el siguiente ejemplo:
+
+```python
+# Intentamos calcular la inversa de una matriz singular
+try:
+    singular = np.array([[1, 2], [2, 4]])
+    singular_inversa = np.linalg.inv(singular)
+except np.linalg.LinAlgError:
+    print("Error: Matrix is singular")
+```
+
+#### ¿Cómo resolver sistemas de ecuaciones lineales usando matrices?
+
+Las matrices son fundamentales en la resolución de sistemas de ecuaciones lineales. Al tener la matriz inversa de un sistema ( A \times X = B ), podemos multiplicar ambos lados por ( A^{-1} ) para resolver ( X ).
+
+```python
+# Supongamos que tenemos un sistema de ecuaciones
+A = np.array([[3, 1], [1, 2]])
+B = np.array([9, 8])
+
+# Calculamos la inversa de A
+A_inversa = np.linalg.inv(A)
+
+# Resolvemos para X
+X = np.dot(A_inversa, B)
+print(X)
+```
+
+Contar con la matriz inversa permite implementar algoritmos eficientes para soluciones exactas de sistemas lineales, lo que es de gran utilidad en campos como la ingeniería y las ciencias computacionales. Con estas herramientas, tu entendimiento y manejo del álgebra lineal se vuelve potente y versátil. ¡Continúa explorando y profundizando en el fascinante mundo de las matemáticas!
+
+## Solución de Sistemas Lineales usando la Inversa de una Matriz
+
+¡Excelente! Resolver sistemas de ecuaciones lineales usando la **inversa de una matriz** es una técnica clásica del álgebra lineal cuando el sistema se puede representar como:
+
+$$
+AX = B
+$$
+
+Donde:
+
+* $A$ es la **matriz de coeficientes** (cuadrada).
+* $X$ es el **vector columna** de incógnitas.
+* $B$ es el **vector columna** de resultados.
+
+### ✅ Paso a Paso para Resolver $AX = B$ con la Inversa
+
+### 📌 1. Verifica que $A$ sea **cuadrada** y **no singular** (determinante ≠ 0)
+
+### 📌 2. Calcula la **inversa de A**: $A^{-1}$
+
+### 📌 3. Multiplica ambos lados por $A^{-1}$:
+
+$$
+A^{-1}AX = A^{-1}B \Rightarrow IX = A^{-1}B \Rightarrow X = A^{-1}B
+$$
+
+### 🔢 Ejemplo Práctico en Python
+
+Supongamos el siguiente sistema:
+
+$$
+\begin{cases}
+2x + y = 5 \\
+5x + 3y = 13
+\end{cases}
+$$
+
+Representamos el sistema:
+
+```python
+import numpy as np
+
+# Matriz de coeficientes A
+A = np.array([[2, 1],
+              [5, 3]])
+
+# Vector de resultados B
+B = np.array([[5],
+              [13]])
+
+# Verificamos si A tiene inversa
+if np.linalg.det(A) != 0:
+    A_inv = np.linalg.inv(A)
+    X = A_inv @ B
+    print("Solución del sistema (x, y):")
+    print(X)
+else:
+    print("La matriz A es singular. No tiene inversa.")
+```
+
+### 📌 Resultado
+
+El código te devuelve el valor de $x$ y $y$ como solución del sistema.
+
+### ⚠️ Consideraciones
+
+* Este método **no es el más eficiente** computacionalmente para grandes sistemas.
+* Es ideal para **análisis teórico o sistemas pequeños**.
+* Para sistemas grandes o mal condicionados, se prefiere `np.linalg.solve(A, B)`.
+
+### 🔄 Alternativa más eficiente:
+
+```python
+X = np.linalg.solve(A, B)  # Resuelve directamente sin calcular la inversa
+```
+
+### Resumen
+
+#### ¿Cómo utilizar la matriz inversa para resolver un sistema de ecuaciones lineales?
+
+Las matrices inversas son herramientas poderosas en álgebra lineal que nos permiten encontrar soluciones a sistemas de ecuaciones lineales. Imagina que tienes un sistema matemático que resolver y deseas utilizar una matriz inversa; hacerlo podría simplificar mucho el proceso. Vamos a profundizar en cómo se hace esto paso a paso usando Python.
+
+#### ¿Cómo definir matrices y vectores en Python?
+
+Primero, definimos nuestras matrices y vectores utilizando la biblioteca NumPy, que es muy útil para el manejo de datos numéricos en Python. Para un sistema de ecuaciones sencillo, donde tenemos las ecuaciones (3x + y = 1) y (2x + y = 1), organizamos la matriz de coeficientes y el vector de resultados así:
+
+```python
+import numpy as np
+
+# Definición de la matriz A
+A = np.array([[3, 1], [2, 1]])
+
+# Definición del vector B
+B = np.array([1, 1])
+```
+
+#### ¿Cómo calcular la matriz inversa?
+
+El siguiente paso es calcular la matriz inversa de (A). En álgebra lineal, si una matriz ( A ) tiene una inversa, significa que podemos multiplicarla por su inversa para obtener la matriz identidad. En Python:
+
+```python
+# Calcular la matriz inversa de A
+inversa_A = np.linalg.inv(A)
+```
+
+#### ¿Cómo resolver el sistema de ecuaciones?
+
+Una vez obtenida la matriz inversa, podemos encontrar la solución ( X ) multiplicando esta inversa por el vector ( B ):
+
+```python
+# Calcular el vector solución X
+X = np.dot(inversa_A, B)
+```
+
+El resultado te dará los valores de ( x ) y ( y ) que solucionan el sistema. En nuestro caso, el vector ( X ) debería ser muy similar a ([0, 1]), lo que corresponde a ( x = 0 ) y ( y = 1 ).
+
+#### ¿Qué pasa si cambiamos el vector de resultados?
+
+Si cambias ( B ) para ver si la misma matriz inversa puede ayudarnos a resolver otra configuración de resultados, tendrías algo así:
+
+```python
+# Nuevo vector B
+B_nuevo = np.array([3, 7])
+
+# Calcular el nuevo vector solución X usando la misma inversa
+X_nuevo = np.dot(inversa_A, B_nuevo)
+```
+
+Este enfoque te proporciona la solución para cualquier vector ( B ) dado, siempre que los coeficientes de las variables en las ecuaciones permanezcan iguales.
+
+#### ¿Cuáles son las limitaciones del uso de matrices inversas?
+
+Aunque resolver sistemas de ecuaciones lineales usando matrices inversas es conveniente, no es siempre eficiente debido a problemas numéricos que pueden surgir, especialmente cuando lidias con matrices grandes o mal condicionadas. A menudo, otras técnicas como la eliminación Gaussiana o métodos numéricos de aproximación pueden ser más adecuados.
+
+#### ¿Por qué es importante la práctica de métodos numéricos?
+
+Los métodos numéricos se utilizan para encontrar soluciones aproximadas a ecuaciones y no dependen de las ineficiencias inherentes a las matrices inversas en representaciones computacionales. Saber cuándo y cómo utilizar diferentes métodos es esencial para quienes trabajan con álgebra lineal y problemas matemáticos complejos en la práctica.
+
+¿Te interesa seguir explorando esta rica área de las matemáticas computacionales? ¡Sigue practicando, afina tus habilidades y aprovecha al máximo estas herramientas fascinantes!
