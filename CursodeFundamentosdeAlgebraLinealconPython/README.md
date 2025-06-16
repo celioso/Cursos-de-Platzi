@@ -1652,3 +1652,165 @@ Aunque resolver sistemas de ecuaciones lineales usando matrices inversas es conv
 Los métodos numéricos se utilizan para encontrar soluciones aproximadas a ecuaciones y no dependen de las ineficiencias inherentes a las matrices inversas en representaciones computacionales. Saber cuándo y cómo utilizar diferentes métodos es esencial para quienes trabajan con álgebra lineal y problemas matemáticos complejos en la práctica.
 
 ¿Te interesa seguir explorando esta rica área de las matemáticas computacionales? ¡Sigue practicando, afina tus habilidades y aprovecha al máximo estas herramientas fascinantes!
+
+## Sistemas de Ecuaciones: Soluciones Únicas, Múltiples o Ninguna
+
+En **Álgebra**, un **sistema de ecuaciones** es un conjunto de dos o más ecuaciones con dos o más incógnitas. Las soluciones del sistema representan los valores de las incógnitas que **satisfacen todas las ecuaciones simultáneamente**. Según las características de las rectas (en el caso de sistemas lineales de dos variables), los sistemas pueden tener:
+
+### 🔹 1. **Una Solución Única** (Sistema Compatible Determinado)
+
+* Las rectas **se cortan en un solo punto**.
+* Las ecuaciones representan **rectas con distintas pendientes**.
+* **Geometría**: Las rectas se cruzan.
+* **Solución**: Un único par ordenado $(x, y)$.
+
+**Ejemplo:**
+
+$$
+\begin{cases}
+x + y = 5 \\
+x - y = 1
+\end{cases}
+$$
+
+✅ Tiene una única solución: $x = 3$, $y = 2$
+
+### 🔹 2. **Infinitas Soluciones** (Sistema Compatible Indeterminado)
+
+* Las rectas **son coincidentes** (la misma recta).
+* Una ecuación es **múltiplo de la otra**.
+* **Geometría**: Todas sus soluciones son compartidas.
+* **Solución**: Infinitos pares ordenados que cumplen ambas ecuaciones.
+
+**Ejemplo:**
+
+$$
+\begin{cases}
+2x + 4y = 6 \\
+x + 2y = 3
+\end{cases}
+$$
+
+✅ Las dos ecuaciones representan la **misma recta**.
+Infinitas soluciones: cualquier par $(x, y)$ que cumpla la ecuación.
+
+### 🔹 3. **Ninguna Solución** (Sistema Incompatible)
+
+* Las rectas **son paralelas** y **nunca se cruzan**.
+* Tienen **la misma pendiente** pero **diferentes ordenadas al origen**.
+* **Geometría**: Nunca se tocan.
+* **Solución**: ❌ No existe ningún par ordenado que satisfaga ambas ecuaciones.
+
+**Ejemplo:**
+
+$$
+\begin{cases}
+x + 2y = 4 \\
+x + 2y = 7
+\end{cases}
+$$
+
+❌ No hay solución. Las rectas son paralelas.
+
+### 🔎 ¿Cómo determinar el tipo de solución?
+
+Si el sistema es de la forma:
+
+$$
+\begin{cases}
+a_1x + b_1y = c_1 \\
+a_2x + b_2y = c_2
+\end{cases}
+$$
+
+Revisa los cocientes:
+
+| Comparación                                             | Tipo de Sistema      |
+| ------------------------------------------------------- | -------------------- |
+| $\frac{a_1}{a_2} \ne \frac{b_1}{b_2}$                   | Una solución única   |
+| $\frac{a_1}{a_2} = \frac{b_1}{b_2} = \frac{c_1}{c_2}$   | Infinitas soluciones |
+| $\frac{a_1}{a_2} = \frac{b_1}{b_2} \ne \frac{c_1}{c_2}$ | Ninguna solución     |
+
+### Resumen
+
+#### ¿Cuáles son los tipos de sistemas de ecuaciones lineales?
+
+En el estudio de sistemas de ecuaciones lineales, es fundamental comprender los diferentes tipos de soluciones que pueden existir. Estos sistemas pueden clasificarse en tres categorías: sin solución, con una solución única o con infinitas soluciones. Cada una de estas situaciones se comporta de manera particular y presentan características únicas que es crucial identificar.
+
+#### ¿Qué ocurre cuando un sistema no tiene solución?
+
+Un sistema de ecuaciones no tiene solución cuando es sobre-determinado, es decir, cuando hay más ecuaciones que variables. Esto se traduce gráficamente en que las líneas o planos representando las ecuaciones no se cruzan en un punto común.
+
+Por ejemplo, consideremos el sistema de ecuaciones:
+
+- ( y_1 = 3x + 5 )
+- ( y_2 = -x + 3 )
+- ( y_3 = 2x + 1 )
+
+En este caso, al graficar estas ecuaciones, notamos que no existe ningún punto donde las tres líneas se intersecten. Esta ausencia de intersección confirma que no hay solución al sistema, lo que ilustra el concepto de un sistema sobre-determinado.
+
+```python
+# Ejemplo en Python usando una biblioteca de gráficos
+import matplotlib.pyplot as plt
+import numpy as np
+
+x = np.linspace(-6, 6, 400)  
+y1 = 3 * x + 5
+y2 = -x + 3
+y3 = 2 * x + 1
+
+plt.plot(x, y1, label='y1 = 3x + 5')
+plt.plot(x, y2, label='y2 = -x + 3')
+plt.plot(x, y3, label='y3 = 2x + 1')
+
+plt.xlim(-8, 8)
+plt.ylim(-8, 8)
+plt.axhline(0, color='grey', lw=0.8)
+plt.axvline(0, color='grey', lw=0.8)
+plt.legend()
+plt.show()
+```
+
+#### ¿Cómo identificamos una solución única?
+
+Un sistema de ecuaciones tiene una solución única cuando las ecuaciones se intersectan en un punto específico. Gráficamente, esto se refleja en una sola intersección entre las líneas de las ecuaciones, lo que destaca que existe una única combinación de valores que satisface todas las ecuaciones a la vez.
+
+Por ejemplo, consideremos las ecuaciones:
+
+- ( y_2 = -x + 3 )
+- ( y_3 = 2x + 1 )
+
+Si graficamos estas ecuaciones, bajando una tiene una pendiente diferente a la otra, resultando en una intersección en un punto exacto. Este punto de intersección representa que el sistema tiene una solución específica y única.
+
+```python
+# Gráfica de un sistema con una solución única
+plt.plot(x, y2, label='y2 = -x + 3')
+plt.plot(x, y3, label='y3 = 2x + 1')
+
+plt.xlim(-8, 8)
+plt.ylim(-8, 8)
+plt.axhline(0, color='grey', lw=0.8)
+plt.axvline(0, color='grey', lw=0.8)
+plt.legend()
+plt.show()
+```
+
+#### ¿Cuándo un sistema tiene infinitas soluciones?
+
+Un sistema de ecuaciones tiene infinitas soluciones cuando las ecuaciones son dependientes, es decir, una ecuación es una múltiplo o derivado de la otra. Esto implica que cualquier solución válida para una ecuación es automáticamente válida para la otra. Gráficamente, esto se representa por una sola línea que se superpone a otra, indicando que hay un grado de libertad.
+
+Por ejemplo, en el caso de sólo usar la ecuación ( y_3 = 2x + 1 ), existe un grado de libertad desde el momento en que cualquier valor de ( x ) encuentra un correspondiente valor de ( y ), siguiendo esta ecuación.
+
+```python
+# Sistema con infinitas soluciones
+plt.plot(x, y3, label='y3 = 2x + 1')
+
+plt.xlim(-8, 8)
+plt.ylim(-8, 8)
+plt.axhline(0, color='grey', lw=0.8)
+plt.axvline(0, color='grey', lw=0.8)
+plt.legend()
+plt.show()
+```
+
+En resumen, los sistemas de ecuaciones lineales pueden presentar escenarios de cero, una o infinitas soluciones, reflejando la rica diversidad de comportamientos en las configuraciones algebraicas y sus soluciones. ¡Continúa indagando en estos conceptos para fortalecer tu entendimiento y aplicación!
