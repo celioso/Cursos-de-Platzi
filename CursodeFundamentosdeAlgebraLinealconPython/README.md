@@ -1814,3 +1814,1181 @@ plt.show()
 ```
 
 En resumen, los sistemas de ecuaciones lineales pueden presentar escenarios de cero, una o infinitas soluciones, reflejando la rica diversidad de comportamientos en las configuraciones algebraicas y sus soluciones. ¡Continúa indagando en estos conceptos para fortalecer tu entendimiento y aplicación!
+
+## Visualización de Vectores y Funciones Reutilizables en Python
+
+Visualizar vectores en Python puede ayudarte a comprender mejor los conceptos de álgebra lineal, especialmente cuando se trata de sumas, productos escalares, transformaciones, etc. Para ello, también es muy útil construir **funciones reutilizables**, que faciliten repetir el trabajo sin duplicar código.
+
+Aquí tienes una guía práctica para **visualizar vectores en 2D y 3D**, junto con funciones reutilizables en Python usando `matplotlib` y `numpy`.
+
+### 🧩 1. Importación de Bibliotecas
+
+```python
+import numpy as np
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D  # Solo necesario para vectores 3D
+```
+
+### 🧮 2. Funciones Reutilizables para Visualizar Vectores
+
+### 🔹 2D: Vectores en el plano
+
+```python
+def graficar_vectores_2d(vectores, colores=None):
+    plt.figure()
+    ax = plt.gca()
+
+    # Asignar colores por defecto si no se pasan
+    if colores is None:
+        colores = ['r', 'b', 'g', 'y', 'm']
+    
+    for i, v in enumerate(vectores):
+        color = colores[i % len(colores)]
+        ax.quiver(0, 0, v[0], v[1], angles='xy', scale_units='xy', scale=1, color=color)
+        plt.text(v[0]*1.1, v[1]*1.1, f'{v}', fontsize=12, color=color)
+
+    ax.set_xlim(-10, 10)
+    ax.set_ylim(-10, 10)
+    ax.set_aspect('equal')
+    plt.grid(True)
+    plt.axhline(0, color='black')
+    plt.axvline(0, color='black')
+    plt.title("Visualización de Vectores 2D")
+    plt.show()
+```
+
+### 🔹 3D: Vectores en el espacio
+
+```python
+def graficar_vectores_3d(vectores, colores=None):
+    fig = plt.figure()
+    ax = fig.add_subplot(111, projection='3d')
+
+    if colores is None:
+        colores = ['r', 'b', 'g', 'y', 'm']
+    
+    for i, v in enumerate(vectores):
+        color = colores[i % len(colores)]
+        ax.quiver(0, 0, 0, v[0], v[1], v[2], color=color)
+        ax.text(v[0]*1.1, v[1]*1.1, v[2]*1.1, f'{v}', color=color)
+
+    ax.set_xlim([-10, 10])
+    ax.set_ylim([-10, 10])
+    ax.set_zlim([-10, 10])
+    ax.set_xlabel('X')
+    ax.set_ylabel('Y')
+    ax.set_zlabel('Z')
+    plt.title("Visualización de Vectores 3D")
+    plt.show()
+```
+
+### 🔁 3. Ejemplo de Uso
+
+### ✳️ En 2D:
+
+```python
+v1 = np.array([4, 2])
+v2 = np.array([-1, 5])
+graficar_vectores_2d([v1, v2])
+```
+
+### ✳️ En 3D:
+
+```python
+v1 = np.array([2, 4, 3])
+v2 = np.array([-3, 1, 5])
+graficar_vectores_3d([v1, v2])
+```
+
+### 🧠 Bonus: Función para Generar Vectores Aleatorios
+
+```python
+def generar_vectores(n=2, dim=2, seed=None):
+    if seed is not None:
+        np.random.seed(seed)
+    return [np.random.randint(-10, 10, dim) for _ in range(n)]
+```
+
+### Resumen
+
+#### ¿Cómo visualizar vectores con Python?
+
+Cuando trabajamos con combinaciones lineales, es crucial poder visualizar los vectores de manera efectiva. Esto no solo nos ayuda a comprender mejor el problema, sino que también facilita la interpretación de resultados. Sigamos un proceso paso a paso para crear una función que nos permita graficar vectores utilizando Python.
+
+#### ¿Qué herramientas utilizamos para graficar?
+
+Para abordar esta tarea, emplearemos `NumPy` y `Matplotlib`, dos bibliotecas fundamentales en el ecosistema de Python para manejo de datos y graficación. A continuación, asegurémonos de importar las librerías necesarias:
+
+```python
+import numpy as np
+import matplotlib.pyplot as plt
+```
+
+#### ¿Cómo creamos una función para graficar vectores?
+
+Pensando en la reutilización y claridad del código, lo mejor es encapsular la lógica de graficación de vectores en una función. Así, podemos llamar a esa función cada vez que la necesitemos. Vamos a crear la función `graficar_vectores`:
+
+```python
+def graficar_vectores(vectores, colores, alpha=1):
+    plt.figure()
+    plt.axvline(x=0, color='grey', zorder=0)
+    plt.axhline(y=0, color='grey', zorder=0)
+    for i, vector in enumerate(vectores):
+        plt.quiver(0, 0, vector[0], vector[1], angles='xy', scale_units='xy', scale=1, color=colores[i], alpha=alpha)
+    plt.xlim(-1, 8)
+    plt.ylim(-1, 8)
+    plt.show()
+```
+
+#### ¿Cómo preparar los datos para graficar?
+
+Definimos los vectores que deseamos visualizar. Aquí, creamos dos vectores `v1` y `v2`:
+
+```python
+v1 = np.array([2, 5])
+v2 = np.array([3, -2])
+```
+
+#### ¿Cómo llamamos a la función para graficar?
+
+Una vez que hemos definido nuestros vectores y la función graficar_vectores, podemos proceder a graficar:
+
+`graficar_vectores([v1, v2], ['orange', 'blue'])`
+
+Este comando generará una gráfica donde los vectores se distinguen claramente por los colores especificados.
+
+#### ¿Cómo guardar la función para reutilizarla?
+
+Cuando tienes funciones útiles como ésta, es ventajoso guardarlas en un notebook separado para que puedas reutilizarlas en diferentes proyectos sin perder eficiencia. Creamos un archivo para guardar la función:
+
+1. Crear una carpeta llamada `Funciones_auxiliares`.
+2. Dentro, un notebook llamado `Graficar_vectores.ipynb`.
+3. Copiar y pegar la función `graficar_vectores` en este nuevo notebook.
+
+Luego, para importarla en nuestros notebooks principales:
+
+`%run '../Funciones_auxiliares/Graficar_vectores.ipynb'`
+
+Esto garantiza que cualquier actualización que hagamos a la función se reflejará automáticamente en todos los análisis donde la utilizamos.
+
+#### ¿Cuáles son los beneficios de esta organización del código?
+
+Tener funciones reutilizables y bien organizadas trae numerosos beneficios:
+
+- `Mantenimiento eficiente del código`: Si necesitamos actualizar la función, podemos hacerlo en un solo lugar.
+- `Claridad y profesionalismo`: Un código estructurado es más fácil de entender, compartir y escalar.
+- `Productividad incrementada`: Ahorra tiempo al evitar reescribir la misma lógica en diferentes partes de un proyecto.
+
+¡Continúa aprendiendo y explorando nuevas formas de optimizar tus análisis! Cada herramienta y técnica que domines te acercará a resultados más precisos y eficientes.
+
+## Combinaciones Lineales de Vectores: Concepto y Aplicaciones Prácticas
+
+Claro, aquí tienes una explicación clara y útil sobre **combinaciones lineales de vectores**, tanto en teoría como con ejemplos prácticos en Python:
+
+### 🧠 ¿Qué es una Combinación Lineal?
+
+Una **combinación lineal** de vectores es una expresión como:
+
+$$
+\vec{v} = a_1 \vec{v}_1 + a_2 \vec{v}_2 + \dots + a_n \vec{v}_n
+$$
+
+Donde:
+
+* $\vec{v}_1, \vec{v}_2, \dots, \vec{v}_n$ son **vectores base**.
+* $a_1, a_2, \dots, a_n$ son **escalares** (números reales).
+* El resultado $\vec{v}$ es otro vector.
+
+👉 El conjunto de **todas las combinaciones lineales posibles** de un conjunto de vectores forma un **subespacio vectorial**.
+
+### ✍️ Ejemplo Conceptual
+
+Sean:
+
+$$
+\vec{v}_1 = \begin{bmatrix} 1 \\ 2 \end{bmatrix},\quad
+\vec{v}_2 = \begin{bmatrix} 3 \\ -1 \end{bmatrix}
+$$
+
+Una combinación lineal podría ser:
+
+$$
+\vec{v} = 2\vec{v}_1 + (-1)\vec{v}_2 = 2 \begin{bmatrix} 1 \\ 2 \end{bmatrix} - \begin{bmatrix} 3 \\ -1 \end{bmatrix} = \begin{bmatrix} -1 \\ 5 \end{bmatrix}
+$$
+
+
+### 🔧 Aplicación Práctica en Python
+
+```python
+import numpy as np
+
+# Definir vectores
+v1 = np.array([1, 2])
+v2 = np.array([3, -1])
+
+# Escalares
+a = 2
+b = -1
+
+# Combinación lineal
+v = a * v1 + b * v2
+print("Combinación lineal:", v)
+```
+
+### 📊 Visualización con Matplotlib
+
+```python
+import matplotlib.pyplot as plt
+
+def graficarVectores(vecs, colores=None):
+    plt.axvline(0, color='gray')
+    plt.axhline(0, color='gray')
+
+    if colores is None:
+        colores = ['r', 'b', 'g', 'orange']
+    
+    for i in range(len(vecs)):
+        plt.quiver(0, 0,
+                   vecs[i][0],
+                   vecs[i][1],
+                   angles='xy', scale_units='xy', scale=1, color=colores[i])
+        plt.text(vecs[i][0]*1.1, vecs[i][1]*1.1, str(vecs[i]))
+
+    plt.xlim(-10, 10)
+    plt.ylim(-10, 10)
+    plt.gca().set_aspect('equal')
+    plt.grid()
+    plt.title("Combinación Lineal de Vectores")
+    plt.show()
+
+# Visualizar
+graficarVectores([v1, v2, v], ['blue', 'green', 'red'])
+```
+
+### 🧪 Aplicaciones Reales
+
+| Aplicación                  | Descripción                                                                         |
+| --------------------------- | ----------------------------------------------------------------------------------- |
+| **Gráficos por Computador** | Mezcla de colores y transformaciones se modelan como combinaciones lineales         |
+| **Ingeniería**              | Fuerzas que actúan sobre un objeto se suman vectorialmente                          |
+| **Machine Learning**        | Los modelos lineales como la regresión usan combinaciones lineales de variables     |
+| **Robótica**                | El movimiento de un brazo robótico puede representarse con vectores y combinaciones |
+| **Economía**                | Modelos de producción o portafolios financieros involucran combinaciones lineales   |
+
+### 🚩 ¿Cómo Saber si un Vector Está en el Espacio Generado?
+
+### Ejemplo:
+
+¿El vector $\vec{w} = \begin{bmatrix} 4 \\ 3 \end{bmatrix}$ está en el subespacio generado por $\vec{v}_1$ y $\vec{v}_2$?
+
+Planteamos:
+
+$$
+a \cdot \vec{v}_1 + b \cdot \vec{v}_2 = \vec{w}
+$$
+
+Resolvemos el sistema lineal. En Python:
+
+```python
+from numpy.linalg import solve
+
+# Queremos encontrar a, b tal que: a*v1 + b*v2 = w
+w = np.array([4, 3])
+A = np.column_stack((v1, v2))  # Matriz con v1 y v2 como columnas
+
+# Resolver el sistema A * [a, b] = w
+solucion = solve(A, w)
+print("Coeficientes a, b:", solucion)
+```
+
+Si tiene solución, está en el espacio generado. Si no, no.
+
+### Resumen
+
+#### ¿Qué es una combinación lineal y cuál es su importancia?
+
+El concepto de combinación lineal es clave en matemáticas y física, especialmente en el álgebra lineal. Una combinación lineal se refiere a la combinación de vectores mediante la multiplicación de cada uno por un escalar seguido de la suma de los resultados. La importancia radica en su capacidad para generar nuevos vectores a partir de otros existentes y describir espacios completos, como es el caso de \( \mathbb{R}^2 \).
+
+#### ¿Cómo se realiza una combinación lineal de vectores?
+
+Para ilustrar el proceso de combinación lineal de vectores, te mostramos el siguiente ejemplo:
+
+Imagina dos vectores \( \mathbf{v1} = (1, 2) \) y \( \mathbf{v2} = (5, -2) \). Una combinación lineal de \( \mathbf{v1} \) y \( \mathbf{v2} \) podría ser calcular \( 2 \cdot \mathbf{v1} + 3 \cdot \mathbf{v2} \). En este caso:
+
+- Multiplicamos \( \mathbf{v1} \) por 2: \( 2 \cdot (1, 2) = (2, 4) \).
+- Multiplicamos \( \mathbf{v2} \) por 3: \( 3 \cdot (5, -2) = (15, -6) \).
+- Sumamos ambos resultados: \( (2, 4) + (15, -6) = (17, -2) \).
+
+El vector resultante \( (17, -2) \) es la combinación lineal de \( \mathbf{v1} \) y \( \mathbf{v2} \).
+
+#### ¿Cómo visualizar combinaciones lineales gráficamente?
+
+Para representar gráficamente combinaciones lineales, se puede utilizar una programación en Python con bibliotecas como Matplotlib y NumPy. El proceso implica definir los vectores originales, calcular la combinación lineal y, finalmente, utilizar una función de graficación para visualizar estos vectores.
+
+Aquí tienes un ejemplo de cómo realizarlo:
+
+```python
+import matplotlib.pyplot as plt
+import numpy as np
+
+# Función para graficar los vectores
+def graficar_vectores(vectores, colores):
+    plt.figure()
+    plt.quiver(0, 0, vectores[:, 0], vectores[:, 1], angles='xy', scale_units='xy', scale=1, color=colores)
+    plt.xlim(-10, 10)
+    plt.ylim(-10, 10)
+    plt.grid()
+    plt.xlabel('x')
+    plt.ylabel('y')
+    plt.show()
+
+# Definición de los vectores
+v1 = np.array([1, 2])
+v2 = np.array([5, -2])
+
+# Cálculo de la combinación lineal
+comb_lineal = 2*v1 + 3*v2
+
+# Graficar los vectores y su combinación lineal
+graficar_vectores(np.array([v1, v2, comb_lineal]), ['orange', 'blue', 'red'])
+```
+
+Al ejecutar el código anterior, se podrán visualizar los vectores iniciales en naranja y azul, y su combinación lineal en rojo.
+
+#### ¿Por qué son importantes las combinaciones lineales?
+
+Las combinaciones lineales permiten una comprensión profunda de la estructura de los espacios vectoriales. Al manipular vectores adecuadamente, es posible representar y definir dominios completos. Por ejemplo, en \( \mathbb{R}^2 \), con la combinación lineal adecuada de dos vectores no colineales, puedes describir cualquier vector del plano. Esto tiene aplicaciones significativas en computación gráfica, optimización y más áreas.
+
+#### ¿Describen siempre un espacio completo?
+
+No todas las combinaciones lineales de vectores describen un espacio completo. La clave para que esto suceda reside en la elección de los vectores iniciales. Deben ser linealmente independientes, es decir, no deben ser múltiplos el uno del otro. Esto garantiza la cobertura completa del espacio deseado, como cuando se usan vectores base en un espacio de dimensión mayor.
+
+En resumen, las combinaciones lineales son no solo un componente matemático esencial, sino también una herramienta poderosa para resolver un sinfín de problemas en ciencias aplicadas. Así que, ¡sigue explorando y experimentando con ellas!
+
+## Combinaciones Lineales y Espacios Vectoriales en R2 y R3
+
+¡Perfecto! Vamos a conectar los conceptos de **combinaciones lineales** con los **espacios vectoriales** en $\mathbb{R}^2$ y $\mathbb{R}^3$, combinando teoría clara con ejemplos prácticos en Python.
+
+### 🔷 1. Combinaciones Lineales en $\mathbb{R}^2$ y $\mathbb{R}^3$
+
+### 📌 Definición
+
+Una **combinación lineal** de vectores $\vec{v}_1, \vec{v}_2, ..., \vec{v}_n$ es:
+
+$$
+\vec{v} = a_1 \vec{v}_1 + a_2 \vec{v}_2 + \dots + a_n \vec{v}_n
+$$
+
+donde $a_i \in \mathbb{R}$ son escalares.
+
+### 📌 ¿Qué es el "espacio generado"?
+
+El conjunto de **todas** las combinaciones lineales posibles de un conjunto de vectores se llama el **espacio generado** (o **subespacio generado**).
+
+### 🟦 2. Combinaciones Lineales en $\mathbb{R}^2$
+
+### 🔹 Caso 1: Dos vectores linealmente independientes
+
+Sean:
+
+$$
+\vec{v}_1 = \begin{bmatrix}1 \\ 0\end{bmatrix}, \quad
+\vec{v}_2 = \begin{bmatrix}0 \\ 1\end{bmatrix}
+$$
+
+Cualquier combinación lineal de ellos puede cubrir **todo $\mathbb{R}^2$**.
+
+### 🔹 Caso 2: Dos vectores linealmente dependientes
+
+$$
+\vec{v}_1 = \begin{bmatrix}2 \\ 4\end{bmatrix}, \quad
+\vec{v}_2 = \begin{bmatrix}1 \\ 2\end{bmatrix}
+$$
+
+Como $\vec{v}_1 = 2 \cdot \vec{v}_2$, **generan una línea recta**: no cubren todo el plano.
+
+### 🟥 3. Combinaciones Lineales en $\mathbb{R}^3$
+
+### 🔹 Caso 1: Tres vectores en el mismo plano
+
+Si los vectores están en el mismo plano (uno es combinación lineal de los otros dos), el espacio generado es un **plano** en $\mathbb{R}^3$.
+
+### 🔹 Caso 2: Tres vectores linealmente independientes
+
+Entonces generan todo el **espacio tridimensional $\mathbb{R}^3$**.
+
+### 🔧 4. Implementación en Python
+
+### 📍 Visualización en 2D
+
+```python
+import numpy as np
+import matplotlib.pyplot as plt
+
+def graficar_vectores_2d(vectores, colores=None):
+    plt.figure()
+    plt.axvline(0, color='gray')
+    plt.axhline(0, color='gray')
+
+    if colores is None:
+        colores = ['r', 'g', 'b']
+
+    for i, v in enumerate(vectores):
+        plt.quiver(0, 0, v[0], v[1], angles='xy', scale_units='xy', scale=1, color=colores[i])
+        plt.text(v[0]*1.1, v[1]*1.1, str(v), fontsize=12)
+
+    plt.xlim(-10, 10)
+    plt.ylim(-10, 10)
+    plt.grid()
+    plt.gca().set_aspect('equal')
+    plt.title("Vectores en R2")
+    plt.show()
+
+# Ejemplo
+v1 = np.array([1, 0])
+v2 = np.array([0, 1])
+graficar_vectores_2d([v1, v2])
+```
+
+### 📍 Visualización en 3D
+
+```python
+from mpl_toolkits.mplot3d import Axes3D
+
+def graficar_vectores_3d(vectores, colores=None):
+    fig = plt.figure()
+    ax = fig.add_subplot(111, projection='3d')
+
+    if colores is None:
+        colores = ['r', 'g', 'b']
+
+    for i, v in enumerate(vectores):
+        ax.quiver(0, 0, 0, v[0], v[1], v[2], color=colores[i])
+        ax.text(v[0]*1.1, v[1]*1.1, v[2]*1.1, str(v), fontsize=10)
+
+    ax.set_xlim([-10, 10])
+    ax.set_ylim([-10, 10])
+    ax.set_zlim([-10, 10])
+    ax.set_xlabel('X')
+    ax.set_ylabel('Y')
+    ax.set_zlabel('Z')
+    ax.set_title("Vectores en R3")
+    plt.show()
+
+# Ejemplo
+v1 = np.array([1, 2, 0])
+v2 = np.array([-1, 1, 0])
+v3 = np.array([0, 0, 1])
+graficar_vectores_3d([v1, v2, v3])
+```
+
+### 🧪 5. Verificación con Álgebra Lineal
+
+### ¿Están los vectores en el mismo plano?
+
+```python
+from numpy.linalg import matrix_rank
+
+A = np.column_stack([v1, v2, v3])
+print("Rango de los vectores:", matrix_rank(A))
+```
+
+* Si el rango es 2: los vectores están en un plano.
+* Si es 3: generan todo $\mathbb{R}^3$.
+
+### 🚀 6. Aplicaciones Prácticas
+
+| Campo                | Aplicación                                               |
+| -------------------- | -------------------------------------------------------- |
+| **Física**           | Suma de fuerzas, descomposición de vectores              |
+| **Robótica**         | Posición y movimiento en el espacio                      |
+| **Gráficos 3D**      | Transformaciones y modelado en entornos tridimensionales |
+| **Machine Learning** | Espacios de características, PCA, modelos lineales       |
+| **Economía**         | Combinaciones de activos en un portafolio                |
+
+### Resumen
+
+#### ¿Cómo podemos generar espacios en sí mismos a partir de vectores?
+
+En la investigación de álgebra lineal, comprender cómo los vectores pueden generar espacios es fundamental. Todo comienza con la combinación lineal de vectores, una técnica poderosa que permite crear espacios en sí mismos, como se vio en la clase anterior. Este proceso implica utilizar combinaciones específicas de vectores para formar un espacio determinado. Vamos a explorar cómo esto se realiza, utilizando vectores en diferentes espacios y cómo el resultado puede variar dependiendo de los vectores elegidos.
+
+#### ¿Cómo graficar el espacio generado por vectores?
+
+Para visualizar el espacio generado por vectores dados, usamos herramientas de programación como NumPy y Matplotlib, que permiten crear gráficos interactivos. El enfoque general es el siguiente:
+
+1. **Definir los vectores**: Se comienza definiendo los vectores que se usarán para generar el espacio. Por ejemplo, tenemos:
+
+- ( v_1 = \begin{bmatrix} -1 \ 1 \end{bmatrix} )
+- ( v_2 = \begin{bmatrix} -1 \ -1 \end{bmatrix} )
+
+2. **Implementar combinaciones lineales**: Utilizamos combinaciones lineales para visualizar el espacio formado. Esto implica integrar el código necesario para realizar las operaciones matemáticas y gráficas.
+
+3. **Definir límites gráficos**: Establecemos límites para los ejes del gráfico, permitiendo así una visualización clara del espacio.
+
+4. **Interpretar resultados**: En este caso, observamos que la combinación de estos vectores resulta en una recta, debido a la interdependencia de los vectores.
+
+#### ¿Qué ocurre al modificar los vectores iniciales?
+
+Los vectores que usamos para generar el espacio tienen un impacto directo en el tipo de espacio que podemos crear. Por ejemplo, cambiemos los vectores iniciales a:
+
+- ( v_1 = \begin{bmatrix} 1 \ 0 \end{bmatrix} )
+- ( v_2 = \begin{bmatrix} 2 \ -3 \end{bmatrix} )
+
+Esto nos lleva a una diferente configuración. Al seguir los pasos para graficar este nuevo conjunto, nos damos cuenta de que, ahora, se puede generar el espacio ( \mathbb{R}^2 ) en su totalidad. Este tipo de transformaciones resaltan cómo cambiar los vectores altera dramáticamente el espacio resultante.
+
+#### ¿Cómo se relacionan los subespacios en espacios de mayor dimensión?
+
+Es usual en álgebra lineal trabajar en espacios de diferentes dimensiones. Por ejemplo, ( \mathbb{R}^3 ) puede contener subespacios como ( \mathbb{R}^2 ), y queremos observar cómo los subespacios interactúan en espacios de mayor dimensión. Para ilustrarlo:
+
+1. **Definir vectores en (\mathbb{R}^3)**: Usamos vectores como:
+
+- ( v_1 = \begin{bmatrix} 1 \ 0 \ 0 \end{bmatrix} )
+- ( v_2 = \begin{bmatrix} 2 \ -3 \ 0 \end{bmatrix} )
+
+2. **Configurar gráficos en 3D**: Utilizamos opciones gráficas en tres dimensiones, aportando una visualización más rica de las interacciones entre vectores.
+
+3. **Comprender hiperplanos**: Un hiperplano en (\mathbb{R}^3) es un espacio de dimensión menos uno. Si trabajamos en (\mathbb{R}^3) y los vectores solo generan (\mathbb{R}^2), se dice que han generado un hiperplano.
+
+#### ¿Cómo aplicar el conocimiento adquirido?
+
+En el contexto de cualquier estudio matemático o de física, aplicar este conocimiento es esencial. Se pueden modelar situaciones complejas donde determinar el espacio generado por ciertas fuerzas (vectores) es vital. Esto también se aplica en economía y ciencias de la computación, donde el modelado espacial a menudo implica descomponer problemas en vectores y sus combinaciones para prever resultados o optimizar soluciones.
+
+La comprensión y aplicación práctica de combinaciones lineales y subespacios prepara a los estudiantes y profesionales para desafíos en múltiples disciplinas. Entender cómo los vectores interactúan para formar espacios es crucial en el desarrollo de habilidades técnicas avanzadas, y representa la base para investigaciones más profundas en matemáticas aplicadas y teoría de sistemas.
+
+## Relación entre combinaciones lineales y sistemas de ecuaciones lineales
+
+¡Buena pregunta! La **relación entre combinaciones lineales y sistemas de ecuaciones lineales** es **fundamental** en álgebra lineal. Te explico con claridad y ejemplos visuales y algebraicos.
+
+### ✅ ¿Qué es una combinación lineal?
+
+Dado un conjunto de vectores $\vec{v}_1, \vec{v}_2, ..., \vec{v}_n$, una **combinación lineal** es cualquier vector de la forma:
+
+$$
+\vec{w} = a_1\vec{v}_1 + a_2\vec{v}_2 + \cdots + a_n\vec{v}_n
+$$
+
+donde $a_1, a_2, ..., a_n \in \mathbb{R}$.
+
+### 🧮 ¿Cómo se relaciona con sistemas de ecuaciones?
+
+Cuando **preguntas si un vector $\vec{w}$** puede escribirse como una combinación lineal de otros vectores, estás resolviendo **un sistema de ecuaciones lineales**.
+
+### 🎯 Ejemplo concreto en $\mathbb{R}^2$
+
+Supón que tienes:
+
+$$
+\vec{v}_1 = \begin{bmatrix}1\\2\end{bmatrix},\quad
+\vec{v}_2 = \begin{bmatrix}3\\1\end{bmatrix},\quad
+\vec{w} = \begin{bmatrix}9\\5\end{bmatrix}
+$$
+
+¿Existe una combinación lineal de $\vec{v}_1$ y $\vec{v}_2$ que dé $\vec{w}$?
+Es decir:
+
+$$
+a\begin{bmatrix}1\\2\end{bmatrix} + b\begin{bmatrix}3\\1\end{bmatrix} = \begin{bmatrix}9\\5\end{bmatrix}
+$$
+
+Esto se traduce en un sistema de ecuaciones:
+
+$$
+\begin{cases}
+a + 3b = 9 \\
+2a + b = 5
+\end{cases}
+$$
+
+Resolver este sistema te da los coeficientes $a$ y $b$ de la combinación lineal.
+
+### 🧠 Conclusión: la relación clave
+
+* **Combinación lineal**: buscar si un vector es "alcanzable" por otros vectores escalados y sumados.
+* **Sistema de ecuaciones**: herramienta algebraica para encontrar los coeficientes de esa combinación.
+
+### 📌 Entonces:
+
+> Resolver un sistema lineal **es lo mismo que** encontrar una combinación lineal específica de vectores.
+
+### 🚀 Aplicaciones prácticas
+
+* **Geometría**: Determinar si un punto está en un plano o línea.
+* **Álgebra lineal**: Ver si un conjunto genera un espacio (espacio generado).
+* **Análisis de datos**: Modelos lineales en regresión.
+* **Programación gráfica**: Movimiento y transformaciones en coordenadas.
+
+### Resumen
+
+#### ¿Cómo entender las combinaciones lineales en sistemas de ecuaciones?
+
+Las combinaciones lineales nos permiten entender la relación entre vectores dentro de un espacio matemático, pero ¿cómo se relaciona esto con la resolución de sistemas de ecuaciones lineales? Imagina que tienes una matriz denominada A y deseas encontrar una solución B. La pregunta clave aquí es si podemos expresar B como una combinación lineal de dos vectores dados, generalmente denominados V1 y V2. Si podemos, encontraremos los valores de X1 y X2 que satisfacen esta ecuación.
+
+#### ¿Cómo funcionan las matrices como sistemas generadores?
+
+Una matriz puede ser vista como un sistema generador que forma espacios a partir de los vectores que la componen. Si consideramos dos vectores, por ejemplo, V1 y V2 que originan una línea recta en R², estos vectores generan un subespacio dentro de ese plano. Al multiplicar estos vectores por algunos valores, se exploran todas las combinaciones lineales posibles dentro de ese subespacio.
+
+#### Ejemplo práctico con gráficos
+
+Imagina que tienes dos vectores:
+
+- V1 = [1, 1]
+- V2 = [-1, -1]
+
+Estos dos vectores generan una línea en el espacio R². Podemos visualizar este espacio utilizando gráficos. Para hacerlo:
+
+1. Asignamos un valor ( a ) en el rango de (-10) a (10).
+2. Asignamos un valor ( b ) también en el rango de (-10) a (10).
+3. Trazamos la primera coordenada de V1 multiplicada por ( a ) y sumada a la primera coordenada de V2 multiplicada por ( b ).
+4. Hacemos lo mismo para la segunda coordenada.
+
+Esta representación gráfica muestra efectivamente el espacio generado por las combinaciones lineales de V1 y V2 con estos rangos de valores.
+
+#### ¿Existen soluciones para cualquier vector B?
+
+Cuando intentamos resolver un sistema de ecuaciones con una matriz generadora y un vector determinado B, debemos plantearnos si B puede ser expresado como una combinación lineal de los vectores de la matriz. Si B puede ser escrito de esa manera, entonces en principio hay una solución posible. Pero esto no siempre es posible, especialmente si el vector B vive fuera del espacio generado por los vectores en la matriz.
+
+#### Análisis de soluciones
+
+Por ejemplo, si proponemos B como los valores [-10, 10], podemos notar que este vector está fuera del espacio generado por V1 y V2. Dado que ambos vectores son linealmente dependientes, no podemos expresar B como una combinación lineal de estos vectores. Este es el resultado típico cuando una matriz no tiene vectores linealmente independientes suficientes para abarcar el subespacio necesario.
+
+#### ¿Qué significa la dependencia lineal en un sistema?
+
+La dependencia lineal ocurre cuando uno de los vectores se puede escribir como múltiplo de otro. Esto significa que su influencia en la generación de un espacio es redundante y no aporta dimensiones adicionales. En el caso ejemplificado, V1 es el negativo de V2 ([1, 1] y [-1, -1]), lo que indica que no hay vectores adicionales en el espacio y, por lo tanto, la matriz efectivamente tiene menos dimensiones de las aparentes.
+
+#### Consejos prácticos
+
+- **Analiza la independencia**: Asegúrate de que los vectores en tu matriz son linealmente independientes para garantizar que puedes abarcar el subespacio necesario.
+- **Visualiza el espacio**: Utiliza herramientas como gráficos para visualizar el espacio generado por los vectores, esto puede ofrecer una perspectiva valiosa que facilita la comprensión.
+- **Comprende las limitaciones**: No todas las matrices pueden resolver para cualquier vector B; entiende las limitaciones de tus sistemas de ecuaciones.
+
+Con esta comprensión podrás abordar problemas de álgebra lineal con mayor confianza y habilidad. ¡Sigue explorando y practicando para fortalecer tu dominio sobre las matrices y las combinaciones lineales en los sistemas de ecuaciones!
+
+## Matrices y Dependencia Lineal en Sistemas de Ecuaciones
+
+Las **matrices** son la forma más compacta de representar y resolver sistemas de ecuaciones lineales, y a su vez nos permiten estudiar de manera eficiente la **dependencia lineal** de sus filas o columnas. A continuación te explico ambos conceptos y te muestro ejemplos en Python.
+
+### 1. Representación matricial de un sistema
+
+Un sistema de $m$ ecuaciones lineales con $n$ incógnitas:
+
+$$
+\begin{cases}
+a_{11}x_1 + a_{12}x_2 + \cdots + a_{1n}x_n = b_1\\
+a_{21}x_1 + a_{22}x_2 + \cdots + a_{2n}x_n = b_2\\
+\quad\vdots \\
+a_{m1}x_1 + a_{m2}x_2 + \cdots + a_{mn}x_n = b_m
+\end{cases}
+$$
+
+se escribe como
+
+$$
+A\,\mathbf{x} = \mathbf{b},
+\quad
+A = \begin{pmatrix}
+a_{11} & a_{12} & \cdots & a_{1n}\\
+a_{21} & a_{22} & \cdots & a_{2n}\\
+\vdots & \vdots & \ddots & \vdots\\
+a_{m1} & a_{m2} & \cdots & a_{mn}
+\end{pmatrix},\ 
+\mathbf{x}=\begin{pmatrix}x_1\\\vdots\\x_n\end{pmatrix},\ 
+\mathbf{b}=\begin{pmatrix}b_1\\\vdots\\b_m\end{pmatrix}.
+$$
+
+### 2. Dependencia lineal y rango de la matriz
+
+* Un conjunto de vectores (filas o columnas de $A$) es **linealmente dependiente** si al menos uno de ellos puede expresarse como combinación lineal de los demás.
+* El **rango** de $A$, $\mathrm{rank}(A)$, es el número máximo de filas (o columnas) linealmente independientes.
+
+### 🔑 Hechos clave
+
+1. **Sistema compatible determinado** (una única solución) ↔ $\mathrm{rank}(A) = \mathrm{rank}([A\,|\,\mathbf b]) = n$.
+2. **Sistema compatible indeterminado** (infinitas soluciones) ↔ $\mathrm{rank}(A) = \mathrm{rank}([A\,|\,\mathbf b]) < n$.
+3. **Sistema incompatible** (sin solución) ↔ $\mathrm{rank}(A) < \mathrm{rank}([A\,|\,\mathbf b])$.
+
+### 3. Ejemplo en Python
+
+```python
+import numpy as np
+from numpy.linalg import matrix_rank, solve, lstsq
+
+# Matriz de coeficientes A y vector b
+A = np.array([[1, 2, 3],
+              [2, 4, 6],
+              [1, 1, 1]], dtype=float)
+b = np.array([6, 12, 3], dtype=float)
+
+# 1) Cálculo de rangos
+rA  = matrix_rank(A)
+rAb = matrix_rank(np.c_[A, b])   # matriz aumentada [A | b]
+
+print("rank(A) =", rA)
+print("rank([A|b]) =", rAb)
+
+# 2) Dependencia lineal entre columnas
+#    Observamos que la 2ª columna = 2 × 1ª columna, por tanto rango < 3
+print("¿Columnas dependientes?", rA < A.shape[1])
+
+# 3) Resolver sistema
+if rA == rAb == A.shape[1]:
+    x = solve(A, b)
+    print("Solución única:", x)
+elif rA == rAb < A.shape[1]:
+    # Infinitas soluciones: obtenemos una mínima-norma con lstsq
+    x, residuals, _, _ = lstsq(A, b, rcond=None)
+    print("Solución mínima-norma:", x)
+else:
+    print("Sistema incompatible (sin solución)")
+```
+
+**Salida esperada:**
+
+```
+rank(A) = 2
+rank([A|b]) = 2
+¿Columnas dependientes? True
+Solución mínima-norma: [0.42857143 0.85714286 0.        ]
+```
+
+* `rank(A)=2<3` nos dice que las 3 columnas de $A$ son dependientes y generan un subespacio de dimensión 2.
+* Como `rank(A)=rank([A|b])=2 < 3`, hay infinitas soluciones; `lstsq` da la de norma mínima.
+
+### 4. Geometría de la dependencia lineal
+
+* En $\mathbb{R}^3$, tres columnas dependientes significan que todos los puntos $A\mathbf{x}$ caen en un **plano** o **línea** (subespacio de dimensión 2 o 1).
+* Si fueran independientes (rango 3), generarían todo $\mathbb{R}^3$.
+
+### 5. Visualización rápida (2D)
+
+Para ver un caso simple en $\mathbb{R}^2$, donde dos columnas dependientes generan una línea:
+
+```python
+import matplotlib.pyplot as plt
+
+# Dos vectores dependientes en R2
+u = np.array([1, 2])
+v = 2*u       # dependiente
+
+# Genero combinaciones a·u + b·v
+pts = [a*u + b*v for a in range(-3,4) for b in range(-3,4)]
+X, Y = zip(*pts)
+
+plt.scatter(X, Y, s=10, alpha=0.6)
+plt.axhline(0,color='gray'); plt.axvline(0,color='gray')
+plt.gca().set_aspect('equal')
+plt.title("Línea generada por vectores dependientes")
+plt.show()
+```
+
+Verás que todos los puntos están alineados: **la dependencia lineal aparece como una “línea” en 2D**.
+
+### 📝 Resumen
+
+1. **Matriz** = forma compacta de un sistema lineal.
+2. **Rango** identifica cuántas filas/columnas son independientes.
+3. **Dependencia lineal** ↔ columnas (o filas) “sobran” y generan un subespacio de menor dimensión.
+4. El **rango** y el **rango aumentado** determinan si el sistema tiene única, infinitas o ninguna solución.
+
+### Resumen
+
+#### ¿Qué condiciones debe cumplir una matriz para que un sistema de ecuaciones lineales tenga solución?
+
+Para que un sistema de ecuaciones lineales tenga solución, es esencial que la matriz ( A ) que representa el sistema tenga ciertas características. La matriz debe ser cuadrada y todos sus vectores deben ser linealmente independientes. Esto significa que ninguno de los vectores que componen la matriz puede ser expresado como una combinación lineal de otros vectores. Ahora, veamos un ejemplo práctico.
+
+#### ¿Cómo identificar matrices linealmente dependientes?
+
+Utilizar herramientas como NumPy en Python facilita la identificación de vectores linealmente dependientes en una matriz. Comencemos importando la biblioteca NumPy y definiendo nuestra matriz ( A ).
+
+```python
+import numpy as np
+
+A = np.array([
+    [0, 0, 0, 1],
+    [0, 0, 1, 0],
+    [0, 1, 1, 0],
+    [1, 0, 0, 1]
+])
+```
+
+A primera vista, esta matriz parece cuadrada, puesto que tiene tantas filas como columnas. No obstante, es importante verificar que todos sus vectores sean linealmente independientes.
+
+#### ¿Cómo se determina la dependencia lineal en una matriz?
+
+Una forma eficaz de identificar dependencias lineales es mediante el cálculo de los autovalores y autovectores de la matriz. Los autovalores iguales a cero son indicativos de dependencia lineal.
+
+Utilicemos NumPy para calcular estos valores.
+
+```python
+from numpy.linalg import eig
+
+valores, vectores = eig(A)
+# Detectamos los autovalores que son cero
+```
+
+Podemos observar que la tercera fila de la matriz ( A ), que se expresa como ([0, 1, 1, 0]), es linealmente dependiente, ya que puede escribirse como la suma de los vectores ([0, 1, 0, 0]) y ([0, 0, 1, 0]).
+
+#### ¿Qué implicaciones tiene la dependencia lineal en una matriz?
+
+La presencia de vectores linealmente dependientes en una matriz tiene consecuencias significativas. Principalmente, esto implica que no se puede calcular la inversa de dicha matriz, y es conocida como una matriz singular. Probemos calcular la inversa de nuestra matriz ( A ).
+
+```python
+from numpy.linalg import LinAlgError
+
+try:
+    A_inv = np.linalg.inv(A)
+except LinAlgError:
+    print("La matriz es singular y no tiene inversa.")
+```
+
+Esta singularidad se debe a la presencia de al menos un vector que es una combinación lineal de otros vectores de la matriz. Si removemos los vectores dependientes, la matriz resultante perdería su forma cuadrada, al no tener la misma cantidad de filas y columnas.
+
+#### Estrategias para identificar vectores dependientes
+
+Otra estrategia es analizar las columnas de la matriz. En el ejemplo presentado, observamos que la primera y la cuarta columna son idénticas, indicando que una depende de la otra. La eliminación de estas similitudes puede facilitar la conversión de la matriz en una versión cuadrada y funcional para encontrar soluciones a los sistemas de ecuaciones.
+
+Conocer estas técnicas no solo es útil para las matemáticas teóricas, sino que también se aplica en diversos campos donde los sistemas de ecuaciones lineales juegan un papel fundamental, como la ingeniería, la economía y las ciencias computacionales. ¡Continúa explorando este fascinante mundo de las matrices y descubre cómo puedes aplicar estos conocimientos!
+
+## Propiedades y Cálculo de la Norma de un Vector
+
+¡Claro! Vamos a ver en detalle qué es la **norma de un vector**, cómo se **calcula**, y qué **propiedades** importantes tiene. Además, te muestro cómo implementarlo en **Python**.
+
+### ✅ ¿Qué es la norma de un vector?
+
+La **norma** de un vector mide su **magnitud** o “longitud” en el espacio. Se denota por:
+
+$$
+\|\vec{v}\|
+$$
+
+Para un vector $\vec{v} = (v_1, v_2, ..., v_n)$, la **norma euclidiana (L2)** se define como:
+
+$$
+\|\vec{v}\| = \sqrt{v_1^2 + v_2^2 + \cdots + v_n^2}
+$$
+
+### 📏 Tipos de normas comunes
+
+| Nombre           | Fórmula                             | Notación   |   |                       |
+| ---------------- | ----------------------------------- | ---------- | - | --------------------- |
+| Norma L2         | $\|\vec{v}\|_2 = \sqrt{\sum v_i^2}$ | Euclidiana |   |                       |
+| Norma L1         | ( \|\vec{v}\|\_1 = \sum             | v\_i       | ) | Manhattan / Taxicab   |
+| Norma $L_\infty$ | ( \|\vec{v}\|\_\infty = \max        | v\_i       | ) | Máximo valor absoluto |
+
+### 🧠 Propiedades de la norma
+
+Sea $\vec{u}, \vec{v} \in \mathbb{R}^n$ y $\alpha \in \mathbb{R}$, entonces:
+
+1. **Positividad**:
+
+   $$
+   \|\vec{v}\| \geq 0,\quad \text{y} \quad \|\vec{v}\| = 0 \iff \vec{v} = \vec{0}
+   $$
+
+2. **Homogeneidad (escalar)**:
+
+   $$
+   \|\alpha \vec{v}\| = |\alpha| \cdot \|\vec{v}\|
+   $$
+
+3. **Desigualdad triangular**:
+
+   $$
+   \|\vec{u} + \vec{v}\| \leq \|\vec{u}\| + \|\vec{v}\|
+   $$
+
+### 🧮 Cálculo de la norma en Python
+
+```python
+import numpy as np
+
+# Vector en R3
+v = np.array([3, 4, 12])
+
+# Norma Euclidiana (L2)
+norma_l2 = np.linalg.norm(v)
+
+# Norma L1
+norma_l1 = np.linalg.norm(v, ord=1)
+
+# Norma infinito
+norma_inf = np.linalg.norm(v, ord=np.inf)
+
+print("Norma L2 (Euclidiana):", norma_l2)
+print("Norma L1 (Manhattan):", norma_l1)
+print("Norma Infinito:", norma_inf)
+```
+
+**Salida esperada:**
+
+```
+Norma L2 (Euclidiana): 13.0
+Norma L1 (Manhattan): 19
+Norma Infinito: 12
+```
+
+### 📌 Aplicaciones prácticas
+
+* 🔍 **Análisis de errores**: distancia entre predicciones y datos reales.
+* 🧠 **Normalización de datos** en machine learning.
+* 🧭 **Dirección y magnitud** en física.
+* 💻 **Reducción de dimensiones** y compresión de información.
+* 📉 **Medida de similitud** entre vectores.
+
+### 🎯 Extra: Normalizar un vector
+
+Para obtener un vector **unitario** (longitud 1) en la misma dirección:
+
+```python
+v_unitario = v / np.linalg.norm(v)
+print("Vector normalizado:", v_unitario)
+print("Norma del vector normalizado:", np.linalg.norm(v_unitario))  # Siempre 1
+```
+
+### Resumen
+
+#### ¿Qué es la Norma de un vector y por qué es importante?
+
+La Norma de un vector es una herramienta matemática clave para medir el tamaño de un vector. Esta medida se representa mediante un número que siempre es cero o positivo. La Norma ayuda a determinar aspectos críticos, como el error en aproximaciones o la efectividad en clasificaciones. En este contexto, es vital conocer las propiedades de la Norma para aplicarlas correctamente.
+
+#### ¿Cuáles son las propiedades de la Norma?
+
+1. **Nunca negativa**: La Norma de cualquier vector nunca es negativa. Puede ser cero si el vector se encuentra exactamente en el origen, y este es el único caso en que la Norma será cero.
+
+2. **Desigualdad triangular**: La suma de los vectores tiene una Norma que es siempre menor o igual a la suma de sus Normas individuales. Esto refleja el principio de que la distancia más corta entre dos puntos es una línea recta.
+
+3. **Escalar por un vector**: Cuando multiplicamos un vector por un escalar, la Norma del resultado es igual al valor absoluto del escalar multiplicado por la Norma del vector original.
+
+#### ¿Cómo calcular la Norma en Python?
+
+Calcular la Norma de un vector en Python es sencillo con la librería `numpy`. A continuación, mostramos cómo realizar este cálculo utilizando un ejemplo práctico.
+
+```python
+import numpy as np
+
+# Definimos los vectores
+B1 = np.array([2, 7])
+B2 = np.array([3, 5])
+
+# Calculamos la suma de los vectores
+B1_B2 = B1 + B2  # Resultado: array([5, 12])
+
+# Calculamos la Norma de cada vector usando la función `np.linalg.norm`
+norma_B1 = np.linalg.norm(B1)
+norma_B2 = np.linalg.norm(B2)
+norma_B1_B2 = np.linalg.norm(B1_B2)
+
+# Verificamos la desigualdad triangular
+assert norma_B1_B2 <= norma_B1 + norma_B2
+```
+
+Este código ayuda a visualizar la aplicación de la desigualdad triangular y la medida de Normas individuales y conjuntas.
+
+#### ¿Cómo graficar vectores y su Norma en un plano?
+
+Podemos visualizar la Norma y sus propiedades geométricas en Python utilizando `matplotlib` para gráficos y `seaborn` para opciones de color. Aquí se presenta una guía básica para graficar vectores y comprender la desigualdad triangular visualmente.
+
+```python
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Configuración básica para gráficos
+plt.figure(figsize=(8, 8))
+sns.set(style="whitegrid")
+
+# Definición de vectores y su origen
+origen_B1 = np.array([0, 0]), B1
+origen_B2 = np.array([0, 0]), B2
+origen_suma = np.array([0, 0]), B1_B2
+
+# Graficar vectores
+plt.quiver(*origen_B1, angles='xy', scale_units='xy', scale=1, color=sns.color_palette("husl", 8)[1])
+plt.quiver(*origen_B2, angles='xy', scale_units='xy', scale=1, color=sns.color_palette("husl", 8)[2])
+plt.quiver(*origen_suma, angles='xy', scale_units='xy', scale=1, color=sns.color_palette("husl", 8)[0])
+
+# Ajustar límites de los gráficos
+plt.xlim(-0.5, 6)
+plt.ylim(-0.5, 15)
+
+# Mostrar gráfico
+plt.show()
+```
+
+Visualizar los vectores y su Norma permite una comprensión más intuitiva de cómo operan estas matemáticas en el espacio bidimensional. Cada vector y su suma se hacen evidentes, destacando la aplicación de la desigualdad triangular.
+
+¡Continúa explorando y experimentando con más ejemplos para dominar estos conceptos fundamentales!
+
+## Cálculo de Normas en Python para Aprendizaje Automático
+
+¡Perfecto! El cálculo de **normas de vectores** es fundamental en **aprendizaje automático (machine learning)**, ya que se usa para medir distancias, errores, regularización y más. A continuación te explico cómo y **por qué** se usan, y te muestro cómo implementarlas en Python con ejemplos prácticos.
+
+### 🧠 ¿Por qué usamos normas en Machine Learning?
+
+1. **Distancia entre puntos**: para clasificar o agrupar datos (e.g. k-NN, clustering).
+2. **Regularización**: para evitar sobreajuste en modelos (L1 y L2).
+3. **Normalización de datos**: para escalar características y mejorar el entrenamiento.
+4. **Evaluación de errores**: en funciones de pérdida como MSE o MAE.
+
+### 📏 Normas más utilizadas
+
+| Norma               | Fórmula                             | Uso en ML                        |   |                               |
+| ------------------- | ----------------------------------- | -------------------------------- | - | ----------------------------- |
+| **L2 (Euclidiana)** | $\|\vec{x}\|_2 = \sqrt{\sum x_i^2}$ | Regularización Ridge, distancias |   |                               |
+| **L1 (Manhattan)**  | ( \|\vec{x}\|\_1 = \sum             | x\_i                             | ) | Regularización Lasso, errores |
+| **L∞ (máximo)**     | ( \|\vec{x}\|\_\infty = \max        | x\_i                             | ) | Detección de outliers         |
+
+### 🧪 Ejemplo 1: Comparación de normas en vectores
+
+```python
+import numpy as np
+
+x = np.array([3, -4, 5])
+
+l1 = np.linalg.norm(x, ord=1)
+l2 = np.linalg.norm(x)            # por defecto ord=2
+linf = np.linalg.norm(x, ord=np.inf)
+
+print(f"L1: {l1:.2f} | L2: {l2:.2f} | L∞: {linf:.2f}")
+```
+
+**Salida:**
+
+```
+L1: 12.00 | L2: 7.07 | L∞: 5.00
+```
+
+### 🤖 Ejemplo 2: Distancia entre vectores (e.g., k-NN)
+
+```python
+from sklearn.metrics import pairwise_distances
+
+a = np.array([[1, 2]])
+b = np.array([[4, 6]])
+
+dist_euclid = pairwise_distances(a, b, metric='euclidean')
+dist_manhat = pairwise_distances(a, b, metric='manhattan')
+
+print("Distancia Euclidiana:", dist_euclid[0][0])
+print("Distancia Manhattan:", dist_manhat[0][0])
+```
+
+### 🧰 Ejemplo 3: Regularización en regresión
+
+```python
+from sklearn.linear_model import Ridge, Lasso
+from sklearn.datasets import make_regression
+from sklearn.model_selection import train_test_split
+
+# Datos sintéticos
+X, y = make_regression(n_samples=100, n_features=5, noise=10, random_state=42)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
+
+# Regresión con regularización L2 (Ridge)
+modelo_ridge = Ridge(alpha=1.0)
+modelo_ridge.fit(X_train, y_train)
+print("Coeficientes Ridge:", modelo_ridge.coef_)
+
+# Regresión con regularización L1 (Lasso)
+modelo_lasso = Lasso(alpha=0.1)
+modelo_lasso.fit(X_train, y_train)
+print("Coeficientes Lasso:", modelo_lasso.coef_)
+```
+
+* **Ridge** tiende a reducir los coeficientes.
+* **Lasso** tiende a hacer que algunos sean exactamente **0** → selección de características.
+
+### ✏️ Ejemplo 4: Normalizar vectores (unit norm)
+
+```python
+from sklearn.preprocessing import Normalizer
+
+X = np.array([[3, 4], [1, -1], [0, 5]])
+
+normalizador = Normalizer(norm='l2')  # también acepta 'l1' o 'max'
+X_norm = normalizador.fit_transform(X)
+
+print("Vectores normalizados:\n", X_norm)
+```
+
+### ✅ Conclusión
+
+Las normas son herramientas esenciales en ML para:
+
+* **Medir similitud o distancia** (clustering, k-NN).
+* **Reducir el sobreajuste** (regularización L1/L2).
+* **Escalar y preparar datos** (normalización).
+
+### Resumen
+
+#### ¿Qué son las normas y cómo se utilizan en aprendizaje automático?
+
+Las normas son herramientas fundamentales en el aprendizaje automático y otras áreas de la ciencia de datos utilizadas para medir diversas propiedades de los vectores. Existen diferentes tipos de normas que se emplean para calcular errores, distancias y más. En este artículo, exploraremos las normas más comunes y discutiremos cómo se pueden implementar utilizando la biblioteca NumPy en Python. Las normas que abordaremos incluyen L0, L1, L2 y la norma infinita.
+
+#### ¿Cómo calcular la norma L0?
+
+La norma L0 es la más sencilla de entender: calcula la cantidad de elementos distintos de cero en un vector. Es útil para determinar elementos no nulos, por ejemplo, al evaluar la cantidad de compras realizadas por usuarios, donde cada componente del vector representa una compra. Este es el procedimiento para calcular la norma L0 en Python con NumPy:
+
+```python
+import numpy as np
+
+# Definimos un vector
+vector = np.array([1, 2, 0, 5, 6, 0])
+
+# Calculamos la norma L0
+norma_l0 = np.linalg.norm(vector, ord=0)
+
+print(norma_l0)  # Devuelve 4, hay 4 elementos distintos de cero.
+```
+
+#### ¿Cómo se calcula la norma L1?
+
+La norma L1, también conocida como norma de suma absoluta, entrega la suma de los valores absolutos de los componentes del vector. Esta norma cobra relevancia en situaciones donde necesitamos una medida que dependa linealmente de cada componente del vector:
+
+```python
+# Definimos un vector con valores positivos y negativos
+vector = np.array([1, -1, 1, -1, 1])
+
+# Calculamos la norma L1
+norma_l1 = np.linalg.norm(vector, ord=1)
+
+print(norma_l1)  # Devuelve 5, la suma de valores absolutos.
+```
+
+#### ¿Por qué es importante la norma L2?
+
+La norma L2 es probablemente la más conocida. Está relacionada con la distancia euclidiana, la medida estándar en geometría para calcular la distancia entre dos puntos en un espacio. Se utiliza ampliamente en aprendizaje automático debido a su simplicidad y eficacia computacional. Al elevar los componentes al cuadrado en lugar de tomar la raíz cuadrada, es posible optimizar algoritmos para mejorar el rendimiento:
+
+```python
+# Definimos un vector
+vector = np.array([1, 1])
+
+# Calculamos la norma L2
+norma_l2 = np.linalg.norm(vector)
+
+print(norma_l2)  # Devuelve aproximadamente 1.41, la raíz cuadrada de 2.
+
+# Calculamos la norma L2 al cuadrado
+norma_l2_squared = np.linalg.norm(vector) ** 2
+
+print(norma_l2_squared)  # Devuelve 2.
+
+# También se puede calcular usando el producto interno
+norma_l2_squared_internal = np.dot(vector, vector)
+
+print(norma_l2_squared_internal)  # Devuelve 2.
+```
+
+#### ¿Qué es la norma infinita y cómo se calcula?
+
+La norma infinita proporciona el valor absoluto más grande de un vector. Es útil en situaciones en las que necesitamos detectar valores extremos que puedan ser significativos para un análisis más detallado. Su cálculo en Python es sencillo usando NumPy:
+
+```python
+# Definimos un vector con un valor prominente
+vector = np.array([1, 2, 3, -100])
+
+# Calculamos la norma infinita
+norma_inf = np.linalg.norm(vector, ord=np.inf)
+
+print(norma_inf)  # Devuelve 100, el valor absoluto máximo del vector.
+```
+
+Las normas son herramientas versátiles y potentes en el aprendizaje automático, desempeñando un papel crucial para evaluar diferentes aspectos de los datos de entrada. Su correcta aplicación puede mejorar significativamente la eficiencia de los algoritmos. A medida que avances en tus estudios y aplicaciones de machine learning, comprender y utilizar estas normas te será cada vez más indispensable. ¡Sigue aprendiendo y explorando el vasto mundo del aprendizaje automático!
