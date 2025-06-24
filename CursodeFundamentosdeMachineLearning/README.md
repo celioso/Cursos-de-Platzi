@@ -1401,3 +1401,1227 @@ Estas variables han demostrado ser cruciales en la predicción eficaz de partido
 [machine-learning/06_seleccion_caracteristicas_cebollitas.ipynb at main · platzi/machine-learning · GitHub](https://github.com/platzi/machine-learning/blob/main/06_seleccion_caracteristicas_cebollitas.ipynb "machine-learning/06_seleccion_caracteristicas_cebollitas.ipynb at main · platzi/machine-learning · GitHub")
 
 [How to Choose a Feature Selection Method For Machine Learning](https://machinelearningmastery.com/feature-selection-with-real-and-categorical-data/ "How to Choose a Feature Selection Method For Machine Learning")
+
+## División de datos en entrenamiento y prueba con scikit-learn
+
+Dividir tus datos en **entrenamiento y prueba** es una parte fundamental en cualquier proyecto de **machine learning**. Con **scikit-learn**, puedes hacerlo fácilmente usando la función `train_test_split`.
+
+### 🧠 ¿Por qué dividir los datos?
+
+* **Entrenamiento (train)**: se usa para ajustar (entrenar) el modelo.
+* **Prueba (test)**: se usa para evaluar qué tan bien generaliza el modelo a datos nuevos.
+* Evita que el modelo aprenda "de memoria" los datos (sobreajuste).
+
+### ✅ Ejemplo en Python con `scikit-learn`
+
+Supongamos que tienes un conjunto de datos con características `X` y etiquetas `y`:
+
+```python
+from sklearn.model_selection import train_test_split
+
+# Supongamos que X y y ya están definidos
+# X = características (variables independientes)
+# y = etiqueta (variable objetivo)
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+```
+
+### 🔍 Parámetros:
+
+* `test_size=0.2`: 20% de los datos se usan para prueba, 80% para entrenamiento.
+* `random_state=42`: asegura que la división sea **reproducible** (siempre igual).
+
+### 📊 Visualizando tamaños:
+
+```python
+print("Tamaño entrenamiento:", X_train.shape)
+print("Tamaño prueba:", X_test.shape)
+```
+
+### 📌 Tip adicional:
+
+Si tu conjunto es muy **desbalanceado**, puedes usar:
+
+```python
+train_test_split(X, y, stratify=y, test_size=0.2)
+```
+
+Esto mantiene la **proporción de clases** tanto en entrenamiento como en prueba.
+
+### Resumen
+
+Evaluar correctamente un modelo de machine learning es crucial para asegurar su utilidad con datos que nunca ha visto anteriormente. Una buena manera de lograrlo es mediante la técnica conocida como **train test split**. Esta técnica consiste en dividir el conjunto de datos en dos partes principales: **entrenamiento**, donde el modelo aprende, y **prueba o test**, donde comprobamos su eficacia en escenarios nuevos.
+
+##### ¿Por qué es importante dividir los datos en entrenamiento y prueba?
+
+Para evitar que nuestro modelo simplemente memorice o se adapte en exceso a los datos con los que fue entrenado (problema conocido como overfitting), es esencial verificar cómo se comporta frente a datos nuevos. Esta división nos permite evaluar objetivamente su capacidad de generalizar lo aprendido:
+
+- **Dato de entrenamiento**: Aquí, el modelo aprende patrones y características esenciales.
+- **Dato de prueba (test)**: Conjunto nuevo utilizado para validar la eficacia real y la generalización del modelo.
+
+#### ¿Cómo implementar la división de datos con scikit-learn?
+
+Para llevar a cabo esta división, usamos la librería scikit-learn, específicamente la función train_test_split:
+
+`from sklearn.model_selection import train_test_split`
+
+Se configuran los parámetros como:
+
+- **test_size** (tamaño del conjunto de prueba), habitualmente recomendado en 20%.
+- **random_state**, para tener resultados consistentes en repeticiones.
+
+`X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)`
+
+#### ¿Cómo puedo experimentar con diferentes tamaños del conjunto prueba?
+
+Existen herramientas como los widgets interactivos de Jupyter que pueden facilitar la comprensión del impacto:
+
+```python
+import ipywidgets as widgets
+widgets.FloatSlider(value=0.2, min=0.1, max=0.4, step=0.05, continuous_update=False)
+```
+
+Usando controles dinámicos, experimentamos visualmente diferentes divisiones y examinamos cómo afecta al conjunto:
+
+- Más datos en entrenamiento implicará potencialmente mejor aprendizaje.
+- Más datos en prueba permitirá validar más robustamente su predicción.
+
+#### ¿Cuál es la recomendación estándar para dividir los datasets?
+
+Lo habitual es utilizar una proporción de 80-20, manteniendo el 80% para el entrenamiento y el 20% restante para el test. Esta distribución ha demostrado ser efectiva en la mayoría de escenarios, equilibrando aprendizaje y validación.
+
+Ahora estás preparado para implementar esta práctica recomendada: dividir eficientemente los datos de tu modelo, garantizando así resultados confiables en nuevos conjuntos de información. ¿Listo para avanzar y aplicar regresión lineal en tus predicciones? Cuéntanos en comentarios cómo te fue con tu nueva implementación.
+
+**Lecturas recomendadas**
+
+[train_test_split — scikit-learn 1.7.0 documentation](https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.train_test_split.html "train_test_split — scikit-learn 1.7.0 documentation")
+
+[machine-learning/07_division_datos_interactiva.ipynb at main · platzi/machine-learning · GitHub](https://github.com/platzi/machine-learning/blob/main/07_division_datos_interactiva.ipynb "machine-learning/07_division_datos_interactiva.ipynb at main · platzi/machine-learning · GitHub")
+
+## Regresión lineal para predecir goles en fútbol
+
+Vamos a ver cómo aplicar **regresión lineal** para predecir goles en fútbol usando **Python y scikit-learn**. Este modelo es ideal si quieres explorar relaciones como:
+
+📊 **¿Cuántos goles marcará un equipo según sus tiros al arco, posesión, pases, etc.?**
+
+### ⚽ Ejemplo: Regresión Lineal para predecir goles
+
+### 📁 1. Datos de ejemplo (`pandas`)
+
+Supongamos que tienes un DataFrame con estas columnas:
+
+```python
+import pandas as pd
+
+# Datos ficticios de partidos
+data = {
+    'tiros_arco': [5, 3, 8, 6, 7],
+    'posesion': [60, 45, 70, 55, 65],
+    'pases': [500, 300, 700, 450, 600],
+    'goles': [2, 1, 3, 2, 3]
+}
+
+df = pd.DataFrame(data)
+```
+
+### 🧪 2. División en entrenamiento y prueba
+
+```python
+from sklearn.model_selection import train_test_split
+
+X = df[['tiros_arco', 'posesion', 'pases']]
+y = df['goles']
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+```
+
+### 🧠 3. Entrenar el modelo
+
+```python
+from sklearn.linear_model import LinearRegression
+
+modelo = LinearRegression()
+modelo.fit(X_train, y_train)
+```
+
+### 🔍 4. Hacer predicciones
+
+```python
+y_pred = modelo.predict(X_test)
+print("Predicciones de goles:", y_pred)
+```
+
+### 📈 5. Evaluar el modelo
+
+```python
+from sklearn.metrics import mean_squared_error, r2_score
+
+print("Error cuadrático medio:", mean_squared_error(y_test, y_pred))
+print("R² score:", r2_score(y_test, y_pred))
+```
+
+---
+
+### 🧮 6. Interpretar los coeficientes
+
+```python
+coeficientes = pd.DataFrame({
+    'Variable': X.columns,
+    'Coeficiente': modelo.coef_
+})
+print(coeficientes)
+```
+
+### ✅ ¿Qué te permite hacer esto?
+
+* Ver **qué variables influyen más** en los goles.
+* Usar el modelo para predecir goles futuros de equipos nuevos.
+* Crear visualizaciones con `matplotlib` o `seaborn`.es?
+
+### Resumen
+
+¿Te imaginas poder predecir los goles de tu equipo favorito con métodos precisos? La regresión lineal, un modelo clásico en *machine learning*, ofrece una herramienta poderosa para asociar variables clave, como posesión del balón y tiros al arco, con la diferencia de goles en cada partido.
+
+#### ¿Qué significa predecir goles usando regresión lineal?
+
+La regresión lineal busca la mejor fórmula matemática para identificar cómo ciertas variables influyen en un resultado específico, como la diferencia de goles. Para esto, se usan datos precisos y claros:
+
+- Posición de balón.
+- Número de tiros al arco.
+
+Estos datos permiten predecir la diferencia de goles, es decir, cuántos goles más marcará uno de los equipos sobre el contrincante.
+
+#### ¿Cómo preparar los datos para entrenar el modelo?
+
+El proceso es sencillo y directo:
+
+- Se importa la biblioteca pandas y la función train_test_split.
+- Creación de variable objetivo "diferencia de goles", definida por goles locales menos visitantes.
+- Selección de variables predictoras, que incluyen posesión local y cantidad de tiros al arco.
+- División del conjunto de datos en entrenamiento (80%) y evaluación (20%), manteniendo la consistencia en resultados mediante el parámetro random state.
+
+#### ¿Qué resultados ofrece el modelo de regresión lineal?
+
+Tras entrenar el modelo con la clase Linear Regression de la biblioteca scikit-learn, se obtienen dos elementos clave:
+
+- **Intercepto (beta cero)**: predicción cuando las variables independientes son cero.
+- **Coeficientes (betas)**: muestran cómo cambia la predicción al incrementar cada variable en una unidad.
+
+Por ejemplo:
+
+- Incrementar 1 unidad la posesión local cambia en promedio 0.06 la diferencia de goles.
+- Incrementar 1 unidad los tiros al arco locales cambia en promedio -0.05 la diferencia de goles.
+
+Esto ayuda a comprender qué variables merecen atención especial en la estrategia del equipo.
+
+#### ¿Cómo evaluar y visualizar las predicciones?
+
+Luego de hacer las predicciones con modelo_rl.predict, es fundamental visualizar los resultados:
+
+- Uso de gráficos de dispersión comparando goles reales frente a predichos.
+- Identificación rápida de qué predicciones coinciden mejor con la realidad y cuáles necesitan ajustes.
+
+#### ¿Qué herramientas interactivas aportan valor adicional?
+
+Los controles dinámicos, mediante sliders interactivos, permiten explorar cómo diferentes escenarios en posesión y tiros afectan la predicción final. Esto resulta especialmente útil para demostraciones prácticas y planificación estratégica con el entrenador o jugadores clave del equipo.
+
+¿Has probado previamente una herramienta similar? ¿Cuál ha sido tu experiencia utilizando modelos estadísticos en deportes? ¡Comparte tus opiniones y expectativas sobre estos métodos!
+ 
+**Lecturas recomendadas**
+
+[machine-learning/08_regresion_lineal_cebollitas.ipynb at main · platzi/machine-learning · GitHub](https://github.com/platzi/machine-learning/blob/main/08_regresion_lineal_cebollitas.ipynb "machine-learning/08_regresion_lineal_cebollitas.ipynb at main · platzi/machine-learning · GitHub")
+
+## Métricas de evaluación para modelos de machine learning
+
+Las **métricas de evaluación** son fundamentales para medir el **rendimiento real de un modelo de machine learning**, tanto en tareas de **regresión** como de **clasificación**. Aquí te presento las más comunes y útiles según el tipo de problema:
+
+
+### 🧮 Para **Regresión** (predicción de valores numéricos, como goles)
+
+### 1. **MSE – Error Cuadrático Medio**
+
+```python
+from sklearn.metrics import mean_squared_error
+mse = mean_squared_error(y_true, y_pred)
+```
+
+* Penaliza los errores grandes.
+* Entre menor, mejor.
+
+### 2. **RMSE – Raíz del Error Cuadrático Medio**
+
+```python
+import numpy as np
+rmse = np.sqrt(mse)
+```
+
+* Más interpretable, ya que está en la misma escala que la variable de salida.
+
+### 3. **MAE – Error Absoluto Medio**
+
+```python
+from sklearn.metrics import mean_absolute_error
+mae = mean_absolute_error(y_true, y_pred)
+```
+
+* Promedia las diferencias absolutas.
+* Más robusto a valores atípicos que el MSE.
+
+### 4. **R² – Coeficiente de Determinación**
+
+```python
+from sklearn.metrics import r2_score
+r2 = r2_score(y_true, y_pred)
+```
+
+* Cuánto del comportamiento de `y` es explicado por el modelo.
+* Valores entre 0 y 1 (o negativos si el modelo es malo).
+* Idealmente cercano a 1.
+
+### 🧪 Para **Clasificación** (como predecir si un equipo gana, empata o pierde)
+
+### 1. **Accuracy (Precisión global)**
+
+```python
+from sklearn.metrics import accuracy_score
+accuracy = accuracy_score(y_true, y_pred)
+```
+
+* Proporción de predicciones correctas.
+
+### 2. **Precision, Recall, F1-score**
+
+```python
+from sklearn.metrics import classification_report
+print(classification_report(y_true, y_pred))
+```
+
+* **Precisión (Precision)**: cuántos positivos predichos realmente lo eran.
+* **Recall (Sensibilidad)**: cuántos positivos reales fueron detectados.
+* **F1-score**: balance entre precision y recall.
+
+### 3. **Matriz de Confusión**
+
+```python
+from sklearn.metrics import confusion_matrix
+print(confusion_matrix(y_true, y_pred))
+```
+
+* Muestra aciertos y errores por clase.
+
+### 4. **ROC AUC (para clasificación binaria)**
+
+```python
+from sklearn.metrics import roc_auc_score
+roc_auc_score(y_true, y_proba)
+```
+
+* Mide la capacidad del modelo para diferenciar clases.
+
+### 📊 Visualizaciones útiles
+
+* `sklearn.metrics.plot_confusion_matrix()`
+* `seaborn.heatmap()` para la matriz de confusión
+* Gráficas de ROC y Precision-Recall
+
+### Resumen
+
+Evaluar un modelo de *machine learning* es tan importante como entrenarlo. Al utilizar métricas específicas, es posible determinar qué tan bien está desempeñándose el modelo y si realmente puede usarse para tomar decisiones informadas. En este contexto, consideraremos cuatro métricas fundamentales: **Error Cuadrático Medio (MSE), Raíz del Error Cuadrático Medio (RMSE), Error Absoluto Medio (MAE) y Coeficiente de Determinación (R²)**.
+
+#### ¿Qué métricas existen para evaluar modelos predictivos?
+
+Cada métrica brinda información particular sobre el rendimiento del modelo:
+
+- **MSE** penaliza fuertemente errores significativos al amplificarlos al cuadrado, lo que ayuda a detectar desviaciones considerables aunque la interpretación directa en términos prácticos (por ejemplo, goles) es complicada.
+- **RMSE** convierte el MSE nuevamente a la escala original, proporcionando una interpretación más intuitiva y fácil de comunicar; muy útil para presentaciones a personas no especializadas técnicamente.
+- **MAE** calcula el promedio directo de los errores absolutos, siendo robusto frente a valores extremos o outliers, con una interpretación clara y directa.
+- **Coeficiente R²** muestra cuánto de la variación en los datos logra explicar el modelo, indicando su capacidad general para captar tendencias.
+
+#### ¿Cómo implementar estas métricas en Python?
+
+Con bibliotecas como *pandas*, *NumPy* y funciones específicas de evaluación, se realiza un cálculo riguroso. Previamente, dividimos nuestros datos entre entrenamiento y validación con *train test split*, y ajustamos un modelo de regresión lineal usando
+
+```python
+from sklearn.linear_model import LinearRegression
+modelo_RL = LinearRegression()
+modelo_RL.fit(X_train, y_train)
+y_pred = modelo_RL.predict(X_test)
+```
+
+Luego, aplicamos las métricas mencionadas:
+
+```python
+from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
+import numpy as np
+
+mse = mean_squared_error(y_test, y_pred)
+rmse = np.sqrt(mse)
+mae = mean_absolute_error(y_test, y_pred)
+r2 = r2_score(y_test, y_pred)
+
+print(f"MSE: {mse:.2f}")
+print(f"RMSE: {rmse:.2f}")
+print(f"MAE: {mae:.2f}")
+print(f"R²: {r2:.2f}")
+```
+
+Estas medidas aportan claridad al Informe Técnico sobre el rendimiento del modelo y facilitan la comunicación efectiva con distintos públicos interesados, como entrenadores o directivos.
+
+#### ¿Por qué usar múltiples métricas de evaluación?
+
+Combinar varias métricas es clave pues así obtenemos un panorama integral del modelo:
+
+- MSE y RMSE: Detectan desviaciones importantes.
+- MAE: Presenta el error típico claramente.
+- R²: Indica la proporción de la variabilidad explicada por el modelo.
+
+Usadas conjuntamente, estas métricas proveen un diagnóstico robusto sobre la utilidad práctica del modelo y ayudan a decidir próximos pasos para ajustes y mejoras.
+
+Te invito a compartir tus experiencias evaluando modelos o cualquier inquietud sobre las métricas mencionadas.
+
+**Lecturas recomendadas**
+
+[Overfitting in Machine Learning: What It Is and How to Prevent It](https://elitedatascience.com/overfitting-in-machine-learning "Overfitting in Machine Learning: What It Is and How to Prevent It")
+
+[machine-learning/09_evaluacion_modelo_cebollitas.ipynb at main · platzi/machine-learning · GitHub](https://github.com/platzi/machine-learning/blob/main/09_evaluacion_modelo_cebollitas.ipynb "machine-learning/09_evaluacion_modelo_cebollitas.ipynb at main · platzi/machine-learning · GitHub")
+
+## Evaluación de métricas en regresión lineal para datos deportivos
+
+Evaluar un modelo de **regresión lineal aplicado a datos deportivos** (como predecir goles, tiros al arco, puntos, etc.) es esencial para entender qué tan bien está funcionando tu modelo.
+
+### ⚽ Escenario típico
+
+Supón que tienes datos deportivos y estás prediciendo una variable como:
+
+> **`y = goles`**
+> A partir de variables como: tiros al arco, posesión, pases, faltas, etc.
+
+### ✅ Métricas clave para evaluación de regresión lineal
+
+### 1. 📉 **MSE – Error Cuadrático Medio**
+
+* Penaliza fuertemente los errores grandes.
+
+```python
+from sklearn.metrics import mean_squared_error
+mse = mean_squared_error(y_true, y_pred)
+```
+
+### 2. 📊 **MAE – Error Absoluto Medio**
+
+* Promedia las diferencias absolutas. Más interpretable y robusto.
+
+```python
+from sklearn.metrics import mean_absolute_error
+mae = mean_absolute_error(y_true, y_pred)
+```
+
+### 3. 📈 **RMSE – Raíz del Error Cuadrático Medio**
+
+* Muestra el error promedio en la **misma escala que la variable objetivo**.
+
+```python
+rmse = mean_squared_error(y_true, y_pred, squared=False)
+```
+
+### 4. 🧮 **R² – Coeficiente de Determinación**
+
+* Indica qué proporción de la varianza es explicada por el modelo.
+* Valor entre 0 y 1 (mejor si se acerca a 1).
+
+```python
+from sklearn.metrics import r2_score
+r2 = r2_score(y_true, y_pred)
+```
+
+### 🔧 Ejemplo en código:
+
+```python
+from sklearn.linear_model import LinearRegression
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
+import numpy as np
+import pandas as pd
+
+# Supongamos que tienes datos deportivos
+data = {
+    'tiros_arco': [5, 3, 8, 6, 7],
+    'posesion': [60, 45, 70, 55, 65],
+    'pases': [500, 300, 700, 450, 600],
+    'goles': [2, 1, 3, 2, 3]
+}
+df = pd.DataFrame(data)
+
+X = df[['tiros_arco', 'posesion', 'pases']]
+y = df['goles']
+
+# División
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Entrenar modelo
+modelo = LinearRegression()
+modelo.fit(X_train, y_train)
+
+# Predicción
+y_pred = modelo.predict(X_test)
+
+# Métricas
+mse = mean_squared_error(y_test, y_pred)
+mae = mean_absolute_error(y_test, y_pred)
+r2 = r2_score(y_test, y_pred)
+
+print(f"MSE: {mse:.2f}")
+print(f"MAE: {mae:.2f}")
+print(f"R\u00b2: {r2:.2f}")
+```
+
+### 📌 Interpretación de resultados
+
+| Métrica | ¿Qué indica?                                                  |
+| ------- | ------------------------------------------------------------- |
+| MSE     | Qué tan grandes son los errores (penaliza errores grandes).   |
+| MAE     | Promedio del error absoluto (más fácil de interpretar).       |
+| RMSE    | Error típico (en unidades de goles, por ejemplo).             |
+| R²      | Qué tan bien el modelo explica la variabilidad del resultado. |
+
+### Resumen
+
+La creación de un modelo de regresión lineal aplicado a datos deportivos, específicamente para analizar goles en partidos de fútbol, implica evaluar su efectividad mediante métricas clave como el R cuadrado y el error cuadrático medio (RMC). Al importar nuestros datos y el modelo entrenado, observamos cómo estos indicadores nos informan claramente sobre el desempeño del modelo y su utilidad práctica.
+
+#### ¿Qué información obtenemos al evaluar nuestro modelo?
+
+Al aplicar métricas como el R cuadrado (R dos), determinamos rápidamente si nuestro modelo de regresión lineal explica adecuadamente la variabilidad observada en los datos:
+
+- Cuando el valor es negativo, indica que el modelo es incluso menos acertado que simples suposiciones aleatorias.
+- Si el valor está entre cero y 0.3, el nivel explicativo es insuficiente, señalando potencial under fitting.
+- Valores superiores a 0.3 sugieren un grado aceptable de explicación de los datos.
+
+En este caso, al encontrar un R cuadrado negativo, confirmamos que nuestro modelo actual no capta correctamente los patrones necesarios para explicar las variaciones en diferencia de goles.
+
+#### ¿Son adecuadas las variables utilizadas?
+
+Es fundamental cuestionarnos sobre la elección y relevancia de las variables usadas. ¿Están capturando realmente los factores decisivos que marcan la diferencia en goles? Algunas variables importantes, como la localía o el desempeño rival en tiros al arco, podrían estar ausentes. Considerar estas dimensiones del juego puede aportar mejores insights y elevar significativamente la precisión del modelo.
+
+#### ¿Existen limitaciones concretas al usar regresión lineal en fútbol?
+
+La regresión lineal presenta ciertas limitaciones importantes al aplicarla a situaciones complejas como partidos de fútbol:
+
+- Supone relaciones lineales entre variables, condición que no necesariamente refleja la dinámica real de un partido.
+- No captura adecuadamente interacciones o efectos no lineales frecuentes en contextos deportivos.
+
+Estas limitaciones invitan a explorar otros modelos más adecuados.
+
+#### ¿Es suficiente este modelo para la toma de decisiones deportivas?
+
+Debido al bajo desempeño identificado, este modelo en específico no podría considerarse suficiente para fundamentar decisiones deportivas estratégicas. Su reducido poder explicativo limita la fiabilidad de las predicciones realizadas, aconsejando buscar alternativas que aporten una visión más robusta y confiable.
+
+#### ¿Qué alternativas podemos considerar para mejorar el modelo?
+
+Tenemos diversas opciones de mejora y optimización:
+
+- Incorporación de nuevas variables relevantes, tales como la localía, características del rival o estadísticas adicionales (por ejemplo, tiros al arco).
+- Aplicación de distintos modelos predictivos más sofisticados y flexibles, como árboles de decisión, random forest o algoritmos como XGBoost.
+- Implementación de validación cruzada para evaluar con mayor precisión la capacidad predictiva.
+- Filtrado y transformación de datos para mejorar métricas predictivas.
+
+Mantener una mente abierta hacia estos enfoques diferentes podría resultar clave en la obtención de modelos más efectivos, asegurando decisiones estratégicas enraizadas en análisis sólidos y precisos.
+
+¿Y tú qué opinas sobre estos enfoques adicionales? Esta reflexión es parte clave del aprendizaje continuo.
+ 
+**Lecturas recomendadas**
+
+[Overfitting in Machine Learning: What It Is and How to Prevent It](https://elitedatascience.com/overfitting-in-machine-learning "Overfitting in Machine Learning: What It Is and How to Prevent It")
+
+[machine-learning/10_reflexion_modelo_regresion_cebollitas.ipynb at main · platzi/machine-learning · GitHub](https://github.com/platzi/machine-learning/blob/main/10_reflexion_modelo_regresion_cebollitas.ipynb "machine-learning/10_reflexion_modelo_regresion_cebollitas.ipynb at main · platzi/machine-learning · GitHub")
+
+[Bonus: machine-learning/11_Bonus.ipynb at main · platzi/machine-learning · GitHub](https://github.com/platzi/machine-learning/blob/main/11_Bonus.ipynb "Bonus: machine-learning/11_Bonus.ipynb at main · platzi/machine-learning · GitHub")
+
+## Reflexión Crítica y Conclusión
+
+La comprensión de modelos de aprendizaje automático requiere no solo implementarlos, sino también saber evaluar su rendimiento y adaptarse cuando no funcionan como esperamos. En el mundo real, es común tener que pivotar entre diferentes algoritmos hasta encontrar el que mejor se ajusta a nuestros datos y al problema que intentamos resolver. Aprender a interpretar métricas y tomar decisiones basadas en ellas es una habilidad fundamental para cualquier científico de datos.
+
+#### ¿Por qué falló el modelo de regresión lineal?
+
+Al analizar el rendimiento de nuestro modelo de regresión lineal, nos encontramos con resultados poco alentadores. Las métricas revelan un panorama claro:
+
+- El modelo presenta un **R² negativo**, lo que indica que su desempeño es peor que simplemente predecir el valor promedio de los datos.
+- Los errores (RMSE y MAE) son **bastante altos**, demostrando una pobre capacidad predictiva.
+
+Estos resultados sugieren fuertemente que la relación entre nuestras variables no es lineal. Cuando intentamos forzar una relación lineal en datos que siguen patrones no lineales, el modelo no puede captar adecuadamente estos patrones, resultando en predicciones deficientes.
+
+#### ¿Qué alternativas tenemos frente a un modelo que no funciona?
+
+Cuando un modelo no cumple con nuestras expectativas, es momento de explorar alternativas. En este caso, el árbol de decisión emerge como una opción prometedora:
+
+- Los árboles de decisión pueden capturar relaciones no lineales entre variables.
+- Son capaces de modelar interacciones complejas sin asumir una forma específica en los datos.
+
+Al implementar este nuevo enfoque, observamos mejoras significativas en todas las métricas:
+
+- **Reducción en RMSE y MAE**: Los errores de predicción disminuyeron notablemente.
+- R² positivo: A diferencia del modelo lineal, el árbol demuestra capacidad para explicar la variabilidad en los datos.
+
+Estas mejoras confirman nuestra hipótesis: estamos tratando con datos que presentan relaciones no lineales.
+
+#### ¿Qué hemos aprendido hasta ahora?
+
+Este ejercicio nos ha proporcionado valiosas lecciones:
+
+1. **Preparación de datos y construcción de modelos básicos**: Hemos aprendido a procesar datos y crear modelos iniciales para abordar problemas.
+2. **Evaluación mediante métricas**: Ahora sabemos interpretar diferentes métricas y utilizarlas para evaluar el rendimiento de nuestros modelos.
+3. **No todos los algoritmos sirven para todos los problemas**: Quizás la lección más importante es comprender que debemos adaptar nuestro enfoque según la naturaleza de los datos.
+
+#### ¿Cómo rediseñar nuestra estrategia a partir de estos hallazgos?
+
+Con base en los resultados obtenidos, podemos replantear nuestra aproximación al problema:
+
+1. **Redefinir un pipeline más adecuado**: Utilizar el árbol de decisión como modelo base e iterar sobre él.
+2. **Mejorar las visualizaciones**: Crear representaciones visuales que nos ayuden a entender mejor la estructura no lineal de nuestros datos.
+3. **Explorar modelos más robustos**: Considerar algoritmos más avanzados que puedan capturar patrones complejos, como:
+- Random Forest
+- Gradient Boosting
+- Redes neuronales
+
+Este nuevo enfoque marca un comienzo más realista y alineado con el comportamiento real de nuestros datos. La capacidad de pivotar y adaptarse cuando los resultados no son los esperados es una habilidad crucial en ciencia de datos.
+
+El camino del aprendizaje automático está lleno de iteraciones y ajustes. Cada "fracaso" nos acerca más a una comprensión profunda de nuestros datos y a soluciones más efectivas. ¿Qué otros modelos crees que podrían funcionar bien con datos no lineales? ¿Has tenido experiencias similares donde tuviste que cambiar completamente tu enfoque?
+
+**Archivos de la clase**
+
+[jugadores-cebollitas.csv](https://static.platzi.com/media/public/uploads/jugadores_cebollitas_33ecea5c-f6f0-44ca-9ff4-e4135408bc04.csv "jugadores-cebollitas.csv")
+
+**Lecturas recomendadas**
+
+[3.4. Metrics and scoring: quantifying the quality of predictions — scikit-learn 1.7.0 documentation](https://scikit-learn.org/stable/modules/model_evaluation.html "3.4. Metrics and scoring: quantifying the quality of predictions — scikit-learn 1.7.0 documentation")
+
+[machine-learning/12_Clase_Reflexion_Critica_Conclusion.ipynb at main · platzi/machine-learning · GitHub](https://github.com/platzi/machine-learning/blob/main/12_Clase_Reflexion_Critica_Conclusion.ipynb "machine-learning/12_Clase_Reflexion_Critica_Conclusion.ipynb at main · platzi/machine-learning · GitHub")
+
+## Clasificación automatizada de jugadores con algoritmo K-means
+
+El algoritmo **K-Means** es una técnica de **machine learning no supervisado** muy útil para **agrupar jugadores automáticamente** según su rendimiento, estilo o características físicas, sin necesidad de conocer de antemano sus posiciones o roles.
+
+### ⚽ Ejemplo práctico: Clasificación de jugadores con K-Means
+
+### 📌 Objetivo:
+
+Agrupar jugadores en **clusters** similares con base en estadísticas como:
+
+* Goles
+* Asistencias
+* Pases completados
+* Recuperaciones
+* Velocidad, etc.
+
+### 🧰 Paso a paso con Python:
+
+#### 1. 📥 Cargar datos de ejemplo
+
+```python
+import pandas as pd
+
+# Datos ficticios
+data = {
+    'nombre': ['Jugador A', 'Jugador B', 'Jugador C', 'Jugador D', 'Jugador E'],
+    'goles': [10, 2, 5, 0, 7],
+    'asistencias': [5, 1, 2, 0, 3],
+    'pases_completos': [300, 100, 200, 150, 250]
+}
+
+df = pd.DataFrame(data)
+```
+
+#### 2. 🎯 Seleccionar variables y escalar
+
+```python
+from sklearn.preprocessing import StandardScaler
+
+X = df[['goles', 'asistencias', 'pases_completos']]
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X)
+```
+
+#### 3. 🤖 Aplicar K-Means
+
+```python
+from sklearn.cluster import KMeans
+
+kmeans = KMeans(n_clusters=2, random_state=42)
+df['cluster'] = kmeans.fit_predict(X_scaled)
+```
+
+#### 4. 📊 Ver los resultados
+
+```python
+print(df[['nombre', 'cluster']])
+```
+
+### 🎨 (Opcional) Visualización con `matplotlib`
+
+```python
+import matplotlib.pyplot as plt
+
+plt.scatter(X_scaled[:, 0], X_scaled[:, 1], c=df['cluster'], cmap='viridis')
+plt.xlabel('Goles (escalado)')
+plt.ylabel('Asistencias (escalado)')
+plt.title('Clasificación de jugadores con K-Means')
+plt.grid(True)
+plt.show()
+```
+
+### 🧠 ¿Qué puedes hacer con esto?
+
+* Identificar **tipos de jugadores** (ofensivos, creativos, defensivos, etc.).
+* Sugerir **roles dentro del equipo** automáticamente.
+* Analizar cómo se agrupan tus jugadores vs. los de otros equipos.
+
+### 🧪 Tip:
+
+Si no sabes cuántos grupos (clusters) elegir, usa el **método del codo (elbow method)** para determinar el mejor valor de `k`.
+
+### Resumen
+
+¿Sabías que puedes utilizar Machine Learning no solo para predecir resultados, sino también para entender mejor a los jugadores de tu equipo? Una herramienta potente es el algoritmo K-means, eficaz para agrupar atletas según sus estadísticas individuales. Con K-means, identificamos perfiles estratégicos como delanteros goleadores, volantes creativos o defensas equilibrados sin asignar etiquetas previas.
+
+#### ¿Qué es el aprendizaje no supervisado y cómo se utiliza con jugadores de fútbol?
+
+El aprendizaje no supervisado implica enseñar al modelo sin ejemplos específicos, permitiendo que encuentren patrones por su cuenta. A diferencia del aprendizaje supervisado, aquí no decimos qué es correcto o incorrecto desde el inicio. Con algoritmos como K-means, los jugadores se agrupan automáticamente en base a características compartidas como:
+
+- Goles realizados.
+- Asistencias otorgadas.
+- Pases completados.
+- Tiros al arco.
+
+Esto ayuda a revelar semejanzas que quizás hasta el momento habían pasado desapercibidas.
+
+#### ¿Cómo funciona el algoritmo K-means para clasificar jugadores?
+
+K-means agrupa jugadores según características numéricas específicas. Sigue estos pasos clave:
+
+1. Selecciona un número predefinido de clusters o grupos.
+2. Asigna inicialmente los jugadores a un grupo basándose en cercanía matemática.
+3. Ajusta iterativamente hasta lograr grupos estables.
+
+De esta forma, jugadores con perfiles similares se agrupan entre sí, facilitando la interpretación de sus desempeños.
+
+#### ¿Qué ofrece explorar estos clusters en un entorno interactivo como Jupyter Notebook?
+
+Cuando usamos K-means dentro de un notebook, podemos realizar procesos como:
+
+#### Importar datos
+
+Usando `pandas`, cargamos métricas individuales desde un archivo:
+
+```python
+import pandas as pd
+df = pd.read_csv('jugadores.csv')
+df.head()
+```
+
+#### Visualizar relaciones estadísticas
+
+Con librerías como `seaborn` y `matplotlib`, visualizamos patrones y correlaciones fácilmente:
+
+```python
+import seaborn as sns
+import matplotlib.pyplot as plt
+sns.pairplot(df)
+plt.show()
+```
+
+#### Aplicar el clustering con K-means
+
+Implementamos el algoritmo indicando el número de grupos deseado:
+
+```python
+from sklearn.cluster import KMeans
+modelo = KMeans(n_clusters=3, random_state=0)
+df['cluster'] = modelo.fit_predict(df[['goles', 'asistencias', 'pases', 'tiros_al_arco']])
+df.head()
+```
+
+#### ¿Cómo interpretar los grupos generados por K-means?
+
+Con gráficos y estadísticas podemos definir perfiles claros. Por ejemplo, un grupo con alta cifra de goles y tiros, pero pocas asistencias, sugiere delanteros ofensivos. Así mismo, un grupo predominante en asistencias y pases podría indicar volantes creativos.
+
+#### Visualización gráfica de clusters
+
+Un gráfico de dispersión o scatter plot permite visualizar rápidamente estos perfiles:
+
+```python
+plt.figure(figsize=(10,6))
+sns.scatterplot(data=df, x='goles', y='asistencias', hue='cluster', palette='Set1')
+plt.title('Grupos de Jugadores según Goles y Asistencias')
+plt.xlabel('Goles')
+plt.ylabel('Asistencias')
+plt.show()
+```
+
+#### Exploración interactiva
+
+La interactividad permite ajustar dinámicamente el número de grupos para identificar la cantidad ideal de perfiles útiles:
+
+```python
+import ipywidgets as widgets
+from ipywidgets import interact
+
+def cluster_interactivo(num_clusters):
+    modelo = KMeans(n_clusters=num_clusters, random_state=0)
+    df['cluster'] = modelo.fit_predict(df[['goles', 'asistencias', 'pases', 'tiros_al_arco']])
+    sns.scatterplot(data=df, x='goles', y='asistencias', hue='cluster', palette='Set1')
+    plt.show()
+
+interact(cluster_interactivo, num_clusters=(2,6,1))
+```
+
+#### ¿Qué beneficios aporta clasificar jugadores mediante K-means?
+
+El análisis automatizado permite: - Entrenar a jugadores según su perfil específico. - Tomar decisiones tácticas fundamentadas en estadísticas reales. - Identificar necesidades claras para futuros fichajes.
+
+Ahora cuentas con una herramienta fiable para conocer en profundidad a tus jugadores, optimizar entrenamientos e implementar tácticas efectivas. ¿Te animas a probarla en tu equipo y contarnos qué patrones o grupos nuevos encontraste?
+ 
+**Lecturas recomendadas**
+
+[2.3. Clustering — scikit-learn 1.7.0 documentation](https://scikit-learn.org/stable/modules/clustering.html#k-means "2.3. Clustering — scikit-learn 1.7.0 documentation")
+
+[machine-learning/16_clustering_kmeans_jugadores.ipynb at main · platzi/machine-learning · GitHub](https://github.com/platzi/machine-learning/blob/main/16_clustering_kmeans_jugadores.ipynb "machine-learning/16_clustering_kmeans_jugadores.ipynb at main · platzi/machine-learning · GitHub")
+
+## Interpretación de clusters K-Means para perfiles de jugadores
+
+Una vez que aplicaste **K-Means** y tienes los jugadores agrupados en **clusters**, el siguiente paso es interpretar esos grupos. Es decir: **¿qué significa cada cluster?** ¿Qué perfil de jugador representa?
+
+### 🎯 ¿Qué es interpretar los clusters?
+
+Interpretar un **cluster** es descubrir **qué tienen en común los jugadores dentro de ese grupo**. Esto se hace observando las **características promedio** de cada grupo.
+
+### 🧠 Pasos para interpretar clusters de jugadores
+
+### 1. ✅ **Agregar el número de cluster a tu DataFrame**
+
+Si no lo has hecho:
+
+```python
+df['cluster'] = kmeans.labels_
+```
+
+### 2. 📊 **Agrupar por cluster y obtener estadísticas**
+
+```python
+perfil_cluster = df.groupby('cluster').mean(numeric_only=True)
+print(perfil_cluster)
+```
+
+Esto te dirá, por ejemplo:
+
+| cluster | goles | asistencias | pases\_completos |
+| ------- | ----- | ----------- | ---------------- |
+| 0       | 7.5   | 3.2         | 280              |
+| 1       | 1.0   | 0.3         | 120              |
+
+👉 Aquí puedes decir:
+
+* Cluster 0 = **jugadores ofensivos** (marcan más, asisten más).
+* Cluster 1 = **jugadores defensivos o con menor participación ofensiva**.
+
+### 3. 🧩 **Etiquetar clusters con perfiles intuitivos**
+
+Puedes usar la media de los datos o visualizaciones para decidir etiquetas como:
+
+| Cluster | Perfil sugerido           |
+| ------- | ------------------------- |
+| 0       | "Atacantes creativos"     |
+| 1       | "Defensores o suplentes"  |
+| 2       | "Mediocampistas de apoyo" |
+
+### 4. 📈 (Opcional) **Visualiza los clusters**
+
+```python
+import matplotlib.pyplot as plt
+
+plt.scatter(X_scaled[:, 0], X_scaled[:, 1], c=df['cluster'], cmap='viridis')
+plt.xlabel("Goles (escalado)")
+plt.ylabel("Asistencias (escalado)")
+plt.title("Clusters de jugadores - KMeans")
+plt.show()
+```
+
+Si tienes más de 2 dimensiones, puedes usar PCA para reducir a 2D:
+
+```python
+from sklearn.decomposition import PCA
+
+pca = PCA(n_components=2)
+X_pca = pca.fit_transform(X_scaled)
+
+plt.scatter(X_pca[:, 0], X_pca[:, 1], c=df['cluster'], cmap='tab10')
+plt.title("Clusters de jugadores (PCA)")
+plt.xlabel("PC1")
+plt.ylabel("PC2")
+plt.show()
+```
+
+### 🧪 Consejo profesional
+
+* Añade variables **contextuales**: minutos jugados, posición, equipo, etc.
+* Compara tu interpretación con la realidad (¿el modelo detecta bien a los delanteros, volantes, etc.?).
+
+### Resumen
+
+El análisis del rendimiento deportivo mediante técnicas avanzadas como el clustering K-Means permite identificar rápidamente perfiles claros dentro de un equipo de fútbol. Aprenderás cómo interpretar clusters generados a partir de estadísticas clave, como goles, asistencias, pases completados y tiros al arco, identificando quiénes destacan en ataque, defensa o juego colectivo. Esta habilidad constituye una valiosa herramienta estratégica y táctica para cualquier cuerpo técnico.
+
+#### ¿Qué es el análisis por clustering usando K-Means?
+
+El algoritmo K-Means es una técnica del aprendizaje no supervisado usada para agrupar individuos, como jugadores de fútbol, según ciertas características estadísticas. Su objetivo es identificar perfiles o grupos homogéneos para facilitar la toma de decisiones tácticas y estratégicas.
+
+#### ¿Cómo preparar los datos para K-Means?
+
+En primer lugar, se importan y visualizan los datos mediante la librería pandas en Python, asegurando observar bien las columnas disponibles. Los datos seleccionados típicamente para este análisis incluyen:
+
+- Goles.
+- Asistencias.
+- Pases completados.
+- Tiros al arco.
+
+La ejecución del algoritmo K-Means requiere únicamente estas variables específicas para crear grupos útiles basados en estadísticas reales de juego.
+
+```python
+import pandas as pd
+jugadores = pd.read_csv('jugadores.csv')
+print(jugadores.columns)
+```
+
+#### ¿Cómo interpretar los resultados del análisis?
+
+Una vez creados los clusters por K-Means, utilizamos el método `.groupby()` junto a `.mean()` para calcular promedios de cada métrica dentro de cada cluster. Este proceso revela perfiles promedio muy claros de cada grupo. Observando así:
+
+- Qué jugadores anotan más.
+- Quiénes asisten más frecuentemente.
+- Cuáles completan más pases o rematan más al arco.
+
+#### ¿Cómo se visualizan y comparan los clusters?
+
+La visualización mediante Boxplots permite examinar con claridad y rapidez la distribución interna y los valores atípicos (outliers) por cada grupo. Las gráficas obtenidas destacan de inmediato las diferencias estadísticamente significativas entre clusters.
+
+Mediante estas visualizaciones podemos confirmar hipótesis, por ejemplo:
+
+- El cluster 0 presenta más goles.
+- El cluster 1 destaca en asistencias.
+- El cluster con más tiros al arco posiblemente representa delanteros.
+
+Esto ayuda mucho al cuerpo técnico a entender claramente dónde sobresale cada jugador.
+
+#### ¿Cómo utilizar widgets para una exploración dinámica?
+
+La utilización de widgets de selección rápido permite filtrar datos visualmente, lo cual es extremadamente útil en reuniones técnicas. Mediante Python, se pueden ver jugadores específicos por cluster junto a sus métricas destacadas. Esto permite una interacción en tiempo real, mejorando la comprensión y facilitando la planificación técnica.
+
+```python
+import ipywidgets as widgets
+from IPython.display import display
+
+cluster_selector = widgets.Dropdown(options=[0,1,2])
+
+def mostrar_jugadores(cluster):
+    display(jugadores[jugadores['cluster'] == cluster])
+
+widgets.interact(mostrar_jugadores, cluster=cluster_selector)
+```
+
+#### ¿Cómo aplicar estos resultados en decisiones reales?
+
+El análisis avanzado mediante clustering es directamente aplicable en decisiones tácticas, ayudando a los entrenadores a definir roles específicos dentro del campo de juego:
+
+- Organizar alineaciones óptimas según las fortalezas estadísticas.
+- Diseñar entrenamientos personalizados, enfocados en el perfil real.
+- Evaluar el potencial fichaje basados en necesidades concretas del equipo.
+
+Este enfoque claro y objetivo basado en datos puede ser crucial para implementar una gestión táctica moderna que conduzca a mejores resultados deportivos.
+
+Finalmente, la próxima técnica a revisar será PCA (Principal Component Analysis), utilizada para simplificar visualizaciones complejas sin perder información relevante.
+ 
+**Lecturas recomendadas**
+
+[Las 12 mejores herramientas y software UX para perfeccionar la experiencia de usuario](https://www.hotjar.com/es/diseno-ux/herramientas/ "Las 12 mejores herramientas y software UX para perfeccionar la experiencia de usuario")
+
+[Plotting Time Series Boxplots](https://towardsdatascience.com/plotting-time-series-boxplots-5a21f2b76cfe/ "Plotting Time Series Boxplots")
+
+[machine-learning/17_interpretacion_clusters_jugadores.ipynb at main · platzi/machine-learning · GitHub](https://github.com/platzi/machine-learning/blob/main/17_interpretacion_clusters_jugadores.ipynb "machine-learning/17_interpretacion_clusters_jugadores.ipynb at main · platzi/machine-learning · GitHub")
+
+## Análisis PCA para agrupar jugadores según rendimiento
+
+El **Análisis de Componentes Principales (PCA)** es una técnica muy útil para:
+
+🔹 **Reducir la dimensionalidad** de tus datos
+🔹 **Visualizar grupos (clusters) de jugadores** en 2D o 3D
+🔹 **Mantener la mayor varianza posible** de los datos originales
+
+### ⚽ Escenario: Agrupar jugadores según rendimiento
+
+Supón que tienes un DataFrame `df_jugadores` con estadísticas como:
+
+* Goles
+* Asistencias
+* Tiros al arco
+* Pases completados
+* Recuperaciones
+* ... y una columna `cluster` asignada por `KMeans`.
+
+### 🧰 Paso a paso: Análisis PCA en Python
+
+### 1. 📦 Importar librerías necesarias
+
+```python
+from sklearn.decomposition import PCA
+from sklearn.preprocessing import StandardScaler
+import matplotlib.pyplot as plt
+import seaborn as sns
+```
+
+### 2. ⚙️ Preparar los datos
+
+```python
+# Selecciona solo las columnas numéricas de rendimiento
+features = ['goles', 'asistencias', 'pases_completados (%)', 'tiros_al_arco']
+
+# Estandarizar para que todas las variables tengan media 0 y varianza 1
+X = StandardScaler().fit_transform(df_jugadores[features])
+```
+
+### 3. 🧠 Aplicar PCA
+
+```python
+pca = PCA(n_components=2)  # Para visualización en 2D
+X_pca = pca.fit_transform(X)
+
+# Agregar los componentes al DataFrame
+df_jugadores['PC1'] = X_pca[:, 0]
+df_jugadores['PC2'] = X_pca[:, 1]
+```
+
+### 4. 📊 Visualizar los clusters en el espacio PCA
+
+```python
+plt.figure(figsize=(8, 6))
+sns.scatterplot(
+    x='PC1',
+    y='PC2',
+    hue='cluster',
+    palette='Set2',
+    data=df_jugadores,
+    s=100,
+    edgecolor='k'
+)
+plt.title('Clusters de jugadores en espacio PCA')
+plt.xlabel(f'PC1 ({pca.explained_variance_ratio_[0]*100:.1f}% varianza)')
+plt.ylabel(f'PC2 ({pca.explained_variance_ratio_[1]*100:.1f}% varianza)')
+plt.grid(True)
+plt.show()
+```
+
+### ✅ ¿Qué interpretas de este gráfico?
+
+* Los **puntos cercanos** representan jugadores similares en sus estadísticas.
+* Cada **color** representa un **cluster de K-Means**.
+* Si los clusters están **bien separados**, significa que tu segmentación tiene **sentido y valor analítico**.
+* Puedes analizar qué **variables contribuyen más a cada componente** usando:
+
+```python
+pd.DataFrame(pca.components_, columns=features, index=['PC1', 'PC2'])
+```
+
+### Resumen
+
+El análisis de datos en fútbol puede complicarse cuando manejamos múltiples variables por jugador, como goles, asistencias o precisión. La técnica PCA, o Análisis de Componentes Principales, simplifica este proceso reduciendo múltiples variables a solo dos o tres componentes principales, ofreciendo una visualización gráfica clara e intuitiva del rendimiento y agrupación natural de jugadores.
+
+#### ¿Qué es PCA y cómo simplifica el análisis futbolístico?
+
+El PCA es una técnica matemática que transforma variables complejas en unas pocas nuevas llamadas componentes principales. Estas nuevas variables son combinaciones de las originales y retienen la mayor parte de la información inicial. Esto permite:
+
+- Visualizar datos complejos en gráficos 2D o 3D.
+- Crear resúmenes efectivos del rendimiento individual y grupal.
+- Identificar grupos naturales de jugadores según estadísticas específicas.
+
+#### ¿Cómo beneficia el PCA al scouting y decisiones tácticas?
+
+Realizar un análisis mediante PCA tiene múltiples ventajas:
+
+- Facilita la identificación visual rápida de grupos de jugadores (delanteros, volantes, defensivos).
+- Permite detectar jugadores atípicos o outliers, con habilidades únicas en comparación con el equipo.
+- Simplifica la comparación directa entre jugadores.
+- Apoya la toma de decisiones tácticas efectivas y selección de refuerzos ideales.
+
+#### Visualización práctica del rendimiento con PCA
+
+En el ejemplo práctico, tomando en cuenta variables como goles, asistencias o tiros, el PCA revela diferentes grupos claros en un solo gráfico:
+
+- Los delanteros destacan en una esquina por su alta cantidad de goles y tiros.
+- Mediocampistas aparecen centralizados, combinando diversas capacidades.
+- Volantes resaltan por asistencias y pases, ubicados generalmente en otra área del gráfico.
+
+#### Integración con clustering (K-means)
+
+Se complementa PCA con K-means clustering para asignar etiquetas visuales claras a cada jugador según su estilo de juego:
+
+- Cada color identifica un perfil futbolístico particular.
+- Sirve para planificación, entrenamientos específicos, fichajes y scouting.
+- Facilita la exposición visual sencilla y rápida de perfiles técnicos al cuerpo encargado.
+
+#### Visualización interactiva del PCA
+
+Con herramientas interactivas, como widgets dropdown, se puede:
+
+- Explorar interactivamente combinaciones de componentes principales.
+- Presentar al cuerpo técnico visualizaciones dinámicas y personalizadas.
+- Facilitar el análisis detallado del rendimiento en tiempo real.
+
+#### ¿Qué se logra al implementar PCA en el análisis futbolístico?
+
+Implementar PCA implica obtener:
+
+- Reducción efectiva de la complejidad de los datos.
+- Visualización rápida y clara de agrupamientos naturales y perfiles específicos de jugadores.
+- Una herramienta ágil que respalde decisiones técnicas inteligentes en tiempo real.
+
+Te invito a comentar qué otros usos prácticos considerarías para PCA dentro de tu equipo.
+ 
+**Lecturas recomendadas**
+
+[2.5. Decomposing signals in components (matrix factorization problems) — scikit-learn 1.7.0 documentation](https://scikit-learn.org/stable/modules/decomposition.html#pca "2.5. Decomposing signals in components (matrix factorization problems) — scikit-learn 1.7.0 documentation")
+
+[machine-learning/18_pca_visualizacion_jugadores.ipynb at main · platzi/machine-learning · GitHub](https://github.com/platzi/machine-learning/blob/main/18_pca_visualizacion_jugadores.ipynb "machine-learning/18_pca_visualizacion_jugadores.ipynb at main · platzi/machine-learning · GitHub")
+
+## Pipeline integrado de Machine Learning para análisis deportivo
+
+Un **pipeline de Machine Learning** bien diseñado para **análisis deportivo** te permite automatizar y optimizar todo el flujo de trabajo, desde los datos hasta las predicciones.
+
+### ⚽ ¿Qué es un pipeline de ML en análisis deportivo?
+
+Es un **flujo estructurado** que:
+
+1. Recibe y limpia datos de rendimiento deportivo.
+2. Extrae o transforma variables (features).
+3. Aplica escalamiento o normalización.
+4. Entrena un modelo (regresión, clasificación, clustering...).
+5. Evalúa el desempeño del modelo.
+6. Aplica el modelo a nuevos datos.
+
+### 🔄 Ejemplo de pipeline con `scikit-learn`
+
+### 🎯 Caso práctico:
+
+Predecir la cantidad de goles de un jugador a partir de sus estadísticas (tiros, asistencias, pases, etc.).
+
+### ✅ 1. Importar librerías
+
+```python
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.linear_model import LinearRegression
+from sklearn.pipeline import Pipeline
+from sklearn.metrics import mean_squared_error, r2_score
+```
+
+### ✅ 2. Datos de ejemplo
+
+```python
+df = pd.DataFrame({
+    'tiros_al_arco': [30, 12, 45, 10, 33],
+    'asistencias': [5, 2, 7, 1, 3],
+    'pases_completados': [300, 150, 400, 120, 280],
+    'goles': [12, 3, 15, 2, 10]  # variable objetivo
+})
+
+X = df.drop('goles', axis=1)
+y = df['goles']
+```
+
+### ✅ 3. Dividir en entrenamiento y prueba
+
+```python
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+```
+
+### ✅ 4. Crear el pipeline
+
+```python
+pipeline = Pipeline([
+    ('scaler', StandardScaler()),              # Escalamiento de datos
+    ('regresor', LinearRegression())           # Modelo de regresión
+])
+```
+
+### ✅ 5. Entrenar el modelo
+
+```python
+pipeline.fit(X_train, y_train)
+```
+
+### ✅ 6. Evaluar el modelo
+
+```python
+y_pred = pipeline.predict(X_test)
+
+print("RMSE:", mean_squared_error(y_test, y_pred, squared=False))
+print("R²:", r2_score(y_test, y_pred))
+```
+
+### 🚀 ¿Qué más se puede integrar al pipeline?
+
+* **Selección de variables** (`SelectKBest`, `RFE`)
+* **Reducción de dimensionalidad** (`PCA`)
+* **Modelos avanzados** (Random Forest, XGBoost)
+* **Cross-validation**
+* **Exportación automática con `joblib`**
+
+### 🧠 ¿Por qué usar pipelines?
+
+* 💡 Reproducibilidad
+* 🔁 Reutilización del flujo
+* ✅ Evitas errores entre etapas
+* 📦 Es fácil de integrar con **GridSearchCV** y producción
+
+### Resumen
+
+La inteligencia deportiva a través de modelos de *machine learning* está transformando la forma en que equipos y entrenadores ejecutan sus estrategias. Al combinar eficazmente modelos supervisados y no supervisados en un pipeline integrado, logramos predicciones precisas sobre resultados de partidos y análisis automático de perfiles de jugadores.
+
+#### ¿Qué es un pipeline integrado avanzado?
+
+Un pipeline integrado avanzado en el ámbito deportivo permite automatizar todo un flujo de trabajo, desde la preparación de datos hasta la generación automática de predicciones. Esta herramienta reúne modelos supervisados y no supervisados para ofrecer resultados coherentes, claros y escalables en tiempo real.
+
+Este pipeline presenta dos funciones centrales:
+
+- **Modelo supervisado (Regresión Ridge)**: predice diferencias esperadas de goles teniendo en cuenta estadísticas clave como posesión de balón y cantidad de tiros.
+- **Modelo no supervisado (Clúster K-Means)**: clasifica automáticamente a los jugadores en grupos claramente definidos según estadísticas individuales tales como goles, asistencias y pases concretados.
+
+La combinación de ambos modelos constituye un poderoso motor analítico:
+
+- Escala automáticamente datos en ambos modelos.
+- Genera predicciones claras y fáciles de interpretar.
+- Facilita decisiones rápidas y efectivas sobre estrategias a seguir durante los partidos.
+
+#### ¿Cómo funciona la integración entre modelos supervisados y no supervisados?
+
+La aplicación funciona en varios pasos bien definidos:
+
+1. Carga y preparación de datasets sobre partidos y jugadores.
+2. Implementación del pipeline supervisado con regresión Ridge para predecir resultados.
+3. Uso de K-Means en un pipeline no supervisado para clasificar a los jugadores en perfiles de acuerdo a su desempeño.
+4. Análisis integrado para visualizar resultados esperados y perfiles de jugadores disponibles, proporcionando una base sólida para decisiones tácticas en tiempo real.
+
+#### ¿Cómo esta herramienta beneficia al cuerpo técnico?
+
+Contar con esta herramienta predictiva es como tener un asistente inteligente 24/7. Permite:
+
+- Visualizar rápidamente cómo puede desarrollarse un partido, prediciendo diferencias de goles basadas en escenarios ajustables de posesión y tiros al arco.
+- Identificar claramente tipos específicos de jugadores según perfiles individuales clasificados previamente.
+- Ajustar en tiempo real las tácticas según las predicciones generadas.
+- Crear análisis personalizados para recomendaciones tácticas, fichajes o entrenamientos específicos.
+
+Este sistema también incluye widgets interactivos que permiten una interacción dinámica con los modelos predictivos, ofreciendo al equipo técnico una plataforma intuitiva y accesible para evaluar escenarios cambiantes.
+
+¿Qué ajustes tácticos sugerirías para optimizar resultados en el próximo partido? Te invito a comentar tus ideas basadas en estas herramientas predictivas.
+
+**Lecturas recomendadas**
+
+[Pipeline — scikit-learn 1.7.0 documentation](https://scikit-learn.org/stable/modules/generated/sklearn.pipeline.Pipeline.html "Pipeline — scikit-learn 1.7.0 documentation")
+
+[machine-learning/19_pipeline_avanzado_presentacion.ipynb at main · platzi/machine-learning · GitHub](https://github.com/platzi/machine-learning/blob/main/19_pipeline_avanzado_presentacion.ipynb "machine-learning/19_pipeline_avanzado_presentacion.ipynb at main · platzi/machine-learning · GitHub")
