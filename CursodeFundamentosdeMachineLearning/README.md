@@ -2625,3 +2625,360 @@ Este sistema también incluye widgets interactivos que permiten una interacción
 [Pipeline — scikit-learn 1.7.0 documentation](https://scikit-learn.org/stable/modules/generated/sklearn.pipeline.Pipeline.html "Pipeline — scikit-learn 1.7.0 documentation")
 
 [machine-learning/19_pipeline_avanzado_presentacion.ipynb at main · platzi/machine-learning · GitHub](https://github.com/platzi/machine-learning/blob/main/19_pipeline_avanzado_presentacion.ipynb "machine-learning/19_pipeline_avanzado_presentacion.ipynb at main · platzi/machine-learning · GitHub")
+
+## Redes neuronales artificiales con PyTorch para clasificación binaria
+
+Las **redes neuronales artificiales (ANN)** con **PyTorch** son una herramienta poderosa para tareas como **clasificación binaria**, por ejemplo:
+
+> ¿Un equipo gana (1) o no gana (0) un partido?
+
+### ⚙️ ¿Qué cubriremos?
+
+* Estructura de una red neuronal para clasificación binaria
+* Código en PyTorch paso a paso
+* Entrenamiento, evaluación y predicción
+
+### ✅ Paso 1: Librerías necesarias
+
+```python
+import torch
+import torch.nn as nn
+import torch.optim as optim
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import accuracy_score
+import numpy as np
+```
+
+### ✅ Paso 2: Datos de ejemplo
+
+Supongamos que tienes estadísticas de partidos:
+
+```python
+# X = tiros al arco, posesión, pases, etc.
+X = np.array([
+    [5, 60, 300],
+    [2, 45, 150],
+    [8, 70, 400],
+    [3, 40, 100],
+    [6, 65, 280]
+])
+
+# y = 1 si ganó el equipo, 0 si no
+y = np.array([1, 0, 1, 0, 1])
+```
+
+### ✅ Paso 3: Preprocesamiento
+
+```python
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X)
+
+X_train, X_test, y_train, y_test = train_test_split(
+    X_scaled, y, test_size=0.2, random_state=42)
+
+X_train = torch.tensor(X_train, dtype=torch.float32)
+X_test  = torch.tensor(X_test, dtype=torch.float32)
+y_train = torch.tensor(y_train, dtype=torch.float32).view(-1, 1)
+y_test  = torch.tensor(y_test, dtype=torch.float32).view(-1, 1)
+```
+
+### ✅ Paso 4: Red neuronal
+
+```python
+class RedBinaria(nn.Module):
+    def __init__(self):
+        super(RedBinaria, self).__init__()
+        self.net = nn.Sequential(
+            nn.Linear(3, 8),    # 3 features de entrada
+            nn.ReLU(),
+            nn.Linear(8, 4),
+            nn.ReLU(),
+            nn.Linear(4, 1),
+            nn.Sigmoid()        # Activación para clasificación binaria
+        )
+
+    def forward(self, x):
+        return self.net(x)
+```
+
+### ✅ Paso 5: Entrenamiento
+
+```python
+modelo = RedBinaria()
+criterio = nn.BCELoss()  # Binary Cross Entropy
+optimizador = optim.Adam(modelo.parameters(), lr=0.01)
+
+# Entrenar
+for epoch in range(200):
+    modelo.train()
+    salida = modelo(X_train)
+    loss = criterio(salida, y_train)
+    
+    optimizador.zero_grad()
+    loss.backward()
+    optimizador.step()
+
+    if epoch % 20 == 0:
+        print(f"Epoch {epoch}, Loss: {loss.item():.4f}")
+```
+
+### ✅ Paso 6: Evaluación
+
+```python
+modelo.eval()
+with torch.no_grad():
+    pred = modelo(X_test)
+    pred_labels = (pred >= 0.5).float()
+
+accuracy = accuracy_score(y_test, pred_labels)
+print(f"Accuracy: {accuracy:.2f}")
+```
+
+### ✅ ¿Qué puedes ajustar?
+
+* Cantidad de capas o neuronas
+* Activaciones (ReLU, Tanh)
+* Métricas (F1, precisión, recall)
+* Función de pérdida (por ejemplo `BCEWithLogitsLoss` sin `Sigmoid`)
+
+### Resumen
+
+Comprender el funcionamiento de las **redes neuronales artificiales (RNA)** es fundamental para avanzar en el área del aprendizaje profundo o *deep learning*. Estas redes, capaces de aprender patrones de forma automática, constituyen la base de muchos sistemas de inteligencia artificial, especialmente en aplicaciones deportivas como el fútbol. Usando PyTorch, una herramienta de programación y análisis, podemos definir, entrenar y evaluar nuestras propias redes neuronales con facilidad y precisión.
+
+#### ¿Qué herramientas necesitamos para crear una red neuronal?
+
+Para comenzar el trabajo con RNA en PyTorch, es fundamental contar con las bibliotecas adecuadas:
+
+- **Torch**: proporciona soporte básico para tensores y autograd.
+- **Torch NN**: incluye elementos esenciales para crear las diferentes capas de una red.
+- **Torch Optim**: usado para actualizar los parámetros y pesos.
+- **NumPy**: facilita la manipulación de matrices en Python.
+
+Estas herramientas nos permiten definir redes, manejar datos y realizar entrenamiento supervisado de manera efectiva.
+
+#### ¿Cómo crear y entrenar una red neuronal sencilla para clasificación binaria?
+
+El proceso inicia con un dataset sintético sencillo:
+
+- Creamos datos con 100 muestras y 4 características cada una.
+- Convertimos estos datos y sus etiquetas en tensores, utilizando `Torch.from_numpy`.
+
+Luego definimos una red neuronal compuesta por:
+
+- Una capa oculta de 8 neuronas con activación ReLU.
+- Una capa de salida con activación sigmoide, útil para problemas de clasificación binaria.
+
+La pérdida en clasificación se mide mediante la función BCLoss, adecuada para este tipo de activación. Para actualizar los pesos y optimizar la red se utiliza Adam Optimizer, lo cual facilita la convergencia y mejora el rendimiento.
+
+El entrenamiento implica calcular predicciones, evaluar errores, obtener gradientes y ajustar pesos automáticamente. Cada época del entrenamiento verifica la pérdida para determinar cómo progresa el aprendizaje.
+
+#### ¿Cómo evaluar y ajustar la estructura de la red neuronal?
+
+Para medir resultados, se transforma la salida de la red en predicciones binarias usando un umbral de 0.5 y se evalúa la precisión mediante el porcentaje de aciertos:
+
+- Se desactivan los cálculos de gradientes para rapidez.
+- Se obtiene la precisión final del modelo, observando cuántas predicciones acierta frente al total del dataset.
+
+Además, se incluye una herramienta interactiva para modificar la arquitectura de red de manera dinámica:
+
+- Podemos ajustar fácilmente el número de capas ocultas entre 1 y 5.
+- Cada capa modifica cómo aprende y generaliza el modelo.
+- Este ejercicio ilustra la importancia del balance entre la capacidad del modelo para aprender y evitar sobreajustes.
+
+Experimentar con diferentes configuraciones te permitirá comprender claramente cómo se correlacionan la arquitectura de la red y su eficacia en los resultados prácticos del fútbol, al mejorar desde soluciones de detección de jugadas hasta el análisis detallado de imágenes y videos.
+ 
+**Lecturas recomendadas**
+
+[Tutorials  |  TensorFlow Core](https://www.tensorflow.org/tutorials "Tutorials  |  TensorFlow Core")
+
+[PyTorch](https://pytorch.org/ "PyTorch")
+
+[machine-learning/20_intro_redes_neuronales.ipynb at main · platzi/machine-learning · GitHub](https://github.com/platzi/machine-learning/blob/main/20_intro_redes_neuronales.ipynb "machine-learning/20_intro_redes_neuronales.ipynb at main · platzi/machine-learning · GitHub")
+
+## Análisis de sentimientos en comentarios deportivos con NLP
+
+El **análisis de sentimientos** con **NLP (Procesamiento de Lenguaje Natural)** es ideal para interpretar comentarios de fans, periodistas o redes sociales sobre eventos deportivos, jugadores o equipos.
+
+### 🎯 ¿Qué es el análisis de sentimientos?
+
+Es una técnica de NLP que **detecta la opinión emocional** detrás de un texto:
+
+* **Positivo** → elogios, entusiasmo, apoyo
+* **Negativo** → críticas, decepción
+* **Neutral** → información objetiva o sin carga emocional
+
+### 🛠️ Herramientas comunes para hacerlo en Python
+
+* **NLTK / TextBlob** → fácil para empezar
+* **Hugging Face Transformers** (modelos preentrenados como BERT)
+* **scikit-learn** con TF-IDF y regresores
+* **spaCy** para tareas de NLP general + extensiones
+
+### ✅ Pipeline típico de análisis de sentimientos deportivo
+
+### 1. 🧾 Recolectar comentarios
+
+Ejemplo:
+
+```python
+comentarios = [
+    "¡Qué gran partido jugó Messi!",
+    "Fue una vergüenza el arbitraje.",
+    "El equipo no mostró nada hoy.",
+    "Increíble atajada del arquero.",
+    "Un empate justo, buen nivel de ambos."
+]
+```
+
+### 2. 🧽 Preprocesamiento (con `nltk` o `re`)
+
+```python
+import re
+
+def limpiar(texto):
+    texto = texto.lower()
+    texto = re.sub(r'[^\w\s]', '', texto)  # Eliminar signos
+    return texto
+
+comentarios_limpios = [limpiar(c) for c in comentarios]
+```
+
+### 3. 📦 Análisis rápido con `TextBlob`
+
+```python
+from textblob import TextBlob
+
+for c in comentarios_limpios:
+    blob = TextBlob(c)
+    print(f"Comentario: {c}")
+    print(f"Polaridad: {blob.sentiment.polarity:.2f} → {'Positivo' if blob.sentiment.polarity > 0 else 'Negativo' if blob.sentiment.polarity < 0 else 'Neutral'}")
+    print()
+```
+
+### 🧠 ¿Qué hace TextBlob?
+
+* `polarity`: valor entre -1 (negativo) y 1 (positivo)
+* `subjectivity`: qué tan subjetivo u objetivo es el texto (opcional para otras tareas)
+
+### 📈 ¿Y si quiero usar un modelo más potente como BERT?
+
+```python
+from transformers import pipeline
+
+clasificador = pipeline("sentiment-analysis", model="nlptown/bert-base-multilingual-uncased-sentiment")
+
+resultados = clasificador(comentarios)
+for comentario, res in zip(comentarios, resultados):
+    print(f"{comentario} → {res['label']}, score: {res['score']:.2f}")
+```
+
+Este modelo entrega predicciones del 1 al 5 🌟.
+
+#3# 🔍 Aplicaciones en deportes
+
+* 🏟️ **Monitorear reacciones** en tiempo real durante partidos
+* 👥 **Evaluar percepción** de fans sobre jugadores o decisiones tácticas
+* 📊 **Visualizar tendencias** emocionales en redes o foros
+* 📢 **Segmentar audiencia** por tono de opinión
+
+### Resumen
+
+¿Te imaginas qué decisiones podrías tomar si supieras exactamente lo que sienten los fanáticos de tu equipo? Eso es lo que propone el procesamiento de lenguaje natural (NLP), una poderosa rama de la inteligencia artificial (IA) que permite a las máquinas entender, interpretar y analizar textos humanos, desde comentarios en redes hasta reportes de prensa.
+
+#### ¿Qué es NLP y cómo puede aplicarse en análisis deportivos?
+
+El NLP (*Natural Language Processing*) es una tecnología clave en sistemas conocidos como Siri, Google o ChatGPT. Gracias a esta tecnología, puedes extraer información clave de opiniones escritas por seguidores y medios, transformándolas en decisiones basadas en datos emocionales concretos.
+
+En el contexto deportivo, esto significa:
+
+- Medir la moral de la hinchada luego de partidos clave.
+- Identificar críticas y alabanzas hacia distintas áreas del equipo, como la defensa o el ataque.
+- Tomar decisiones estratégicas que estén conectadas con la realidad emocional del club.
+
+#### ¿Cómo preparar los datos textuales para analizarlos con NLP?
+
+La efectividad del análisis NPL depende fundamentalmente de cómo prepares tus datos. El proceso inicial es sencillo y directo:
+
+1. **Carga de datos**: Importar tus comentarios deportivos desde archivos CSV utilizando pandas y asegurarte que cada comentario sea tratado como texto.
+2. **Limpieza de texto**: Crear una función sencilla en Python que utilice expresiones regulares para:
+3. Convertir todas las letras a minúsculas.
+4. Eliminar espacios excesivos, signos de puntuación y caracteres especiales.
+5. **Inspección inicial**: Visualizar los primeros resultados limpios para confirmar que el proceso fue exitoso.
+
+Aquí un breve ejemplo en Python:
+
+```python
+import re
+
+def limpiar_texto(texto):
+    texto = texto.lower()
+    texto = re.sub(r'[^a-zA-Zñáéíóúü0-9\s]', '', texto)
+    texto = re.sub(r'\s+', ' ', texto).strip()
+    return texto
+```
+
+Esta función simplifica considerablemente los comentarios, volviéndolos más fáciles de analizar y comprender.
+
+#### ¿Cómo visualizar fácilmente los resultados del análisis emocional?
+
+Las representaciones visuales son herramientas potentes para entender rápidamente grandes volúmenes de información cualitativa:
+
+- **Nube de palabras**: Generar gráficos visuales del vocabulario más repetido en los comentarios, permitiendo identificar fácilmente preocupaciones recurrentes o temas valiosos para el equipo técnico.
+- **Distribución de sentimientos**: Representar gráficamente cuántos comentarios son positivos, negativos o neutros ayuda a detectar tendencias generales entre los seguidores.
+
+Ejemplo para generar una nube de palabras:
+
+```python
+from wordcloud import WordCloud
+import matplotlib.pyplot as plt
+
+wordcloud = WordCloud(width=800, height=400, colormap='viridis').generate(texto_total)
+plt.figure(figsize=(10,5))
+plt.imshow(wordcloud, interpolation='bilinear')
+plt.axis('off')
+plt.show()
+```
+
+Utilizando Seaborn se genera una distribución visual de sentimientos:
+
+```python
+import seaborn as sns
+sns.countplot(data=df_comentarios, x='sentimiento')
+plt.title('Distribución de Sentimientos')
+plt.xlabel('Sentimiento')
+plt.ylabel('Frecuencia')
+plt.show()
+```
+
+#### ¿Cómo explorar comentarios específicos mediante interactividad?
+
+Integrar funciones interactivas permite examinar comentarios puntuales basados en su categoría emocional. Esto puede lograrse mediante widgets en Jupyter Notebook, facilitando la exploración cualitativa del contenido.
+
+Un sencillo ejemplo de implementación interactiva:
+
+```python
+import ipywidgets as widgets
+from IPython.display import display
+
+seleccion = widgets.Dropdown(options=df_comentarios['sentimiento'].unique())
+
+def mostrar_comentarios(categoria):
+    display(df_comentarios[df_comentarios['sentimiento'] == categoria].sample(5))
+
+widgets.interactive(mostrar_comentarios, categoria=seleccion)
+```
+
+Este enfoque mejora enormemente la interacción con los datos y aporta claridad en la toma de decisiones deportivas guiadas por las emociones reales de seguidores y prensa.
+ 
+**Archivos de la clase**
+
+[comentarios-deportivos.csv](https://static.platzi.com/media/public/uploads/comentarios_deportivos_a58295c0-8866-44e6-b80e-1ca5f7c2342b.csv "comentarios-deportivos.csv")
+
+**Lecturas recomendadas**
+
+[spaCy 101: Everything you need to know · spaCy Usage Documentation](https://spacy.io/usage/spacy-101 "spaCy 101: Everything you need to know · spaCy Usage Documentation")
+
+[NLTK Book](https://www.nltk.org/book/ "NLTK Book")
+
+[Rate limit · GitHub](https://github.com/platzi/machine-learning/blob/main/22_intro_nlp_deportivo.ipynb "Rate limit · GitHub")
