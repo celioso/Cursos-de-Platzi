@@ -1454,3 +1454,5 @@ plt.show()
 ```
 
 Este enfoque nos permite un amplio control en el preprocesamiento de imágenes y es un paso vital hacia técnicas más avanzadas como la reducción dimensional y la compresión de imágenes. Continúa explorando este mundo fascinante y conviértete en un experto en procesamiento de imágenes en Python. Siempre hay nuevas técnicas y herramientas emergentes que enriquecen el panorama de la ciencia de datos y la inteligencia artificial cada día.
+
+*
