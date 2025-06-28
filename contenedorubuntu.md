@@ -518,3 +518,5 @@ docker build -t mi-servidor .
 docker run -d -p 80:80 -p 22:22 --name servidor-web mi-servidor
 ```
 Luego, abre tu navegador y prueba con `http://localhost` o la IP del contenedor.
+
+## Test
