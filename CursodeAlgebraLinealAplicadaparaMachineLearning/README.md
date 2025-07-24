@@ -1455,4 +1455,427 @@ plt.show()
 
 Este enfoque nos permite un amplio control en el preprocesamiento de imágenes y es un paso vital hacia técnicas más avanzadas como la reducción dimensional y la compresión de imágenes. Continúa explorando este mundo fascinante y conviértete en un experto en procesamiento de imágenes en Python. Siempre hay nuevas técnicas y herramientas emergentes que enriquecen el panorama de la ciencia de datos y la inteligencia artificial cada día.
 
-*
+## Descomposición de imágenes: reducción de tamaño y reconstrucción eficaz
+
+La **descomposición de imágenes** mediante técnicas como **SVD (Singular Value Decomposition)** permite **reducir el tamaño** de una imagen y luego **reconstruirla** de manera eficaz, preservando la mayor parte de la información visual.
+
+### 🧠 ¿Qué es la descomposición SVD?
+
+La descomposición SVD de una matriz `A` (por ejemplo, la matriz de una imagen en escala de grises) permite escribirla como:
+
+$$
+A = U \cdot \Sigma \cdot V^T
+$$
+
+* `U`: matriz de vectores propios (izquierda)
+* `Σ` (Sigma): matriz diagonal con los **valores singulares**
+* `V^T`: matriz transpuesta de vectores propios (derecha)
+
+### 📷 Aplicación en Imágenes
+
+Las imágenes (en escala de grises) pueden representarse como matrices $m \times n$, donde cada valor representa la intensidad de un píxel.
+
+Al aplicar SVD a esa matriz, podemos:
+
+1. **Guardar solo los primeros $k$ valores singulares más grandes**, reduciendo datos.
+2. **Reconstruir la imagen** con aproximación aceptable mediante:
+
+$$
+A_k \approx U_k \cdot \Sigma_k \cdot V_k^T
+$$
+
+### ✅ Ventajas
+
+* **Compresión eficiente**: con solo unos pocos componentes se puede recrear bien la imagen.
+* **Reducción de ruido**: al ignorar los valores singulares más pequeños.
+
+### 🧪 Ejemplo práctico en Python
+
+```python
+import numpy as np
+import matplotlib.pyplot as plt
+from skimage.color import rgb2gray
+from skimage.io import imread
+
+# Cargar imagen y convertir a escala de grises
+imagen = rgb2gray(imread('imagen.jpg'))
+
+# Aplicar SVD
+U, S, Vt = np.linalg.svd(imagen, full_matrices=False)
+
+# Reconstrucción con k componentes
+k = 50
+S_k = np.diag(S[:k])
+U_k = U[:, :k]
+Vt_k = Vt[:k, :]
+reconstruida = U_k @ S_k @ Vt_k
+
+# Mostrar imagen original y reconstruida
+plt.figure(figsize=(10, 5))
+plt.subplot(1, 2, 1)
+plt.title("Original")
+plt.imshow(imagen, cmap='gray')
+plt.axis('off')
+
+plt.subplot(1, 2, 2)
+plt.title(f"Reconstruida con k={k}")
+plt.imshow(reconstruida, cmap='gray')
+plt.axis('off')
+
+plt.show()
+```
+
+### 🎯 Conclusión
+
+La descomposición SVD:
+
+* Es una herramienta poderosa para **compresión y análisis de imágenes**.
+* Permite ajustar la cantidad de información retenida usando el parámetro $k$.
+* Es útil en tareas de **reconstrucción, reducción de ruido y compresión sin pérdida significativa**.
+
+### Resumen
+
+#### ¿Cómo aplicar la descomposición SVD a una imagen?
+
+La descomposición en valores singulares (SVD) es una técnica matemática potente que nos permite reducir la dimensionalidad de una matriz sin perder información esencial. A menudo, se aplica en el procesamiento de imágenes para comprimir archivos manteniendo una buena calidad visual. Pero, ¿cómo aplicamos esta técnica a una imagen concreta? Veamos el proceso completo y cómo esto afecta la reconstrucción de la imagen.
+
+#### ¿Qué librerías son esenciales para el procesamiento de imágenes?
+
+Para comenzar con nuestro análisis, es necesario importar las librerías adecuadas. Utilizaremos principalmente matplotlib para graficar y tratar imágenes, y numpy para manejar números y realizar operaciones matemáticas:
+
+```python
+import matplotlib.pyplot as plt
+import numpy as np
+from PIL import Image
+```
+
+Estas librerías nos permitirán cargar, manipular y visualizar nuestra imagen de manera eficiente.
+
+#### ¿Cómo cargar y preparar la imagen?
+
+Primero, cargamos nuestra imagen y la convertimos a escala de grises. Esto simplifica el proceso al reducir la información de color a una sola banda:
+
+```python
+img_path = "ruta/a/tu/imagen.jpg"
+imagen_color = Image.open(img_path)
+imagen_gray = imagen_color.convert('L')
+imagen_array = np.array(imagen_gray, dtype=float)import matplotlib.pyplot as plt
+import numpy as np
+from PIL import Image
+```
+
+Esta conversión a escala de grises también nos facilita realizar la descomposición SVD, ya que trabajaremos con una matriz más sencilla.
+
+#### ¿Cómo se realiza la descomposición en valores singulares (SVD)?
+
+Utilizamos numpy para calcular la descomposición SVD de la matriz que representa nuestra imagen:
+
+`U, S, Vt = np.linalg.svd(imagen_array, full_matrices=False)`
+
+Aquí, `U` y `Vt` son matrices ortogonales, mientras que `S` es un vector que contiene los valores singulares. Estos valores singulares están ordenados de mayor a menor, identificando los componentes más significativos de la imagen.
+
+#### ¿Cómo reconstruir la imagen utilizando SVD?
+
+La reconstrucción de la imagen usando una cantidad reducida de valores singulares es clave para la compresión. Utilizamos solo los valores singulares más grandes, ya que representan la mayor parte de la información visual:
+
+```python
+img_path = "ruta/a/tu/imagen.jpg"
+imagen_color = Image.open(img_path)
+imagen_gray = imagen_color.convert('L')
+imagen_array = np.array(imagen_gray, dtype=float)k = 50  # número de valores singulares considerados
+S_k = np.diag(S[:k])
+U_k = U[:, :k]
+Vt_k = Vt[:k, :]
+imagen_reconstruida = np.dot(U_k, np.dot(S_k, Vt_k))import matplotlib.pyplot as plt
+import numpy as np
+from PIL import Image
+```
+
+Al variar `k`, podemos observar el efecto que tiene en la calidad de la imagen reconstruida. Cuanto mayor sea k, mejor será la calidad visual pero también mayor el tamaño del archivo.
+
+#### ¿Qué tamaño de archivo y calidad de imagen obtenemos al variar k?
+
+La elección de `k` afecta directamente al tamaño final de nuestro archivo y la claridad de la imagen reconstruida. Aquí algunas consideraciones:
+
+- **Con pocos valores singulares**: Tendremos un archivo muy comprimido pero con pérdida de detalles. La imagen será menos clara.
+- **Con muchos valores singulares**: Conservamos más detalles finos pero el tamaño del archivo es mayor.
+
+La habilidad para elegir el `k` óptimo depende del propósito: si se necesita reconocimiento más que calidad visual, menos valores serán suficientes.
+
+Concluyendo, la técnica SVD aplicada a imágenes logra un equilibrio único entre compresión y calidad, permitiendo optimizar recursos de almacenamiento sin sacrificar demasiada información visual. Te invitamos a experimentar y determinar cuál es el valor `k` ideal para tus necesidades específicas. ¡Explora nuevas formas de eficientizar tus proyectos de imágenes!
+
+## Compresión de Imágenes Usando Descomposición en Valores Singulares
+
+La **compresión de imágenes usando Descomposición en Valores Singulares (SVD)** es una técnica poderosa que reduce el tamaño de una imagen manteniendo su calidad visual con una aproximación eficiente.
+
+### 🔍 ¿Qué es la compresión con SVD?
+
+Dada una imagen como una matriz $A$, aplicamos la descomposición SVD:
+
+$$
+A = U \cdot \Sigma \cdot V^T
+$$
+
+Para comprimir:
+
+* Nos quedamos solo con los **primeros $k$** valores singulares de $\Sigma$, que contienen la mayor parte de la energía (información) de la imagen.
+* Esto reduce drásticamente el número de elementos necesarios para representar la imagen.
+
+### 📉 ¿Cuánto se reduce?
+
+Si la imagen es de tamaño $m \times n$, almacenar todo requiere $m \cdot n$ elementos.
+Con SVD, almacenamos:
+
+$$
+k \cdot (m + n + 1)
+$$
+
+¡Para un $k$ pequeño, la reducción puede ser de más del 90%!
+
+### 💻 Ejemplo en Python
+
+```python
+import numpy as np
+import matplotlib.pyplot as plt
+from skimage.color import rgb2gray
+from skimage.io import imread
+
+# Leer y convertir a escala de grises
+imagen = rgb2gray(imread('paisaje.jpg'))
+
+# SVD
+U, S, Vt = np.linalg.svd(imagen, full_matrices=False)
+
+# Compresión con diferentes k
+ks = [5, 20, 50, 100]
+
+plt.figure(figsize=(12, 8))
+
+for i, k in enumerate(ks, 1):
+    # Aproximar imagen
+    Uk = U[:, :k]
+    Sk = np.diag(S[:k])
+    Vk = Vt[:k, :]
+    A_k = Uk @ Sk @ Vk
+    
+    # Mostrar
+    plt.subplot(2, 3, i)
+    plt.imshow(A_k, cmap='gray')
+    plt.title(f'k = {k}')
+    plt.axis('off')
+
+# Imagen original
+plt.subplot(2, 3, 6)
+plt.imshow(imagen, cmap='gray')
+plt.title('Original')
+plt.axis('off')
+
+plt.tight_layout()
+plt.show()
+```
+
+### 🧠 Ventajas
+
+* 🔹 **Compresión sin pérdidas perceptibles** (para valores bajos de $k$)
+* 🔹 **Reducción de ruido**
+* 🔹 **Fácil de implementar con NumPy**
+
+### 📊 Visualización de error
+
+Puedes calcular el error de reconstrucción con:
+
+```python
+error = np.linalg.norm(imagen - A_k) / np.linalg.norm(imagen)
+```
+
+Esto te permite elegir un $k$ que balancee calidad y compresión.
+
+### 🎯 Conclusión
+
+La SVD permite:
+
+* **Reducir almacenamiento**
+* **Transmitir imágenes comprimidas**
+* **Controlar la calidad vs tamaño con $k$**
+
+## Compresión de Imágenes Usando Descomposición en Valores Singulares
+
+La **compresión de imágenes usando Descomposición en Valores Singulares (SVD)** es una técnica poderosa que reduce el tamaño de una imagen manteniendo su calidad visual con una aproximación eficiente.
+
+### 🔍 ¿Qué es la compresión con SVD?
+
+Dada una imagen como una matriz $A$, aplicamos la descomposición SVD:
+
+$$
+A = U \cdot \Sigma \cdot V^T
+$$
+
+Para comprimir:
+
+* Nos quedamos solo con los **primeros $k$** valores singulares de $\Sigma$, que contienen la mayor parte de la energía (información) de la imagen.
+* Esto reduce drásticamente el número de elementos necesarios para representar la imagen.
+
+### 📉 ¿Cuánto se reduce?
+
+Si la imagen es de tamaño $m \times n$, almacenar todo requiere $m \cdot n$ elementos.
+Con SVD, almacenamos:
+
+$$
+k \cdot (m + n + 1)
+$$
+
+¡Para un $k$ pequeño, la reducción puede ser de más del 90%!
+
+### 💻 Ejemplo en Python
+
+```python
+import numpy as np
+import matplotlib.pyplot as plt
+from skimage.color import rgb2gray
+from skimage.io import imread
+
+# Leer y convertir a escala de grises
+imagen = rgb2gray(imread('paisaje.jpg'))
+
+# SVD
+U, S, Vt = np.linalg.svd(imagen, full_matrices=False)
+
+# Compresión con diferentes k
+ks = [5, 20, 50, 100]
+
+plt.figure(figsize=(12, 8))
+
+for i, k in enumerate(ks, 1):
+    # Aproximar imagen
+    Uk = U[:, :k]
+    Sk = np.diag(S[:k])
+    Vk = Vt[:k, :]
+    A_k = Uk @ Sk @ Vk
+    
+    # Mostrar
+    plt.subplot(2, 3, i)
+    plt.imshow(A_k, cmap='gray')
+    plt.title(f'k = {k}')
+    plt.axis('off')
+
+# Imagen original
+plt.subplot(2, 3, 6)
+plt.imshow(imagen, cmap='gray')
+plt.title('Original')
+plt.axis('off')
+
+plt.tight_layout()
+plt.show()
+```
+
+### 🧠 Ventajas
+
+* 🔹 **Compresión sin pérdidas perceptibles** (para valores bajos de $k$)
+* 🔹 **Reducción de ruido**
+* 🔹 **Fácil de implementar con NumPy**
+
+### 📊 Visualización de error
+
+Puedes calcular el error de reconstrucción con:
+
+```python
+error = np.linalg.norm(imagen - A_k) / np.linalg.norm(imagen)
+```
+
+Esto te permite elegir un $k$ que balancee calidad y compresión.
+
+### 🎯 Conclusión
+
+La SVD permite:
+
+* **Reducir almacenamiento**
+* **Transmitir imágenes comprimidas**
+* **Controlar la calidad vs tamaño con $k$**
+
+## Cálculo de la seudo inversa de Moore-Penrose en Python
+
+La **seudoinversa de Moore-Penrose** es una generalización de la inversa de una matriz que puede aplicarse incluso si la matriz no es cuadrada o no es invertible. En Python, puedes calcularla fácilmente con NumPy.
+
+### 📌 ¿Qué es la seudo inversa?
+
+Para una matriz $A \in \mathbb{R}^{m \times n}$, su seudoinversa $A^+$ satisface ciertas propiedades algebraicas. Se define mediante la descomposición en valores singulares (SVD):
+
+$$
+A = U \Sigma V^T \quad \Rightarrow \quad A^+ = V \Sigma^+ U^T
+$$
+
+Donde:
+
+* $\Sigma^+$ se obtiene invirtiendo los valores singulares distintos de cero y transponiendo la matriz.
+
+### 💻 Cálculo con NumPy
+
+### ✅ Usando `np.linalg.pinv`
+
+```python
+import numpy as np
+
+A = np.array([[1, 2], [3, 4], [5, 6]])  # Matriz no cuadrada
+A_pseudo = np.linalg.pinv(A)
+
+print("Matriz original A:")
+print(A)
+print("\nSeudo inversa de A (Moore-Penrose):")
+print(A_pseudo)
+```
+
+### 🧠 ¿Qué hace NumPy internamente?
+
+`np.linalg.pinv` utiliza la **SVD** para calcular la seudo inversa:
+
+```python
+U, S, Vt = np.linalg.svd(A, full_matrices=False)
+
+# Invertimos los valores singulares (evitando dividir por cero)
+S_inv = np.diag(1 / S)
+
+# Calculamos la seudoinversa manualmente
+A_pseudo_manual = Vt.T @ S_inv @ U.T
+```
+
+### 📘 Aplicación: resolver sistemas sobredeterminados
+
+Para sistemas $Ax = b$ donde $A$ no es cuadrada:
+
+```python
+x = np.linalg.pinv(A) @ b
+```
+
+Esto da la **solución de mínimos cuadrados**: la mejor aproximación posible.
+
+### ✅ Ventajas
+
+* Funciona con matrices **rectangulares o singulares**.
+* Muy útil en **regresión lineal**, **ML**, **ajuste de curvas**, y **optimización**.
+
+### Resumen
+
+La **pseudoinversa de Moore Penrose** es una aplicación directa de *singular value decomposition (*SVD), que nos permite resolver en determinados momentos sistemas de ecuaciones lineales con múltiples soluciones.
+
+La matriz pseudoinversa es utilizada cuando en un sistema de ecuaciones lineales, representado por Ax = B, x no tiene inversa. Esta operación es única y existe si se verifican 4 condiciones.
+
+**Ejemplo de pseudoinversa de una matriz**
+
+En el siguiente ejemplo, verás las 4 condiciones para obtener una fórmula Penrose.
+
+![pseudoinversa](images/pseudoinversa.png)
+
+**Cómo calcular la matriz pseudoinversa de Moore Penrose**
+
+Para calcularla se siguen los siguientes pasos:
+
+- Calcular las matrices U, D, y V (matrices SVD) de A.
+- Construir D_pse: una matriz de ceros que tiene igual dimension de A, y que luego se transpone.
+- Reemplazar la submatriz D_pse[: D.shape[0], : D.shape[0]] por np.linalg.inv(np.diag(D))
+- Reconstruir pseudoinversa: A_pse = V.T.dot(D_pse).dot(U.T)
+
+**Cómo calcular la pseudoinversa de Moore Penrose en Python**
+
+Para calcularla automáticamente por Python: np.linalg.pinv(A)Lo que obtenemos con A_pse es una matriz muy cercana a la inversa. Cercano en el sentido de que minimiza la norma dos de estas distancias. O sea, de estos errores que estamos cometiendo.
+
+A_pse no es conmutativa, es decir, A_pse·A ≠ A·A_pse
