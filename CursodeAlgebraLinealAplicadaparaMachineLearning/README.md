@@ -1879,3 +1879,748 @@ Para calcularla se siguen los siguientes pasos:
 Para calcularla automáticamente por Python: np.linalg.pinv(A)Lo que obtenemos con A_pse es una matriz muy cercana a la inversa. Cercano en el sentido de que minimiza la norma dos de estas distancias. O sea, de estos errores que estamos cometiendo.
 
 A_pse no es conmutativa, es decir, A_pse·A ≠ A·A_pse
+
+## Solución de Sistemas Sobredeterminados con Pseudo-Inversa y Python
+
+La **solución de sistemas sobredeterminados** (más ecuaciones que incógnitas) es común en estadística, machine learning y procesamiento de señales. Cuando el sistema no tiene solución exacta, usamos la **pseudo-inversa de Moore-Penrose** para obtener una **solución por mínimos cuadrados**.
+
+### 🧮 Ejemplo de sistema sobredeterminado
+
+Supón que tienes el sistema:
+
+$$
+A \cdot x = b
+$$
+
+Donde:
+
+* $A$ es una matriz $m \times n$, con $m > n$ (más ecuaciones que incógnitas).
+* No siempre hay solución exacta, pero queremos minimizar el error $\|Ax - b\|^2$.
+
+La solución por mínimos cuadrados es:
+
+$$
+x = A^+ \cdot b
+$$
+
+Donde $A^+$ es la pseudo-inversa de Moore-Penrose de $A$.
+
+### ✅ Implementación en Python con NumPy
+
+```python
+import numpy as np
+
+# Matriz A (más filas que columnas)
+A = np.array([
+    [1, 1],
+    [1, 2],
+    [1, 3]
+])
+
+# Vector b
+b = np.array([1, 2, 2])
+
+# Cálculo de la pseudo-inversa de A
+A_pseudo = np.linalg.pinv(A)
+
+# Solución por mínimos cuadrados
+x = A_pseudo @ b
+
+print("Solución x:")
+print(x)
+
+# Verificación: Aproximación de Ax
+print("Aproximación Ax:")
+print(A @ x)
+```
+
+### 🔍 Salida esperada:
+
+```text
+Solución x:
+[0.5 0.5]
+
+Aproximación Ax:
+[1.  1.5 2. ]
+```
+
+Esto minimiza la distancia entre el vector real $b = [1, 2, 2]$ y la estimación $Ax$.
+
+### 📌 Alternativas con `np.linalg.lstsq` (más estable):
+
+```python
+x_lstsq, residuals, rank, s = np.linalg.lstsq(A, b, rcond=None)
+print("Solución con lstsq:", x_lstsq)
+```
+
+### 🔧 ¿Dónde se usa?
+
+* Ajuste de modelos lineales
+* Reconstrucción de imágenes
+* Solución de ecuaciones inconsistentes en sistemas reales
+
+### Resumen
+
+#### ¿Qué es un sistema de ecuaciones y cómo se resuelve?
+
+Un sistema de ecuaciones es un conjunto de ecuaciones con varias incógnitas. Este sistema puede tener cero, una o infinitas soluciones. En situaciones donde el sistema tiene una solución única, esto indica que existe una matriz inversa y que la matriz es cuadrada con vectores linealmente independientes. Cuando buscamos una solución X tal que minimice una norma específica, podemos recurrir a un método llamado pseudo inversa.
+
+#### ¿Cómo aplicar la pseudo inversa para resolver un sistema?
+
+La pseudo inversa es útil para encontrar una solución X que minimice la norma de a por X menos B en un sistema de ecuaciones lineales. Esto es importante en sistemas sobre determinados, donde hay más ecuaciones que incógnitas.
+
+#### Visualización inicial con Python
+
+Para abordar este problema con código, se pueden seguir estos pasos:
+
+1. **Configuración de entorno y librerías**: Inicialmente, se importa `numpy` como `np` y se utiliza `matplotlib` para visualizar gráficamente.
+
+```python
+import numpy as np
+import matplotlib.pyplot as plt
+```
+
+2. **Definición del dominio**: Se establece un rango de valores de X para evaluar las ecuaciones del sistema:
+
+```python
+x = np.linspace(-5, 5, 1000)
+```
+
+3. **Definición de funciones**: Se crean las funciones correspondientes a las tres ecuaciones del sistema:
+
+```python
+y1 = -4 * x + 3
+y2 = 2 * x + 5
+y3 = -3 * x + 1
+```
+
+#### Graficación del sistema
+
+Las ecuaciones se grafican para visualizar su intersección:
+
+```python
+plt.plot(x, y1, label='y1 = -4x + 3')
+plt.plot(x, y2, label='y2 = 2x + 5')
+plt.plot(x, y3, label='y3 = -3x + 1')
+plt.xlim(-2, 2.5)
+plt.ylim(-6, 6)
+plt.legend()
+plt.show()
+```
+
+En el gráfico, es evidente que las rectas definidas por estas ecuaciones no cruzan en un único punto común.
+
+#### ¿Cómo usar la pseudo inversa para encontrar el punto óptimo?
+
+Para resolver este problema gráficamente y encontrar el punto que minimice la norma dos, seguimos estos pasos:
+
+1. **Definir la matriz y el vector de soluciones**:
+
+La matriz A se construye con los coeficientes de las ecuaciones:
+
+```python
+A = np.array([[4, 1], [-2, 1], [3, 1]])
+b = np.array([3, 5, 1])  # Vector de soluciones
+```
+
+2. **Calcular la pseudo inversa**:
+
+Utilizamos `numpy.linalg.pinv` para calcularla:
+
+`A_pseudo_inv = np.linalg.pinv(A)`
+
+3. **Encontrar la solución X**:
+
+Multiplicamos la pseudo inversa de A con el vector b:
+
+`X = A_pseudo_inv @ b`
+
+Este cálculo nos proporciona una solución que podemos interpretar gráficamente.
+
+#### Interpretación gráfica y análisis
+
+Al graficar nuevamente y añadir el punto encontrado:
+
+```python
+plt.plot(x, y1, label='y1 = -4x + 3')
+plt.plot(x, y2, label='y2 = 2x + 5')
+plt.plot(x, y3, label='y3 = -3x + 1')
+plt.scatter(X[0], X[1], color='red', zorder=5)  # Punto solución
+plt.xlim(-2, 2.5)
+plt.ylim(-6, 6)
+plt.legend()
+plt.show()
+```
+
+El punto solución no siempre se encuentra en el centro del "triángulo" formado por las ecuaciones debido al diferente peso que cada una ejerce sobre él, como una suerte de centro de gravedad.
+
+La pseudo inversa proporciona una herramienta efectiva para manejar sistemas sobre determinados, ayudándonos a encontrar soluciones óptimas que norman la minimización. Siguiendo este enfoque, podemos comprender y resolver problemas complejos en la matemática aplicada. ¡Sigue adelante y continúa aprendiendo!
+
+## Reducción de Dimensionalidad en Análisis de Datos: PCA Aplicado
+
+### 📘 ¿Qué es la Reducción de Dimensionalidad?
+
+Es el proceso de transformar un conjunto de datos con muchas **variables (dimensiones)** en un conjunto más pequeño que retiene la **mayor cantidad de información posible**. Sirve para:
+
+* Visualizar datos complejos.
+* Eliminar ruido o redundancias.
+* Acelerar algoritmos de aprendizaje automático.
+* Evitar el problema de la **maldición de la dimensionalidad**.
+
+### 🔍 ¿Qué es PCA?
+
+El **Análisis de Componentes Principales (PCA)** es una técnica lineal de reducción de dimensionalidad. Busca encontrar nuevas **variables no correlacionadas** (componentes principales) que:
+
+1. Sean combinaciones lineales de las variables originales.
+2. Ordenen los datos según la **varianza** que aportan.
+
+**Ejemplo:** si tienes 10 variables, puedes reducirlas a 2 o 3 que expliquen la mayoría de la variación.
+
+### 🧪 Ejemplo Práctico en Python
+
+Vamos a usar el famoso conjunto de datos **Iris** para aplicar PCA.
+
+```python
+from sklearn.datasets import load_iris
+from sklearn.preprocessing import StandardScaler
+from sklearn.decomposition import PCA
+import matplotlib.pyplot as plt
+import pandas as pd
+
+# 1. Cargar datos
+iris = load_iris()
+X = iris.data
+y = iris.target
+labels = iris.target_names
+
+# 2. Escalado de los datos
+X_scaled = StandardScaler().fit_transform(X)
+
+# 3. Aplicar PCA (reducir a 2 dimensiones)
+pca = PCA(n_components=2)
+X_pca = pca.fit_transform(X_scaled)
+
+# 4. Visualizar
+plt.figure(figsize=(8, 6))
+for i in range(len(labels)):
+    plt.scatter(X_pca[y == i, 0], X_pca[y == i, 1], label=labels[i])
+plt.xlabel("Componente Principal 1")
+plt.ylabel("Componente Principal 2")
+plt.title("PCA aplicado al dataset Iris")
+plt.legend()
+plt.grid(True)
+plt.show()
+```
+
+### 📊 ¿Qué nos dice `pca.explained_variance_ratio_`?
+
+Este atributo te muestra **cuánta información (varianza)** conserva cada componente.
+
+```python
+print(pca.explained_variance_ratio_)
+```
+
+Un ejemplo de salida:
+
+```text
+[0.72, 0.23]
+```
+
+Esto significa que el **95% de la información total** del dataset está capturada en los primeros 2 componentes.
+
+### ✅ Ventajas de PCA
+
+* Reduce la complejidad computacional.
+* Mejora la visualización de datos multivariados.
+* Puede mejorar el rendimiento de modelos supervisados.
+* Es útil para **preprocesar imágenes, señales, datos de sensores**, etc.
+
+### 🚫 Cuándo *no* usar PCA
+
+* Cuando necesitas interpretar el efecto directo de las variables originales (PCA transforma los datos).
+* Cuando los datos no tienen relaciones lineales (para eso existen métodos no lineales como t-SNE o UMAP).
+
+### Resumen
+
+#### ¿Cómo abordar la maldición de la dimensión en análisis de datos? 
+ La maldición de la dimensión es un problema común en estadística que surge al incrementar las variables en un conjunto de datos. Si añadimos más dimensiones, necesitaremos exponencialmente más muestras para mantener la relevancia estadística. Por lo tanto, comprender cómo eliminar dimensiones innecesarias es crucial para mejorar el análisis de datos.
+
+#### ¿Cómo generar una muestra de datos en Python?
+
+En primer lugar, es fundamental configurar y definir correctamente nuestras muestras de datos antes de realizar experimentos. Utilizamos librerías como `numpy` y `matplotlib` para este propósito. Aquí te mostramos cómo puedes hacerlo:
+
+```python
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Definimos la semilla para reproducir el experimento
+np.random.seed(0)
+
+# Generamos números aleatorios
+X = 3 * np.random.rand(200, 1)
+y = 20 + 20 * X + 2 * np.random.rand(200, 1)
+
+# Formateamos las matrices
+X = X.reshape((200, 1))
+y = y.reshape((200, 1))
+
+# Concatenamos los vectores
+XY = np.hstack((X, y))
+
+# Visualizamos la dispersión de los puntos
+plt.scatter(XY[:, 0], XY[:, 1], marker='o', color='b')
+plt.xlabel('X')
+plt.ylabel('Y')
+plt.show()
+```
+
+Este código genera muestras y visualiza la correlación entre las variables.
+
+#### ¿Cómo transformar el sistema de referencia para reducir dimensiones?
+
+El paso clave en la reducción de dimensiones es centrar los datos, lo que implica restar la media de los datos originales. Luego, usando las Componentes Principales (PCA), podemos identificar las direcciones de mayor varianza que permiten una representación más sencilla de los datos.
+
+```python
+# Centramos los datos
+X_centered = X - np.mean(X, axis=0)
+Y_centered = y - np.mean(y, axis=0)
+
+# Recalculamos el producto interno
+cov_matrix = np.dot(X_centered.T, X_centered)
+
+# Calculamos los autovalores y autovectores
+eigenvalues, eigenvectors = np.linalg.eigh(cov_matrix)
+
+# Graficamos los autovectores
+vector_colors = ['r', 'b']
+plt.quiver(*np.mean(X_centered, axis=0),
+           *eigenvectors[:,0], scale=eigenvalues[0],
+           color=vector_colors[0])
+plt.quiver(*np.mean(y, axis=0),
+           *eigenvectors[:,1], scale=eigenvalues[1],
+           color=vector_colors[1])
+plt.show()
+```
+
+En este código se calcula y grafica la transformación resultante, mostrando cómo los autovectores definen la dirección de máxima varianza.
+
+#### ¿Cómo interpretar la proyección en el espacio reducido?
+
+La proyección en un nuevo sistema de referencia revela mucho sobre la información subyacente en los datos. Si logramos reescribir nuestra nube de puntos en función de los autovectores, podemos reducir las dimensiones sin perder demasiada información.
+
+```python
+# Proyectamos en el sistema de autovectores
+X_transformed = np.dot(X_centered, eigenvectors)
+
+# Visualizamos la transformación
+plt.scatter(X_transformed[:, 0], X_transformed[:, 1], marker='o', c='g')
+plt.axhline(0, color='red', lw=2)
+plt.axvline(0, color='red', lw=2)
+plt.xlabel('PC 1')
+plt.ylabel('PC 2')
+plt.show()
+```
+
+Esta proyección nos permite reducir nuestras dimensiones, centrándonos en las variables que explican la mayor parte de la varianza.
+
+#### Reflexion
+
+Cuando se trabaja con conjuntos de datos extensos y variables interrelacionadas, la reducción de dimensiones, como la que se consigue mediante PCA, es esencial. Esto no solo mejora la eficiencia del análisis, sino que también facilita la interpretación de los resultados. Un enfoque cuidadoso y metodológico garantiza que mantengamos la esencia de los datos mientras eliminamos la redundancia innecesaria.
+
+Si te interesa profundizar y dominar estas técnicas, te animo a seguir explorando y experimentando con diferentes conjuntos de datos. La práctica constante y el estudio te ayudarán a convertirte en un experto en análisis de datos. ¡Sigue adelante y nunca dejes de aprender!
+
+## Análisis de Componentes Principales en Imágenes: Reducción Dimensional
+
+El **PCA en imágenes** es una técnica poderosa para **reducir el tamaño y la complejidad** de una imagen sin perder (demasiada) información relevante. En lugar de operar sobre datos tabulares, se aplica sobre los **pixeles** de la imagen, que pueden tratarse como vectores de alta dimensión.
+
+### 📌 ¿Por qué aplicar PCA a imágenes?
+
+* 🔻 **Reducción de tamaño** (compresión).
+* 🔍 **Eliminación de ruido**.
+* ⚡ **Aceleración de modelos de visión por computador**.
+* 🎨 **Reconstrucción visual con menos información**.
+
+### 🖼️ ¿Cómo se aplica?
+
+Una imagen a color (RGB) es una **matriz 3D**: alto × ancho × 3 canales. Se puede aplicar PCA por canal o convertirla a escala de grises y luego aplicar PCA sobre la matriz 2D resultante.
+
+### 🧪 Ejemplo Práctico: PCA aplicado a una imagen con Python
+
+```python
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.decomposition import PCA
+from skimage.color import rgb2gray
+from skimage.io import imread
+
+# 1. Cargar imagen y convertir a escala de grises
+img = imread('tu_imagen.jpg')  # Reemplaza con una ruta válida
+gray_img = rgb2gray(img)
+
+# 2. Visualizar la imagen original
+plt.imshow(gray_img, cmap='gray')
+plt.title("Imagen Original")
+plt.axis("off")
+plt.show()
+
+# 3. Aplicar PCA
+n_components = 50  # puedes cambiar este valor
+pca = PCA(n_components=n_components)
+transformed = pca.fit_transform(gray_img)
+reconstructed = pca.inverse_transform(transformed)
+
+# 4. Mostrar imagen reconstruida
+plt.imshow(reconstructed, cmap='gray')
+plt.title(f"Reconstruida con {n_components} componentes")
+plt.axis("off")
+plt.show()
+
+# 5. Comparar varianza explicada
+print(f"Varianza explicada acumulada: {np.sum(pca.explained_variance_ratio_):.4f}")
+```
+
+### 📉 Resultado:
+
+* La imagen reconstruida con PCA tiene **menos información**, pero **visualmente se parece** a la original.
+* Con menos de 50 componentes, puedes conservar **más del 90% de la varianza** en muchos casos.
+
+### 🎯 Aplicaciones reales
+
+* **Reconocimiento facial** (Eigenfaces).
+* **Compresión** y almacenamiento eficiente.
+* **Preprocesamiento para modelos de Deep Learning**.
+* **Detección de anomalías visuales**.
+
+### Resumen
+
+#### ¿Qué es el análisis de componentes principales?
+
+El análisis de componentes principales (PCA, por sus siglas en inglés) es una técnica invaluable en el mundo del procesamiento de datos para reducir la cantidad de dimensiones con las que trabajamos. Frecuentemente, enfrentamos conjuntos de datos con muchas variables, y PCA nos ayuda a conservar el 80% de la información más relevante con menos variables. En síntesis, simplifica nuestros datos sin perder demasiada información esencial.
+
+#### ¿Cómo preparar datos de imágenes para PCA?
+
+Para ilustrar cómo aplicar PCA, veamos un ejemplo con imágenes. Utilizaremos un conjunto de datos de rostros del laboratorio Olivetti, creado entre 1992 y 1994 en los laboratorios de Cambridge.
+
+#### Paso 1: Importar librerías necesarias
+
+Utilizaremos librerías de Python como `numpy`, `matplotlib`, y `pandas` para realizar las operaciones requeridas:
+
+```python
+import numpy as np
+import matplotlib.pyplot as plt
+import pandas as pd
+```
+
+#### Paso 2: Leer y normalizar las imágenes
+
+Primero, cargamos las imágenes desde un directorio específico. Luego, normalizamos los valores de las imágenes dividiéndolos por 255, el valor máximo posible en una imagen en escala de grises.
+
+```python
+image = np.random.rand(112, 92)  # ejemplo de una imagen
+image_normalizada = image / 255.0
+```
+
+#### Paso 3: Visualización sin ejes
+
+Para graficar estas imágenes sin mostrar los ejes cartesianos, los configuramos así:
+
+```python
+fig, axs = plt.subplots(1, 2, figsize=(12, 12))
+axs[0].imshow(image, cmap='gray')
+axs[1].imshow(image_normalizada, cmap='gray')
+
+for ax in axs:
+    ax.set_xticks([])
+    ax.set_yticks([])
+plt.show()
+```
+
+##### ¿Cómo gestionar múltiples imágenes?
+#### Paso 1: Leer múltiples imágenes
+
+Configuramos un DataFrame para conservar los datos de cada imagen a medida que las leemos. Esto requiere recorrer los archivos de imágenes disponibles.
+
+```python
+from glob import glob
+
+imagenes = glob('imagenes/*')
+caras = pd.DataFrame()
+
+for archivo in imagenes:
+    img = plt.imread(archivo).flatten()  # aplanar la imagen
+    caras = caras.append([img], ignore_index=True)
+```
+
+#### Paso 2: Visualización de un subconjunto de imágenes
+
+Podemos mostrar un conjunto de imágenes seleccionando un número de individuos y el número de tomas para cada uno:
+
+```python
+fig, axs = plt.subplots(5, 10, figsize=(15, 8))
+
+for i, ax in enumerate(axs.flatten()):
+    img = caras.iloc[i].values.reshape(112, 92)  # reconstruir la forma original
+    ax.imshow(img, cmap='gray')
+    ax.set_xticks([])
+    ax.set_yticks([])
+
+plt.subplots_adjust(wspace=0.1, hspace=0.01)
+plt.show()
+```
+
+Este setup nos permite tener una vista preliminar del conjunto de datos con el que trabajaremos en PCA.
+
+##### Reflexiones finales
+
+El análisis de componentes principales se convertirá en un aliado fundamental para el análisis y procesamiento de datos, especialmente cuando se trabaja con imágenes o datasets de alta dimensionalidad. Además, el uso correcto de librerías como `numpy` y `pandas` optimiza la preparación y limpieza de datos. ¡Vamos a seguir explorando el potencial de estas herramientas y a comprender a fondo sus aplicaciones!
+
+**Lecturas recomendadas**
+
+[algebra aplicada](https://github.com/platzi/algebra-aplicada/tree/master/03%20-%20Algebra%20Lineal%20Aplicada%20-%20Analisis%20de%20Componentes%20Principales%20(PCA)/imagenes "algebra aplicada")
+
+## Reducción de Dimensiones en Imágenes con PCA
+
+Vamos a aplicar **PCA (Análisis de Componentes Principales)** para reducir la dimensionalidad de un conjunto de imágenes, lo cual es útil para:
+
+* **Reducir el tamaño de almacenamiento**.
+* **Eliminar redundancia**.
+* **Visualizar datos complejos**.
+* **Extraer características para Machine Learning**.
+
+### 📦 Paso a paso en Python:
+
+Primero cargamos las imágenes como ya lo hiciste, luego aplicamos PCA para reducirlas y reconstruimos algunas para ver el efecto.
+
+### ✅ Código completo:
+
+```python
+import pandas as pd
+import matplotlib.pyplot as plt
+import imageio.v2 as imageio
+from glob import iglob
+from sklearn.decomposition import PCA
+
+# === 1. Cargar las imágenes ===
+caras = []
+
+for path in iglob('./imagenes/*/*.pgm'):
+    im = imageio.imread(path)
+    cara = pd.Series(im.flatten(), name=path)
+    caras.append(cara)
+
+caras = pd.concat(caras, axis=1).T  # Cada fila es una imagen
+
+# === 2. Aplicar PCA ===
+pca = PCA(n_components=50)  # Usa 50 componentes principales
+caras_pca = pca.fit_transform(caras)
+
+# === 3. Reconstrucción aproximada de las imágenes ===
+caras_reconstruidas = pca.inverse_transform(caras_pca)
+
+# === 4. Mostrar originales y reconstruidas ===
+fig, axes = plt.subplots(2, 10, figsize=(15, 4),
+                         subplot_kw={'xticks': [], 'yticks': []},
+                         gridspec_kw=dict(hspace=0.01, wspace=0.01))
+
+for i in range(10):
+    # Original
+    axes[0, i].imshow(caras.iloc[i].values.reshape(112, 92), cmap='gray')
+    # Reconstruida
+    axes[1, i].imshow(caras_reconstruidas[i].reshape(112, 92), cmap='gray')
+
+axes[0, 0].set_ylabel('Original', fontsize=12)
+axes[1, 0].set_ylabel('Reconstruida', fontsize=12)
+plt.suptitle('Reducción de Dimensiones con PCA', fontsize=14)
+plt.tight_layout()
+plt.show()
+```
+
+### 📉 Explicación:
+
+* **`n_components=50`**: Conservamos 50 dimensiones de las \~10,000 originales (112x92).
+* **`fit_transform`**: Calcula los ejes principales (autovectores) y proyecta las imágenes.
+* **`inverse_transform`**: Reconstruye la imagen original desde las componentes principales.
+
+### 📊 Evaluación:
+
+Puedes ver cuánta **varianza** se conserva con:
+
+```python
+print("Varianza acumulada conservada:", sum(pca.explained_variance_ratio_))
+```
+
+Ejemplo de salida:
+
+```
+Varianza acumulada conservada: 0.92
+```
+
+Eso significa que estás reteniendo el 92% de la información con solo 50 dimensiones.
+
+### Resumen
+
+#### ¿Cómo aplicar PCA para reducir la dimensionalidad de imágenes?
+
+La reducción de dimensionalidad es una técnica crucial cuando trabajamos con conjuntos de datos grandes, y en el caso de imágenes, el uso de PCA (Análisis de Componentes Principales) es especialmente útil. Aquí te mostraré cómo hacerlo paso a paso utilizando Python.
+
+#### ¿Qué es PCA y cómo podemos usarlo?
+
+PCA es un método estadístico que permite reducir la dimensionalidad de un conjunto de datos, manteniendo la mayor parte de la variabilidad presente en él. Esto se logra mediante la transformación de las variables originales en un nuevo conjunto de variables, llamadas componentes principales. He aquí cómo puedes implementarlo:
+
+```python
+from sklearn.decomposition import PCA
+
+# Instanciamos PCA para capturar el 50% de la varianza de los datos
+caras_pca = PCA(n_components=0.5)
+
+# Ajustamos y transformamos nuestro conjunto de imágenes
+componentes = caras_pca.fit_transform(imagenes)
+```
+
+#### ¿Cómo visualizar los componentes?
+
+Una parte importante del uso de PCA es la visualización de los componentes principales. Esto nos ayuda a entender cuántas componentes son necesarias para retener la información deseada.
+
+```python
+import matplotlib.pyplot as plt
+
+# Calculamos el número de filas y columnas para el gráfico
+filas = 3
+columnas = caras_pca.n_components_ // filas
+
+# Definimos la figura
+fig, ax = plt.subplots(filas, columnas, figsize=(12, 6))
+
+for i, axi in enumerate(ax.flat):
+    # Obtenemos la imagen correspondiente a la componente i
+    componente_i = componentes[:, i].reshape(altura, ancho)
+    axi.imshow(componente_i, cmap='gray')
+    axi.set_title(f'Componente {i}')
+    axi.axis('off')
+
+plt.show()
+```
+
+#### ¿Qué sucede al ajustar el porcentaje de varianza explicada?
+
+Modificar el porcentaje de varianza explicada nos permite ajustar la cantidad de componentes mantenidos. Esto es crucial para balancear entre precisión y eficiencia computacional.
+
+```python
+# Por ejemplo, para capturar el 80% de la varianza
+caras_pca_80 = PCA(n_components=0.8)
+componentes_80 = caras_pca_80.fit_transform(imagenes)
+
+# Con un 80% de varianza, obtenemos más componentes:
+# Requiere más tiempo de procesamiento pero mejora la calidad de la representación
+```
+
+#### ¿Cómo afecta el porcentaje de información en los resultados?
+
+Es interesante observar cómo el porcentaje de varianza afecta la cantidad de componentes y la representación de los datos. Al aumentar el porcentaje de información que queremos conservar, aumentamos el tiempo de computación y la complejidad.
+
+```python
+caras_pca_999 = PCA(n_components=0.999)
+componentes_999 = caras_pca_999.fit_transform(imagenes)
+
+# Al graficar, notamos una representación más fiel, aunque con un costo computacional más alto
+```
+
+Las principales conclusiones son que con solo seis componentes puedes capturar el 50% de la información, utilizando cuarenta y cuatro componentes puedes capturar hasta el 80%, y si deseas casi el 100% de precisión, necesitas la mayoría de las imágenes como componentes. Con PCA, no solo puedes identificar patrones y rasgos clave en tus datos, sino que también mejoras la eficiencia del procesamiento, reduciendo la dimensionalidad de tus conjuntos de datos de manera efectiva.
+
+Te animo a seguir explorando y experimentando con PCA y otras técnicas de reducción de dimensionalidad, ya que estas herramientas son fundamentales para el análisis de datos a gran escala y la comprensión de patrones complejos.
+
+## Reducción de Dimensiones con Descomposición de Matrices
+
+La **reducción de dimensiones con descomposición de matrices** es una técnica fundamental en procesamiento de imágenes y aprendizaje automático. Aquí te explico brevemente cómo funciona, y luego te muestro un ejemplo práctico con código en Python utilizando **PCA (Análisis de Componentes Principales)**, que es uno de los métodos más usados y se basa en **descomposición en valores singulares (SVD)**.
+
+### 🔎 ¿Qué es la Reducción de Dimensiones con Descomposición de Matrices?
+
+**Objetivo:** Transformar datos de alta dimensión (por ejemplo, una imagen de 1024x1024 píxeles) en una representación de menor dimensión que conserve la mayor parte de la información relevante.
+
+### 🔧 Técnicas comunes:
+
+| Método               | Tipo de descomposición                     | Utilidad                                               |
+| -------------------- | ------------------------------------------ | ------------------------------------------------------ |
+| **PCA**              | Descomposición en valores singulares (SVD) | Análisis lineal, reducción de ruido                    |
+| **SVD directamente** | SVD pura: `A = UΣVᵀ`                       | Compresión y reconstrucción                            |
+| **NMF**              | Factorización no negativa                  | Interpretabilidad, imágenes con sólo valores positivos |
+| **LDA**              | Descomposición basada en clases            | Reducción supervisada para clasificación               |
+
+### 📷 Ejemplo: Reducción de Dimensiones de una Imagen con PCA
+
+### Paso 1: Cargar imagen y convertirla a escala de grises
+
+```python
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.decomposition import PCA
+from skimage.color import rgb2gray
+from skimage.io import imread
+
+# Cargar imagen y convertirla a escala de grises
+img = imread('https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/600x600_black_and_white_mandelbrot_set.png/512px-600x600_black_and_white_mandelbrot_set.png')
+gray_img = rgb2gray(img)
+
+plt.imshow(gray_img, cmap='gray')
+plt.title('Imagen Original')
+plt.axis('off')
+plt.show()
+```
+
+### Paso 2: Aplicar PCA para reducción de dimensiones
+
+```python
+# Aplicamos PCA fila por fila (columnas son las características)
+pca = PCA(n_components=50)  # Elige cuántas componentes principales conservar
+img_transformed = pca.fit_transform(gray_img)
+img_reconstructed = pca.inverse_transform(img_transformed)
+
+plt.imshow(img_reconstructed, cmap='gray')
+plt.title('Imagen Reconstruida con PCA (50 componentes)')
+plt.axis('off')
+plt.show()
+```
+
+### 📉 Comparación visual
+
+* **Imagen original**: contiene toda la información (512x512 píxeles)
+* **Imagen PCA (50 componentes)**: comprimida y reconstruida
+* Puedes experimentar con `n_components=10`, `20`, `100`, etc.
+
+### ✅ Beneficios
+
+* **Reducción de almacenamiento**: Ideal para compresión de imágenes.
+* **Filtrado de ruido**: PCA tiende a conservar la señal fuerte y reducir el ruido.
+* **Velocidad**: Con datos más pequeños, los modelos aprenden más rápido.
+
+### Resumen
+
+#### ¿Por qué es importante la descomposición de matrices en el aprendizaje automático?
+
+En el fascinante mundo del aprendizaje automático, la descomposición de matrices surge como una técnica esencial para la reducción de dimensiones. Este método no solo optimiza los modelos al disminuir las dimensiones de un conjunto de datos, sino que también ofrece ventajas significativas en el contexto de la computación. ¿Quieres saber por qué esta técnica es vital? Vamos a explorarlo.
+
+#### ¿Cómo beneficia la reducción de dimensiones en el procesamiento de datos?
+
+La reducción de dimensiones a través de la descomposición de matrices permite manejar grandes conjuntos de datos con eficacia. Este enfoque ayuda a:
+
+- **Reducir tiempos computacionales**: Al trabajar con menos dimensiones, los resultados se obtienen más rápido, lo que es crucial para modelos que manejan grandes volúmenes de datos.
+
+- **Mejorar la precisión del modelo**: Al eliminar el ruido y los datos redundantes, el modelo puede centrarse en las características más relevantes.
+
+- **Facilitar la visualización**: Con menos dimensiones, es más sencillo para los humanos interpretar y visualizar los datos.
+
+#### ¿Qué técnicas existen para la descomposición de matrices?
+
+Existen varias técnicas de descomposición que son ampliamente utilizadas en diversas aplicaciones de aprendizaje automático:
+
+1. **Descomposición en Valores Singulares (SVD)**: Analiza y simplifica matrices complejas, lo cual es especialmente útil en la compresión de datos y en el reconocimiento de patrones.
+
+2. **Descomposición QR**: Utilizada principalmente para resolver sistemas de ecuaciones lineales, es una herramienta clave para la regresión lineal.
+
+3. **Descomposición LU**: Permite descomponer una matriz en matrices triangulares, facilitando el cálculo de determinantes y la realización de operaciones inversas.
+
+#### ¿Cuáles son los siguientes pasos en tu aprendizaje?
+
+Ahora que entiendes la relevancia de la descomposición de matrices, es el momento de seguir avanzando. Te recomiendo profundizar en cursos de Maximum Learning o Deep Learning disponibles en plataformas educativas como Platzi. Estos cursos te ayudarán a aplicar estos conceptos de manera práctica y avanzada, mejorando aún más tus competencias.
+
+No olvides realizar los exámenes para obtener la certificación y consolidar tu conocimiento. Además, compartir tu conocimiento puede ser beneficioso; utiliza códigos de referido, y si es posible, disfruta de las ventajas que te otorgan, como un mes gratis de suscripción, incentivando así a otros a unirse a esta comunidad de aprendizaje.
