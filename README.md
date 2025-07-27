@@ -185,10 +185,8 @@
 - [Curso Básico de Cálculo Diferencial para Data Science e Inteligencia Artificial](CursoBasicodeCalculoDiferencialparaDataScienceeInteligenciaArtificial)
 - [Curso de Estadística Inferencial para Data Science e Inteligencia Artificial](CursodeEstadisticaInferencialparaDataScienceeInteligenciaArtificial)
 - [Curso de Fundamentos de Álgebra Lineal con Python](CursodeFundamentosdeAlgebraLinealconPython)
-
-Curso de Álgebra Lineal Aplicada para Machine Learning
-
-Curso de Regresión Lineal con Python y scikit-learn
+- [Curso de Álgebra Lineal Aplicada para Machine Learning](CursodeAlgebraLinealAplicadaparaMachineLearning)
+- [Curso de Regresión Lineal con Python y scikit-learn](CursodeRegresionLinealconPythonyscikit-learn)
 
 Curso de Regresión Logística con Python y scikit-learn
 
