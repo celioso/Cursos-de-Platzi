@@ -154,3 +154,87 @@ Con esta base ya podemos:
 2. Crear un modelo de regresión lineal con `scikit-learn`.
 3. Entrenar el modelo.
 4. Hacer predicciones y evaluar el desempeño.
+
+## Entrenando un modelo de regresión lineal con scikit-learn
+
+Entrenar un modelo de regresión lineal con **Scikit-learn** es sencillo. A continuación te muestro un ejemplo completo, paso a paso, con explicaciones:
+
+### ✅ 1. Importar las librerías necesarias
+
+```python
+import numpy as np
+import pandas as pd
+from sklearn.linear_model import LinearRegression
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import mean_squared_error, r2_score
+```
+
+### ✅ 2. Crear o cargar los datos
+
+Aquí vamos a crear datos sintéticos como ejemplo:
+
+```python
+# Datos de ejemplo (relación lineal con algo de ruido)
+np.random.seed(0)
+X = 2 * np.random.rand(100, 1)
+y = 4 + 3 * X + np.random.randn(100, 1)
+```
+
+### ✅ 3. Dividir en entrenamiento y prueba
+
+```python
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+```
+
+### ✅ 4. Entrenar el modelo
+
+```python
+model = LinearRegression()
+model.fit(X_train, y_train)
+```
+
+### ✅ 5. Ver los coeficientes del modelo
+
+```python
+print(f"Intercepto: {model.intercept_}")
+print(f"Coeficientes: {model.coef_}")
+```
+
+### ✅ 6. Realizar predicciones
+
+```python
+y_pred = model.predict(X_test)
+```
+
+### ✅ 7. Evaluar el modelo
+
+```python
+print(f"Error cuadrático medio (MSE): {mean_squared_error(y_test, y_pred):.2f}")
+print(f"Coeficiente de determinación (R²): {r2_score(y_test, y_pred):.2f}")
+```
+
+### ✅ 8. (Opcional) Visualizar resultados
+
+```python
+import matplotlib.pyplot as plt
+
+plt.scatter(X_test, y_test, color='blue', label='Datos reales')
+plt.plot(X_test, y_pred, color='red', linewidth=2, label='Regresión lineal')
+plt.xlabel('X')
+plt.ylabel('y')
+plt.legend()
+plt.title('Modelo de Regresión Lineal')
+plt.show()
+```
+
+**Lecturas recomendadas**
+
+[scikit-learn: machine learning in Python — scikit-learn 1.0.2 documentation](https://scikit-learn.org/stable/)
+
+[sklearn.linear_model.LinearRegression — scikit-learn 1.0.2 documentation](https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LinearRegression.html)
+
+[sklearn.preprocessing.StandardScaler — scikit-learn 1.0.2 documentation](https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.StandardScaler.html)
+
+[Primera_regresión_lineal.ipynb - Google Drive](https://drive.google.com/file/d/1wh1T5AE1AgmgDcTaiziaeKYSuovVFQPk/view?usp=sharing)
+
+[Primera_regresión_lineal_Template.ipynb - Google Drive](https://drive.google.com/file/d/1NkcOQg-BTEAD0ttGDcZcAZwYpD0jXPJd/view?usp=sharing)
