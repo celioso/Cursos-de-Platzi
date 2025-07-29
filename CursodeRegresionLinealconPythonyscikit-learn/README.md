@@ -842,3 +842,228 @@ print('MSE:', mean_squared_error(y_test, y_pred))
 [Proyecto_Final.ipynb - Google Drive](https://drive.google.com/file/d/1UDV8y9eyZuKEDSIRKY7w93Bdo7EBqz5Z/view?usp=sharing)
 
 [Proyecto_Final_Template.ipynb - Google Drive](https://drive.google.com/file/d/1PrSPTAVz6lXKAqNcTlUvWc_de8TRILOx/view?usp=sharing)
+
+## Evaluando el modelo
+
+¡Perfecto! Una vez entrenado el modelo de regresión lineal, es fundamental **evaluar su rendimiento** para saber qué tan bien está prediciendo los gastos médicos.
+
+Aquí tienes una guía completa para evaluar el modelo:
+
+### ✅ 1. Importar métricas de evaluación
+
+```python
+from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
+import numpy as np
+```
+
+### ✅ 2. Calcular métricas de desempeño
+
+```python
+# Predicciones
+y_pred = model.predict(X_test)
+
+# R² (coeficiente de determinación)
+r2 = r2_score(y_test, y_pred)
+
+# Error absoluto medio
+mae = mean_absolute_error(y_test, y_pred)
+
+# Error cuadrático medio
+mse = mean_squared_error(y_test, y_pred)
+
+# Raíz del error cuadrático medio
+rmse = np.sqrt(mse)
+
+# Mostrar resultados
+print(f'R²: {r2:.4f}')
+print(f'MAE: {mae:.2f}')
+print(f'MSE: {mse:.2f}')
+print(f'RMSE: {rmse:.2f}')
+```
+
+### ✅ 3. Interpretar resultados
+
+| Métrica  | Interpretación                                                                                                                                    |
+| -------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **R²**   | Mide qué porcentaje de la variabilidad en los gastos se explica por las variables independientes. 1 es perfecto, 0 significa que no explica nada. |
+| **MAE**  | Promedio del error absoluto entre las predicciones y los valores reales.                                                                          |
+| **MSE**  | Promedio de los errores al cuadrado. Penaliza más los errores grandes.                                                                            |
+| **RMSE** | Raíz cuadrada del MSE. Más interpretable que el MSE, está en las mismas unidades que `charges`.                                                   |
+
+### ✅ 4. (Opcional) Gráfico de comparación
+
+```python
+import matplotlib.pyplot as plt
+
+plt.scatter(y_test, y_pred, alpha=0.5)
+plt.xlabel('Valores reales (charges)')
+plt.ylabel('Predicciones (charges)')
+plt.title('Predicciones vs Valores reales')
+plt.plot([y_test.min(), y_test.max()], [y_test.min(), y_test.max()], 'r--')  # Línea ideal
+plt.grid()
+plt.show()
+```
+
+Si deseas mejorar la precisión del modelo, podrías probar con **modelos más avanzados** como:
+
+* Ridge, Lasso (regresión regularizada)
+* Random Forest o Gradient Boosting
+* XGBoost
+
+**Archivos de la clase**
+
+[proyecto-final-template.ipynb](https://static.platzi.com/media/public/uploads/proyecto_final_template_ae2e550d-3eb9-46b0-83f7-9d83ede0a8e7.ipynb)
+[proyecto-final.ipynb](https://static.platzi.com/media/public/uploads/proyecto_final_ca80d638-ee4b-42ae-9ddf-6881f2c7a43a.ipynb)
+
+**Lecturas recomendadas**
+
+[3.3. Metrics and scoring: quantifying the quality of predictions — scikit-learn 1.0.2 documentation](https://scikit-learn.org/stable/modules/model_evaluation.html)
+
+[Proyecto_Final_Template.ipynb - Google Drive](https://drive.google.com/file/d/1PrSPTAVz6lXKAqNcTlUvWc_de8TRILOx/view?usp=sharing)
+
+[Proyecto_Final.ipynb - Google Drive](https://drive.google.com/file/d/1UDV8y9eyZuKEDSIRKY7w93Bdo7EBqz5Z/view?usp=sharing)
+
+## Mejorando el modelo
+
+Para **mejorar tu modelo de regresión lineal para predecir los gastos médicos de pacientes**, puedes aplicar varias estrategias. Aquí te dejo un flujo de trabajo guiado, con ejemplos en código, asumiendo que ya tienes los datos listos (`X_train`, `X_test`, `y_train`, `y_test`):
+
+### 🧠 1. **Agregar características polinómicas**
+
+Puede ayudar si la relación entre variables no es lineal:
+
+```python
+from sklearn.preprocessing import PolynomialFeatures
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import r2_score
+
+# Grado 2 (cuadrático)
+poly = PolynomialFeatures(degree=2)
+X_poly = poly.fit_transform(X_train)
+X_test_poly = poly.transform(X_test)
+
+model_poly = LinearRegression()
+model_poly.fit(X_poly, y_train)
+
+y_pred_poly = model_poly.predict(X_test_poly)
+print("R² (polinómica):", r2_score(y_test, y_pred_poly).round(4))
+```
+
+### 🔄 2. **Escalar las variables (si no lo has hecho)**
+
+Muy útil si combinas variables con diferentes escalas (por ejemplo, edad y número de hijos):
+
+```python
+from sklearn.preprocessing import StandardScaler
+
+scaler = StandardScaler()
+X_train_scaled = scaler.fit_transform(X_train)
+X_test_scaled = scaler.transform(X_test)
+
+model = LinearRegression()
+model.fit(X_train_scaled, y_train)
+y_pred_scaled = model.predict(X_test_scaled)
+print("R² (escalado):", r2_score(y_test, y_pred_scaled).round(4))
+```
+
+### 🔥 3. **Probar modelos más potentes (como regularización)**
+
+Para controlar el sobreajuste o mejorar con variables no relevantes:
+
+#### a) **Ridge Regression** (L2)
+
+```python
+from sklearn.linear_model import Ridge
+
+ridge = Ridge(alpha=1.0)
+ridge.fit(X_train_scaled, y_train)
+y_pred_ridge = ridge.predict(X_test_scaled)
+print("R² Ridge:", r2_score(y_test, y_pred_ridge).round(4))
+```
+
+#### b) **Lasso Regression** (L1 - hace selección de variables)
+
+```python
+from sklearn.linear_model import Lasso
+
+lasso = Lasso(alpha=0.01)
+lasso.fit(X_train_scaled, y_train)
+y_pred_lasso = lasso.predict(X_test_scaled)
+print("R² Lasso:", r2_score(y_test, y_pred_lasso).round(4))
+```
+
+### 📊 4. **Ingeniería de características**
+
+* Convertir variables categóricas a dummies con `pd.get_dummies`
+* Probar interacciones entre variables
+* Agregar transformaciones no lineales (log, raíz, etc.)
+
+Ejemplo:
+
+```python
+import numpy as np
+X_train["bmi_log"] = np.log(X_train["bmi"])
+X_test["bmi_log"] = np.log(X_test["bmi"])
+```
+
+### 🧪 5. **Validación cruzada para comparar**
+
+Te permite evaluar cuál modelo generaliza mejor:
+
+```python
+from sklearn.model_selection import cross_val_score
+
+scores = cross_val_score(model, X_train_scaled, y_train, cv=5, scoring='r2')
+print("R² promedio (CV):", scores.mean().round(4))
+```
+
+## ¿Qué hay más allá de la linealidad?
+
+Más allá de la **linealidad** en los modelos de regresión, existen métodos que permiten capturar **relaciones más complejas y no lineales** entre las variables. Aquí te explico las principales alternativas y conceptos clave:
+
+### 🔹 1. **Regresión Polinómica**
+
+* Transforma las variables originales en potencias (cuadrado, cubo, etc.).
+* Ejemplo: en vez de ajustar una línea recta, ajusta una **curva**.
+* Útil cuando la relación entre X e Y es curvilínea.
+
+```python
+from sklearn.preprocessing import PolynomialFeatures
+from sklearn.linear_model import LinearRegression
+
+poly = PolynomialFeatures(degree=2)
+X_poly = poly.fit_transform(X)
+model = LinearRegression().fit(X_poly, y)
+```
+
+### 🔹 2. **Modelos No Paramétricos**
+
+* **Árboles de Decisión**, **Random Forest**, **Gradient Boosting** y **XGBoost**: modelan relaciones complejas sin suponer una forma funcional explícita.
+* Flexibles, pero pueden sobreajustar si no se regulan.
+
+### 🔹 3. **Regresión con Splines**
+
+* Divide el dominio de la variable en tramos y ajusta funciones diferentes (por ejemplo, polinomios) en cada tramo.
+* Es suave y flexible para capturar formas no lineales.
+
+### 🔹 4. **Modelos Basados en Kernels**
+
+* **SVM con kernel RBF**, **Kernel Ridge Regression**, entre otros.
+* Usan transformaciones no lineales implícitas para separar/predicir datos en espacios de mayor dimensión.
+
+### 🔹 5. **Redes Neuronales**
+
+* Capturan relaciones altamente no lineales.
+* Útiles con muchos datos y relaciones complejas.
+* Requieren más recursos y tiempo de entrenamiento.
+
+### 🔹 6. **Transformaciones de Variables**
+
+* Aplicar funciones como logaritmos, raíces, exponenciales a las variables para linealizar relaciones no lineales.
+
+### 📌 En resumen:
+
+Cuando la relación entre variables no es lineal, puedes:
+
+* Usar **regresión polinómica**.
+* Aplicar **transformaciones**.
+* O directamente cambiar a **modelos más flexibles**, como árboles o redes neuronales.
