@@ -1,3 +1,4 @@
 pandas>=2.3.1
 seaborn>=0.13.2
 StandardScaler>=0.5
+kagglehub>=0.3.12
