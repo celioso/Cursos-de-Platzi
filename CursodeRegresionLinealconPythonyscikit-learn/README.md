@@ -1,4 +1,4 @@
-# Curso de Regresión Lineal con Python y scikit-learn
+U7# Curso de Regresión Lineal con Python y scikit-learn
 
 ## Tu primera regresión lineal con scikit-learn
 
@@ -1067,3 +1067,6 @@ Cuando la relación entre variables no es lineal, puedes:
 * Usar **regresión polinómica**.
 * Aplicar **transformaciones**.
 * O directamente cambiar a **modelos más flexibles**, como árboles o redes neuronales.
+
+
+Err
