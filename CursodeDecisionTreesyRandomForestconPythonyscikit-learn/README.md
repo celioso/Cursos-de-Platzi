@@ -772,3 +772,744 @@ plt.show()
 [decision_tree_random_forest_project_completed.ipynb - Google Drive](https://drive.google.com/file/d/1Ck8R2GXK_ZeW9oYRIdXgVhBqi3ibt_QJ/view?usp=sharing)
 
 [decision_tree_random_forest_project_template.ipynb - Google Drive](https://drive.google.com/file/d/1PFP6e4YfAI8nXq31kzRC8NquONJqLqeK/view?usp=sharing)
+
+## ¿Cómo evaluar un modelo de árbol de decisión?
+
+Evaluar un modelo de **árbol de decisión** implica analizar qué tan bien predice sobre datos nuevos. Aquí tienes los pasos más importantes para hacerlo:
+
+### ✅ **1. Dividir los datos**
+
+Antes de entrenar, debes separar tu dataset:
+
+```python
+from sklearn.model_selection import train_test_split
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+```
+
+### ✅ **2. Entrenar el modelo**
+
+```python
+from sklearn.tree import DecisionTreeClassifier
+
+modelo = DecisionTreeClassifier(random_state=42)
+modelo.fit(X_train, y_train)
+```
+
+### ✅ **3. Realizar predicciones**
+
+```python
+y_pred = modelo.predict(X_test)
+```
+
+### ✅ **4. Evaluar el rendimiento**
+
+Usa métricas de clasificación:
+
+```python
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
+
+print("Accuracy:", accuracy_score(y_test, y_pred))
+print("\nMatriz de confusión:\n", confusion_matrix(y_test, y_pred))
+print("\nReporte de clasificación:\n", classification_report(y_test, y_pred))
+```
+
+### 🔍 ¿Qué significan estas métricas?
+
+| Métrica                   | Significado                                              |
+| ------------------------- | -------------------------------------------------------- |
+| **Accuracy**              | Porcentaje de predicciones correctas                     |
+| **Precisión (precision)** | Qué tan precisas son las predicciones positivas          |
+| **Recall (sensibilidad)** | Qué tanto recupera el modelo de las clases verdaderas    |
+| **F1-score**              | Balance entre precisión y recall                         |
+| **Confusion Matrix**      | Muestra predicciones correctas vs. incorrectas por clase |
+
+### ✅ **5. Importancia de variables (opcional)**
+
+Para saber qué variables son más útiles:
+
+```python
+import pandas as pd
+
+importancia = modelo.feature_importances_
+print(pd.DataFrame({'Feature': feature_names, 'Importancia': importancia}))
+```
+
+### ✅ **6. Validación cruzada (opcional)**
+
+Para tener una mejor idea del rendimiento general:
+
+```python
+from sklearn.model_selection import cross_val_score
+
+scores = cross_val_score(modelo, X, y, cv=5)
+print("Accuracy promedio:", scores.mean())
+```
+
+## Evaluación de resultados del modelo de árbol de decisión
+
+La **evaluación de resultados** de un modelo de árbol de decisión se realiza para determinar qué tan bien generaliza a nuevos datos. A continuación te explico las principales herramientas y cómo interpretarlas:
+
+### ✅ 1. **Predicción del modelo**
+
+Después de entrenar el modelo:
+
+```python
+y_pred = modelo.predict(X_test)
+```
+
+### ✅ 2. **Métricas comunes de evaluación**
+
+### 📊 a) **Accuracy (exactitud)**
+
+Mide el porcentaje de predicciones correctas.
+
+```python
+from sklearn.metrics import accuracy_score
+print("Accuracy:", accuracy_score(y_test, y_pred))
+```
+
+> 🧠 Útil si las clases están balanceadas. No confiable si una clase domina.
+
+### 📉 b) **Matriz de confusión**
+
+Muestra cuántas predicciones fueron correctas o incorrectas por clase.
+
+```python
+from sklearn.metrics import confusion_matrix
+print(confusion_matrix(y_test, y_pred))
+```
+
+> 📌 Cada fila representa la clase real, cada columna la clase predicha.
+
+### 📄 c) **Reporte de clasificación**
+
+Incluye precisión, recall y F1-score por clase:
+
+```python
+from sklearn.metrics import classification_report
+print(classification_report(y_test, y_pred))
+```
+
+* **Precision:** % de predicciones positivas correctas.
+* **Recall (sensibilidad):** % de positivos reales bien clasificados.
+* **F1-score:** Promedio armónico de precisión y recall.
+
+### 📈 d) **Curva ROC y AUC (para clasificación binaria)**
+
+Mide rendimiento del modelo en distintas probabilidades de corte.
+
+```python
+from sklearn.metrics import roc_curve, roc_auc_score
+
+y_proba = modelo.predict_proba(X_test)[:, 1]  # Probabilidad clase positiva
+fpr, tpr, _ = roc_curve(y_test, y_proba)
+auc = roc_auc_score(y_test, y_proba)
+print("AUC:", auc)
+```
+
+> ⚠️ Solo aplicable para problemas binarios (2 clases).
+
+### ✅ 3. **Evaluación con validación cruzada (opcional)**
+
+```python
+from sklearn.model_selection import cross_val_score
+
+scores = cross_val_score(modelo, X, y, cv=5)
+print("Accuracy promedio:", scores.mean())
+```
+
+### ✅ 4. **Importancia de características**
+
+Permite interpretar qué variables influyeron más:
+
+```python
+import pandas as pd
+
+pd.DataFrame({
+    'Característica': feature_names,
+    'Importancia': modelo.feature_importances_
+}).sort_values(by='Importancia', ascending=False)
+```
+
+**Lecturas recomendadas**
+
+[sklearn.metrics.accuracy_score — scikit-learn 1.2.1 documentation](https://scikit-learn.org/stable/modules/generated/sklearn.metrics.accuracy_score.html)
+
+[decision_tree_random_forest_project_completed.ipynb - Google Drive](https://drive.google.com/file/d/1Ck8R2GXK_ZeW9oYRIdXgVhBqi3ibt_QJ/view?usp=sharing)
+
+[decision_tree_random_forest_project_template.ipynb - Google Drive](https://drive.google.com/file/d/1PFP6e4YfAI8nXq31kzRC8NquONJqLqeK/view?usp=sharing)
+
+## ¿Qué son los random forest o bosques aleatorios?
+
+Los **Random Forest** o **Bosques Aleatorios** son un **algoritmo de aprendizaje automático supervisado** que se utiliza tanto para **clasificación** como para **regresión**.
+
+### 🌲 ¿Qué son?
+
+Un **Random Forest** es un **conjunto (ensamble)** de muchos **árboles de decisión** que trabajan juntos. En lugar de confiar en un solo árbol de decisión, este método construye varios árboles y **combina sus resultados** para obtener una predicción más precisa y robusta.
+
+### 🔍 ¿Cómo funciona?
+
+1. **Se crean muchos árboles de decisión**, cada uno entrenado con una **muestra aleatoria del dataset** (con reemplazo, técnica llamada *bootstrap*).
+2. Para cada árbol, al momento de decidir una división, **solo se consideran aleatoriamente un subconjunto de las variables**.
+3. Para clasificación: se toma el **voto mayoritario** de todos los árboles.
+
+   * Para regresión: se toma el **promedio** de las predicciones de todos los árboles.
+
+### 🎯 Ventajas:
+
+* ✅ Reduce el **sobreajuste (overfitting)** de un solo árbol.
+* ✅ Es más **preciso y estable** que un árbol de decisión individual.
+* ✅ Funciona bien incluso sin ajustes finos de hiperparámetros.
+* ✅ Puede manejar **datos faltantes y variables categóricas**.
+
+### ⚠️ Desventajas:
+
+* ❌ Es más lento y consume más memoria que un solo árbol.
+* ❌ Difícil de interpretar (a diferencia de un solo árbol de decisión).
+
+### 📊 Ejemplo de uso:
+
+Si estás clasificando tipos de vehículos (eléctrico, híbrido, gasolina) a partir de datos como peso, potencia, y consumo, un modelo **Random Forest** puede ofrecer muy buena precisión al combinar decisiones de múltiples árboles.
+
+## Tu primer random forest con scikit-learn
+
+¡Perfecto! Vamos a crear tu **primer Random Forest con `scikit-learn`**, paso a paso. Usaremos un dataset clásico: **Iris**, que es ideal para clasificación.
+
+### ✅ 1. Importar librerías necesarias
+
+```python
+from sklearn.datasets import load_iris
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+```
+
+### ✅ 2. Cargar el dataset y dividir en entrenamiento y prueba
+
+```python
+# Cargar el dataset Iris
+iris = load_iris()
+X = iris.data
+y = iris.target
+
+# Dividir en entrenamiento (80%) y prueba (20%)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+```
+
+### ✅ 3. Crear y entrenar el modelo Random Forest
+
+```python
+# Crear el modelo
+model = RandomForestClassifier(n_estimators=100, random_state=42)
+
+# Entrenar el modelo
+model.fit(X_train, y_train)
+```
+
+### ✅ 4. Realizar predicciones y evaluar
+
+```python
+# Predicciones
+y_pred = model.predict(X_test)
+
+# Métricas
+print("Accuracy:", accuracy_score(y_test, y_pred))
+print("\nReporte de Clasificación:\n", classification_report(y_test, y_pred))
+print("\nMatriz de Confusión:\n", confusion_matrix(y_test, y_pred))
+```
+
+### ✅ 5. Visualizar la importancia de las características
+
+```python
+# Importancia de las variables
+importances = model.feature_importances_
+features = iris.feature_names
+
+# Mostrar con Seaborn
+sns.barplot(x=importances, y=features, palette="viridis")
+plt.title("Importancia de características en Random Forest")
+plt.xlabel("Importancia")
+plt.ylabel("Característica")
+plt.show()
+```
+
+### ✅ Resultado Esperado:
+
+* Una **alta precisión** (accuracy > 90%) en este dataset.
+* Gráfico con las variables más relevantes para el modelo.
+* Matriz de confusión para visualizar errores (falsos positivos/negativos).
+
+**Archivos de la clase**
+
+[primer-random-forest-completed.ipynb](https://static.platzi.com/media/public/uploads/primer_random_forest_completed_e98709b3-f62e-4b17-befb-02e3cdf7b810.ipynb)
+[primer-random-forest-template.ipynb](https://static.platzi.com/media/public/uploads/primer_random_forest_template_a4b4eae3-7fbe-49c5-9f32-66bb8aca4f38.ipynb)
+
+**Lecturas recomendadas**
+
+[pima-indians-diabetes.csv | Kaggle](https://www.kaggle.com/datasets/kumargh/pimaindiansdiabetescsv)
+
+[primer_random_forest_completed.ipynb - Google Drive](https://drive.google.com/file/d/19eaWQEU_9OH7Hy3VnQErGiRClUVLzNEK/view?usp=sharing)
+
+[primer_random_forest_template.ipynb - Google Drive](https://drive.google.com/file/d/1ksrGgYppmGM8U8uNErNKWM5pn5lP9sd1/view?usp=sharing)
+
+## Entrenamiento de tu primer modelo de random forest con scikit-learn
+
+¡Perfecto! Aquí tienes una guía clara y práctica para el **entrenamiento de tu primer modelo de Random Forest con `scikit-learn`** usando un dataset real:
+
+### 🔧 Paso 1: Importar librerías necesarias
+
+```python
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.datasets import load_iris
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import classification_report, accuracy_score, confusion_matrix
+import matplotlib.pyplot as plt
+import seaborn as sns
+```
+
+### 📥 Paso 2: Cargar y explorar los datos
+
+```python
+# Dataset clásico: Iris
+iris = load_iris()
+X = iris.data
+y = iris.target
+
+# Opcional: ver forma de los datos
+print("Shape X:", X.shape)
+print("Shape y:", y.shape)
+```
+
+### ✂️ Paso 3: Dividir en entrenamiento y prueba
+
+```python
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+```
+
+### 🌲 Paso 4: Crear y entrenar el modelo Random Forest
+
+```python
+rf_model = RandomForestClassifier(n_estimators=100, random_state=42)
+rf_model.fit(X_train, y_train)
+```
+
+### 📈 Paso 5: Realizar predicciones
+
+```python
+y_pred = rf_model.predict(X_test)
+```
+
+### ✅ Paso 6: Evaluar el modelo
+
+```python
+print("Accuracy:", accuracy_score(y_test, y_pred))
+print("\nClassification Report:\n", classification_report(y_test, y_pred))
+print("\nConfusion Matrix:\n", confusion_matrix(y_test, y_pred))
+```
+
+### 🔍 Paso 7: Visualizar importancia de características
+
+```python
+feature_importances = rf_model.feature_importances_
+feature_names = iris.feature_names
+
+sns.barplot(x=feature_importances, y=feature_names)
+plt.title("Importancia de las características")
+plt.xlabel("Importancia")
+plt.ylabel("Característica")
+plt.show()
+```
+
+### 🎉 Resultado:
+
+Con el dataset **Iris**, deberías obtener una precisión bastante alta (cerca o superior al 95%), y podrás ver qué variables fueron más importantes para la clasificación.
+
+**Lecturas recomendadas**
+
+[pima-indians-diabetes.csv | Kaggle](https://www.kaggle.com/datasets/kumargh/pimaindiansdiabetescsv)
+
+[primer_random_forest_completed.ipynb - Google Drive](https://drive.google.com/file/d/19eaWQEU_9OH7Hy3VnQErGiRClUVLzNEK/view?usp=sharing)
+
+[primer_random_forest_template.ipynb - Google Drive](https://drive.google.com/file/d/1ksrGgYppmGM8U8uNErNKWM5pn5lP9sd1/view?usp=sharing)
+
+## Evaluación de tu primer modelo de random forest con scikit-learn
+
+¡Perfecto! Una vez entrenado tu primer modelo de **Random Forest** con `scikit-learn`, es fundamental **evaluarlo correctamente** para entender su rendimiento. Aquí te explico cómo hacerlo paso a paso:
+
+### ✅ **1. Predicción en datos de prueba**
+
+```python
+y_pred = rf_model.predict(X_test)
+```
+
+También puedes obtener las **probabilidades de clase** si lo necesitas:
+
+```python
+y_proba = rf_model.predict_proba(X_test)
+```
+
+### 📊 **2. Métricas de evaluación**
+
+#### a. **Exactitud (Accuracy)**
+
+```python
+from sklearn.metrics import accuracy_score
+print("Accuracy:", accuracy_score(y_test, y_pred))
+```
+
+#### b. **Reporte de Clasificación (precision, recall, f1-score)**
+
+```python
+from sklearn.metrics import classification_report
+print(classification_report(y_test, y_pred, target_names=iris.target_names))
+```
+
+#### c. **Matriz de confusión**
+
+```python
+from sklearn.metrics import confusion_matrix
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+cm = confusion_matrix(y_test, y_pred)
+
+sns.heatmap(cm, annot=True, fmt='d', cmap='Blues',
+            xticklabels=iris.target_names,
+            yticklabels=iris.target_names)
+plt.xlabel('Predicción')
+plt.ylabel('Real')
+plt.title('Matriz de Confusión')
+plt.show()
+```
+
+### 🧠 **3. Importancia de características**
+
+Para entender qué variables son más relevantes:
+
+```python
+import pandas as pd
+
+importances = pd.Series(rf_model.feature_importances_, index=iris.feature_names)
+importances.sort_values(ascending=True).plot(kind='barh')
+plt.title('Importancia de las características')
+plt.show()
+```
+
+### 🧪 **4. Validación cruzada (opcional)**
+
+Para evaluar el modelo de forma más robusta:
+
+```python
+from sklearn.model_selection import cross_val_score
+
+scores = cross_val_score(rf_model, X, y, cv=5)
+print("Accuracy promedio con CV:", scores.mean())
+```
+
+### 🔍 Resultado esperado
+
+Con un dataset como el **Iris**, podrías obtener:
+
+* Accuracy > 0.95
+* Una matriz de confusión clara
+* Las características más importantes (ej. `petal length` o `petal width`)
+
+## ¿Cómo funcionan los random forest?
+
+Los **Random Forest** (o **bosques aleatorios**) son un algoritmo de **aprendizaje automático supervisado** basado en **árboles de decisión**, pero mejorado gracias a la combinación de muchos árboles. Su objetivo es hacer predicciones más **precisas**, **robustas** y **menos propensas al sobreajuste** que un único árbol.
+
+### 🌳 ¿Cómo funciona un Random Forest?
+
+1. **Creación de múltiples árboles de decisión (forest):**
+
+   * En lugar de construir un solo árbol, el Random Forest construye **muchos árboles** (por ejemplo, 100 o 500).
+   * Cada árbol se entrena con una **muestra aleatoria** del conjunto de datos original (con reemplazo, es decir, **bootstrap**).
+
+2. **Selección aleatoria de características:**
+
+   * Cuando un árbol va a hacer una división en un nodo, **no mira todas las características**, sino que selecciona un subconjunto aleatorio.
+   * Esto aumenta la **diversidad** entre los árboles y mejora la generalización.
+
+3. **Votación o promedio de predicciones:**
+
+   * Para **clasificación**, cada árbol "vota" por una clase, y gana la clase más votada.
+   * Para **regresión**, se promedia la predicción de todos los árboles.
+
+### 🎯 Ejemplo simple (clasificación)
+
+Supongamos que quieres predecir si un cliente comprará o no un producto.
+
+* Entrenas 100 árboles, cada uno con diferentes subconjuntos de datos y características.
+* Un cliente nuevo llega. Cada árbol da su predicción (sí o no).
+* El **resultado final** será el que tenga **más votos**.
+
+### ⚖️ Ventajas del Random Forest
+
+✅ Reduce el **sobreajuste** comparado con un solo árbol
+✅ Funciona bien en la mayoría de los problemas (clasificación y regresión)
+✅ Puede manejar **datos faltantes** y **variables categóricas o numéricas**
+✅ Da una **medida de importancia** de las variables (`feature_importances_`)
+
+### ⚠️ Desventajas
+
+❌ Menos interpretables que un solo árbol
+❌ Consumen más recursos (RAM/tiempo)
+❌ El entrenamiento puede ser más lento con muchos árboles o muchos datos
+
+### 🔧 Parámetros clave en Scikit-learn
+
+```python
+from sklearn.ensemble import RandomForestClassifier
+
+modelo = RandomForestClassifier(
+    n_estimators=100,       # número de árboles
+    max_depth=None,         # profundidad máxima del árbol
+    max_features='sqrt',    # número de features aleatorios por split
+    bootstrap=True,         # si usar muestreo con reemplazo
+    random_state=42
+)
+```
+
+## ¿Cuándo utilizar random forest?
+
+Puedes utilizar **Random Forest** cuando necesitas un modelo robusto y preciso para **clasificación** o **regresión**, especialmente en situaciones donde:
+
+### ✅ **Cuándo usar Random Forest**
+
+#### 1. **Tienes muchos datos y no sabes qué modelo usar**
+
+* Random Forest es un buen modelo **por defecto**: funciona bien sin necesidad de demasiada configuración.
+* Puede manejar **datos con muchas características** y detectar cuáles son realmente importantes.
+
+#### 2. **Tus datos tienen ruido o relaciones no lineales**
+
+* Random Forest no asume relaciones lineales entre variables.
+* Es resistente al **sobreajuste**, especialmente comparado con árboles de decisión individuales.
+
+#### 3. **Quisieras una estimación de la importancia de las variables**
+
+* Random Forest te da una medida clara de la **importancia de cada feature**, útil para interpretar el modelo o reducir la dimensionalidad.
+
+#### 4. **No te importa que el modelo sea poco interpretable**
+
+* A diferencia de una regresión lineal o un solo árbol, el modelo es como una "caja negra".
+* Pero si **la precisión es más importante que la explicación**, es una buena opción.
+
+#### 5. **Tienes datos faltantes o mezcla de datos categóricos y numéricos**
+
+* Random Forest puede tolerar **cierto nivel de datos faltantes**.
+* Maneja datos categóricos codificados (por ejemplo, con One-Hot Encoding) sin problemas.
+
+#### 6. **Tu problema es de clasificación multiclase o multietiqueta**
+
+* Funciona bien en escenarios donde hay más de dos clases o múltiples etiquetas.
+
+### ❌ **Cuándo evitar Random Forest**
+
+* Cuando necesitas un modelo **muy interpretable** (por ejemplo, en medicina o leyes).
+* Si tienes **poco poder de cómputo**: entrenar muchos árboles puede ser costoso.
+* Si tu conjunto de datos es **muy pequeño**, un árbol de decisión o un modelo más simple puede ser mejor.
+
+### 🧠 Ejemplos de uso en la vida real
+
+* **Banca**: detectar fraudes o evaluar el riesgo crediticio.
+* **Medicina**: predecir enfermedades a partir de datos clínicos.
+* **Marketing**: segmentar clientes o predecir abandono.
+* **Finanzas**: predecir el precio de una acción.
+* **Ingeniería**: detectar fallos en sensores o equipos.
+
+**Lecturas recomendadas**
+
+[Random Forest (Bosque Aleatorio): combinando árboles - IArtificial.net](https://www.iartificial.net/random-forest-bosque-aleatorio/)
+
+## Entrenamiento de modelo de clasificación de carros con random forest
+
+Aquí tienes un ejemplo completo de **entrenamiento de un modelo de clasificación de carros usando Random Forest en Python con `scikit-learn`**, desde los datos hasta la predicción:
+
+### ✅ Supongamos que tienes un dataset con las siguientes columnas:
+
+* `marca`, `anio`, `cilindraje`, `tipo_combustible`, `precio_categoria` (donde esta última es la variable **objetivo**: "alto", "medio", "bajo")
+
+### 📦 1. Importar librerías
+
+```python
+import pandas as pd
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import LabelEncoder
+from sklearn.metrics import classification_report, confusion_matrix
+```
+
+### 📄 2. Datos de ejemplo
+
+```python
+# Datos simulados
+data = {
+    'marca': ['Toyota', 'Mazda', 'Renault', 'Chevrolet', 'Kia'],
+    'anio': [2015, 2018, 2020, 2017, 2016],
+    'cilindraje': [1.6, 2.0, 1.2, 1.4, 1.6],
+    'tipo_combustible': ['Gasolina', 'Gasolina', 'Gasolina', 'Diesel', 'Gasolina'],
+    'precio_categoria': ['medio', 'alto', 'bajo', 'medio', 'bajo']
+}
+df = pd.DataFrame(data)
+```
+
+### 🧹 3. Preprocesamiento
+
+```python
+# Codificación de variables categóricas
+le_marca = LabelEncoder()
+le_comb = LabelEncoder()
+le_target = LabelEncoder()
+
+df['marca'] = le_marca.fit_transform(df['marca'])
+df['tipo_combustible'] = le_comb.fit_transform(df['tipo_combustible'])
+df['precio_categoria'] = le_target.fit_transform(df['precio_categoria'])  # Etiquetas 0, 1, 2
+```
+
+### ✂️ 4. División en train/test
+
+```python
+X = df.drop('precio_categoria', axis=1)
+y = df['precio_categoria']
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25, random_state=42)
+```
+
+### 🌲 5. Entrenamiento del modelo Random Forest
+
+```python
+model = RandomForestClassifier(n_estimators=100, random_state=42)
+model.fit(X_train, y_train)
+```
+
+### 🧪 6. Evaluación del modelo
+
+```python
+y_pred = model.predict(X_test)
+
+print("Matriz de confusión:")
+print(confusion_matrix(y_test, y_pred))
+print("\nReporte de clasificación:")
+print(classification_report(y_test, y_pred, target_names=le_target.classes_))
+```
+
+### 🧠 7. Predecir nuevos autos
+
+```python
+nuevo_auto = pd.DataFrame({
+    'marca': le_marca.transform(['Toyota']),
+    'anio': [2022],
+    'cilindraje': [1.8],
+    'tipo_combustible': le_comb.transform(['Gasolina'])
+})
+
+pred = model.predict(nuevo_auto)
+print(f"Categoría de precio predicha: {le_target.inverse_transform(pred)[0]}")
+```
+
+**Archivos de la clase**
+
+[decision-tree-random-forest-project-completed.ipynb](https://static.platzi.com/media/public/uploads/decision_tree_random_forest_project_completed_562b6c49-de86-4fb3-9a11-cdc2f5c37678.ipynb)
+[decision-tree-random-forest-project-template.ipynb](https://static.platzi.com/media/public/uploads/decision_tree_random_forest_project_template_8dcf18db-e157-4d47-85a9-ef449f26de4c.ipynb)
+
+**Lecturas recomendadas**
+
+[sklearn.ensemble.RandomForestClassifier — scikit-learn 1.2.1 documentation](https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestClassifier.html)
+[decision_tree_random_forest_project_completed.ipynb - Google Drive](https://drive.google.com/file/d/1Ck8R2GXK_ZeW9oYRIdXgVhBqi3ibt_QJ/view?usp=sharing)
+[decision_tree_random_forest_project_template.ipynb - Google Drive](https://drive.google.com/file/d/1PFP6e4YfAI8nXq31kzRC8NquONJqLqeK/view?usp=sharing)
+
+## Evaluación de resultados del modelo de clasificación con random forest
+
+La **evaluación de resultados de un modelo de clasificación con Random Forest** en scikit-learn se realiza principalmente con métricas como:
+
+### ✅ 1. **Accuracy (exactitud)**
+
+Mide el porcentaje de predicciones correctas sobre el total.
+
+```python
+from sklearn.metrics import accuracy_score
+
+accuracy = accuracy_score(y_test, y_pred)
+print(f"Accuracy del modelo: {accuracy:.2f}")
+```
+
+### ✅ 2. **Matriz de confusión**
+
+Muestra cuántos ejemplos se clasificaron correctamente y cuáles fueron confundidos entre clases.
+
+```python
+from sklearn.metrics import confusion_matrix
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+cm = confusion_matrix(y_test, y_pred)
+
+plt.figure(figsize=(5,4))
+sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', xticklabels=le_target.classes_, yticklabels=le_target.classes_)
+plt.xlabel("Predicción")
+plt.ylabel("Real")
+plt.title("Matriz de Confusión")
+plt.show()
+```
+
+### ✅ 3. **Reporte de clasificación**
+
+Incluye precisión, recall y F1-score para cada clase:
+
+```python
+from sklearn.metrics import classification_report
+
+print(classification_report(y_test, y_pred, target_names=le_target.classes_))
+```
+
+🔹 **Precision**: De los que predije como clase X, ¿cuántos eran realmente X?
+🔹 **Recall**: De todos los que eran clase X, ¿cuántos los detecté correctamente?
+🔹 **F1-score**: Promedio ponderado de precisión y recall.
+
+### ✅ 4. **Importancia de características**
+
+Para saber qué variables influyen más en el modelo:
+
+```python
+importances = model.feature_importances_
+for col, imp in zip(X.columns, importances):
+    print(f"{col}: {imp:.4f}")
+```
+
+### 🎯 Ejemplo de salida esperada (si se usó el código anterior)
+
+```text
+Accuracy del modelo: 0.80
+
+              precision    recall  f1-score   support
+
+        alto       0.75      1.00      0.86         1
+        bajo       1.00      0.50      0.67         2
+       medio       1.00      1.00      1.00         1
+
+    accuracy                           0.80         4
+   macro avg       0.92      0.83      0.84         4
+weighted avg       0.88      0.80      0.79         4
+```
+
+**Archivos de la clase**
+
+[decision-tree-random-forest-project-completed.ipynb](https://static.platzi.com/media/public/uploads/decision_tree_random_forest_project_completed_2b8cc33a-1f4f-47f4-8f0b-8f881066cd3d.ipynb)
+[decision-tree-random-forest-project-template.ipynb](https://static.platzi.com/media/public/uploads/decision_tree_random_forest_project_template_f5d5ec26-0355-4844-8cc1-2e016d08c6e9.ipynb)
+
+**Lecturas recomendadas**
+
+[sklearn.metrics.accuracy_score — scikit-learn 1.2.1 documentation](https://scikit-learn.org/stable/modules/generated/sklearn.metrics.accuracy_score.html)
+[decision_tree_random_forest_project_completed.ipynb - Google Drive](https://drive.google.com/file/d/1Ck8R2GXK_ZeW9oYRIdXgVhBqi3ibt_QJ/view?usp=sharing)
+[decision_tree_random_forest_project_template.ipynb - Google Drive](https://drive.google.com/file/d/1PFP6e4YfAI8nXq31kzRC8NquONJqLqeK/view?usp=sharing)
+
+**Lecturas recomendadas**
+
+[UCI Machine Learning Repository: Census Income Data Set](https://archive.ics.uci.edu/ml/datasets/Census+Income)
+
+[https://www.linkedin.com/in/laylascheli/](https://www.linkedin.com/in/laylascheli/)

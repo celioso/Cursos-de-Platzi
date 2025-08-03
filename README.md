@@ -187,12 +187,9 @@
 - [Curso de Fundamentos de Álgebra Lineal con Python](CursodeFundamentosdeAlgebraLinealconPython)
 - [Curso de Álgebra Lineal Aplicada para Machine Learning](CursodeAlgebraLinealAplicadaparaMachineLearning)
 - [Curso de Regresión Lineal con Python y scikit-learn](CursodeRegresionLinealconPythonyscikit-learn)
-
-Curso de Regresión Logística con Python y scikit-learn
-
-Curso de Decision Trees y Random Forest con Python y scikit-learn
-
-Curso de Clustering con Python y scikit-learn
+- [Curso de Regresión Logística con Python y scikit-learn](CursodeRegresionLogisticaconPythonyscikit-learn)
+- [Curso de Decision Trees y Random Forest con Python y scikit-learn](CursodeDecisionTreesyRandomForestconPythonyscikit-learn)
+- [Curso de Clustering con Python y scikit-learn](CursodeClusteringconPythonyscikit-learn)
 
 Curso Profesional de Machine Learning con scikit-learn
 
