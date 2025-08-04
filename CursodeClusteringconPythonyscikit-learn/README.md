@@ -1089,3 +1089,71 @@ visualizer.show()
 [Selecting the number of clusters with silhouette analysis on KMeans clustering — scikit-learn 1.1.3 documentation](https://scikit-learn.org/stable/auto_examples/cluster/plot_kmeans_silhouette_analysis.html)
 
 [dbscan.ipynb - Google Drive](https://drive.google.com/file/d/1e0LRhK3k00yxHZy5Q9eXS0jTU0GdnYTq/view?usp=sharing)
+
+## Preparar datos para clusterizar
+
+Preparar los datos adecuadamente es **clave para obtener buenos resultados de clustering**. Aquí tienes una guía paso a paso para preparar tus datos antes de aplicar algoritmos como K-means, DBSCAN o Hierarchical Clustering:
+
+### 🧹 1. Cargar y explorar los datos
+
+```python
+import pandas as pd
+
+df = pd.read_csv("tu_archivo.csv")  # o usa otro método de carga
+print(df.head())
+print(df.info())
+```
+
+### 🔍 2. Seleccionar las columnas relevantes
+
+El clustering se basa en distancias, por lo tanto, es importante **seleccionar solo las características numéricas** (o convertir las categóricas).
+
+```python
+features = df[['columna1', 'columna2', 'columna3']]  # ajusta según tu dataset
+```
+
+### 🧼 3. Limpiar datos
+
+* **Eliminar nulos o imputar valores**
+* **Eliminar duplicados si es necesario**
+
+```python
+features = features.dropna()
+features = features.drop_duplicates()
+```
+
+### 🧮 4. Escalar los datos (muy importante)
+
+Los algoritmos de clustering **dependen de la escala** de los datos. Se recomienda usar `StandardScaler` o `MinMaxScaler`.
+
+```python
+from sklearn.preprocessing import StandardScaler
+
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(features)
+```
+
+### ✅ 5. (Opcional) Reducir dimensiones para visualizar
+
+Si tienes más de 2 dimensiones, puedes usar PCA o t-SNE para reducir a 2D y visualizar los clústeres.
+
+```python
+from sklearn.decomposition import PCA
+
+pca = PCA(n_components=2)
+X_pca = pca.fit_transform(X_scaled)
+```
+
+### 📦 Resultado final listo para clusterizar
+
+Ahora `X_scaled` (o `X_pca`) está listo para pasar a:
+
+* `KMeans().fit(X_scaled)`
+* `DBSCAN().fit(X_scaled)`
+* `AgglomerativeClustering().fit(X_scaled)`
+
+**Lecturas recomendadas**
+
+[Unsupervised Learning on Country Data | Kaggle](https://www.kaggle.com/datasets/rohan0301/unsupervised-learning-on-country-data)
+
+[proyecto_countries_clustering.ipynb - Google Drive](https://drive.google.com/file/d/10ybq0nOtmjpYyy6tLie1StUbZ3YXxGf_/view?usp=sharing)
