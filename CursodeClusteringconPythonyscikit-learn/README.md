@@ -1157,3 +1157,527 @@ Ahora `X_scaled` (o `X_pca`) está listo para pasar a:
 [Unsupervised Learning on Country Data | Kaggle](https://www.kaggle.com/datasets/rohan0301/unsupervised-learning-on-country-data)
 
 [proyecto_countries_clustering.ipynb - Google Drive](https://drive.google.com/file/d/10ybq0nOtmjpYyy6tLie1StUbZ3YXxGf_/view?usp=sharing)
+
+## Aplicando PCA para clustering
+
+Aplicar **PCA (Análisis de Componentes Principales)** antes del clustering puede ayudarte a:
+
+* **Reducir la dimensionalidad** del dataset.
+* **Eliminar ruido** y redundancia.
+* **Mejorar visualización** de los grupos.
+* Hacer que algoritmos como **K-means** o **DBSCAN** funcionen mejor si los datos tienen muchas dimensiones.
+
+### 🔧 Pasos para aplicar PCA antes de clustering:
+
+```python
+from sklearn.decomposition import PCA
+from sklearn.preprocessing import StandardScaler
+
+# 1. Escalar los datos
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(df_country.drop('country', axis=1))  # Asegúrate que 'country' existe
+
+# 2. Aplicar PCA
+pca = PCA(n_components=2)  # Elige 2 o más componentes para visualización o clustering
+X_pca = pca.fit_transform(X_scaled)
+
+# 3. Visualización opcional
+import matplotlib.pyplot as plt
+
+plt.figure(figsize=(8,6))
+plt.scatter(X_pca[:, 0], X_pca[:, 1])
+plt.xlabel('PCA 1')
+plt.ylabel('PCA 2')
+plt.title('Datos reducidos con PCA')
+plt.grid(True)
+plt.show()
+```
+
+### 🧪 Usar PCA con K-means (ejemplo):
+
+```python
+from sklearn.cluster import KMeans
+
+kmeans = KMeans(n_clusters=3, random_state=42)
+clusters = kmeans.fit_predict(X_pca)
+
+# Visualizar clustering
+plt.figure(figsize=(8,6))
+plt.scatter(X_pca[:, 0], X_pca[:, 1], c=clusters, cmap='viridis')
+plt.xlabel('PCA 1')
+plt.ylabel('PCA 2')
+plt.title('Clustering con K-means después de PCA')
+plt.colorbar(label='Cluster')
+plt.grid(True)
+plt.show()
+```
+
+### ✅ ¿Cuántos componentes usar?
+
+Puedes revisar cuánta **varianza explica cada componente**:
+
+```python
+print(pca.explained_variance_ratio_)
+print("Varianza acumulada:", sum(pca.explained_variance_ratio_))
+```
+
+Si los primeros 2 o 3 componentes explican >80% de la varianza, puedes usarlos sin perder mucha información.
+
+**Archivos de la clase** 
+
+[proyecto-countries-clustering.ipynb](https://static.platzi.com/media/public/uploads/proyecto_countries_clustering_95a989f9-43df-4a04-a70d-842608fa304d.ipynb)
+
+**Lecturas recomendadas**
+
+[Principle Components Analysis - Learn Machine Learning The fun way](https://mlplaygrounds.com/machine/learning/PCA.html)
+
+[Platzi: Cursos online profesionales de tecnología](https://platzi.com/clases/2353-estadistica-descriptiva/38412-pca-analisis-de-componentes-principales/)
+
+[proyecto_countries_clustering.ipynb - Google Drive](https://drive.google.com/file/d/10ybq0nOtmjpYyy6tLie1StUbZ3YXxGf_/view?usp=sharing)
+
+## Resolviendo con K-means
+
+Perfecto, resolver un problema de **clustering** con **K-means** implica los siguientes pasos clave:
+
+### ✅ **1. Preparar los datos**
+
+Asegúrate de escalar los datos y eliminar columnas no numéricas como `'country'`.
+
+```python
+from sklearn.preprocessing import StandardScaler
+
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(df_country.drop('country', axis=1))  # Solo si 'country' está presente
+```
+
+### ✅ **2. Elegir el número de clusters (K)**
+
+Puedes usar el **método del codo** para encontrar un buen valor de K:
+
+```python
+from sklearn.cluster import KMeans
+import matplotlib.pyplot as plt
+
+inertia = []
+K_range = range(1, 11)
+
+for k in K_range:
+    kmeans = KMeans(n_clusters=k, random_state=42)
+    kmeans.fit(X_scaled)
+    inertia.append(kmeans.inertia_)
+
+plt.plot(K_range, inertia, marker='o')
+plt.xlabel('Número de clusters (K)')
+plt.ylabel('Inercia')
+plt.title('Método del codo')
+plt.grid(True)
+plt.show()
+```
+
+> Busca el "codo" en la curva: el punto donde la inercia deja de disminuir rápidamente.
+
+### ✅ **3. Ajustar el modelo con el K elegido**
+
+```python
+k = 3  # por ejemplo, según el codo
+kmeans = KMeans(n_clusters=k, random_state=42)
+clusters = kmeans.fit_predict(X_scaled)
+```
+
+### ✅ **4. Visualizar resultados (opcional con PCA)**
+
+```python
+from sklearn.decomposition import PCA
+
+pca = PCA(n_components=2)
+X_pca = pca.fit_transform(X_scaled)
+
+plt.scatter(X_pca[:, 0], X_pca[:, 1], c=clusters, cmap='viridis')
+plt.xlabel('PCA 1')
+plt.ylabel('PCA 2')
+plt.title('Clustering con K-means')
+plt.colorbar(label='Cluster')
+plt.grid(True)
+plt.show()
+```
+
+### ✅ **5. Analizar los grupos**
+
+Puedes agregar los resultados de los clusters al DataFrame original:
+
+```python
+df_country['cluster'] = clusters
+```
+
+Luego analizar, por ejemplo, con `.groupby('cluster').mean()`.
+
+**Lecturas recomendadas**
+
+[Unsupervised Learning on Country Data | Kaggle](https://www.kaggle.com/datasets/rohan0301/unsupervised-learning-on-country-data)
+
+[proyecto_countries_clustering.ipynb - Google Drive](https://drive.google.com/file/d/10ybq0nOtmjpYyy6tLie1StUbZ3YXxGf_/view?usp=sharing)
+
+## Resolviendo con hierarchical clustering
+
+Para resolver un problema de **segmentación o clasificación de vehículos** (o cualquier conjunto de datos similar) usando **hierarchical clustering (clustering jerárquico)**, se siguen estos pasos generales. A continuación te muestro un ejemplo completo con Python aplicado a un conjunto de vehículos con características como precio, consumo, y tamaño.
+
+### ✅ 1. **Importar librerías**
+
+```python
+import pandas as pd
+import matplotlib.pyplot as plt
+from scipy.cluster.hierarchy import dendrogram, linkage, fcluster
+from sklearn.preprocessing import StandardScaler
+```
+
+### ✅ 2. **Crear o cargar el dataset**
+
+Ejemplo de vehículos (puedes usar tus propios datos):
+
+```python
+data = {
+    'Modelo': ['Onix', 'Kia Soluto', 'Swift', 'S-Cross', 'Picanto', 'K3 Cross', 'Kardian'],
+    'Precio': [82320000, 69990000, 85000000, 125000000, 65000000, 120000000, 110000000],
+    'Consumo_kmgl': [65, 60, 70, 55, 68, 58, 62],
+    'Longitud_mm': [4474, 4300, 3840, 4300, 3595, 4365, 4115]
+}
+df = pd.DataFrame(data)
+```
+
+### ✅ 3. **Normalizar los datos**
+
+```python
+scaler = StandardScaler()
+X = scaler.fit_transform(df[['Precio', 'Consumo_kmgl', 'Longitud_mm']])
+```
+
+### ✅ 4. **Aplicar Clustering Jerárquico**
+
+```python
+linked = linkage(X, method='ward')  # También puedes usar 'single', 'complete', 'average'
+```
+
+### ✅ 5. **Graficar el dendrograma**
+
+```python
+plt.figure(figsize=(10, 6))
+dendrogram(linked,
+           labels=df['Modelo'].values,
+           orientation='top',
+           distance_sort='descending',
+           show_leaf_counts=True)
+plt.title('Dendrograma de vehículos')
+plt.xlabel('Modelos')
+plt.ylabel('Distancia')
+plt.show()
+```
+
+### ✅ 6. **Formar grupos (clusters)**
+
+Por ejemplo, 3 grupos:
+
+```python
+clusters = fcluster(linked, 3, criterion='maxclust')
+df['Cluster'] = clusters
+print(df.sort_values('Cluster'))
+```
+
+### 🧠 Interpretación
+
+Al formar 2–4 clusters, puedes analizar qué vehículos están en el mismo grupo y por qué (precio similar, tamaño, consumo, etc). Por ejemplo:
+
+* **Cluster 1**: Autos compactos y económicos (Picanto, Soluto)
+* **Cluster 2**: Autos medianos con mejor equipamiento (Onix, Kardian)
+* **Cluster 3**: SUV o crossover (S-Cross, K3 Cross)
+
+**Lecturas recomendadas**
+
+[proyecto_countries_clustering.ipynb - Google Drive](https://drive.google.com/file/d/10ybq0nOtmjpYyy6tLie1StUbZ3YXxGf_/view?usp=sharing)
+
+## Resolviendo con DBSCAN
+
+Resolver un problema con **DBSCAN (Density-Based Spatial Clustering of Applications with Noise)** es ideal cuando esperas encontrar **clusters de forma irregular** o quieres detectar **outliers** (valores atípicos) de forma automática. Aquí te muestro cómo implementarlo paso a paso en Python, usando como ejemplo autos disponibles en Colombia bajo ciertos criterios.
+
+### ✅ 1. **Importar librerías**
+
+```python
+import pandas as pd
+import numpy as np
+from sklearn.preprocessing import StandardScaler
+from sklearn.cluster import DBSCAN
+import matplotlib.pyplot as plt
+```
+
+### ✅ 2. **Datos de ejemplo**
+
+Simulamos datos representativos de autos:
+
+```python
+data = {
+    'Modelo': ['Onix', 'Kia Soluto', 'Swift', 'S-Cross', 'Picanto', 'K3 Cross', 'Kardian'],
+    'Precio': [82320000, 69990000, 85000000, 125000000, 65000000, 120000000, 110000000],
+    'Consumo_kmgl': [65, 60, 70, 55, 68, 58, 62],
+    'Longitud_mm': [4474, 4300, 3840, 4300, 3595, 4365, 4115]
+}
+df = pd.DataFrame(data)
+```
+
+### ✅ 3. **Normalización**
+
+```python
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(df[['Precio', 'Consumo_kmgl', 'Longitud_mm']])
+```
+
+### ✅ 4. **Aplicar DBSCAN**
+
+```python
+dbscan = DBSCAN(eps=1.0, min_samples=2)
+labels = dbscan.fit_predict(X_scaled)
+df['Cluster'] = labels
+```
+
+### ✅ 5. **Visualizar resultados**
+
+```python
+plt.figure(figsize=(8, 5))
+plt.scatter(X_scaled[:, 0], X_scaled[:, 1], c=labels, cmap='Set1')
+for i, modelo in enumerate(df['Modelo']):
+    plt.annotate(modelo, (X_scaled[i, 0], X_scaled[i, 1]))
+plt.title('Clusters con DBSCAN')
+plt.xlabel('Precio (normalizado)')
+plt.ylabel('Consumo (normalizado)')
+plt.grid(True)
+plt.show()
+```
+
+### ✅ 6. **Interpretar resultados**
+
+* El campo `Cluster` en `df` indica el grupo al que pertenece cada auto.
+* Los valores `-1` son **outliers**: DBSCAN los identifica como puntos que no pertenecen a ningún cluster.
+* Puedes ajustar `eps` y `min_samples` para modificar la densidad mínima requerida para formar un grupo.
+
+### 🔧 Ajuste de Hiperparámetros
+
+Para encontrar buenos valores de `eps` y `min_samples`, puedes usar:
+
+```python
+from sklearn.neighbors import NearestNeighbors
+
+neighbors = NearestNeighbors(n_neighbors=2)
+neighbors_fit = neighbors.fit(X_scaled)
+distances, indices = neighbors_fit.kneighbors(X_scaled)
+
+distances = np.sort(distances[:, 1])
+plt.plot(distances)
+plt.title('K-distance plot')
+plt.xlabel('Puntos ordenados')
+plt.ylabel('Distancia al 2° vecino más cercano')
+plt.grid(True)
+plt.show()
+```
+
+Busca el “codo” en el gráfico para elegir el valor de `eps`.
+
+## Resolviendo con DBSCAN (sin PCA)
+
+Perfecto. Vamos a resolver un problema de **clustering con DBSCAN sin usar PCA**, es decir, aplicando el algoritmo directamente sobre los datos normalizados, tal como se recomienda en muchos escenarios prácticos.
+
+### 🧪 **Paso a paso para clustering con DBSCAN (sin PCA)**
+
+Supongamos que tienes un conjunto de datos `df` con variables como:
+
+* Precio del vehículo
+* Consumo de combustible
+* Dimensiones
+* Otros atributos numéricos útiles para el análisis
+
+### ✅ 1. **Importar librerías necesarias**
+
+```python
+import pandas as pd
+import numpy as np
+from sklearn.preprocessing import StandardScaler
+from sklearn.cluster import DBSCAN
+import matplotlib.pyplot as plt
+import seaborn as sns
+```
+
+### ✅ 2. **Cargar o crear tus datos**
+
+Aquí usamos un ejemplo simulado (puedes reemplazar por tu DataFrame real):
+
+```python
+df = pd.DataFrame({
+    'Modelo': ['Kia Picanto', 'Renault Kwid', 'Chevrolet Onix', 'Suzuki Swift', 'Renault Kardian'],
+    'Precio': [65000000, 58000000, 82300000, 85000000, 105000000],
+    'Consumo_kmgl': [65, 70, 60, 68, 58],
+    'Longitud_mm': [3595, 3731, 4474, 3840, 4115]
+})
+```
+
+### ✅ 3. **Preprocesamiento (normalización)**
+
+Normalizamos solo las columnas numéricas (sin aplicar reducción de dimensionalidad):
+
+```python
+X = df[['Precio', 'Consumo_kmgl', 'Longitud_mm']]
+
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X)
+```
+
+### ✅ 4. **Aplicar DBSCAN**
+
+```python
+dbscan = DBSCAN(eps=1.0, min_samples=2)
+labels = dbscan.fit_predict(X_scaled)
+df['Cluster'] = labels
+```
+
+### ✅ 5. **Visualización 2D**
+
+Como no usamos PCA, puedes graficar solo 2 dimensiones directamente:
+
+```python
+plt.figure(figsize=(8, 6))
+sns.scatterplot(x=X_scaled[:, 0], y=X_scaled[:, 1], hue=labels, palette='tab10', s=100)
+for i, txt in enumerate(df['Modelo']):
+    plt.annotate(txt, (X_scaled[i, 0]+0.02, X_scaled[i, 1]+0.02), fontsize=9)
+plt.title("Clustering con DBSCAN (sin PCA)")
+plt.xlabel("Precio (normalizado)")
+plt.ylabel("Consumo (normalizado)")
+plt.grid(True)
+plt.show()
+```
+
+### ✅ 6. **Resultados**
+
+```python
+print(df)
+```
+
+Esto te dará un DataFrame con los modelos y su **asignación de clúster** o `-1` si fue identificado como **outlier**.
+
+### 🎯 Consejo: ¿Cómo elegir el mejor `eps`?
+
+Usa el método del gráfico de la “k-distancia”:
+
+```python
+from sklearn.neighbors import NearestNeighbors
+
+neighbors = NearestNeighbors(n_neighbors=2)
+neighbors_fit = neighbors.fit(X_scaled)
+distances, indices = neighbors_fit.kneighbors(X_scaled)
+distances = np.sort(distances[:, 1])
+plt.plot(distances)
+plt.title("Gráfico de k-distancia")
+plt.xlabel("Puntos ordenados")
+plt.ylabel("Distancia al 2° vecino")
+plt.grid(True)
+plt.show()
+```
+
+El punto donde la curva se eleva bruscamente es un buen candidato para `eps`.
+
+**Lecturas recomendadas**
+
+[proyecto_countries_clustering.ipynb - Google Drive](https://drive.google.com/file/d/10ybq0nOtmjpYyy6tLie1StUbZ3YXxGf_/view?usp=sharing)
+
+## Evaluación resultados de distintos modelos de clustering
+
+Evaluar los resultados de distintos **modelos de clustering** (K-means, DBSCAN, Hierarchical Clustering, etc.) es esencial para identificar cuál ofrece la mejor segmentación según tus datos. A diferencia de clasificación supervisada, en clustering no tenemos etiquetas verdaderas, por lo que usamos **métricas internas** o **evaluaciones visuales**.
+
+### ✅ Evaluación de Modelos de Clustering
+
+### 🔹 1. **Silhouette Score**
+
+Mide cuán bien están separados los clústeres y cuán compactos son.
+
+* Rango: **-1 a 1**
+* Valores cercanos a **1** son mejores.
+* Se puede usar con **KMeans**, **Hierarchical**, y **DBSCAN** (aunque este último puede tener `-1` como outliers).
+
+```python
+from sklearn.metrics import silhouette_score
+
+score = silhouette_score(X_scaled, labels)
+print(f'Silhouette Score: {score:.3f}')
+```
+
+> Nota: Para DBSCAN, asegúrate de excluir los outliers (`labels != -1`), si es necesario.
+
+### 🔹 2. **Davies-Bouldin Index**
+
+Mide la dispersión intra-clúster y separación inter-clúster.
+
+* **Menor es mejor**
+* Funciona con cualquier método de clustering.
+
+```python
+from sklearn.metrics import davies_bouldin_score
+
+dbi = davies_bouldin_score(X_scaled, labels)
+print(f'Davies-Bouldin Index: {dbi:.3f}')
+```
+
+### 🔹 3. **Calinski-Harabasz Index**
+
+Cuantifica la varianza entre los clústeres y dentro de los clústeres.
+
+* **Mayor es mejor**
+* Bueno para comparar modelos con distintos `k`.
+
+```python
+from sklearn.metrics import calinski_harabasz_score
+
+ch_score = calinski_harabasz_score(X_scaled, labels)
+print(f'Calinski-Harabasz Index: {ch_score:.3f}')
+```
+
+### 🔹 4. **Comparación visual 2D**
+
+Reduce los datos a 2 dimensiones (por ejemplo, con PCA) y visualiza:
+
+```python
+from sklearn.decomposition import PCA
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+pca = PCA(n_components=2)
+X_pca = pca.fit_transform(X_scaled)
+
+plt.figure(figsize=(8, 6))
+sns.scatterplot(x=X_pca[:, 0], y=X_pca[:, 1], hue=labels, palette='tab10', s=100)
+plt.title("Clustering Visual")
+plt.xlabel("PC1")
+plt.ylabel("PC2")
+plt.grid(True)
+plt.show()
+```
+
+Esto permite **comparar visualmente** cómo los modelos separan los datos.
+
+### 🧪 Comparación entre modelos
+
+Aquí un resumen de cómo podrías comparar tres modelos:
+
+| Modelo              | Silhouette Score | Davies-Bouldin | Calinski-Harabasz |
+| ------------------- | ---------------- | -------------- | ----------------- |
+| K-means (k=3)       | 0.52             | 0.88           | 137.6             |
+| Hierarchical (ward) | 0.47             | 0.91           | 120.3             |
+| DBSCAN (eps=1.2)    | 0.60             | 0.77           | 150.8             |
+
+> Puedes construir esta tabla automáticamente si guardas los resultados de cada modelo.
+
+### 🧠 Consejo
+
+* **K-means** funciona mejor con grupos esféricos bien definidos.
+* **Hierarchical** es útil si te interesa una estructura jerárquica (como dendrogramas).
+* **DBSCAN** detecta outliers y clústeres de forma arbitraria (ideal en datos con ruido).
+
+## Proyecto final y cierre
+
+**Lecturas recomendadas**
+
+[Customer Personality Analysis | Kaggle](https://www.kaggle.com/datasets/imakash3011/customer-personality-analysis)
