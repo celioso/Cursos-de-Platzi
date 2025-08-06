@@ -23,4 +23,9 @@ if __name__ == '__main__':
         'HUBER' : HuberRegressor(epsilon=1.35)
     }
 
-    
+    for name, estimador in estimadores.items():
+        estimador.fit(X_train, y_train)
+        predictions = estimador.predict(X_test)
+        print("="*64)
+        print(name)
+        print("MSE: ", mean_squared_error(y_test, predictions))
