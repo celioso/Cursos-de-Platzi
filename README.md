@@ -190,8 +190,7 @@
 - [Curso de Regresión Logística con Python y scikit-learn](CursodeRegresionLogisticaconPythonyscikit-learn)
 - [Curso de Decision Trees y Random Forest con Python y scikit-learn](CursodeDecisionTreesyRandomForestconPythonyscikit-learn)
 - [Curso de Clustering con Python y scikit-learn](CursodeClusteringconPythonyscikit-learn)
-
-Curso Profesional de Machine Learning con scikit-learn
+- [Curso Profesional de Machine Learning con scikit-learn](CursoProfesionaldeMachineLearningconscikit-learn)
 
 Curso de Bases de Datos con SQL
 
