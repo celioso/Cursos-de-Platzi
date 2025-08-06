@@ -3127,3 +3127,439 @@ Esta práctica te permitirá establecer un enfoque más robusto y adaptado a tu 
 Finalmente, para mantener la coherencia y la organización del proyecto, renombramos el archivo que contiene este proceso a `boosting.py`, garantizando que siempre estaremos trabajando con los contenidos correctos en los repositorios de código.
 
 Con este entendimiento de cómo integrar Gradient Boosting en tus proyectos, estarás mejor preparado para enfrentar desafíos más complejos en tus exploraciones de Machine Learning. ¡Sigue aprendiendo y mejorando tus modelos!
+
+## Agrupamiento de Datos en Aprendizaje No Supervisado
+
+El **agrupamiento de datos** o *clustering* es una técnica central en el **aprendizaje no supervisado**, cuyo objetivo es **descubrir estructuras ocultas o patrones** en datos **sin etiquetas**. A continuación, te explico los fundamentos, los métodos principales y cómo implementarlo en Python con `scikit-learn`.
+
+### 🧠 ¿Qué es el Agrupamiento?
+
+El agrupamiento consiste en **dividir un conjunto de datos en grupos (clusters)**, de tal forma que:
+
+* **Los elementos dentro de un grupo son similares entre sí**.
+* **Los elementos de diferentes grupos son diferentes entre sí**.
+
+### 📌 Casos de Uso Comunes
+
+* Segmentación de clientes
+* Agrupación de documentos o artículos
+* Análisis de imágenes
+* Detección de anomalías
+
+### 🔧 Métodos de Agrupamiento Populares
+
+| Método            | Características principales                                      |
+| ----------------- | ---------------------------------------------------------------- |
+| **K-Means**       | Basado en centroides, rápido, sensible a outliers                |
+| **DBSCAN**        | Basado en densidad, detecta ruido y clusters de forma arbitraria |
+| **Mean Shift**    | No necesita predefinir número de clusters                        |
+| **Agglomerative** | Jerárquico, forma un árbol de clusters                           |
+
+### ✅ Implementación en Python (K-Means como ejemplo)
+
+```python
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.cluster import KMeans
+from sklearn.preprocessing import StandardScaler
+from sklearn.datasets import load_iris
+
+# Cargar datos de ejemplo (puedes usar tus propios datos)
+data = load_iris()
+X = pd.DataFrame(data.data, columns=data.feature_names)
+
+# Escalar datos (buena práctica)
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X)
+
+# Aplicar K-Means con 3 clusters
+kmeans = KMeans(n_clusters=3, random_state=42)
+clusters = kmeans.fit_predict(X_scaled)
+
+# Agregar columna de cluster al DataFrame
+X["cluster"] = clusters
+
+# Visualizar agrupamientos (en 2D para simplificar)
+plt.scatter(X_scaled[:, 0], X_scaled[:, 1], c=clusters, cmap="viridis")
+plt.title("Clustering con K-Means")
+plt.xlabel("Feature 1 (escalada)")
+plt.ylabel("Feature 2 (escalada)")
+plt.show()
+```
+
+### 📈 Elegir el número óptimo de clusters (método del codo)
+
+```python
+sse = []
+for k in range(1, 10):
+    kmeans = KMeans(n_clusters=k, random_state=42)
+    kmeans.fit(X_scaled)
+    sse.append(kmeans.inertia_)
+
+plt.plot(range(1, 10), sse, marker="o")
+plt.xlabel("Número de clusters")
+plt.ylabel("SSE (Error cuadrático)")
+plt.title("Método del codo")
+plt.show()
+```
+
+### 📌 Otros Métodos: DBSCAN (detección de ruido)
+
+```python
+from sklearn.cluster import DBSCAN
+
+db = DBSCAN(eps=0.5, min_samples=5)
+labels = db.fit_predict(X_scaled)
+
+X["cluster_dbscan"] = labels
+```
+
+### 🧪 Evaluación del Agrupamiento
+
+Como el aprendizaje es **no supervisado**, se usan métricas como:
+
+* **Silhouette Score**
+* **Davies-Bouldin Index**
+* **Calinski-Harabasz Index**
+
+```python
+from sklearn.metrics import silhouette_score
+
+score = silhouette_score(X_scaled, clusters)
+print("Silhouette Score:", score)
+```
+
+Resumen
+
+¿Qué es el aprendizaje no supervisado y por qué es importante?
+En el mundo del aprendizaje automáticamente, no todo se trata de supervisión. A diferencia del aprendizaje supervisado, que se fundamenta en el uso de etiquetas conocidas, el aprendizaje no supervisado se centra en descubrir patrones ocultos en datos no etiquetados. Esto resulta valioso para identificar agrupaciones o estructuras no evidentes a simple vista, allanando el camino para nuevas perspectivas o hipótesis en proyectos de machine learning.
+
+¿Cuáles son las aplicaciones del clustering?
+Los algoritmos de clustering, o agrupamiento, son una pieza clave en el aprendizaje no supervisado:
+
+Agrupación de datos sin etiquetas conocidas: Útil para ver en cuántos grupos podrían clasificarse los datos cuando no hay etiquetas de antemano.
+Descubrimiento de patrones en datos desconocidos: Permite generar comprensiones sobre la estructura y relaciones dentro del conjunto de datos.
+Identificación de valores atípicos: Detecta valores que se alejan significativamente de los puntos comunes en los datos.
+¿Cuáles son las estrategias de clustering disponibles?
+La elección de la técnica de clustering puede depender de varios factores, como el conocimiento previo sobre los datos. Aquí te enumeramos algunas estrategias y sus casos de uso:
+
+K-Means y Spectral Clustering: Recomendados cuando se sabe cuántos grupos se desea obtener. Por ejemplo, una empresa de marketing que ya tiene definidos sus segmentos de clientes (bajo, medio, alto).
+from sklearn.cluster import KMeans
+# Asumiendo que 'data' es tu conjunto de datos
+kmeans = KMeans(n_clusters=3)
+kmeans.fit(data)
+labels = kmeans.labels_
+Mean-Shift, DBSCAN, y Clúster jerárquico: Ideales cuando se desconoce el número de grupos. Estos algoritmos permiten explorar y experimentar posibles agrupamientos sin tener una cantidad previa establecida de categorías.
+from sklearn.cluster import DBSCAN
+# Ejemplo para la implementación de DBSCAN
+dbscan = DBSCAN(eps=0.5, min_samples=5)
+dbscan.fit(data)
+labels = dbscan.labels_
+Animamos a los estudiantes a elegir la técnica que mejor se adapte a sus datos específicos y a seguir explorando este fascinante ámbito del machine learning. La combinación adecuada de habilidades analíticas y técnicas de clustering puede llevarte a sorprendentes descubrimientos e innovaciones.
+
+## Agrupamiento de Caramelos con K-Means y Pandas
+
+### Resumen
+
+#### ¿Cómo implementar un algoritmo de clustering con K-Means en Python?
+
+Hoy vamos a adentrarnos en la implementación del algoritmo K-Means, específicamente usando el método de mini lotes (MiniBatch K-Means), para un clustering efectivo y eficiente. Utilizaremos un conjunto de datos que contiene características de 85 diferentes caramelos. El objetivo: obtener un análisis detallado de cómo agrupar estos caramelos de manera significativa.
+
+#### ¿Qué es el conjunto de datos de caramelos?
+
+El conjunto de datos de caramelos cuenta con 85 tipos diferentes y varias características:
+
+- **Nombre del caramelo**: Identificación del caramelo.
+- **Atributos en composición**: Si contiene chocolate, frutas, etc.
+- **Porcentaje de azúcar**: Cantidad relativa de azúcar respecto a otros caramelos.
+- **Porcentaje de precio**: Precio comparativo con los demás.
+- **Preferencia del público**: Proporción de veces que fue elegido en pruebas comparativas uno a uno.
+
+#### ¿Cómo preparamos los datos en Python?
+
+Primero importamos las librerías necesarias y cargamos los datos en un DataFrame de pandas.
+
+```python
+import pandas as pd
+from sklearn.cluster import MiniBatchKMeans
+
+# Cargar el archivo Candy.csv dentro del entorno de pandas
+df = pd.read_csv('data/Candy.csv')
+print(df.head(10))  # Verificar las primeras 10 filas
+```
+
+Es importante observar los datos para asegurarnos de haberlos cargado correctamente.
+
+#### ¿Qué es y cómo funciona MiniBatch K-Means?
+
+MiniBatch K-Means es una variación del tradicional algoritmo K-Means, especialmente optimizado para funcionar en máquinas con recursos limitados. Funciona agrupando subconjuntos de datos (lotes) en vez de la totalidad, reduciendo así el uso de memoria y tiempo de cómputo.
+
+#### ¿Cómo configuramos y entrenamos el modelo?
+
+En esta ocasión, vamos a configurar nuestro modelo para 4 clusters. Esta decisión se basa en la idea ficticia de una tienda que desea organizar sus dulces en 4 estanterías, basándose en sus similitudes.
+
+```python
+# Configuración del modelo
+kmeans = MiniBatchKMeans(n_clusters=4, batch_size=8)
+# Entrenar el modelo con los datos
+kmeans.fit(df.drop(columns=['nombre_caramelo']))
+```
+
+#### ¿Cómo interpretamos los resultados?
+
+Una vez entrenado el modelo, obtenemos:
+
+- **Centros de cluster**: Verificamos que se han creado 4 centros como deseamos.
+
+`print(kmeans.cluster_centers_)`
+
+- **Predicciones de cluster**: Cada caramelo se categoriza en uno de los 4 clusters, facilitando la interpretación de a qué grupo se parece más un caramelo.
+
+```python
+cluster_labels = kmeans.predict(df.drop(columns=['nombre_caramelo']))
+df['cluster_label'] = cluster_labels
+print(df.head())
+```
+
+#### ¿Qué sigue después de la clasificación?
+
+Con los clusters identificados, es posible:
+
+1. **Exportar los resultados a un archivo** para compartición o análisis futuro.
+2. **Graficar datos** para visualizar los clusters, si deseamos un análisis visual más intuitivo.
+
+`df.to_csv('clustered_candy.csv')`
+
+Este ejemplo de K-Means culmina con la integración de los datos y sus clusters en un único archivo, facilitando el análisis posterior. ¡Ahora depende de ti explorar y seguir aprendiendo sobre métodos de clustering y sus aplicaciones en diferentes áreas!
+
+## Agrupamiento de Datos con Algoritmo Mean Shift
+
+El **algoritmo Mean Shift** es un método de **agrupamiento no supervisado** que no requiere especificar el número de clusters de antemano (a diferencia de K-Means). Encuentra zonas de alta densidad de datos y agrupa en torno a ellas, lo cual lo hace útil para conjuntos con estructuras desconocidas.
+
+### 📌 ¿Cómo funciona Mean Shift?
+
+1. Coloca un "centro móvil" en cada punto.
+2. Calcula la **media** de los puntos dentro de una **ventana (bandwidth)**.
+3. Mueve el centro hacia la media.
+4. Repite hasta que los centros converjan.
+5. Agrupa puntos cuyo centro convergente sea el mismo.
+
+### 🛠️ Implementación Paso a Paso con `scikit-learn`
+
+### ### 1. Importar librerías y cargar datos
+
+Usaremos un dataset de ejemplo. Puedes reemplazarlo con tus propios datos:
+
+```python
+import pandas as pd
+import numpy as np
+from sklearn.datasets import make_blobs
+import matplotlib.pyplot as plt
+from sklearn.cluster import MeanShift, estimate_bandwidth
+
+# Dataset de ejemplo con 2 características
+X, _ = make_blobs(n_samples=300, centers=4, cluster_std=0.60, random_state=0)
+
+plt.scatter(X[:, 0], X[:, 1], s=50)
+plt.title("Datos sin agrupar")
+plt.grid(True)
+plt.show()
+```
+
+### ### 2. Calcular el bandwidth (ventana de densidad)
+
+```python
+bandwidth = estimate_bandwidth(X, quantile=0.2, n_samples=100)
+print(f"Bandwidth estimado: {bandwidth}")
+```
+
+### ### 3. Aplicar Mean Shift
+
+```python
+ms = MeanShift(bandwidth=bandwidth, bin_seeding=True)
+ms.fit(X)
+labels = ms.labels_
+cluster_centers = ms.cluster_centers_
+
+print(f"Número de clusters encontrados: {len(np.unique(labels))}")
+```
+
+### ### 4. Visualizar resultados
+
+```python
+plt.figure(figsize=(8, 6))
+plt.scatter(X[:, 0], X[:, 1], c=labels, cmap='viridis', s=50)
+plt.scatter(cluster_centers[:, 0], cluster_centers[:, 1], 
+            c='red', s=200, marker='X', label='Centros')
+
+plt.title("Clustering con Mean Shift")
+plt.legend()
+plt.grid(True)
+plt.show()
+```
+
+### ✅ Ventajas de Mean Shift
+
+* No requiere definir el número de clusters.
+* Identifica clusters de forma libre (no solo esféricos como K-Means).
+* Robusto ante la forma de los datos.
+
+### ⚠️ Desventajas
+
+* Computacionalmente costoso en datasets grandes.
+* Sensible al parámetro de `bandwidth` (ventana de densidad).
+
+### Resumen
+
+#### ¿Cómo utilizar MeanShift para agrupar datos de forma eficiente?
+
+Los algoritmos de clustering son una herramienta poderosa en el análisis de datos, permitiendo agrupar elementos con características similares sin requerir una clasificación previa. Uno de los métodos populares para este tipo de problemas es MeanShift, especialmente útil cuando la cantidad de clústeres no es previamente conocida.
+
+#### ¿Cómo se lleva a cabo la importación y preparación de los datos?
+
+Para comenzar con el uso de MeanShift, la importación y la preparación del conjunto de datos es crucial:
+
+1. **Importar librerías necesarias**: Se requiere de las librerías `pandas` para manejar los datos y `sklearn.cluster` para el algoritmo MeanShift.
+
+```python
+import pandas as pd
+from sklearn.cluster import MeanShift
+```
+
+2. **Carga del conjunto de datos**: Utiliza `pandas` para leer datos desde un archivo CSV.
+
+`data = pd.read_csv('caramelos.csv')`
+
+3. **Preparación de los datos**: Es importante eliminar las columnas categóricas que no pueden ser utilizadas por algoritmos de clustering. Aquí se elimina la columna competitorname.
+
+`data.drop('competitorname', axis=1, inplace=True)`
+
+#### ¿Cómo configurar y ejecutar el algoritmo MeanShift?
+
+La configuración del algoritmo MeanShift es sencilla debido a que, en muchos casos, no es necesario especificar detalles técnicos complejos como el ancho de banda:
+
+1. Configurar el modelo: Se crea una instancia de MeanShift sin parámetros específicos para permitir al algoritmo determinar automáticamente el mejor ancho de banda.
+
+`model = MeanShift()`
+
+2. **Entrenar el modelo**: Se ajusta el modelo a los datos preparados.
+
+`model.fit(data)`
+
+3. **Evaluación inicial de etiquetas**: Se imprimen las etiquetas asignadas para entender cómo se han agrupado los datos.
+
+```python
+labels = model.labels_
+print(labels)
+```
+
+#### ¿Cómo identificar y analizar los resultados del clustering?
+
+Ahora que el algoritmo ha ejecutado el agrupamiento, es vital evaluar los resultados para integrarlos en futuras aplicaciones o análisis:
+
+1. **Identificación del número de clústeres**: Usando la función `max()` de Python, puede determinarse el número total de clústeres.
+
+```python
+num_clusters = labels.max() + 1
+print(f"Number of clusters: {num_clusters}")
+```
+
+2. **Centroide de cada clúster**: Los centros de los clústeres proporcionan una idea de la distribución de entradas. Estos datos suelen tener las mismas dimensiones que los datos originales.
+
+```python
+centers = model.cluster_centers_
+print(centers)
+```
+
+3. **Integración de resultados en el dataset**: Agregar las etiquetas de clústeres al dataset para facilitar su análisis posterior.
+
+`data['cluster'] = labels`
+
+#### ¿Qué considerar al comparar MeanShift con otros algoritmos?
+
+Cuando se utilizan múltiples algoritmos de clustering, es normal que los resultados varíen. Aquí algunos aspectos a tener en cuenta:
+
+- **Diferencias en resultados**: Los algoritmos como K-means y MeanShift pueden arrojar diferentes agrupaciones debido a sus enfoques y cálculos matemáticos subyacentes.
+- **Consideraciones computacionales**: Uno de los algoritmos puede ser más eficiente en términos de tiempo y recursos que otro.
+- **Relevancia práctica**: La utilidad real y la interpretación de los resultados en un contexto empresarial o científico determinarán cuál es el algoritmo más adecuado.
+
+Finalmente, en algunos casos se puede implementar un método semi-automático que combine los mejores aspectos de diferentes enfoques para una mejor toma de decisiones. ¡Atrévete a experimentar con MeanShift y descubre sus aplicaciones prácticas en tus proyectos de análisis de datos!
+
+## Validación Cruzada en Modelos de Machine Learning
+
+La **validación cruzada** es una técnica fundamental en **machine learning** para evaluar el rendimiento de los modelos y evitar el sobreajuste (**overfitting**). Consiste en dividir el conjunto de datos en varias particiones para entrenar y validar el modelo múltiples veces con diferentes subconjuntos.
+
+### 📌 ¿Por qué usar validación cruzada?
+
+* ✅ Proporciona una estimación más realista del rendimiento del modelo.
+* ✅ Utiliza mejor los datos disponibles.
+* ✅ Ayuda a detectar si el modelo se sobreajusta.
+
+### 🔁 Tipos de Validación Cruzada
+
+### 1. **K-Fold Cross Validation**
+
+Divide el dataset en `k` partes (**folds**), entrena el modelo con `k-1` y valida con la restante, rotando en cada iteración.
+
+```python
+from sklearn.model_selection import cross_val_score
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.datasets import load_iris
+
+X, y = load_iris(return_X_y=True)
+model = RandomForestClassifier()
+
+# 5-fold cross validation
+scores = cross_val_score(model, X, y, cv=5)
+print("Scores:", scores)
+print("Accuracy promedio:", scores.mean())
+```
+
+### 2. **Stratified K-Fold**
+
+Usado en clasificación, asegura que cada fold tenga la misma proporción de clases que el conjunto original.
+
+```python
+from sklearn.model_selection import StratifiedKFold
+
+skf = StratifiedKFold(n_splits=5)
+```
+
+### 3. **Leave-One-Out (LOOCV)**
+
+Cada muestra se utiliza una vez como validación y el resto como entrenamiento. Muy costoso para datasets grandes.
+
+```python
+from sklearn.model_selection import LeaveOneOut
+
+loo = LeaveOneOut()
+scores = cross_val_score(model, X, y, cv=loo)
+print("Promedio:", scores.mean())
+```
+
+### ⚙️ Evaluación con Métricas
+
+Puedes cambiar la métrica con el parámetro `scoring`:
+
+```python
+cross_val_score(model, X, y, cv=5, scoring='f1_macro')  # f1, roc_auc, etc.
+```
+
+### 📊 Visualización de Resultados
+
+```python
+import matplotlib.pyplot as plt
+
+plt.plot(range(1, 6), scores, marker='o')
+plt.title("Validación Cruzada")
+plt.xlabel("Fold")
+plt.ylabel("Accuracy")
+plt.grid(True)
+plt.show()
+```
+
+### ✅ Buenas Prácticas
+
+* Usa `StratifiedKFold` para clasificación con clases desbalanceadas.
+* Combina con `GridSearchCV` para ajustar hiperparámetros.
+* No mezcles validación cruzada con datos de test (¡reserva test aparte!).
