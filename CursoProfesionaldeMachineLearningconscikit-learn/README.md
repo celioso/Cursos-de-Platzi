@@ -3563,3 +3563,482 @@ plt.show()
 * Usa `StratifiedKFold` para clasificación con clases desbalanceadas.
 * Combina con `GridSearchCV` para ajustar hiperparámetros.
 * No mezcles validación cruzada con datos de test (¡reserva test aparte!).
+
+## Validación Cruzada con Scikit-learn: Cruz Vales Cor y KFold
+
+Aquí tienes una explicación completa sobre la **Validación Cruzada con Scikit-learn**, incluyendo el uso de `cross_val_score` y `KFold` paso a paso:
+
+### 🎯 ¿Qué es la Validación Cruzada?
+
+La **validación cruzada** es una técnica para evaluar el rendimiento de un modelo dividiendo el conjunto de datos en múltiples subconjuntos (**folds**) y entrenando/evaluando varias veces. Esto da una estimación más robusta del rendimiento general del modelo.
+
+### ✅ Usando `cross_val_score`
+
+La función `cross_val_score` realiza todo el ciclo de validación cruzada automáticamente.
+
+### 📌 Ejemplo con `cross_val_score`
+
+```python
+from sklearn.model_selection import cross_val_score
+from sklearn.datasets import load_iris
+from sklearn.ensemble import RandomForestClassifier
+
+# Cargar dataset
+X, y = load_iris(return_X_y=True)
+
+# Crear modelo
+model = RandomForestClassifier()
+
+# Validación cruzada con 5 folds
+scores = cross_val_score(model, X, y, cv=5)
+
+# Resultados
+print("Scores individuales:", scores)
+print("Precisión promedio:", scores.mean())
+```
+
+### 🔁 Usando `KFold` manualmente
+
+`KFold` te da más control sobre cómo se divide el conjunto de datos.
+
+### 📌 Ejemplo con `KFold`
+
+```python
+from sklearn.model_selection import KFold
+from sklearn.metrics import accuracy_score
+from sklearn.ensemble import RandomForestClassifier
+import numpy as np
+
+# Dataset
+X, y = load_iris(return_X_y=True)
+
+# Crear el modelo
+model = RandomForestClassifier()
+
+# Crear los folds
+kf = KFold(n_splits=5, shuffle=True, random_state=42)
+
+scores = []
+
+# Entrenar y evaluar manualmente
+for train_index, test_index in kf.split(X):
+    X_train, X_test = X[train_index], X[test_index]
+    y_train, y_test = y[train_index], y[test_index]
+
+    model.fit(X_train, y_train)
+    y_pred = model.predict(X_test)
+    
+    acc = accuracy_score(y_test, y_pred)
+    scores.append(acc)
+
+print("Scores individuales:", scores)
+print("Precisión promedio:", np.mean(scores))
+```
+
+### 🎯 Diferencias entre `cross_val_score` y `KFold`
+
+| Aspecto                     | `cross_val_score`                        | `KFold` + manual                |
+| --------------------------- | ---------------------------------------- | ------------------------------- |
+| Simplicidad                 | ✅ Muy fácil de usar                      | ❌ Más código                    |
+| Control                     | ❌ Menos control sobre entrenamiento/test | ✅ Total control                 |
+| Personalización de métricas | ✅ Usando `scoring`                       | ✅ Libre elección                |
+| Uso común                   | Ideal para experimentación rápida        | Ideal para escenarios avanzados |
+
+### 🔍 Tips
+
+* Usa `StratifiedKFold` para clasificación con clases desbalanceadas.
+* Puedes usar `cross_val_score(..., scoring='f1_macro')` para otras métricas.
+* Para clasificación binaria, también puedes probar `roc_auc`.
+
+### Resumen
+
+#### ¿Cómo implementar la validación cruzada en Python?
+
+La validación cruzada es una técnica esencial en el análisis de datos que te permite evaluar el rendimiento de un modelo de aprendizaje automático de manera efectiva. Este proceso implica dividir los datos en subconjuntos para probar el modelo varias veces y así asegurar su robustez. Gracias a bibliotecas como Scikit-Learn, esta técnica puede ser implementada de manera sencilla y eficaz. Vamos a explorar cómo hacerlo paso a paso.
+
+#### ¿Cuáles módulos y funciones necesitamos?
+
+Para llevar a cabo la validación cruzada en Python, comenzaremos importando los módulos necesarios:
+
+```python
+import pandas as pd
+import numpy as np
+from sklearn.tree import DecisionTreeRegressor
+from sklearn.model_selection import cross_val_score, KFold
+```
+
+- **Pandas**: Utilizado para la manipulación de datos.
+- **NumPy**: Ayuda en cálculos matemáticos complejos.
+- **DecisionTreeRegressor**: Un modelo de árbol de decisión para regresiones.
+- **cross_val_score y KFold**: Funciones de Scikit-Learn que facilitan la implementación de la validación cruzada.
+
+#### ¿Cómo preparar los datos?
+
+Vamos a utilizar un dataset conocido para llevar a cabo nuestra validación cruzada. Puedes cargarlo y prepararlo como se muestra a continuación:
+
+```python
+data = pd.read_csv('data/felicidad.csv')
+X = data.drop(['country', 'score'], axis=1)
+y = data['score']
+```
+
+- **DataFrame** `data`: Cargamos un CSV que contiene los datos.
+- **Características** `X`: Todas las columnas excepto el nombre del país y el score.
+- **Objetivo** `y`: La columna que queremos predecir, en este caso, el 'score'.
+
+#### ¿Cómo definir y evaluar el modelo?
+
+En esta etapa, definimos nuestro modelo de árbol de decisión sin ajustes adicionales y procedemos a evaluarlo.
+
+```python
+model = DecisionTreeRegressor()
+
+scores = cross_val_score(
+    model, X, y, scoring='neg_mean_squared_error', cv=3
+)
+
+mean_score = np.mean(scores)
+abs_mean_score = np.abs(mean_score)
+```
+
+DecisionTreeRegressor: Se utiliza en su configuración predeterminada.
+cross_val_score: Calcula el error cuadrático medio negativo para validar cruzadamente.
+Media y valor absoluto: Convertimos el valor medio del score negativo a su valor absoluto para mayor claridad.
+
+#### ¿Cómo controlar las particiones de datos?
+
+Usamos `KFold` para dividir los datos en subconjuntos específicos y controlar la aleatorización y consistencia de las particiones.
+
+```python
+kf = KFold(n_splits=3, shuffle=True, random_state=42)
+
+for train_index, test_index in kf.split(X):
+    X_train, X_test = X.iloc[train_index], X.iloc[test_index]
+    y_train, y_test = y.iloc[train_index], y.iloc[test_index]
+```
+
+- **KFold**: Permite definir el número de particiones (3 en nuestro caso), además de la opción de aleatorización.
+- **Partición y asignación**: Divide los datos en conjuntos de entrenamiento y prueba.
+
+¡Así es como puedes implementar y controlar la validación cruzada de manera sencilla en Python! Experimentar con diferentes modelos y configuraciones te dará una profunda comprensión de la robustez y eficacia de tus modelos. Sigue explorando y aprendiendo, el único límite es tu curiosidad.
+
+## Optimización de Modelos con Búsqueda en Grilla y Aleatoria
+
+La **optimización de modelos** en machine learning consiste en ajustar los hiperparámetros de un modelo para mejorar su rendimiento. En `scikit-learn`, las dos estrategias más comunes para este propósito son:
+
+### 🔍 Búsqueda en Grilla (Grid Search)
+
+La **búsqueda en grilla (`GridSearchCV`)** evalúa de manera **exhaustiva** todas las combinaciones posibles de hiperparámetros definidos por el usuario.
+
+### Ventajas:
+
+* Garantiza encontrar la mejor combinación dentro del espacio buscado.
+* Fácil de implementar e interpretar.
+
+### Desventajas:
+
+* Muy costosa computacionalmente (especialmente con muchas combinaciones o modelos complejos).
+
+### Ejemplo:
+
+```python
+from sklearn.model_selection import GridSearchCV
+from sklearn.ensemble import RandomForestClassifier
+
+# Definimos el modelo y los hiperparámetros a probar
+model = RandomForestClassifier()
+param_grid = {
+    'n_estimators': [50, 100],
+    'max_depth': [None, 10, 20],
+    'min_samples_split': [2, 5]
+}
+
+# Búsqueda en grilla con validación cruzada
+grid_search = GridSearchCV(estimator=model, param_grid=param_grid, cv=5)
+grid_search.fit(X_train, y_train)
+
+print("Mejores hiperparámetros:", grid_search.best_params_)
+print("Mejor score:", grid_search.best_score_)
+```
+
+### 🎲 Búsqueda Aleatoria (Randomized Search)
+
+La **búsqueda aleatoria (`RandomizedSearchCV`)** prueba un número fijo de combinaciones seleccionadas aleatoriamente del espacio de hiperparámetros.
+
+### Ventajas:
+
+* Menos costosa que `GridSearchCV`.
+* Puede encontrar buenas soluciones más rápido, especialmente cuando hay muchos hiperparámetros.
+
+### Desventajas:
+
+* No garantiza encontrar la mejor combinación posible.
+
+### Ejemplo:
+
+```python
+from sklearn.model_selection import RandomizedSearchCV
+from sklearn.ensemble import GradientBoostingClassifier
+from scipy.stats import randint
+
+# Definir modelo y espacio de búsqueda
+model = GradientBoostingClassifier()
+param_dist = {
+    'n_estimators': randint(50, 200),
+    'max_depth': randint(1, 10),
+    'learning_rate': [0.01, 0.05, 0.1, 0.2]
+}
+
+# Búsqueda aleatoria
+random_search = RandomizedSearchCV(model, param_distributions=param_dist, n_iter=10, cv=5, random_state=42)
+random_search.fit(X_train, y_train)
+
+print("Mejores hiperparámetros:", random_search.best_params_)
+print("Mejor score:", random_search.best_score_)
+```
+
+### ✅ Recomendaciones:
+
+* Usa `GridSearchCV` si el número de combinaciones es pequeño y puedes permitirte el costo computacional.
+* Usa `RandomizedSearchCV` si el espacio de búsqueda es grande o si el tiempo es limitado.
+* Siempre usa validación cruzada para evaluar el rendimiento y evitar overfitting.
+
+### Resumen
+
+#### ¿Cómo seleccionar y optimizar modelos utilizando validación cruzada?
+
+La selección y optimización de modelos de aprendizaje automático es una tarea crucial pero a menudo compleja. Encontrar el modelo adecuado no es suficiente; también hay que ajustar y optimizar sus parámetros para lograr el mejor desempeño posible. Esta tarea puede volverse tediosa, especialmente cuando se realizan pruebas manuales de cada parámetro.
+
+#### ¿Cuáles son las soluciones ofrecidas por Scikit-learn?
+
+Scikit-learn, una biblioteca popular de aprendizaje automático en Python, nos ofrece tres enfoques diferentes para optimizar parámetros:
+
+1. **Búsqueda manual**:
+
+- Consiste en seleccionar un modelo, explorar su documentación, identificar parámetros relevantes y probar combinaciones hasta encontrar la mejor.
+- Es un proceso meticuloso y puede ser muy costoso en términos de tiempo y recursos computacionales.
+
+2. **Búsqueda en malla (Grid Search)**:
+
+- Este enfoque sistemático utiliza una matriz de parámetros y ejecuta pruebas exhaustivas para todas las combinaciones posibles, buscando la mejor configuración.
+- Se define mediante un diccionario donde se especifican los parámetros y sus posibles valores.
+
+```python
+from sklearn.model_selection import GridSearchCV
+
+# Definición de parámetros para GridSearch
+parametros = {
+    'C': [1, 10, 100],
+    'kernel': ['linear', 'rbf']
+}
+
+# Implementación del GridSearchCV
+grid_search = GridSearchCV(estimator=SVC(), param_grid=parametros, cv=5)
+grid_search.fit(X_train, y_train)
+```
+
+3. **Búsqueda aleatorizada (Randomized Search)**:
+
+- Similar al Grid Search, pero en lugar de probar todas las combinaciones, selecciona aleatoriamente un número determinado de ellas, dentro de los rangos especificados.
+- Funciona bien para cuando no se dispone de mucho tiempo o recursos.
+
+```python
+from sklearn.model_selection import RandomizedSearchCV
+from scipy.stats import expon
+
+# Configuración de parámetros para RandomizedSearch
+parametros_rand = {
+    'C': expon(scale=100),
+    'gamma': expon(scale=0.1),
+    'kernel': ['linear', 'rbf'],
+    'class_weight': ['balanced', None]
+}
+
+# Implementación de RandomizedSearchCV
+random_search = RandomizedSearchCV(estimator=SVC(), param_distributions=parametros_rand, n_iter=10, cv=5)
+random_search.fit(X_train, y_train)
+```
+
+#### ¿Cuándo utilizar cada tipo de búsqueda?
+
+- **Grid Search** es ideal cuando se quiere hacer un análisis exhaustivo de todas las combinaciones posibles de parámetros, garantizando así que se encuentre la mejor configuración.
+
+- **Randomized Search** es más adecuado si se cuenta con limitaciones de tiempo o recursos computacionales, o si se busca una solución rápida y eficiente para experimentar con diferentes configuraciones.
+
+La elección del método depende mucho del problema específico y de las limitaciones del proyecto. En cualquier caso, estos enfoques automáticos permiten un aprovechamiento más eficaz del tiempo y los recursos, facilitando un análisis riguroso desde una perspectiva más sistemática. Así que a seguir explorando, la ciencia de datos es un campo vasto y lleno de oportunidades para aprender e innovar.
+
+## Automatización de Parámetros en Modelos de Regresión con Random Forest
+
+La **automatización de parámetros** en modelos de regresión como **Random Forest** consiste en ajustar automáticamente los hiperparámetros del modelo para mejorar su rendimiento sin intervención manual constante. Aquí se describen los pasos clave para hacerlo en Python usando `scikit-learn`.
+
+### 🔁 Automatización de Parámetros en Modelos de Regresión con Random Forest
+
+### 🎯 Objetivo:
+
+Optimizar automáticamente los parámetros del modelo `RandomForestRegressor` usando búsqueda en grilla (`GridSearchCV`) o búsqueda aleatoria (`RandomizedSearchCV`) y validación cruzada.
+
+### 1️⃣ **Importar librerías necesarias**
+
+```python
+import numpy as np
+import pandas as pd
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.model_selection import GridSearchCV, RandomizedSearchCV, train_test_split
+from sklearn.metrics import mean_squared_error, r2_score
+```
+
+### 2️⃣ **División del dataset**
+
+```python
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+```
+
+### 3️⃣ **Definir el modelo base**
+
+```python
+rf = RandomForestRegressor(random_state=42)
+```
+
+### 4️⃣ **Configurar la búsqueda de hiperparámetros**
+
+#### 📌 Opción A: Búsqueda en Grilla (exhaustiva)
+
+```python
+param_grid = {
+    'n_estimators': [50, 100, 200],
+    'max_depth': [None, 10, 20],
+    'min_samples_split': [2, 5, 10],
+    'min_samples_leaf': [1, 2, 4]
+}
+
+grid_search = GridSearchCV(estimator=rf, param_grid=param_grid, 
+                           cv=5, n_jobs=-1, scoring='r2')
+grid_search.fit(X_train, y_train)
+
+print("Mejores parámetros:", grid_search.best_params_)
+```
+
+#### 📌 Opción B: Búsqueda Aleatoria (más rápida)
+
+```python
+from scipy.stats import randint
+
+param_dist = {
+    'n_estimators': randint(50, 200),
+    'max_depth': randint(5, 30),
+    'min_samples_split': randint(2, 10),
+    'min_samples_leaf': randint(1, 5)
+}
+
+random_search = RandomizedSearchCV(estimator=rf, param_distributions=param_dist, 
+                                   n_iter=20, cv=5, n_jobs=-1, random_state=42,
+                                   scoring='r2')
+random_search.fit(X_train, y_train)
+
+print("Mejores parámetros:", random_search.best_params_)
+```
+
+### 5️⃣ **Evaluar el modelo optimizado**
+
+```python
+best_model = random_search.best_estimator_
+y_pred = best_model.predict(X_test)
+
+print("MSE:", mean_squared_error(y_test, y_pred))
+print("R²:", r2_score(y_test, y_pred))
+```
+
+### ✅ Ventajas
+
+* **Automatización total**: no necesitas elegir manualmente los hiperparámetros.
+* **Rendimiento óptimo**: encuentra combinaciones que mejoran precisión.
+* **Escalable**: puedes aplicarlo a otros modelos como SVM, KNN, etc.
+
+### Resumen
+
+#### ¿Cómo automatizar la selección de modelos y optimización de parámetros?
+
+Automatizar el proceso de selección de modelos y optimización de parámetros es clave para trabajar de manera eficiente en data science. Esto no solo ahorra tiempo, sino que además mejora la eficacia de los resultados. En esta guía usaremos el `RandomizedSearchCV` de Scikit-learn para demostrar cómo se realiza este proceso.
+
+#### ¿Qué herramientas necesitamos importar?
+
+Para iniciar con el proceso de optimización automática, importaremos las librerías necesarias. Como siempre, **pandas** es fundamental para la manipulación de datos. Además, importaremos el `RandomizedSearchCV` del módulo `model_selection` y el algoritmo `RandomForestRegressor` del módulo `ensemble`.
+
+```python
+import pandas as pd
+from sklearn.model_selection import RandomizedSearchCV
+from sklearn.ensemble import RandomForestRegressor
+```
+
+#### ¿Cómo prepararnos para la carga de datos?
+
+Asegúrate de que tu script se esté ejecutando dentro de un entorno activado donde las librerías estén configuradas. Luego, carga tu archivo `CSV` en un DataFrame utilizando `pandas`.
+
+```python
+if __name__ == "__main__":
+    df = pd.read_csv("data/felicidad.csv")
+    print(df.shape)  # Confirmar la carga de datos
+```
+
+#### ¿Cómo definimos y configuramos el modelo?
+
+Primero, definimos un regresor `RandomForestRegressor` sin parámetros. Luego, establecemos una grilla de parámetros en forma de diccionario, donde cada clave es un parámetro del modelo y el valor es un rango de valores posibles.
+
+```python
+regressor = RandomForestRegressor()
+
+param_grid = {
+    'n_estimators': range(4, 15),
+    'criterion': ['mse', 'mae'],
+    'max_depth': range(2, 11)
+}
+```
+
+#### ¿Qué es el RandomizedSearchCV y cómo se utiliza?
+
+El `RandomizedSearchCV` es una herramienta que permite optimizar de manera automática los parámetros de un modelo. Aquí configuramos nuestro `estimator`, `param_distributions` y ajustamos la cantidad de iteraciones y el método de validación cruzada.
+
+```python
+random_search = RandomizedSearchCV(
+    estimator=regressor,
+    param_distributions=param_grid,
+    n_iter=10,
+    cv=3,
+    scoring='neg_mean_absolute_error',
+    random_state=42
+)
+```
+
+#### ¿Cómo preparamos los datos para el entrenamiento?
+
+Para dividir nuestros datos entre características (`X`) y variable objetivo (`y`), seleccionamos las columnas correspondientes. En este caso, eliminamos cualquier columna que no aporte significativamente al modelo.
+
+```python
+X = df.drop(columns=["RANK", "SCORE"])
+y = df["SCORE"]
+```
+
+#### ¿Cómo entrenamos el modelo con la configuración optimizada?
+
+Entrena el modelo utilizando la configuración optimizada por `RandomizedSearchCV`. Es esencial imprimir el mejor estimador y los parámetros para revisar la calidad de los resultados.
+
+```python
+random_search.fit(X, y)
+best_estimator = random_search.best_estimator_
+print("Best Estimator:", best_estimator)
+```
+
+#### ¿Cómo realizamos y evaluamos las predicciones?
+
+Finalmente, realiza las predicciones con el modelo optimizado. Verificamos la exactitud de las predicciones comparando los resultados previstos con las variables reales.
+
+```python
+prediction = best_estimator.predict(X.iloc[0:1])
+print("Predicción para el primer registro:", prediction)
+```
+
+#### ¿Qué observamos sobre el resultado?
+
+En el ejemplo, la predicción se aproximó bastante al valor real, lo que indica que la optimización funcionó adecuadamente. Este proceso puede aplicarse a diferentes modelos y datasets para optimizar configuraciones de manera sistemática y efectiva.
+
+Incorpora esto en tu flujo de trabajo diario para obtener resultados consistentes con menos esfuerzo manual. ¡Sigue explorando y perfeccionando tus modelos!
