@@ -14,4 +14,4 @@ def predict():
     return jsonify({'prediccion': list(prediction)})
 
 if __name__ == "__main__":
-    app.run(port=8080)
+    app.run(port=8081)
