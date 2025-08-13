@@ -4,7 +4,7 @@
 
 ## Python
 
-## Python: De Cero a Experto
+### Python: De Cero a Experto
 
 - [Curso de Fundamentos de Python](Curso_de_Fundamentos_de_Python)
 - [Curso de Python: Comprehensions,Funciones y Manejo de Errores](CursodePythonComprehensions,FuncionesyManejodeErrores)
