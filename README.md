@@ -272,4 +272,4 @@ Laboratorio de Machine Learning: Puesta en Producción de Modelos
 
 ## CLOUD SERVICES
 
-- [Curso Basico de Django](CursoBasicodeDjango)
+- [Curso Basic de Django](CursoBasicodeDjango)
