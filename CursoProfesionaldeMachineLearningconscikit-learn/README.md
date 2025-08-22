@@ -1661,6 +1661,86 @@ Si el tema te ha interesado, te invito a seguir aprendiendo y experimentando con
 
 ## Implementación de Regularización en Modelos de Regresión Lineal
 
+Perfecto 🚀 Hablemos de la **implementación de regularización en modelos de regresión lineal**.
+
+### 🔹 ¿Qué es la regularización?
+
+La regularización es una técnica que se usa en modelos de regresión para **evitar el sobreajuste (overfitting)**.
+Se logra agregando un **término de penalización** a la función de costo (MSE).
+
+### Tipos principales:
+
+1. **Ridge (L2):** penaliza con la suma de los cuadrados de los coeficientes.
+
+   * Mantiene todos los coeficientes, pero reduce su magnitud.
+2. **Lasso (L1):** penaliza con la suma de los valores absolutos de los coeficientes.
+
+   * Puede hacer que algunos coeficientes se vuelvan **exactamente 0** → selección de variables.
+3. **Elastic Net (L1 + L2):** combinación de Ridge y Lasso.
+
+### 🔹 Funciones de costo
+
+### Regresión lineal normal:
+
+$$
+J(\beta) = \frac{1}{n} \sum_{i=1}^n (y_i - \hat{y}_i)^2
+$$
+
+### Ridge (L2):
+
+$$
+J(\beta) = \frac{1}{n} \sum_{i=1}^n (y_i - \hat{y}_i)^2 + \lambda \sum_{j=1}^p \beta_j^2
+$$
+
+### Lasso (L1):
+
+$$
+J(\beta) = \frac{1}{n} \sum_{i=1}^n (y_i - \hat{y}_i)^2 + \lambda \sum_{j=1}^p |\beta_j|
+$$
+
+### 🔹 Ejemplo práctico en Python
+
+```python
+import numpy as np
+import pandas as pd
+from sklearn.linear_model import LinearRegression, Ridge, Lasso, ElasticNet
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import mean_squared_error
+
+# Dataset de ejemplo
+np.random.seed(42)
+X = np.random.rand(100, 3)
+y = 3*X[:,0] + 2*X[:,1] - X[:,2] + np.random.randn(100)*0.1
+
+# Separar en train/test
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Modelos
+lr = LinearRegression().fit(X_train, y_train)
+ridge = Ridge(alpha=1.0).fit(X_train, y_train)
+lasso = Lasso(alpha=0.1).fit(X_train, y_train)
+elastic = ElasticNet(alpha=0.1, l1_ratio=0.5).fit(X_train, y_train)
+
+# Evaluación
+models = {
+    "Linear Regression": lr,
+    "Ridge": ridge,
+    "Lasso": lasso,
+    "Elastic Net": elastic
+}
+
+for name, model in models.items():
+    y_pred = model.predict(X_test)
+    print(f"{name} - MSE: {mean_squared_error(y_test, y_pred):.4f} - Coefs: {model.coef_}")
+```
+
+### 🔹 Interpretación del ejemplo
+
+* **Linear Regression:** ajusta sin restricción (riesgo de sobreajuste).
+* **Ridge:** reduce los coeficientes, pero mantiene todos ≠ 0.
+* **Lasso:** puede anular variables irrelevantes → selección automática.
+* **Elastic Net:** balancea entre L1 y L2.
+
 ### Resumen
 
 #### ¿Cómo comenzar con la implementación de técnicas de regularización?
@@ -3229,35 +3309,109 @@ score = silhouette_score(X_scaled, clusters)
 print("Silhouette Score:", score)
 ```
 
-Resumen
+### Resumen
 
-¿Qué es el aprendizaje no supervisado y por qué es importante?
+### ¿Qué es el aprendizaje no supervisado y por qué es importante?
+
 En el mundo del aprendizaje automáticamente, no todo se trata de supervisión. A diferencia del aprendizaje supervisado, que se fundamenta en el uso de etiquetas conocidas, el aprendizaje no supervisado se centra en descubrir patrones ocultos en datos no etiquetados. Esto resulta valioso para identificar agrupaciones o estructuras no evidentes a simple vista, allanando el camino para nuevas perspectivas o hipótesis en proyectos de machine learning.
 
-¿Cuáles son las aplicaciones del clustering?
+### ¿Cuáles son las aplicaciones del clustering?
+
 Los algoritmos de clustering, o agrupamiento, son una pieza clave en el aprendizaje no supervisado:
 
-Agrupación de datos sin etiquetas conocidas: Útil para ver en cuántos grupos podrían clasificarse los datos cuando no hay etiquetas de antemano.
-Descubrimiento de patrones en datos desconocidos: Permite generar comprensiones sobre la estructura y relaciones dentro del conjunto de datos.
-Identificación de valores atípicos: Detecta valores que se alejan significativamente de los puntos comunes en los datos.
-¿Cuáles son las estrategias de clustering disponibles?
+- **Agrupación de datos sin etiquetas conocidas**: Útil para ver en cuántos grupos podrían clasificarse los datos cuando no hay etiquetas de antemano.
+- **Descubrimiento de patrones en datos desconocidos**: Permite generar comprensiones sobre la estructura y relaciones dentro del conjunto de datos.
+- **Identificación de valores atípicos**: Detecta valores que se alejan significativamente de los puntos comunes en los datos.
+
+### ¿Cuáles son las estrategias de clustering disponibles?
+
 La elección de la técnica de clustering puede depender de varios factores, como el conocimiento previo sobre los datos. Aquí te enumeramos algunas estrategias y sus casos de uso:
 
-K-Means y Spectral Clustering: Recomendados cuando se sabe cuántos grupos se desea obtener. Por ejemplo, una empresa de marketing que ya tiene definidos sus segmentos de clientes (bajo, medio, alto).
+- **K-Means y Spectral Clustering**: Recomendados cuando se sabe cuántos grupos se desea obtener. Por ejemplo, una empresa de marketing que ya tiene definidos sus segmentos de clientes (bajo, medio, alto).
+
+```python
 from sklearn.cluster import KMeans
 # Asumiendo que 'data' es tu conjunto de datos
 kmeans = KMeans(n_clusters=3)
 kmeans.fit(data)
 labels = kmeans.labels_
-Mean-Shift, DBSCAN, y Clúster jerárquico: Ideales cuando se desconoce el número de grupos. Estos algoritmos permiten explorar y experimentar posibles agrupamientos sin tener una cantidad previa establecida de categorías.
+```
+
+- **Mean-Shift, DBSCAN, y Clúster jerárquico**: Ideales cuando se desconoce el número de grupos. Estos algoritmos permiten explorar y experimentar posibles agrupamientos sin tener una cantidad previa establecida de categorías.
+
+```python
 from sklearn.cluster import DBSCAN
 # Ejemplo para la implementación de DBSCAN
 dbscan = DBSCAN(eps=0.5, min_samples=5)
 dbscan.fit(data)
 labels = dbscan.labels_
+```
+
 Animamos a los estudiantes a elegir la técnica que mejor se adapte a sus datos específicos y a seguir explorando este fascinante ámbito del machine learning. La combinación adecuada de habilidades analíticas y técnicas de clustering puede llevarte a sorprendentes descubrimientos e innovaciones.
 
 ## Agrupamiento de Caramelos con K-Means y Pandas
+
+¡Muy buen tema! 🍬🤖
+Te muestro paso a paso cómo puedes implementar un **agrupamiento de caramelos con K-Means usando Pandas y Scikit-learn**. La idea es tener un dataset ficticio de caramelos con características (dulzura, color, dureza, etc.) y aplicar **K-Means** para agruparlos en categorías.
+
+### Ejemplo en Python: Agrupamiento de Caramelos con K-Means
+
+```python
+import pandas as pd
+from sklearn.cluster import KMeans
+import matplotlib.pyplot as plt
+
+# 1. Creamos un dataset ficticio de caramelos
+data = {
+    "Caramelo": ["ChocoBar", "Gomita", "CarameloDuro", "Toffee", "Menta", "Chicle", "Jalea", "BombaFruta"],
+    "Dulzura": [8, 9, 5, 7, 6, 9, 8, 7],
+    "Dureza": [2, 1, 10, 6, 8, 2, 3, 5],
+    "ColorIntensidad": [7, 9, 4, 5, 3, 8, 9, 6]
+}
+
+df = pd.DataFrame(data)
+
+# 2. Seleccionamos las características para el clustering
+X = df[["Dulzura", "Dureza", "ColorIntensidad"]]
+
+# 3. Aplicamos K-Means con 3 clusters
+kmeans = KMeans(n_clusters=3, random_state=42)
+df["Cluster"] = kmeans.fit_predict(X)
+
+# 4. Mostramos los resultados
+print(df)
+
+# 5. Visualización de los clusters (2D usando Dulzura y Dureza)
+plt.figure(figsize=(8,6))
+plt.scatter(df["Dulzura"], df["Dureza"], c=df["Cluster"], cmap="viridis", s=100)
+for i, txt in enumerate(df["Caramelo"]):
+    plt.annotate(txt, (df["Dulzura"][i]+0.1, df["Dureza"][i]+0.1))
+plt.xlabel("Dulzura")
+plt.ylabel("Dureza")
+plt.title("Agrupamiento de Caramelos con K-Means")
+plt.show()
+```
+
+### 📊 Resultado esperado:
+
+* El **DataFrame** tendrá una nueva columna `"Cluster"` que indica el grupo de cada caramelo.
+* El **gráfico de dispersión** mostrará cómo K-Means agrupó los caramelos según sus características.
+
+Ejemplo de salida en la tabla:
+
+| Caramelo     | Dulzura | Dureza | ColorIntensidad | Cluster |
+| ------------ | ------- | ------ | --------------- | ------- |
+| ChocoBar     | 8       | 2      | 7               | 0       |
+| Gomita       | 9       | 1      | 9               | 0       |
+| CarameloDuro | 5       | 10     | 4               | 1       |
+| Toffee       | 7       | 6      | 5               | 1       |
+| Menta        | 6       | 8      | 3               | 1       |
+| Chicle       | 9       | 2      | 8               | 0       |
+| Jalea        | 8       | 3      | 9               | 0       |
+| BombaFruta   | 7       | 5      | 6               | 2       |
+
+👉 El número de clusters `n_clusters=3` lo puedes variar para experimentar.
+👉 También puedes aplicar **PCA** para visualizar en 2D si tu dataset tiene más dimensiones.
 
 ### Resumen
 
@@ -4045,7 +4199,56 @@ Incorpora esto en tu flujo de trabajo diario para obtener resultados consistente
 
 ## Optimización Automática de Modelos con Auto-sklearn
 
-ver data
+## Optimización Automática de Modelos con Auto-sklearn
+
+A estas alturas, después de ver la forma en la que scikit-learn nos permite semi-automatizar la optimización de nuestros modelos con GridSearchCV y RandomizedSearchCV es posible que te estés preguntando ¿Cuál es el límite de esta automatización?
+
+Pues te sorprenderás,
+
+Automated Machine Learning (AutoML), es un concepto relativamente nuevo que en general pretende la completa automatización de todo el proceso de Machine Learning, desde la extracción de los datos hasta su publicación final de cara a los usuarios.
+
+Sin embargo, este ideal aún está en desarrollo en la mayoría de las etapas del proceso de Machine Learning y aún se depende bastante de la intervención humana. Aún con esto, es importante que seamos conscientes de que ya existen varias herramientas que nos acercan un poco a esta meta casi tomada de la ciencia ficción.
+
+Puedes encontrar más información leyendo el siguiente enlace:
+
+[https://itmastersmag.com/noticias-analisis/que-es-automated-machine-learning-la-proxima-generacion-de-inteligencia-artificial/](https://itmastersmag.com/noticias-analisis/que-es-automated-machine-learning-la-proxima-generacion-de-inteligencia-artificial/ "https://itmastersmag.com/noticias-analisis/que-es-automated-machine-learning-la-proxima-generacion-de-inteligencia-artificial/")
+
+La herramienta que te quiero presentar en esta clase se llama auto-sklearn, y nos ayudará a llevar aún un paso más lejos nuestro proceso de selección y optimización de modelos de machine learning. Dado que automáticamente prueba diferentes modelos predefinidos y configuraciones de parámetros comunes hasta encontrar la que más se ajuste según los datos que le pasemos como entrada. Con esta herramienta podrás entrenar modelos tanto de clasificación como de regresión por igual.
+
+Para una lista de los clasificadores disponibles consulta:
+
+[https://github.com/automl/auto-sklearn/tree/master/autosklearn/pipeline/components/classification](https://github.com/automl/auto-sklearn/tree/master/autosklearn/pipeline/components/classification "https://github.com/automl/auto-sklearn/tree/master/autosklearn/pipeline/components/classification")
+
+Y para una lista de los regresores disponibles consulta:
+
+[https://github.com/automl/auto-sklearn/tree/master/autosklearn/pipeline/components/regression](https://github.com/automl/auto-sklearn/tree/master/autosklearn/pipeline/components/regression "https://github.com/automl/auto-sklearn/tree/master/autosklearn/pipeline/components/regression")
+
+Ten en cuenta que podrás añadir modelos personalizados al proceso siguiendo los pasos descritos en la documentación.
+
+### auto-sklearn:
+
+Esta herramienta es una librería basada en los algoritmos de scikit-learn, aunque hay que tener presente que es una librería externa y se debe instalar siempre por aparte. En todo caso al ser una librería de Python se puede combinar sin ningún problema con el resto de nuestro código desarrollado para scikit-learn, incluso permitiendo la exportación de modelos ya entrenados para su posterior uso.
+
+Enlace a la documentación: [https://automl.github.io/auto-sklearn/master/index.html](https://automl.github.io/auto-sklearn/master/index.html "https://automl.github.io/auto-sklearn/master/index.html")
+
+Como lo puedes ver en su página web, los requerimientos para probar autosklearn son:
+
+- Se requiere un sistema operativo basado en Linux.
+- Python (>=3.5) .
+- Compilador para C++ (con soporte para C++11), por ejemplo GCC.
+- SWIG (versión 3.0 o superior).
+
+La forma de hacer funcionar nuestro algoritmo no podría ser más fácil. Nos resultará bastante familiar a estas alturas después de haber trabajado tanto con sklearn.
+
+```python
+import autosklearn.classification
+
+cls = autosklearn.classification.AutoSklearnClassifier()
+cls.fit(X_train, y_train)
+predictions = cls.predict(X_test)
+```
+
+¡Te invito a conocer a fondo esta herramienta a través de su documentación y decidir si es la estrategia que estás buscando para tu problema específico!
 
 ## Estructuración Modular de Código Python para Machine Learning
 
@@ -4198,7 +4401,7 @@ class Utiles:
         return pd.read_csv(path)
 ```
 
-- Ventaja de usar clases: Facilitan la actualización y modificación del código, manteniendo el flujo de ejecución intacto. Si un cliente cambia de base de datos, solo necesitas cambiar un método.
+- **Ventaja de usar clases**: Facilitan la actualización y modificación del código, manteniendo el flujo de ejecución intacto. Si un cliente cambia de base de datos, solo necesitas cambiar un método.
 
 #### ¿Cómo reutilizar métodos en Python?
 
@@ -4215,7 +4418,7 @@ Esta forma de organización te permite modificar y mejorar funciones sin afectar
 
 #### ¿Cómo ejecutar el código de forma modular?
 
-Una vez organizada la estructura, el `main.py` puede cargar datos de un CSV usando métodos definidos en utils.py. Asegúrate de importar librerías necesarias como Pandas para evitar errores.
+Una vez organizada la estructura, el `main.py` puede cargar datos de un CSV usando métodos definidos en `utils.py`. Asegúrate de importar librerías necesarias como Pandas para evitar errores.
 
 ```python
 import pandas as pd
@@ -4802,3 +5005,81 @@ Implementar tu modelo en producción es una misión compleja que has aprendido a
 La aventura del aprendizaje no termina aquí. Te animo a rendir el examen y a evaluar tus conocimientos actuando de manera autónoma. Además, habrás recibido materiales adicionales para continuar enriqueciendo tu formación.
 
 ¿Listo para el desafío? Mantente curioso, nunca dejes de aprender y prepárate para aplicar estos conocimientos en proyectos reales. ¡Te felicito nuevamente y te deseo lo mejor en tu camino en el fascinante mundo del análisis de datos y Machine Learning!
+
+## Recursos para Aprender Machine Learning y Data Science
+
+Una vez más debo felicitarte por haber llegado hasta el final de este curso. ¡Si multiplicamos nuestro conocimiento y lo compartimos con otros, cada vez haremos mejores productos tecnológicos que nos beneficien a todos!
+
+¡Nunca pares de aprender!
+
+No quiero irme sin recordarte que todo lo que vimos en este curso es no más una muestra del apasionante mundo del machine learning. Y te quiero dejar algunos materiales para que puedas continuar con tu camino de aprendizaje infinito. Si encuentras algún material que valga la pena, no dudes en hacérmelo llegar también. Juntos podemos llegar más lejos.
+**
+Machine Learning & Data Science:**
+
+El canal de StatQuest con Josh Starmer (Inglés):
+
+[https://www.youtube.com/channel/UCtYLUTtgS3k1Fg4y5tAhLbw](https://www.youtube.com/channel/UCtYLUTtgS3k1Fg4y5tAhLbw "https://www.youtube.com/channel/UCtYLUTtgS3k1Fg4y5tAhLbw")
+
+El canal de SentDex (Inglés):
+
+[https://www.youtube.com/user/sentdex](https://www.youtube.com/user/sentdex "https://www.youtube.com/user/sentdex")
+
+Un blog especializado en Data Science (Inglés)
+
+[https://towardsdatascience.com/](https://towardsdatascience.com/ "https://towardsdatascience.com/")
+
+Libro gratuito: The art of data science (Inglés)
+
+[https://bookdown.org/rdpeng/artofdatascience/](https://bookdown.org/rdpeng/artofdatascience/?fbclid=IwAR3SKV15jY7cdU_t7bm7pA-fd4v_VvstgEoubKak3KZbEqHmn1c0S2yZRgI "https://bookdown.org/rdpeng/artofdatascience/")
+
+Canal AMP Tech: (Español)
+
+[https://www.youtube.com/channel/UCG4H4Qf-ZU9Ycr_PQ4egqDQ](https://www.youtube.com/channel/UCG4H4Qf-ZU9Ycr_PQ4egqDQ "https://www.youtube.com/channel/UCG4H4Qf-ZU9Ycr_PQ4egqDQ")
+
+Tensorflow Coding (Español):
+
+[https://www.youtube.com/watch?v=ZMkYL942RBw&list=PLQY2H8rRoyvz3rEFpW2I3gPSru5xm8Bf7](https://www.youtube.com/watch?v=ZMkYL942RBw&list=PLQY2H8rRoyvz3rEFpW2I3gPSru5xm8Bf7 "https://www.youtube.com/watch?v=ZMkYL942RBw&list=PLQY2H8rRoyvz3rEFpW2I3gPSru5xm8Bf7")
+
+Canal de 3Blue1Brown (Subtitulado):
+
+[https://www.youtube.com/watch?v=aircAruvnKk](https://www.youtube.com/watch?v=aircAruvnKk "https://www.youtube.com/watch?v=aircAruvnKk")
+
+El curso de Deep Learning para PLN de Stanford: [http://web.stanford.edu/class/cs224n/](http://web.stanford.edu/class/cs224n/ "http://web.stanford.edu/class/cs224n/")
+
+El canal de Daniel Shiffman “The Coding Train”
+
+(Está más orientado a temas de computación gráfica, pero las explicaciones que da de Inteligencia Artificial son maravillosas).
+
+[https://www.youtube.com/user/shiffman](https://www.youtube.com/user/shiffman "https://www.youtube.com/user/shiffman")
+
+El libro de Daniel Shiffman de introducción a la vida artificial usando P5.JS (Javascript):
+
+[https://natureofcode.com/book/](https://natureofcode.com/book/ "https://natureofcode.com/book/")
+
+El canal de Andrew Ng. Deeplearning.ai
+
+[https://www.youtube.com/channel/UCcIXc5mJsHVYTZR1maL5l9w](https://www.youtube.com/channel/UCcIXc5mJsHVYTZR1maL5l9w "https://www.youtube.com/channel/UCcIXc5mJsHVYTZR1maL5l9w")
+
+**Mis comunidades favoritas en facebook:**
+
+(No olvides revisar la sección de archivos cuando sea el caso)
+
+The Data Pub:
+
+[https://www.facebook.com/thedatapub/](https://www.facebook.com/thedatapub/ "https://www.facebook.com/thedatapub/")
+
+Machine Learning Colombia:
+
+[https://www.facebook.com/groups/1766056600304468/files/](https://www.facebook.com/groups/1766056600304468/files/ "https://www.facebook.com/groups/1766056600304468/files/")
+
+Machine Learning en Español
+
+[https://www.facebook.com/groups/machinelearninges/](https://www.facebook.com/groups/machinelearninges/ "https://www.facebook.com/groups/machinelearninges/")
+
+Sociedad Ecuatoriana de estadística (Español)
+
+[https://www.facebook.com/socecuest/](https://www.facebook.com/socecuest/ "https://www.facebook.com/socecuest/")
+
+Con mucho cariño,
+
+Ariel Ortiz Beltrán.

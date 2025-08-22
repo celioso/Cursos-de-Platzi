@@ -191,9 +191,7 @@
 - [Curso de Decision Trees y Random Forest con Python y scikit-learn](CursodeDecisionTreesyRandomForestconPythonyscikit-learn)
 - [Curso de Clustering con Python y scikit-learn](CursodeClusteringconPythonyscikit-learn)
 - [Curso Profesional de Machine Learning con scikit-learn](CursoProfesionaldeMachineLearningconscikit-learn)
-
-Curso de Bases de Datos con SQL
-
+- [Curso de Bases de Datos con SQL](CursodeBasesdeDatosconSQL)
 - [Curso Práctico de SQL](CursoPracticodeSQL)
 - [Curso de PostgreSQL Aplicado a Ciencia de Datos](CursodePostgreSQLAplicadoaCienciadeDatos)
 - [Curso de Herramientas de Inteligencia Artificial para Equipos de Datos](CursodeHerramientasdeInteligenciaArtificialparaEquiposdeDatos)
