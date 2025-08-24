@@ -1169,3 +1169,540 @@ Te desafío a crear una tabla para instructores siguiendo estas pautas, y a comp
 [GitHub - platzi/curso-sql: Platzi curso de Bases de Datos con SQL 💚 | Selecciones, Joins, Agrupaciones | Domina 👩‍💻 herramientas clave desde cero hasta crear bases de datos robustas y eficientes](https://github.com/platzi/curso-sql)
 
 [Edito usado en clase - SQL Online Compiler - Next gen SQL Editor](https://sqliteonline.com/)
+
+## Buenas practicas de bases de datos con SQL
+
+Las **buenas prácticas en bases de datos con SQL** son clave para que tu sistema sea **escalable, seguro y fácil de mantener**. Aquí te dejo una lista organizada:
+
+### 🔹 1. Diseño y modelado
+
+* **Normalización**: al menos hasta 3FN (Tercera Forma Normal) para evitar duplicación de datos.
+* **Denormalización consciente**: solo si necesitas velocidad y sabes que el costo en duplicidad es manejable.
+* **Claves primarias**: siempre define una `PRIMARY KEY` clara y única.
+* **Claves externas (FOREIGN KEY)**: mantienen integridad entre tablas (ejemplo: `students` → `courses`).
+* **Tipos de datos correctos**: usa `INT` para números, `DATE/TIMESTAMP` para fechas, `BOOLEAN` para valores lógicos.
+* **Longitudes adecuadas**: no pongas `VARCHAR(500)` si solo necesitas `VARCHAR(50)`.
+
+### 🔹 2. Rendimiento
+
+* **Índices**:
+
+  * Crea índices en columnas que usas mucho en `WHERE`, `JOIN` o `ORDER BY`.
+  * No abuses: demasiados índices ralentizan `INSERT`/`UPDATE`.
+* **Consultas eficientes**:
+
+  * Usa `SELECT columnas` en vez de `SELECT *`.
+  * Evita subconsultas innecesarias, prefiere `JOIN`.
+* **Particionamiento y sharding** (cuando hay muchos datos).
+
+### 🔹 3. Seguridad
+
+* **Principio de privilegios mínimos**:
+
+  * Crea usuarios con permisos limitados (`SELECT`, `INSERT`, etc.).
+* **Parámetros en consultas**: evita concatenar strings para prevenir **SQL Injection**.
+
+  * Ejemplo en Python con SQLite:
+
+    ```python
+    cursor.execute("SELECT * FROM users WHERE email = ?", (email,))
+    ```
+* **Encriptación de datos sensibles** (ejemplo: contraseñas → `bcrypt`, nunca en texto plano).
+* **Backups automáticos**: siempre configura copias de seguridad periódicas.
+
+### 🔹 4. Escalabilidad y mantenimiento
+
+* **Nombres claros**:
+
+  * Tablas en plural: `students`, `courses`.
+  * Columnas descriptivas: `created_at`, `updated_at`, no solo `date1`.
+* **Documentación**: escribe comentarios sobre relaciones y triggers.
+* **Migraciones controladas**: usa herramientas como Alembic (Python) o Liquibase para mantener versiones.
+* **Monitoreo**: revisa logs y rendimiento (`EXPLAIN` para analizar queries).
+
+### 🔹 5. Ejemplo de buenas prácticas en tabla
+
+```sql
+CREATE TABLE students (
+    student_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    first_name TEXT NOT NULL,
+    last_name TEXT NOT NULL,
+    email TEXT UNIQUE NOT NULL,
+    age INTEGER CHECK (age BETWEEN 0 AND 120),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+```
+
+👉 Estas son prácticas que te harán ver como un **buen programador de bases de datos** en entrevistas.
+
+### Resumen
+
+#### ¿Qué es la normalización y por qué es importante?
+
+La normalización es una práctica crucial en la manipulación de bases de datos. Su objetivo es garantizar la integridad y organización de los datos, permitiendo la adecuada estructuración de la información y el correcto relacionamiento entre tablas. Imaginemos una mudanza como metáfora: organizamos por áreas (como cocina o habitación) y no almacenamos un electrodoméstico donde estarían objetos de dormitorio. Con esta misma lógica, la normalización ayuda a identificar las áreas de negocio y atribuir de manera precisa cada objeto en una base de datos, evitando incongruencias y asegurando datos atómicos y bien relacionados.
+
+#### ¿Cómo se aplica la primera forma normal?
+
+La primera forma normal (1NF) se centra en la atomicidad de los datos y en la especificación de una clave primaria para cada registro. Los pasos a seguir incluyen:
+
+- Asegurar que toda la información sea atómica, es decir, indivisible.
+- Utilizar una clave primaria para diferenciar cada registro.
+- Centralizar la información por columnas, evitando combinar diferentes tipos de información en un solo campo.
+
+Por ejemplo, en una tabla de estudiantes y cursos, si un campo contiene múltiples cursos de forma conjunta, como "A, B, C", se estaría violando este principio ya que los datos no son indivisibles.
+
+**Ejemplo**:
+
+Si Marco está inscrito en los cursos A, B y C, cada inscripción debería ser un registro separado:
+
+```bash
+ID | Estudiante | Curso
+1  | Marco      | A
+1  | Marco      | B
+1  | Marco      | C
+```
+
+#### ¿Qué implica la segunda forma normal?
+
+La segunda forma normal (2NF) requiere que todos los atributos no clave dependan de la clave primaria. Esto significa que no debe haber dependencias parciales de la clave.
+
+- Cumplir previamente con la 1NF.
+- Crear tablas separadas para grupos de datos relacionados y establecer relaciones entre ellas mediante claves foráneas.
+
+Por ejemplo, una tabla de cursos separada con su propia clave primaria elimina la redundancia de datos de curso en la tabla de estudiantes:
+
+```bash
+Tabla Cursos
+ID | Curso
+1  | A
+2  | B
+3  | C
+
+Tabla Inscripciones
+EstudianteID | CursoID
+1            | 1
+1            | 2
+1            | 3
+```
+
+#### ¿Cómo se configura la tercera forma normal?
+
+La tercera forma normal (3NF) afirma que los atributos no clave deben ser completamente independientes de los demás. Esto se traduce en:
+
+- Asegurar que no haya dependencias funcionales transitivas.
+- Mantener independiente toda información no relacionada directamente con la clave primaria.
+
+Para nuestro ejemplo, las tablas de estudiantes y cursos deben contener solo información pertinente, evitando que un atributo dependa de otro que no sea la clave primaria.
+
+**Ejemplo de tablas**:
+
+1. **Tabla Estudiantes**: Contendrá solo detalles relevantes del estudiante:
+
+- Nombre
+- Apellido
+- Identificación
+
+2. **Tabla Cursos**: Incluirá solo información acerca de los cursos:
+
+- Descripción
+- Capacidad
+
+3. **Tabla Intermedia**: Conectará estudiantes y cursos:
+
+- EstudianteID
+
+- CursoID
+
+#### ¿Cómo organizar información de direcciones?
+
+En el caso de las direcciones, abundar detalles atómicos es esencial.
+
+- Separar el país, departamento y ciudad.
+- Relacionar cada elemento mediante claves foráneas para mantener integridad y reducción de redundancias.
+
+Cada empresa puede optar por estructuras diferentes, pero la justificación en base a las formas normales asegura un desarrollo más sencillo y mayor calidad de datos.
+
+La normalización no solo maximiza la eficiencia del almacenamiento de datos, sino que también mejora las operaciones de transformación, análisis y calidad de los mismos, otorgando un sistema robusto y eficiente.
+
+## Insertando Datos con SQL (INSERT)
+
+Vamos a practicar cómo insertar datos en SQL (`INSERT INTO`).
+Siguiendo con tu ejemplo de **Instructor** y **Courses**, te muestro cómo hacerlo paso a paso:
+
+### 🔹 Insertar en **Instructor**
+
+```sql
+INSERT INTO Instructor (firstname, lastname, age, email, assignature)
+VALUES ('Carlos', 'Pérez', 40, 'carlos.perez@email.com', 'Matemáticas');
+
+INSERT INTO Instructor (firstname, lastname, age, email, assignature)
+VALUES ('Laura', 'Gómez', 35, 'laura.gomez@email.com', 'Física');
+```
+
+👉 Aquí no necesitas pasar `instructor_id` porque es **AUTOINCREMENT**.
+
+### 🔹 Insertar en **Courses** (con relación)
+
+Supongamos que `Carlos Pérez` quedó con `instructor_id = 1` y `Laura Gómez = 2` (SQLite los asigna automáticamente):
+
+```sql
+INSERT INTO Courses (coursename, description, instructor_id, durationhours)
+VALUES ('Álgebra Básica', 'Curso introductorio de álgebra', 1, 40);
+
+INSERT INTO Courses (coursename, description, instructor_id, durationhours)
+VALUES ('Mecánica Clásica', 'Fundamentos de la física mecánica', 2, 60);
+```
+
+👉 Aquí sí debes indicar el `instructor_id` correcto para que la **FOREIGN KEY** sea válida.
+
+### 🔹 Ver los datos insertados
+
+```sql
+SELECT * FROM Instructor;
+SELECT * FROM Courses;
+```
+
+📌 **Tip:** Si no recuerdas el `instructor_id` al insertar en `Courses`, puedes buscarlo con:
+
+```sql
+SELECT instructor_id, firstname, lastname FROM Instructor;
+```
+
+### Resumen
+
+####¿Cómo realizar inserciones de datos en bases de datos? 
+
+La inserción de datos en bases de datos relacionales es una habilidad esencial para cualquier desarrollador o analista de datos. Vamos a profundizar en el uso de las declaraciones INSERT INTO y algunas de sus complejidades.
+
+#### ¿Qué son las sentencias INSERT INTO?
+
+Las sentencias `INSERT INTO` se utilizan para agregar nuevas filas a una tabla en una base de datos. Esta operación es básica y forma el núcleo de las operaciones de manipulación de datos (DML). Para utilizar `INSERT INTO`, sigamos estos pasos:
+
+1. Especificar el nombre de la tabla a la cual deseamos añadir información.
+2. Detallar los atributos o columnas receptores de estos nuevos datos.
+3. Asignar los valores correspondientes a cada atributo.
+
+**Ejemplo de código SQL**
+
+Aquí hay un ejemplo sencillo de cómo luciría una inserción:
+
+```sql
+INSERT INTO nombre_tabla (columna1, columna2, columna3)
+VALUES (valor1, valor2, valor3);
+```
+
+#### ¿Cómo manejar valores por defecto?
+
+A menudo, las tablas tienen columnas configuradas con valores por defecto, como la fecha de carga o la fecha de actualización. Estas no necesitan ser explícitamente especificadas en la sentencia `INSERT INTO`, lo que simplifica el proceso:
+
+```sql
+INSERT INTO estudiantes (nombre, apellido, correo)
+VALUES ('Carolina', 'Martínez', 'carolina@example.com');
+```
+
+#### ¿Cómo trabajar con claves foráneas?
+
+El manejo de claves foráneas es un componente clave en las bases de datos relacionales porque permite vincular tablas diferentes. Al insertar datos que involucren claves foráneas, el contenido debe coincidir con una clave primaria en otra tabla.
+
+En este ejemplo, supongamos que tenemos una tabla de relacionamiento entre estudiantes y cursos:
+
+- Estudiantes tiene un ID que es clave primaria.
+- Cursos tiene un ID que es clave primaria.
+- La tabla de relacionamiento tiene ambos como claves foráneas.
+
+**Ejemplo de inserción con claves foráneas**
+
+Supongamos que Carolina, cuyo ID de estudiante es 1, va a ser registrada en un curso de francés cuyo ID es también 1:
+
+```sql
+INSERT INTO relacion_estudiante_curso (estudiante_id, curso_id, fecha_matricula)
+VALUES (1, 1, '2023-10-01');
+```
+
+#### ¿Cómo verificar las inserciones?
+Después de realizar inserciones, es vital validar que los datos se han registrado correctamente. Esto se puede hacer utilizando una consulta `SELECT`:
+
+`SELECT * FROM relacion_estudiante_curso;`
+
+#### ¿Qué hacer si se cometen errores?
+
+Los errores son parte del aprendizaje. Intenta insertar información incorrecta para entender cómo el motor de base de datos maneja estos errores y qué feedback proporciona. Practica insertando datos erróneos y revisa los mensajes de error para mejorar tu comprensión.
+
+#### Recomendaciones
+
+1. **Practica constantemente**: No hay mejor manera de aprender que practicar. Cree una base de datos de prueba y trabaja con diferentes tipos de inserciones y consultas.
+2. **Juega con los datos**: Experimenta con diferentes escenarios y relaciones dentro de tu base de datos.
+3. **Explora errores**: Inserta datos inapropiados o en formatos incorrectos para ver cómo tu base de datos maneja los errores.
+
+Avanza con confianza en el mundo de las bases de datos, ampliando tus habilidades y profundizando en cada funcionalidad de las mismas. ¡Sigue practicando y explorando nuevas formas de manipular y consultar tus datos!
+
+## Consultas y Selecciones en SQL (SELECT)
+
+Las **consultas SELECT** en SQL son la base para obtener datos de tus tablas. Te muestro paso a paso con ejemplos claros, suponiendo que ya tienes tu tabla `people`:
+
+```sql
+CREATE TABLE people (
+  person_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+  first_name VARCHAR(255) NOT NULL,
+  last_name VARCHAR(255) NOT NULL,
+  address VARCHAR(255) NOT NULL,
+  city VARCHAR(255) NOT NULL
+);
+```
+
+Y supongamos que insertamos algunos datos:
+
+```sql
+INSERT INTO people (first_name, last_name, address, city)
+VALUES 
+('Juan', 'Pérez', 'Calle 123', 'Bogotá'),
+('Ana', 'Gómez', 'Av 45 #10', 'Medellín'),
+('Luis', 'Martínez', 'Cra 7 #45', 'Cali');
+```
+
+### 🔹 Consultas básicas con `SELECT`
+
+### 1. Seleccionar **todas las columnas**
+
+```sql
+SELECT * FROM people;
+```
+
+### 2. Seleccionar **columnas específicas**
+
+```sql
+SELECT first_name, city FROM people;
+```
+
+### 3. Usar **WHERE** para filtrar
+
+```sql
+SELECT * FROM people
+WHERE city = 'Bogotá';
+```
+
+### 4. Ordenar resultados con `ORDER BY`
+
+```sql
+SELECT * FROM people
+ORDER BY last_name ASC;   -- ascendente
+```
+
+### 5. Limitar cantidad de resultados
+
+```sql
+SELECT * FROM people
+LIMIT 2;
+```
+
+### 6. Usar alias (para renombrar columnas)
+
+```sql
+SELECT first_name AS Nombre, last_name AS Apellido
+FROM people;
+```
+
+### 7. Filtrar con condiciones lógicas
+
+```sql
+SELECT * FROM people
+WHERE city = 'Cali' OR city = 'Medellín';
+```
+
+### 8. Buscar por coincidencia con `LIKE`
+
+```sql
+SELECT * FROM people
+WHERE first_name LIKE 'A%';  -- nombres que comienzan con A
+```
+
+### Resumen
+
+#### Nota al pie
+
+Queremos detallarte la función `SELECT`.
+En SQL, el comando `SELECT` se usa para recuperar datos de una base de datos. Puedes especificar las columnas que deseas obtener.
+Si realizamos el siguiente comando:
+`SELECT * FROM COURSES`
+Podemos observar la información de la tabla completa, que habíamos creado en clases anteriores con la tabla `COURSES`.
+Si solo queremos seleccionar una columna o columnas en específico, debemos hacer lo siguiente:
+Con el comando `SELECT`, mencionamos el nombre de las columnas que queremos traer.
+En nuestro ejemplo, podemos llamar a `coursename` y `description`:
+SELECT coursename, description (Seleccionamos las columnas que queremos traer)
+ FROM COURSES (Elegimos la tabla de donde queremos obtener la información)
+Puedes ordenar la información obtenida con tu comando `SELECT` utilizando la función `ORDER`.
+En el ejemplo, podemos organizarlo de forma ascendente, descendente o por fecha:
+ORDER BY coursename ASC
+
+#### ¿Cómo utilizar la sentencia SELECT * FROM en SQL?
+
+La sentencia `SELECT * FROM` es uno de los comandos más esenciales y comunes que utilizarás en el campo del análisis de datos, ya sea como analista, ingeniero de datos o cualquier profesional en este ámbito. Esta consulta te permite acceder y visualizar de manera inmediata toda la información contenida en una tabla de tu base de datos. Vamos a profundizar en su uso y algunas de sus variaciones.
+
+#### ¿Cómo funciona la sentencia SELECT * FROM?
+
+La funcionalidad básica de la sentencia `SELECT * FROM` implica tres componentes principales:
+
+1. **SELECT**: Una palabra reservada que indica que deseas seleccionar datos de la base de datos.
+2. **Asterisco (*)**: Indica que quieres seleccionar todos los campos de la tabla.
+3. **FROM**: Designa la tabla de la cual deseas obtener información.
+
+Por ejemplo, si deseas consultar toda la información almacenada en la tabla llamada "cursos", la sentencia será:
+
+`SELECT * FROM cursos;`
+
+Al ejecutarla, verás todos los registros y columnas disponibles en la tabla, incluyendo el nombre del curso, descripción, instructor ID, duración del curso, fecha de carga y fecha de modificación.
+
+#### ¿Cómo especificar campos en la consulta?
+
+A veces no necesitas toda la información de la tabla; solo estás interesado en ciertos atributos. En vez de utilizar el asterisco para seleccionar todos los campos, puedes especificar los nombres de las columnas que deseas consultar. Por ejemplo:
+
+`SELECT nombre_curso, descripcion FROM cursos;`
+
+Este comando mostrará únicamente los campos "nombre_curso" y "descripcion", permitiéndote enfocarte en la información necesaria.
+
+#### ¿Cómo ordenar los resultados de la consulta?
+
+Ordenar los resultados es otra capacidad poderosa. Puedes ordenar la información de manera ascendente o descendente, usando la cláusula `ORDER BY`. Por defecto, el orden es ascendente.
+
+Para ordenar por el nombre del curso, lo harías de la siguiente forma:
+
+`SELECT * FROM cursos ORDER BY nombre_curso ASC;`
+
+O para orden descendente:
+
+`SELECT * FROM cursos ORDER BY nombre_curso DESC;`
+
+#### ¿Qué evitar al escribir consultas SQL?
+
+Al trabajar con SQL, es importante prestar atención a la sensibilidad de las claves. Algunos motores de bases de datos son "keyssensitive", lo que significa que debes escribir los nombres de los atributos exactamente como los registraste en tu base de datos. Los errores de sintaxis, como llamar a un campo de forma incorrecta, son comunes, por lo que debes ser cuidadoso con la escritura.
+
+Si ves un error como un campo no existente, verifica que el nombre esté bien escrito y que coincida con la base de datos. Por ejemplo, si un campo se registró como "fecha_carga", no funcionará si lo escribes de la forma "fecha-carga".
+
+#### ¿Cómo seguir mejorando tus habilidades en SQL?
+
+Te animo a que explores otras tablas en tu base de datos y juegues con los datos que tienes almacenados. Practica agrupando información, utilizando claves adicionales y manipula los datos para obtener una comprensión más profunda y afinada de SQL. Cada error es una oportunidad para aprender y mejorar tus habilidades de consulta y manejo de bases de datos.
+
+La práctica constante te ayudará a convertirte en un experto en el manejo de datos, dándote la confianza necesaria para abordar problemas más complejos y proponer soluciones innovadoras en el mundo de los datos. ¡Continúa tu aventura en el fascinante mundo de SQL!
+
+## Eliminación de Datos con SQL (DELETE)
+
+te explico cómo funciona la eliminación de datos en SQL con **DELETE**.
+
+La sentencia básica es:
+
+```sql
+DELETE FROM nombre_tabla
+WHERE condición;
+```
+
+### 🔹 Ejemplos con tu tabla `people`
+
+1. **Eliminar un registro específico por ID**
+
+```sql
+DELETE FROM people
+WHERE person_id = 3;
+```
+
+👉 Esto borra solo la persona con `person_id = 3`.
+
+2. **Eliminar por coincidencia de nombre**
+
+```sql
+DELETE FROM people
+WHERE first_name = 'Juan';
+```
+
+👉 Elimina a todas las personas llamadas Juan.
+
+3. **Eliminar registros de una ciudad**
+
+```sql
+DELETE FROM people
+WHERE city = 'Bogotá';
+```
+
+👉 Borra todos los que viven en Bogotá.
+
+4. **Eliminar TODOS los registros (vaciar la tabla)**
+   ⚠️ Cuidado, esto elimina todo el contenido:
+
+```sql
+DELETE FROM people;
+```
+
+5. **Eliminar con condición múltiple**
+
+```sql
+DELETE FROM people
+WHERE city = 'Medellín' AND last_name = 'Pérez';
+```
+
+👉 Solo borra a quienes cumplan **ambas condiciones**.
+
+📌 Recomendación:
+Antes de borrar, puedes verificar qué filas se afectarían con un **SELECT**. Por ejemplo:
+
+```sql
+SELECT * FROM people WHERE city = 'Bogotá';
+```
+
+y si estás seguro, ejecutas el `DELETE`.
+
+### Resumen
+
+### ¿Cómo evitar desastres al eliminar datos en SQL?
+
+Trabajar con bases de datos en SQL es una habilidad esencial para cualquier profesional de datos. Sin embargo, es igualmente crucial entender cómo ejecutar las sentencias correctamente para evitar problemas graves, como la eliminación accidental de toda la producción. Aquí exploraremos los errores comunes y mejores prácticas al usar la sentencia DELETE en SQL para evitar desastres.
+
+#### ¿Cuál es la errata más común al utilizar DELETE?
+
+En el mundo de la ingeniería de datos, un error crítico es olvidar la cláusula `WHERE` en un `DELETE` statement. Esto puede provocar la eliminación de todos los registros en una tabla, lo que podría llevar a perder información crucial.
+
+- **Sintaxis del DELETE**: Debe contener la palabra reservada `DELETE` seguida de `FROM`, el nombre de la tabla y, finalmente, un WHERE que especifique las condiciones para eliminar los datos.
+
+`DELETE FROM nombre_tabla WHERE condición;`
+
+- **Importancia del WHERE**: Este es el elemento más importante de la sintaxis. Sin él, eliminas toda la información de tu tabla, arriesgando perder datos valiosos y causando fallos en producción.
+
+#### ¿Cómo poner en práctica DELETE de manera segura?
+
+Antes de ejecutar cualquier `DELETE`, es esencial consultar la información de la tabla con una `SELECT` query para verificar los datos que serán afectados. De este modo, puedes asegurarte de que solo se eliminen los registros correctos.
+
+1. **Consulta previa**: Revisa la información de la tabla que deseas modificar antes de aplicar el `DELETE`.
+
+`SELECT * FROM nombre_tabla WHERE condición;`
+
+2. **Eliminar por clave primaria**: Es recomendable utilizar la clave primaria en la cláusula `WHERE`, ya que es única y reduce el riesgo de afectar más registros de los necesarios.
+
+3. **Verificar después de DELETE**: Consulta de nuevo la tabla para garantizar que se eliminaron los registros adecuados.
+
+```sql
+DELETE FROM estudiante WHERE id = 2;
+SELECT * FROM estudiante;
+```
+
+#### ¿Qué otras sentencias SQL debes conocer?
+
+Además de `DELETE`, hay otras sentencias SQL importantes que debes manejar con precisión para una gestión eficaz de la base de datos.
+
+- **SELECT**: Esta es una de las sentencias más fundamentales, permitiéndote manipular datos, agregar `WHERE`, `GROUP BY`, `ORDER BY`, entre otros.
+
+`SELECT * FROM nombre_tabla WHERE condición;`
+
+- **UPDATE**: Utilizada para modificar datos. Recuerda usar `WHERE` para especificar qué registros deseas actualizar.
+
+`UPDATE nombre_tabla SET columna = valor WHERE condición;`
+
+- **CREATE DATABASE y CREATE TABLE**: Esta sintaxis te permite crear bases de datos y tablas, especificando restricciones como claves primarias y tipos de datos.
+
+```sql
+CREATE DATABASE nombre_base_datos;
+CREATE TABLE nombre_tabla (
+    id INT PRIMARY KEY,
+    nombre VARCHAR(255)
+);
+```
+
+Con este conocimiento, podrás evitar errores críticos en tus proyectos de datos. Ten siempre presente revisar la sintaxis detalladamente y comprender el impacto de tus acciones. Esto no solo garantiza la integridad de los datos, sino que también eleva tu habilidad profesional en el manejo de bases de datos. ¡Sigue aprendiendo y perfeccionando tus capacidades para convertirte en un experto en el mundo de los datos!

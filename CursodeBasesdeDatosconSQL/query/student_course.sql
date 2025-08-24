@@ -1,0 +1,13 @@
+--- 23-08-2025 19:10:47 SQLite.9
+CREATE TABLE STUDENT_COURSE(
+    STUDENTS_COURSE_ID INTEGER primary key,
+  	STUDENT_ID INT,
+    COURSE_ID INT,
+  	ENROLLMENTDATE TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    LOADDATE TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UPDATEDATE TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  	foreign key (student_id) references students(student_id),
+    foreign key (course_id) references Courses(course_id)
+);
+
+

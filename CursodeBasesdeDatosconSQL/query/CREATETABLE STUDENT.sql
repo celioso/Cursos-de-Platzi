@@ -10,3 +10,14 @@ CREATE TABLE students (
 );
 
 
+-- Escribe aquí tu código SQL 👇
+SELECT * FROM cursos;
+
+SELECT count(*) AS cantidad FROM cursos;
+
+SELECT nombre AS name, 
+  profe AS teacher, n_calificaciones
+  n_reviews FROM cursos;
+
+
+
