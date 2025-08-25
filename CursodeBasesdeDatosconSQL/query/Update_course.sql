@@ -1,0 +1,14 @@
+--- 24-08-2025 18:42:24 SQLite.17
+UPDATE COURSES
+SET COURSENAME = 'Introduction to MySQL'
+WHERE COURSENAME = 'Introduction to SQL';
+
+
+
+
+
+--- 24-08-2025 18:42:27 SQLite
+SELECT * FROM COURSES;
+
+
+

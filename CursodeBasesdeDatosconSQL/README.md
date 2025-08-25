@@ -1706,3 +1706,701 @@ CREATE TABLE nombre_tabla (
 ```
 
 Con este conocimiento, podrás evitar errores críticos en tus proyectos de datos. Ten siempre presente revisar la sintaxis detalladamente y comprender el impacto de tus acciones. Esto no solo garantiza la integridad de los datos, sino que también eleva tu habilidad profesional en el manejo de bases de datos. ¡Sigue aprendiendo y perfeccionando tus capacidades para convertirte en un experto en el mundo de los datos!
+
+## Actualización de Datos con SQL (UPDATE)
+
+El comando **UPDATE** en SQL se usa para **modificar registros existentes** en una tabla.
+
+La sintaxis general es:
+
+```sql
+UPDATE nombre_tabla
+SET columna1 = valor1, columna2 = valor2, ...
+WHERE condición;
+```
+
+⚠️ **Muy importante**: si omites el `WHERE`, actualizarás **TODOS** los registros de la tabla.
+
+### Ejemplos con tu tabla **INSTRUCTORS**
+
+#### 1. Cambiar el correo de un instructor específico:
+
+```sql
+UPDATE INSTRUCTORS
+SET EMAIL = 'nuevo.email@example.com'
+WHERE INSTRUCTORID = 1;
+```
+
+#### 2. Actualizar la edad de todos los instructores con apellido "Smith":
+
+```sql
+UPDATE INSTRUCTORS
+SET AGE = AGE + 1
+WHERE LASTNAME = 'Smith';
+```
+
+#### 3. Actualizar múltiples columnas:
+
+```sql
+UPDATE INSTRUCTORS
+SET FIRSTNAME = 'Robert',
+    EMAIL = 'robert.smith@example.com'
+WHERE INSTRUCTORID = 3;
+```
+
+#### 4. Actualizar **toda la tabla** (ejemplo: reiniciar correos):
+
+```sql
+UPDATE INSTRUCTORS
+SET EMAIL = 'pendiente@asignar.com';
+```
+
+*(Ojo, esto cambia todos los correos en la tabla).*
+
+### Resumen
+
+#### ¿Cómo gestionar errores en bases de datos?
+
+Imagina que los datos en tu base de datos contienen un error. La buena noticia es que SQL, un lenguaje de consulta estructurado, te permite modificar registros sin la necesidad de reconstruir toda la tabla. Este proceso trae grandes beneficios, como ahorrar tiempo y recursos, además de evitar la pérdida de información valiosa.
+
+#### ¿Qué comando utilizar para actualizar información?
+
+Para actualizar información en una tabla, utilizamos el comando UPDATE. Con UPDATE, puedes cambiar los valores de uno o más campos en las filas existentes de tu tabla. Aquí un ejemplo sencillo en el que vamos a corregir un error tipográfico en una base de datos que almacena información de personas:
+
+```sql
+UPDATE personas 
+SET nombre = 'Juana' 
+WHERE nombre = 'Juna';
+```
+
+En este caso, estamos actualizando todas las filas en las que el nombre es "Juna" a "Juana". Asegúrate siempre de que el `WHERE` esté bien definido para no modificar registros que no deseas alterar.
+
+#### ¿Cómo confirmar los cambios realizados?
+
+Después de ejecutar un comando `UPDATE`, es importante confirmar que los cambios se han realizado correctamente. Para ello, puedes utilizar el comando `SELECT` y verificar los resultados:
+
+`SELECT * FROM personas WHERE nombre = 'Juana';`
+
+Esto te mostrará todas las filas en las que el nombre es ahora "Juana". Es una buena práctica comprobar siempre los resultados para garantizar que la actualización se haya implementado como se esperaba.
+
+#### ¿Qué precauciones tomar al modificar datos?
+
+Modificar información en una base de datos es una tarea sensible que conlleva algunas consideraciones:
+
+- **Revisar los datos**: Antes de actualizar, asegúrate de que el dato nuevo es correcto para evitar errores posteriores.
+- **Realizar copias de seguridad**: Siempre realiza una copia de seguridad de la base de datos antes de efectuar cambios significativos, en caso de que necesites volver a la versión anterior.
+- **Pruebas en entornos seguros**: Cuando sea posible, realiza pruebas en un entorno de desarrollo o pruebas para verificar los cambios antes de aplicarlos en producción.
+
+Un mantenimiento adecuado de la base de datos garantiza la integridad y confiabilidad de los datos, lo cual es crucial para cualquier organización que dependa de la información almacenada para su operación diaria. Mantente siempre actualizado y sigue aprendiendo para mejorar tus habilidades en manejo de bases de datos.
+
+## 🛠️ Guía de instalación de MySQL y MySQL Workbench
+
+Para continuar con las siguientes clases vamos a necesitar la instalación de MySQL y MySQL Workbench.
+
+Instalación de MySQL
+Instalación de MySQL en Windows
+1. **Descargar el instalador**
+
+- Visita: [https://dev.mysql.com/downloads/installer](https://dev.mysql.com/downloads/installer)
+
+- Descarga MySQL Installer for Windows (puede ser la versión Full o Web).
+
+2. **Ejecutar el instalador**
+
+- Haz clic derecho y selecciona **"Ejecutar como administrador"**.
+
+- Elige la opción **Developer Default** (instala cliente, servidor, Workbench y herramientas adicionales).
+
+- Acepta los términos y espera a que se descarguen todos los componentes.
+
+3. **Configurar el servidor MySQL**
+
+- **Tipo de configuración**: *Standalone MySQL Server*
+
+- **Puerto**: 3306
+
+- **Método de autenticación**: *Use Legacy Authentication Method*
+
+- **Contraseña**: Crea una contraseña para el usuario root
+
+4. **Verificar la instalación**
+
+Abre una terminal (CMD o PowerShell) y ejecuta:
+
+`mysql -u root -p`
+
+Introduce la contraseña. Si accedes correctamente, ¡está funcionando!
+
+### 🍏 Instalación de MySQL en macOS
+1. **Instalar Homebrew (si no lo tienes)**
+
+`/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"`
+
+2. **Instalar MySQL**
+
+`brew install mysql`
+
+3. **Iniciar el servidor**
+
+`brew services start mysql`
+
+4. **Conectarse al cliente**
+
+`mysql -u root`
+
+Si da error de autenticación, ejecuta:
+
+`mysql_secure_installation`
+
+🐿 **Instalación de MySQL en Ubuntu / Debian**
+
+1. **Actualizar el sistema**
+
+`sudo apt update sudo apt upgrade`
+
+2. **Instalar MySQL Server**
+
+`sudo apt install mysql-server`
+
+3. **Asegurar la instalación**
+
+`sudo mysql_secure_installation`
+
+ - Establece una contraseña para el usuario root
+
+ - Acepta las opciones de seguridad recomendadas
+
+4. **Conectarse al cliente**
+
+`sudo mysql -u root -p`
+
+💻 **Instalación de MySQL Workbench**
+
+#### ¿Qué es?
+
+MySQL Workbench es una interfaz gráfica para trabajar con bases de datos MySQL: puedes visualizar, modelar, escribir queries y administrar usuarios de forma más visual.
+
+🔽 **Descarga**
+
+- Ve a: [https://dev.mysql.com/downloads/workbench/](https://dev.mysql.com/downloads/workbench/)
+
+- Elige tu sistema operativo y descarga el instalador.
+
+🧩 **Instalación**
+
+- **Windows/macOS**: Ejecuta el instalador y sigue los pasos. En Windows, si instalaste con el MySQL Installer, ya deberías tener Workbench incluido.
+
+- **Linux**: En sistemas basados en Debian:
+
+`sudo apt install mysql-workbench`
+
+✅ **Verifica conexión**
+
+- Abre MySQL Workbench.
+
+- Crea una nueva conexión con el usuario root y el puerto 3306.
+
+- Si logras conectarte y ver las bases de datos, ¡todo está listo!
+
+✅ **Probar la conexión**
+
+Una vez dentro del cliente (CLI o Workbench), ejecuta:
+
+`SHOW DATABASES;`
+
+Si ves information_schema, mysql, etc., entonces la instalación fue exitosa. 🎉
+
+## ¿Qué es la cláusula WHERE de SQL?
+
+La **cláusula `WHERE` en SQL** sirve para **filtrar registros** en una consulta o instrucción, de manera que solo se afecten o muestren las filas que cumplen con una condición específica.
+
+### 📌 Uso general:
+
+```sql
+SELECT columnas
+FROM tabla
+WHERE condición;
+```
+
+### 🔹 Ejemplos prácticos
+
+1. **Filtrar resultados en un `SELECT`**
+
+```sql
+SELECT * 
+FROM STUDENTS
+WHERE edad > 25;
+```
+
+👉 Muestra solo los estudiantes cuya edad sea mayor a 25.
+
+2. **Actualizar registros específicos (`UPDATE`)**
+
+```sql
+UPDATE STUDENTS
+SET edad = 30
+WHERE student_id = 2;
+```
+
+👉 Solo actualiza la edad del estudiante con `id = 2`.
+
+3. **Eliminar registros (`DELETE`)**
+
+```sql
+DELETE FROM STUDENTS
+WHERE edad < 18;
+```
+
+👉 Elimina únicamente los estudiantes menores de 18 años.
+
+### ⚠️ Importante:
+
+* Si **no usas `WHERE`** en `UPDATE` o `DELETE`, afectarás **todas las filas** de la tabla.
+* Puedes usar operadores como `=`, `<>` (distinto), `<`, `>`, `BETWEEN`, `LIKE`, `IN`, `AND`, `OR`.
+
+### Resumen
+
+#### ¿Por qué utilizar MySQL para análisis de datos?
+
+MySQL se destaca como una de las plataformas más populares en el ámbito del análisis de datos, gracias a su robustez y flexibilidad. A diferencia de SQL Lite, MySQL implementa reglas más estrictas, lo que ayuda a mantener la integridad y calidad de los datos. Al trabajar con MySQL, se evita, por ejemplo, dejar campos como el Primary Key y identificadores nulos, garantizando así bases de datos bien estructuradas y confiables.
+
+Además, MySQL ofrece un entorno de trabajo en consola donde se pueden practicar consultas complejas y manipulaciones de datos, lo que resulta esencial para desarrolladores y analistas de datos. Es altamente recomendable configurar adecuadamente el entorno al instalar MySQL, crear bases de datos y tablas desde cero, y usar herramientas como ChatGPT para generar ejemplos de registros a insertar.
+
+#### ¿Cómo utilizar la sentencia WHERE en MySQL?
+
+La sentencia `WHERE` es una herramienta poderosa y versátil en MySQL, ya que nos permite filtrar datos de forma precisa en nuestras consultas. Se puede emplear para modificar, eliminar o simplemente consultar datos mediante diferentes operadores lógicos y de comparación.
+
+#### ¿Qué operadores lógicos se pueden utilizar?
+
+1. **Operador de igualdad (`=`)**:
+
+- Permite obtener registros que coincidan exactamente con un valor específico. Por ejemplo, para consultar estudiantes con un instructor_id específico.
+
+2. **Operador de desigualdad (`!=` o `<>`)**:
+
+- Filtra los datos que no coinciden con el valor especificado. Excluye resultados que coincidan con criterios determinados y es útil para obtener conjuntos de datos más relevantes.
+
+3. **Operador de comparación**:
+
+Operadores como `<`, `>`, `<=`, y `>=` permiten realizar consultas basadas en rangos numéricos.
+
+#### ¿Cómo se usan los operadores para manipular datos de texto?
+
+Para datos de texto, los operadores comparativos también son útiles. Se pueden utilizar comillas simples para encerrar los valores de texto específicos que queremos filtrar, por ejemplo, filtrar por un nombre de instructor específico o por correo electrónico.
+
+`SELECT * FROM instructores WHERE primer_nombre = 'John';`
+
+#### ¿Qué es la cláusula BETWEEN?
+
+El operador `BETWEEN` es ideal para definir rangos inclusivos entre dos valores, y es especialmente útil para datos numéricos. Es vital indicar primero el menor valor seguido por el mayor al utilizar este operador.
+
+`SELECT * FROM instructores WHERE salario BETWEEN 50000 AND 90000;`
+
+#### ¿Cómo se pueden optimizar las consultas SQL?
+
+Optimizar consultas SQL es crucial para mantener un rendimiento eficiente en bases de datos MySQL, especialmente al manejar grandes volúmenes de datos.
+
+- **Índices**: Implementar índices para columnas usadas frecuentemente en la cláusula `WHERE`, ya que aceleran el acceso a los datos.
+- **Consultas específicas**: Evitar el uso de `SELECT *` en favor de especificar solo las columnas necesarias.
+- **Limitar resultados**: Si se requieren menos registros,` LIMIT` puede reducir la carga de las consultas.
+
+#### ¿Cómo practicar con estos conceptos en MySQL?
+
+La práctica constante es clave para dominar MySQL. Usa prácticas interactivas, como las consultas de ejemplo aportadas y modificadas con diferentes operadores y datos. Además, cuestiona sobre diferentes escenarios, como modificar datos específicos, lo cual fortalece las habilidades adquiridas.
+
+Finalmente, invita a los demás a compartir experiencias y resultados de las prácticas mediante comentarios en plataformas de aprendizaje o foros, ya que la colaboración y el feedback son sumamente valiosos en el proceso de aprendizaje.
+
+## Filtrar y Ordenar Datos en SQL (LIKE)
+
+En SQL puedes **filtrar y ordenar datos** usando `WHERE`, `LIKE` y `ORDER BY`.
+
+### 🔎 **1. Filtrar con `LIKE`**
+
+La cláusula `LIKE` se usa en el `WHERE` para buscar patrones de texto.
+Los comodines principales son:
+
+* `%` → Cualquier número de caracteres.
+* `_` → Un solo carácter.
+
+Ejemplos:
+
+```sql
+-- Buscar estudiantes cuyo nombre empieza con 'A'
+SELECT * 
+FROM STUDENTS
+WHERE FIRSTNAME LIKE 'A%';
+
+-- Buscar estudiantes cuyo apellido termina en 'z'
+SELECT * 
+FROM STUDENTS
+WHERE LASTNAME LIKE '%z';
+
+-- Buscar estudiantes cuyo correo contiene 'gmail'
+SELECT * 
+FROM STUDENTS
+WHERE EMAIL LIKE '%gmail%';
+```
+
+### 📌 **2. Ordenar con `ORDER BY`**
+
+Puedes ordenar los resultados **ascendente (ASC)** o **descendente (DESC)**:
+
+```sql
+-- Ordenar estudiantes por edad (menor a mayor)
+SELECT * 
+FROM STUDENTS
+ORDER BY AGE ASC;
+
+-- Ordenar estudiantes por salario de mayor a menor
+SELECT * 
+FROM STUDENTS
+ORDER BY SALARY DESC;
+```
+
+### 🎯 **3. Combinar LIKE + ORDER BY**
+
+```sql
+-- Buscar estudiantes cuyo nombre empiece con 'M' y ordenar por apellido
+SELECT * 
+FROM STUDENTS
+WHERE FIRSTNAME LIKE 'M%'
+ORDER BY LASTNAME ASC;
+
+-- Buscar correos de Gmail y ordenarlos por fecha de carga
+SELECT * 
+FROM STUDENTS
+WHERE EMAIL LIKE '%gmail%'
+ORDER BY LOADDATE DESC;
+```
+
+### Resumen
+
+#### ¿Cómo filtrar datos usando la cláusula `WHERE` y la palabra reservada `LIKE` en SQL?
+
+En este artículo, exploraremos cómo filtrar datos de manera avanzada utilizando la cláusula `WHERE` junto con la palabra reservada `LIKE` en SQL. Este método te permitirá depurar y limpiar datos con mayor eficiencia y precisión, mejorando el rendimiento de tus consultas. A partir de casos específicos, como encontrar nombres que comienzan o terminan con determinadas letras o que contienen caracteres específicos, aprenderás cómo aplicar estos operadores para obtener exactamente los resultados que necesitas.
+
+#### ¿Cómo seleccionar nombres que comienzan con una letra específica?
+
+Para encontrar nombres que comienzan con una letra particular, por ejemplo, la letra 'C', se usa el operador `LIKE` combinado con `WHERE`. Aquí te mostramos cómo estructurar tu consulta:
+
+```sql
+SELECT * FROM estudiantes
+WHERE nombre LIKE 'C%';
+```
+
+1. `SELECT *` selecciona todas las columnas de la tabla.
+2. `FROM` estudiantes indica la tabla de la que se extraen los datos.
+3. `WHERE nombre LIKE 'C%'` especifica que buscamos nombres que comiencen con 'C'.
+
+#### ¿Cómo encontrar apellidos que terminan en una letra específica?
+
+Para buscar apellidos que terminan con una letra específica, digamos 'Z', modificamos la posición del porcentaje en nuestra sentencia SQL. Aquí está el ejemplo:
+
+```sql
+SELECT * FROM estudiantes
+WHERE apellido LIKE '%Z';
+```
+
+El símbolo `%` se coloca delante de la 'Z', indicando que buscamos apellidos que finalicen con esta letra.
+
+#### ¿Cómo mostrar únicamente las columnas necesarias en una consulta?
+
+Es fundamental optimizar nuestras consultas al seleccionar solo los datos necesarios, lo cual es crucial en el análisis avanzado o cuando se manejan grandes cantidades de datos, como en procesos de Big Data.
+
+Supongamos que deseas ver solo el primer nombre y el apellido de personas de 20 años. La consulta se vería así:
+
+```sql
+SELECT nombre, apellido FROM estudiantes
+WHERE edad = 20;
+```
+
+Poner solo las columnas necesarias en el `SELECT` garantiza una consulta más eficiente. Aquí, incluso si no estamos mostrando la edad en el resultado, se usa en la cláusula `WHERE` para filtrar las filas.
+
+#### ¿Cómo trabajar con múltiples filtros en una consulta?
+
+A veces se requiere aplicar varios criterios simultáneamente. Imagina que necesitas personas cuyo nombre empiece con 'M', tengan 20 años, y su apellido contenga la letra 'O'. Aquí está cómo hacerlo:
+
+```sql
+SELECT nombre, apellido FROM estudiantes
+WHERE nombre LIKE 'M%'
+AND edad = 20
+AND apellido LIKE '%O%';
+```
+
+- `LIKE 'M%'` filtra los nombres que comienzan con 'M'.
+- `edad = 20` asegura que solo se seleccionen personas de 20 años.
+- `apellido LIKE '%O%'` busca apellidos que contengan la letra 'O' en cualquier posición.
+
+#### Consejos para optimizar tus consultas SQL
+
+- **Usar índices**: Asegúrate de que las columnas utilizadas en `WHERE` estén indexadas para mejorar el rendimiento.
+- **Seleccionar solo columnas necesarias**: Evita el uso de `SELECT *` para reducir la carga del servidor y el tiempo de respuesta.
+- **Practicar con diferentes tablas**: Familiarízate con la diversidad de tus tablas para perfeccionar tus habilidades en SQL.
+- **Pruebas continuas**: Realiza y modifica consultas según diferentes escenarios para validar resultados y eficiencia.
+
+Al aplicar estos métodos y consejos, podrás manejar tus consultas SQL con eficacia, llevando tu análisis de datos a un nuevo nivel. Deja que tus resultados hablen por ti al optimizar y refinar cada filtrado de datos. ¡Sigue practicando y explorando nuevas posibilidades para mejorar tu eficiencia en SQL!
+
+## Cláusulas de Comparación Textual en SQL (AND, NULL, IN, NOT)
+
+¡Excelente tema! 🚀
+En SQL, además de `LIKE`, se pueden usar **cláusulas de comparación textual** para filtrar resultados de forma más precisa. Te muestro los más usados con ejemplos claros:
+
+### 🔹 **1. `AND`**
+
+Sirve para combinar **dos o más condiciones**:
+
+```sql
+-- Estudiantes con nombre 'Carlos' y edad mayor a 20
+SELECT * 
+FROM STUDENTS
+WHERE FIRSTNAME = 'Carlos' AND AGE > 20;
+```
+
+### 🔹 **2. `NULL`**
+
+Se usa para verificar si un valor está vacío (**NULL**) o no (**IS NOT NULL**):
+
+```sql
+-- Buscar estudiantes que no tienen correo
+SELECT * 
+FROM STUDENTS
+WHERE EMAIL IS NULL;
+
+-- Buscar estudiantes que sí tienen correo
+SELECT * 
+FROM STUDENTS
+WHERE EMAIL IS NOT NULL;
+```
+
+⚠️ Ojo: en SQL no se usa `= NULL`, siempre se usa `IS NULL`.
+
+### 🔹 **3. `IN`**
+
+Sirve para comprobar si un valor está dentro de una **lista de valores**:
+
+```sql
+-- Estudiantes con edades de 18, 20 o 25
+SELECT * 
+FROM STUDENTS
+WHERE AGE IN (18, 20, 25);
+
+-- Estudiantes con nombre en una lista
+SELECT * 
+FROM STUDENTS
+WHERE FIRSTNAME IN ('Carlos', 'María', 'Ana');
+```
+
+### 🔹 **4. `NOT`**
+
+Sirve para **negar condiciones**:
+
+```sql
+-- Estudiantes que NO se llaman 'Carolina'
+SELECT * 
+FROM STUDENTS
+WHERE FIRSTNAME NOT LIKE 'Carolina';
+
+-- Estudiantes cuya edad no esté en 18 o 20
+SELECT * 
+FROM STUDENTS
+WHERE AGE NOT IN (18, 20);
+```
+
+✅ Ejemplo combinando varias cláusulas:
+
+```sql
+-- Estudiantes mayores de 18, con correo Gmail y cuyo apellido NO sea 'Lopez'
+SELECT * 
+FROM STUDENTS
+WHERE AGE > 18 
+  AND EMAIL LIKE '%gmail%'
+  AND LASTNAME NOT LIKE 'Lopez';
+```
+
+### Resumen
+
+#### ¿Cómo utilizar operadores lógicos en análisis de datos?
+
+El uso de operadores lógicos es fundamental en el análisis de datos y constituye una habilidad esencial para un ingeniero de datos. Los operadores permiten establecer criterios específicos en la información que manejamos, ya sea en procedimientos almacenados, vistas o flujos de trabajo. Veamos cómo se aplican estos operadores en una base de datos, utilizando la consola de SQL.
+
+#### ¿Qué es un operador lógico y cómo se utiliza?
+
+Los operadores lógicos nos permiten combinar múltiples criterios en nuestras consultas para obtener resultados precisos. Por ejemplo, al trabajar con una tabla de instructores, podemos aplicar el siguiente criterio: "el salario debe ser mayor a cincuenta mil dólares".
+
+`SELECT * FROM instructores WHERE salario > 50000;`
+
+Este operador simple nos proporcionará una lista de instructores cuyo salario excede los 50,000 dólares.
+
+#### ¿Cómo utilizar el operador AND y el operador OR?
+
+El operador AND nos ayuda a combinar múltiples condiciones que deben cumplirse simultáneamente. Imaginemos que además queremos que el primer nombre del instructor comience con la letra "J":
+
+`SELECT * FROM instructores WHERE salario > 50000 AND nombre LIKE 'J%';`
+
+Como resultado, obtendremos una lista que cumple ambas condiciones.
+
+Por otro lado, el operador **OR** se utiliza para condiciones excluyentes, cumpliendo al menos una de ellas. Si deseamos aplicar esta lógica, la consulta cambiaría a:
+
+`SELECT * FROM instructores WHERE salario > 50000 OR nombre LIKE 'J%';`
+
+En este caso, la lista incluirá instructores que cumplen al menos una de las condiciones establecidas, resultando en un conjunto más grande de datos.
+
+#### ¿Cómo manejar varias condiciones de búsqueda?
+
+La capacidad de mezclar operadores lógicos permite definir aún más nuestras consultas. Añadiendo un criterio adicional, como nombres que comienzan con "D", podríamos tener:
+
+`SELECT * FROM instructores WHERE (salario > 50000 OR nombre LIKE 'J%') OR nombre LIKE 'D%';`
+
+Esto arroja una lista más amplia, incluía aquellos instructores cuyo primer nombre empieza con "D", además de los criterios antes mencionados.
+
+#### ¿Cómo trabajar con valores nulos en SQL?
+
+Los valores nulos son una parte compleja del análisis de datos. Comprender cómo manejarlos correctamente puede optimizar nuestras consultas.
+
+#### ¿Cómo eliminar los datos nulos de los resultados?
+
+Para visualizar registros cuyos nombres no sean nulos, podemos usar la siguiente consulta:
+
+`SELECT * FROM estudiantes WHERE nombre IS NOT NULL;`
+
+Esto mostrará solo los registros donde el campo nombre contiene datos válidos.
+
+#### ¿Y si queremos ver los datos nulos?
+
+Invertir la lógica es sencillo:
+
+`SELECT * FROM estudiantes WHERE nombre IS NULL;`
+
+Con ello, listamos sólo aquellos registros donde el campo nombre no tiene un valor almacenado.
+
+#### ¿Cómo aplicar filtros con NOT IN?
+
+El operador NOT IN permite excluir ciertos valores específicos de nuestros resultados. Por ejemplo, si deseamos excluir estudiantes con una edad determinada:
+
+`SELECT * FROM estudiantes WHERE edad NOT IN (20);`
+
+Esta consulta devolverá información de todos los estudiantes, excepto aquellos que tengan exactamente veinte años.
+
+Practicando este tipo de consultas y dominando el uso de operadores lógicos y filtros, podrás optimizar tus análisis de datos y lograr cumplir de manera eficiente con cualquier requerimiento propuesto. Explora, experimenta y sigue aprendiendo para fortalecer tus habilidades en el apasionante mundo del análisis de datos.
+
+## Funciones de Aritmética Básica en SQL (COUNT)
+
+La **función `COUNT` en SQL** se usa para **contar registros** dentro de una tabla, de acuerdo con un criterio. Es una de las funciones de agregación más usadas.
+
+### 📌 Sintaxis básica:
+
+```sql
+SELECT COUNT(*)
+FROM nombre_tabla;
+```
+
+👉 Explicación:
+
+* `COUNT(*)` → cuenta **todas las filas** de la tabla, incluyendo valores nulos.
+* `COUNT(columna)` → cuenta solo las filas donde la columna **NO es nula**.
+
+### ✅ Ejemplos prácticos:
+
+1. **Contar todos los estudiantes en la tabla `STUDENTS`:**
+
+```sql
+SELECT COUNT(*) AS total_estudiantes
+FROM STUDENTS;
+```
+
+2. **Contar estudiantes con correo registrado (ignora `NULL`):**
+
+```sql
+SELECT COUNT(EMAIL) AS con_correo
+FROM STUDENTS;
+```
+
+3. **Contar estudiantes mayores de 25 años:**
+
+```sql
+SELECT COUNT(*) AS mayores_25
+FROM STUDENTS
+WHERE AGE > 25;
+```
+
+4. **Contar estudiantes por cada apellido (agrupados con `GROUP BY`):**
+
+```sql
+SELECT LASTNAME, COUNT(*) AS cantidad
+FROM STUDENTS
+GROUP BY LASTNAME;
+```
+
+### Resumen
+
+#### Aclaración:
+
+Hola, estudiantes. 
+Queríamos detallar un poco sobre la función **COUNT** mencionada en la clase.
+Para aplicarla en el primer ejemplo que la profesora relacionó, utilizamos el siguiente comando:
+**SELECT** courseid, **COUNT**(studentid)
+En este caso, **SELECT** se utiliza para identificar el ID del curso donde se va a realizar el conteo de los estudiantes. Es decir:
+**SELECT** courseid
+Después de ello, utilizamos la función COUNT, la cual realizará la búsqueda de cuántos estudiantes se encuentran en cada uno de los cursos:
+**COUNT**(studentid)
+
+Adicionalmente, hemos dejado el query para la creación de la tabla STUDENT_COURSE y el INSERT que se realiza sobre la misma.
+
+#### ¿Cómo generar informes eficaces con SQL en entornos de Business Intelligence?
+
+El Business Intelligence es esencial para la toma de decisiones empresariales, pues proporciona herramientas y tecnologías que ayudan a transformar datos en información valiosa. SQL, una de las principales herramientas de manipulación de datos, permite la creación de informes detallados. Este contenido te guiará a través de un escenario práctico donde aprendemos a construir informes utilizando consultas SQL. Abordaremos desde la agrupación de estudiantes por curso hasta el cálculo de saldos promedios de instructores.
+
+#### ¿Cómo contar estudiantes por curso?
+
+Imagina que tu jefe necesita saber cuántos estudiantes están inscritos en cada curso. La solución es usar SQL para agrupar la información. Empezaremos usando la sentencia `GROUP BY`, que nos permite clasificar datos según columnas específicas.
+
+```sql
+SELECT curso_id, COUNT(estudiante_id) AS total_estudiantes
+FROM inscripciones
+GROUP BY curso_id;
+```
+
+Este ejemplo agrupa estudiantes por curso, contando cuántos hay en cada uno. Es clave especificar el campo de estudiante dentro del `COUNT` para obtener resultados precisos.
+
+#### ¿Cómo filtrar estudiantes con más de dos cursos?
+
+Supongamos que ahora solo quieres mostrar estudiantes con más de dos cursos registrados. Aquí entra `HAVING`, que actúa como un filtro posterior al `GROUP BY`.
+
+```sql
+SELECT estudiante_id, COUNT(curso_id) AS total_cursos
+FROM inscripciones
+GROUP BY estudiante_id
+HAVING COUNT(curso_id) > 2;
+```
+
+Esta consulta proporciona resultados donde solo los estudiantes con más de dos cursos registrados son mostrados, demostrando la flexibilidad de `HAVING` en SQL para crear filtros avanzados.
+
+#### ¿Cómo calcular salarios de instructores con operaciones aritméticas?
+
+En la gestión administrativa, conocer el salario total de los empleados puede ser crucial. SQL ofrece la función de SUM para sumar valores de una columna, y los `alias` para mejorar la legibilidad del resultado.
+
+```sql
+SELECT SUM(salario) AS salario_total
+FROM instructores;
+```
+
+Este comando suma todos los salarios de la tabla de instructores. Al usar un `alias`, nominalizamos la columna resultante para facilitar su interpretación en los informes.
+
+#### ¿Cómo calcular el promedio de salarios?
+
+Para conocer el promedio salarial de los instructores, utilizamos AVG, que calcula el promedio de una columna de números.
+
+```sql
+SELECT AVG(salario) AS salario_promedio
+FROM instructores;
+```
+
+Al igual que con otras funciones aritméticas, los `alias` ayudan a mantener un estándar uniforme y profesional en la presentación de datos al personal directivo.
+
+#### Buenas prácticas y recomendaciones
+
+Mantener consistencia y limpieza en el nombre de las columnas es fundamental. Evita mezclar idiomas o usar mayúsculas y minúsculas indiscriminadamente al nombrar columnas o utilizar `aliases`. Estas prácticas garantizan que nuestras consultas sean no solo correctas, sino también profesionalmente presentadas.
+
+Practicar y experimentar con diferentes combinaciones es esencial para desarrollar habilidades avanzadas en SQL y BI. Imagina que tu jefe te pide diferentes informes y utiliza estos métodos para resolver problemas reales en un entorno de datos dinámico.
+
+Si tienes alguna duda o deseas explorar otros escenarios, ¡anímate a plantear tus preguntas y comparte tus experiencias!
