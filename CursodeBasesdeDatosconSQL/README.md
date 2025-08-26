@@ -2404,3 +2404,1744 @@ Mantener consistencia y limpieza en el nombre de las columnas es fundamental. Ev
 Practicar y experimentar con diferentes combinaciones es esencial para desarrollar habilidades avanzadas en SQL y BI. Imagina que tu jefe te pide diferentes informes y utiliza estos métodos para resolver problemas reales en un entorno de datos dinámico.
 
 Si tienes alguna duda o deseas explorar otros escenarios, ¡anímate a plantear tus preguntas y comparte tus experiencias!
+
+## Agrupación de Datos en SQL: GROUP BY, HAVING y CASE para Análisis Avanzado
+
+¡Excelente tema 🚀! Vamos a ver cómo funcionan **`GROUP BY`**, **`HAVING`** y **`CASE`** en SQL para hacer análisis de datos más avanzados.
+
+### 🔹 1. `GROUP BY`
+
+Sirve para **agrupar registros** en función de una o varias columnas. Generalmente se combina con funciones de agregación (`COUNT`, `SUM`, `AVG`, `MAX`, `MIN`).
+
+### Ejemplo:
+
+Contar estudiantes por apellido:
+
+```sql
+SELECT LASTNAME, COUNT(*) AS cantidad
+FROM STUDENTS
+GROUP BY LASTNAME;
+```
+
+👉 Esto devuelve cuántos estudiantes tienen el mismo apellido.
+
+### 🔹 2. `HAVING`
+
+Se usa para **filtrar resultados después de hacer un `GROUP BY`**.
+(`WHERE` no funciona con funciones agregadas, por eso existe `HAVING`).
+
+### Ejemplo:
+
+Mostrar solo apellidos que tengan **más de 1 estudiante**:
+
+```sql
+SELECT LASTNAME, COUNT(*) AS cantidad
+FROM STUDENTS
+GROUP BY LASTNAME
+HAVING COUNT(*) > 1;
+```
+
+### 🔹 3. `CASE`
+
+Es como un **if-else en SQL**. Permite clasificar o crear categorías dinámicas.
+
+### Ejemplo:
+
+Clasificar estudiantes por rango de edad:
+
+```sql
+SELECT 
+    FIRSTNAME,
+    LASTNAME,
+    AGE,
+    CASE
+        WHEN AGE < 18 THEN 'Menor de Edad'
+        WHEN AGE BETWEEN 18 AND 30 THEN 'Joven Adulto'
+        WHEN AGE BETWEEN 31 AND 50 THEN 'Adulto'
+        ELSE 'Mayor'
+    END AS categoria_edad
+FROM STUDENTS;
+```
+
+### 🔹 4. Ejemplo completo (GROUP BY + HAVING + CASE)
+
+Queremos saber cuántos estudiantes hay en cada **categoría de edad**, pero mostrar solo las categorías que tienen **2 o más estudiantes**:
+
+```sql
+SELECT 
+    CASE
+        WHEN AGE < 18 THEN 'Menor de Edad'
+        WHEN AGE BETWEEN 18 AND 30 THEN 'Joven Adulto'
+        WHEN AGE BETWEEN 31 AND 50 THEN 'Adulto'
+        ELSE 'Mayor'
+    END AS categoria_edad,
+    COUNT(*) AS total_estudiantes
+FROM STUDENTS
+GROUP BY categoria_edad
+HAVING COUNT(*) >= 2;
+```
+
+👉 Con esto puedes hacer análisis avanzados directamente en SQL, sin necesidad de sacar los datos a otra herramienta.
+
+### Resumen
+
+#### ¿Cómo manejar grandes volúmenes de datos en bases de datos multirrelacionales?
+
+El manejo eficiente de los datos es esencial cuando se trabaja con bases de datos complejas que contienen múltiples relaciones. Este proceso, aunque desafiante, se puede optimizar mediante el uso de herramientas y conceptos avanzados como el GROUP BY y el HAVING COUNT. Con estas técnicas, podremos agrupar, filtrar y clasificar los datos con facilidad. Vamos a explorar cómo aplicar estos conceptos y cuál es su efectividad a través de ejemplos prácticos.
+
+#### ¿Qué es el GROUP BY y cómo aplicarlo?
+
+`GROUP BY` es fundamental cuando necesitamos contar registros únicos en una base de datos. Supongamos que tienes una tabla de estudiantes, algunos de los cuales están matriculados en varios cursos. Si solamente quieres saber cuántos estudiantes únicos hay sin contar la duplicación de cursos, `GROUP BY` te permite consultar la cantidad exacta.
+
+Para lograrlo, ejecuta un conteo sobre el ID del estudiante, agrupando así la información:
+
+```sql
+SELECT student_id, COUNT(*) 
+FROM students_courses
+GROUP BY student_id;
+```
+
+Esto te mostrará cada estudiante solo una vez junto con la cantidad total de cursos en los que están matriculados.
+
+#### ¿Cómo utilizar el HAVING COUNT para filtrar agrupaciones?
+
+`HAVING COUNT` es una herramienta poderosa para aplicar filtros sobre datos agrupados. Por ejemplo, si tu objetivo es obtener los cursos que tengan más de tres estudiantes, podrías implementar la siguiente consulta:
+
+```sql
+SELECT course_id, COUNT(*) 
+FROM students_courses
+GROUP BY course_id
+HAVING COUNT(*) > 3;
+```
+
+Este enfoque te ayuda a aplicar condiciones adicionales a tu agrupación inicial, asegurando que los resultados exhibidos correspondan exactamente a tus condiciones deseadas.
+
+#### ¿Cómo clasificar categorías con CASE WHEN?
+
+El uso del `CASE WHEN` es crucial cuando requieres clasificar datos según reglas específicas. Al evaluar un atributo como la edad de diferentes estudiantes y clasificarlos en equipos según su rango, el siguiente código SQL es útil:
+
+```sql
+SELECT student_name, 
+  CASE 
+    WHEN age BETWEEN 18 AND 20 THEN 'Team A' 
+    ELSE 'Team B' 
+  END as team
+FROM students;
+```
+
+Este código te permite clasificar automáticamente a los estudiantes en `Team A` si se encuentran dentro del rango de 18 a 20 años y en Team B si no cumplen esta condición.
+
+#### ¿Cómo expandir los criterios de clasificación?
+
+Para escenarios más complejos, donde los criterios combinan atributos distintos, puedes ampliar el `CASE WHEN`:
+
+```sql
+SELECT student_name, 
+  CASE 
+    WHEN age BETWEEN 18 AND 20 THEN 'Team A' 
+    WHEN student_name = 'María' THEN 'Team A' 
+    ELSE 'Team C' 
+  END as team
+FROM students;
+```
+
+Aquí, los estudiantes llamados María también se clasificarán en `Team A`, mientras que todos los demás irán al `Team C`.
+
+Utilizar entidades como `GROUP BY`, `HAVING COUNT`, y `CASE WHEN` permite manejar grandes datos con mayor precisión. Si te sientes atascado, no olvides que siempre puedes recurrir a herramientas de inteligencia artificial como Platzi Ada para obtener asistencia. ¡Mantén tus habilidades al día y acepta nuevos retos!
+
+## Tipos de JOIN en SQL
+
+Los **`JOIN` en SQL** permiten combinar registros de dos o más tablas según una condición de relación (normalmente con claves primarias y foráneas).
+
+Te muestro los tipos principales con ejemplos:
+
+### 🔹 1. **INNER JOIN**
+
+Devuelve solo las filas que tienen coincidencia en ambas tablas.
+
+### Ejemplo:
+
+```sql
+SELECT s.STUDENT_ID, s.FIRSTNAME, e.COURSE
+FROM STUDENTS s
+INNER JOIN ENROLLMENTS e
+    ON s.STUDENT_ID = e.STUDENT_ID;
+```
+
+👉 Muestra solo los estudiantes que **sí están matriculados** en algún curso.
+
+### 🔹 2. **LEFT JOIN** (o LEFT OUTER JOIN)
+
+Devuelve **todas las filas de la tabla izquierda**, y solo las coincidencias de la tabla derecha. Si no hay coincidencia, pone `NULL`.
+
+```sql
+SELECT s.STUDENT_ID, s.FIRSTNAME, e.COURSE
+FROM STUDENTS s
+LEFT JOIN ENROLLMENTS e
+    ON s.STUDENT_ID = e.STUDENT_ID;
+```
+
+👉 Muestra **todos los estudiantes**, incluso los que no tienen cursos.
+
+### 🔹 3. **RIGHT JOIN** (o RIGHT OUTER JOIN)
+
+Es lo contrario del LEFT JOIN: devuelve **todas las filas de la tabla derecha**, y solo las coincidencias de la izquierda.
+
+```sql
+SELECT s.STUDENT_ID, s.FIRSTNAME, e.COURSE
+FROM STUDENTS s
+RIGHT JOIN ENROLLMENTS e
+    ON s.STUDENT_ID = e.STUDENT_ID;
+```
+
+👉 Muestra **todos los cursos con estudiantes**, e incluso cursos donde nadie se matriculó (`NULL` en datos de estudiante).
+
+### 🔹 4. **FULL OUTER JOIN**
+
+Devuelve todas las filas de ambas tablas, coincidan o no.
+Cuando no hay coincidencia, aparecen valores `NULL`.
+
+```sql
+SELECT s.STUDENT_ID, s.FIRSTNAME, e.COURSE
+FROM STUDENTS s
+FULL OUTER JOIN ENROLLMENTS e
+    ON s.STUDENT_ID = e.STUDENT_ID;
+```
+
+👉 Une los dos mundos: todos los estudiantes y todos los cursos, aunque no tengan relación.
+
+### 🔹 5. **CROSS JOIN**
+
+Devuelve el **producto cartesiano**: todas las combinaciones posibles entre filas de ambas tablas.
+
+```sql
+SELECT s.FIRSTNAME, e.COURSE
+FROM STUDENTS s
+CROSS JOIN ENROLLMENTS e;
+```
+
+👉 Si hay 10 estudiantes y 5 cursos, obtendrás **50 combinaciones**.
+
+### 🔹 6. **SELF JOIN**
+
+Es un join de una tabla **consigo misma**.
+Útil para jerarquías o relaciones dentro de la misma tabla.
+
+### Ejemplo:
+
+Tabla `EMPLOYEES` con `EMPLOYEE_ID` y `MANAGER_ID`:
+
+```sql
+SELECT e1.NAME AS empleado, e2.NAME AS jefe
+FROM EMPLOYEES e1
+INNER JOIN EMPLOYEES e2
+    ON e1.MANAGER_ID = e2.EMPLOYEE_ID;
+```
+
+👉 Relaciona cada empleado con su jefe.
+
+📌 Resumen gráfico:
+
+* **INNER JOIN** → Solo coincidencias.
+* **LEFT JOIN** → Todos de la izquierda + coincidencias.
+* **RIGHT JOIN** → Todos de la derecha + coincidencias.
+* **FULL JOIN** → Todos de ambos lados.
+* **CROSS JOIN** → Todas las combinaciones.
+* **SELF JOIN** → La tabla contra sí misma.
+
+### Resumen
+
+#### ¿Qué son los tipos de "join" en SQL?
+
+En el ámbito del manejo de bases de datos, especialmente al trabajar con SQL, los "join" son esenciales para relacionar y combinar información de diferentes tablas. Estos permiten obtener datos detallados y completos, enriquecer nuestras consultas y hacer un análisis más robusto de los datos. Conocer los diferentes tipos de "join" es crucial para aprovechar al máximo el potencial de SQL. Analicemos cada uno de ellos.
+
+#### ¿Cómo funciona el Inner Join?
+
+El Inner Join es uno de los tipos de "join" más utilizados en SQL. Su propósito es devolver únicamente los registros que tienen coincidencias en ambas tablas involucradas en la consulta. Por ejemplo, si tenemos dos tablas que contienen letras del abecedario, el Inner Join solo mostrará aquellas letras que están presentes en ambas tablas. Si las tablas contienen las letras A, B, C en una y A, C, D en la otra, el Inner Join mostraría A y C, al ser los únicos elementos comunes.
+
+```sql
+SELECT * FROM tabla1
+INNER JOIN tabla2 ON tabla1.letra = tabla2.letra;
+```
+
+#### ¿Qué hace un Left Join?
+
+El Left Join es útil cuando queremos obtener todos los registros de la tabla a la izquierda de nuestra consulta, junto con las coincidencias de la tabla derecha. Si no hay coincidencias, el resultado incluirá NULL para los registros de la tabla derecha que no coinciden. Siguiendo el ejemplo de las letras, al usar un Left Join con la tabla1 a la izquierda y tabla2 a la derecha, obtendremos todas las letras de tabla1 y las coincidencias con tabla2.
+
+```sql
+SELECT * FROM tabla1
+LEFT JOIN tabla2 ON tabla1.letra = tabla2.letra;
+```
+
+#### ¿Cómo opera el Right Join?
+
+El Right Join es casi idéntico al Left Join, pero enfocado en la tabla derecha. Devolverá todos los registros de la tabla derecha, y las coincidencias o NULL donde no existan en la tabla izquierda. Si se tiene la tabla2 a la derecha, el resultado incluirá todas las letras de tabla2, más las coincidencias de tabla1.
+
+```sql
+SELECT * FROM tabla1
+RIGHT JOIN tabla2 ON tabla1.letra = tabla2.letra;
+```
+
+#### ¿Qué es el Full Outer Join?
+
+El Full Outer Join combina los resultados del Left Join y del Right Join. Esto significa que mostrará todos los registros de ambas tablas, duplicando donde existan coincidencias y llenando con NULL donde no haya coincidencias. Esta función es potente para obtener una visión completa de los datos, ya que agrupa toda la información de ambas tablas, sin importar si hay coincidencias o no.
+
+```sql
+SELECT * FROM tabla1
+FULL OUTER JOIN tabla2 ON tabla1.letra = tabla2.letra;
+```
+
+#### ¿Cómo utilizar el Cross Join?
+
+El Cross Join crea un producto cartesiano de las dos tablas involucradas, lo que significa que devuelve cada fila de la primera tabla combinada con cada fila de la segunda tabla. Este "join" no necesita una condición ON, ya que simplemente toma todas las combinaciones posibles de registros.
+
+Imaginemos una tabla de productos y otra de marcas. Al aplicar un Cross Join, cada producto se combina con cada marca, generando todas las combinaciones posibles.
+
+```sql
+SELECT productos.nombre, marcas.nombre 
+FROM productos
+CROSS JOIN marcas;
+```
+
+Los "joins" son herramientas poderosas en SQL que permiten relacionar distintos elementos de bases de datos, facilitando la creación de reportes detallados y entendimientos profundos de los datos. Con estos conocimientos, estás preparado para empezar a realizar combinaciones de tablas de manera efectiva y adecuada.
+
+## ¿Cómo funciona INNER JOIN, LEFT JOIN, RIGHT JOIN y FULL JOIN?
+
+Muy buena pregunta 🙌. Te explico de forma clara cómo funcionan los **JOINs** en SQL con un ejemplo sencillo.
+
+### 📌 Supongamos que tenemos dos tablas:
+
+### Tabla **STUDENTS**
+
+| student\_id | name   | age |
+| ----------- | ------ | --- |
+| 1           | Ana    | 20  |
+| 2           | Carlos | 22  |
+| 3           | Juan   | 23  |
+
+### Tabla **COURSES**
+
+| course\_id | student\_id | course\_name |
+| ---------- | ----------- | ------------ |
+| 101        | 1           | Matemáticas  |
+| 102        | 2           | Historia     |
+| 103        | 4           | Biología     |
+
+### 🔹 1. **INNER JOIN**
+
+Muestra solo las filas que tienen coincidencias en **ambas tablas**.
+
+```sql
+SELECT s.name, c.course_name
+FROM STUDENTS s
+INNER JOIN COURSES c ON s.student_id = c.student_id;
+```
+
+📊 Resultado:
+
+| name   | course\_name |
+| ------ | ------------ |
+| Ana    | Matemáticas  |
+| Carlos | Historia     |
+
+➡️ Juan no aparece porque no tiene curso, y Biología no aparece porque el `student_id=4` no está en STUDENTS.
+
+### 🔹 2. **LEFT JOIN**
+
+Muestra **todos los registros de la tabla izquierda (STUDENTS)** y solo los que coinciden de la derecha (COURSES).
+
+```sql
+SELECT s.name, c.course_name
+FROM STUDENTS s
+LEFT JOIN COURSES c ON s.student_id = c.student_id;
+```
+
+📊 Resultado:
+
+| name   | course\_name |
+| ------ | ------------ |
+| Ana    | Matemáticas  |
+| Carlos | Historia     |
+| Juan   | NULL         |
+
+➡️ Juan aparece aunque no tenga curso (con `NULL`).
+
+### 🔹 3. **RIGHT JOIN**
+
+Muestra **todos los registros de la tabla derecha (COURSES)** y solo los que coinciden de la izquierda (STUDENTS).
+
+```sql
+SELECT s.name, c.course_name
+FROM STUDENTS s
+RIGHT JOIN COURSES c ON s.student_id = c.student_id;
+```
+
+📊 Resultado:
+
+| name   | course\_name |
+| ------ | ------------ |
+| Ana    | Matemáticas  |
+| Carlos | Historia     |
+| NULL   | Biología     |
+
+➡️ Biología aparece aunque no tenga estudiante (con `NULL`).
+
+### 🔹 4. **FULL JOIN** (o FULL OUTER JOIN)
+
+Muestra **todos los registros de ambas tablas**, coincidan o no.
+(No todos los motores SQL lo soportan directamente; en MySQL se simula con `UNION` de LEFT y RIGHT).
+
+```sql
+SELECT s.name, c.course_name
+FROM STUDENTS s
+FULL OUTER JOIN COURSES c ON s.student_id = c.student_id;
+```
+
+📊 Resultado:
+
+| name   | course\_name |
+| ------ | ------------ |
+| Ana    | Matemáticas  |
+| Carlos | Historia     |
+| Juan   | NULL         |
+| NULL   | Biología     |
+
+➡️ Combina todo, con `NULL` en donde no hay coincidencia.
+
+📌 **Resumen gráfico:**
+
+* **INNER JOIN** → Solo intersección.
+* **LEFT JOIN** → Todo de la izquierda + coincidencias.
+* **RIGHT JOIN** → Todo de la derecha + coincidencias.
+* **FULL JOIN** → Todo de ambas tablas.
+
+### Resumen
+
+#### ¿Cómo implementar lo aprendido sobre joins en consola?
+
+El trabajo con bases de datos es esencial para cualquier profesional en el campo de la tecnología y la ciencia de datos. Utilizar los joins de manera eficiente puede ayudarte a conectar múltiples tablas rápidamente. Aquí aprenderás cómo replantear toda una base de datos y practicar la creación de tablas y la inserción de datos desde la consola.
+
+#### ¿Cómo recrear la base de datos?
+
+1. **Crear la base de datos**: Es necesario definir el esquema y estructura de la base de datos, incluyendo las tablas, sus columnas y los tipos de datos adecuados para cada columna.
+2. **Identificar claves primarias**: Las claves primarias son esenciales para identificar de manera única cada registro dentro de una tabla.
+3. **Registrar claves foráneas**: Permiten relacionar tablas y asegurar la integridad de los datos.
+
+#### Ejemplo de Código SQL:
+
+```sql
+CREATE TABLE productos (
+    id INT PRIMARY KEY,
+    nombre VARCHAR(255),
+    marca VARCHAR(255),
+    precio DECIMAL(10, 2)
+);
+
+CREATE TABLE marcas (
+    id INT PRIMARY KEY,
+    nombre VARCHAR(255)
+);
+
+-- Insertar datos
+INSERT INTO productos (id, nombre, marca, precio) VALUES (1, 'Producto1', 'MarcaA', 100.00);
+INSERT INTO marcas (id, nombre) VALUES (1, 'MarcaA');
+```
+
+#### ¿Cómo ejecutar joins en consola?
+
+La sentencia básica `SELECT * FROM` se utiliza para consultar todas las columnas de una tabla. Los Joins permiten combinar registros de dos o más tablas.
+
+#### Ejemplo de Inner Join:
+
+```sql
+SELECT p.*, m.nombre 
+FROM productos p
+INNER JOIN marcas m ON p.marca = m.id;
+```
+
+- El INNER JOIN conecta las dos tablas usando las claves primarias y foráneas establecidas.
+
+#### ¿Cómo realizar un join de tipo Right, Left o Full Outer?
+
+La única diferencia entre los tipos de joins radica en la palabra clave utilizada en la sentencia SQL.
+
+##### Cambios en el Join:
+
+1. **Right Join**: Muestra todos los registros de la tabla a la derecha y los registros coincidentes de la tabla a la izquierda.
+
+```sql
+SELECT p.*, m.nombre 
+FROM productos p
+RIGHT JOIN marcas m ON p.marca = m.id;
+```
+
+2. **Left Join**: Proporciona todos los registros de la tabla a la izquierda y los coincidentes de la tabla a la derecha.
+
+```sql
+SELECT p.*, m.nombre 
+FROM productos p
+LEFT JOIN marcas m ON p.marca = m.id;
+```
+
+3. **Full Outer Join**: Combina el Right Join y el Left Join.
+
+```sql
+SELECT p.*, m.nombre 
+FROM productos p
+FULL OUTER JOIN marcas m ON p.marca = m.id;
+```
+
+#### ¿Por qué es importante el nombramiento adecuado de tablas en joins?
+
+El uso de alias para tablas puede simplificar las consultas. Sin embargo, para procedimientos más complejos, el uso de nombres cortos o una sola letra como alias puede ser confuso. Es recomendable usar nombres significativos que denoten con claridad la conexión que se está realizando entre las tablas. Esto facilita la comprensión, el mantenimiento y el soporte del código.
+
+- **Buenas prácticas**:
+ - Usa nombres intuitivos y descriptivos para alias de tablas.
+ - Evita nombres genéricos que no den contexto.
+ - Asegúrate de que el nombramiento sea coherente en todo tu código.
+
+Recuerda continuar practicando y refinando tus habilidades con bases de datos. ¡La experiencia y la dedicación son clave para dominar esta área y enfrentar procesos de desarrollo de software con éxito!
+
+## Vistas Materializadas en SQL: Como optimizar tus consultas y reportes.
+
+¡Tema clave para acelerar reportes! 🚀
+Una **vista materializada (MV)** guarda en disco el **resultado** de una consulta (joins, agregados, filtros). Así tus reportes “pesados” se leen como si fueran una tabla, evitando recalcular cada vez.
+
+### ¿Cuándo usarlas?
+
+* Dashboards y reportes con **joins/aggregaciones costosas**.
+* Consultas que leen mucho y escriben poco.
+* Datos que pueden estar **ligeramente desactualizados** (consistencia eventual).
+
+### Ventajas y costos
+
+**+** Respuestas mucho más rápidas.
+**+** Menos carga en tablas base.
+**–** Ocupan almacenamiento.
+**–** Hay que **refrescarlas** (pueden estar “stale”).
+**–** Mantenimiento/índices extra.
+
+### Patrones de uso (con ejemplos)
+
+### PostgreSQL
+
+```sql
+-- 1) Crear MV
+CREATE MATERIALIZED VIEW mv_sales_daily AS
+SELECT
+  date_trunc('day', s.created_at) AS day,
+  p.category_id,
+  COUNT(*) AS orders,
+  SUM(s.amount) AS revenue
+FROM sales s
+JOIN products p ON p.id = s.product_id
+GROUP BY 1, 2;
+
+-- 2) Indexar para acelerar lecturas
+CREATE INDEX ON mv_sales_daily (day, category_id);
+
+-- 3) Refrescar (bloquea lecturas durante la reconstrucción)
+REFRESH MATERIALIZED VIEW mv_sales_daily;
+
+-- 4) Refrescar sin bloquear lectores (usa tabla intermedia)
+REFRESH MATERIALIZED VIEW CONCURRENTLY mv_sales_daily;
+```
+
+> Nota: PostgreSQL **no** hace “fast refresh” nativo (incremental). Cada `REFRESH` recalcula completo; `CONCURRENTLY` evita bloquear consultas lectoras. (Si necesitas incrementales, existen extensiones como *pg\_ivm*).
+
+**Cuándo refrescar**
+
+* Programado (p. ej., cada hora/noche con `cron`/`pg_cron`).
+* Bajo demanda (tras un ETL).
+* Mixto: rápido (parcial) vía tabla de staging → `REFRESH` inmediatamente después del load.
+
+### Oracle
+
+```sql
+-- Requiere logs para FAST REFRESH
+CREATE MATERIALIZED VIEW LOG ON SALES WITH ROWID, SEQUENCE
+  INCLUDING NEW VALUES;
+
+CREATE MATERIALIZED VIEW mv_sales_daily
+BUILD IMMEDIATE
+REFRESH FAST ON COMMIT
+AS
+SELECT trunc(created_at) AS day, product_id,
+       COUNT(*) orders, SUM(amount) revenue
+FROM sales
+GROUP BY trunc(created_at), product_id;
+```
+
+* **REFRESH FAST**: incremental, usa *materialized view logs*.
+* **ON COMMIT**: se refresca al confirmar transacción.
+* Alternativas: `ON DEMAND`, `REFRESH COMPLETE` (recalcula todo).
+
+### SQL Server (equivalente: *Indexed Views*)
+
+SQL Server no tiene “materialized views” por nombre, pero las **vistas indexadas** guardan físicamente el resultado.
+
+```sql
+-- Reglas: determinismo, SCHEMABINDING, COUNT_BIG(*), etc.
+CREATE VIEW dbo.vwSalesDaily
+WITH SCHEMABINDING
+AS
+SELECT
+  CONVERT(date, created_at) AS day,
+  product_id,
+  COUNT_BIG(*) AS orders,
+  SUM(amount) AS revenue
+FROM dbo.sales
+GROUP BY CONVERT(date, created_at), product_id;
+
+-- Materializa creando un índice único
+CREATE UNIQUE CLUSTERED INDEX IX_vwSalesDaily
+  ON dbo.vwSalesDaily(day, product_id);
+```
+
+> Se mantiene automáticamente (incremental), a costa de **más costo de escritura** en las tablas base.
+
+### MySQL/MariaDB
+
+No traen MV nativas. Patrón común:
+
+1. Crear tabla destino `mv_sales_daily`.
+2. Poblarla con `INSERT ... SELECT` o `CREATE TABLE ... AS SELECT`.
+3. Refrescarla con **EVENTOS** (MySQL) o un orquestador (Airflow/cron).
+
+```sql
+CREATE TABLE mv_sales_daily AS
+SELECT ... -- tu consulta pesada
+
+CREATE EVENT ev_refresh_mv_sales_daily
+ON SCHEDULE EVERY 1 HOUR
+DO
+  REPLACE INTO mv_sales_daily
+  SELECT ... ;
+```
+
+### Buenas prácticas para optimizar
+
+1. **Diseña pensando en la consulta**
+
+   * Deja solo columnas necesarias.
+   * Pre-agrega al nivel que lea tu dashboard (día/semana/mes).
+
+2. **Índices en la MV**
+
+   * Indexa las columnas que usas en `WHERE`, `JOIN` y `ORDER BY`.
+   * Ej.: `(day, category_id)` para filtros por fecha/categoría.
+
+3. **Estrategia de refresh**
+
+   * Define SLA de frescura: cada 5 min, hora, noche.
+   * **PostgreSQL**: usa `CONCURRENTLY` para evitar bloquear lectores.
+   * **Oracle/SQL Server**: aprovecha *fast refresh* / vistas indexadas si los writes lo permiten.
+
+4. **Particiona por tiempo (si el motor lo permite)**
+
+   * Facilita refresh por ventana (solo el último día/mes).
+
+5. **Monitorea**
+
+   * Tamaño, tiempos de refresh, latencia de frescura.
+   * Métricas del plan de ejecución de las lecturas y del refresh.
+
+6. **Control de staleness**
+
+   * Guarda `last_refreshed_at` (otra tabla o comentario) y muéstralo en el dashboard.
+
+### Checklist rápido
+
+* [ ] ¿Qué latencia de datos aceptas (minutos/horas)?
+* [ ] ¿Qué columnas/agrupaciones necesita el dashboard?
+* [ ] ¿Hay índices adecuados en la MV?
+* [ ] ¿Cómo y cuándo se refresca? ¿Bloquea lectores?
+* [ ] ¿Cuánta carga extra añade el mantenimiento a las escrituras?
+
+### Resumen
+
+#### ¿Por qué son importantes las vistas en la transformación de datos?
+
+Al abordar el análisis de datos, un paso crucial es la transformación, donde típicamente empleamos diversos recursos. Las vistas temporales, las tablas temporales, las vistas materializadas y los procedimientos almacenados son solo algunos de estos recursos esenciales. Estos recursos facilitan la transformación de datos como parte del proceso ETL (Extracción, Transformación y Carga). Además, las vistas nos ofrecen una ventaja significativa: limitan la cantidad de datos mostrada al usuario final, mejorando la eficiencia y rendimiento de nuestras consultas.
+
+#### ¿Cómo se crea una vista?
+
+Crear una vista dentro de la sintaxis de consola es sencillo pero requiere atención a ciertos detalles. Utilizamos la palabra reservada `CREATE VIEW`, seguida del nombre deseado para la vista. Posteriormente, empleamos el término `AS` para especificar la consulta que configurará la vista.
+
+```sql
+CREATE VIEW vista_estudiantes AS
+SELECT *
+FROM estudiantes;
+```
+
+Este ejemplo básico selecciona todos los campos de la tabla "estudiantes". Aunque las vistas son conceptos distintos a las tablas, el resultado se encuentra en una sección llamada "vistas" al actualizarlas.
+
+### ¿Cómo se optimiza una vista para mostrar solo datos necesarios?
+
+Normalmente, el propósito principal de una vista no es mostrar todos los campos de una tabla, sino limitar los datos mostrados sólo a lo relevante para el usuario.
+
+Por razones de seguridad, muchas veces es necesario restringir la información accesible para ciertos usuarios. Podemos lograrlo llamando específicamente los campos deseados. Por ejemplo, si queremos mostrar solo la clave primaria, el primer nombre y el apellido de las personas, se podría modificar así:
+
+```sql
+CREATE OR REPLACE VIEW vista_estudiantes_ligera AS
+SELECT clave_primaria, primer_nombre, apellido
+FROM estudiantes;
+```
+
+Podemos recrear o modificar una vista usando `CREATE OR REPLACE`, que no requiere la palabra reservada `UPDATE` ya que está destinada solo a la manipulación de datos en tablas.
+
+### ¿Cómo se elimina una vista?
+
+Si una vista ya no es necesaria o fue creada por error, eliminarla es simple usando `DROP VIEW`. Este comando elimina la vista de la base de datos de forma rápida y efectiva.
+
+`DROP VIEW vista_estudiantes_ligera;`
+
+El comando `DROP` es el mismo utilizado para la eliminación de tablas, añadiendo la palabra reservada `VIEW` para indicarle que aplicaremos la acción sobre una vista.
+
+#### ¿Cómo avanzar en la práctica de la creación de vistas?
+
+Te invito a crear una vista usando otra tabla de tu base de datos y realizar una consulta más elaborada. Intenta aplicar lo que has aprendido, como los JOIN y condicionales. Comparte tu experiencia y tus consultas recreadas en los comentarios, ¡y hazme saber si tienes preguntas! La práctica es la clave para el dominio de la transformación de datos y cada intento te acerca más a la maestría en el manejo de bases de datos.
+
+## Vistas Materializadas y Temporales en SQL
+
+Perfecto 🚀, vamos a ver **Vistas Materializadas y Vistas Temporales en SQL**, qué son, sus diferencias y cómo se usan:
+
+### 🔹 1. Vistas Temporales (o simplemente *Vistas*)
+
+* Una **vista** es una consulta almacenada con un nombre, como si fuera una "tabla virtual".
+* No guarda los datos, solo la instrucción SQL que se ejecuta cada vez que se consulta.
+* Son útiles para simplificar consultas complejas y mejorar la seguridad (mostrando solo ciertos campos).
+
+📌 **Ejemplo de Vista:**
+
+```sql
+CREATE VIEW VistaEstudiantesMayores AS
+SELECT FIRSTNAME, LASTNAME, AGE
+FROM STUDENTS
+WHERE AGE >= 30;
+```
+
+📌 **Consulta desde la vista:**
+
+```sql
+SELECT * FROM VistaEstudiantesMayores;
+```
+
+⚠️ Características:
+
+* Siempre muestran los **datos actualizados** de las tablas originales.
+* No consumen almacenamiento extra (excepto metadatos).
+* Son más lentas que las materializadas en consultas muy grandes, porque siempre recalculan.
+
+### 🔹 2. Vistas Materializadas
+
+* Son como una vista, pero **guardan físicamente el resultado de la consulta** en disco.
+* Se comportan casi como una tabla, por eso permiten consultas más rápidas en reportes o análisis.
+* Se deben **refrescar** (actualizar) cuando cambian los datos de las tablas base.
+
+📌 **Ejemplo en Oracle o PostgreSQL:**
+
+```sql
+CREATE MATERIALIZED VIEW MV_EstudiantesResumen AS
+SELECT COURSE_ID, COUNT(*) AS Total_Estudiantes
+FROM STUDENT_COURSE
+GROUP BY COURSE_ID;
+```
+
+📌 **Actualizar la vista materializada:**
+
+```sql
+REFRESH MATERIALIZED VIEW MV_EstudiantesResumen;
+```
+
+⚠️ Características:
+
+* Ocupan **espacio en disco** porque almacenan datos.
+* Son rápidas en consultas repetitivas (reportes, dashboards).
+* Requieren estrategia de **refresco** (manual o automático).
+
+### 🔹 Diferencias Clave
+
+| Característica | Vista                             | Vista Materializada                 |
+| -------------- | --------------------------------- | ----------------------------------- |
+| Almacenamiento | No guarda datos, solo la consulta | Guarda datos físicamente            |
+| Rendimiento    | Más lenta en datos grandes        | Más rápida en consultas repetitivas |
+| Actualización  | Siempre en tiempo real            | Necesita `REFRESH`                  |
+| Uso típico     | Simplificar queries, seguridad    | Reportes, BI, Data Warehousing      |
+
+👉 En **MySQL** no existen *vistas materializadas nativas*, pero se pueden simular con **tablas temporales o triggers**.
+👉 En **Oracle, PostgreSQL y SQL Server (Indexed Views)** sí existen oficialmente.
+
+### Resumen
+
+#### ¿Cómo optimizar los procesos de ETL mediante vistas temporales y materializadas?
+
+Los procesos de ETL (Extracción, Transformación y Carga) son fundamentales en el ámbito del desarrollo de ingeniería de datos, ya que usualmente requieren un tiempo considerable para su ejecución. Un ingeniero de datos puede enfrentar la necesidad de consultar repetidamente la misma información, y en estas circunstancias, las vistas temporales y materializadas son herramientas útiles para optimizar flujos de trabajo y mejorar el rendimiento de las consultas. Hoy, profundizaremos en estos conceptos y te brindaremos el conocimiento necesario para implementarlos efectivamente en tus proyectos.
+
+#### ¿Qué son las vistas temporales y cómo se utilizan?
+
+Las vistas temporales son una solución sencilla y eficaz para escenarios donde se necesita consultar la misma información repetidamente durante una sesión de trabajo. A diferencia de las vistas permanentes, que almacenan los datos de manera indefinida, las vistas temporales existen solo mientras la sesión está activa. Al cerrar la sesión, estas vistas se eliminan automáticamente del sistema.
+
+Para crear una vista temporal, se utiliza el siguiente comando SQL:
+
+```sql
+CREATE TEMPORARY VIEW nombre_vista AS
+SELECT ...
+```
+
+Donde:
+
+- `CREATE TEMPORARY VIEW`: indica que la vista que se creará será temporal.
+- nombre_vista: es el nombre que deseas asignar a tu vista.
+- `SELECT ...`: es la consulta que define qué datos se almacenarán en la vista.
+
+Este enfoque es ideal cuando no necesitas conservar los datos permanentemente, aunque requieras consultarlos reiteradas veces en el mismo contexto operativo. Se recomienda para operaciones o análisis que son significativos solo por un tiempo limitado.
+
+### ¿Por qué considerar las vistas materializadas?
+
+En situaciones donde las consultas son extensas, complejas o el soporte de estas es demandante debido a la dificultad de sus operaciones, las vistas materializadas emergen como una herramienta potente. Estas vistas almacenan físicamente los resultados de la consulta en una base de datos, permitiendo un acceso más rápido a los datos procesados, reduciendo así el tiempo de procesamiento en futuras consultas.
+
+Para crear una vista materializada, puedes utilizar el siguiente comando:
+
+```sql
+CREATE MATERIALIZED VIEW nombre_mat_vista AS
+SELECT ...
+```
+
+Este comando es similar al de las vistas permanentes, pero la diferencia clave yace en el almacenamiento físico de los resultados, lo que no solo optimiza el rendimiento, sino también facilita la eficacia y capacidad de soporte técnico para operaciones futuras.
+
+### Ventajas de las vistas materializadas en el soporte técnico
+
+- **Reducción en el tiempo de ejecución**: Al almacenar los resultados ya calculados de consultas complejas, las vistas materializadas liberan recursos al evitar el recalculo en cada ejecución.
+- **Mejora en la eficiencia del soporte**: Proporcionan una capa preprocesada que simplifica la solución de problemas y la implementación de cambios requeridos.
+- **Optimización de procesos**: Especialmente útil en escenarios donde las transformaciones matemáticas o reglas de negocios exigen procesamiento inmediato y repetido.
+
+#### Consejos finales para implementar y experimentar con vistas
+Al realizar experimentos con vistas temporales y materializadas, te sugerimos seguir estos pasos:
+
+- Prueba diferentes comandos de creación de vistas en el motor de base de datos que estés utilizando.
+- Detecta y resuelve cualquier incompatibilidad de palabras reservadas específicas de tu sistema. Cada motor SQL (como PostgreSQL, MySQL, etc.) puede tener variaciones en el uso de palabras clave.
+- Comparte hallazgos y desafíos con tus colegas para enriquecerte mutuamente con diferentes experiencias y conocimientos.
+
+¡Sigue explorando y mejorando tus habilidades en ingeniería de datos! Implementar las herramientas correctas no solo aumentará tu eficiencia sino que también te posicionará como un profesional experto en la gestión avanzada de datos.
+
+## Expresiones de Tablas Comunes (CTE) en SQL
+
+Las **CTE (Common Table Expressions)** o **Expresiones de Tabla Común** en SQL son una forma de definir consultas temporales que solo existen durante la ejecución de una sentencia.
+
+### 🔹 ¿Qué es una CTE?
+
+* Es como una “vista temporal” que se define **dentro de una consulta**.
+* Solo existe durante esa consulta (a diferencia de una vista normal que queda almacenada).
+* Se escribe con la cláusula `WITH`.
+
+### 🔸 Sintaxis general
+
+```sql
+WITH nombre_cte AS (
+    SELECT ...
+    FROM ...
+    WHERE ...
+)
+SELECT *
+FROM nombre_cte
+WHERE ...;
+```
+
+### 🔹 Ejemplo 1: Simplificar consultas
+
+Supongamos que queremos la lista de estudiantes mayores de 25 años y luego filtrar solo los que están en ingeniería:
+
+```sql
+WITH EstudiantesMayores AS (
+    SELECT student_id, firstname, lastname, age, career
+    FROM students
+    WHERE age > 25
+)
+SELECT *
+FROM EstudiantesMayores
+WHERE career = 'Ingeniería';
+```
+
+✅ Aquí la CTE `EstudiantesMayores` evita repetir la subconsulta.
+
+### 🔹 Ejemplo 2: Usar varias CTEs en cadena
+
+Podemos definir varias y reutilizarlas en la consulta final:
+
+```sql
+WITH VentasPorCliente AS (
+    SELECT cliente_id, SUM(total) AS total_compras
+    FROM ventas
+    GROUP BY cliente_id
+),
+ClientesVIP AS (
+    SELECT cliente_id
+    FROM VentasPorCliente
+    WHERE total_compras > 10000
+)
+SELECT c.nombre, v.total_compras
+FROM ClientesVIP vip
+JOIN VentasPorCliente v ON vip.cliente_id = v.cliente_id
+JOIN clientes c ON c.id = v.cliente_id;
+```
+
+### 🔹 Ejemplo 3: CTE Recursiva
+
+Una de las grandes ventajas es que las CTE pueden ser **recursivas**, muy útiles para recorrer jerarquías (ej. empleados y jefes, categorías de productos, etc.).
+
+📌 Encontrar toda la jerarquía de un empleado:
+
+```sql
+WITH RECURSIVE Jerarquia AS (
+    -- Caso base
+    SELECT empleado_id, nombre, jefe_id
+    FROM empleados
+    WHERE empleado_id = 1   -- jefe inicial
+
+    UNION ALL
+
+    -- Caso recursivo
+    SELECT e.empleado_id, e.nombre, e.jefe_id
+    FROM empleados e
+    INNER JOIN Jerarquia j ON e.jefe_id = j.empleado_id
+)
+SELECT * FROM Jerarquia;
+```
+
+👉 Esto devuelve al empleado inicial y todos sus subordinados en todos los niveles.
+
+### 🔹 Diferencias entre CTE y Vista
+
+| Aspecto       | CTE                             | Vista                                          |
+| ------------- | ------------------------------- | ---------------------------------------------- |
+| Persistencia  | Solo existe durante la consulta | Persistente (queda creada en DB)               |
+| Reutilización | Solo en la query actual         | Reutilizable en varias consultas               |
+| Rendimiento   | Similar a subconsulta           | Puede mejorar con índices                      |
+| Ideal para    | Consultas complejas, recursivas | Reportes, seguridad, simplificación permanente |
+
+📌 **CTE se soporta en**: SQL Server, PostgreSQL, Oracle, MySQL (desde 8.0).
+
+### Resumen
+
+#### ¿Qué es el proceso de transformación de datos?
+
+En el mundo de la manipulación de datos, las siglas ETR (extracción, transformación y carga) y ELT (extracción, carga y transformación) son fundamentales. Dentro de estos procesos, la transformación de datos juega un papel crucial. Se trata del paso donde limpiamos, depuramos y aplicamos reglas de negocio a los datos, generando indicadores y estadísticas conforme a las necesidades de la información. Sin embargo, este proceso puede complicarse ya que nuestras consultas se vuelven avanzadas, abarcando múltiples tablas y utilizando complejas funciones matemáticas y algorítmicas.
+
+#### ¿Qué son las CTE en SQL?
+
+Las CTE (Common Table Expressions) en SQL son una herramienta valiosa para mejorar la legibilidad y mantenimiento del código, facilitando el desarrollo y entendimiento del negocio. Las CTE permiten dividir una consulta de alto nivel en subconsultas más fáciles de comprender. Estas subconsultas luego se pueden relacionar en una consulta principal.
+
+#### ¿Cómo se estructura una CTE?
+
+Crear una CTE en SQL es sencillo. La sintaxis básica se inicia con la palabra reservada WITH, seguida de un nombre claro que refiera al proceso de negocio que representa la consulta. Este nombre es fundamental para la claridad y funcionalidad del código.
+
+```sql
+WITH nombre_de_la_cte AS (
+    -- Aquí se coloca la subconsulta
+)
+SELECT * FROM nombre_de_la_cte;
+```
+
+#### Buenas prácticas al nombrar una CTE
+
+- **Claridad**: El nombre debe hacer clara referencia al proceso de negocio que aborda.
+- **Funcionalidad**: Ayuda a otros desarrolladores a entender la finalidad de la CTE.
+
+#### ¿Cómo se usan las CTE con múltiples subconsultas?
+
+Las CTE pueden contener una o varias subconsultas. En el caso de múltiples subconsultas, pueden relacionarse entre sí mediante `JOIN`, `INNER JOIN`, `LEFT JOIN`, `RIGHT JOIN` y otras herramientas que hemos aprendido en SQL.
+
+#### Ejemplo práctico de CTE
+
+Imaginemos que queremos calcular el salario promedio de los empleados y aplicar un condicionante a los resultados. Aquí, la CTE nos permitiría:
+
+1. Calcular el salario promedio en una subconsulta.
+
+2. Usar la consulta principal para filtrar estos resultados según criterios específicos, por ejemplo, aquellos cuyos salarios superen un valor determinado.
+
+```sql
+WITH promedio_salarios AS ( SELECT departamento_id, AVG(salario) AS promedio_salario FROM empleados GROUP BY departamento_id ) SELECT * FROM promedio_salarios WHERE promedio_salario > 65000;
+```
+
+#### Retos y consideraciones
+
+Al usar CTE, es importante recordar que:
+
+- Puedes referenciar múltiples subconsultas dentro de la consulta principal.
+- Cada subconsulta puede depender de otras creando relaciones complejas.
+- Misturas de distintas operaciones SQL como agrupamientos y joins enriquecen las consultas.
+
+#### ¿Cómo enriquecer nuestras consultas usando CTE?
+Además de simplificar nuestro código, el uso de CTE fomenta la experimentación con nuevas consultas combinando diversas subconsultas. Se invita a la comunidad de desarrolladores a interactuar con estas herramientas, creando consultas avanzadas y compartiendo sus soluciones para el enriquecimiento mutuo.
+
+Las CTE representan un método eficiente y eficaz para trabajar con datos complejos en SQL, mejorando la claridad, el mantenimiento y el proceso de desarrollo en general. ¡Anímate a poner en práctica tus conocimientos y crea consultas innovadoras!
+
+## Procedimientos Almacenados en SQL
+
+Perfecto 🚀, vamos con los **Procedimientos Almacenados en SQL (Stored Procedures)**.
+
+### 🔹 ¿Qué es un Procedimiento Almacenado?
+
+Un **Procedimiento Almacenado** es un bloque de código SQL que se guarda en la base de datos y puede ejecutarse varias veces, como una función.
+
+Sirven para:
+
+* Reutilizar lógica de negocio en la base de datos.
+* Centralizar validaciones o procesos.
+* Mejorar seguridad (se da acceso al procedimiento, no a la tabla).
+* Reducir tráfico entre cliente y servidor (la lógica corre en el servidor).
+
+### 🔸 Sintaxis general
+
+La sintaxis puede variar un poco según el motor de base de datos (**SQL Server, MySQL, PostgreSQL, Oracle**).
+
+### ✅ SQL Server
+
+```sql
+CREATE PROCEDURE NombreProcedimiento
+    @Parametro1 INT,
+    @Parametro2 VARCHAR(50)
+AS
+BEGIN
+    SELECT * 
+    FROM empleados
+    WHERE id = @Parametro1;
+END;
+```
+
+Ejecutar:
+
+```sql
+EXEC NombreProcedimiento 5, 'valor';
+```
+
+---
+
+### ✅ MySQL / MariaDB
+
+```sql
+DELIMITER //
+
+CREATE PROCEDURE NombreProcedimiento (
+    IN p_id INT,
+    IN p_nombre VARCHAR(50)
+)
+BEGIN
+    SELECT * 
+    FROM empleados
+    WHERE id = p_id AND nombre = p_nombre;
+END //
+
+DELIMITER ;
+```
+
+Ejecutar:
+
+```sql
+CALL NombreProcedimiento(5, 'Juan');
+```
+
+### ✅ PostgreSQL
+
+```sql
+CREATE OR REPLACE PROCEDURE NombreProcedimiento(p_id INT, p_nombre VARCHAR)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    RAISE NOTICE 'ID: %, Nombre: %', p_id, p_nombre;
+END;
+$$;
+```
+
+Ejecutar:
+
+```sql
+CALL NombreProcedimiento(5, 'Juan');
+```
+
+#### 🔸 Tipos de Parámetros
+
+Los procedimientos pueden recibir parámetros de tres formas (nombres cambian según el motor):
+
+* **IN** → Entrada (reciben valores).
+* **OUT** → Salida (devuelven valores).
+* **INOUT** → Pueden recibir y devolver valores.
+
+Ejemplo en MySQL:
+
+```sql
+CREATE PROCEDURE SumarNumeros(IN a INT, IN b INT, OUT resultado INT)
+BEGIN
+    SET resultado = a + b;
+END;
+```
+
+Llamada:
+
+```sql
+CALL SumarNumeros(3, 5, @res);
+SELECT @res; -- devuelve 8
+```
+
+#### 🔸 Ejemplo real
+
+Supongamos que queremos un procedimiento que devuelva los clientes con compras mayores a cierto valor:
+
+```sql
+CREATE PROCEDURE ClientesVIP(IN limite DECIMAL(10,2))
+BEGIN
+    SELECT cliente_id, nombre, SUM(total) AS total_compras
+    FROM ventas
+    GROUP BY cliente_id, nombre
+    HAVING SUM(total) > limite;
+END;
+```
+
+Ejecutar:
+
+```sql
+CALL ClientesVIP(10000);
+```
+
+### 🔸 Ventajas de los Procedimientos Almacenados
+
+✅ Reutilización de código.
+✅ Seguridad (no das acceso directo a tablas).
+✅ Mejor rendimiento (menos tráfico de consultas).
+✅ Mantenimiento centralizado.
+
+### Resumen
+
+#### ¿Qué son los procedimientos almacenados y por qué son útiles?
+
+Los procedimientos almacenados son una herramienta fundamental para optimizar procesos repetitivos en la gestión de bases de datos. En lugar de escribir y ejecutar manualmente las consultas SQL cada vez que se necesita, los procedimientos almacenados permiten definir un conjunto de instrucciones SQL que pueden ser ejecutadas automáticamente. Esto es especialmente útil para tareas que requieren inserción, modificación o creación de registros con regularidad, como actualizaciones diarias, semanales o mensuales.
+
+- **Automatización**: Los procedimientos almacenados facilitan la automatización de procesos al permitir su ejecución predefinida e interactuar con otros procesos empresariales.
+- **Optimización**: Ayudan a mejorar la eficiencia del sistema al reducir el tiempo y esfuerzo para realizar tareas repetitivas, manteniendo la lógica de programación ya establecida.
+- **Interacción con otros sistemas**: Pueden ser diseñados para generar salidas que se utilizan como entradas en otros sistemas, mejorando la integración y la coherencia en los flujos de trabajo.
+
+##### ¿Cómo se crean los procedimientos almacenados en SQL y MySQL?
+
+#### Creación de un procedimiento almacenado en SQL Server
+
+Para crear un procedimiento almacenado en SQL Server, se utiliza la palabra reservada `CREATE PROCEDURE` seguida del nombre del procedimiento. Es importante ser específico en la denominación para facilitar la identificación de la función del procedimiento. Aquí se definen las variables y parámetros necesarios, especificando los tipos de datos que se esperan recibir.
+
+```sql
+CREATE PROCEDURE InsertEmployee 
+    @Name NVARCHAR(50), 
+    @Surname NVARCHAR(50), 
+    @DepartmentId INT, 
+    @Salary DECIMAL(10, 2), 
+    @HireDate DATE
+AS
+BEGIN
+    INSERT INTO Employees (Name, Surname, DepartmentId, Salary, HireDate)
+    VALUES (@Name, @Surname, @DepartmentId, @Salary, @HireDate);
+END;
+```
+
+### Creación de un procedimiento almacenado en MySQL
+
+De manera similar a SQL Server, en MySQL se usa `CREATE PROCEDURE` pero los parámetros se definen con la palabra reservada `IN` para indicar que son entradas al procedimiento.
+
+```sql
+DELIMITER //
+CREATE PROCEDURE InsertEmployee (IN Name VARCHAR(50), IN Surname VARCHAR(50), IN DepartmentId INT, IN Salary DECIMAL(10,2), IN HireDate DATE)
+BEGIN
+    INSERT INTO Employees (Name, Surname, DepartmentId, Salary, HireDate)
+    VALUES (Name, Surname, DepartmentId, Salary, HireDate);
+END;
+//
+DELIMITER ;
+```
+
+#### ¿Cómo se ejecutan los procedimientos almacenados?
+
+Al ejecutar un procedimiento almacenado, se utiliza una sintaxis específica según el lenguaje SQL que se esté empleando.
+
+- **En SQL Server**, se puede invocar el procedimiento utilizando la palabra reservada `EXEC`:
+
+`EXEC InsertEmployee 'John', 'Doe', 3, 55000, '2023-10-01';`
+
+- **En MySQL**, se utiliza la palabra CALL:
+
+`CALL InsertEmployee('John', 'Doe', 3, 55000, '2023-10-01');`
+
+Es crucial recordar que los parámetros deben enviarse en el orden exacto en que fueron definidos en el procedimiento.
+
+#### ¿Cómo empezar a practicar procedimientos almacenados?
+
+La práctica es esencial para dominar la creación y uso de procedimientos almacenados. Se recomienda utilizar plataformas de práctica SQL para experimentar con ejemplos y resolver errores que puedan surgir en el proceso de codificación.
+
+1. **Elige un entorno SQL**: Puedes escoger plataformas gratuitas como MySQL Workbench, SQL Server Management Studio, o entornos en línea como DB-Fiddle.
+2. **Prueba diferentes consultas**: Inserta, actualiza o elimina registros utilizando procedimientos almacenados.
+3. **Experimenta con condicionales**: Asegúrate de usar condiciones para evitar operar en datos incorrectos.
+
+Amplía tus conocimientos integrando consultas más complejas que incorporen estadísticas, predicciones o analíticas avanzadas. Así, no solo optimizas el tiempo de codificación, sino que también contribuyes al desarrollo eficiente de soluciones empresariales con procedimientos almacenados. Sigue practicando y compartiendo tus experiencias para fortalecer tu habilidad en esta poderosa herramienta de bases de datos.
+
+## Procedimientos Almacenados en SQL: Gestión de Variables y Manejo de Excepciones
+
+¡Excelente tema! 🚀
+Los **Procedimientos Almacenados (Stored Procedures)** en SQL no solo permiten encapsular lógica de negocio dentro de la base de datos, sino que también pueden **manejar variables** y **gestionar excepciones** para un control más robusto.
+
+### 🔹 1. Gestión de Variables en Procedimientos Almacenados
+
+En un **procedimiento almacenado**, puedes declarar, asignar y usar **variables locales** para cálculos o control de flujo.
+
+📌 Ejemplo en **MySQL**:
+
+```sql
+DELIMITER $$
+
+CREATE PROCEDURE GetStudentInfo(IN student_id INT)
+BEGIN
+    DECLARE student_name VARCHAR(100);
+    DECLARE student_age INT;
+
+    -- Asignar valores a las variables
+    SELECT CONCAT(FIRSTNAME, ' ', LASTNAME), AGE
+    INTO student_name, student_age
+    FROM STUDENTS
+    WHERE STUDENT_ID = student_id;
+
+    -- Mostrar resultado
+    SELECT student_name AS Nombre, student_age AS Edad;
+END$$
+
+DELIMITER ;
+```
+
+✔ Aquí declaramos variables (`student_name`, `student_age`) y les asignamos datos con `SELECT ... INTO`.
+
+### 🔹 2. Manejo de Excepciones
+
+En algunos motores de BD como **MySQL** y **Oracle**, puedes manejar errores con **handlers**.
+En **MySQL**, usamos `DECLARE ... HANDLER`.
+
+📌 Ejemplo en **MySQL**:
+
+```sql
+DELIMITER $$
+
+CREATE PROCEDURE SafeInsertStudent(
+    IN fname VARCHAR(50),
+    IN lname VARCHAR(50),
+    IN age INT,
+    IN email VARCHAR(100)
+)
+BEGIN
+    DECLARE CONTINUE HANDLER FOR SQLEXCEPTION
+    BEGIN
+        -- Acción en caso de error
+        SELECT 'Ocurrió un error durante la inserción' AS ErrorMessage;
+    END;
+
+    -- Intentar inserción
+    INSERT INTO STUDENTS (FIRSTNAME, LASTNAME, AGE, EMAIL)
+    VALUES (fname, lname, age, email);
+
+    -- Confirmar éxito
+    SELECT 'Estudiante insertado correctamente' AS SuccessMessage;
+END$$
+
+DELIMITER ;
+```
+
+✔ Aquí si ocurre un error (ejemplo: email duplicado, violación de clave), el handler captura la excepción y retorna un mensaje en vez de fallar.
+
+### 🔹 3. Manejo de Excepciones en **Oracle PL/SQL**
+
+Oracle tiene un bloque `EXCEPTION` muy potente:
+
+```sql
+CREATE OR REPLACE PROCEDURE SafeInsertStudent(
+    p_fname IN VARCHAR2,
+    p_lname IN VARCHAR2,
+    p_age   IN NUMBER,
+    p_email IN VARCHAR2
+) AS
+BEGIN
+    INSERT INTO STUDENTS (FIRSTNAME, LASTNAME, AGE, EMAIL)
+    VALUES (p_fname, p_lname, p_age, p_email);
+
+    DBMS_OUTPUT.PUT_LINE('Estudiante insertado correctamente');
+
+EXCEPTION
+    WHEN DUP_VAL_ON_INDEX THEN
+        DBMS_OUTPUT.PUT_LINE('Error: Email duplicado');
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('Error inesperado: ' || SQLERRM);
+END;
+/
+```
+
+✔ `EXCEPTION` permite capturar errores específicos (`DUP_VAL_ON_INDEX`) o generales (`OTHERS`).
+
+✅ **En resumen**:
+
+* **Variables** → sirven para almacenar resultados intermedios dentro del procedimiento.
+* **Handlers/Exceptions** → aseguran que el procedimiento no falle ante errores inesperados y puedes dar mensajes personalizados.
+
+### Resumen
+
+#### ¿Cómo crear procedimientos almacenados con parámetros de entrada y salida?
+
+El manejo de procederes almacenados en bases de datos como MySQL es crucial para optimizar transacciones complejas y asegurar la integridad de los datos. Aprender a utilizarlos eficazmente, incluyendo la interacción con parámetros de entrada y salida, puede mejorar significativamente tu competencia en el uso de bases de datos. En este instructivo, exploraremos un escenario práctico donde se emplean ambos tipos de parámetros, construyendo sobre la base de los procedimientos previamente almacenados. Al finalizar, tendrás una comprensión sólida de cómo gestionar transacciones y manejar excepciones.
+
+#### ¿Qué son los parámetros de entrada y salida?
+
+En un procedimiento almacenado, los parámetros de entrada permiten pasar información a la operación. Utilizamos la palabra reservada `IN` para definirlos, seguido por el nombre del parámetro y su tipo de dato. Por otro lado, los parámetros de salida, definidos con `OUT`, sirven para devolver datos después de completar el procedimiento. Ambos tipos de parámetros comparten una estructura similar, diferenciándose solo por la palabra clave inicial.
+
+#### ¿Cómo influye el uso de variables y manejo de excepciones?
+
+Las variables actúan como contenedores para resultados intermedios o finales dentro del procedimiento almacenado. Es importante no confundir parámetros y variables, pues en MySQL las variables se declaran con la palabra clave `DECLARE`. En nuestro ejemplo, se utilizará una variable para almacenar el resultado del promedio de salario. Además, el manejo de excepciones es vital para cancelar transacciones ante errores, evitando inconsistencias en tus datos. Se utiliza `ROLLBACK` para revertir la transacción fallida, junto con el uso de `SELECT` para mostrar mensajes de error informativos al usuario.
+
+#### ¿Cuál es el proceso para crear un procedimiento almacenado?
+
+1. **Definición de Parámetros y Variables**:
+
+- Parámetros de entrada (primer nombre, apellido, departamento, salario, fecha).
+- Parámetro de salida (resultado promedio).
+- Declaración de la variable para almacenar el resultado del promedio.
+
+2. **Iniciación de la Transacción**:
+
+- Comenzar la transacción con `BEGIN`.
+- Iniciar la declaración de operaciones que incluye, en este ejemplo, `INSERT INTO` y una consulta de promedio de salario.
+
+3. Manejo de Excepciones:
+
+- Utilizar `SELECT` para definir el mensaje de error usando `AS` para etiquetarlo.
+- Establecer `ROLLBACK` para revertir operaciones en caso de error.
+
+4. **Concluir Transacción Exitosa**:
+
+- Asignar el resultado del cálculo de promedio a la variable usando el símbolo `=`.
+- Confirmar la conclusión exitosa de la transacción con `COMMIT`.
+- Finalizar el procedimiento con `END`.
+
+#### Ejemplo de sintaxis en MySQL
+
+```sql
+CREATE PROCEDURE CalcularPromedioSalario (
+    IN nombre VARCHAR(100),
+    IN apellido VARCHAR(100),
+    IN departamento VARCHAR(100),
+    IN salario DECIMAL(10,2),
+    IN fecha DATE,
+    OUT promedio DECIMAL(10,2)
+)
+BEGIN
+    DECLARE resultadoPromedio DECIMAL(10,2);
+
+    START TRANSACTION;
+
+    BEGIN
+        -- Insertar nueva entrada en la tabla empleados
+        INSERT INTO empleados (nombre, apellido, departamento, salario, fecha)
+        VALUES (nombre, apellido, departamento, salario, fecha);
+
+        -- Calcular el promedio de salarios
+        SELECT AVG(salario) INTO resultadoPromedio FROM empleados;
+
+        -- Asignar el promedio calculado al parámetro de salida
+        SET promedio = resultadoPromedio;
+
+        COMMIT;
+    EXCEPTION
+        BEGIN
+            -- Mensaje de error y rollback si algo falla
+            SELECT 'Error: no se pudo completar la operación.' AS mensajeError;
+            ROLLBACK;
+        END;
+    END;
+    END;
+```
+
+Este ejemplo ilustra un procedimiento almacenado que inserta datos y calcula un promedio. En caso de error, el rollback garantiza que no se realicen cambios parciales en los datos.
+
+El compromiso con el aprendizaje de estas herramientas te habilitará para manejar transacciones complejas con confianza y eficiencia. Te animamos a experimentar y crear tus propios procedimientos, incrementando así tu conocimiento y habilidades en gestión de bases de datos. Si tienes preguntas o deseas contribuir al desarrollo de estas prácticas, ¡compártelo en los comentarios!
+
+## Respaldos y Restauración de Bases de Datos
+
+Los **respaldos (backups)** y la **restauración (restore)** son procesos críticos en la administración de bases de datos, ya que garantizan la **seguridad, disponibilidad e integridad de la información** en caso de fallos, errores humanos o desastres.
+
+### 🔹 1. ¿Qué es un Respaldo (Backup)?
+
+Un **backup** es una copia de seguridad de la base de datos o de partes de ella (tablas, esquemas, registros, logs).
+Sirve para recuperar los datos si se pierden o dañan.
+
+### Tipos de respaldos:
+
+1. **Completo (Full Backup)**
+   Copia toda la base de datos.
+
+   ```sql
+   -- Ejemplo en MySQL
+   mysqldump -u usuario -p basededatos > backup.sql
+   ```
+
+2. **Diferencial**
+   Copia solo lo que ha cambiado desde el último backup completo.
+
+3. **Incremental**
+   Copia únicamente lo que cambió desde el último backup (sea completo o incremental).
+
+4. **En caliente (Hot Backup)**
+   Se realiza mientras la base está en uso, sin detener operaciones.
+
+5. **En frío (Cold Backup)**
+   Se realiza cuando la base de datos está detenida.
+
+### 🔹 2. ¿Qué es una Restauración (Restore)?
+
+Es el proceso de **recuperar la base de datos** a partir de un respaldo.
+Permite volver a un estado anterior conocido.
+
+### Ejemplo en MySQL:
+
+```bash
+mysql -u usuario -p basededatos < backup.sql
+```
+
+### Ejemplo en SQL Server:
+
+```sql
+RESTORE DATABASE MiBase
+FROM DISK = 'C:\Backups\mibase.bak'
+WITH REPLACE;
+```
+
+### 🔹 3. Estrategias de Respaldo y Restauración
+
+* **Regla 3-2-1**:
+
+  * 3 copias de los datos
+  * 2 en diferentes medios (disco, nube)
+  * 1 fuera del sitio (remoto)
+
+* **Automatización** con jobs (cron, SQL Agent, scripts).
+
+* **Pruebas periódicas** de restauración para garantizar que el backup funciona.
+
+* **Monitoreo y alertas** para detectar fallos en el respaldo.
+
+### 🔹 4. Buenas Prácticas
+
+✅ Planifica respaldos regulares (diarios, semanales).
+✅ Usa cifrado para proteger datos sensibles.
+✅ Mantén logs de transacciones para recuperación punto en el tiempo.
+✅ Documenta los procedimientos de recuperación ante desastres (DRP).
+
+📌 **En resumen:**
+
+* **Backup** = prevención.
+* **Restore** = recuperación.
+  Ambos son pilares de la **administración de bases de datos segura**.
+
+### Resumen
+
+#### ¿Qué es la copia de seguridad y restauración de datos?
+
+Imagínate que, por error, alguien ejecuta un comando `drop table` o `delete` sin utilizar el `where`, provocando pérdidas masivas de información en una base de datos. O que, simplemente, un servidor colapsa, y se pierde la información temporalmente. Para estos casos, el uso adecuado de copias de seguridad (backups) y la restauración de datos es crucial. El encargado de garantizar esta seguridad y disponibilidad de la información es el administrador de bases de datos.
+
+#### ¿Cuándo se deberían realizar las copias de seguridad?
+
+La periodicidad para realizar copias de seguridad puede variar dependiendo de la criticidad de la información. Por ejemplo:
+
+- **Industrias de venta de productos**: Podría ser suficiente tomar un snapshot (copia de seguridad) diariamente.
+- **Bancos**: Debido a la sensibilidad de los datos, es probable que se realicen copias en diversos momentos del día.
+
+#### ¿Cómo se pueden automatizar estas tareas?
+
+En la actualidad, muchas plataformas en la nube ofrecen servicios que automatizan la creación de copias de seguridad según un período determinado por el usuario. Esto reduce la carga de trabajo y minimiza el riesgo de errores humanos.
+
+##### ¿Cómo exportar e importar datos?
+
+Exportar e importar datos es fundamental para gestionar y restaurar información. A continuación, se presenta un proceso simple para realizar estas tareas utilizando herramientas de consola.
+
+#### Pasos para la exportación de datos
+
+1. Selecciona la opción DataExport en tu consola de base de datos.
+2. Elige la base de datos cuyo esquema deseas respaldar.
+3. Establece la ruta donde se almacenarán los archivos de backup.
+4. Verifica qué elementos de la base de datos (tablas, rutinas, procedimientos, vistas) se están exportando.
+
+#### Pasos para la importación de datos
+
+1. Accede a las opciones del servidor y selecciona `DataImport`.
+2. Especifica la ruta en la que guardaste los archivos de respaldo.
+3. Carga el contenido seleccionando la base de datos de destino.
+4. Inicia el proceso para restablecer los archivos.
+
+Este proceso puede realizarse manualmente, pero también existen métodos para automatizarlo, lo que resulta especialmente útil para proyectos grandes o con alta demanda de cambios.
+
+#### ¿Cómo mejorar la práctica de backups?
+
+Para fortalecer tus habilidades en la gestión de copias de seguridad:
+
+- **Practica regularmente**: Realiza ejercicios de backup y restauración con bases de datos creadas durante el curso u otras que desarrolles.
+- **Explora nuevas alternativas**: Investiga y prueba diferentes soluciones de restauración de datos, tanto locales como en la nube.
+- **Utiliza recursos adicionales**: Revisa archivos y materiales proporcionados durante el curso para afianzar tus conocimientos prácticos.
+
+Si tienes alguna duda o conoces métodos innovadores para la restauración de datos, ¡no dudes en compartir tus comentarios! La colaboración es clave para mejorar continuamente nuestras habilidades técnicas y de manejo de datos.
+
+## Potenciando los Datos en la Nube: Data Science, Big Data, ML e AI
+
+Hoy en día los datos en la nube son el **petróleo digital** y combinarlos con **Data Science, Big Data, Machine Learning (ML) e Inteligencia Artificial (AI)** permite transformar información en **valor estratégico**.
+
+### 🚀 Potenciando los Datos en la Nube
+
+### 🔹 1. La Nube como Habilitador
+
+La nube (**AWS, Azure, Google Cloud, Oracle Cloud**) ofrece:
+
+* **Escalabilidad**: crecer o reducir recursos bajo demanda.
+* **Almacenamiento flexible**: desde bases relacionales hasta *data lakes*.
+* **Procesamiento distribuido**: análisis en tiempo real con clusters y pipelines.
+* **Servicios administrados**: quitan carga operativa al equipo.
+
+### 🔹 2. Data Science en la Nube
+
+El **Científico de Datos** aprovecha la nube para:
+
+* **Recolectar y limpiar datos** (ETL/ELT con herramientas como AWS Glue, Azure Data Factory, Google Dataflow).
+* **Analizar** con entornos listos (Jupyter en SageMaker, Databricks, Colab).
+* **Visualizar** con dashboards (Power BI, Tableau, Looker, QuickSight).
+
+👉 Ejemplo: Usar **BigQuery (GCP)** para analizar millones de registros de transacciones en segundos y detectar patrones de consumo.
+
+### 🔹 3. Big Data en la Nube
+
+El **Big Data** se caracteriza por las 5V:
+
+1. **Volumen** (terabytes/petabytes)
+2. **Velocidad** (procesamiento en streaming)
+3. **Variedad** (estructurados, no estructurados, IoT)
+4. **Veracidad** (datos confiables)
+5. **Valor** (generar insights reales)
+
+Herramientas clave:
+
+* **Data Lakes**: Amazon S3 + Lake Formation, Azure Data Lake, Google Cloud Storage.
+* **Procesamiento distribuido**: Spark, Hadoop en EMR, Dataproc, HDInsight.
+* **Streaming**: Kafka, Kinesis, Pub/Sub.
+
+### 🔹 4. Machine Learning (ML) en la Nube
+
+Permite crear modelos predictivos y prescriptivos sin necesidad de infra compleja.
+Servicios destacados:
+
+* **AWS SageMaker** (entrenar, implementar y monitorear modelos).
+* **Azure Machine Learning**.
+* **Google Vertex AI**.
+
+Ejemplo de aplicación:
+
+* **Predicción de demanda** en retail.
+* **Detección de fraude** en banca en tiempo real.
+
+### 🔹 5. Inteligencia Artificial (AI) en la Nube
+
+La AI lleva los modelos ML a otro nivel, con **capacidades cognitivas**:
+
+* **Procesamiento de Lenguaje Natural (NLP)**: análisis de sentimiento, chatbots.
+* **Visión por Computador**: reconocimiento facial, conteo de objetos en video.
+* **Modelos generativos (GenAI)**: crear texto, imágenes, código (ej. OpenAI en Azure, Gemini en GCP).
+
+Ejemplo:
+Un hospital usa **AI en la nube** para analizar radiografías y detectar enfermedades con más rapidez que un diagnóstico manual.
+
+### 🔹 6. Sinergia de Todo el Ecosistema
+
+Cuando combinamos estas piezas:
+
+* **Big Data** → captura masiva de información.
+* **Data Science** → análisis y extracción de conocimiento.
+* **Machine Learning** → predicción y automatización.
+* **AI** → decisiones inteligentes y generación de nuevo contenido.
+* **Cloud** → escalabilidad, seguridad y velocidad.
+
+### 🔹 7. Retos y Buenas Prácticas
+
+⚠️ Retos:
+
+* Gobernanza y calidad de datos.
+* Privacidad y cumplimiento (GDPR, HIPAA).
+* Costos si no se optimiza.
+
+✅ Buenas prácticas:
+
+* Definir un **Data Lake + Data Warehouse híbrido**.
+* Aplicar **MLOps** para escalar modelos ML.
+* Implementar **seguridad en capas** (encriptación, IAM, auditoría).
+* Aprovechar **arquitecturas serverless** (BigQuery, Athena, Synapse).
+
+📌 **En resumen:**
+La **nube es el motor** que hace posible llevar **Data Science, Big Data, ML y AI** a escala, de forma ágil, segura y rentable.
+
+### Resumen
+
+#### ¿Qué es la copia de seguridad y restauración de datos?
+
+Imagínate que, por error, alguien ejecuta un comando `drop table` o `delete` sin utilizar el `where`, provocando pérdidas masivas de información en una base de datos. O que, simplemente, un servidor colapsa, y se pierde la información temporalmente. Para estos casos, el uso adecuado de copias de seguridad (backups) y la restauración de datos es crucial. El encargado de garantizar esta seguridad y disponibilidad de la información es el administrador de bases de datos.
+
+#### ¿Cuándo se deberían realizar las copias de seguridad?
+
+La periodicidad para realizar copias de seguridad puede variar dependiendo de la criticidad de la información. Por ejemplo:
+
+- **Industrias de venta de productos**: Podría ser suficiente tomar un snapshot (copia de seguridad) diariamente.
+- **Bancos**: Debido a la sensibilidad de los datos, es probable que se realicen copias en diversos momentos del día.
+
+#### ¿Cómo se pueden automatizar estas tareas?
+
+En la actualidad, muchas plataformas en la nube ofrecen servicios que automatizan la creación de copias de seguridad según un período determinado por el usuario. Esto reduce la carga de trabajo y minimiza el riesgo de errores humanos.
+
+##### ¿Cómo exportar e importar datos?
+
+Exportar e importar datos es fundamental para gestionar y restaurar información. A continuación, se presenta un proceso simple para realizar estas tareas utilizando herramientas de consola.
+
+#### Pasos para la exportación de datos
+
+1. Selecciona la opción DataExport en tu consola de base de datos.
+2. Elige la base de datos cuyo esquema deseas respaldar.
+3. Establece la ruta donde se almacenarán los archivos de backup.
+4. Verifica qué elementos de la base de datos (tablas, rutinas, procedimientos, vistas) se están exportando.
+
+#### Pasos para la importación de datos
+
+1. Accede a las opciones del servidor y selecciona `DataImport`.
+2. Especifica la ruta en la que guardaste los archivos de respaldo.
+3. Carga el contenido seleccionando la base de datos de destino.
+4. Inicia el proceso para restablecer los archivos.
+
+Este proceso puede realizarse manualmente, pero también existen métodos para automatizarlo, lo que resulta especialmente útil para proyectos grandes o con alta demanda de cambios.
+
+#### ¿Cómo mejorar la práctica de backups?
+
+Para fortalecer tus habilidades en la gestión de copias de seguridad:
+
+- **Practica regularmente**: Realiza ejercicios de backup y restauración con bases de datos creadas durante el curso u otras que desarrolles.
+- **Explora nuevas alternativas**: Investiga y prueba diferentes soluciones de restauración de datos, tanto locales como en la nube.
+- **Utiliza recursos adicionales**: Revisa archivos y materiales proporcionados durante el curso para afianzar tus conocimientos prácticos.
+
+Si tienes alguna duda o conoces métodos innovadores para la restauración de datos, ¡no dudes en compartir tus comentarios! La colaboración es clave para mejorar continuamente nuestras habilidades técnicas y de manejo de datos.
+
+## SQL para Análisis de Datos: Primeros pasos con Power BI
+
+Combinar **SQL** con **Power BI** es una de las formas más efectivas para realizar **análisis de datos** y crear **reportes interactivos**. Te muestro los **primeros pasos**:
+
+### 1. Preparar la Base de Datos
+
+Antes de conectar con Power BI, necesitas una fuente de datos SQL (por ejemplo, **SQL Server, MySQL o PostgreSQL**).
+
+Ejemplo de consulta SQL simple:
+
+```sql
+SELECT 
+    student_id,
+    firstname,
+    lastname,
+    age,
+    email
+FROM students
+WHERE age > 20;
+```
+
+### 2. Conectar Power BI con SQL
+
+En Power BI Desktop:
+
+1. Clic en **Obtener datos** → **SQL Server** (o MySQL, PostgreSQL según corresponda).
+2. Ingresar el **nombre del servidor** y la **base de datos**.
+3. Elegir entre **Importar datos** (trae los datos a Power BI) o **DirectQuery** (consulta en tiempo real).
+4. Seleccionar las tablas o escribir tu propia consulta SQL.
+
+Ejemplo:
+
+```sql
+SELECT 
+    AGE,
+    COUNT(*) AS total_estudiantes
+FROM students
+GROUP BY AGE;
+```
+
+Esto permitirá que Power BI reciba la información ya agregada.
+
+### 3. Transformar Datos (Power Query)
+
+* El editor de Power BI permite:
+
+  * **Renombrar columnas**
+  * **Quitar duplicados**
+  * **Filtrar datos**
+  * **Crear columnas calculadas**
+* Esto complementa lo que no quieras hacer directamente en SQL.
+
+### 4. Crear Visualizaciones
+
+Con los datos cargados puedes:
+
+* Hacer **gráficos de barras** para distribución por edad.
+* Usar **tarjetas** para mostrar totales (ej. número de estudiantes).
+* Construir **dashboards interactivos** con filtros dinámicos.
+
+### 5. Casos Comunes de SQL + Power BI
+
+* **Ventas**: Totales, promedios y comparaciones por región.
+* **Educación**: Cantidad de estudiantes por curso y edad.
+* **Finanzas**: Tendencias de gastos e ingresos con series de tiempo.
+
+👉 Con esto ya tendrías un flujo completo: **SQL (extracción y filtrado) → Power BI (visualización e interacción)**.
+
+### Resumen
+
+### ¿Cómo visualizar datos de manera efectiva?
+
+La visualización de datos es un paso crucial al presentar la información final al usuario. Involucra no solo el análisis exhaustivo de los resultados, sino también la identificación de KPIs (Indicadores Clave de Desempeño) que puedan tener un impacto significativo en las decisiones de la empresa.
+
+Para una visualización efectiva, debes tener en cuenta:
+
+- **Identificación de KPIs**: Descubre cuál es el valor de ciertos indicadores, como la trayectoria de ventas anuales, o alertas, como la caída en las ventas de un producto.
+- **Uso de Dashboards**: Utiliza herramientas como Power BI para crear dashboards que faciliten la interpretación de la información.
+
+#### ¿Qué plataformas se pueden utilizar?
+
+Una plataforma muy recomendada para la visualización de datos es Power BI, que te permite conectarte a diversos orígenes de datos:
+
+- **Fuentes de datos variadas**: Puedes conectarte a bases de datos, archivos físicos (Excel, CSV) o servicios en línea.
+- **Integración con otros recursos**: Es posible conectar Power BI a una base de datos MySQL, o cargar archivos CSV transformándolos en tablas visualizables.
+
+### ¿Cuáles son los componentes esenciales de un Dashboard en Power BI?
+
+Un Dashboard en Power BI se compone de tres secciones cruciales:
+
+1. **Filtros**: Mejoran la experiencia del usuario al permitirle enfocar su análisis en áreas específicas.
+2. **Visualizaciones**: Ofrecen gráficos interactivos como diagramas de trayectoria para facilitar el análisis comparativo de información.
+3. **Datos**: Muestra la información cargada, segmentada por variables como departamento, edad y ventas, y diferenciada por tipo de dato (texto, numérico, tiempo).
+
+##### ¿Cómo se seleccionan y visualizan los datos?
+
+Para crear visualizaciones efectivas en Power BI, sigue estos pasos:
+
+1. **Conectar y cargar datos**: Importa datos desde tus archivos CSV o bases de datos directas.
+2. **Elegir tipología de gráfico**: Explora y selecciona diferentes tipos de gráficos que mejor representen tus datos.
+3. **Experimentación y creatividad**: Cambia ejes y visualizaciones para identificar nuevos insights y KPIs.
+
+#### ¿Qué más puedo explorar en Power BI?
+
+Power BI proporciona varias características adicionales para profundizar en tus análisis, como:
+
+- **Crear KPIs avanzados**: Aplica reglas de cálculo porcentual para determinar el valor relativo de una métrica en comparación con otras.
+- **Agregar filtros avanzados**: Mejora la interacción con tus datos filtrando información específica para un análisis más focalizado.
+
+#### Riqueza de los datos y su impacto
+
+Los datos son esenciales no solo en tecnología, sino en todos los campos comerciales. Manipular y analizar estos datos correctamente puede conducir a decisiones óptimas, mientras que un mal análisis puede llevar a errores significativos. Algunas consideraciones clave incluyen:
+
+- **Interpretación adecuada**: Un análisis preciso requiere entender correctamente los datos y su contexto.
+- **Calidad y valor**: Asegúrate de que la información sea real, relevante y de valor para la empresa.
+
+En resumen, el manejo eficiente de datos te permite no solo entender el presente, sino prever tendencias futuras para una toma de decisiones más informada y estratégica. ¡Sigue explorando y fortaleciendo tu habilidad para interpretar datos con herramientas como Power BI!
