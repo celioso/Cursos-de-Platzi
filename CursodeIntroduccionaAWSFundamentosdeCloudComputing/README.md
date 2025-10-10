@@ -355,17 +355,17 @@ On-premises se refiere a una forma tradicional de cómputo en la cual nos encarg
 
 En la siguiente tabla se muestra qué componentes de IT están administrados según el tipo de cómputo en la nube. “Sí” indica que el componente está administrado por el proveedor de nube, “No” indica que nosotros somos responsables del componente.
 
-Componente | On-premises | IAAS | PAAS  | SAAS
-|---|---|---|---|
-Aplicaciones | No | No | No | Sí
-Data | No | No | No | Sí
-Runtime | No | No | Sí | Sí
-Middleware | No | No | Sí | Sí
-O/S | No | No | Sí | Sí
-Virtualización | No | Sí | Sí | Sí
-Servidores | No | Sí | Sí | Sí
-Almacenamiento | No | Sí | Sí | Sí
-Redes | No | Sí | Sí | Sí
+| Componente | On-premises | IAAS | PAAS  | SAAS |
+|---|---|---|---|---|
+| Aplicaciones | No | No | No | Sí |
+| Data | No | No | No | Sí |
+| Runtime | No | No | Sí | Sí |
+| Middleware | No | No | Sí | Sí |
+| O/S | No | No | Sí | Sí |
+| Virtualización | No | Sí | Sí | Sí |
+| Servidores | No | Sí | Sí | Sí |
+| Almacenamiento | No | Sí | Sí | Sí |
+| Redes | No | Sí | Sí | Sí |
 
 **Lecturas recomendadas**
 
@@ -1185,3 +1185,4 @@ Algunos de los beneficios de una herramienta de AWS son los siguientes:
 
 
 ¡Disfruta la Live Class y cuéntanos cómo te fue con esta experiencia! Continúa con nuestros [cursos de AWS](https://platzi.com/ruta/aws/).
+
