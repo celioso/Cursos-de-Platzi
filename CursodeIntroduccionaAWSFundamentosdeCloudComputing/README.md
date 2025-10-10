@@ -78,7 +78,7 @@ Entendamos primero como funciona la web en términos simples. Tenemos un cliente
 
 Si la web fuera un servicio postal, el cliente seríamos nosotros con la petición o paquete que queremos enviar, la red sería el servicio postal en sí y el servidor representaría al destinatario al que queremos enviar el paquete.
 
-[como-funciona-sitio-web.jpg](images/como-funciona-sitio-web.jpg)
+![como-funciona-sitio-web.jpg](images/como-funciona-sitio-web.jpg)
 
 ### ¿Cómo está compuesto un servidor?
 
@@ -1182,5 +1182,6 @@ Algunos de los beneficios de una herramienta de AWS son los siguientes:
 - Se incrementa la **velocidad** y **agilidad**
 - Se reduce el **gasto de dinero en la ejecución** y mantenimiento de centro de datos
 - Globalizas en minutos tu plataforma
+
 
 ¡Disfruta la Live Class y cuéntanos cómo te fue con esta experiencia! Continúa con nuestros [cursos de AWS](https://platzi.com/ruta/aws/).
