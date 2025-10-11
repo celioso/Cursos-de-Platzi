@@ -1014,7 +1014,7 @@ Habilita el control de versiones de buckets (lo vamos a necesitar para el próxi
 
 Una vez creado, **haz click en el nombre de tu bucket, y luego en Cargar**. Puedes hacer click en *Agregar archivos*, o arrastrar el archivo que quieres subir. Una vez subido, haz click en *Cargar*.
 
-![Cargar archivo](Cargar_archivo.png)
+![Cargar archivo](images/Cargar_archivo.png)
 
 Cuando termine de cargar, podrás hacer click en el nombre del objeto, lo cual te mostrará sus propiedades, entre ellas la URL del objeto. Si intentas acceder desde tu navegador, es posible que te salga una página de acceso denegado.
 
@@ -1558,3 +1558,4 @@ Un ejemplo de uso es el de un sitio de noticias, al cual se accede miles de vece
 
 
 ElastiCache posee dos motores, [Redis](https://redis.io/ "Redis") y [Memcached](https://memcached.org/ "Memcached"). Ambos se monitorean a sí mismos continuamente, y pueden ser escalados hacia arriba o abajo en función de la demanda de la aplicación.
+
