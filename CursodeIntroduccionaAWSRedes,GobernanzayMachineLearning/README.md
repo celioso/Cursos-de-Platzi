@@ -1093,13 +1093,13 @@ Como podrás notar, definimos el mismo bucket que en la clase anterior, más un 
 
 2. Ahora, en la página de CloudFormation, escogemos la pila que creamos y le damos a “**Actualizar**”.
 
-[Escoger la pila](images/Escogerlapila.png)
+![Escoger la pila](images/Escogerlapila.png)
 
 3. En “Preparar la plantilla” escogemos “**Reemplazar la plantilla actual**” y cargamos el archivo **updatestack1.json**.
 
 4. Le damos a Siguiente tres veces, y notamos que en “Vista previa del conjunto de cambios” nos muestra que solo va a añadir un nuevo bucket de S3, **puesto que el bucket con ID lógico “platzilab” ya existe**. Entonces le damos a “**Actualizar pila**”.
 
-[Vista previa de cambios](images/Vistapreviadecambios.png)
+![Vista previa de cambios](images/Vistapreviadecambios.png)
 
 Si nos vamos a ver nuestros buckets de S3, encontraremos que se ha creado uno nuevo cuyo nombre incluye “platzilabalexis”.
 
@@ -1417,3 +1417,4 @@ A continuación, escogemos el lenguaje y presionamos en “**Start streaming**�
 
 
 ![Prueba de Amazon Transcribe](images/PruebadeAmazonTranscribe.png)
+
