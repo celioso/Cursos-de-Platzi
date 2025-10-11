@@ -1006,7 +1006,7 @@ Deberás escoger un nombre único para el bucket. Por ejemplo, **test-[tu-numbre
 
 Acto seguido, en la sección ““**Configuración de bloqueo de acceso público para este bucket”**”, desactiva la casilla de **Bloquear todo el acceso público**, y activa la de reconocimiento de configuración actual.
 
-![configuración de bloqueo de acceso público](images/configuracion_de_bloqueo_de_acceso_publico.png)
+![configuración de bloqueo de acceso público](images/Bucket_accesible_publicamente.png)
 
 Habilita el control de versiones de buckets (lo vamos a necesitar para el próximo laboratorio). Finalmente, haz click en **Crear Bucket**.
 
@@ -1555,5 +1555,6 @@ print(client.get("mensaje"))
 Es una **base de datos en memoria que almacena datos a los que se ha accedido previamente en [memoria caché](https://aws.amazon.com/es/caching/?nc1=h_ls "memoria caché")**, para mejorar la rapidez de acceso a estos datos. Consultar datos en caché siempre es más rápido que consultar directamente la base de datos.
 
 Un ejemplo de uso es el de un sitio de noticias, al cual se accede miles de veces al día. Si los artículos se mantienen en una base de datos en memoria, se podrá acceder a estos mucho más rápido.
+
 
 ElastiCache posee dos motores, [Redis](https://redis.io/ "Redis") y [Memcached](https://memcached.org/ "Memcached"). Ambos se monitorean a sí mismos continuamente, y pueden ser escalados hacia arriba o abajo en función de la demanda de la aplicación.
