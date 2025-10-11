@@ -535,7 +535,7 @@ Ahora, para cada ACL de red creado debemos añadir una regla de entrada y una de
 1. Seleccionamos una ACL de red
 2. Nos vamos a “**Reglas de entrada**” -> “**Editar reglas de entrada**”.
 
-![Editar reglas de entrada](Editar_reglas_de_entrada.png)
+![Editar reglas de entrada](images/Editar_reglas_de_entrada.png)
 
 3. Le damos clic en “**Añadir una nueva regla**”. Y colocamos los siguientes parámetros
 
@@ -547,7 +547,7 @@ Ahora, para cada ACL de red creado debemos añadir una regla de entrada y una de
 4. Le damos a “**Guardar cambios**”.
 5. Repetimos el proceso con la regla de salida y con el otro ACL (NACLB), colocando los mismos parámetros anteriores. Ahora solo falta añadir estos ACL a nuestras subredes, las cuales crearemos a continuación.
 
-![Añadir una nueva regla de entrada](Añadir_una_nueva_regla_de_entrada.png)
+![Añadir una nueva regla de entrada](images/Añadir_una_nueva_regla_de_entrada.png)
 Añadir una nueva regla de entrada
 
 ### Pasos para crear subredes
@@ -564,7 +564,7 @@ Añadir una nueva regla de entrada
 - **Zona de dispinibilidad**: la segunda que te aparezca en el menú de selección, que termine en “b”.
 - **Bloque de CIDR IPv4**: 10.0.0.128/25.
 
-![Crear subred](Crear_subred.png)
+![Crear subred](images/Crear_subred.png)
 
 Ahora solo falta **asociar los ACL que creamos con las subredes**. Para esto simplemente hacemos clic derecho en DemoSubredA y clic en “**Editar la asociación de ACL de red**”, y seleccionamos la ACL correspondiente (NACLA). Entonces le damos en Guardar, y repetimos el procedimiento con *DemoSubredB*.
 
@@ -1414,5 +1414,6 @@ Amazon Transcribe es **serverless**, por lo que **solo pagas por el tiempo de au
 En la [página del servicio de Amazon Transcribe](https://console.aws.amazon.com/transcribe/home "página del servicio de Amazon Transcribe") podemos explorar sus opciones y casos de uso. También podemos poner a prueba el servicio haciendo clic en “**Create a transcript**”.
 
 A continuación, escogemos el lenguaje y presionamos en “**Start streaming**”. El navegador nos va a pedir permiso para usar el micrófono. Una vez que otorgamos el permiso, podemos comenzar a hablar y veremos como nuestro discurso se transcribe en tiempo real. Para detener la transcripción, simplemente le damos a “**Stop streaming**”.
+
 
 ![Prueba de Amazon Transcribe](images/PruebadeAmazonTranscribe.png)
