@@ -268,7 +268,7 @@ Si AWS sufre una vulnerabilidad en la infraestructura subyacente del servicio IA
 
 ### Herramientas de Cumplimiento en AWS
 
-![pexels kevin ku](images/pexels-kevin-ku.jpg)
+![pexels kevin ku](images/pexels-divinetechygirl.jpg)
 
 AWS ofrece herramientas que ayudan a los clientes a cumplir con normativas y estándares de seguridad, facilitando el monitoreo, auditoría y gestión de la conformidad.
 
@@ -9086,4 +9086,5 @@ sudo alternatives --config python3
 
 ### **🚀 Resumen**
 - Para la versión por defecto: `sudo yum install -y python3`
+
 - Para la última versión oficial: Compilar desde el código fuente.
