@@ -9230,7 +9230,112 @@ Para que no memorices cientos de servicios inútiles para el examen, aquí tiene
 [4]: https://www.economize.cloud/resources/aws/services?utm_source=chatgpt.com "List of all Amazon Web Services (AWS) Services - Economize Cloud"
 [5]: https://www.leskoff.com/s02057-0?utm_source=chatgpt.com "Here's the full list of AWS services - Leskoff"
 
+### Lista extensa de servicios de AWS (2025 aprox.)
+
+Esta lista está basada en los catálogos oficiales de AWS y recursos como Leskoff (535 servicios en 2023) ([leskoff.com][1]), y la página oficial “AWS Products” ([Amazon Web Services, Inc.][2]).
+
+### Servicios de AWS (orden alfabético parcial / por categoría)
+
+> **Nota**: AWS tiene cientos de servicios, muchos muy específicos. Aquí incluyo una lista amplia con los más conocidos y también los menos comunes.
+
+| Servicio                                             | Categoría / uso principal                                    |
+| ---------------------------------------------------- | ------------------------------------------------------------ |
+| **Active Directory Connector (AD Connector)**        | Integración / identidad                                      |
+| **Amazon API Gateway**                               | Exposición y gestión de APIs                                 |
+| **Amazon AppFlow**                                   | Integración de datos entre SaaS y AWS                        |
+| **Amazon AppIntegrations**                           | Gestión de integraciones con aplicaciones externas           |
+| **Amazon AppStream 2.0**                             | Servicio de streaming de aplicaciones de escritorio          |
+| **Amazon Athena**                                    | Consulta tipo SQL directamente sobre S3                      |
+| **Amazon Aurora**                                    | Base de datos relacional compatible con MySQL / PostgreSQL   |
+| **Aurora Serverless**                                | Variante sin servidor de Aurora                              |
+| **Amazon Bedrock**                                   | Plataforma para modelos generativos (IA)                     |
+| **Amazon Braket**                                    | Computación cuántica como servicio                           |
+| **Amazon Chime**                                     | Comunicaciones (video, chat, llamadas)                       |
+| **Amazon CloudDirectory**                            | Directorio jerárquico administrado                           |
+| **Amazon CloudFront**                                | CDN (Red de entrega de contenido)                            |
+| **Amazon CloudSearch**                               | Búsqueda administrada para aplicaciones                      |
+| **Amazon CloudWatch**                                | Monitoreo, métricas, alarmas, logs                           |
+| **Amazon CloudTrail**                                | Registro / auditoría de llamadas a API                       |
+| **Amazon Cognito**                                   | Gestión de identidades / autenticación de usuarios           |
+| **Amazon Comprehend**                                | Procesamiento de lenguaje natural                            |
+| **Amazon Connect**                                   | Centro de contactos en la nube                               |
+| **Amazon Data Pipeline**                             | Orquestación / movimiento / transformación de datos          |
+| **Amazon Detective**                                 | Análisis de seguridad / investigación de incidentes          |
+| **Amazon DocumentDB**                                | Base de datos documental compatible con MongoDB              |
+| **Amazon DynamoDB**                                  | Base de datos NoSQL administrada                             |
+| **Amazon EBS (Elastic Block Store)**                 | Almacenamiento en bloque                                     |
+| **Amazon EC2 (Elastic Compute Cloud)**               | Instancias de máquinas virtuales                             |
+| **EC2 Auto Scaling**                                 | Escalado automático de instancias EC2                        |
+| **Amazon ECR (Elastic Container Registry)**          | Registro de imágenes de contenedor                           |
+| **Amazon ECS (Elastic Container Service)**           | Orquestador de contenedores                                  |
+| **Amazon EKS (Elastic Kubernetes Service)**          | Kubernetes administrado                                      |
+| **AWS Fargate**                                      | Ejecución de contenedores sin infraestructura subyacente     |
+| **Elastic Beanstalk**                                | Plataforma como servicio para desplegar aplicaciones         |
+| **AWS Lambda**                                       | Funciones “serverless” ejecutadas por evento                 |
+| **Amazon ElastiCache**                               | Caché en memoria (Redis, Memcached)                          |
+| **Amazon EMR**                                       | Big data / procesamiento distribuido (Hadoop, Spark, etc.)   |
+| **Amazon EventBridge**                               | Bus de eventos / integración entre servicios                 |
+| **AWS Glue**                                         | ETL / catalogado de datos                                    |
+| **Amazon Kinesis**                                   | Procesamiento en tiempo real / streams de datos              |
+| **Amazon Keyspaces**                                 | Base de datos compatible con Apache Cassandra                |
+| **AWS Key Management Service (KMS)**                 | Gestión de claves criptográficas                             |
+| **Amazon Lex**                                       | Servicio de chatbots / lenguaje conversacional               |
+| **Amazon Lightsail**                                 | VPS simplificado para uso fácil                              |
+| **Amazon Macie**                                     | Detección automática de datos sensibles                      |
+| **Amazon Managed Blockchain**                        | Blockchain administrado (Hyperledger / Ethereum)             |
+| **Amazon MQ**                                        | Broker de mensajes (ActiveMQ / RabbitMQ)                     |
+| **Amazon Neptune**                                   | Base de datos de grafos                                      |
+| **AWS Outposts**                                     | Servicios de AWS en instalaciones locales (híbrido)          |
+| **Amazon Polly**                                     | Conversión de texto a voz                                    |
+| **Amazon QuickSight**                                | Visualización / BI / dashboards                              |
+| **Amazon RDS**                                       | Base de datos relacional administrada                        |
+| **Amazon Redshift**                                  | Almacén de datos / análisis a gran escala                    |
+| **Amazon Rekognition**                               | Análisis de imágenes y videos (visión)                       |
+| **Amazon Route 53**                                  | DNS / enrutamiento de tráfico                                |
+| **Amazon SageMaker**                                 | Plataforma de machine learning                               |
+| **AWS S3 (Simple Storage Service)**                  | Almacenamiento de objetos                                    |
+| **Amazon S3 Glacier / Deep Archive**                 | Almacenamiento de archivo / bajo costo                       |
+| **AWS Secrets Manager**                              | Gestión de secretos / credenciales                           |
+| **AWS Security Hub**                                 | Vista central de seguridad / compliance                      |
+| **AWS Service Catalog**                              | Catálogo de servicios / productos organizacionales           |
+| **Amazon SES (Simple Email Service)**                | Servicio de envío de email                                   |
+| **Amazon SNS (Simple Notification Service)**         | Notificaciones / pub-sub                                     |
+| **Amazon SQS (Simple Queue Service)**                | Colas de mensajes                                            |
+| **AWS Step Functions**                               | Orquestación de flujos de trabajo / pasos                    |
+| **AWS Storage Gateway**                              | Conexión híbrida entre on-premises y nube                    |
+| **AWS Systems Manager**                              | Gestión operativa, automatización, parches                   |
+| **AWS Transfer Family**                              | Transferencia de archivos (SFTP, FTPS, FTP)                  |
+| **Amazon VPC (Virtual Private Cloud)**               | Red privada virtual dentro de AWS                            |
+| **Amazon WAF (Web Application Firewall)**            | Firewall de aplicaciones web                                 |
+| **AWS Shield**                                       | Protección contra ataques DDoS                               |
+| **AWS Lambda@Edge**                                  | Ejecutar funciones Lambda cercano al usuario                 |
+| **AWS Config**                                       | Auditoría / seguimiento de configuraciones de recursos       |
+| **AWS Organizations**                                | Gestión de múltiples cuentas AWS                             |
+| **AWS Budgets / Cost Explorer / Billing**            | Herramientas de gestión de costos                            |
+| **AWS Snow Family (Snowball, Snowcone, Snowmobile)** | Dispositivos físicos para traslado de datos (edge / offline) |
+| **AWS Transit Gateway**                              | Conectividad entre VPCs / redes                              |
+| **AWS Glue Data Catalog**                            | Catálogo de metadatos para datos                             |
+| **AWS Fault Injection Simulator**                    | Pruebas de fallos controladas (resiliencia)                  |
+| **AWS Global Accelerator**                           | Mejora de rendimiento de red global                          |
+| **AWS Directory Service**                            | Directorio (Active Directory en la nube)                     |
+| **AWS Certificate Manager (ACM)**                    | Gestión de certificados SSL / TLS                            |
+| **AWS Firewall Manager**                             | Administración central de reglas de seguridad                |
+| **AWS Network Firewall**                             | Firewall a nivel de red                                      |
+| **AWS Resource Access Manager (RAM)**                | Compartir recursos entre cuentas                             |
+| **AWS Identity Center / Single Sign-On**             | Inicio de sesión único / federación                          |
+| **AWS Audit Manager**                                | Automatiza auditorías de cumplimiento                        |
+| **Amazon Timestream**                                | Base de datos para series temporales                         |
+| **Amazon Elastic Inference**                         | Acelerar inferencia en modelos de ML                         |
+| **Otros servicios especializados / emergentes**      | (Robótica, AR/VR, metaverso, cuantica, etc.)                 |
+
+Si quieres, te lo organizo en un formato PDF ya “listo para descarga” (yo te mando el archivo) y te lo comparto. ¿Preferirías eso?
+
+[1]: https://www.leskoff.com/s02057-0?utm_source=chatgpt.com "Here's the full list of AWS services - Leskoff"
+[2]: https://aws.amazon.com/products/?utm_source=chatgpt.com "Cloud Services - Build and Scale Securely- AWS"
+
+
 Aquí tienes tu archivo listo para descargar:
 📘 [Descargar Servicios_AWS_Fundamentals_2025.pdf](sandbox:/mnt/data/Servicios_AWS_Fundamentals_2025.pdf)
 
 Incluye los servicios principales de AWS organizados por categoría, ideal para repasar antes del examen **AWS Certified Cloud Practitioner (Fundamentals)**.
+
