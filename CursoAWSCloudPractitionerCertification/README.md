@@ -9088,3 +9088,149 @@ sudo alternatives --config python3
 - Para la versión por defecto: `sudo yum install -y python3`
 
 - Para la última versión oficial: Compilar desde el código fuente.
+
+
+## Principales pUntos de AWS
+
+* AWS tiene decenas (incluso cientos) de servicios/productos, y la lista crece con el tiempo. ([Documentación de AWS][1])
+* Para el examen **AWS Certified Cloud Practitioner (Fundamentals / AWS Fundamental Exam)** no necesitas conocer todos con detalle, sino los más relevantes o comunes, su propósito, sus características básicas y cómo se relacionan entre sí.
+
+De todas formas, te dejaré una lista bastante amplia de servicios agrupados por categorías, y luego te muestro los más importantes que suelen aparecer en el examen.
+
+## Principales categorías de servicios de AWS
+
+Aquí tienes algunas de las categorías más usadas, con ejemplos de servicios en cada una:
+(La lista no es exhaustiva, pero sí bastante representativa) ([Documentación de AWS][1])
+
+| Categoría                                                       | Servicios destacados / ejemplos                                                                        | Descripción breve                                                                                              |
+| --------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------- |
+| **Cómputo (Compute)**                                           | EC2, Lambda, Elastic Beanstalk, Fargate, Lightsail, AWS Batch, App Runner                              | Permiten ejecutar código, aplicaciones, máquinas virtuales, contenedores, etc. ([Documentación de AWS][2])     |
+| **Almacenamiento (Storage)**                                    | S3, EBS, EFS, FSx, S3 Glacier, Storage Gateway                                                         | Para almacenar objetos, archivos, bloques, archivos escalables, almacenamiento a largo plazo, etc. ([Hava][3]) |
+| **Bases de datos (Databases)**                                  | RDS, DynamoDB, Aurora, ElastiCache, Timestream, Neptune, DocumentDB                                    | Bases de datos relacionales, NoSQL, en memoria, series temporales, grafos, etc. ([Hava][3])                    |
+| **Redes / contenido / entrega (Networking & Content Delivery)** | VPC, Route 53, CloudFront, API Gateway, Direct Connect, Elastic Load Balancing, Transit Gateway        | Para conectar, enrutar, exponer servicios, balanceo de carga, redes privadas, etc. ([Hava][3])                 |
+| **Seguridad, identidad y cumplimiento**                         | IAM, Cognito, KMS, Certificate Manager, AWS Shield, AWS WAF, AWS CloudTrail, AWS Config                | Control de acceso, cifrado, seguridad, auditoría, cumplimiento regulatorio. ([Amazon Web Services, Inc.][4])   |
+| **Analítica y Big Data**                                        | Athena, Glue, Redshift, Kinesis, EMR, QuickSight                                                       | Procesamiento de datos, análisis, transformaciones, visualización. ([Hava][3])                                 |
+| **Migración & transferencia**                                   | AWS Database Migration Service (DMS), Server Migration Service, DataSync, Snow Family, Transfer Family | Para mover datos / servicios desde on-premises o entre regiones. ([Hava][3])                                   |
+| **Herramientas de desarrollo / DevOps**                         | CloudFormation, CloudTrail, CodeCommit, CodePipeline, CodeDeploy, CodeBuild, CodeStar                  | Para automatizar, versionar, desplegar infraestructura y código. ([Documentación de AWS][1])                   |
+| **Inteligencia artificial / aprendizaje automático**            | SageMaker, Comprehend, Rekognition, Lex, Polly, Translate                                              | Servicios para construir modelos, procesar lenguaje, imágenes, voz, traducción. ([Documentación de AWS][1])    |
+| **IoT (Internet de las Cosas)**                                 | IoT Core, IoT Analytics, Greengrass                                                                    | Para conectar dispositivos (“cosas”) al cloud. ([Documentación de AWS][1])                                     |
+| **Servicios de aplicación / integración**                       | SQS, SNS, Step Functions, EventBridge, SWF                                                             | Para mensajería, orquestación, eventos, colas, coordinación. ([Hava][3])                                       |
+| **Migración al borde / híbrido (Edge & Hybrid)**                | Outposts, Wavelength, Local Zones, Snowball / Snowcone / Snowmobile                                    | Para extender servicios de AWS más cerca del usuario o en ubicaciones locales. ([Documentación de AWS][2])     |
+
+### Servicios que debes conocer para el examen fundamental
+
+Aunque el examen fundamental no exige conocimiento profundo de cada uno, estos son los servicios que *sí* debes conocer bien, porque son los que con más frecuencia aparecen en preguntas, situaciones de negocio o escenarios:
+
+* **Amazon EC2** (máquinas virtuales)
+* **Amazon S3** (almacenamiento de objetos)
+* **AWS Lambda** (cómputo sin servidor / serverless)
+* **Amazon RDS / Aurora** (bases de datos relacionales)
+* **Amazon DynamoDB** (base NoSQL)
+* **Amazon VPC** (red privada virtual)
+* **IAM (Identity and Access Management)**
+* **Route 53** (DNS / enrutamiento de dominio)
+* **CloudFront** (CDN)
+* **Elastic Load Balancer (ELB)**
+* **SNS / SQS** (servicios de mensajería)
+* **AWS Glue / Athena / Redshift** (analítica / consulta de datos)
+* **CloudFormation** (infraestructura como código)
+* **AWS CloudWatch** (monitoreo / métricas)
+* **AWS Cost Explorer / Budgets / Billing** (costos y facturación)
+
+Si quieres, puedo armarte una lista actualizada justo para el año del examen (2025) con **todos** los servicios que AWS tiene activos (con su nombre oficial) y marcar cuáles son los más “clave” para el examen. ¿Te lo hago?
+
+[1]: https://docs.aws.amazon.com/whitepapers/latest/aws-overview/amazon-web-services-cloud-platform.html?utm_source=chatgpt.com "AWS services by category - Overview of Amazon Web Services"
+[2]: https://docs.aws.amazon.com/whitepapers/latest/aws-overview/compute-services.html?utm_source=chatgpt.com "AWS Compute Services category iconCompute - AWS Documentation"
+[3]: https://www.hava.io/blog/aws-services-list?utm_source=chatgpt.com "Amazon AWS Services List Complete"
+[4]: https://www.amazonaws.cn/en/products/?utm_source=chatgpt.com "All Products - Amazon Web Services"
+
+
+1. Una fuente oficial con la lista de servicios de AWS por categoría. ([Documentación de AWS][1])
+2. Algunos recursos de terceros con catálogos amplios. ([Kursus Pemrograman][2])
+3. Una versión “resumida / destacada” para que no te satures.
+
+### 1. Lista oficial por categoría (AWS)
+
+AWS mantiene en su documentación una sección llamada *AWS services by category* donde se organizan los servicios según su funcionalidad principal. ([Documentación de AWS][1])
+
+Algunas de las categorías que usan:
+
+* Compute
+* Storage
+* Database
+* Networking & Content Delivery
+* Security, Identity, & Compliance
+* Analytics
+* Migration & Transfer
+* Developer Tools
+* Machine Learning & AI
+* Internet of Things (IoT)
+* Application Integration
+* Edge & Hybrid (servicios de borde / híbridos)
+* Media & Streaming
+* Business Applications
+* AR / VR / Game Tech
+* Quantum Technologies
+* Robotics & Automation
+* etc.
+
+Dentro de cada categoría hay decenas de servicios.
+
+### 2. Recursos con listados amplios
+
+* Fahram.dev tiene un catálogo “Full list of AWS services” con muchas entradas. ([Kursus Pemrograman][2])
+* Hava tiene un “AWS Services List Complete” con los principales servicios usados en aplicaciones estándar. ([Hava][3])
+* Economize Cloud también tiene un catálogo con descripciones y familias de servicios. ([Economize Cloud][4])
+* Leskoff muestra una lista extensa con cientos de servicios que AWS ofrece. ([Leskoff][5])
+
+Según Leskoff, AWS tiene **535 productos y servicios** (dato de 2023) en su listado. ([Leskoff][5])
+
+Así que, “todos” es un número muy grande, y la lista crece con el tiempo.
+
+### 3. Versión destacada (“claves / útiles para el examen AWS Cloud Practitioner”)
+
+Para que no memorices cientos de servicios inútiles para el examen, aquí tienes los más importantes que sí conviene que conozcas:
+
+| Servicio                                                                                | Categoría / rol                             | Qué hace / para qué sirve                                                               |
+| --------------------------------------------------------------------------------------- | ------------------------------------------- | --------------------------------------------------------------------------------------- |
+| **Amazon EC2**                                                                          | Compute                                     | Máquinas virtuales en la nube, con distintas configuraciones de CPU, memoria, etc.      |
+| **AWS Lambda**                                                                          | Compute (serverless)                        | Ejecuta código en respuesta a eventos sin tener que manejar servidores.                 |
+| **Amazon S3**                                                                           | Storage (objetos)                           | Almacenamiento de objetos, datos, archivos, backups, “data lake”.                       |
+| **Amazon EBS**                                                                          | Storage (bloque)                            | Volúmenes en bloque que se pueden anexar a instancias EC2.                              |
+| **Amazon EFS**                                                                          | Storage (archivo)                           | Sistema de archivos compartido (tipo NFS) para múltiples instancias.                    |
+| **Amazon FSx**                                                                          | Storage especializado                       | Sistemas de archivos administrados (Windows, Lustre, etc.).                             |
+| **Amazon RDS / Aurora**                                                                 | Base de datos relacional                    | Base de datos administrada, múltiples motores (MySQL, PostgreSQL, etc.).                |
+| **Amazon DynamoDB**                                                                     | Base de datos NoSQL                         | Base de datos rápida, sin servidor, con escalado automático.                            |
+| **Amazon Redshift**                                                                     | Analytics / almacén de datos                | Base de datos / almacén para análisis a gran escala.                                    |
+| **Amazon Kinesis**                                                                      | Streaming / ingestion de datos              | Procesamiento en tiempo real de flujos de datos.                                        |
+| **Amazon VPC**                                                                          | Networking                                  | Red privada virtual que permite definir subredes, reglas de acceso, etc.                |
+| **Elastic Load Balancer (ELB)**                                                         | Networking / alta disponibilidad            | Distribuye tráfico entre instancias para balancear carga.                               |
+| **Route 53**                                                                            | Networking / DNS                            | Servicio de nombres de dominio, direccionamiento de tráfico, políticas DNS.             |
+| **CloudFront**                                                                          | CDN (Content Delivery Network)              | Distribución de contenido con baja latencia alrededor del mundo.                        |
+| **IAM (Identity and Access Management)**                                                | Seguridad / identidad                       | Gestión de usuarios, roles, permisos, control de acceso.                                |
+| **AWS Key Management Service (KMS)**                                                    | Seguridad / cifrado                         | Administración de claves criptográficas para cifrado de datos.                          |
+| **AWS WAF / AWS Shield**                                                                | Seguridad / protección frente a ataques web | Firewall de aplicaciones web, protección contra DDoS.                                   |
+| **CloudWatch**                                                                          | Observabilidad / monitoreo                  | Permite métricas, alarmas, logs, dashboards para tus recursos.                          |
+| **AWS CloudTrail**                                                                      | Auditoría / registro                        | Registra llamadas a APIs, quién hizo qué acción, para auditoría y cumplimiento.         |
+| **CloudFormation**                                                                      | Infraestructura como código (IaC)           | Definir infraestructura como plantillas (JSON / YAML) para desplegar recursos.          |
+| **AWS Config**                                                                          | Gobierno / conformidad                      | Rastrea configuraciones de recursos y cambios a lo largo del tiempo.                    |
+| **SNS / SQS**                                                                           | Integración / mensajería                    | SNS = notificaciones / pub-sub; SQS = colas de mensajes para desacoplar componentes.    |
+| **Step Functions / EventBridge**                                                        | Orquestación / eventos                      | Coordinar flujos de trabajo, reaccionar a eventos, integración entre servicios.         |
+| **Glue / Athena**                                                                       | Analytics / ETL / consulta                  | Glue = transformación / preparación de datos; Athena = consultas SQL sobre datos en S3. |
+| **AWS Cost Explorer / Budgets**                                                         | Gestión de costos                           | Herramientas para ver gastos, proyectar costos, definir presupuestos.                   |
+| **AWS Organizations**                                                                   | Cuenta múltiple / gobernanza                | Permite administrar múltiples cuentas de AWS dentro de una organización.                |
+| **AWS Migration & Transfer (DMS, DataSync, Snow family)**                               | Migración de datos / servicios              | Mover datos, bases de datos o cargas de trabajo desde local o entre regiones/cuentas.   |
+| **Outposts, Local Zones, Wavelength**                                                   | Edge / híbrido                              | Llevar servicios de AWS al borde o cerca del usuario.                                   |
+| **Servicios AI / ML (SageMaker, Comprehend, Rekognition, Polly, Lex, Translate, etc.)** | Inteligencia artificial / ML                | Para entrenar, desplegar modelos, análisis de texto, imágenes, voz, traducción.         |
+
+
+[1]: https://docs.aws.amazon.com/whitepapers/latest/aws-overview/amazon-web-services-cloud-platform.html?utm_source=chatgpt.com "AWS services by category - Overview of Amazon Web Services"
+[2]: https://fahram.dev/article/full-list-of-aws-services?utm_source=chatgpt.com "Full list of AWS Services."
+[3]: https://www.hava.io/blog/aws-services-list?utm_source=chatgpt.com "Amazon AWS Services List Complete"
+[4]: https://www.economize.cloud/resources/aws/services?utm_source=chatgpt.com "List of all Amazon Web Services (AWS) Services - Economize Cloud"
+[5]: https://www.leskoff.com/s02057-0?utm_source=chatgpt.com "Here's the full list of AWS services - Leskoff"
+
+Aquí tienes tu archivo listo para descargar:
+📘 [Descargar Servicios_AWS_Fundamentals_2025.pdf](sandbox:/mnt/data/Servicios_AWS_Fundamentals_2025.pdf)
+
+Incluye los servicios principales de AWS organizados por categoría, ideal para repasar antes del examen **AWS Certified Cloud Practitioner (Fundamentals)**.
