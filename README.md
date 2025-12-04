@@ -66,7 +66,8 @@
 
 ## Linux server
 
-- [Curso de Introducción a la Terminal y Línea de Comandos](Curso-de-Introducción-a-la-Terminal-y-Linea-de-Comandos)
+- [Curso de Introducción a la Terminal y Línea de Comandos](CursodeIntroduccionalaTerminalyLineadeComandos)
+- [Curso de Introducción a la Terminal y Línea de Comandos I](Curso-de-Introducción-a-la-Terminal-y-Linea-de-Comandos)
 - [Curso Profesional de Git y GitHub](CursoProfesionaldeGityGitHub)
 - [Fundamentos de Ingeniería de Software](FundamentosDeIngenieriaDeSoftware)
 - [Curso de Introducción a la Administración de Servidores Linux](CursodeIntroducciónalaAdministracióndeServidoresLinux)
