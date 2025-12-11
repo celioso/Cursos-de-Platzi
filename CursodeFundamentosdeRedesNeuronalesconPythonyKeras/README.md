@@ -451,9 +451,9 @@ Una neurona en una red neuronal artificial recibe uno o más valores de entrada 
 
 1. **Entradas y Pesos (Weights)**: Cada neurona recibe varias entradas \( x_1, x_2, x_3, ..., x_n \), donde \( n \) es el número de entradas. Cada una de estas entradas está asociada a un valor llamado **peso** \( w_1, w_2, w_3, ..., w_n \). Estos pesos determinan la importancia de cada entrada para la neurona. La neurona combina las entradas y los pesos a través de una suma ponderada.
 
-   \[
+   $$
    z = w_1 \cdot x_1 + w_2 \cdot x_2 + ... + w_n \cdot x_n
-   \]
+   $$
 
 2. **Suma y Término de Sesgo (Bias)**: Además de las entradas ponderadas, se agrega un término de **sesgo** \( b \), que es un valor constante que permite ajustar el resultado de la suma ponderada. Esto da la fórmula:
 
@@ -2312,5 +2312,6 @@ Después de haber cubierto los conceptos fundamentales de redes neuronales, como
 **Lecturas recomendadas**
 
 [Curso de NPL con Python y NLTK - Platzi](https://platzi.com/cursos/python-lenguaje-natural/)
+
 
 [Curso de Redes Neuronales con TensorFlow - Platzi](https://platzi.com/cursos/redes-neuronales-tensorflow/)
