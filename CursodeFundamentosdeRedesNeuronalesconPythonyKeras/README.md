@@ -449,42 +449,42 @@ Una **neurona** en el contexto de redes neuronales artificiales (como las que se
 
 Una neurona en una red neuronal artificial recibe uno o más valores de entrada (como características o datos de entrenamiento) y realiza las siguientes operaciones:
 
-1. **Entradas y Pesos (Weights)**: Cada neurona recibe varias entradas \( x_1, x_2, x_3, ..., x_n \), donde \( n \) es el número de entradas. Cada una de estas entradas está asociada a un valor llamado **peso** \( w_1, w_2, w_3, ..., w_n \). Estos pesos determinan la importancia de cada entrada para la neurona. La neurona combina las entradas y los pesos a través de una suma ponderada.
+1. **Entradas y Pesos (Weights)**: Cada neurona recibe varias entradas $ x_1, x_2, x_3, ..., x_n$, donde $ n $ es el número de entradas. Cada una de estas entradas está asociada a un valor llamado **peso** $ w_1, w_2, w_3, ..., w_n $. Estos pesos determinan la importancia de cada entrada para la neurona. La neurona combina las entradas y los pesos a través de una suma ponderada.
 
    $$
    z = w_1 \cdot x_1 + w_2 \cdot x_2 + ... + w_n \cdot x_n
    $$
 
-2. **Suma y Término de Sesgo (Bias)**: Además de las entradas ponderadas, se agrega un término de **sesgo** \( b \), que es un valor constante que permite ajustar el resultado de la suma ponderada. Esto da la fórmula:
+2. **Suma y Término de Sesgo (Bias)**: Además de las entradas ponderadas, se agrega un término de **sesgo** $ b $, que es un valor constante que permite ajustar el resultado de la suma ponderada. Esto da la fórmula:
 
-   \[
+   $$
    z = (w_1 \cdot x_1 + w_2 \cdot x_2 + ... + w_n \cdot x_n) + b
-   \]
+   $$
 
    El sesgo permite que el modelo se ajuste mejor a los datos, ayudando a la red neuronal a aprender incluso cuando las entradas son cero.
 
-3. **Función de Activación**: Después de calcular \( z \), se aplica una **función de activación** a este valor. Esta función es crucial, ya que introduce **no linealidad** en el modelo, permitiendo que la red neuronal aprenda patrones complejos. Algunas funciones de activación comunes son:
+3. **Función de Activación**: Después de calcular $ z$, se aplica una **función de activación** a este valor. Esta función es crucial, ya que introduce **no linealidad** en el modelo, permitiendo que la red neuronal aprenda patrones complejos. Algunas funciones de activación comunes son:
    
-   - **ReLU (Rectified Linear Unit)**: Retorna \( 0 \) si \( z \) es negativo y \( z \) si es positivo. Es muy utilizada en redes neuronales profundas.
-     \[
+   - **ReLU (Rectified Linear Unit)**: Retorna $ 0 $ si $ z $ es negativo y $ z $ si es positivo. Es muy utilizada en redes neuronales profundas.
+     $$
      \text{ReLU}(z) = \max(0, z)
-     \]
+     $$
    
-   - **Sigmoide**: Convierte cualquier valor en un número entre \( 0 \) y \( 1 \), comúnmente usada para problemas de clasificación binaria.
-     \[
+   - **Sigmoide**: Convierte cualquier valor en un número entre $ 0 $ y $ 1 $, comúnmente usada para problemas de clasificación binaria.
+     $$
      \sigma(z) = \frac{1}{1 + e^{-z}}
-     \]
+     $$
    
-   - **Tanh**: Similar a la sigmoide, pero su rango está entre \( -1 \) y \( 1 \). Es útil cuando se necesita una activación centrada en cero.
-     \[
+   - **Tanh**: Similar a la sigmoide, pero su rango está entre $ -1 $ y $ 1 $. Es útil cuando se necesita una activación centrada en cero.
+     $$
      \tanh(z) = \frac{e^{z} - e^{-z}}{e^{z} + e^{-z}}
-     \]
+     $$
 
 4. **Salida**: Después de aplicar la función de activación, la neurona produce una salida. Esta salida puede ser una de las entradas de las neuronas en la siguiente capa o puede ser la salida final del modelo si la neurona está en la última capa.
 
 ### Proceso de entrenamiento de la neurona
 
-Durante el entrenamiento de la red neuronal, los pesos \( w_1, w_2, ..., w_n \) y el sesgo \( b \) de cada neurona se ajustan automáticamente para minimizar el **error** en las predicciones del modelo. Este ajuste se realiza a través de un algoritmo llamado **retropropagación** (backpropagation), que utiliza el **descenso del gradiente** para actualizar los parámetros y mejorar el rendimiento del modelo en función de una métrica de error (como la **pérdida**).
+Durante el entrenamiento de la red neuronal, los pesos $ w_1, w_2, ..., w_n $ y el sesgo $ b $ de cada neurona se ajustan automáticamente para minimizar el **error** en las predicciones del modelo. Este ajuste se realiza a través de un algoritmo llamado **retropropagación** (backpropagation), que utiliza el **descenso del gradiente** para actualizar los parámetros y mejorar el rendimiento del modelo en función de una métrica de error (como la **pérdida**).
 
 ### Neurona en una red neuronal
 Las neuronas no funcionan de manera aislada, sino que están organizadas en capas:
@@ -551,9 +551,9 @@ La **arquitectura de una red neuronal** se refiere a la estructura y organizaci�
 ### Funciones de Activación
 
 - Introducen **no linealidad** en la red, permitiendo que aprenda relaciones complejas.
-- **ReLU (Rectified Linear Unit)**: \(\text{ReLU}(z) = \max(0, z)\)
-- **Sigmoide**: \(\sigma(z) = \frac{1}{1 + e^{-z}}\)
-- **Tanh**: \(\tanh(z) = \frac{e^{z} - e^{-z}}{e^{z} + e^{-z}}\)
+- **ReLU (Rectified Linear Unit)**: $\text{ReLU}(z) = \max(0, z)$
+- **Sigmoide**: $\sigma(z) = \frac{1}{1 + e^{-z}}$
+- **Tanh**: $\tanh(z) = \frac{e^{z} - e^{-z}}{e^{z} + e^{-z}}$
 - **Softmax**: Convierte un vector de valores en probabilidades que suman 1.
 
 ### Tipos de Arquitecturas de Redes Neuronales
@@ -634,9 +634,9 @@ A continuación, te explico las funciones de activación más comunes utilizadas
 La función sigmoide convierte un valor de entrada en un valor entre 0 y 1, lo que la hace útil para modelos de clasificación binaria.
 
 - **Fórmula**:
-  \[
+  $$
   \sigma(x) = \frac{1}{1 + e^{-x}}
-  \]
+  $$
 
 - **Propiedades**:
   - Su salida es continua, por lo que es adecuada para calcular probabilidades.
@@ -650,9 +650,9 @@ La función sigmoide convierte un valor de entrada en un valor entre 0 y 1, lo q
 La función `tanh` es similar a la sigmoide, pero escala la salida entre -1 y 1. Es útil para normalizar la activación en torno a 0, en lugar de en torno a 0.5 como la sigmoide.
 
 - **Fórmula**:
-  \[
+  $$
   \tanh(x) = \frac{e^x - e^{-x}}{e^x + e^{-x}}
-  \]
+  $$
 
 - **Propiedades**:
   - Es **simétrica en torno a 0**, lo que puede facilitar el entrenamiento en redes neuronales profundas.
@@ -665,9 +665,9 @@ La función `tanh` es similar a la sigmoide, pero escala la salida entre -1 y 1.
 La función ReLU es una de las más utilizadas en redes neuronales profundas debido a su simplicidad y buen rendimiento.
 
 - **Fórmula**:
-  \[
+  $$
   \text{ReLU}(x) = \max(0, x)
-  \]
+  $$
 
 - **Propiedades**:
   - Introduce no linealidad en la red de una manera muy eficiente.
@@ -676,32 +676,32 @@ La función ReLU es una de las más utilizadas en redes neuronales profundas deb
 
 - **Problemas**:
   - **Neurona muerta**: Si una neurona recibe siempre entradas negativas, puede que nunca se active (salida de 0), lo que puede resultar en un modelo subentrenado.
-  - **No diferenciable en \( x = 0 \)**, aunque este problema rara vez afecta el entrenamiento en la práctica.
+  - **No diferenciable en $ x = 0 $**, aunque este problema rara vez afecta el entrenamiento en la práctica.
 
 ### 4. **Leaky ReLU**
 Es una variante de ReLU diseñada para resolver el problema de las neuronas muertas. En lugar de hacer que la salida sea cero para valores negativos, introduce un pequeño valor de pendiente para las entradas negativas.
 
 - **Fórmula**:
-  \[
+  $$
   \text{Leaky ReLU}(x) = \max(\alpha x, x)
-  \]
-  Donde \( \alpha \) es un pequeño valor (generalmente 0.01).
+  $$
+  Donde $ \alpha $ es un pequeño valor (generalmente 0.01).
 
 - **Propiedades**:
   - Al igual que ReLU, es computacionalmente eficiente.
   - Al introducir una pendiente pequeña para valores negativos, reduce el riesgo de tener neuronas muertas.
 
 - **Problemas**:
-  - Aunque mejora el problema de las neuronas muertas, su efectividad depende de la elección correcta del valor \( \alpha \).
+  - Aunque mejora el problema de las neuronas muertas, su efectividad depende de la elección correcta del valor $ \alpha $.
 
 ### 5. **Softmax**
 La función **softmax** se utiliza principalmente en la capa de salida de redes neuronales que resuelven problemas de **clasificación multiclase**. Convierte un vector de valores en una distribución de probabilidad.
 
 - **Fórmula**:
-  \[
+  $$
   \text{Softmax}(z_i) = \frac{e^{z_i}}{\sum_{j} e^{z_j}}
-  \]
-  Donde \( z_i \) es el valor de activación de la \( i \)-ésima neurona y \( j \) recorre todas las neuronas en la capa de salida.
+  $$
+  Donde $ z_i $ es el valor de activación de la $ i $-ésima neurona y $ j $ recorre todas las neuronas en la capa de salida.
 
 - **Propiedades**:
   - Transforma la salida en una distribución de probabilidad donde la suma de todas las salidas es 1.
@@ -711,14 +711,14 @@ La función **softmax** se utiliza principalmente en la capa de salida de redes 
 La función **ELU** es similar a ReLU pero intenta mejorar su comportamiento en valores negativos.
 
 - **Fórmula**:
-  \[
+  $$
   \text{ELU}(x) = 
   \begin{cases} 
   x & \text{si } x > 0 \\ 
   \alpha(e^x - 1) & \text{si } x \leq 0 
   \end{cases}
-  \]
-  Donde \( \alpha \) es un hiperparámetro positivo.
+  $$
+  Donde $ \alpha $ es un hiperparámetro positivo.
 
 - **Propiedades**:
   - No sufre del problema de las neuronas muertas, ya que permite valores negativos y positivos.
@@ -762,13 +762,13 @@ Una **función discreta** es aquella que se define solo en un conjunto específi
 - **Ejemplos**:
   - **Función escalón**: Un ejemplo clásico de función discreta es la función escalón de Heaviside, que toma el valor 0 para entradas negativas y 1 para entradas no negativas.
   
-  \[
+  $$
   f(x) = 
   \begin{cases} 
   0 & \text{si } x < 0 \\ 
   1 & \text{si } x \geq 0 
   \end{cases}
-  \]
+  $$
 
 - **Uso en Redes Neuronales**: Algunas funciones de activación, como la **función escalón** o **función sign**, pueden ser consideradas discretas, aunque no son comunes en las redes neuronales modernas debido a su falta de derivabilidad y propiedades de suavidad.
 
@@ -778,19 +778,19 @@ Una **función continua**, por otro lado, es aquella que está definida para tod
 
 #### Características:
 - **Dominio**: Intervalos continuos (como números reales).
-- **Continuidad**: No hay saltos; si \(x\) se aproxima a un valor \(a\), la función \(f(x)\) se aproxima a \(f(a)\).
+- **Continuidad**: No hay saltos; si $x$ se aproxima a un valor $a$, la función $f(x)$ se aproxima a $f(a)$.
 - **Ejemplos**:
   - **Función sigmoide**: Una función continua que mapea cualquier valor real a un rango entre 0 y 1. Se usa comúnmente como función de activación en redes neuronales.
   
-  \[
+  $$
   \sigma(x) = \frac{1}{1 + e^{-x}}
-  \]
+  $$
 
   - **Función tanh**: Otra función continua que mapea los valores reales a un rango entre -1 y 1.
 
-  \[
+  $$
   \tanh(x) = \frac{e^x - e^{-x}}{e^x + e^{-x}}
-  \]
+  $$
 
 - **Uso en Redes Neuronales**: Las funciones de activación continuas son esenciales en redes neuronales modernas, ya que permiten el cálculo de gradientes durante el proceso de retropropagación, facilitando el entrenamiento de la red.
 
@@ -831,13 +831,13 @@ Hay varias funciones de pérdida que se utilizan según el tipo de tarea (regres
 #### 1. **Error Cuadrático Medio (MSE)** – (*Mean Squared Error*)
 Es una de las funciones de pérdida más comunes para problemas de **regresión**. Calcula el promedio de los cuadrados de las diferencias entre las predicciones del modelo y los valores reales. Cuanto más pequeñas sean estas diferencias, mejor será el modelo.
 
-\[
+$$
 MSE = \frac{1}{n} \sum_{i=1}^{n} (y_i - \hat{y}_i)^2
-\]
+$$
 
-- \(y_i\): Valor real
-- \(\hat{y}_i\): Valor predicho
-- \(n\): Número de ejemplos
+- $y_i$: Valor real
+- $\hat{y}_i$: Valor predicho
+- $n$): Número de ejemplos
 
 **Uso**: Problemas de regresión donde la salida es un valor continuo.
 
@@ -847,27 +847,27 @@ Esta es la función de pérdida más utilizada para problemas de **clasificació
 
 **Para clasificación binaria**:
 
-\[
+$$
 \text{Binary Cross-Entropy} = -\frac{1}{n} \sum_{i=1}^{n} [y_i \log(\hat{y}_i) + (1 - y_i) \log(1 - \hat{y}_i)]
-\]
+$$
 
 **Para clasificación multiclase**:
 
-\[
+$$
 \text{Categorical Cross-Entropy} = -\sum_{i=1}^{n} \sum_{j=1}^{m} y_{ij} \log(\hat{y}_{ij})
-\]
+$$
 
-- \(y_{ij}\): Valor real de la clase \(j\) del ejemplo \(i\) (0 o 1)
-- \(\hat{y}_{ij}\): Probabilidad predicha de la clase \(j\) del ejemplo \(i\)
+- $y_{ij}$: Valor real de la clase $j$ del ejemplo $i$ (0 o 1)
+- $\hat{y}_{ij}$: Probabilidad predicha de la clase $j$ del ejemplo $i$
 
 **Uso**: Problemas de clasificación binaria y multiclase.
 
 #### 3. **Hinge Loss**
 Esta función de pérdida se utiliza comúnmente en **máquinas de soporte vectorial (SVM)** para tareas de clasificación. Ayuda a maximizar el margen entre las clases y penaliza a las muestras mal clasificadas o clasificadas incorrectamente, pero solo cuando el margen está por debajo de un umbral.
 
-\[
+$$
 \text{Hinge Loss} = \max(0, 1 - y_i \cdot \hat{y}_i)
-\]
+$$
 
 **Uso**: Tareas de clasificación, especialmente con SVM.
 
@@ -875,22 +875,22 @@ Esta función de pérdida se utiliza comúnmente en **máquinas de soporte vecto
 
 El Huber Loss combina los enfoques de MSE y MAE (Error Absoluto Medio), siendo menos sensible a *outliers* que MSE pero más suave que MAE en la penalización de errores pequeños. Para errores pequeños, se comporta como MSE y para errores grandes, se comporta como MAE.
 
-\[
+$$
 \text{Huber Loss} = 
 \begin{cases} 
 \frac{1}{2}(y - \hat{y})^2 & \text{si } |y - \hat{y}| \leq \delta \\
 \delta \cdot (|y - \hat{y}| - \frac{\delta}{2}) & \text{si } |y - \hat{y}| > \delta
 \end{cases}
-\]
+$$
 
 **Uso**: Problemas de regresión con datos que tienen *outliers*.
 
 #### 5. **Log Loss (Logaritmic Loss)**
 Es una variante de la entropía cruzada que se usa especialmente en clasificación binaria. Penaliza las predicciones que están muy lejos de los valores reales, con penalizaciones más altas para errores mayores.
 
-\[
+$$
 \text{Log Loss} = -\frac{1}{n} \sum_{i=1}^{n} [y_i \log(\hat{y}_i) + (1 - y_i) \log(1 - \hat{y}_i)]
-\]
+$$
 
 ### Función de pérdida en la práctica
 
@@ -922,15 +922,15 @@ El **descenso de gradiente** es uno de los algoritmos clave utilizados para opti
 2. **Cálculo del gradiente**: Se calcula el gradiente de la función de pérdida con respecto a los pesos. Este gradiente indica la dirección de la mayor pendiente (ascenso) de la función de pérdida.
 3. **Actualización de los pesos**: Los pesos se actualizan en la dirección opuesta al gradiente para reducir la pérdida. Esta actualización se realiza según la siguiente fórmula:
 
-   \[
+   $$
    w_{\text{nuevo}} = w_{\text{viejo}} - \eta \cdot \nabla L(w)
-   \]
+   $$
 
    Donde:
-   - \(w_{\text{nuevo}}\) son los nuevos pesos después de la actualización.
-   - \(w_{\text{viejo}}\) son los pesos actuales.
-   - \(\eta\) es la tasa de aprendizaje (*learning rate*), un parámetro que controla el tamaño del paso que damos.
-   - \(\nabla L(w)\) es el gradiente de la función de pérdida con respecto a los pesos.
+   - $w_{\text{nuevo}}$ son los nuevos pesos después de la actualización.
+   - $w_{\text{viejo}}$ son los pesos actuales.
+   - $\eta$ es la tasa de aprendizaje (*learning rate*), un parámetro que controla el tamaño del paso que damos.
+   - $\nabla L(w)$ es el gradiente de la función de pérdida con respecto a los pesos.
 
 4. **Iteración**: El proceso se repite hasta que la función de pérdida converja a un valor mínimo o hasta alcanzar un número máximo de iteraciones.
 
@@ -1064,13 +1064,13 @@ Keras proporciona varios otros optimizadores que también están basados en el d
    
    La actualización de los pesos se hace con la fórmula:
 
-   \[
+   $$
    w_{\text{nuevo}} = w_{\text{viejo}} - \eta \cdot \frac{\partial L}{\partial w}
-   \]
+   $$
 
    Donde:
-   - \( \eta \) es la **tasa de aprendizaje**, que determina qué tan grande es el paso que se da en cada actualización.
-   - \( \frac{\partial L}{\partial w} \) es el gradiente de la función de pérdida con respecto a los pesos.
+   - $ \eta $ es la **tasa de aprendizaje**, que determina qué tan grande es el paso que se da en cada actualización.
+   - $ \frac{\partial L}{\partial w} $ es el gradiente de la función de pérdida con respecto a los pesos.
 
 ### Ejemplo: Proceso Detallado de Backpropagation
 
@@ -1083,7 +1083,7 @@ Para entrenar la red, el proceso de backpropagation sigue estos pasos:
 
 #### 1. Propagación hacia adelante:
 
-- Los datos de entrada \(x_1, x_2, ..., x_n\) se multiplican por los pesos iniciales en la primera capa, pasan a través de la función de activación y se envían a la siguiente capa.
+- Los datos de entrada $x_1, x_2, ..., x_n$ se multiplican por los pesos iniciales en la primera capa, pasan a través de la función de activación y se envían a la siguiente capa.
   
 - En la capa de salida, los valores de salida son generados después de aplicar los pesos finales y la función de activación de la capa de salida (por ejemplo, softmax en clasificación).
 
@@ -1177,7 +1177,7 @@ Puedes acceder al **TensorFlow Playground** en el siguiente enlace: [https://pla
 
 ### Características Clave de TensorFlow Playground:
 
-1. **Entradas**: Permite seleccionar diferentes características de entrada para entrenar la red neuronal (por ejemplo, \( x_1, x_2 \)).
+1. **Entradas**: Permite seleccionar diferentes características de entrada para entrenar la red neuronal (por ejemplo, $ x_1, x_2 $).
   
 2. **Capas Ocultas**: Puedes añadir o eliminar capas ocultas y ajustar el número de neuronas en cada capa. Esto te permite experimentar con redes más profundas o superficiales.
 
@@ -1228,7 +1228,7 @@ En el contexto de **redes neuronales** y **aprendizaje profundo (deep learning)*
 Un **tensor** es una estructura de datos multidimensional que generaliza los conceptos de escalares, vectores y matrices. En **deep learning**, los tensores son la base sobre la cual se alimentan los datos a los modelos. TensorFlow, PyTorch y otros marcos de aprendizaje profundo se basan en la manipulación de tensores.
 
 #### Tipos de tensores según sus dimensiones:
-- **Escalar (0D tensor)**: Un número simple, como \( 5 \) o \( 3.14 \). No tiene dimensiones.
+- **Escalar (0D tensor)**: Un número simple, como $ 5 $ o $ 3.14 $. No tiene dimensiones.
   - Ejemplo: `x = 5`
   
 - **Vector (1D tensor)**: Una secuencia de números. Tiene una sola dimensión.
@@ -1236,9 +1236,9 @@ Un **tensor** es una estructura de datos multidimensional que generaliza los con
   
 - **Matriz (2D tensor)**: Una tabla de números con filas y columnas (similar a una hoja de cálculo).
   - Ejemplo: 
-    \[
+    $$
     \text{matriz} = \begin{bmatrix} 1 & 2 & 3 \\ 4 & 5 & 6 \end{bmatrix}
-    \]
+    $$
   
 - **Tensor 3D**: Es una pila de matrices, o múltiples tablas de valores. Puede representar, por ejemplo, una colección de imágenes en color (cada imagen se representa con 3 matrices: rojo, verde, azul).
   - Ejemplo: Un tensor 3D puede tener dimensiones de forma (64, 28, 28), lo que significa 64 imágenes de tamaño 28x28 píxeles.
@@ -1372,14 +1372,14 @@ Cada neurona tiene asociados pesos que se inicializan de forma aleatoria y un se
 #### 2. Funciones de Activación
 
 - **Sigmoide**: Comúnmente usada para la clasificación binaria.
-  \[
+  $$
   \sigma(z) = \frac{1}{1 + e^{-z}}
-  \]
+  $$
   
 - **ReLU**: Común en capas ocultas.
-  \[
+  $$
   \text{ReLU}(z) = \max(0, z)
-  \]
+  $$
 
 #### 3. Propagación hacia Adelante
 
@@ -1388,9 +1388,9 @@ Esto consiste en calcular la salida de cada capa de la red, desde la entrada has
 #### 4. Función de Pérdida
 
 Usamos la **entropía cruzada binaria** para calcular la pérdida. Para un problema de clasificación binaria, la función de pérdida es:
-\[
+$$
 L(y, \hat{y}) = - \left( y \cdot \log(\hat{y}) + (1 - y) \cdot \log(1 - \hat{y}) \right)
-\]
+$$
 
 #### 5. Propagación hacia Atrás (Backpropagation)
 
@@ -1476,7 +1476,7 @@ print(predicted_output)
 
 ### Resultado:
 
-Después de entrenar la red durante 10,000 epochs, la red aprenderá a clasificar correctamente los datos del problema XOR, y podrás observar que las predicciones se acercan a los valores esperados \([0], [1], [1], [0]\).
+Después de entrenar la red durante 10,000 epochs, la red aprenderá a clasificar correctamente los datos del problema XOR, y podrás observar que las predicciones se acercan a los valores esperados $[0], [1], [1], [0]$.
 
 ### Conclusión:
 
@@ -1499,10 +1499,10 @@ El **backpropagation** (retropropagación) y el **descenso del gradiente** son d
 
 4. **Actualización de los pesos usando el descenso de gradiente**:
    - Los pesos de la red se actualizan en la dirección negativa del gradiente, lo que reduce el error. La fórmula del descenso de gradiente básico para actualizar los pesos es:
-     \[
+     $$
      w := w - \eta \cdot \frac{\partial L}{\partial w}
-     \]
-     donde \( \eta \) es la tasa de aprendizaje, \( L \) es la función de pérdida, y \( w \) es el peso.
+     $$
+     donde $ \eta $ es la tasa de aprendizaje, $ L $ es la función de pérdida, y $ w $ es el peso.
 
 ### Ejemplo paso a paso con código
 
@@ -1607,7 +1607,7 @@ Salida final:
  [0.02]]
 ```
 
-Esto muestra que la red ha aprendido a resolver el problema XOR, donde los pares \([0, 1]\) y \([1, 0]\) producen un 1, y los pares \([0, 0]\) y \([1, 1]\) producen un 0, dentro de un margen razonable.
+Esto muestra que la red ha aprendido a resolver el problema XOR, donde los pares $[0, 1]$ y $[1, 0]$ producen un 1, y los pares $[0, 0]$ y $[1, 1]$ producen un 0, dentro de un margen razonable.
 
 ### Resumen:
 
@@ -2195,15 +2195,15 @@ La regresión lineal simple intenta encontrar la **línea recta** que mejor se a
 
 En este caso, el modelo ajustará una línea con la forma:
 
-\[
+$$
 y = w_0 + w_1 \cdot x
-\]
+$$
 
 Donde:
-- \( y \) es el valor predicho (precio).
-- \( w_0 \) es la intersección con el eje Y (el precio cuando el tamaño de la casa es 0).
-- \( w_1 \) es la pendiente de la línea (cuánto aumenta el precio por cada metro cuadrado adicional).
-- \( x \) es el tamaño de la casa (característica independiente).
+- $ y $ es el valor predicho (precio).
+- $ w_0 $ es la intersección con el eje Y (el precio cuando el tamaño de la casa es 0).
+- $ w_1 $ es la pendiente de la línea (cuánto aumenta el precio por cada metro cuadrado adicional).
+- $ x $ es el tamaño de la casa (característica independiente).
 
 ### Más allá de la regresión lineal
 
