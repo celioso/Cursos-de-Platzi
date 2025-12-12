@@ -170,7 +170,7 @@ Longitud de una cadena, lista, tupla, etc.:
  3
 ```
 Tipo de dato:
-````python
+```python
 >>> type(4) 
  < type int >
 ```
@@ -193,7 +193,8 @@ Sumar un conjunto:
 
 ```python
  sum([1, 2, 4]) 
- 7```
+ 7
+```
  
 Organizar un conjunto:
 ```python
@@ -201,10 +202,11 @@ sorted([5, 2, 1])
  [1, 2, 5]
  ```
 Conocer los comandos que le puedes aplicar a x tipo de datos:
-````python
+```python
 Li = [5, 2, 1]
 dir(Li)
- ['append', 'count', 'extend', 'index', 'insert', 'pop', 'remove', 'reverse', 'sort']```
+ ['append', 'count', 'extend', 'index', 'insert', 'pop', 'remove', 'reverse', 'sort']
+```
 ‘append’, ‘count’, ‘extend’, ‘index’, ‘insert’, ‘pop’, ‘remove’, ‘reverse’, ‘sort’ son posibles comandos que puedes aplicar a una lista.
 
 Información sobre una función o librería:
@@ -216,7 +218,7 @@ help(sorted)
 Clases es uno de los conceptos con más definiciones en la programación, pero en resumen sólo son la representación de un objeto. Para definir la clase usas_ class_ y el nombre. En caso de tener parámetros los pones entre paréntesis.
 
 Para crear un constructor haces una función dentro de la clase con el nombre init y de parámetros self (significa su clase misma), nombre_r y edad_r:
-````python
+```python
  class Estudiante(object): 
  ... 	def __init__(self,nombre_r,edad_r): 
  ... 		self.nombre = nombre_r 
@@ -256,18 +258,21 @@ Los condicionales tienen la siguiente estructura. Ten en cuenta que lo que conti
  elif ( a == b ): 
  	elementos 
  else:
- 	elementos```
+ 	elementos
+```
 
 ### Bucle FOR
 El bucle de for lo puedes usar de la siguiente forma: recorres una cadena o lista a la cual va a tomar el elemento en cuestión con la siguiente estructura:
 ```python
  for i in ____:
- 	elementos```
+ 	elementos
+```
 
 Ejemplo:
 ```python
 for i in range(10):
- 	print i```
+ 	print i
+```
 
 En este caso recorrerá una lista de diez elementos, es decir el _print i _de ejecutar diez veces. Ahora i va a tomar cada valor de la lista, entonces este for imprimirá los números del 0 al 9 (recordar que en un range vas hasta el número puesto -1).
 
@@ -276,14 +281,16 @@ En este caso while tiene una condición que determina hasta cuándo se ejecutar�
 
 ```python
 while (condición):
- 	elementos```
+ 	elementos
+```
 Ejemplo:
 
 ```python
 >>> x = 0 
  >>> while x < 10: 
  ... 	print x 
- ... 	x += 1```
+ ... 	x += 1
+```
  
 En este ejemplo preguntará si es menor que diez. Dado que es menor imprimirá x y luego sumará una unidad a x. Luego x es 1 y como sigue siendo menor a diez se seguirá ejecutando, y así sucesivamente hasta que x llegue a ser mayor o igual a 10.
 
@@ -967,4 +974,5 @@ Although never is often better than *right* now.
 If the implementation is hard to explain, it's a bad idea.
 If the implementation is easy to explain, it may be a good idea.
 Namespaces are one honking great idea -- let's do more of those!
+
 ```
