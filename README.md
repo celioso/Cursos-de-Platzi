@@ -7,6 +7,7 @@
 ### Python: De Cero a Experto
 
 - [Curso de Fundamentos de Python](Curso_de_Fundamentos_de_Python)
+- [Curso de Fundamentos de Python Actualizacion](CursodeFundamentosdePythonActualizacion)
 - [Curso de Python: Comprehensions,Funciones y Manejo de Errores](CursodePythonComprehensions,FuncionesyManejodeErrores)
 - [Curso de Python: PIP y Entornos Virtuales](CursoDePythonPIPyEntornosVirtuales)
 - [Curso de Unit Testing en Python](CursodeUnitTestingenPython)
