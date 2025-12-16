@@ -10,12 +10,14 @@ Python es un lenguaje de programación creado por Guido Van Rossum, con una sint
 - Recargado: viene con muchas librerías por defecto.
 Editor recomendado: Atom o Sublime Text.
 
-Instalación de python
+**Instalación de python**
+
 Existen dos versiones de Python que tienen gran uso actualmente, Python 2.x y Python 3.x, para este curso necesitas usar una versión 3.x
 
 Para instalar Python solo debes seguir los pasos dependiendo del sistema operativo que tengas instalado.
 
 ### Windows
+
 Para instalar Python en Windows ve al sitio https://www.python.org/downloads/ y presiona sobre el botón Download Python 3.7.3
 
 Se descargará un archivo de instalación con el nombre python-3.7.3.exe , ejecútalo. Y sigue los pasos de instalación.
@@ -32,6 +34,7 @@ Tu consola se mostrará así.
 ¡Ya estás listo para continuar con el curso!
 
 ### MacOS
+
 La forma sencilla es tener instalado [homebrew](http://https://brew.sh/ "homebrew") y usar el comando:
 
 ** Para instalar la Versión 2.7**
@@ -40,7 +43,9 @@ La forma sencilla es tener instalado [homebrew](http://https://brew.sh/ "homebre
 Para instalar la Versión 3.x
 
 `brew install python3`
+
 ### Linux
+
 Generalmente Linux ya lo trae instalado, para comprobarlo puedes ejecutar en la terminal el comando.
 Versión 2.7
 `python -v`
@@ -61,6 +66,7 @@ Si usas otra distribución o no has podido instalar python en tu sistema Linux d
 Si eres usuario habitual de linux también puedes [descargar los archivos](http://https://www.python.org/downloads/source/ "descargar los archivos") para instalarlo manualmente.
 
 ### Antes de empezar:
+
 Para usar Python debemos tener un editor de texto abierto y una terminal o cmd (línea de comandos en Windows) como administrador.
 No le tengas miedo a la consola, la consola es tu amiga.
 Para ejecutar Python abre la terminal y escribe:
@@ -100,6 +106,7 @@ Cuando usamos Python debemos atender ciertas reglas de la comunidad para definir
 En Python trabajas con **módulo**s y **ficheros** que usas para importar las librerías.
 
 **Funciones**
+
 Las funciones las defines con def junto a un nombre y unos paréntesis que reciben los parámetros a usar. Terminas con dos puntos.
 
 `def nombre_de_la_función(parametros):`
@@ -114,20 +121,25 @@ Después por indentación colocas los datos que se ejecutarán desde la función
 Hello World!
 
 ### Variables
+
 Las variables, a diferencia de los demás lenguajes de programación, no debes definirlas, ni tampoco su tipo de dato, ya que al momento de iterarlas se identificará su tipo. Recuerda que en Python todo es un objeto.
 
 ```python
 A = 3 
 B = A
 ```
+
 ### Listas
+
 Las listas las declaras con corchetes. Estas pueden tener una lista dentro o cualquier tipo de dato.
 ```python
  >>> L = [22, True, ”una lista”, [1, 2]] 
  >>> L[0] 
  22
 ```
+
 **Tuplas**
+
 Las tuplas se declaran con paréntesis, recuerda que no puedes editar los datos de una tupla después de que la has creado.
 ```python
  >>> T = (22, True, "una tupla", (1, 2)) 
@@ -135,6 +147,7 @@ Las tuplas se declaran con paréntesis, recuerda que no puedes editar los datos 
  22
 ```
 ### Diccionarios
+
 En los diccionarios tienes un grupo de datos con un formato: la primera cadena o número será la clave para acceder al segundo dato, el segundo dato será el dato al cual accederás con la llave. Recuerda que los diccionarios son listas de llave:valor.
 ```python
  >>> D = {"Kill Bill": "Tamarino", "Amelie": "Jean-Pierre Jeunet"} 
@@ -142,6 +155,7 @@ En los diccionarios tienes un grupo de datos con un formato: la primera cadena o
  "Tamarino"
 ```
 **Conversiones**
+
 De flotante a entero:
 ```python
  >>> int(4.3)
@@ -164,6 +178,7 @@ De tupla a lista:
 ```
  
 ### Operadores Comunes
+
 Longitud de una cadena, lista, tupla, etc.:
 ```python
 >>> len("key") 
@@ -214,7 +229,9 @@ Información sobre una función o librería:
 help(sorted) 
  (Aparecerá la documentación de la función sorted)
 ```
+
 ### Clases
+
 Clases es uno de los conceptos con más definiciones en la programación, pero en resumen sólo son la representación de un objeto. Para definir la clase usas_ class_ y el nombre. En caso de tener parámetros los pones entre paréntesis.
 
 Para crear un constructor haces una función dentro de la clase con el nombre init y de parámetros self (significa su clase misma), nombre_r y edad_r:
@@ -974,5 +991,4 @@ Although never is often better than *right* now.
 If the implementation is hard to explain, it's a bad idea.
 If the implementation is easy to explain, it may be a good idea.
 Namespaces are one honking great idea -- let's do more of those!
-
 ```
