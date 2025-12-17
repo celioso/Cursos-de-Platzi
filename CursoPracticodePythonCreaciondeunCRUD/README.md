@@ -31,8 +31,6 @@ Al finalizar la instalación haz lo siguiente para corroborar una instalación c
 Tu consola se mostrará así.
 ![consola de python](https://parzibyte.me/blog/wp-content/uploads/2017/11/Probando-python.png)
 
-¡Ya estás listo para continuar con el curso!
-
 ### MacOS
 
 La forma sencilla es tener instalado [homebrew](http://https://brew.sh/ "homebrew") y usar el comando:
