@@ -2,7 +2,7 @@
 OneDrive/Escritorio/programación/platzi/CursodeETLeingestadedatosconPython/notebook/dataapi.ipynb
 ## ETL con Jupyter Notebook y Python
 
-Realizar un proceso ETL (Extract, Transform, Load) en **Jupyter Notebook** utilizando **Python** es una forma práctica de trabajar con datos de manera interactiva. A continuación, te detallo los pasos básicos para implementar un proceso ETL, junto con ejemplos de código.
+Realizar un proceso *ETL (Extract, Transform, Load)* en **Jupyter Notebook** utilizando **Python** es una forma práctica de trabajar con datos de manera interactiva. A continuación, te detallo los pasos básicos para implementar un proceso ETL, junto con ejemplos de código.
 
 ### **1. Extract (Extracción)**
 La etapa de extracción implica obtener datos desde diversas fuentes, como bases de datos, archivos CSV, APIs, etc.
