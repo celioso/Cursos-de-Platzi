@@ -9,10 +9,10 @@ Comandos de instalacion:
 - `npm i -D prettier`
 - `npx cypress open` o `npm run test`
 
-Tambien para el autocompletado coloquen la siguiente linea de codigo en en archivo e2e.js
+Tambien para el autocompletado coloquen la siguiente linea de codigo en el archivo e2e.js
 
 
-/// <reference types="cypress" />
+`/// <reference types="cypress" />`
 
 ## Cookies 
 
