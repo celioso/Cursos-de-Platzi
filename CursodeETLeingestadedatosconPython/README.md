@@ -360,7 +360,7 @@ Anaconda es una distribución de Python que incluye herramientas como Jupyter No
    - Finaliza la instalación.
 
 2. **macOS**:
-   - Abre el instalador (`.pkg`) descargado.
+   - *Abre* el instalador (`.pkg`) descargado.
    - Sigue las instrucciones en pantalla.
    - Asegúrate de añadir `conda` a tu PATH si se solicita.
 
