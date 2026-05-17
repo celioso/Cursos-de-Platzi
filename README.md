@@ -2,7 +2,7 @@
 
 😎😎👽👽👍👍 Todos los curso de Platzi que he realizado 👍👍👽👽😎😎
 
-## Python
+## *Python*
 
 ### Python: De Cero a Experto
 
